@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3a 11-October-2012
+ * Project Version: 1q3b 12-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -170,9 +170,12 @@ using namespace std;
 //#define GIA_OPTIMISE_PERFORMANCE_FOR_RELEX_PATENT_QUERIES_REPLICATION_RATHER_THAN_RELEX_PATENT_SYNTACTIC_PROTOTYPE_OUTPUT_REPLICATION			//not ever used - old for testing
 //#define GIA_COLLAPSE_COP_RELATION_DEPENDENT_BE_TO_APPOS_NOT_PREDADJ_OLD										//not ever used - old for testing
 
-
-
-//#define USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
+#ifndef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
+	#define GIA_USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION
+	#define GIA_USE_SUPPORT_MULTIPLE_CONDITION_INSTANCES_PER_CONDITION
+#endif
+//#define GIA_USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
+//#define GIA_USE_SUPPORT_MULTIPLE_CONDITION_INSTANCES_PER_CONDITION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
 //#define USE_OLD_SUBJ_OBJ_ONLY_ONE_PAIR_RESTRICTION_METHOD 	//default: disabled
 
 //#define GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_SUBSTANCE_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
@@ -963,17 +966,20 @@ void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definiti
 GIAEntityNode * addOrConnectActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity, bool sameReferenceSetSubject, bool sameReferenceSetObject);
 GIAEntityNode * addOrConnectActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet);
 GIAEntityNode * addOrConnectActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet);
+	GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity);	
 	void connectActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet);
 	void connectActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet);
 GIAEntityNode * addActionToActionDefinitionDefineSubstances(GIAEntityNode * actionEntity);
-GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity);
-	void upgradeSubstanceToAction(GIAEntityNode * substance);
-	GIAEntityNode * addAction(GIAEntityNode * actionEntity);
-
+		void upgradeSubstanceToAction(GIAEntityNode * substance);
+		GIAEntityNode * addAction(GIAEntityNode * actionEntity);
+	
 GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, GIAEntityNode * conditionTypeEntity, bool sameReferenceSet);
+	GIAEntityNode * addConditionToConditionDefinition(GIAEntityNode * conditionTypeEntity);
+	void connectConditionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingCondition, bool sameReferenceSet);
+	void connectConditionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingCondition, bool sameReferenceSet);
 GIAEntityNode * addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionDefinitionNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
 GIAEntityNode * addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionSubstanceNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
-	GIAEntityNode * addCondition(GIAEntityNode * conditionEntity);
+		GIAEntityNode * addCondition(GIAEntityNode * conditionEntity);
 
 string convertStanfordPrepositionToRelex(string * preposition, int NLPdependencyRelationsType, bool * stanfordPrepositionFound);				//Stanford Compatible
 
@@ -1039,7 +1045,11 @@ GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAEntityNo
 GIAEntityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts);
 
 void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet);
-
+	#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
+	GIAEntityConnection * findEntityNodePointerInVector(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToFind, int connectionType, bool * foundNode);
+	GIAEntityConnection * findEntityNodeNameInVector(GIAEntityNode * entityNode, string * entityNodeNameToFind, int connectionType, bool * foundNode);
+	#endif
+	
 long determineNextIdInstance(GIAEntityNode * entity);
 
 #ifdef GIA_USE_DATABASE

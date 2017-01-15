@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3a 11-October-2012
+ * Project Version: 1q3b 12-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -487,7 +487,7 @@ GIAEntityNode * addActionToActionDefinitionDefineSubstances(GIAEntityNode * acti
 			}
 			else
 			{
-				#ifdef USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
+				#ifdef GIA_USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
 				newOrExistingAction = addAction(actionEntity);
 				#else
 				newOrExistingAction = actionEntity;
@@ -526,7 +526,7 @@ GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity)
 			}
 			else
 			{
-				#ifdef USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
+				#ifdef GIA_USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
 				newOrExistingAction = addAction(actionEntity);
 				#else
 				newOrExistingAction = actionEntity;
@@ -680,13 +680,32 @@ GIAEntityNode * addOrConnectActionToEntity(GIAEntityNode * subjectEntity, GIAEnt
 	if(!(actionEntity->disabled))
 	{
 	#endif
+		
+		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
+		//see if relevant link already exists between the two nodes, and if so use that
+		bool foundNode1 = false;
+		GIAEntityConnection * connectionFound = findEntityNodeNameInVector(subjectEntity, &(actionEntity->entityName), GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS, &foundNode1);
+		if(foundNode1)
+		{
+			GIAEntityNode * currentActionNodeInList = connectionFound->entity;
+			bool foundNode2 = false;
+			GIAEntityConnection * connectionFound2 = findEntityNodePointerInVector(currentActionNodeInList, actionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, &foundNode2);
+			if(foundNode2)
+			{
+				if(newOrExistingAction != currentActionNodeInList)
+				{
+					newOrExistingAction->disabled = true;
+					newOrExistingAction = currentActionNodeInList;
+				}
+			}		
+		}
+		#endif
+				
+		newOrExistingAction = addActionToActionDefinition(actionEntity);
 
-	newOrExistingAction = addActionToActionDefinition(actionEntity);
+		connectActionInstanceToSubject(subjectEntity, newOrExistingAction, sameReferenceSetSubject);
 
-	connectActionInstanceToSubject(subjectEntity, newOrExistingAction, sameReferenceSetSubject);
-
-	connectActionInstanceToObject(objectEntity, newOrExistingAction, sameReferenceSetObject);
-
+		connectActionInstanceToObject(objectEntity, newOrExistingAction, sameReferenceSetObject);
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
@@ -698,7 +717,7 @@ GIAEntityNode * addOrConnectActionToEntity(GIAEntityNode * subjectEntity, GIAEnt
 
 void connectActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet)
 {
-	//configure subject entity node
+	//configure action subject entity node
 	writeVectorConnection(subjectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS, sameReferenceSet);
 	writeVectorConnection(newOrExistingAction, subjectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, sameReferenceSet);
 
@@ -716,8 +735,25 @@ GIAEntityNode * addOrConnectActionToSubject(GIAEntityNode * subjectEntity, GIAEn
 	if(!(actionEntity->disabled))
 	{
 	#endif
+		/*//do not presume single linked actions/conditions are identical
+		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
+		//see if relevant link already exists between the two nodes, and if so use that
+		bool foundNode1 = false;
+		GIAEntityConnection * connectionFound = findEntityNodeNameInVector(subjectEntity, &(actionEntity->entityName), GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS, &foundNode1);
+		if(foundNode1)
+		{
+			GIAEntityNode * currentActionNodeInList = connectionFound->entity;
+			if(newOrExistingAction != currentActionNodeInList)
+			{
+				newOrExistingAction->disabled = true;
+				newOrExistingAction = currentActionNodeInList;
+			}		
+		}
+		#endif
+		*/	
 		newOrExistingAction = addActionToActionDefinition(actionEntity);
 		connectActionInstanceToSubject(subjectEntity, newOrExistingAction, sameReferenceSet);
+
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
@@ -728,7 +764,7 @@ GIAEntityNode * addOrConnectActionToSubject(GIAEntityNode * subjectEntity, GIAEn
 
 void connectActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet)
 {
-	//configure object entity node
+	//configure action object entity node
 	writeVectorConnection(objectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS, sameReferenceSet);
 	writeVectorConnection(newOrExistingAction, objectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, sameReferenceSet);
 
@@ -745,8 +781,25 @@ GIAEntityNode * addOrConnectActionToObject(GIAEntityNode * objectEntity, GIAEnti
 	if(!(actionEntity->disabled))
 	{
 	#endif
+		/*//do not presume single linked actions/conditions are identical
+		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
+		//see if relevant link already exists between the two nodes, and if so use that
+		bool foundNode1 = false;
+		GIAEntityConnection * connectionFound = findEntityNodeNameInVector(objectEntity, &(actionEntity->entityName), GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS, &foundNode1);
+		if(foundNode1)
+		{
+			GIAEntityNode * currentActionNodeInList = connectionFound->entity;
+			if(newOrExistingAction != currentActionNodeInList)
+			{
+				newOrExistingAction->disabled = true;
+				newOrExistingAction = currentActionNodeInList;
+			}		
+		}
+		#endif
+		*/
 		newOrExistingAction = addActionToActionDefinition(actionEntity);
 		connectActionInstanceToObject(objectEntity, newOrExistingAction, sameReferenceSet);
+		
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
@@ -768,35 +821,34 @@ GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEnt
 	if(!(conditionTypeEntity->disabled))
 	{
 	#endif
-		if(!(conditionTypeEntity->isConcept))
+		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
+		//see if relevant link already exists between the two nodes, and if so use that
+		bool foundNode1 = false;
+		GIAEntityConnection * connectionFound = findEntityNodeNameInVector(entityNode, &(conditionTypeEntity->entityName), GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, &foundNode1);
+		if(foundNode1)
 		{
-			GIAEntityNode * existingCondition = conditionTypeEntity;
-
-			//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-
-			//configure entity node containing this substance
-			writeVectorConnection(existingCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
-			writeVectorConnection(existingCondition, conditionEntityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, sameReferenceSet);
-			writeVectorConnection(entityNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
-			writeVectorConnection(conditionEntityNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS, sameReferenceSet);
-
-			newOrExistingCondition = existingCondition;
-
+			GIAEntityNode * currentConditionNodeInList = connectionFound->entity;
+			bool foundNode2 = false;
+			GIAEntityConnection * connectionFound2 = findEntityNodePointerInVector(currentConditionNodeInList, conditionEntityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, &foundNode2);
+			if(foundNode2)
+			{
+				if(newOrExistingCondition != currentConditionNodeInList)
+				{
+					newOrExistingCondition->disabled = true;
+					newOrExistingCondition = currentConditionNodeInList;
+				}
+			}		
 		}
-		else
-		{
-			GIAEntityNode * newCondition = addCondition(conditionTypeEntity);
+		#endif
+		
+		newOrExistingCondition = addConditionToConditionDefinition(conditionTypeEntity);
 
-			writeVectorConnection(newCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
-			writeVectorConnection(newCondition, conditionEntityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, sameReferenceSet);
-			writeVectorConnection(entityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
-			writeVectorConnection(conditionEntityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS, sameReferenceSet);
+		//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
-			//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-
-			newOrExistingCondition = newCondition;
-		}
-
+		//configure entity node containing this substance
+		connectConditionInstanceToSubject(entityNode, newOrExistingCondition, sameReferenceSet);
+		connectConditionInstanceToObject(conditionEntityNode, newOrExistingCondition, sameReferenceSet);
+				
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
@@ -825,6 +877,51 @@ GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEnt
 	return newOrExistingCondition;
 }
 
+GIAEntityNode * addConditionToConditionDefinition(GIAEntityNode * conditionTypeEntity)
+{
+	GIAEntityNode * newOrExistingCondition = conditionTypeEntity;
+
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(conditionTypeEntity->disabled))	//Added 12 October 2012 (for consistency with addActionToActionDefinition)
+	{
+	#endif
+		//configure condition node
+		if(conditionTypeEntity->isConcept)
+		{
+			//always add new conditions per sentence (never use conditions defined from previous sentences)
+			newOrExistingCondition = addCondition(conditionTypeEntity);
+		}
+		else
+		{
+			#ifdef GIA_USE_SUPPORT_MULTIPLE_CONDITION_INSTANCES_PER_CONDITION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
+			newOrExistingCondition = addCondition(conditionTypeEntity);	//Added 12 October 2012 (for consistency with addActionToActionDefinition)
+			#else
+			newOrExistingCondition = conditionTypeEntity;
+			#endif
+		}
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	}
+	#endif
+
+	return newOrExistingCondition;
+}
+
+
+void connectConditionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingCondition, bool sameReferenceSet)
+{
+	//configure condition subject entity node
+	writeVectorConnection(subjectEntity, newOrExistingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
+	writeVectorConnection(newOrExistingCondition, subjectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
+}
+
+void connectConditionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingCondition, bool sameReferenceSet)
+{
+	//configure condition object entity node
+	writeVectorConnection(objectEntity, newOrExistingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS, sameReferenceSet);
+	writeVectorConnection(newOrExistingCondition, objectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, sameReferenceSet);
+}
+
+
 GIAEntityNode * addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionDefinitionNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet)
 {
 	GIAEntityNode * newOrExistingCondition = conditionTypeEntity;
@@ -837,37 +934,18 @@ GIAEntityNode * addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * ent
 	if(!(conditionTypeEntity->disabled))
 	{
 	#endif
+		newOrExistingCondition = addConditionToConditionDefinition(conditionTypeEntity);
 
-		if(!(conditionTypeEntity->isConcept))
+		//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+
+		//configure entity node containing this substance
+		connectConditionInstanceToSubject(entityNode, newOrExistingCondition, sameReferenceSet);
+		addDefinitionToEntity(newOrExistingCondition, conditionDefinitionNode, sameReferenceSet);
+		
+		if(conditionTypeEntity->isConcept)
 		{
-			GIAEntityNode * existingCondition = conditionTypeEntity;
-
-			//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-
-			//configure entity node containing this substance
-			writeVectorConnection(existingCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
-			writeVectorConnection(entityNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
-			writeVectorConnection(existingCondition, conditionDefinitionNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);
-			writeVectorConnection(conditionDefinitionNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet);
-
-			newOrExistingCondition = existingCondition;
-
+			newOrExistingCondition->negative = negative;	//overwrite negative with orrect one from context; ie that from "being" entity node
 		}
-		else
-		{
-			GIAEntityNode * newCondition = addCondition(conditionTypeEntity);
-			newCondition->negative = negative;	//overwrite negative with orrect one from context; ie that from "being" entity node
-
-			writeVectorConnection(newCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
-			writeVectorConnection(entityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
-			writeVectorConnection(newCondition, conditionDefinitionNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);
-			writeVectorConnection(conditionDefinitionNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet);
-
-			//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-
-			newOrExistingCondition = newCondition;
-		}
-
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
@@ -889,37 +967,18 @@ GIAEntityNode * addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * enti
 	if(!(conditionTypeEntity->disabled))
 	{
 	#endif
+		newOrExistingCondition = addConditionToConditionDefinition(conditionTypeEntity);
 
-		if(!(conditionTypeEntity->isConcept))
+		//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+
+		//configure entity node containing this substance
+		connectConditionInstanceToSubject(entityNode, newOrExistingCondition, sameReferenceSet);
+		connectPropertyToEntity(newOrExistingCondition, conditionSubstanceNode, sameReferenceSet);
+
+		if(conditionTypeEntity->isConcept)
 		{
-			GIAEntityNode * existingCondition = conditionTypeEntity;
-
-			//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-
-			//configure entity node containing this substance
-			writeVectorConnection(existingCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
-			writeVectorConnection(entityNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
-			writeVectorConnection(conditionSubstanceNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
-			writeVectorConnection(existingCondition, conditionSubstanceNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
-
-			newOrExistingCondition = existingCondition;
-
+			newOrExistingCondition->negative = negative;	//overwrite negative with orrect one from context; ie that from "being" entity node
 		}
-		else
-		{
-			GIAEntityNode * newCondition = addCondition(conditionTypeEntity);
-			newCondition->negative = negative;	//overwrite negative with correct one from context; ie that from "having" entity node
-
-			writeVectorConnection(newCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
-			writeVectorConnection(entityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
-			writeVectorConnection(conditionSubstanceNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
-			writeVectorConnection(newCondition, conditionSubstanceNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
-
-			//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-
-			newOrExistingCondition = newCondition;
-		}
-
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
@@ -1431,6 +1490,7 @@ GIAEntityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNod
 }
 
 
+		
 
 /*these functions have been added for GIA Database compatibility*/
 //this function does write to database, but prepares data structures for write to database (at the end of the user sequence, writeDatabase() is written...)
@@ -1440,18 +1500,15 @@ void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNod
 	if(!(entityNode->wasReferenceTemp && entityNodeToAdd->wasReferenceTemp))
 	{
 	#endif
-		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
+		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_PROPERTIES_AND_DEFINITIONS
 		//see if link already exists between the two nodes, and if so increment the confidence
 		bool foundNode = false;
-		for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entityNode->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
+		GIAEntityConnection * connectionFound = findEntityNodePointerInVector(entityNode, entityNodeToAdd, connectionType, &foundNode);
+		if(foundNode)
 		{
-			if((*connectionIter)->entity == entityNodeToAdd)
-			{
-				foundNode = true;
-				(*connectionIter)->confidence = (*connectionIter)->confidence + GIA_ENTITY_CONNECTION_CONFIDENCE_INCREMENT;
-			}
+			connectionFound->confidence = connectionFound->confidence + GIA_ENTITY_CONNECTION_CONFIDENCE_INCREMENT;
 		}
-		if(!foundNode)
+		else
 		{
 		#endif
 			vector<GIAEntityConnection*> * vectorConnection = &(entityNode->entityVectorConnectionsArray[connectionType]);
@@ -1494,13 +1551,46 @@ void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNod
 				newConnection->added = true;		//this allows for fast update of the DB (append reference connections)
 			}
 			#endif
-		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
+		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_PROPERTIES_AND_DEFINITIONS
 		}
 		#endif
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	}
 	#endif
 }
+
+#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
+
+GIAEntityConnection * findEntityNodePointerInVector(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToFind, int connectionType, bool * foundNode)
+{
+	GIAEntityConnection * connectionFound = NULL;
+	for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entityNode->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
+	{
+		if((*connectionIter)->entity == entityNodeToFind)
+		{
+			*foundNode = true;
+			connectionFound = *connectionIter;
+		}
+	}
+	return connectionFound;
+}
+
+GIAEntityConnection * findEntityNodeNameInVector(GIAEntityNode * entityNode, string * entityNodeNameToFind, int connectionType, bool * foundNode)
+{
+	GIAEntityConnection * connectionFound = NULL;
+	for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entityNode->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
+	{
+		if((*connectionIter)->entity->entityName == *entityNodeNameToFind)
+		{
+			*foundNode = true;
+			connectionFound = *connectionIter;			
+		}
+	}
+	return connectionFound;
+}
+
+#endif
+
 
 long determineNextIdInstance(GIAEntityNode * entity)
 {
