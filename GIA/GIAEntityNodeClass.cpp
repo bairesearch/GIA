@@ -84,6 +84,7 @@ GIAEntityNode::GIAEntityNode(void)
 	
 	hasAssociatedPropertyTemp = false;
 	
+	isQuery = false;
 }
 GIAEntityNode::~GIAEntityNode(void)
 {
@@ -130,6 +131,15 @@ void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode)
 
 int calculateQuantityNumberInt(string quantityNumberString)
 {
+	/*
+	if(quantityNumberString == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+	{
+		quantityNumberInt = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_QUANTITY_NUMBER_REPLACEMENT;
+	}	
+	else
+	{
+	*/
+	
 	int quantityNumberInt = 1;
 	bool found = false;
 	for(int i=0; i<QUANTITY_NUMBER_LOW_NUMBER_OF_TYPES; i++)
@@ -161,6 +171,7 @@ int calculateQuantityNumberInt(string quantityNumberString)
 		char * quantityNumberStringcharstar = const_cast<char*>(quantityNumberString.c_str());
 		quantityNumberInt = atoi(quantityNumberStringcharstar);	
 	}	
+	
 	return quantityNumberInt;
 }
 

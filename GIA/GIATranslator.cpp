@@ -13,9 +13,13 @@
 
 #include "GIATranslator.h"
 
-string relationTypePropositionLocationOrTimeNameArray[RELATION_TYPE_PREPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_AT, RELATION_TYPE_PREPOSITION_ON, RELATION_TYPE_PREPOSITION_TO};
-string relationTypePropositionActionOrPropertyNameArray[RELATION_TYPE_PREPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_WHEN, RELATION_TYPE_PREPOSITION_BECAUSE};
-
+string relationTypePropositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {"in", "at", "on", "after", "ago", "before", "between", "by", "during", "for", "to", "till", "until", "past", "since", "up_to", "within",  REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
+	//http://www.englisch-hilfen.de/en/grammar/preposition_time.htm
+string relationTypePropositionLocationNameArray[RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES] = {"in", "on", "at", "by", "near", "nearby", "above", "below", "over", "under", "around", "through", "inside", "inside_of", "outside", "between", "beside", "beyond", "in_front_of", "in_front", "in_back_of", "behind", "next_to", "on_top_of", "within", "beneath", "underneath", "among", "along", "against", "before", "after", "behind", "to", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE};		
+	//http://www.eslgold.com/grammar/prepositions_location.html + before, after, behind, to, etc
+string relationTypePropositionReasonOrCircumstanceNameArray[RELATION_TYPE_PREPOSITION_REASON_OR_CIRCUMSTANCE_NUMBER_OF_TYPES] = {"because", "on_account_of", "for", "out_of", "when",  REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY};
+	//http://vlc.polyu.edu.hk/vlc/GrammarCourse/Lesson2_Preposition/CausePurpose.htm
+	
 string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_THAT};
 string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_SUBJECT_EXPLETIVE};
 string relationTypeAdjectiveNameArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_1, RELATION_TYPE_ADJECTIVE_2, RELATION_TYPE_ADJECTIVE_3};
@@ -101,7 +105,6 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 			}
 					
 			thingEntity = thingEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
-				
 		}
 	
 		//configure property node
@@ -356,16 +359,6 @@ void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntit
 	objectEntity->isObjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 }
 
-void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity, string conditionName)
-{	
-	locationConditionEntity->conditionType = CONDITION_NODE_TYPE_LOCATION;
-	
-	propertyNode->ConditionNodeList.push_back(locationConditionEntity);
-	propertyNode->ConditionNodeTypeList.push_back(conditionName);	
-	locationConditionEntity->ConditionNodeReverseList.push_back(propertyNode);
-	locationConditionEntity->ConditionNodeTypeReverseList.push_back(conditionName);
-}
-
 void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, string conditionName)
 {	
 	timeConditionEntity->conditionType = CONDITION_NODE_TYPE_TIME;
@@ -377,6 +370,27 @@ void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * ti
 	timeConditionEntity->ConditionNodeReverseList.push_back(propertyNode);
 	timeConditionEntity->ConditionNodeTypeReverseList.push_back(conditionName);
 }
+
+void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity, string conditionName)
+{	
+	locationConditionEntity->conditionType = CONDITION_NODE_TYPE_LOCATION;
+	
+	propertyNode->ConditionNodeList.push_back(locationConditionEntity);
+	propertyNode->ConditionNodeTypeList.push_back(conditionName);	
+	locationConditionEntity->ConditionNodeReverseList.push_back(propertyNode);
+	locationConditionEntity->ConditionNodeTypeReverseList.push_back(conditionName);
+}
+
+void addReasonConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * reasonConditionEntity, string conditionName)
+{	
+	reasonConditionEntity->conditionType = CONDITION_NODE_TYPE_REASON;
+	
+	propertyNode->ConditionNodeList.push_back(reasonConditionEntity);
+	propertyNode->ConditionNodeTypeList.push_back(conditionName);	
+	reasonConditionEntity->ConditionNodeReverseList.push_back(propertyNode);
+	reasonConditionEntity->ConditionNodeTypeReverseList.push_back(conditionName);
+}
+
 
 void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, string conditionName)
 {
@@ -612,6 +626,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			//cout << "relationFunctionIndex = " << relationFunctionIndex << endl;
 			//cout << "relationArgumentIndex = " << relationArgumentIndex << endl;
 
+			bool argumentIsQuery = false;
+			if(argumentName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+			{//modify relation index [to prevent overlapping of comparison variable indicies with other indicies]
+				relationArgumentIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_ARGUMENT_INDEX;
+				currentRelationInList->relationArgumentIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_ARGUMENT_INDEX;
+				argumentIsQuery = true;
+			}
+				
 			if(!GIAEntityNodeArrayFilled[relationFunctionIndex])
 			{
 				GIAEntityNode * functionEntity = findOrAddEntityNodeByName(indexOfEntityNodes, indexOfEntityNames, &functionName, &functionEntityAlreadyExistant, &functionEntityIndex, true);
@@ -634,6 +656,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			}
 			if(!GIAEntityNodeArrayFilled[relationArgumentIndex])
 			{
+
 				GIAEntityNode * argumentEntity = findOrAddEntityNodeByName(indexOfEntityNodes, indexOfEntityNames, &argumentName, &argumentEntityAlreadyExistant, &argumentEntityIndex, true);
 				GIAEntityNodeArrayFilled[relationArgumentIndex] = true;
 				GIAEntityNodeArray[relationArgumentIndex] = argumentEntity;				
@@ -649,6 +672,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				GIAEntityNodeArray[relationArgumentIndex]->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[relationArgumentIndex];
 								
 				GIAEntityNodeArray[relationArgumentIndex]->hasAssociatedPropertyTemp = false;	
+				
+				if(argumentIsQuery)
+				{
+					GIAEntityNodeArray[relationArgumentIndex]->isQuery = true;
+				}
 			}
 			
 			currentRelationInList = currentRelationInList->next;
@@ -1653,7 +1681,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}
 		
-						
+		
 		//cout << "4a pass; define action/property conditions" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
@@ -1662,28 +1690,57 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 
 			int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
 			int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
-				
-			bool passedPropositionLocationOrTime = false;
-			bool passedPropositionActionOrProperty = false;
-			bool passedPropositionUnkown = false;
-			for(int i=0; i<RELATION_TYPE_PREPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES; i++)
+			
+			bool passedPropositionTime = false;	
+			bool passedPropositionLocation = false;
+			bool passedPropositionReasonOrCircumstances = false;
+			bool passedPropositionUnknown = false;
+			
+			//parse specific relex questions: not required, as these have been added to the relationTypePreposition_NameArrays
+			/*
+			if(currentRelationInList->relationType == REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN)
 			{
-				if(currentRelationInList->relationType == relationTypePropositionLocationOrTimeNameArray[i])
+				passedPropositionTime = true;
+			}
+			else if(currentRelationInList->relationType == REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE)
+			{
+				passedPropositionLocation = true;
+			}
+			else if(currentRelationInList->relationType == REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY)
+			{
+				passedPropositionReason = true;
+			}
+			*/
+						
+			for(int i=0; i<RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypePropositionTimeNameArray[i])
 				{
-					passedPropositionLocationOrTime = true;
+					passedPropositionTime = true;
+				}
+			}			
+			for(int i=0; i<RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypePropositionLocationNameArray[i])
+				{
+					GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
+					if(!actionOrPropertyConditionEntity->hasAssociatedTime)	
+					{//NB "at" and "on" are shared for location and time prepositions
+						passedPropositionLocation = true;
+					}
 				}
 			}
-			for(int i=0; i<RELATION_TYPE_PREPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES; i++)
+			for(int i=0; i<RELATION_TYPE_PREPOSITION_REASON_OR_CIRCUMSTANCE_NUMBER_OF_TYPES; i++)
 			{
-				if(currentRelationInList->relationType == relationTypePropositionActionOrPropertyNameArray[i])
+				if(currentRelationInList->relationType == relationTypePropositionReasonOrCircumstanceNameArray[i])
 				{
-					passedPropositionActionOrProperty = true;
+					passedPropositionReasonOrCircumstances = true;
 				}
 			}
 			
 			if(currentRelationInList->relationType[0] != RELATION_TYPE_PREPOSITION_FIRST_CHARACTER)
-			{
-				passedPropositionUnkown = true;
+			{//not valid for REFERENCE_TYPE_QUESTION_QUERY_VARIABLEs... [but this is not a problem because passedPropositionUnknown is processed last in the if/else switch below]
+				passedPropositionUnknown = true;
 			}
 			
 			
@@ -1702,33 +1759,28 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				actionOrPropertyConditionEntity = actionOrPropertyConditionEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
 			}
 																	
-			if(passedPropositionLocationOrTime)
+			if(passedPropositionTime)
 			{
-				if(actionOrPropertyConditionEntity->hasAssociatedTime)
-				{
-					cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
-					cout << "timeConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
-
-					addTimeConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType);				
-				}
-				else
-				{//assume place/location
-
-					cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
-					cout << "locationConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
-
-					addLocationConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType);
-				}	
-			}		
-			else if(passedPropositionActionOrProperty)
-			{
-			
 				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
-				cout << "actionOrPropertyConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
-									
-				addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType);		
+				cout << "timeConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
+
+				addTimeConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType);				
 			}
-			else if(passedPropositionUnkown)
+			else if(passedPropositionLocation)
+			{
+				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
+				cout << "locationConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
+
+				addLocationConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType);	
+			}		
+			else if(passedPropositionReasonOrCircumstances)
+			{
+				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
+				cout << "reasonConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
+									
+				addReasonConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType);		
+			}
+			else if(passedPropositionUnknown)
 			{
 				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
 				cout << "actionOrPropertyConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
@@ -1872,6 +1924,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					quantityProperty->hasQuantity = true;
 					int quantityNumberInt = calculateQuantityNumberInt(currentRelationInList->relationArgument);
 					quantityProperty->quantityNumber = quantityNumberInt;
+					
+					if(currentRelationInList->relationArgument == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+					{
+						quantityProperty->isQuery = true;
+					}
 					
 					//now locate quantity modifiers and multiplicators
 					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
@@ -2054,17 +2111,31 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}
 		
+
+
+		//cout << "5a pass; parse questions" << endl;	
 		/*
-		//restore critical variables; temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
-		for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+		currentRelationInList = currentSentenceInList->firstRelationInList;
+		while(currentRelationInList->next != NULL)
 		{	
-			if(GIAEntityNodeArrayFilled[w])
+			//parse specific relex questions: replace with standard prepositions and add question flag "isQuery"
+			if(currentRelationInList->relationType == REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN)
 			{
-				GIAEntityNodeArray[w]->isReferenceEntityInThisSentence = false;
+				passedPropositionTime = true;
 			}
+			else if(currentRelationInList->relationType == REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE)
+			{
+				passedPropositionLocation = true;
+			}
+			else if(currentRelationInList->relationType == REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY)
+			{
+				passedPropositionReason = true;
+			}	
 		}
 		*/
-
+		
+		
+				
 		#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_CLEAR_REFERENCES_EVERY_SENTENCE	
 		//restore critical variables: used for GIA translator reference paser only - cleared every time a new sentence is parsed (Clearing should actually be applied to each paragraph/manuscript instead)
 		long vectorSize = indexOfEntityNames->size();

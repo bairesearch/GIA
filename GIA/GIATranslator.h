@@ -103,20 +103,29 @@ using namespace std;
 	//? DOING NOW: references: yet to integrate - see http://wiki.opencog.org/w/Ideas#Improved_reference_resolution for integration (also check for the existence of the "person" tag in the feature "tense" data block)
 	//? #define RELATION_TYPE_QUANTITY "_quantity"	//eg his bike	[bike him]		/its bike
 
+
 #define RELATION_TYPE_OBJECT_SPECIAL_CONDITION_NUMBER_OF_TYPES (1)
 
-//predicates????
-//action/property conditions
-#define RELATION_TYPE_PREPOSITION_ON "on"		//eg rides on tuesday		[ride tuesday]		//this forms the action condition; "when"
-#define RELATION_TYPE_PREPOSITION_AT "at"		//eg rides at the palace	[ride palace]	//this forms the action condition; "where"
-#define RELATION_TYPE_PREPOSITION_TO "to"		//eg rides to the shops 			//this forms the action condition; "where"	
-#define RELATION_TYPE_PREPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES (3)
-#define RELATION_TYPE_PREPOSITION_WHEN "when"	//eg joe fires his bow when john drives fast.	[fire drive]	//this forms the action condition; "when" [not time, but in association with another action]
-#define RELATION_TYPE_PREPOSITION_BECAUSE "because"
-#define RELATION_TYPE_PREPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES (2)
+//action/property conditions: prepositions [predicates????]
+#define RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES (18)
+#define RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES (35)
+#define RELATION_TYPE_PREPOSITION_REASON_OR_CIRCUMSTANCE_NUMBER_OF_TYPES (6)
 #define RELATION_TYPE_PREPOSITION_FIRST_CHARACTER '_'
 #define RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION "_pobj"
 #define RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION "_psubj"
+
+
+//prepositions are now added explicitly
+/*
+#define RELATION_TYPE_PREPOSITION_ON "on"		//eg rides on tuesday		[ride tuesday]		//this forms the action condition; "when"
+#define RELATION_TYPE_PREPOSITION_AT "at"		//eg rides at the palace	[ride palace]	//this forms the action condition; "where"
+#define RELATION_TYPE_PREPOSITION_TO "to"		//eg rides to the shops 			//this forms the action condition; "where"	
+*/
+/*
+#define RELATION_TYPE_PREPOSITION_WHEN "when"	//eg joe fires his bow when john drives fast.	[fire drive]	//this forms the action condition; "when" [not time, but in association with another action]
+#define RELATION_TYPE_PREPOSITION_BECAUSE "because"
+*/
+
 
 //?#define RELATION_TYPE_OF "of"		//eg [she grew tired] of it	{same as with it}
 
@@ -175,6 +184,19 @@ using namespace std;
 #define REFERENCE_TYPE_PERSON_PLURAL_THEY "it"
 */
 
+//questions;
+#define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE "_%atLocation"
+#define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN "_%atTime"
+#define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY "_%because"
+#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE "_$qVar"
+#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_ARGUMENT_INDEX (MAX_NUMBER_OF_WORDS_PER_SENTENCE-1)
+//#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_QUANTITY_NUMBER_REPLACEMENT -9999
+
+#define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE_REPLACEMENT "RELATION_TYPE_PREPOSITION_AT"
+#define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN_REPLACEMENT "RELATION_TYPE_PREPOSITION_AT"	//must also set hasAssociatedTime to true
+#define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY_REPLACEMENT "RELATION_TYPE_PREPOSITION_BECAUSE"
+
+
 
 
 /*
@@ -204,8 +226,9 @@ void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEnti
 	void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
 
 void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, string conditionName);
-	void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity, string conditionName);
 	void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, string conditionName);
+	void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity, string conditionName);
+	void addReasonConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * reasonConditionEntity, string conditionName);
 	void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, string conditionName);
 
 	//property to property relationship - these they in actual fact represent different levels of detail in information to property to action / action to action nodes - direct property to property relationships are missing the action/connectivity information

@@ -81,6 +81,8 @@ using namespace std;
 #define MEASURE_TYPE_PER (3)
 #define MEASURE_TYPE_UNDEFINED (-1)
 
+#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_TEMP_FOR_DISPLAY_ONLY "_$qVar"
+
 extern string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
 extern string grammaticalTenseModifierNameArray[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];
 extern string grammaticalNumberNameArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES];
@@ -206,6 +208,7 @@ public:
 
 	bool hasAssociatedPropertyTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 
+	bool isQuery;
 	
 };
 
