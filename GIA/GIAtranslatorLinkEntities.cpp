@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f8a 10-July-2014
+ * Project Version: 2f9a 11-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -2638,8 +2638,10 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 }
 
 #ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
-void createConditionBasedUponPreposition(GIAentityNode * actionOrSubstanceConditionSubjectEntity, GIAentityNode * actionOrSubstanceConditionObjectEntity, string relationType, bool negative, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType, bool sameReferenceSet)
+void createConditionBasedUponPreposition(GIAentityNode * actionOrSubstanceConditionSubjectEntity, GIAentityNode * actionOrSubstanceConditionObjectEntity, Relation * currentRelationInList, bool negative, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType, bool sameReferenceSet)
 {
+	string relationType = currentRelationInList->relationType;
+	
 	/* does not cover all grounds
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
 	relationType = performPrepositionReduction(relationType);
@@ -2741,7 +2743,7 @@ void createConditionBasedUponPreposition(GIAentityNode * actionOrSubstanceCondit
 		//added 3 June 2012 for advanced referencing of prepositions
 		GIAentityNode * conditionConceptEntity;
 		int featureIndexOfPreposition = INT_DEFAULT_VALUE;
-		bool prepositionFeatureFound = determineFeatureIndexOfPreposition(currentSentenceInList, &prepositionName, &featureIndexOfPreposition);
+		bool prepositionFeatureFound = determineFeatureIndexOfPreposition(currentSentenceInList, currentRelationInList, &featureIndexOfPreposition);
 		if(!prepositionFeatureFound)
 		{
 			featureIndexOfPreposition = FEATURE_INDEX_OF_PREPOSITION_UNKNOWN;
