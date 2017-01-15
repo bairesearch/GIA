@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l3a 15-October-2015
+ * Project Version: 2l3b 15-October-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -98,8 +98,7 @@ GIAentityNode* DBfindOrAddConceptEntityNodeByName(vector<GIAentityNode*>* entity
 		GIAentityNode* conceptEntityNode;
 		if(conceptEntityNodeLoaded)
 		{
-			unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIterator;
-			conceptEntityNodesListIterator = entityNodesActiveListConcepts->find(*entityNodeName);
+			unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIterator = entityNodesActiveListConcepts->find(*entityNodeName);
 			conceptEntityNode = conceptEntityNodesListIterator->second;
 			#ifdef GIA_DATABASE_DEBUG
 			cout << "1. DBfindOrAddConceptEntityNodeByName: conceptEntityNodeLoaded" << endl;
@@ -198,9 +197,7 @@ GIAentityNode* LocalFindOrAddConceptEntityNodeByName(vector<GIAentityNode*>* ent
 {
 	GIAentityNode* entityNodeFound = NULL;
 
-	unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIterator;
-	conceptEntityNodesListIterator = entityNodesActiveListConcepts->find(*entityNodeName);
-
+	unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIterator = entityNodesActiveListConcepts->find(*entityNodeName);
 
 	if(conceptEntityNodesListIterator != entityNodesActiveListConcepts->end())
 	{//concept entity found

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l3a 15-October-2015
+ * Project Version: 2l3b 15-October-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -173,8 +173,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											if(currentSentenceInList->sentenceIndex == 20)
 											{
 												cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
-												unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIter2;
-												for(conceptEntityNodesListIter2 = entityNodesActiveListConcepts->begin(); conceptEntityNodesListIter2 != entityNodesActiveListConcepts->end(); conceptEntityNodesListIter2++)
+												for(unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIter2 = entityNodesActiveListConcepts->begin(); conceptEntityNodesListIter2 != entityNodesActiveListConcepts->end(); conceptEntityNodesListIter2++)
 												{
 													GIAentityNode* entityNode = conceptEntityNodesListIter2->second;
 													cout << "entityNode->disabled = " << entityNode->entityName << ", " << int(entityNode->disabled) << endl;

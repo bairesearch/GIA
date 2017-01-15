@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l3a 15-October-2015
+ * Project Version: 2l3b 15-October-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1480,8 +1480,7 @@ void disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAe
 
 void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(unordered_map<string, GIAentityNode*>* conceptEntityNodesListMap)
 {
-	unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListMapIter;
-	for(conceptEntityNodesListMapIter = conceptEntityNodesListMap->begin(); conceptEntityNodesListMapIter != conceptEntityNodesListMap->end(); conceptEntityNodesListMapIter++)
+	for(unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListMapIter = conceptEntityNodesListMap->begin(); conceptEntityNodesListMapIter != conceptEntityNodesListMap->end(); conceptEntityNodesListMapIter++)
 	{
 		GIAentityNode* entityNode = conceptEntityNodesListMapIter->second;
 		if(!(entityNode->disabled))
@@ -1495,8 +1494,7 @@ void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(unordered_map<st
 //(used for printing/xml write purposes)
 void recordConceptNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string, GIAentityNode*>* conceptEntityNodesListMap)
 {
-	unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListMapIter;
-	for(conceptEntityNodesListMapIter = conceptEntityNodesListMap->begin(); conceptEntityNodesListMapIter != conceptEntityNodesListMap->end(); conceptEntityNodesListMapIter++)
+	for(unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListMapIter = conceptEntityNodesListMap->begin(); conceptEntityNodesListMapIter != conceptEntityNodesListMap->end(); conceptEntityNodesListMapIter++)
 	{
 		GIAentityNode* entityNode = conceptEntityNodesListMapIter->second;
 		if(!(entityNode->permanentConcept))
@@ -1509,8 +1507,7 @@ void recordConceptNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string, GIA
 //(used for printing/xml write purposes)
 void recordConceptNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIAentityNode*>* conceptEntityNodesListMap)
 {
-	unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListMapIter;
-	for(conceptEntityNodesListMapIter = conceptEntityNodesListMap->begin(); conceptEntityNodesListMapIter != conceptEntityNodesListMap->end(); conceptEntityNodesListMapIter++)
+	for(unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListMapIter = conceptEntityNodesListMap->begin(); conceptEntityNodesListMapIter != conceptEntityNodesListMap->end(); conceptEntityNodesListMapIter++)
 	{
 		GIAentityNode* entityNode = conceptEntityNodesListMapIter->second;
 		if(entityNode->disabled)

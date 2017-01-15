@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l3a 15-October-2015
+ * Project Version: 2l3b 15-October-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -166,8 +166,6 @@ void initiateMaxXAtParticularY()
 
 void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, bool printType[], LDreference* firstReferenceInPrintList, XMLparserTag** currentTag, int maxNumberSentences)
 {
-	vector<GIAentityNode*>::iterator entityIter;
-
 	LDreference* currentReferenceInPrintList = firstReferenceInPrintList;
 
 	initiateMaxXAtParticularY();
@@ -191,7 +189,7 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesA
 		#ifdef GIA_DRAW_DEBUG
 		cout << "*** sentenceIndex = " << sentenceIndex << endl;
 		#endif
-		for(entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
+		for(vector<GIAentityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 		{
 			#ifdef GIA_DRAW_DEBUG
 			cout << "\ttracing..." << (*entityIter)->entityName << endl;

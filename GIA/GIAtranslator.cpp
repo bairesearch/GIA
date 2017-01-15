@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l3a 15-October-2015
+ * Project Version: 2l3b 15-October-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -244,8 +244,7 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 		#ifdef GIA_ENABLE_REFERENCE_LINKING_CLEAR_REFERENCES_EVERY_PARAGRAPH
 		//restore critical variables: used for GIA translator reference paser only - cleared every time a new paragraph is parsed
-		unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIter;
-		for(conceptEntityNodesListIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListIter++)
+		for(unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListIter++)
 		{
 			GIAentityNode* entityNode = conceptEntityNodesListIter->second;
 			entityNode->entityAlreadyDeclaredInThisContext = false;
@@ -268,8 +267,7 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirac
 {
 	//link GIAsentences with each generated CEcodeextension
 	GIAsentence* currentSentenceInList = firstSentenceInList;
-	vector<CECodeextension*>::iterator codeextensionIter;
-	for(codeextensionIter = codeextensionsList->begin(); codeextensionIter != codeextensionsList->end(); codeextensionIter++)
+	for(vector<CECodeextension*>::iterator codeextensionIter = codeextensionsList->begin(); codeextensionIter != codeextensionsList->end(); codeextensionIter++)
 	{
 		CECodeextension* currentCodeextensionInHeirachy = *codeextensionIter;
 		currentCodeextensionInHeirachy->sentence = currentSentenceInList;
@@ -486,14 +484,12 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		/*
-		vector<GIAentityNode*>::iterator sentenceConceptEntityNodesListTempNotUsed1Iter;
-		for(sentenceConceptEntityNodesListTempNotUsed1Iter = sentenceConceptEntityNodesListTempNotUsed1.begin(); sentenceConceptEntityNodesListTempNotUsed1Iter != sentenceConceptEntityNodesListTempNotUsed1.end(); sentenceConceptEntityNodesListTempNotUsed1Iter++)
+		for(vector<GIAentityNode*>::iterator sentenceConceptEntityNodesListTempNotUsed1Iter = sentenceConceptEntityNodesListTempNotUsed1.begin(); sentenceConceptEntityNodesListTempNotUsed1Iter != sentenceConceptEntityNodesListTempNotUsed1.end(); sentenceConceptEntityNodesListTempNotUsed1Iter++)
 		{
 			GIAentityNode* entityNode = *sentenceConceptEntityNodesListTempNotUsed1Iter;
 			cout << "DEBUG1: entityNode->entityName = " << entityNode->entityName << endl;
 		}
-		unordered_map<string, GIAentityNode*>::iterator sentenceConceptEntityNodesListIter;
-		for(sentenceConceptEntityNodesListIter = sentenceConceptEntityNodesList->begin(); sentenceConceptEntityNodesListIter != sentenceConceptEntityNodesList->end(); sentenceConceptEntityNodesListIter++)
+		for(unordered_map<string, GIAentityNode*>::iterator sentenceConceptEntityNodesListIter = sentenceConceptEntityNodesList->begin(); sentenceConceptEntityNodesListIter != sentenceConceptEntityNodesList->end(); sentenceConceptEntityNodesListIter++)
 		{
 			GIAentityNode* entityNode = sentenceConceptEntityNodesListIter->second;
 			cout << "DEBUG2: entityNode->entityName = " << entityNode->entityName << endl;
@@ -1193,8 +1189,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "\n\n recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled() currentSentenceInList->sentenceIndex = " << currentSentenceInList->sentenceIndex << endl;
-	unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIter2;
-	for(conceptEntityNodesListIter2 = entityNodesActiveListConcepts->begin(); conceptEntityNodesListIter2 != entityNodesActiveListConcepts->end(); conceptEntityNodesListIter2++)
+	for(unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIter2 = entityNodesActiveListConcepts->begin(); conceptEntityNodesListIter2 != entityNodesActiveListConcepts->end(); conceptEntityNodesListIter2++)
 	{
 		GIAentityNode* entityNode = conceptEntityNodesListIter2->second;
 		cout << "entityNode->disabled = " << entityNode->entityName << ", " << int(entityNode->disabled) << endl;
@@ -1204,8 +1199,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 	#ifdef GIA_ENABLE_REFERENCE_LINKING_CLEAR_REFERENCES_EVERY_SENTENCE
 	//restore critical variables: used for GIA translator reference paser only - cleared every time a new sentence is parsed
-	unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIter;
-	for(conceptEntityNodesListIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListIter++)
+	for(unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListIter++)
 	{
 		GIAentityNode* entityNode = conceptEntityNodesListIter->second;
 		entityNode->entityAlreadyDeclaredInThisContext = false;
