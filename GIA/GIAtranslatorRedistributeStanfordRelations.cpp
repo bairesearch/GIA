@@ -2238,8 +2238,12 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 
 	GIAgenericDepRelInterpretationParameters paramType1 = param;
 	paramType1.useRelationTest[REL1][REL_ENT2] = true; paramType1.relationTest[REL1][REL_ENT2] = GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME;
+	paramType1.useRelationIndexTest[REL1][REL_ENT2] = true; paramType1.relationIndexTestRelationID[REL1][REL_ENT2] = REL2; paramType1.relationIndexTestEntityID[REL1][REL_ENT2] = REL_ENT1;	//added 18 April 2014
 	paramType1.disableRelation[REL1] = true;
 	paramType1.disableEntity[REL1][REL_ENT2] = true;
+	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
+	paramType1.disableEntity[REL2][REL_ENT3] = true;	//added 18 April 2014
+	#endif
 	paramType1.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramType1.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
 	paramType1.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramType1.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; paramType1.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
 	paramType1.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramType1.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramType1.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT1;
@@ -2250,8 +2254,12 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 
 	GIAgenericDepRelInterpretationParameters paramType2 = param;
 	paramType2.useRelationTest[REL1][REL_ENT1] = true; paramType2.relationTest[REL1][REL_ENT1] = GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME;
+	paramType2.useRelationIndexTest[REL1][REL_ENT1] = true; paramType2.relationIndexTestRelationID[REL1][REL_ENT1] = REL2; paramType2.relationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT1;	//added 18 April 2014
 	paramType2.disableRelation[REL1] = true;
 	paramType2.disableEntity[REL1][REL_ENT1] = true;
+	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
+	paramType2.disableEntity[REL2][REL_ENT3] = true;	//added 18 April 2014
+	#endif
 	paramType2.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramType2.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
 	paramType2.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramType2.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; paramType2.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
 	paramType2.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramType2.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramType2.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;

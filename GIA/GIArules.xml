@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4c 18-April-2014
+ * Project Version: 2e4d 18-April-2014
  *
  *******************************************************************************/
 -->
@@ -1007,8 +1007,12 @@
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_subj" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="2" relationArrayTest="of|_poss" relationArrayTestSize="2" />
 				<option useRelationTest="true" REL="0" REL_ENT="1" relationTest="name" />
+				<option useRelationIndexTest="true" REL="0" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="0" />
 				<option disableRelation="true" REL="0" />
 				<option disableEntity="true" REL="0" REL_ENT="1" />
+				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
+				<option disableEntity="true" REL="1" REL_ENT="2" />
+				<!-- #endif -->
 				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_appo" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="0" redistributeRelationEntityIndexReassignmentRelationEntityID="0" />
@@ -1021,8 +1025,12 @@
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_subj" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="2" relationArrayTest="of|_poss" relationArrayTestSize="2" />
 				<option useRelationTest="true" REL="0" REL_ENT="0" relationTest="name" />
+				<option useRelationIndexTest="true" REL="0" REL_ENT="0" relationIndexTestRelationID="1" relationIndexTestEntityID="0" />
 				<option disableRelation="true" REL="0" />
 				<option disableEntity="true" REL="0" REL_ENT="0" />
+				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
+				<option disableEntity="true" REL="1" REL_ENT="2" />
+				<!-- #endif -->
 				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_appo" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="0" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
