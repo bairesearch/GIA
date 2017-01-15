@@ -130,7 +130,6 @@ using namespace std;
 #endif
 #ifdef USE_WORDNET
 #include "GIAwordnet.h"
-#include "wn.h"
 #endif
 	
 static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any of the following\n"
@@ -187,9 +186,9 @@ int main(int argc,char **argv)
 	string wordExample = "like";
 	bool wordIsFound = false;
 	string listOfSynonyms[WORDNET_FINDTHEINFO_OUTPUT_MAX_NUMBER_SYNONYMS];
-	int wordType = VERB;	//NOUN	VERB
-	findMostPopularSynset(wordExample, &wordIsFound, wordType);
-	//findSynonymsOLD(wordExample, &wordIsFound, listOfSynonyms, wordType);
+	int wordNetPOS = VERB;	//NOUN	VERB
+	checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(wordExample, &wordIsFound, wordNetPOS);
+	//findSynonymsOLD(wordExample, &wordIsFound, listOfSynonyms, wordNetPOS);
 	exit(0);	
 	#endif
 	

@@ -45,7 +45,7 @@ void initialiseWordNet()
 http://wordnet.princeton.edu/man/wnsearch.3WN.html
 /usr/include/wn.h
 
-int wordType = 
+int wordNetPOS = 
 #define NOUN		1
 #define VERB		2
 #define ADJ		3
@@ -95,90 +95,109 @@ int similarityType =
 */
 
 
-//assumes word and queryWord have the same wordType
-bool checkIfQueryWordIsContainedWithinAnotherWordsSynsets(string * word, string * queryWord, int wordType)
+//assumes word and otherWord have the same wordNetPOS
+bool checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(string * word, string * otherWord, int wordNetPOS)
 {
-	bool wordIsFound = false;
 	bool entityNamesAreSynonymous = false;
 	
-	/*
-	cout << "wordType = " << wordType << endl;
-	cout << "word = " << word << endl;
-	*/
-	SynsetPtr firstSenseInList = findSynsets(*word, &wordIsFound, wordType);
 	
-	if(wordIsFound)
+	#ifdef GIA_WORDNET_DEBUG_OUTPUT_SYNONYMNS
+	*word = "ride";
+	*otherWord = "lift";
+	#endif
+	
+	if(checkIfWordIsContainedWithinAnotherWordsSynsets(word, otherWord, wordNetPOS))
 	{
-		//cout << "wordIsFound: " << *word << endl;
+		entityNamesAreSynonymous = true;
+	}
+	
+	if(checkIfWordIsContainedWithinAnotherWordsSynsets(otherWord, word, wordNetPOS))
+	{
+		entityNamesAreSynonymous = true;
+	}
+	
+	
+	if(entityNamesAreSynonymous)
+	{
+		cout << "\t synon FOUND" << endl;
+		exit(0);
+	}
+	
+	return entityNamesAreSynonymous;
+}
+
+bool checkIfWordIsContainedWithinAnotherWordsSynsets(string * word, string * otherWord, int wordNetPOS)
+{
+	bool entityNamesAreSynonymous = false;
 		
-		//now search the synsets for equivalent words
-		int senseIndex = 0;
-		bool stillSensesToGo = true;
-		SynsetPtr currentSenseInList = firstSenseInList;
-		while(stillSensesToGo)
+	for(int similarityTypeIndex = 0; similarityTypeIndex<WORDNET_DATA_ENTRY_POINTERS_INDICATING_SIMILAR_SYNSETS_NUMBER_OF_TYPES; similarityTypeIndex++)
+	{
+		int similarityType = wordnetDataEntryPointersIndicatingSimilarSynsetsArray[similarityTypeIndex];
+		
+		bool wordIsFound = false;
+		
+		/*
+		cout << "word = " << word << endl;
+		cout << "otherWord = " << otherWord << endl;		
+		cout << "wordNetPOS = " << wordNetPOS << endl;
+		cout << "similarityType = " << similarityType << endl;
+		*/
+		
+		SynsetPtr firstSenseInList = findSynsets(*word, &wordIsFound, wordNetPOS, similarityType);
+
+		if(wordIsFound)
 		{
-			for(int w=0; w<currentSenseInList->wcount; w++)
-			{
-				#ifdef GIA_WORDNET_DEBUG_OUTPUT_SYNONYMNS
-				cout << "synonymn = " << currentSenseInList->words[w] << endl;
-				cout << "queryWord = " << *queryWord << endl;
-				#endif
-				string currentWord = currentSenseInList->words[w];
-				if(currentWord == *queryWord)
-				{
-					entityNamesAreSynonymous = true;
-					#ifdef GIA_WORDNET_DEBUG
-					cout << "match found - entityNamesAreSynonymous:" << endl;
-					cout << "currentSenseInList->words[w] = " << currentSenseInList->words[w] << endl;
-					cout << "queryWord = " << *queryWord << endl;
-					#endif
-				}
-			}
-			
-			if(currentSenseInList->nextss == NULL)
-			{
-				stillSensesToGo = false;
-			}
-			else
-			{
-				currentSenseInList = currentSenseInList->nextss;
-			}
-
-			senseIndex++;
-
+			int irrelevantNotUsed = 0;
+			checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(firstSenseInList, wordNetPOS, &irrelevantNotUsed, &entityNamesAreSynonymous, otherWord, true);
 		}
 	}
 	
 	return entityNamesAreSynonymous;
 }
+
 	
-SynsetPtr findMostPopularSynset(string word, bool * wordIsFound, int wordType)
+SynsetPtr findMostPopularSynsets(string word, bool * wordIsFound, int wordNetPOS)
 {
-	SynsetPtr firstSenseInList = findSynsets(word, wordIsFound, wordType);
-	SynsetPtr senseOutputWithHighestTags = NULL;
-	if(*wordIsFound)
+	int maximumNumberOfTagsAcrossSimilarityTypes = 0;
+	SynsetPtr senseOutputWithHighestTagsAcrossSimilarityTypes = NULL;
+	
+	for(int similarityTypeIndex = 0; similarityTypeIndex<WORDNET_DATA_ENTRY_POINTERS_INDICATING_SIMILAR_SYNSETS_NUMBER_OF_TYPES; similarityTypeIndex++)
 	{
-		senseOutputWithHighestTags = findMostPopularSynset(firstSenseInList, wordType);
+		int similarityType = wordnetDataEntryPointersIndicatingSimilarSynsetsArray[similarityTypeIndex];
+		SynsetPtr firstSenseInList = findSynsets(word, wordIsFound, wordNetPOS, similarityType);
+		
+		if(*wordIsFound)
+		{
+			int maximumNumberOfTags = 0;
+			bool entityNamesAreSynonymousIrrelevantNotUsed = false;
+			string otherWordIrrelevantNotUsed = "";
+			SynsetPtr senseOutputWithHighestTags = checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(firstSenseInList, wordNetPOS, &maximumNumberOfTags, &entityNamesAreSynonymousIrrelevantNotUsed, &otherWordIrrelevantNotUsed, false);
+			
+			if(maximumNumberOfTags > maximumNumberOfTagsAcrossSimilarityTypes)
+			{
+				maximumNumberOfTagsAcrossSimilarityTypes = maximumNumberOfTags;
+				senseOutputWithHighestTagsAcrossSimilarityTypes = senseOutputWithHighestTags;
+			}				
+		}
 	}
-	return senseOutputWithHighestTags;
+	return senseOutputWithHighestTagsAcrossSimilarityTypes;
 }
 
-SynsetPtr findSynsets(string word, bool * wordIsFound, int wordType)
+SynsetPtr findSynsets(string word, bool * wordIsFound, int wordNetPOS, int similarityType)
 {	
-	int similarityType = SIMPTR;	//SIMPTR (similar) or SYNS (synonymn) - they both appear to give same output
 	char * wordCharStar = const_cast<char*>(word.c_str());
 	
 	/*
 	#ifdef GIA_WORDNET_DEBUG
 	cout << "findSynsets()" << endl;
 	cout << "wordCharStar = " << wordCharStar << endl;
-	cout << "wordType = " << wordType << endl;
+	cout << "wordNetPOS = " << wordNetPOS << endl;
 	#endif
 	*/
 	
-	SynsetPtr firstSenseInList = findtheinfo_ds(wordCharStar, wordType, similarityType, 0);	//returns pointer to the first Synset struct in a Synset struct linked list containing word/searchStr
+	SynsetPtr firstSenseInList = findtheinfo_ds(wordCharStar, wordNetPOS, similarityType, 0);	//returns pointer to the first Synset struct in a Synset struct linked list containing word/searchStr
 
-	//char * sensePrintedOutput = findtheinfo(wordCharStar, wordType, similarityType, 0);		//similarityType/OVERVIEW
+	//char * sensePrintedOutput = findtheinfo(wordCharStar, wordNetPOS, similarityType, 0);		//similarityType/OVERVIEW
 	//cout << "findtheinfo sensePrintedOutput = " << sensePrintedOutput << endl;
 	
 	if(firstSenseInList == NULL)
@@ -193,78 +212,128 @@ SynsetPtr findSynsets(string word, bool * wordIsFound, int wordType)
 	return firstSenseInList;
 }
 
-SynsetPtr findMostPopularSynset(SynsetPtr firstSenseInList, int wordType)
+SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(SynsetPtr firstSenseInList, int wordNetPOS, int * maximumNumberOfTags, bool * entityNamesAreSynonymous, string * otherWord, bool compareEntityNames)
 {
 	
 	SynsetPtr currentSenseInList = firstSenseInList;
 	SynsetPtr senseOutputWithHighestTags = firstSenseInList;
-	int maximumNumberOfTags = 0;
+	*maximumNumberOfTags = 0;
 	
 	int senseIndex = 0;
 	
 	bool stillSensesToGo = true;
 	while(stillSensesToGo)
 	{
-		#ifdef GIA_WORDNET_DEBUG
-		cout << "senseIndex = " << senseIndex << endl;
-		cout << "currentSenseInList->wcount = " << currentSenseInList->wcount << endl;
-		for(int w=0; w< currentSenseInList->wcount; w++)
-		{
-			cout << "word = " << currentSenseInList->words[w] << endl;
-		}
-		cout << "whichword = " << currentSenseInList->whichword << endl;		//which word in words[] corresponds to word/searchStr
-		#endif
-		
-		Index * idxOfFirstWordInWords = getindex(currentSenseInList->words[0], wordType);	//returns pointer to Index struct representing first word in words[]
-		int senseNumber = *(currentSenseInList->wnsns);	
-		int tagCount = GetTagcnt(idxOfFirstWordInWords, senseNumber);
+		for(int pointerIndex = 0; pointerIndex<currentSenseInList->ptrcount + 1; pointerIndex++)	//+1 to allow for CURRENTSYNSETPOINTERINDEX
+		{		
+			SynsetPtr currentRelatedSense = NULL;
+			bool passed = false;
 
-		#ifdef GIA_WORDNET_DEBUG
-		cout << "indexInData = " << currentSenseInList->hereiam << endl;	      //index [first column] from data.wordType (eg data.noun) for the sense/usage of word/searchStr	      
-		cout << "idxOfFirstWordInWords = " << idxOfFirstWordInWords << endl;
-		cout << "idxOfFirstWordInWords->off_cnt " << idxOfFirstWordInWords->off_cnt << endl;  //total number of senses of first word in words[] (see index.wordType (eg index.noun) - the total number of pointers listed)
-		cout << "senseNumber = " << senseNumber << endl;      //sense number of the first word in words[] (corresponding to the sense of word/searchStr) - second last column of sense.wordType (eg sense.noun)
-		cout << "tagCount = " << tagCount << endl;	      //popularity of sense (number of times the sense passed has been tagged according to the cntlist file) - last column of sense.wordType (eg sense.noun)
-		cout << " " << endl;
-		#endif
-		
-		if(tagCount > maximumNumberOfTags)
-		{
-			senseOutputWithHighestTags = currentSenseInList;
+			if(pointerIndex == CURRENTSYNSETPOINTERINDEX)
+			{
+				passed = true;
+				currentRelatedSense = currentSenseInList;
+			}
+			else
+			{
+				char * wordUnknown;
+				for(int similarityTypeIndex = 0; similarityTypeIndex<WORDNET_DATA_ENTRY_POINTERS_INDICATING_RELATED_SYNSETS_NUMBER_OF_TYPES; similarityTypeIndex++)
+				{
+					if(currentSenseInList->ptrtyp[pointerIndex] == wordnetDataEntryPointersIndicatingRelatedSynsetsArray[similarityTypeIndex])
+					{
+						//if ptrtyp indicates related synset, then go to ptroff 
+						passed = true;
+						SynsetPtr currentRelatedSense = read_synset(wordNetPOS, currentSenseInList->ptroff[pointerIndex], wordUnknown);
+					}					
+				}				
+			}
+			if(passed)
+			{		
+				#ifdef GIA_WORDNET_DEBUG
+				cout << "senseIndex = " << senseIndex << endl;
+				cout << "currentRelatedSense->wcount = " << currentRelatedSense->wcount << endl;
+				for(int w=0; w< currentRelatedSense->wcount; w++)
+				{
+					cout << "word = " << currentRelatedSense->words[w] << endl;
+
+					string currentWord = currentRelatedSense->words[w];
+					if(currentWord == *otherWord)
+					{
+						*entityNamesAreSynonymous = true;
+						#ifdef GIA_WORDNET_DEBUG
+						cout << "match found - entityNamesAreSynonymous:" << endl;
+						cout << "currentRelatedSense->words[w] = " << currentRelatedSense->words[w] << endl;
+						cout << "otherWord = " << *otherWord << endl;
+						#endif
+
+						if(compareEntityNames)
+						{
+							if(tagCount > *maximumNumberOfTags)
+							{
+								*maximumNumberOfTags = tagCount;
+								senseOutputWithHighestTags = currentRelatedSense;
+							}					
+						}						
+					}			
+				}
+				cout << "whichword = " << currentRelatedSense->whichword << endl;		//which word in words[] corresponds to word/searchStr
+				#endif
+
+				Index * idxOfFirstWordInWords = getindex(currentRelatedSense->words[0], wordNetPOS);	//returns pointer to Index struct representing first word in words[]
+				int senseNumber = *(currentRelatedSense->wnsns);	
+				int tagCount = GetTagcnt(idxOfFirstWordInWords, senseNumber);
+
+				#ifdef GIA_WORDNET_DEBUG
+				cout << "indexInData = " << currentRelatedSense->hereiam << endl;	      //index [first column] from data.wordNetPOS (eg data.noun) for the sense/usage of word/searchStr	      
+				cout << "idxOfFirstWordInWords = " << idxOfFirstWordInWords << endl;
+				cout << "idxOfFirstWordInWords->off_cnt " << idxOfFirstWordInWords->off_cnt << endl;  //total number of senses of first word in words[] (see index.wordNetPOS (eg index.noun) - the total number of pointers listed)
+				cout << "senseNumber = " << senseNumber << endl;      //sense number of the first word in words[] (corresponding to the sense of word/searchStr) - second last column of sense.wordNetPOS (eg sense.noun)
+				cout << "tagCount = " << tagCount << endl;	      //popularity of sense (number of times the sense passed has been tagged according to the cntlist file) - last column of sense.wordNetPOS (eg sense.noun)
+				cout << " " << endl;
+				#endif
+
+				if(!compareEntityNames)
+				{
+					if(tagCount > *maximumNumberOfTags)
+					{
+						*maximumNumberOfTags = tagCount;
+						senseOutputWithHighestTags = currentRelatedSense;
+					}
+				}
+
+				#ifdef GIA_WORDNET_DEBUG
+				/*
+				for(int q=1; q<= idxOfFirstWordInWords->off_cnt; q++)
+				{
+					cout << "tagcount = " << GetTagcnt(idxOfFirstWordInWords, q) << endl;
+				}
+
+				cout << "hereiam = " << currentRelatedSense->hereiam << endl;		//index [first column] from data.wordNetPOS (eg data.noun) for the sense/usage of word/searchStr
+				cout << "sstype = " << currentRelatedSense->sstype << endl; 
+				cout << "fnum = " << currentRelatedSense->fnum << endl;
+				cout << "pos = " << currentRelatedSense->pos << endl;
+				cout << "wcount = " << currentRelatedSense->wcount << endl; 
+				cout << "words = " << currentRelatedSense->words << endl;
+				cout << "lexid = " << currentRelatedSense->lexid << endl;
+				cout << "wnsns = " << *(currentRelatedSense->wnsns) << endl;			//sense number of the first word in words[] - corresponding to the sense of word/searchStr
+				cout << "whichword = " << currentRelatedSense->whichword << endl;		//which word in words[] corresponds to word/searchStr
+				cout << "ptrcount = " << currentRelatedSense->ptrcount << endl;
+				cout << "ptrtyp = " << currentRelatedSense->ptrtyp << endl;
+				cout << "ptroff = " << currentRelatedSense->ptroff << endl;
+				cout << "ppos = " << currentRelatedSense->ppos << endl;
+				cout << "pto = " << currentRelatedSense->pto << endl;
+				cout << "pfrm = " << currentRelatedSense->pfrm << endl;
+				cout << "fcount = " << currentRelatedSense->fcount << endl;
+				cout << "frmid = " << currentRelatedSense->frmid << endl;
+				cout << "frmto = " << currentRelatedSense->frmto << endl;
+				cout << "defn = " << currentRelatedSense->defn << endl;
+				cout << "key = " << currentRelatedSense->key << endl;
+				cout << "searchtype = " << currentRelatedSense->searchtype << endl;
+				cout << " " << endl;
+				*/
+				#endif
+			}
 		}
-		
-		#ifdef GIA_WORDNET_DEBUG
-		/*
-		for(int q=1; q<= idxOfFirstWordInWords->off_cnt; q++)
-		{
-			cout << "tagcount = " << GetTagcnt(idxOfFirstWordInWords, q) << endl;
-		}
-				
-		cout << "hereiam = " << currentSenseInList->hereiam << endl;		//index [first column] from data.wordType (eg data.noun) for the sense/usage of word/searchStr
-		cout << "sstype = " << currentSenseInList->sstype << endl; 
-		cout << "fnum = " << currentSenseInList->fnum << endl;
-		cout << "pos = " << currentSenseInList->pos << endl;
-		cout << "wcount = " << currentSenseInList->wcount << endl; 
-		cout << "words = " << currentSenseInList->words << endl;
-		cout << "lexid = " << currentSenseInList->lexid << endl;
-		cout << "wnsns = " << *(currentSenseInList->wnsns) << endl;			//sense number of the first word in words[] - corresponding to the sense of word/searchStr
-		cout << "whichword = " << currentSenseInList->whichword << endl;		//which word in words[] corresponds to word/searchStr
-		cout << "ptrcount = " << currentSenseInList->ptrcount << endl;
-		cout << "ptrtyp = " << currentSenseInList->ptrtyp << endl;
-		cout << "ptroff = " << currentSenseInList->ptroff << endl;
-		cout << "ppos = " << currentSenseInList->ppos << endl;
-		cout << "pto = " << currentSenseInList->pto << endl;
-		cout << "pfrm = " << currentSenseInList->pfrm << endl;
-		cout << "fcount = " << currentSenseInList->fcount << endl;
-		cout << "frmid = " << currentSenseInList->frmid << endl;
-		cout << "frmto = " << currentSenseInList->frmto << endl;
-		cout << "defn = " << currentSenseInList->defn << endl;
-		cout << "key = " << currentSenseInList->key << endl;
-		cout << "searchtype = " << currentSenseInList->searchtype << endl;
-		cout << " " << endl;
-		*/
-		#endif
-		
 		if(currentSenseInList->nextss == NULL)
 		{
 			stillSensesToGo = false;
@@ -272,25 +341,26 @@ SynsetPtr findMostPopularSynset(SynsetPtr firstSenseInList, int wordType)
 		else
 		{
 			currentSenseInList = currentSenseInList->nextss;
-		}
+		}			
+		
 		
 		senseIndex++;
 
 	}
-	
+		
 	return senseOutputWithHighestTags;
 }
 
 		
 			
-void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], int wordType)
+void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], int wordNetPOS)
 {
 	bool result = true;
 	
 	int similarityType = SIMPTR;	//SIMPTR (similar) or SYNS (synonymn) - they both appear to give same output
 	char * wordCharStar = const_cast<char*>(word.c_str());
 	
-	char * output = findtheinfo(wordCharStar, wordType, similarityType, 0);
+	char * output = findtheinfo(wordCharStar, wordNetPOS, similarityType, 0);
 
 	char currentItemString[MAX_CHARACTERS_OF_WORDNET_FINDTHEINFO_OUTPUT] = "";
 	char lineString[MAX_CHARACTERS_OF_WORDNET_FINDTHEINFO_OUTPUT_LINE] = "";

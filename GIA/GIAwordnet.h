@@ -31,15 +31,31 @@ using namespace std;
 #define MAX_CHARACTERS_OF_WORDNET_FINDTHEINFO_OUTPUT_NUMBER_OF_SENSES (10)	//supports e^10 senses
 #define WORDNET_FINDTHEINFO_OUTPUT_MAX_NUMBER_SYNONYMS (100)
 
+#define WORDNET_DATA_ENTRY_POINTERS_INDICATING_SIMILAR_SYNSETS_NUMBER_OF_TYPES (1)
+static int wordnetDataEntryPointersIndicatingSimilarSynsetsArray[WORDNET_DATA_ENTRY_POINTERS_INDICATING_SIMILAR_SYNSETS_NUMBER_OF_TYPES] = {SIMPTR};
+
+//#define CURRENTSYNSET (99)
+
+#ifdef WORDNET_SEARCH_RELATED_SYNSETS
+	#define WORDNET_DATA_ENTRY_POINTERS_INDICATING_RELATED_SYNSETS_NUMBER_OF_TYPES (2)
+	static int wordnetDataEntryPointersIndicatingRelatedSynsetsArray[WORDNET_DATA_ENTRY_POINTERS_INDICATING_RELATED_SYNSETS_NUMBER_OF_TYPES] = {SIMPTR, HYPOPTR};
+#else
+	#define WORDNET_DATA_ENTRY_POINTERS_INDICATING_RELATED_SYNSETS_NUMBER_OF_TYPES (0)
+	static int wordnetDataEntryPointersIndicatingRelatedSynsetsArray[WORDNET_DATA_ENTRY_POINTERS_INDICATING_RELATED_SYNSETS_NUMBER_OF_TYPES] = {};
+#endif
+#define CURRENTSYNSETPOINTERINDEX (WORDNET_DATA_ENTRY_POINTERS_INDICATING_RELATED_SYNSETS_NUMBER_OF_TYPES)
+
 void initialiseWordNet();
 
-bool checkIfQueryWordIsContainedWithinAnotherWordsSynsets(string * word, string * queryWord, int wordType);
-SynsetPtr findMostPopularSynset(string word, bool * wordIsFound, int wordType);
-	SynsetPtr findSynsets(string word, bool * wordIsFound, int wordType);
-	SynsetPtr findMostPopularSynset(SynsetPtr firstSenseInList, int wordType);	
+bool checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(string * word, string * otherWord, int wordNetPOS);
+	bool checkIfWordIsContainedWithinAnotherWordsSynsets(string * word, string * otherWord, int wordNetPOS);
+SynsetPtr findMostPopularSynsets(string word, bool * wordIsFound, int wordNetPOS);
+		SynsetPtr findSynsets(string word, bool * wordIsFound, int wordNetPOS, int similarityType);
+		SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(SynsetPtr firstSenseInList, int wordNetPOS, int * maximumNumberOfTags, bool * entityNamesAreSynonymous, string * otherWord, bool compareEntityNames);	
+
 
 	
-void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], int wordType);
+void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], int wordNetPOS);
 bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char * output, int * newCharIndex, char * lineString, char characterToRecordUntil, char escapeCharacter);
 
 #endif

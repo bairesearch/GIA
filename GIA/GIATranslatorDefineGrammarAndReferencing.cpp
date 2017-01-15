@@ -238,10 +238,10 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList, bool GIAEntity
 			//cout << "isDefinite currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;	
 		}					
 	
-		//fill wordType array for wordnet - added 26 April 2012
-		int wordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
-		convertRelexPOSTypeToWordnetWordType(&(currentFeatureInList->type), &wordType);
-		GIAEntityNodeWordTypeArray[currentFeatureInList->entityIndex] = wordType;
+		//fill wordNetPOS array for wordnet - added 26 April 2012
+		int wordNetPOS = GRAMMATICAL_WORD_TYPE_UNDEFINED;
+		convertRelexPOSTypeToWordnetWordType(&(currentFeatureInList->type), &wordNetPOS);
+		GIAEntityNodeWordTypeArray[currentFeatureInList->entityIndex] = wordNetPOS;
 				
 		#ifdef FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION
 		//fill NER array after Relex Parse for Stanford equivalent proper noun detection - added 26 April 2012
@@ -367,7 +367,7 @@ void extractGrammaticalInformationFromPOStag(string * POStag, int entityIndex, i
 	
 	//pronoun detection;
 	bool pronounDetected = false;
-	//use POS information to extract pronoun information - NB alternatively, could use referenceTypePersonNameArray and referenceTypePossessiveNameArray (as there is only a limited set of pronouns in english)
+	//use stanfordPOS information to extract pronoun information - NB alternatively, could use referenceTypePersonNameArray and referenceTypePossessiveNameArray (as there is only a limited set of pronouns in english)
 	for(int i=0; i<FEATURE_POS_TAG_INDICATES_PRONOUN_NUMBER_TYPES; i++)
 	{
 		if(*POStag == featurePOSindicatesPronounTypeArray[i])
@@ -388,7 +388,7 @@ void extractGrammaticalInformationStanford(Feature * firstFeatureInList, bool GI
 		while(currentFeatureInList->next != NULL)
 		{	
 			int currentFeatureIndex = currentFeatureInList->entityIndex;
-			extractGrammaticalInformationFromPOStag(&(currentFeatureInList->POS), currentFeatureIndex, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeGrammaticalIsPronounArray);
+			extractGrammaticalInformationFromPOStag(&(currentFeatureInList->stanfordPOS), currentFeatureIndex, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeGrammaticalIsPronounArray);
 				
 			int currentNER = FEATURE_NER_UNDEFINED;
 			for(int i=0; i<FEATURE_NER_NUMBER_TYPES; i++)
@@ -407,10 +407,11 @@ void extractGrammaticalInformationStanford(Feature * firstFeatureInList, bool GI
 			GIAEntityNodeNERArray[currentFeatureIndex] = currentNER;
 			GIAEntityNodeNormalizedNERArray[currentFeatureIndex] = currentFeatureInList->NormalizedNER;
 			GIAEntityNodeTimexArray[currentFeatureIndex] = currentFeatureInList->Timex;
-			GIAEntityNodePOSArray[currentFeatureIndex] = currentFeatureInList->POS;
-			int wordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
-			convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(&(currentFeatureInList->POS), &(currentFeatureInList->type), &wordType);
-			GIAEntityNodeWordTypeArray[currentFeatureIndex] = wordType;
+			GIAEntityNodePOSArray[currentFeatureIndex] = currentFeatureInList->stanfordPOS;
+			int wordNetPOS = GRAMMATICAL_WORD_TYPE_UNDEFINED;
+			convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(&(currentFeatureInList->stanfordPOS), &(currentFeatureInList->type), &wordNetPOS);
+			
+			GIAEntityNodeWordTypeArray[currentFeatureIndex] = wordNetPOS;
 			
 			if((currentNER == FEATURE_NER_DATE) || (currentNER == FEATURE_NER_TIME))
 			{
@@ -439,7 +440,7 @@ void extractPastTense(int entityIndex, int entityIndexContainingTenseIndication,
 		{	
 			if(currentFeatureInList->entityIndex == entityIndexContainingTenseIndication)
 			{	
-				extractPastTenseFromPOStag(&(currentFeatureInList->POS), entityIndex, GIAEntityNodeGrammaticalTenseArray);
+				extractPastTenseFromPOStag(&(currentFeatureInList->stanfordPOS), entityIndex, GIAEntityNodeGrammaticalTenseArray);
 			}
 			currentFeatureInList = currentFeatureInList->next;
 		}
@@ -596,12 +597,12 @@ void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], G
 			entity->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[w];
 			entity->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[w];	
 			
-			entity->POSTemp = GIAEntityNodePOSArray[w];
+			entity->stanfordPOSTemp = GIAEntityNodePOSArray[w];
 			entity->NERTemp = GIAEntityNodeNERArray[w];
 			entity->NormalizedNERTemp = GIAEntityNodeNormalizedNERArray[w];
 			entity->TimexTemp = GIAEntityNodeTimexArray[w];		
 			
-			entity->wordType = GIAEntityNodeWordTypeArray[w];
+			entity->wordNetPOS = GIAEntityNodeWordTypeArray[w];
 						
 		}
 	}
@@ -1031,10 +1032,10 @@ void linkReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEnt
 							
 							bool passedCoreferenceTypeRequirements = false;
 							#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
-							//use POS information to ensure that the reference is a pronoun - NB alternatively, could use referenceTypePersonNameArray and referenceTypePossessiveNameArray (as there is only a limited set of pronouns in english)
+							//use stanfordPOS information to ensure that the reference is a pronoun - NB alternatively, could use referenceTypePersonNameArray and referenceTypePossessiveNameArray (as there is only a limited set of pronouns in english)
 							for(int i=0; i<FEATURE_POS_TAG_INDICATES_PRONOUN_NUMBER_TYPES; i++)
 							{
-								if(reference->POSTemp == featurePOSindicatesPronounTypeArray[i])
+								if(reference->stanfordPOSTemp == featurePOSindicatesPronounTypeArray[i])
 								{
 									passedCoreferenceTypeRequirements = true;
 								}
@@ -1828,8 +1829,8 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 											bool subjectGovernorAdjectiveOrAdvebFound = false;
 											for(int i=0; i<FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_TYPES; i++)
 											{
-												//cout << "subjectGovernorEntity->POSTemp = " << subjectGovernorEntity->POSTemp << endl;
-												if(subjectGovernorEntity->POSTemp == featurePOSindicatesAdjectiveOrAdverbTypeArray[i])
+												//cout << "subjectGovernorEntity->stanfordPOSTemp = " << subjectGovernorEntity->stanfordPOSTemp << endl;
+												if(subjectGovernorEntity->stanfordPOSTemp == featurePOSindicatesAdjectiveOrAdverbTypeArray[i])
 												{
 													subjectGovernorAdjectiveOrAdvebFound = true;
 												}

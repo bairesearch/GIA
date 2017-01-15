@@ -364,7 +364,7 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 					else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_POS)
 					{
 						string TagValue = currentTagInToken->value;
-						currentFeatureInList->POS = TagValue;
+						currentFeatureInList->stanfordPOS = TagValue;
 					}
 					else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_NER)
 					{
@@ -569,7 +569,7 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 			cout << "currentFeatureInList->grammar = " << currentFeatureInList->grammar << endl;
 			cout << "currentFeatureInList->CharacterOffsetBegin = " << currentFeatureInList->CharacterOffsetBegin << endl;
 			cout << "currentFeatureInList->CharacterOffsetEnd = " << currentFeatureInList->CharacterOffsetEnd << endl;
-			cout << "currentFeatureInList->POS = " << currentFeatureInList->POS << endl;
+			cout << "currentFeatureInList->stanfordPOS = " << currentFeatureInList->stanfordPOS << endl;
 			cout << "currentFeatureInList->NER = " << currentFeatureInList->NER << endl;
 			cout << "currentFeatureInList->NormalizedNER = " << currentFeatureInList->NormalizedNER << endl;
 			cout << "currentFeatureInList->Timex = " << currentFeatureInList->Timex << endl;

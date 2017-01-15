@@ -309,7 +309,7 @@ GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
 	newProperty->entityNodeDefiningThisInstance = propertyEntity;
 	propertyEntity->hasAssociatedInstance = true;
 	propertyEntity->hasAssociatedInstanceTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	newProperty->wordType = propertyEntity->wordType;
+	newProperty->wordNetPOS = propertyEntity->wordNetPOS;
 	
 	//if(propertyEntity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
 	//{
@@ -438,7 +438,7 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 	actionEntity->hasAssociatedInstance = true;
 	actionEntity->hasAssociatedInstanceIsAction = true;
 	actionEntity->hasAssociatedInstanceTemp = true;
-	newAction->wordType = actionEntity->wordType;
+	newAction->wordNetPOS = actionEntity->wordNetPOS;
 	newAction->isAction = true;
 	//WHY WOULD THIS EVER BE REQURIED?; newAction->entityNodeContainingThisProperty = NULL;
 
@@ -1118,14 +1118,14 @@ void recordConceptNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIA
 	}	
 }
 
-void convertRelexPOSTypeToWordnetWordType(string * relexPOStype, int * wordType)
+void convertRelexPOSTypeToWordnetWordType(string * relexPOStype, int * wordNetPOS)
 {
-	*wordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
+	*wordNetPOS = GRAMMATICAL_WORD_TYPE_UNDEFINED;
 	for(int i=0; i<FEATURE_RELEX_POS_NUMBER_OF_TYPES; i++)
 	{
 		if(featureRelexPOSTypeArray[i] == *relexPOStype)
 		{
-			*wordType = featureRelexPOSTypeCrossReferenceWordnetWordTypeArray[i];
+			*wordNetPOS = featureRelexPOSTypeCrossReferenceWordnetWordTypeArray[i];
 		}
 	}
 	
@@ -1133,12 +1133,12 @@ void convertRelexPOSTypeToWordnetWordType(string * relexPOStype, int * wordType)
 	#ifdef GIA_WORDNET_DEBUG
 	cout << "convertRelexPOSTypeToWordnetWordType(): " << endl;
 	cout << "relexPOStype = " << *relexPOStype << endl;
-	cout << "wordType = " << *wordType << endl;	
+	cout << "wordNetPOS = " << *wordNetPOS << endl;	
 	#endif
 	*/
 }
 
-void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, string * relexPOStype, int * wordType)
+void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, string * relexPOStype, int * wordNetPOS)
 {	
 	*relexPOStype = FEATURE_RELEX_POS_TYPE_WORD;
 	for(int i=0; i<FEATURE_POS_TAG_NUMBER_OF_TYPES_MINIMAL; i++)
@@ -1149,14 +1149,14 @@ void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, stri
 		}
 	}
 	
-	convertRelexPOSTypeToWordnetWordType(relexPOStype, wordType);
+	convertRelexPOSTypeToWordnetWordType(relexPOStype, wordNetPOS);
 
 	/*
 	#ifdef GIA_WORDNET_DEBUG
 	cout << "convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(): " << endl;
 	cout << "POStag = " << *POStag << endl;
 	cout << "relexPOStype = " << *relexPOStype << endl;
-	cout << "wordType = " << *wordType << endl;
+	cout << "wordNetPOS = " << *wordNetPOS << endl;
 	#endif
 	*/
 }

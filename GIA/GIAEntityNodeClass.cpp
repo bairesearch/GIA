@@ -99,7 +99,7 @@ GIAEntityNode::GIAEntityNode(void)
 	CharacterOffsetBeginTemp = -1;
 	CharacterOffsetEndTemp = -1;
 	*/
-	POSTemp = "";
+	stanfordPOSTemp = "";
 	NERTemp = FEATURE_NER_UNDEFINED;
 	NormalizedNERTemp = "";
 	TimexTemp = "";
@@ -131,7 +131,7 @@ GIAEntityNode::GIAEntityNode(void)
 	
 	//firstSentenceToAppearInNetwork = true;
 	
-	wordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;	
+	wordNetPOS = GRAMMATICAL_WORD_TYPE_UNDEFINED;	
 }
 GIAEntityNode::~GIAEntityNode(void)
 {

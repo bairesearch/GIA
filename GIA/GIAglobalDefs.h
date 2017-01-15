@@ -15,6 +15,7 @@
 #include "SHAREDglobalDefs.h"
 
 //variables currently under attention for testing purposes
+#define WORDNET_SEARCH_RELATED_SYNSETS		//TESTING THIS NOW (1j2b)
 //#define GIA_DISABLE_REFERENCING		//default: off	{this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}
 //#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		//{//this should only be enabled with Relex??} 	//this was (effectively) disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
 #ifndef GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS
@@ -25,7 +26,7 @@
 //#define GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
 
 //Debug;
-//#define GIA_WORDNET_DEBUG_OUTPUT_SYNONYMNS
+#define GIA_WORDNET_DEBUG_OUTPUT_SYNONYMNS
 //#define GIA_WORDNET_DEBUG
 //#define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG2
 //#define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
@@ -58,7 +59,7 @@
 		#define GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS		//BAI paragraph tag support has not yet been added to Relex 1.3.0
 	#endif
 #endif
-#ifdef GIA_USE_STANFORD_CORENLP		//a more advanced implementation of stanford parser (with lemma, entity name detection, etc: Stanford CoreNLP integrates all our NLP tools for the English language, including the part-of-speech (POS) tagger, the named entity recognizer (NER), the parser, and the coreference resolution system)
+#ifdef GIA_USE_STANFORD_CORENLP		//a more advanced implementation of stanford parser (with lemma, entity name detection, etc: Stanford CoreNLP integrates all our NLP tools for the English language, including the part-of-speech (stanfordPOS) tagger, the named entity recognizer (NER), the parser, and the coreference resolution system)
 	#define GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	#define GIA_STANFORD_NLP_EXECUTABLE_NAME "execute-stanfordCoreNLP.sh"
 #endif

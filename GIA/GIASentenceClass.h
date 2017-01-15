@@ -26,7 +26,7 @@ using namespace std;
 #define FEATURE_GRAMMATICAL_TENSE_DATE "date"
 #define FEATURE_WORD_QUESTIONMARK "?"
 
-//from http://wiki.opencog.org/w/Word_properties (intermediary - used for translation purposes into WordNet int wordType only)
+//from http://wiki.opencog.org/w/Word_properties (intermediary - used for translation purposes into WordNet int wordNetPOS only)
 #define FEATURE_RELEX_POS_TYPE_PUNCTUATION (0)
 #define FEATURE_RELEX_POS_TYPE_ADJECTIVE (1)
 #define FEATURE_RELEX_POS_TYPE_ADVERB (2)
@@ -135,7 +135,7 @@ public:
 	#ifdef GIA_USE_STANFORD_CORENLP
 	int CharacterOffsetBegin;
 	int CharacterOffsetEnd;
-	string POS;
+	string stanfordPOS;
 	string NER;
 	string NormalizedNER;
 	string Timex;

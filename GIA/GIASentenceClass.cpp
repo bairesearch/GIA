@@ -106,8 +106,8 @@ Feature::Feature(void)
 	#ifdef GIA_USE_STANFORD_CORENLP
 	CharacterOffsetBegin = -1;
 	CharacterOffsetEnd = -1;
-	POS = "";
-	NER = "";
+	stanfordPOS = "";
+	NER = "";	//NB Relex uses NER information, but it is only defined for (attached to) entites - see NERTemp - (it is not defined for temporary/intermediary sentence features) 
 	NormalizedNER = "";
 	Timex = "";
 	#endif

@@ -256,19 +256,19 @@ bool compareEntityNames(GIAEntityNode * queryEntityNode, GIAEntityNode * entityN
 	}	
 	else
 	{
-		if(queryEntityNode->wordType != entityNode->wordType)	//error checking
+		if(queryEntityNode->wordNetPOS != entityNode->wordNetPOS)	//error checking
 		{
 			/*
 			#ifdef GIA_WORDNET_DEBUG
-			cout << "compareEntityNames() warning: (queryEntityNode->wordType != entityNode->wordType)" << endl;
-			cout << "queryEntityNode->wordType " << queryEntityNode->entityName << " = " << queryEntityNode->wordType << endl;
-			cout << "entityNode->wordType = " << entityNode->entityName << " = " << entityNode->wordType << endl;
+			cout << "compareEntityNames() warning: (queryEntityNode->wordNetPOS != entityNode->wordNetPOS)" << endl;
+			cout << "queryEntityNode->wordNetPOS " << queryEntityNode->entityName << " = " << queryEntityNode->wordNetPOS << endl;
+			cout << "entityNode->wordNetPOS = " << entityNode->entityName << " = " << entityNode->wordNetPOS << endl;
 			#endif
 			*/
 		}
 		else
 		{		
-			if(checkIfQueryWordIsContainedWithinAnotherWordsSynsets(&(entityNode->entityName), &(queryEntityNode->entityName), entityNode->wordType))
+			if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(entityNode->entityName), &(queryEntityNode->entityName), entityNode->wordNetPOS))
 			{
 				entityNamesAreSynonymous = true;
 			}

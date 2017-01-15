@@ -246,7 +246,7 @@ public:
 	int CharacterOffsetBeginTemp;
 	int CharacterOffsetEndTemp;
 	*/
-	string POSTemp;
+	string stanfordPOSTemp;
 	string NormalizedNERTemp;
 	string TimexTemp;
 	#endif
@@ -280,7 +280,7 @@ public:
 	
 	//bool firstSentenceToAppearInNetwork;
 	
-	int wordType;			//added 26 April 2012 (used for compatibility with wordnet)	
+	int wordNetPOS;			//added 26 April 2012 (used for compatibility with wordnet)	
 	/*
 	enum
 	{
