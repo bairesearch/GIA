@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o5c 21-October-2016
+ * Project Version: 2o6a 22-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1526,10 +1526,19 @@ GIACoreference* generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIAe
 				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
 				cout << "\taddingEntityCorrespondingBestMatch. entityNode being traced: = " << entityNode->entityName << endl;
 				cout << "entityNode->entityName = " << entityNode->entityName << endl;
-				cout << "entityNode->entityCorrespondingBestMatch->entityName = " << entityNode->entityCorrespondingBestMatch->entityName << endl;
-				cout << "entityNode->entityCorrespondingBestMatch->idInstance = " << entityNode->entityCorrespondingBestMatch->idInstance << endl;
 				cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
 				cout << "sourceMention->entityName = " << sourceMention->entityName << endl;
+				cout << "entityNode->idActiveList = " << entityNode->idActiveList << endl;
+				cout << "entityNode->entityCorrespondingBestMatch->entityName = " << entityNode->entityCorrespondingBestMatch->entityName << endl;
+				cout << "entityNode->entityCorrespondingBestMatch->entityIndexTemp = " << entityNode->entityCorrespondingBestMatch->entityIndexTemp << endl;
+				cout << "entityNode->entityCorrespondingBestMatch->idInstance = " << entityNode->entityCorrespondingBestMatch->idInstance << endl;
+				cout << "entityNode->entityCorrespondingBestMatch->idActiveList = " << entityNode->entityCorrespondingBestMatch->idActiveList << endl;
+				#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+				if(intrasentenceReference)
+				{
+					cout << "intrasentenceReference" << endl;
+				}
+				#endif
 				#endif
 
 

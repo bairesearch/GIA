@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o5c 21-October-2016
+ * Project Version: 2o6a 22-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -465,6 +465,16 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		cout << "\n\t\t\t GIA_USE_ADVANCED_REFERENCING_DEBUG (2identifyReferenceSets)\n" << endl;
 		#endif
 
+		/*
+		for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteTempIter = entityNodesActiveListCompleteTemp->begin(); entityNodesActiveListCompleteTempIter != entityNodesActiveListCompleteTemp->end(); entityNodesActiveListCompleteTempIter++)
+		{
+			GIAentityNode* entityNode = *entityNodesActiveListCompleteTempIter;
+			cout << "DEBUG1: entityNode->entityName = " << entityNode->entityName << endl;
+			cout << "DEBUG1: entityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp << endl;
+			cout << "DEBUG1: entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
+		}
+		*/
+		
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		/*
 		for(vector<GIAentityNode*>::iterator sentenceNetworkIndexEntityNodesListTempNotUsed1Iter = sentenceNetworkIndexEntityNodesListTempNotUsed1.begin(); sentenceNetworkIndexEntityNodesListTempNotUsed1Iter != sentenceNetworkIndexEntityNodesListTempNotUsed1.end(); sentenceNetworkIndexEntityNodesListTempNotUsed1Iter++)

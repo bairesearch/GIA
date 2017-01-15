@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o5c 21-October-2016
+ * Project Version: 2o6a 22-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -192,14 +192,16 @@ GIAentityNode* addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAentityNod
 //this has been created based upon addOrConnectPropertyToEntity
 GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet)
 {
+	/*//disabled 2o6a due to *
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	#ifdef GIA_TRANSLATOR_DO_NOT_CREATE_CONCEPT_PROPERTIES_FOR_NON_CONCEPT_PARENTS
 	if(!(thingEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))
 	{
-		propertyEntity->entityType = GIA_ENTITY_TYPE_TYPE_SUBSTANCE;	//CHECKTHIS: will this ever be a quality?
+		propertyEntity->entityType = GIA_ENTITY_TYPE_TYPE_SUBSTANCE;	//CHECKTHIS: will this ever be a quality?*
 	}
 	#endif
 	#endif
+	*/
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_NETWORK_INDEX_ENTITIES
 	if(!(propertyEntity->disabled))
@@ -236,6 +238,7 @@ GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode
 //changed some instances of addOrConnectPropertyToEntity to addPropertyToEntity
 GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet)
 {
+	/*//disabled 2o6a due to *
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	#ifdef GIA_TRANSLATOR_DO_NOT_CREATE_CONCEPT_PROPERTIES_FOR_NON_CONCEPT_PARENTS
 	if(!(thingEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))
@@ -244,6 +247,7 @@ GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentit
 	}
 	#endif
 	#endif
+	*/
 
 	GIAentityNode* propertyEntitySubstance = propertyEntity;
 
@@ -633,6 +637,7 @@ void addDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* thingEntity, GIAe
 	//replace action if already existant
 GIAentityNode* addOrConnectActionToEntity(GIAentityNode* subjectEntity, GIAentityNode* objectEntity, GIAentityNode* actionEntity, bool sameReferenceSet)
 {
+	/*//disabled 2o6a due to *
 	#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	#ifdef GIA_TRANSLATOR_DO_NOT_CREATE_CONCEPT_PROPERTIES_FOR_NON_CONCEPT_PARENTS
 	if(isActionSpecialPossessive(actionEntity))
@@ -644,6 +649,7 @@ GIAentityNode* addOrConnectActionToEntity(GIAentityNode* subjectEntity, GIAentit
 	}
 	#endif
 	#endif
+	*/
 
 	GIAentityNode* newOrExistingAction = actionEntity;
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_NETWORK_INDEX_ENTITIES

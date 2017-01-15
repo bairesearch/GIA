@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o5c 21-October-2016
+ * Project Version: 2o6a 22-October-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -1069,7 +1069,11 @@ bool generateXMLentityNodeTagList(XMLparserTag* firstTagInSemanticNet, vector<GI
 		#endif
 			if(currentEntity->entityType == entityType)
 			{
-				currentTagL1 = generateXMLentityNodeTag(currentTagL1, currentEntity,* currentEntityNodeIDinEntityNodesActiveCompleteList);
+				#ifdef GIA_SEMANTIC_NET_XML_REORDER_NETWORK_INDEX_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
+				currentTagL1 = generateXMLentityNodeTag(currentTagL1, currentEntity, *currentEntityNodeIDinEntityNodesActiveCompleteList);
+				#else
+				currentTagL1 = generateXMLentityNodeTag(currentTagL1, currentEntity, currentEntity->idActiveList);
+				#endif
 				(*currentEntityNodeIDinEntityNodesActiveCompleteList) = (*currentEntityNodeIDinEntityNodesActiveCompleteList) + 1;
 			}
 

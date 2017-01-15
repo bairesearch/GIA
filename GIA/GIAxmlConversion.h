@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o5c 21-October-2016
+ * Project Version: 2o6a 22-October-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -39,8 +39,6 @@
 #include "GIAentityNodeClass.h"
 #include "GIAentityConnectionClass.h"
 #include "GIAconditionNodeClass.h"
-
-#define GIA_SEMANTIC_NET_XML_REORDER_NETWORK_INDEX_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
 
 #define GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
 #define GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES

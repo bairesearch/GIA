@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o5c 21-October-2016
+ * Project Version: 2o6a 22-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -817,7 +817,11 @@
 	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
 		//#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//note this preprocessor check is not enforced: use the new implementation regardless of whether GIA advanced referencing is set or not set
 			//#define GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION	//added 2k3a, removed 2k3c //record possessionAuxiliaryHaveArtificial info	//required by GIA advanced referencing
-			//#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_HYBRID	//added 2k3c, disabled for USE_NLC:!GIA_DISABLE_CROSS_SENTENCE_REFERENCING
+			#ifdef GIA_DISABLE_2o_CODE_FOR_DEBUG
+				#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC	//disabled 2c1a, reenabled and upgraded 2o6a	//required for !GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//NB if modified, need to update GIArules.xml accordingly
+			#else
+				#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_HYBRID	//added 2k3c	//NB if modified, need to update GIArules.xml accordingly
+			#endif
 		//#endif
 	#endif
 #endif
@@ -971,13 +975,12 @@
 
 #define GIA_USE_NON_STANDARD_CONDITION_CONDITION_CONNECTIONS_CONNECT_CONJUNCTIONS_TO_THEIR_RELEVANT_PREPOSITIONS	//required for USE_NLC
 
-//#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC	//disabled GIA 2c1a
-#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+//#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC	//requirement removed 2o6a
 	#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR	//assumes GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES is true (why is this required?)
 	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 		#define GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY	//this is required for !GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA
 	#endif
-#endif
+//#endif
 #define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_DEFINITION_BASIC
 
 #ifdef USE_NLC
@@ -1322,9 +1325,6 @@
 
 //Debug [Disable these for official build];
 //#define GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
-#ifdef USE_NLC
-	#define GIA_INSTANCE_OR_REFERENCE_SET_ID_DEBUG
-#endif
 
 //#define GIA2_SEMANTIC_PARSER_DEBUG
 //#define GIA_SEMANTIC_PARSER_TRANSLATOR_DEBUG
@@ -1476,6 +1476,13 @@
 #ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED		//more robust implementation (should activate when using GIA_USE_DATABASE to ensure all the semantic network connections are visible)
 #endif
-//#define GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDICES
+#ifdef USE_NLC
+	//#define GIA_DRAW_PRINT_INSTANCE_ID
+	#define GIA_DRAW_PRINT_ACTIVELIST_ID
+	#define GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDICES
+#endif
+//#define GIA_SEMANTIC_NET_XML_REORDER_NETWORK_INDEX_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
+
+
 
 #endif
