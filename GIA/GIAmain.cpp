@@ -169,19 +169,19 @@ int main(int argc,char **argv)
 	bool useInputQueryXMLFile = false;
 	string inputQueryXMLFileName = "semanticNetQuery.xml";	
 	
-	bool useOutputQueryXMLFile = true;
+	bool useOutputQueryXMLFile = false;
 	string outputQueryXMLFileName = "semanticNetQuery.xml";
 
-	bool useOutputQueryCXLFile = true;
+	bool useOutputQueryCXLFile = false;
 	string outputQueryCXLFileName = "semanticNetQuery.cxl";
 		
-	bool useOutputQueryLDRFile = true;
+	bool useOutputQueryLDRFile = false;
 	string outputQueryLDRFileName = "semanticNetQuery.ldr";
 	
-	bool useOutputQueryPPMFile = true;
+	bool useOutputQueryPPMFile = false;
 	string outputQueryPPMFileName = "semanticNetQuery.ppm";
 	
-	bool useOutputQuerySVGFile = true;
+	bool useOutputQuerySVGFile = false;
 	string outputQuerySVGFileName = "semanticNetQuery.svg";
 		
 	bool useOutputTextAllFile = false;
@@ -199,6 +199,7 @@ int main(int argc,char **argv)
 	
 	bool useInputQuery = false;
 	
+ 
 	//bool train = false;
 	//bool form = true;
 
@@ -479,7 +480,12 @@ int main(int argc,char **argv)
 		}	
 		
 		if(useInputQuery)
-		{
+		{		
+			if(useOutputTextAllFile)
+			{
+				printOutputQuery = true;
+			}
+			
 			if(!useOutputQueryXMLFile)
 			{	
 				if(useOutputTextAllFile)
@@ -515,7 +521,7 @@ int main(int argc,char **argv)
 			if(!useOutputQueryPPMFile)
 			{
 				if(useOutputTextAllFile)
-				{
+				{				
 					useOutputQueryPPMFile = true;		
 					outputQueryPPMFileName = outputTextAllFileName + "Query.ppm";
 				}
@@ -523,7 +529,31 @@ int main(int argc,char **argv)
 		}	
 	}
 	
-					
+	/*
+	cout << errmessage << endl;
+	cout << "Parameters to be used:" << endl; 	
+	cout << "inputTextPlainTXTFileName = " << inputTextPlainTXTFileName << endl;
+	cout << "inputTextRelexXMLFileName = " << inputTextRelexXMLFileName << endl;
+	cout << "inputTextXMLFileName = " << inputTextXMLFileName << endl;
+	cout << "outputTextXMLFileName = " << outputTextXMLFileName << endl;
+	cout << "outputTextCXLFileName = " << outputTextCXLFileName << endl;
+	cout << "outputTextLDRFileName = " << outputTextLDRFileName << endl;
+	cout << "outputTextPPMFileName = " << outputTextPPMFileName << endl;
+	cout << "outputTextSVGFileName = " << outputTextSVGFileName << endl;
+	cout << "inputQueryPlainTXTFileName = " << inputQueryPlainTXTFileName << endl;
+	cout << "inputQueryRelexXMLFileName = " << inputQueryRelexXMLFileName << endl;
+	cout << "inputQueryXMLFileName = " << inputQueryXMLFileName << endl;
+	cout << "outputQueryXMLFileName = " << outputQueryXMLFileName << endl;
+	cout << "outputQueryCXLFileName = " << outputQueryCXLFileName << endl;
+	cout << "outputQueryLDRFileName = " << outputQueryLDRFileName << endl;
+	cout << "outputQueryPPMFileName = " << outputQueryPPMFileName << endl;
+	cout << "outputQuerySVGFileName = " << outputQuerySVGFileName << endl;
+	cout << "useOutputTextAnswerPlainTXTFile = " << useOutputTextAnswerPlainTXTFile << endl;
+	cout << "displayInOpenGLAndOutputScreenshot = " << displayInOpenGLAndOutputScreenshot << endl;
+	cout << "rasterImageWidth = " << rasterImageWidth << endl;
+	cout << "rasterImageHeight = " << rasterImageHeight << endl;
+	*/
+				
 	if(useInputTextPlainTXTFile)
 	{
 		if(useInputTextRelexXMLFile)
