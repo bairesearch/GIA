@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1d 22-May-2012
+ * Project Version: 1l1e 23-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1305,6 +1305,7 @@ void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNod
 	entityNode->entityVectorConnectionsIDArray[connectionType].push_back(entityNodeToAdd->idInstance);	//required for database syncronisation with RAM
 	entityNode->entityVectorConnectionsLoadedArray[connectionType].push_back(true);				//required for database syncronisation with RAM		
 	entityNode->entityVectorConnectionsModifiedArray[connectionType].push_back(true);			//required for database syncronisation with RAM [this is used such that only the single line in the vector connection list file {for the connectionType} is required to be updated; ie the entire the vector connection list file {for the connectionType} does not have to be rewritten]
+	entityNode->entityVectorConnectionsAddedArray[connectionType].push_back(true);				//required for database syncronisation with RAM [this is used such that only the single line in the vector connection list file {for the connectionType} is required to be updated; ie the entire the vector connection list file {for the connectionType} does not have to be rewritten]
 	#endif
 }
 
@@ -1323,6 +1324,7 @@ void writeBasicConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNode
 	entityNode->entityBasicConnectionsIDArray[connectionType].push_back(entityNodeToAdd->idInstance);	//required for database syncronisation with RAM	
 	entityNode->entityBasicConnectionsLoadedArray[connectionType].push_back(true);				//required for database syncronisation with RAM		
 	entityNode->entityBasicConnectionsModifiedArray[connectionType] = true;					//required for database syncronisation with RAM [is this required?]
+	entityNode->entityBasicConnectionsAddedArray[connectionType] = true;					//required for database syncronisation with RAM [is this required?]
 	#endif
 }
 

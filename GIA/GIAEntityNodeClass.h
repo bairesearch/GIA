@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1d 22-May-2012
+ * Project Version: 1l1e 23-May-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -216,8 +216,11 @@ public:
 	vector<bool> entityVectorConnectionsLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//signifies whether the vector connection node has been loaded (eg from the db)
 	bool entityBasicConnectionsLoadedArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];					//signifies whether the basic connection node has been loaded (eg from the db)
 		bool entityAllVectorConnectionsLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//signifies whether all the vector connection nodes have been loaded (eg from the db)	
-	vector<bool> entityVectorConnectionsModifiedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];			//signifies whether the database needs to be updated upon exit with modified reference/node
-	bool entityBasicConnectionsModifiedArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];					//signifies whether the database needs to be updated upon exit with modified reference/node
+	vector<bool> entityVectorConnectionsModifiedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];			//signifies whether the database needs to be updated upon exit with modified reference/node	//make sure these parameters are set whenever a new connection is made
+	bool entityBasicConnectionsModifiedArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];					//signifies whether the database needs to be updated upon exit with modified reference/node	//make sure these parameters are set whenever a new connection is made
+		bool entityAllVectorConnectionsModifiedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//signifies whether the database needs to be updated upon exit with modified reference/node [must set this this if vector connections have been removed {ie the entire reference list must be updated}]	
+	vector<bool> entityVectorConnectionsAddedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//signifies whether the database needs to be updated upon exit with modified reference/node	//make sure these parameters are set whenever a new connection is made
+	bool entityBasicConnectionsAddedArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];					//signifies whether the database needs to be updated upon exit with modified reference/node	//make sure these parameters are set whenever a new connection is made
 	#endif
 	/*
 	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPES];
@@ -363,6 +366,18 @@ public:
 	bool modified;	//implies database Update is Required
 	#endif
 };
+
+class GIAConnection
+{
+public:
+	string entityName;	//of target
+	long idInstance;	//of target
+	bool loaded;
+	
+	GIAEntityNode(void);
+	~GIAEntityNode(void);
+	
+}
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode);
 
