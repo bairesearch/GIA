@@ -754,6 +754,35 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	#endif
 
+	/*
+	cout << "\nredistributeStanfordRelations/redistributeRelexRelations: " << endl;
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAentityNodeArrayFilled[i])
+		{
+			if(!(GIAentityNodeArray[i]->disabled))
+			{
+				cout << "\ti = " << i << endl;
+				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
+				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
+				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
+			}
+		}
+	}
+	*/
+	/*
+	cout << "redistributeStanfordRelations: " << endl;
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{
+		if(GIAentityNodeArrayFilled[w])
+		{
+			if(GIAfeatureTempEntityNodeArray[w]->disabled)
+			{
+				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " disabled" << endl;
+			}
+		}
+	}	
+	*/
 	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -785,6 +814,20 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		#endif
 	}
 	#endif
+
+	/*
+	cout << "locateAndAddAllConceptEntities: " << endl;
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{
+		if(GIAentityNodeArrayFilled[w])
+		{
+			if(GIAfeatureTempEntityNodeArray[w]->disabled)
+			{
+				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " disabled" << endl;
+			}
+		}
+	}
+	*/
 
 	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
 	botSwitchFirstAndSecondPerson(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPdependencyRelationsType);
@@ -875,6 +918,19 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	identifyEntityTypes(currentSentenceInList, GIAfeatureTempEntityNodeArray, NLPdependencyRelationsType);
 
+	/*
+	cout << "linkAdvancedReferencesGIA: " << endl;
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{
+		if(GIAentityNodeArrayFilled[w])
+		{
+			if(GIAfeatureTempEntityNodeArray[w]->disabled)
+			{
+				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " disabled" << endl;
+			}
+		}
+	}
+	*/
 
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -922,9 +978,9 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	}
 	#endif
 #endif
-	
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "\nBefore substance declarations: " << endl;
+	/*
+	//#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "\ndisableConceptEntitiesBasedOnFeatureTempEntityNodeArray: " << endl;
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
 		if(GIAentityNodeArrayFilled[i])
@@ -938,7 +994,22 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 			}
 		}
 	}
-	#endif
+	//#endif
+	*/
+
+	/*
+	cout << "disableConceptEntitiesBasedOnFeatureTempEntityNodeArray: " << endl;
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{
+		if(GIAentityNodeArrayFilled[w])
+		{
+			if(GIAfeatureTempEntityNodeArray[w]->disabled)
+			{
+				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " disabled" << endl;
+			}
+		}
+	}
+	*/
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 4; disable concept entities based on feature temp entity node array" << endl;
@@ -997,14 +1068,8 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	cout << "pass B:" << endl;
 	#endif
 
-	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
-	applyGIATranslatorGenericXMLfunctions("GIAtranslatorDefineSubstances", currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NULL, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
-	#else
-	defineSubstances(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp, NLPdependencyRelationsType);
-	#endif
-
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "\nAfter substance declarations: " << endl;
+	/*
+	cout << "\nsubstance declarations: " << endl;
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
 		if(GIAentityNodeArrayFilled[i])
@@ -1018,7 +1083,30 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 			}
 		}
 	}
+	*/
+
+	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
+	applyGIATranslatorGenericXMLfunctions("GIAtranslatorDefineSubstances", currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NULL, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
+	#else
+	defineSubstances(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp, NLPdependencyRelationsType);
 	#endif
+
+	/*
+	cout << "\ncollapseRedundantRelationAndMakeNegativeRelex: " << endl;
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAentityNodeArrayFilled[i])
+		{
+			if(!(GIAentityNodeArray[i]->disabled))
+			{
+				cout << "\ti = " << i << endl;
+				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
+				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
+				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
+			}
+		}
+	}
+	*/
 
 	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//Stanford version is executed after all substances have been generated (including actions)... [Upgrade translator - do not associate feature/grammatical info with concept entities; just leave them in the feature array until the concept instances have been generated]
@@ -1033,6 +1121,23 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	#endif
 
+	/*
+	cout << "\n applyGrammaticalInfoToAllEntities: " << endl;
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAentityNodeArrayFilled[i])
+		{
+			if(!(GIAentityNodeArray[i]->disabled))
+			{
+				cout << "\ti = " << i << endl;
+				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
+				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
+				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
+			}
+		}
+	}
+	*/
+
 	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES	// or GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	//this function has been shifted, and applied to entity instances, not the concept entity array...
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -1040,6 +1145,23 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
  	applyGrammaticalInfoToAllEntities(GIAentityNodeArrayFilled, GIAentityNodeArray, currentSentenceInList->firstFeatureInList);
 	#endif
+
+	/*
+	cout << "\n identifyComparisonVariableAlternateMethod: " << endl;
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAentityNodeArrayFilled[i])
+		{
+			if(!(GIAentityNodeArray[i]->disabled))
+			{
+				cout << "\ti = " << i << endl;
+				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
+				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
+				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
+			}
+		}
+	}
+	*/
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1b; identify comparison variable" << endl;
@@ -1051,6 +1173,23 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	//transfer disabled substances across execution#2 [this is required since GIAtranslatorRedistributeStanfordRelations operations are now done on temporary entity nodes GIAfeatureTempEntityNodeArray instead of concept entity nodes {whose values would have been automatically transferred their instances upon creation}...]
 	disableEntitiesBasedOnFeatureTempEntityNodeArray(GIAentityNodeArrayFilled, GIAentityNodeArray, GIAfeatureTempEntityNodeArray);
+
+	/*
+	cout << "\nlink entities: " << endl;
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAentityNodeArrayFilled[i])
+		{
+			if(!(GIAentityNodeArray[i]->disabled))
+			{
+				cout << "\ti = " << i << endl;
+				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
+				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
+				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
+			}
+		}
+	}
+	*/
 
 	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 	applyGIATranslatorGenericXMLfunctions("GIAtranslatorLinkEntities", currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
@@ -1072,10 +1211,60 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	#endif
 
+	/*
+	cout << "\n1 advanced feature: " << endl;
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAentityNodeArrayFilled[i])
+		{
+			if(!(GIAentityNodeArray[i]->disabled))
+			{
+				cout << "\ti = " << i << endl;
+				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
+				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
+				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
+			}
+		}
+	}
+	*/
+
 	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 	applyGIATranslatorGenericXMLfunctions("GIAtranslatorApplyAdvancedFeatures", currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
 	#endif
+
+	/*
+	cout << "\n2 advanced feature: " << endl;
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAentityNodeArrayFilled[i])
+		{
+			if(!(GIAentityNodeArray[i]->disabled))
+			{
+				cout << "\ti = " << i << endl;
+				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
+				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
+				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
+			}
+		}
+	}
+	*/
 	applyAdvancedFeatures(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType, NLPfeatureParser);
+	/*
+	cout << "\n3 advanced feature: " << endl;
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAentityNodeArrayFilled[i])
+		{
+			if(!(GIAentityNodeArray[i]->disabled))
+			{
+				cout << "\ti = " << i << endl;
+				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
+				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
+				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
+			}
+		}
+	}
+	*/
 
 
 	#ifdef GIA_USE_ADVANCED_REFERENCING
@@ -1314,12 +1503,25 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 												}
 											}
 
+											/*
+											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "():" << endl;
+											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+											{
+												if(GIAentityNodeArrayFilled[w])
+												{
+													if(GIAentityNodeArray[w]->disabled)
+													{
+														cout << GIAentityNodeArray[w]->entityName << " disabled" << endl;
+													}
+												}
+											}
+											*/
 
 											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation
 											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))
 											{
 												result = false;
-											}
+											}	
 
 											/*
 											if(functionName == "redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs")

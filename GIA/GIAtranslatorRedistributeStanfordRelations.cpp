@@ -277,10 +277,6 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 	EntityCharacteristic entityCharacteristicsTestB("NERTemp", FEATURE_NER_PERSON_STRING);
 	paramB1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTestB);
 	paramB1.useRelationTest[REL1][REL_ENT3] = true; paramB1.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PRENOMIAL_MODIFIER;
-	paramB1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i1);
-	paramB1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i2);
-	paramB1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i3);
-	paramB1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i4);
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5C_FEATURES_STANFORD_NER_INDICATES_NAME_CONCATENATION_REQUIRES_POS_NNP
 	paramB1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest1ii1);
 	paramB1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1ii1);
@@ -297,7 +293,10 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 	#endif
 
 	GIAgenericDepRelInterpretationParameters paramA2 = param;
-	paramA2.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTestA);
+	paramA2.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i1);
+	paramA2.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i2);
+	paramA2.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i3);
+	paramA2.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i4);
 	paramA2.useSpecialCaseCharacteristicsRelationIndexTest[REL1][REL_ENT1] = true; paramA2.specialCaseCharacteristicsRelationIndexTestRelationID[REL1][REL_ENT1] = REL1; paramA2.specialCaseCharacteristicsRelationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT2; paramA2.specialCaseCharacteristicsRelationIndexTest[REL1][REL_ENT1].name = "NERTemp";
 	paramA2.disableEntity[REL1][REL_ENT2] = true;
 	if(genericDependecyRelationInterpretation(&paramA2, REL1))

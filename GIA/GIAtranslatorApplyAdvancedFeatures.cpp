@@ -408,6 +408,7 @@ void extractQuantities(Sentence * currentSentenceInList, bool GIAentityNodeArray
 	}
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
+	//NB GIA could support quantity extraction with Stanford Parser only (ie without Stanford CoreNLP as the NLPfeatureParser) but this has not been implemented
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
 		extractQuantitiesStanfordCoreNLP(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts);
@@ -428,11 +429,10 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 			if(currentRelationInList->relationType == RELATION_TYPE_QUANTITY)
 			{
 				#ifdef GIA_TRANSLATOR_DEBUG
-				/*
+				cout << "extractQuantitiesStanfordCoreNLP()" << endl;
 				cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 				cout << "currentRelationInList->relationGovernor = " << currentRelationInList->relationGovernor << endl;
 				cout << "currentRelationInList->relationDependent = " << currentRelationInList->relationDependent << endl;
-				*/
 				#endif
 
 				GIAentityNode * quantityEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
@@ -445,17 +445,19 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 									
 					GIAentityNode * quantitySubstance = quantityEntity;
 					quantitySubstance->hasQuantity = true;
-					if((quantitySubstance->NormalizedNERtemp != "") && (quantitySubstance->NormalizedNERtemp != "0.0"))		//added 0.0 for a stanford anomaly 11 May 2012
+					if((quantitySubstance->NormalizedNERtemp != "") && (quantitySubstance->NormalizedNERtemp != "0.0") && (quantitySubstance->NERTemp != FEATURE_NER_DURATION))		//added (quantitySubstance->NERTemp != FEATURE_NER_DURATION) for Stanford Parser 2014-01-04 //added (quantitySubstance->NormalizedNERtemp != "0.0") for a stanford anomaly 11 May 2012
 					{
 						quantitySubstance->quantityNumberString = quantitySubstance->NormalizedNERtemp;
 					}
 					else
 					{
+						//cout << "here2" << endl;
 						quantitySubstance->quantityNumberString = currentRelationInList->relationDependent;
 					}
 
 					int quantityNumberInt = calculateQuantityNumberInt(quantitySubstance->quantityNumberString);
 					quantitySubstance->quantityNumber = quantityNumberInt;
+					//cout << "quantitySubstance->quantityNumber = " << quantitySubstance->quantityNumber << endl;
 					quantitySubstance->isSubstanceConcept = false;	//added 2a11a [because defineSubstanceConcepts() does not have access to quantity data]
 						
 					disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);

@@ -533,7 +533,7 @@ bool loadPhrasalVerbDataAndGenerateAllTenseVariants(string phrasalVerbDatabaseFi
 				}
 				if(parsingVerbBase)
 				{
-					cout << "warning: parsingVerbBase && (currentToken == GIA_LRP_PHRASALVERB_DATABASE_TAG_ALTERNATE) - ignoring second alternate base" << endl;
+					//cout << "warning: parsingVerbBase && (currentToken == GIA_LRP_PHRASALVERB_DATABASE_TAG_ALTERNATE) - ignoring second alternate base" << endl;
 					currentTagInPhrasalVerb->base = true;
 				}
 				else

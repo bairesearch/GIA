@@ -140,10 +140,6 @@
 				<option useRelationArrayTest="true" REL="0" REL_ENT="2" relationArrayTest="_conj_and|_conj_or" relationArrayTestSize="2" relationArrayTestIsNegative="true" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="NERTemp" value="5" REL="0" REL_ENT="0" />
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_nn" />
-				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="NERTemp" value="5" REL="0" REL_ENT="0" />
-				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="NERTemp" value="6" REL="0" REL_ENT="0" />
-				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="NERTemp" value="7" REL="0" REL_ENT="0" />
-				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="NERTemp" value="8" REL="0" REL_ENT="0" />
 				<!-- #ifndefGIA_DO_NOT_SUPPORT_SPECIAL_CASE_5C_FEATURES_STANFORD_NER_INDICATES_NAME_CONCATENATION_REQUIRES_POS_NNP -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="stanfordPOStemp" value="NNP" REL="0" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="stanfordPOStemp" value="NNP" REL="0" REL_ENT="0" />
@@ -159,7 +155,10 @@
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="0" REL_ENT="2" relationArrayTest="_conj_and|_conj_or" relationArrayTestSize="2" relationArrayTestIsNegative="true" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="NERTemp" value="0" negative="true" REL="0" REL_ENT="0" />
+				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="NERTemp" value="5" REL="0" REL_ENT="0" />
+				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="NERTemp" value="6" REL="0" REL_ENT="0" />
+				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="NERTemp" value="7" REL="0" REL_ENT="0" />
+				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="NERTemp" value="8" REL="0" REL_ENT="0" />
 				<option useSpecialCaseCharacteristicsRelationIndexTest="true" REL="0" REL_ENT="0" specialCaseCharacteristicsRelationIndexTestRelationID="0" specialCaseCharacteristicsRelationIndexTestEntityID="1" specialCaseCharacteristicsRelationIndexTest="NERTemp" />
 				<option disableEntity="true" REL="0" REL_ENT="1" />
 				</paramDepRel>
@@ -3288,7 +3287,9 @@
 				<option functionToExecuteUponFind="8" />
 				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="0" /> <!-- coincidentially this condition holds for both cases -->
 				<option functionEntityRelationID="0" FUNC_ENT="1" functionEntityRelationEntityID="1" /> <!-- coincidentially this condition holds for both 3 cases -->
+				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
 				<option defaultSameSetReferenceValue="true" />
+				<!-- #endif -->
 				<option useRelationArrayTest="true" REL="0" REL_ENT="2" relationArrayTest="_measure_distance|_measure_size|_measure_time|_measure" relationArrayTestSize="4" />
 				<option mustGenerateConditionTypeName="true" conditionTypeEntityDefaultName="_measure" conditionTypeEntityDefaultIndex="993" /> <!-- NB does not support the full array of Relex measure/dependency types -->
 				</paramDepRel>
