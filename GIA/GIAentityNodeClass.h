@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -133,7 +133,7 @@ using namespace std;
 #define GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP (8)
 #define GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP (9)
 #define GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP (10)
-#define GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP (11)	
+#define GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP (11)
 #define GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP (12)
 
 #define GRAMMATICAL_NUMBER_UNDEFINED 0
@@ -406,7 +406,7 @@ public:
 	#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 	unordered_map<int, int> grammaticalPredeterminerTempSentenceArray;	//only for instances (not for concepts)	- required for GIA advanced referencing as different references to an entity may well have different predeterminers (eg each)
 	#endif
-	#endif	
+	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
 	string stanfordPOStemp;
 	string NormalizedNERtemp;
@@ -508,7 +508,7 @@ public:
 	#endif
 	bool NLCisAlias;
 	#endif
-	
+
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
 	string conditionType2;	//added 2h1a/14-November-2014 - required for NLC 1m1a+

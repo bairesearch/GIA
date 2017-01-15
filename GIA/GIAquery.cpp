@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -121,7 +121,7 @@ GIAreferenceTraceParameters::GIAreferenceTraceParameters(void)
 	#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
 	doNotParseQuerySubnetsWithSubstanceConcepts = false;
 	#endif
-	
+
 	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 	testReferenceSetContext = false;
 	referenceSetDefiniteEntity = NULL;
@@ -130,11 +130,11 @@ GIAreferenceTraceParameters::GIAreferenceTraceParameters(void)
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	ensureSameReferenceSetQueryConnections = false;
 	#endif
-	
+
 	#ifdef GIA_REFERENCING_QUERY_SUPPORT_SAME_REFERENCE_SET_TESTS
 	sameReferenceSetTests = false;
 	#endif
-	
+
 	#ifdef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY
 	traceSubstanceConceptsOnly = false;
 	#endif
@@ -285,11 +285,11 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAen
 				//cout << "i = " << i << endl;
 				#endif
 				for(vector<GIAentityConnection*>::iterator connectionIterQuery = queryEntityNode->entityVectorConnectionsArray[i].begin(); connectionIterQuery != queryEntityNode->entityVectorConnectionsArray[i].end(); connectionIterQuery++)
-				{	
+				{
 					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 					if(traceModeIsQuery || !(referenceTraceParameters->ensureSameReferenceSetQueryConnections) || (*connectionIterQuery)->sameReferenceSet)
 					{
-					#endif	
+					#endif
 						#ifdef GIA_QUERY_DEBUG
 						cout << "\n\nconnectionIterQuery = " << (*connectionIterQuery)->entity->entityName << ", isConcept = " << (*connectionIterQuery)->entity->isConcept << endl;
 						cout << "connectionIterQuery idInstance = " << (*connectionIterQuery)->entity->idInstance << endl;
@@ -2086,7 +2086,7 @@ bool compareEntityAliases(GIAentityNode* queryEntityNode, GIAentityNode* entityN
 			aliasMatchFound = true;
 		}
 		#endif
-		
+
 		if(queryEntityNode->entityName == entityNode->entityName)
 		{
 			aliasMatchFound = true;
@@ -2448,7 +2448,7 @@ void queryDebugIndentOutputForLevel(int currentLevel)
 bool compareEntityStandard(GIAentityNode* queryEntityNode, GIAentityNode* entityNode, int* numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAqueryTraceParameters* queryTraceParameters, GIAreferenceTraceParameters* referenceTraceParameters)
 {
 	bool compareEntityNamesResult = false;
-	
+
 	if(compareEntityAliases(queryEntityNode, entityNode))
 	{
 		compareEntityNamesResult = true;
@@ -2512,7 +2512,7 @@ bool compareEntityStandard(GIAentityNode* queryEntityNode, GIAentityNode* entity
 		#endif
 	}
 	#endif
-	
+
 	return compareEntityNamesResult;
 }
 

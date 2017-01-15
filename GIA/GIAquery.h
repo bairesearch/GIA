@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
@@ -165,7 +165,7 @@ public:
 	#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
 	bool doNotParseQuerySubnetsWithSubstanceConcepts;
 	#endif
-	
+
 	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 	bool testReferenceSetContext;
 	GIAentityNode* referenceSetDefiniteEntity;
@@ -174,11 +174,11 @@ public:
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	bool ensureSameReferenceSetQueryConnections;	//added 2i29a	//CHECKTHIS; check ensureSameReferenceSetQueryConnections is not required for dreammode (identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts)
 	#endif
-	
+
 	#ifdef GIA_REFERENCING_QUERY_SUPPORT_SAME_REFERENCE_SET_TESTS
 	bool sameReferenceSetTests;
 	#endif
-	
+
 	#ifdef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY
 	bool traceSubstanceConceptsOnly;
 	#endif

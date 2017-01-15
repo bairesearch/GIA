@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -231,7 +231,7 @@ bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQu
 		if(isQuery)
 		{
 			cout << "error: parseNLPparserFile() does not support queries at present with (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER). Set feature parser to RelEx or Stanford Core NLP for queries" << endl;
-			
+
 		}
 		*/
 		cout << "error: parseNLPparserFeaturesFile{} does not parse features when (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER). GIAfeature extraction is not supported with GIA_NLP_PARSER_STANFORD_PARSER because Stanford Parser does not identify lemmas. Set feature parser to RelEx or Stanford Core NLP to extract features" << endl;
@@ -246,7 +246,7 @@ bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQu
 bool parseNLPparserRelationsFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
-	
+
 	#ifdef GIA_USE_RELEX
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
 	{
@@ -807,7 +807,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 										#ifdef GIA_USE_LRP
 										}
 										#endif
-										
+
 										#ifdef GIA_NLP_DEBUG
 										//cout << "currentRelationInList->relationGovernor = " << currentRelationInList->relationGovernor << endl;
 										//cout << "currentRelationInList->relationDependent = " << currentRelationInList->relationDependent << endl;
@@ -888,7 +888,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 			if(currentTagInDocument->name == StanfordCoreNLP_XML_TAG_coreferences)	//added 2k6c (as Stanford CoreNLP only adds coreferences tag if there is one or more coreferences)
 			{
 				firstTagInCoreferences = parseTagDownALevel(currentTagInDocument, StanfordCoreNLP_XML_TAG_coreferences, &hasCoreferences);
-			} 
+			}
 			if(hasCoreferences)
 			{
 				XMLparserTag* currentTagInnCoreferences = firstTagInCoreferences;

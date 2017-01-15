@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -110,7 +110,7 @@ public:
 
 #endif
 
-//#ifdef GIA_USE_ADVANCED_REFERENCING	
+//#ifdef GIA_USE_ADVANCED_REFERENCING
 //these classes are only used by GIA_USE_ADVANCED_REFERENCING:
 class GIAMention
 {
@@ -164,12 +164,12 @@ public:
 	bool relationGovernorRevertedToOfficialLRPTemp;
 	bool relationDependentRevertedToOfficialLRPTemp;
 	#endif
-	
+
 	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
 	string relationTypeNonInversed;
 	int relationTypeIndexNonInversed;
 	#endif
-	
+
 	bool disabled;
 	//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	bool disabledDuringLink;
@@ -212,7 +212,7 @@ public:
 	#endif
 	#endif
 	#endif
-	
+
 	GIArelation* next;
 };
 
@@ -266,7 +266,7 @@ public:
 	#ifdef GIA_SUPPORT_PREDETERMINERS
 	int grammaticalPredeterminer;
 	#endif
-	
+
 	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	bool alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	bool mustSetIsSubstanceConceptBasedOnApposRelation;
@@ -278,11 +278,11 @@ public:
 	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 	int GIAsemanticParserPOStype;
 	#endif
-	
+
 	#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
 	bool determinerPotentiallySingularDetected;
 	#endif
-	
+
 	GIAfeature* next;
 	GIAfeature* previous;	//used for reference lookup
 };
@@ -321,7 +321,7 @@ public:
 	bool isQuestion;
 
 	bool semanticParserSuccessful;
-	
+
 	int conditionEntityArtificialIndexCurrent;	//added 2g1a/25-August-2014
 };
 

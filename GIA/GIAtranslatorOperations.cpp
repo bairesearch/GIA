@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -206,7 +206,7 @@ GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode
 	if(!(thingEntity->isSubstanceConcept))
 	{
 		propertyEntity->isSubstanceConcept = false;
-	}		
+	}
 	#endif
 	#endif
 
@@ -222,7 +222,7 @@ GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode
 		//configure entity node containing this substance
 		writeVectorConnection(thingEntity, propertyEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
 		writeVectorConnection(propertyEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
-		
+
 		#ifdef GIA_PREVENT_SUBSTANCE_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_SUBSTANCE_CONCEPTS
 		if(propertyEntity->isSubstanceConcept)
 		{
@@ -250,10 +250,10 @@ GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentit
 	if(!(thingEntity->isSubstanceConcept))
 	{
 		propertyEntity->isSubstanceConcept = false;
-	}		
+	}
 	#endif
 	#endif
-	
+
 	GIAentityNode* propertyEntitySubstance = propertyEntity;
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
@@ -270,11 +270,11 @@ GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentit
 		{
 			propertyEntitySubstance = addSubstance(propertyEntity);
 		}
-		
+
 		writeVectorConnection(thingEntity, propertyEntitySubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
 		writeVectorConnection(propertyEntitySubstance, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
 		thingEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-			
+
 		#ifdef GIA_PREVENT_SUBSTANCE_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_SUBSTANCE_CONCEPTS
 		if(propertyEntitySubstance->isSubstanceConcept)
 		{
@@ -285,7 +285,7 @@ GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentit
 			}
 		}
 		#endif
-		
+
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
@@ -483,7 +483,7 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 		newSubstance->negative = true;
 	}
 
-	#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY		
+	#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 	newSubstance->entityIndexTemp = entity->entityIndexTemp;
 	newSubstance->sentenceIndexTemp = entity->sentenceIndexTemp;
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
@@ -492,7 +492,7 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 	//cout << "newSubstance->sentenceIndexTemp = " << newSubstance->sentenceIndexTemp << endl;
 	#endif
 	#endif
-	
+
 	#ifdef GIA_SUPPORT_NUMBER_OF
 	newSubstance->isNumberOf = entity->isNumberOf;
 	#endif
@@ -572,7 +572,7 @@ void addDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* thingEntity, GIAe
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
-	#endif	
+	#endif
 }
 #endif
 
@@ -591,11 +591,11 @@ GIAentityNode* addOrConnectActionToEntity(GIAentityNode* subjectEntity, GIAentit
 		if(!(subjectEntity->isSubstanceConcept))
 		{
 			objectEntity->isSubstanceConcept = false;
-		}		
+		}
 	}
 	#endif
 	#endif
-	
+
 	GIAentityNode* newOrExistingAction = actionEntity;
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(subjectEntity->disabled))
@@ -947,7 +947,7 @@ void eraseSubstanceFromSubstanceList(GIAentityNode* existingEntity)
 GIAentityNode* addOrConnectConditionToEntity(GIAentityNode* conditionSubjectEntity, GIAentityNode* conditionObjectEntity, GIAentityNode* conditionEntity, bool sameReferenceSet)
 {
 	GIAentityNode* newOrExistingCondition = conditionEntity;
-	
+
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(conditionSubjectEntity->disabled))
 	{
@@ -956,7 +956,7 @@ GIAentityNode* addOrConnectConditionToEntity(GIAentityNode* conditionSubjectEnti
 	if(!(conditionEntity->disabled))
 	{
 	#endif
-		
+
 		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
 		//see if relevant link already exists between the two nodes, and if so use that
 		bool foundNode1 = false;
@@ -989,7 +989,7 @@ GIAentityNode* addOrConnectConditionToEntity(GIAentityNode* conditionSubjectEnti
 			}
 		}
 		#endif
-		
+
 		#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		//required to compensate for defineSubstancesActions{} being exectuted before linkDependentActionsType1{}
 		newOrExistingCondition->isSubstance = false;	//required because defineSubstancesActions{} defines substances [not actions]
@@ -1000,7 +1000,7 @@ GIAentityNode* addOrConnectConditionToEntity(GIAentityNode* conditionSubjectEnti
 		//configure entity node containing this substance
 		connectConditionInstanceToSubject(conditionSubjectEntity, newOrExistingCondition, sameReferenceSet);
 		connectConditionInstanceToObject(conditionObjectEntity, newOrExistingCondition, sameReferenceSet);
-		
+
 		#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
 		identifyConditionType(newOrExistingCondition);
 		#endif
@@ -1790,7 +1790,7 @@ GIAentityConnection* writeVectorConnection(GIAentityNode* entityNode, GIAentityN
 			{
 				newConnection->isReference = true;
 			}
-			#endif			
+			#endif
 			vectorConnection->push_back(newConnection);
 
 			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
@@ -2336,7 +2336,7 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 	//if(((indefiniteEntity->grammaticalNumber == GRAMMATICAL_NUMBER_SINGULAR) && (definiteEntity->grammaticalNumber == GRAMMATICAL_NUMBER_SINGULAR)) || (indefiniteEntity->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL))
 	//{
 	if(indefiniteEntity->sentenceIndexTemp < definiteEntity->sentenceIndexTemp)
-	{					 
+	{
 		 NLCsentence* currentNLCsentenceInList = firstNLCsentenceInListLocal;
 		 bool foundIndefiniteEntitySentence = false;
 		 while((currentNLCsentenceInList->next != NULL) && !foundIndefiniteEntitySentence)
@@ -2355,7 +2355,7 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 		 bool foundDefiniteEntitySentence = false;
 		 int minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence = currentNLCsentenceInList->indentation;
 		 while((currentNLCsentenceInList->next != NULL) && !foundDefiniteEntitySentence)
-		 {	
+		 {
 			if(currentNLCsentenceInList->indentation < minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence)
 			{
 				minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence = currentNLCsentenceInList->indentation;
@@ -2368,7 +2368,7 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 			else
 			{
 				currentNLCsentenceInList = currentNLCsentenceInList->next;
-			}	 	
+			}
 		 }
 		 NLCsentence* definiteEntityNLCsentenceInList = currentNLCsentenceInList;
 
@@ -2393,7 +2393,7 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 		 }
 	}
 	//}
-	
+
 	return foundIndefiniteEntity;
 }
 #endif

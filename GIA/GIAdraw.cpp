@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -51,7 +51,7 @@ int maxXAtAParticularY[MAX_GIA_TREE_DEPTH];
 void printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile, int maxNumberSentences)
 {//most of this is copied from CSexecFlow.cpp
 	bool result = true;
-	
+
 	XMLparserTag* firstTagInSVGFile = new XMLparserTag();
 	XMLparserTag* currentTagInSVGFile = firstTagInSVGFile;
 
@@ -89,7 +89,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiveListComplete,
 
 	if(display)
 	{
-		
+
 		//re-parse, then re-write to create a collapsed referencelist file...
 		//method1:
 		string topLevelSceneFileName = outputFileNameLDR;
@@ -111,7 +111,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiveListComplete,
 		delete initialReferenceInSceneFile;
 		delete topLevelReferenceInSceneFile;
 		#endif
-		
+
 
 		unsigned char* rgbMap = new unsigned char[width*height*RGB_NUM];
 
@@ -147,8 +147,8 @@ void printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiveListComplete,
 	{
 		//must use an external program to view the .ldr file (Eg LDView)
 	}
-	
-	
+
+
 	#ifdef GIA_FREE_MEMORY1
 	delete firstReferenceInPrintList;
 	#endif
@@ -416,13 +416,13 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 							}
 							#endif
 							//cout << "entityConnectionColour = " << entityConnectionColour << endl;
-							
+
 							#ifdef GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDICES
 							//string connectionName = convertIntToString((*connectionIter)->sentenceIndexTemp);
 							string connectionName = string("s") + convertIntToString((*connectionIter)->sentenceIndexTemp) + entityVectorConnectionNameArray[i];
-							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1,* connectionIter, currentReferenceInPrintList, printType, connectionName, entityConnectionColour, currentTag);	
+							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1,* connectionIter, currentReferenceInPrintList, printType, connectionName, entityConnectionColour, currentTag);
 							#else
-							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1,* connectionIter, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);	
+							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1,* connectionIter, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);
 							#endif
 						}
 					}

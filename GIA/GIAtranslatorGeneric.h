@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -175,7 +175,7 @@ public:
 	bool useSpecialCaseCharacteristicsRelationIndexTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];			//not used often (UNTESTED)
 	int specialCaseCharacteristicsRelationIndexTestRelationID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];		//not used often (UNTESTED)
 	int specialCaseCharacteristicsRelationIndexTestEntityID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];		//not used often (UNTESTED)
-	GIAentityCharacteristic specialCaseCharacteristicsRelationIndexTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//not used often (UNTESTED)	
+	GIAentityCharacteristic specialCaseCharacteristicsRelationIndexTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//not used often (UNTESTED)
 
 		//for redistribution
 	bool useRedistributeRelationEntityIndexReassignment[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];				//for relation1, relation2, relation3, and relation4; for entity1, entity2, and entity3 - for reassigning relation entities
@@ -196,8 +196,8 @@ public:
 	bool useSpecialCaseCharacteristicsRelationEntityIndexReassignment[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];			//not used often (UNTESTED)
 	int specialCaseCharacteristicsRelationEntityIndexReassignmentRelationID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];		//not used often (UNTESTED)
 	int specialCaseCharacteristicsRelationEntityIndexReassignmentRelationEntityID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];		//not used often (UNTESTED)
-	GIAentityCharacteristic specialCaseCharacteristicsRelationEntityIndexReassignment[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//not used often (UNTESTED)	
-	
+	GIAentityCharacteristic specialCaseCharacteristicsRelationEntityIndexReassignment[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//not used often (UNTESTED)
+
 	bool useRedistributeSpecialCaseRcmodIndicatesSameReferenceSetNotTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];	//added 2j7a
 
 		//for execution
@@ -228,9 +228,9 @@ public:
 	string functionName;
 
 	bool useRedistributeSpecialCaseNonExistantRelationCheck[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];	//non existant relations tests - added GIA 2f12a/13-July-2014
-	
+
 	#ifdef GIA_SUPPORT_PREDETERMINERS
-	
+
 	#endif
 };
 

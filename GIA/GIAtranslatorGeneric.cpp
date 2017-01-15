@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -107,8 +107,8 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	initialiseBoolArray2D(&useSpecialCaseCharacteristicsRelationIndexTest[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false);	//not used often
 	initialiseIntArray2D(&specialCaseCharacteristicsRelationIndexTestRelationID[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, INT_DEFAULT_VALUE);		//not used often
 	initialiseIntArray2D(&specialCaseCharacteristicsRelationIndexTestEntityID[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, INT_DEFAULT_VALUE);		//not used often
-	//specialCaseCharacteristicsRelationIndexTest initialisation not required	
-	
+	//specialCaseCharacteristicsRelationIndexTest initialisation not required
+
 		//for redistribution
 	initialiseBoolArray2D(&useRedistributeRelationEntityIndexReassignment[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false);			//for relation1, relation2, relation3, and relation4; for entity1, entity2, and entity3 - for reassigning relation entities
 	initialiseIntArray2D(&redistributeRelationEntityIndexReassignmentRelationID[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, INT_DEFAULT_VALUE);						//for relation1, relation2, relation3, and relation4; for entity1, entity2, and entity3 - relation1, relation2, relation3, or relation4 - for reassigning relation entities
@@ -128,9 +128,9 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	initialiseIntArray2D(&specialCaseCharacteristicsRelationEntityIndexReassignmentRelationID[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, INT_DEFAULT_VALUE);					//not used often
 	initialiseIntArray2D(&specialCaseCharacteristicsRelationEntityIndexReassignmentRelationEntityID[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, INT_DEFAULT_VALUE);				//not used often	//initialisation added 2j7a
 	//specialCaseCharacteristicsRelationEntityIndexReassignment initialisation not required
-	
+
 	initialiseBoolArray1D(useRedistributeSpecialCaseRcmodIndicatesSameReferenceSetNotTest, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, false);
-	
+
 		//for execution
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	defaultSameSetRelationID = INT_DEFAULT_VALUE;
@@ -297,8 +297,8 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 					passedRelation = false;		//"that"/"which" connection found
 					//cout << "rcmodIndicatesSameReferenceSet = " << currentRelationID << endl;
 				}
-			
-			}				
+
+			}
 			for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION; relationEntityID++)
 			{
 				if(!testEntityCharacteristics(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]], &(param->specialCaseCharacteristicsTestAndVector[currentRelationID][relationEntityID]), true))
@@ -516,7 +516,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 						if(!specialCaseRelationCheck)
 						{
 							//cout << "!specialCaseRelationCheck: currentRelationID = " << currentRelationID << endl;
-							
+
 							//special case reference set checks
 							for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
 							{
@@ -555,7 +555,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								}
 								#endif
 							}
-							
+
 							if(param->executeOrReassign)
 							{//execute
 								#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
@@ -773,9 +773,9 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									//cout << "param->GIAentityNodeArray[functionEntityIndex2] = " << param->GIAentityNodeArray[functionEntityIndex2]->entityName << endl;
 									//cout << "param->GIAentityNodeArray[functionEntityIndex3] = " << param->GIAentityNodeArray[functionEntityIndex3]->entityName << endl;
 									//cout << "sameReferenceSet = " << sameReferenceSet << endl;
-																	
+
 									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], sameReferenceSet);
-									
+
 									#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED	//CHECKTHIS
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 									if(!(currentRelationInList->inverseRelationTwoWay))	//added 2j5e
@@ -783,7 +783,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 										#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
 										if(currentRelationInList->inverseRelationSingle)	//added 2j5g
-										{	
+										{
 											//cout << "a1 currentRelationInList->relationTypeIndexNonInversed = " << currentRelationInList->relationTypeIndexNonInversed << endl;
 											GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex2, currentRelationInList->relationTypeIndexNonInversed, sameReferenceSet);	//use original (non-inversed) values
 											GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, functionEntityIndex1, currentRelationInList->relationTypeIndexNonInversed, sameReferenceSet);	//use original (non-inversed) values
@@ -792,7 +792,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										else
 										{
 										#endif
-										#endif								
+										#endif
 											GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet);
 											GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, functionEntityIndex2, functionEntityIndex3, sameReferenceSet);
 										#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
@@ -800,25 +800,25 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										}
 										#endif
 										#endif
-									
+
 									}
 									#endif
 									#endif
 									#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
 									if(currentRelationInList->relationTwoWay)	//limitation only works when GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity is called based on a single GIArelation
-									{	
+									{
 										#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
 										cout << "currentRelationInList->relationTwoWay detected" << endl;
 										#endif
-										param->GIAentityNodeArray[functionEntityIndex3]->conditionTwoWay = true;	//sets conditionTwoWay for condition substance not concept 
+										param->GIAentityNodeArray[functionEntityIndex3]->conditionTwoWay = true;	//sets conditionTwoWay for condition substance not concept
 									}
 									#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 									if(currentRelationInList->inverseRelationTwoWay)	//limitation only works when GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity is called based on a single GIArelation
-									{	
+									{
 										#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
 										cout << "currentRelationInList->inverseRelationTwoWay detected" << endl;
 										#endif
-										param->GIAentityNodeArray[functionEntityIndex3]->inverseConditionTwoWay = true;	//sets inverseConditionTwoWay for condition substance not concept 
+										param->GIAentityNodeArray[functionEntityIndex3]->inverseConditionTwoWay = true;	//sets inverseConditionTwoWay for condition substance not concept
 									}
 									#endif
 									#endif
@@ -856,7 +856,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias)
 								{
 									#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-									cout << "GIArules.xml warning: functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias (12) and GIA has been compiled with GIA_DISABLE_ALIAS_ENTITY_MERGING: executing GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias (14) instead" << endl; 
+									cout << "GIArules.xml warning: functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias (12) and GIA has been compiled with GIA_DISABLE_ALIAS_ENTITY_MERGING: executing GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias (14) instead" << endl;
 									addDefinitionToEntityMarkConnectionAsAlias(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_MARK_CONNECTION_AS_ALIAS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
@@ -893,7 +893,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_MARK_CONNECTION_AS_ALIAS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 									#else
-									cout << "GIArules.xml warning: functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias (14) and GIA has been compiled without GIA_DISABLE_ALIAS_ENTITY_MERGING: executing GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias (12) instead" << endl; 
+									cout << "GIArules.xml warning: functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias (14) and GIA has been compiled without GIA_DISABLE_ALIAS_ENTITY_MERGING: executing GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias (12) instead" << endl;
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 									#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
 									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_ENTITY_NODES_ADD_ALIAS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
@@ -905,7 +905,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									param->GIAentityNodeArray[functionEntityIndex2] = param->GIAentityNodeArray[functionEntityIndex1];
 									#endif
 								}
-								
+
 								else
 								{
 									cout << "illegal functionToExecuteUponFind: " << param->functionToExecuteUponFind << endl;
@@ -1055,7 +1055,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									}
 								}
 							}
-										
+
 							//for cleanup
 							for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
 							{

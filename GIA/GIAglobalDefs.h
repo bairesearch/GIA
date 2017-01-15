@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -65,12 +65,24 @@
  *			copy freeglut.dll from freeglut 2.6.0 (compiled) - 32bit.zip to: C:\WINDOWS\SysWOW64
  *			[or System32]
  *
+ *			(Windows 10 x86_64 Only)
+ *			unzip freeglut 2.8.1 (compiled).zip
+ * 			copy freeglut.dll from freeglut 2.8.1 (compiled) - 32bit.zip to: C:\WINDOWS\SysWOW64 [or System32]
  *
  *		Freeglut may be downloaded via;
  *
- *		* (Linux) distribution repository
- *		* (Windows) see http://tempvariable.blogspot.com.au/2008/02/installing-freeglut-on-visual-studio.html / http://www.transmissionzero.co.uk/software/freeglut-devel/
- *
+ *			(Linux) distribution repository
+ *			(Windows)
+ *				Install Visual C++ 2010 (download VS2010Express1.iso from Microsoft.com)
+ *				download freeglut-2.8.1.tar.gz from https://sourceforge.net/projects/freeglut/files/freeglut/2.8.1/
+ *				open freeglut-2.8.1/VisualStudio/2010/freeglut.vcxproj
+ *				change to 'Release'
+ *				Build Solution
+ *				extract files from freeglut-2.8.1\VisualStudio\lib\x86 folder;
+ *					copy freeglut.dll to freeglut 2.8.1 (compiled) - 32bit\System32
+ *					copy freeglut.lib to freeglut 2.8.1 (compiled) - 32bit\lib
+ *				extract files from freeglut-2.6.0/Include/GL
+ *					Copy 4 files to freeglut 2.8.1 (compiled) - 32bit\include\GL
  *
  *		Install External Package 2 - Wordnet libraries
  *		--------------------------------------
@@ -90,7 +102,7 @@
  *			(Windows XP Only {UNTESTED})
  *			Install WordNet_3.0_win32-setup.exe (from Google Code)
  *
- *			(Windows 7/8 x86_64 Only)
+ *			(Windows 7/8/10 x86_64 Only)
  *			Install WordNet_3.0_win32-setup.exe (from Google Code)
  *
  *		WordNet may be downloaded via;
@@ -376,19 +388,19 @@
  *		(Linux and Windows) eg http://nlp.stanford.edu/software/stanford-parser-2012-03-09.tgz / http://nlp.stanford.edu/software/stanford-parser-2013-04-05.zip / http://nlp.stanford.edu/software/stanford-parser-full-2014-01-04.zip / / http://nlp.stanford.edu/software/stanford-parser-full-2015-04-20.zip
  *
  *		Note Stanford Parser/CoreNLP requires Java Runtime Environment to be installed;
- *	
+ *
  *			(Linux Ubuntu 14.04 only);
  *			Java 7 (1.7) installation:
  *				sudo apt-get install openjdk-7-jdk
  *			Java 8 (1.8) installation - required for Stanford Parser/CoreNLP 2015-04-20+:
  *				(http://ubuntuhandbook.org/index.php/2015/01/install-openjdk-8-ubuntu-14-04-12-04-lts)
  *				sudo add-apt-repository ppa:openjdk-r/ppa
- *				sudo apt-get update 
+ *				sudo apt-get update
  *				sudo apt-get install openjdk-8-jdk
  *				sudo update-alternatives --config java	[to set active/default version of Java]
  *				sudo update-alternatives --config javac [to set active/default Java Compiler]
  *				java -version [check version of java running]
- *	
+ *
  *			(Linux EL5/EL6 only);
  *			Java 7 (1.7) installation:
  *				yum install java-1.7.0-openjdk-devel
@@ -398,12 +410,20 @@
  *				sudo update-alternatives --config java	[to set active/default version of Java]
  *				NOTNEEDED: sudo update-alternatives --config javac [to set active/default Java Compiler]
  *				java -version [check version of java running]
- *	
- *			(Windows 7/8 x86_64 Only)
+ *
+ *			(Linux EL7 only);
+ *			Java 7 (1.7) installation
+ *				yum search java | grep openjdk
+ *				yum install java-1.7.0-openjdk-headless.x86_64
+ *			Java 8 (1.8) installation - required for Stanford Parser/CoreNLP 2015-04-20+:
+ *				yum search java | grep openjdk
+ *				yum install java-1.8.0-openjdk-headless.x86_64
+ *
+ *			(Windows 7/8/10 x86_64 Only)
  *			Java 7 (1.7) installation:
  *				download and install jre-7uXX-windows-x64.exe
  *				Ensure to install Java 7 to "C:\Program Files\Java\jre7"
- *	
+ *
  *			Java 8 (1.8) installation - required for Stanford Parser/CoreNLP 2015-04-20+:
  *				download and install jre-8uXX-windows-x64.exe
  *				(http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
@@ -533,10 +553,28 @@
  *			copy freeglut.lib to: C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\lib\
  *			copy freeglut.dll to: C:\WINDOWS\SysWOW64 [or System32]
  *
+ *			(Windows 10 x86_64 Only);
+ *			unpack source code freeglut 2.8.1 (compiled) - 32bit.zip
+ *			copy freeglut.h to: C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\GL\ (note: you'll have to create the GL folder)
+ * 			copy freeglut_ext.h to: C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\GL\
+ * 			copy freeglut_std.h to: C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\GL\
+ * 			copy freeglut.lib to: C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib\
+ * 			copy freeglut.dll to: C:\WINDOWS\SysWOW64 [or System32]
+ *
  *		Freeglut may be downloaded via;
  *
- *		* (Linux) distribution repository
- *		* (Windows) see http://tempvariable.blogspot.com.au/2008/02/installing-freeglut-on-visual-studio.html / http://www.transmissionzero.co.uk/software/freeglut-devel/
+ *			(Linux) distribution repository
+ *			(Windows)
+ *				Install Visual C++ 2010 (download VS2010Express1.iso from Microsoft.com)
+ *				download freeglut-2.8.1.tar.gz from https://sourceforge.net/projects/freeglut/files/freeglut/2.8.1/
+ *				open freeglut-2.8.1/VisualStudio/2010/freeglut.vcxproj
+ *				change to 'Release'
+ *				Build Solution
+ *				extract files from freeglut-2.8.1\VisualStudio\lib\x86 folder;
+ *					copy freeglut.dll to freeglut 2.8.1 (compiled) - 32bit\System32
+ *					copy freeglut.lib to freeglut 2.8.1 (compiled) - 32bit\lib
+ *				extract files from freeglut-2.6.0/Include/GL
+ *					Copy 4 files to freeglut 2.8.1 (compiled) - 32bit\include\GL
  *
  *		Install External Package 2 - Wordnet development libraries
  *		--------------------------------------
@@ -555,22 +593,24 @@
  *
  *			(Windows XP Only {UNTESTED})
  *			Install WordNet_3.0_win32-setup.exe (from Google Code)
- *			copy wn.lib to C:\Program Files\Microsoft Visual Studio 9.0\VC\lib\
- *			copy wn.h to C:\Program Files\Microsoft Visual Studio 9.0\VC\Include\
+ *			copy wn.lib from wn source project\Release to C:\Program Files\Microsoft Visual Studio 9.0\VC\lib\
+ *			copy wn.h from wn source project to C:\Program Files\Microsoft Visual Studio 9.0\VC\Include\
  *			ensure wn.lib is added to MS Visual Studio OR project - Linker - additional dependencies
  *
  *			(Windows 7/8 x86_64 Only)
  *			Install WordNet_3.0_win32-setup.exe (from Google Code)
- *			copy wn.lib to C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib
- *			copy wn.h to C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\Include\
+ *			copy wn.lib from wn source project\Release to C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib
+ *			copy wn.h from wn source project to C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\Include\
  *			ensure wn.lib is added to MS Visual Studio OR project - Linker - additional dependencies
  *
  *			To Compile Wordnet 3.0 in Visual Studio 2010 (to create wn.lib);
  *			Install WordNet_3.0_win32-setup.exe (from Google Code])
  *			extract C:\Program Files (x86)\WordNet\3.0\src\wn source project.zip
+ *			Open wn.sln (convert to Visual C++ 2010 project)
+ *			change to 'Release'
  *			wn project - properties - General - Common Language Runtime Support - No Common Language Runtime Support
- *			wn project - properties - General - Static Library (.lib)
- *			Build All
+ *			wn project - properties - General - Configuration Type - Static Library (.lib)
+ *			Project - Build Solution
  *
  *		WordNet may be downloaded via;
  *
@@ -619,7 +659,7 @@
  *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
  *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow > answer.txt
  *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -syndet 1 -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
- *		
+ *
  *		Windows XP/7/8:
  *		Example using NLP input from Stanford Core NLP;
  *		OpenGIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2015-04-20" -notshow
@@ -657,7 +697,7 @@
 #endif
 //#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER	//disabled for OpenGIA (OLD: GIA_USE_CORPUS_DATABASE)
 
-	
+
 //#define GIA_DISABLE_2g_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2h_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2i_CODE_FOR_DEBUG
@@ -680,7 +720,7 @@
 		#define GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE	//2k3a
 		#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
 			//#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS	//for offline reimplementions of GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE only
-			#define GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_EXTENSIVE	//added 2k3d; record semantic relation tuple files for all non-existant relations 
+			#define GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_EXTENSIVE	//added 2k3d; record semantic relation tuple files for all non-existant relations
 			#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_EXTENSIVE
 				//#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH	//has not yet been defined
 					#define GIA2_SEMANTIC_PARSER_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS	//added 2k3d
@@ -706,7 +746,7 @@
 			//#define GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION	//added 2k3a, removed 2k3c //record possessionAuxiliaryHaveArtificial info	//required by GIA advanced referencing
 			#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_HYBRID	//added 2k3c
 		//#endif
-	#endif		
+	#endif
 #endif
 
 #ifndef GIA_DISABLE_2j_CODE_FOR_DEBUG
@@ -723,7 +763,7 @@
 			//#define GIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_ACTION_TYPES		//2j7a, disabled 2j15b for special cases, eg "Given the nature of the bank, write the letter."
 			#define GIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_CONDITION_TYPES	//2j7a
 		#endif
-		//#define GIA_STANFORD_PARSER_CONNECT_PREPOSITIONS_TO_ACTION_RATHER_THAN_ACTION_OBJECT_GENERALISE_ACTION_TYPES	//added 2j7a, disable 2j10a for backwards compatibility in GIA output (NB does not improve grammatical correctness of translation, as it just parses that which is ambiguous differently) 
+		//#define GIA_STANFORD_PARSER_CONNECT_PREPOSITIONS_TO_ACTION_RATHER_THAN_ACTION_OBJECT_GENERALISE_ACTION_TYPES	//added 2j7a, disable 2j10a for backwards compatibility in GIA output (NB does not improve grammatical correctness of translation, as it just parses that which is ambiguous differently)
 		//#define GIA_LINK_ACTION_CONDITIONS_CORRECT_SAME_REFERENCE_SET		//2j7a, disabled 2j14a for NLC compatibility
 		//#define GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_ONLY_ACCEPT_AT_CONDITIONS	//not coded
 		#define GIA_STANFORD_PARSER_CONNECT_PREPOSITIONS_TO_ACTION_OBJECT_RATHER_THAN_ACTION	//2j7a	//eg "Move the bike near the car." - note this case is ambigious - note stanford connects the "near" preposition to the car object (instead of the move action)
@@ -750,7 +790,7 @@
 		#endif
 	#endif
 	#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
-		#define GIA_DISABLE_ALIAS_ENTITY_MERGING	//added 2g11a/21-October-2014 - required for NLC 1k14a+	//IMPORTANT: when activating/deactivating from compilation, ensure GIArules.xml is updated accordingly (search for "GIA_DISABLE_ALIAS_ENTITY_MERGING") 
+		#define GIA_DISABLE_ALIAS_ENTITY_MERGING	//added 2g11a/21-October-2014 - required for NLC 1k14a+	//IMPORTANT: when activating/deactivating from compilation, ensure GIArules.xml is updated accordingly (search for "GIA_DISABLE_ALIAS_ENTITY_MERGING")
 		//#define GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES	//untested and unused
 		#ifdef GIA_SUPPORT_NLC_INTEGRATION
 			//#define GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS	//added 2i31a, disabled 2k7a
@@ -801,7 +841,7 @@
 #ifndef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING
 	#define GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT	//GIA 2a10a	//disabled 2i19b
 #endif
-		
+
 #ifndef GIA_DISABLE_2h_CODE_FOR_DEBUG
 	#define GIA_SPATIOTEMPORAL_NETWORK		//yet to implement ~2h2a/17-November-2014+
 	#ifdef GIA_SPATIOTEMPORAL_NETWORK
@@ -820,9 +860,9 @@
 			#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW	//added 2h1c/14-November-2014 - required for NLC 1m1a+
 		#endif
 		#define GIA_SUPPORT_ACTIONS_OF_ACTIONS
-		#ifdef GIA_SUPPORT_ACTIONS_OF_ACTIONS	
+		#ifdef GIA_SUPPORT_ACTIONS_OF_ACTIONS
 			#define GIA_SUPPORT_NONSTANDARD_INTERMEDIARY_VERB_TYPES
-			#ifdef GIA_SUPPORT_NONSTANDARD_INTERMEDIARY_VERB_TYPES	
+			#ifdef GIA_SUPPORT_NONSTANDARD_INTERMEDIARY_VERB_TYPES
 				#define GIA_FEATURE_POS_TAG_VERB_POTENTIAL	//added 2h2a/18-November-2014 - required for NLC 1m2a+	- adds new non-standard pos tag for "able" words
 				#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
 					#define GIA_FEATURE_POS_TAG_VERB_POTENTIAL_INVERSE 	//added 2h2c/18-November-2014 - required for NLC 1m2a+	- adds new non-standard pos tag for "ive" words
@@ -837,12 +877,12 @@
 #ifndef GIA_DISABLE_2g_CODE_FOR_DEBUG
 	#ifdef USE_NLC
 		#ifndef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
-			#define GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES	//added 2f8a/09-July-2014	//NB this is only required for NLC_SUPPORT_LOGICAL_CONDITION_OPERATIONS_ADVANCED	
+			#define GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES	//added 2f8a/09-July-2014	//NB this is only required for NLC_SUPPORT_LOGICAL_CONDITION_OPERATIONS_ADVANCED
 		#endif
 	#endif
 #endif
 
-	
+
 //#define GIA_ENABLE_WARNINGS
 
 
@@ -910,7 +950,7 @@
 		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME "isNameQuery"
 		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME "isWhichOrEquivalentWhatQuery"
 	#endif
-	#define GIA2_SEMANTIC_PARSER	//2d1a	//switches between just using the primary sentence files generated by GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS and the subset sentence files generated by either 
+	#define GIA2_SEMANTIC_PARSER	//2d1a	//switches between just using the primary sentence files generated by GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS and the subset sentence files generated by either
 	#ifdef GIA2_SEMANTIC_PARSER
 		#define GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE	//NB maxNumberOfWordsInSentence is only currently used by GIA2
 		#define GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_USE_FLAT_FILE	//temporarily enabled for debugging
@@ -1011,7 +1051,7 @@
 	#endif
 	#ifndef STANFORD_PARSER_USE_POS_TAGS
 		#define STANFORD_CORENLP_POS_TAGS_BUG_GIA_WORKAROUND_SET_DETERMINER_DEPENDENT_TO_NOUN	//added 2i2b - eg "a human" in "A human is a player." should always be interpreted as a noun
-	#endif	
+	#endif
 #endif
 
 #define GIA_APPLY_BUG_WORKAROUND_WHERE_A_CONCEPT_ENTITY_OF_INSTANCE_0_CAN_HAVE_NODE_DEFINING_INSTANCE
@@ -1073,7 +1113,7 @@
 		#define GIA_NLG_DEBUG_MANUALLY_HARDCODE_INTO_NLG2
 	#endif
 	#define GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR	//NB even NLG2 requires origWord not lemma, so a morphology generator is required in both
-	#define GIA_USE_WORD_ORIG	//NB wordOrig is now used by more than just NLG (it is also used by LRP)	
+	#define GIA_USE_WORD_ORIG	//NB wordOrig is now used by more than just NLG (it is also used by LRP)
 #endif
 
 //variables currently being tested (1n1a+)
@@ -1116,10 +1156,10 @@
 	#ifndef GIA_STORE_CONNECTION_SENTENCE_INDEX
 		#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	#endif
-	#ifdef USE_NLC	
+	#ifdef USE_NLC
 		#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//ie #ifndef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY. Note NLC does not require intrasentence referencing when NLC_USE_ADVANCED_REFERENCING is enabled (ie GIA_DISABLE_CROSS_SENTENCE_REFERENCING is enabled)
 			#define GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-		#endif	
+		#endif
 	#else
 		#define GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 	#endif
@@ -1129,7 +1169,7 @@
 #endif
 
 
-#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	
+#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	#define GIA_IDENTIFY_REFERENCE_SET_CONCEPT_ENTITY_ENTRANCE_DO_NOT_ENTER_ON_AN_ACTION_NODE	//GIA 2a8a	//this update is required for NLC if statement parsing //this update enforces orginal GIA specification: '//an action is considered by default not to be part of the same reference set as its subject/object (eg "the man fires the bow"). An rcmod /"that" is explicitly required for an action to be considered part of the same reference set as its subject/object (eg "the man that fires the bow...")'
 	#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY	//this is required considering reference look up of non definite sets is never desired
 	#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
@@ -1146,7 +1186,7 @@
 	#define GIA_ADVANCED_REFERENCING_PREPOSITIONS
 	#define GIA_ADVANCED_REFERENCING_CONDITIONS		//all conditions; ie, not just preposition conditions
 	#define GIA_ADVANCED_REFERENCING_CONDITIONS_RELEX_SPECIFIC - added 2 July 2013 (requires testing)
-	
+
 	#define GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET	//added 1m5aTEMP11 [requires Stanford Parser - incompatible with Relex - because it requires record of the sentence entity index of the determiner "the"; grammaticalIndexOfDeterminer/grammaticalIndexOfDeterminerTemp]
 #endif
 
@@ -1158,7 +1198,7 @@
 			#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION		//if using advanced referencing, only use the pronominal coreferences from Stanford (it, she, he, etc) [not optional]
 		#endif
 	#else
-		#ifdef GIA_USE_NON_ADVANCED_REFERENCING		
+		#ifdef GIA_USE_NON_ADVANCED_REFERENCING
 			#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES	//default: on
 			#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
 				//#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL	//Not fully tested, but appears to work at least in simple scenarios
@@ -1178,7 +1218,7 @@
 			#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES		//default: on
 			#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
 				#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION		//if not using referencing, only use the pronominal coreferences from Stanford (it, she, he, etc) [not optional]
-			#endif		
+			#endif
 		#endif
 	#endif
 #endif

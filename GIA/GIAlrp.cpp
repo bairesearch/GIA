@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -100,7 +100,7 @@ bool initialiseLRP(string newLRPDataFolderName, bool newUseLRP)
 		prepositionsInverseListLoaded = true;
 	}
 	#endif
-		
+
 	return result;
 }
 bool getUseLRP()
@@ -240,7 +240,7 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 	{
 		result = false;
 	}
-	
+
 	setCurrentDirectory(tempFolder);
 
 	GIALRPtagTextCorrespondenceInfo* currentGIALRPtagCorrespondenceInfo = getCurrentGIALRPtagTextCorrespondenceInfo();
@@ -248,7 +248,7 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 	{
 		result = false;
 	}
-	
+
 	while(currentGIALRPtagCorrespondenceInfo->next != NULL)
 	{
 		currentGIALRPtagCorrespondenceInfo = currentGIALRPtagCorrespondenceInfo->next;	//added 2j6d (add to end of list)
@@ -256,8 +256,8 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 	if(!searchAndReplaceMultiwordPrepositions(firstTagInPlainText, firstTagInMultiwordPrepositionList, currentGIALRPtagCorrespondenceInfo))
 	{
 		result = false;
-	}	
-	
+	}
+
 	if(!writeTagListToFile(firstTagInPlainText, plainTextLRPoutputFileName, plainTextLRPforNLPoutputFileName))
 	{
 		result = false;
@@ -1005,7 +1005,7 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag* firstTagInPlain
 	GIALRPtag* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 
 	string fileContents = getFileContents(plainTextInputFileName);
-	
+
 	int charCount = 0;
 	char currentToken;
 	bool whiteSpace = false;
@@ -1186,7 +1186,7 @@ bool isIntrawordPunctuationMark(int indexOfCurrentToken, string* lineContents)
 	if((currentToken == CHAR_FULLSTOP) || (currentToken == CHAR_COLON))	//updated 2j6e (added CHAR_COLON for times, eg 06:45)
 	{
 		if(indexOfCurrentToken < lineContents->length()-1)	//ensure fullstop is not immediately succeded by an alphabetical character, which indicates that the fullstop is part of a filename, eg "people.xml"
-		{	
+		{
 			char characterImmediatelySucceedingPunctuationMark = (*lineContents)[indexOfCurrentToken+1];
 			bool isPunctuationMarkImmediatelySucceededByAlphanumericCharacter = charInCharArray(characterImmediatelySucceedingPunctuationMark, GIALRPNLPparsableCharacters, GIA_LRP_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES);
 			//cout << "isIntrawordPunctuationMark{}: characterImmediatelySucceedingPunctuationMark = " << characterImmediatelySucceedingPunctuationMark << endl;
@@ -1194,7 +1194,7 @@ bool isIntrawordPunctuationMark(int indexOfCurrentToken, string* lineContents)
 			if(isPunctuationMarkImmediatelySucceededByAlphanumericCharacter)
 			{
 				intrawordPunctuationMark = true;
-			}		
+			}
 		}
 	}
 	return intrawordPunctuationMark;
@@ -1598,7 +1598,7 @@ bool searchAndReplacePhrasalVerbs(GIALRPtag* firstTagInPlainText, GIALRPtag* fir
 
 		currentTagInPlainText = currentTagInPlainText->nextSentence;
 	}
-	
+
 	return result;
 }
 
@@ -1606,7 +1606,7 @@ bool searchAndReplacePhrasalVerbs(GIALRPtag* firstTagInPlainText, GIALRPtag* fir
 bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, GIALRPtag* firstTagInMultiwordPrepositionList, GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo)
 {
 	bool result = true;
-	
+
 	GIALRPtagTextCorrespondenceInfo* currentCorrespondenceInfo = firstGIALRPtagCorrespondenceInfo;	//new correspondence info for each found multiword preposition
 
 	GIALRPtag* currentTagInPlainText = firstTagInPlainText;
@@ -1615,7 +1615,7 @@ bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, GIALR
 		#ifdef GIA_LRP_DEBUG
 		//cout << "qcurrentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
 		#endif
-			
+
 		GIALRPtag* firstTagInPlainTextSentence = currentTagInPlainText;
 		GIALRPtag* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		GIALRPtag* previousTagInPlainTextSentence = NULL;
@@ -1805,13 +1805,13 @@ void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, GIAsentence* curr
 
 	//save original values for NLP only (required during a multiword preposition replacement with an adjacent multiword verb
 	feature->wordWithLRPforNLPonly = feature->word;
-	
+
 	/*
 	cout << "\n\nsentityIndexForNonPrepositionsOnly = " << entityIndexForNonPrepositionsOnly << endl;
 	cout << "feature->wordWithLRPforNLPonly = " << feature->wordWithLRPforNLPonly << endl;
 	cout << "currentSentenceInList->sentenceIndex = " <<  currentSentenceInList->sentenceIndex << endl;
 	*/
-	
+
 	string word = feature->word;
 	//string lemma = feature->lemma;	//only used for prepositions (dependency relation) calculations, where lemma has already been calculated via revertNLPtagNameToOfficialLRPtagName()
 
@@ -1952,7 +1952,7 @@ void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, GIAsentence* curr
 						feature->word = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP;
 						feature->lemma = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->lemmaWithLRP;
 						feature->featureRevertedToOfficialLRPTemp = true;
-						
+
 						#ifdef GIA_LRP_DEBUG
 						cout << "\t(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex == entityIndexForNonPrepositionsOnly)" << endl;
 						cout << "feature->word = " << feature->word << endl;
@@ -2164,7 +2164,7 @@ bool determineVerbCase(string word, GIALRPtag* firstTagInVerbList, string* baseN
 
 		currentTagInVerbList = currentTagInVerbList->nextSentence;
 	}
-	
+
 	#ifdef GIA_LRP_DEBUG
 	if(foundVerbCase)
 	{
@@ -2187,7 +2187,7 @@ void testVerbCase(string tagName, string wordLowerCase, string baseTenseFormStar
 			*grammaticalTenseModifier = grammaticalTenseModifierNew;
 			*baseNameFound = tagName;
 			*numberOfCharactersInBaseTenseFormAppend = baseTenseFormAppend.length();
-		}	
+		}
 	}
 }
 #endif
@@ -2321,11 +2321,11 @@ bool loadPrepositionsInverseList(string prepositionsInverseListFileName, GIALRPt
 				#ifdef GIA_LRP_DEBUG
 				cout <<	"adding Tag: tagName = " << currentWord << endl;
 				#endif
-				
+
 				currentTagInRow->tagName = currentWord;
 				currentTagInRow->nextTag = new GIALRPtag();
 				currentTagInRow = currentTagInRow->nextTag;
-				
+
 				currentWord = "";
 			}
 			else
@@ -2339,15 +2339,15 @@ bool loadPrepositionsInverseList(string prepositionsInverseListFileName, GIALRPt
 	}
 
 	return result;
-}			
-			
+}
+
 void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool* inverseConditionRequired, bool* twoWayConditionRequired, string* inverseConditionName)
-{	
+{
 	GIALRPtag* firstTagInPrepositionsInverseList = firstTagInPrepositionsInverseListGlobal;
-	
+
 	*inverseConditionRequired = false;
 	*twoWayConditionRequired = false;
-	
+
 	//invert condition if necessary
 	GIALRPtag* currentTagInPrepositionsInverseList = firstTagInPrepositionsInverseList;
 	while(currentTagInPrepositionsInverseList->nextSentence != NULL)
@@ -2355,7 +2355,7 @@ void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool* invers
 		#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
 		//cout << "qcurrentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
 		#endif
-		
+
 		GIALRPtag* firstTagInPrepositionsInverseListSentence = currentTagInPrepositionsInverseList;
 		GIALRPtag* currentTagInPrepositionsInverseListSentence = firstTagInPrepositionsInverseListSentence;
 		bool foundConditionToInvert = false;
@@ -2385,7 +2385,7 @@ void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool* invers
 						#endif
 					}
 				}
-			}	
+			}
 			else if(i == GIA_LRP_PREPOSITIONS_DATABASE_TAG_INVERT_REVERSE_CONDITION_VALID)
 			{
 				if(foundConditionToInvert)
@@ -2399,10 +2399,10 @@ void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool* invers
 						#endif
 					}
 				}
-			}	
+			}
 			currentTagInPrepositionsInverseListSentence = currentTagInPrepositionsInverseListSentence->nextTag;
 		}
-		
+
 		currentTagInPrepositionsInverseList = currentTagInPrepositionsInverseList->nextSentence;
 	}
 }
@@ -2411,9 +2411,9 @@ void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool* invers
 bool identifyConditionType(GIAentityNode* conditionEntity)
 {
 	bool conditionTypeIdentified = false;
-	
+
 	GIALRPtag* firstTagInPrepositionsInverseList = firstTagInPrepositionsInverseListGlobal;
-	
+
 	//identify condition type
 	GIALRPtag* currentTagInPrepositionsInverseList = firstTagInPrepositionsInverseList;
 	while(currentTagInPrepositionsInverseList->nextSentence != NULL)
@@ -2421,7 +2421,7 @@ bool identifyConditionType(GIAentityNode* conditionEntity)
 		#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
 		//cout << "qcurrentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
 		#endif
-		
+
 		if(currentTagInPrepositionsInverseList->tagName == conditionEntity->entityName)
 		{
 			GIALRPtag* firstTagInPrepositionsInverseListSentence = currentTagInPrepositionsInverseList;
@@ -2435,16 +2435,16 @@ bool identifyConditionType(GIAentityNode* conditionEntity)
 					cout << "identifyConditionTypeAndInvertIfNecessary{}: conditionEntity->conditionType2 = " << conditionEntity->conditionType2 << endl;
 					#endif
 					conditionTypeIdentified = true;
-				}		
+				}
 				currentTagInPrepositionsInverseListSentence = currentTagInPrepositionsInverseListSentence->nextTag;
 			}
 		}
-		
+
 		currentTagInPrepositionsInverseList = currentTagInPrepositionsInverseList->nextSentence;
 	}
-		
+
 	return conditionTypeIdentified;
 }
 #endif
-		
+
 #endif

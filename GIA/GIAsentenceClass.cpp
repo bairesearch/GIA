@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -78,7 +78,7 @@ GIAstanfordCoreNLPcoreference::~GIAstanfordCoreNLPcoreference(void)
 }
 #endif
 
-//#ifdef GIA_USE_ADVANCED_REFERENCING	
+//#ifdef GIA_USE_ADVANCED_REFERENCING
 //these classes are only used by GIA_USE_ADVANCED_REFERENCING:
 GIAMention::GIAMention(void)
 {
@@ -147,7 +147,7 @@ GIArelation::GIArelation(void)
 	relationTypeNonInversed = "";
 	relationTypeIndexNonInversed = INT_DEFAULT_VALUE;
 	#endif
-	
+
 	disabled = false;
 	//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	disabledDuringLink = false;
@@ -173,7 +173,7 @@ GIArelation::GIArelation(void)
 	corpusSpecialRelationDependentIsQuery = "";
 	#endif
 	#endif
-	
+
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	inverseRelation = false;
 	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
@@ -186,7 +186,7 @@ GIArelation::GIArelation(void)
 	#endif
 	#endif
 	#endif
-	
+
 	next = NULL;
 }
 
@@ -210,7 +210,7 @@ GIAfeature::GIAfeature(void)
 	#ifdef GIA_USE_LRP
 	featureRevertedToOfficialLRPTemp = "";
 	#endif
-	
+
 	#ifdef GIA_USE_RELEX
 	type = "";
 	grammar = "";
@@ -262,7 +262,7 @@ GIAfeature::GIAfeature(void)
 	#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
 	determinerPotentiallySingularDetected = false;
 	#endif
-	
+
 	next = NULL;
 	previous = NULL;
 }
@@ -303,7 +303,7 @@ GIAsentence::GIAsentence(void)
 	isQuestion = false;
 
 	semanticParserSuccessful = false;
-	
+
 	conditionEntityArtificialIndexCurrent = MAX_NUMBER_OF_WORDS_PER_SENTENCE - 2;	//NB REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX = (MAX_NUMBER_OF_WORDS_PER_SENTENCE-1)
 }
 

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -54,7 +54,7 @@ void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 	#endif
 	defineSubstancesAllNodes(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
-	
+
 	#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B0; defineSubstancesBasedOnDeterminatesOfDefinitionEntities" << endl;
@@ -85,7 +85,7 @@ void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 	cout << "section B0; defineSubstancesTagIsToBeComplimentOfAction" << endl;
 	#endif
 	defineSubstancesTagIsToBeComplimentOfAction(currentSentenceInList, GIAentityNodeArray);	//NB this function contains code for defineSubstancesTagIsToBeComplimentOfAction{}
-	
+
 
 #ifndef GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
 
@@ -160,7 +160,7 @@ void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 	#endif
 	defineSubstancesActionConcepts(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
 	#endif
-	
+
 #endif
 }
 

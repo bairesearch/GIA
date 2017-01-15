@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  *
  *******************************************************************************/
 
@@ -164,7 +164,7 @@ GIAentityNode::GIAentityNode(void)
 	#ifdef GIA_SUPPORT_NUMBER_OF
 	isNumberOf = false;
 	#endif
-	
+
 	/*GIA Connections*/
 	//to minimise query/referencing code
 	actionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS]);
@@ -272,10 +272,10 @@ GIAentityNode::GIAentityNode(void)
 	#endif
 	NLCisAlias = false;
 	#endif
-	
+
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
-	conditionType2 = ""; 
+	conditionType2 = "";
 	#endif
 	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
 	conditionTwoWay = false;
@@ -360,10 +360,10 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	grammaticalIndexOfDeterminerTemp = GIA_ENTITY_INDEX_UNDEFINED;
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
-	
+
 	//CharacterOffsetBeginTemp = INT_DEFAULT_VALUE;
 	//CharacterOffsetEndTemp = INT_DEFAULT_VALUE;
-	
+
 	stanfordPOStemp = "";
 	NERTemp = FEATURE_NER_UNDEFINED;
 	NormalizedNERtemp = "";
@@ -391,7 +391,7 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	#ifdef GIA_SUPPORT_NUMBER_OF
 	isNumberOf = false;
 	#endif
-	
+
 	//GIA Connections
 	//to minimise query/referencing code
 	actionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS]);
@@ -494,10 +494,10 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	NLCcontextGeneratedTemp = false;
 	NLCcategoryListCreatedTemp = false;
 	#endif
-	
+
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
-	conditionType2 = ""; 
+	conditionType2 = "";
 	#endif
 	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
 	conditionTwoWay = false;
@@ -890,7 +890,7 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 {
 	bool foundMatch = false;
 	bool illegalVariable = false;
-	
+
 	//cout << "testEntityCharacteristic{}:" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
 
 	/*GIA Entity Type*/
@@ -960,7 +960,7 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 	#ifdef GIA_SUPPORT_NUMBER_OF
 	testEntityCharacteristicIterationbool(entity->isNumberOf, entityCharacteristic, "isNumberOf", &foundMatch);
 	#endif
-	
+
 	/*GIA Miscellaneous Internal Variables*/
 	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 	testEntityCharacteristicIterationbool(entity->wasReference, entityCharacteristic, "wasReference", &foundMatch);
@@ -998,7 +998,7 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 			result = false;
 		}
 	}
-	
+
 	if(illegalVariable)
 	{
 		result = true;
@@ -1263,7 +1263,7 @@ bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	#ifdef GIA_SUPPORT_NUMBER_OF
 	getEntityCharacteristicIterationbool(entity->isNumberOf, entityCharacteristic, "isNumberOf", &foundMatch);
 	#endif
-	
+
 	/*GIA Miscellaneous Internal Variables*/
 	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 	getEntityCharacteristicIterationbool(entity->wasReference, entityCharacteristic, "wasReference", &foundMatch);

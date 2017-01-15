@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -123,7 +123,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 													cout << "applyGIATranslatorGenericXMLfunctions{} error: illegal currentParamTag->firstAttribute->value = " << currentParamTag->firstAttribute->value << endl;
 												}
 											}
-											
+
 											/*
 											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
 											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -137,7 +137,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 												}
 											}
 											*/
-											
+
 											/*
 											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
 											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -168,7 +168,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 												}
 											}
 											*/
-											
+
 											/*
 											if(currentSentenceInList->sentenceIndex == 20)
 											{
@@ -180,7 +180,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 												}
 											}
 											*/
-											
+
 											/*
 											GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 											while(currentRelationInList->next != NULL)
@@ -208,7 +208,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 														string relationType = currentRelationInList->relationType;
 														GIAentityNode* relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 														GIAentityNode* relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
-														
+
 														cout << "relationType = " << currentRelationInList->relationType << endl;
 														cout << "relationGoverner = " << currentRelationInList->relationGovernor << endl;
 														cout << "relationDependent = " << currentRelationInList->relationDependent << endl;
@@ -234,7 +234,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 															//cout << "relationDependent->grammaticalDefiniteTemp = " << relationDependent->grammaticalDefiniteTemp << endl;
 															//cout << "relationDependent->grammaticalIndefinitePluralTemp = " << relationDependent->grammaticalIndefinitePluralTemp << endl;
 															//cout << "relationDependent->isSubstanceConcept = " << relationDependent->isSubstanceConcept << endl;
-															
+
 															//cout << "relationGoverner->grammaticalNumber = " << relationGoverner->grammaticalNumber << endl;
 															//cout << "relationGoverner->grammaticalDefiniteTemp = " << relationGoverner->grammaticalDefiniteTemp << endl;
 															//cout << "relationGoverner->grammaticalIndefinitePluralTemp = " << relationGoverner->grammaticalIndefinitePluralTemp << endl;
@@ -248,7 +248,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 															//cout << "relationDependent->grammaticalProperNounTemp = " << relationDependent->grammaticalProperNounTemp << endl;
 															//cout << "relationDependent->mustSetIsSubstanceConceptBasedOnApposRelation = " << relationDependent->mustSetIsSubstanceConceptBasedOnApposRelation << endl;
 															//cout << "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = " << relationDependent->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp << endl;
-															
+
 															//cout << "relationGoverner->isSubstance = " << relationGoverner->isSubstance << endl;
 															//cout << "relationGoverner->isNameQuery = " << relationGoverner->isNameQuery << endl;
 															//cout << "relationGoverner->isSubstanceConcept = " << relationGoverner->isSubstanceConcept << endl;
@@ -261,16 +261,16 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 															//cout << "relationDependent->isSubstanceConcept = " << relationDependent->isSubstanceConcept << endl;
 															//cout << "relationDependent->hasAssociatedTime = " << relationDependent->hasAssociatedTime << endl;
 															//cout << "relationDependent->grammaticalProperNounTemp = " << relationDependent->grammaticalProperNounTemp << endl;
-															//cout << "relationDependent->isNameQuery = " << relationDependent->isNameQuery << endl;	
-															
-														
-														
+															//cout << "relationDependent->isNameQuery = " << relationDependent->isNameQuery << endl;
+
+
+
 													}
 													currentRelationInList = currentRelationInList->next;
 												}
 											}
 											*/
-											
+
 
 											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation
 											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))
@@ -279,10 +279,10 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											/*
 											else
 											{
-												cout << "\t\t applyGIATranslatorGenericXMLparam passed: " << functionName << endl;	
+												cout << "\t\t applyGIATranslatorGenericXMLparam passed: " << functionName << endl;
 											}
 											*/
-											
+
 											/*
 											if(functionName == "defineSubstanceConcepts")
 											{
@@ -552,7 +552,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 					}
 					#endif
 				}
-				
+
 				//added assertPostProcessingValue 2i34a:
 				assertAttribute = currentConfigurationTag->firstAttribute;
 				while(assertAttribute->nextAttribute != NULL)
@@ -582,7 +582,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 				if(genericDependecyRelationInterpretation(&paramDepRel, REL1))
 				{
 					result = true;
-					//cout << "\t\t genericDependecyRelationInterpretation passed: " << functionName << endl;	
+					//cout << "\t\t genericDependecyRelationInterpretation passed: " << functionName << endl;
 					if(asssertsetDefiniteAfterFinish)
 					{
 						featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalIsDefinite = true;
@@ -618,7 +618,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 				if(genericEntityInterpretation(&paramEntity))
 				{
 					result = true;
-					//cout << "\t\t genericEntityInterpretation passed: " << functionName << endl;				
+					//cout << "\t\t genericEntityInterpretation passed: " << functionName << endl;
 				}
 				else
 				{
@@ -805,8 +805,8 @@ bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParame
 	genericEntityInterpretationApplyOptionbool(&(paramDepRel->useSpecialCaseCharacteristicsRelationEntityIndexReassignment[REL][REL_ENT]), xmlAttribute, "useSpecialCaseCharacteristicsRelationEntityIndexReassignment", &foundMatch);
 	genericEntityInterpretationApplyOptionint(&(paramDepRel->specialCaseCharacteristicsRelationEntityIndexReassignmentRelationID[REL][REL_ENT]), xmlAttribute, "specialCaseCharacteristicsRelationEntityIndexReassignmentRelationID", &foundMatch, true);
 	genericEntityInterpretationApplyOptionint(&(paramDepRel->specialCaseCharacteristicsRelationEntityIndexReassignmentRelationEntityID[REL][REL_ENT]), xmlAttribute, "specialCaseCharacteristicsRelationEntityIndexReassignmentRelationEntityID", &foundMatch, true);
-	genericEntityInterpretationApplyOptionstring(&(paramDepRel->specialCaseCharacteristicsRelationEntityIndexReassignment[REL][REL_ENT].name), xmlAttribute, "specialCaseCharacteristicsRelationEntityIndexReassignment", &foundMatch);	
-	
+	genericEntityInterpretationApplyOptionstring(&(paramDepRel->specialCaseCharacteristicsRelationEntityIndexReassignment[REL][REL_ENT].name), xmlAttribute, "specialCaseCharacteristicsRelationEntityIndexReassignment", &foundMatch);
+
 	genericEntityInterpretationApplyOptionbool(&(paramDepRel->useRedistributeSpecialCaseRcmodIndicatesSameReferenceSetNotTest[REL]), xmlAttribute, "useRedistributeSpecialCaseRcmodIndicatesSameReferenceSetNotTest", &foundMatch);
 
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION

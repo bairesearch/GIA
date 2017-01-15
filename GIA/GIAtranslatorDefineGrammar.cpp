@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -175,7 +175,7 @@ void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool
 				#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
 				currentRelationInList->relationTypeIndex = prepositionEntityIndex;
 				#endif
-								
+
 				if(!(GIAentityNodeArrayFilled[prepositionEntityIndex]))
 				{
 					GIAentityNodeArrayFilled[prepositionEntityIndex] = true;
@@ -292,7 +292,7 @@ void locateAndAddAllConceptEntities(GIAsentence* currentSentenceInList, bool GIA
 			if(GIAfeatureTempEntityNodeArray[w]->isNumberOf)
 			{
 				entity->isNumberOf = true;
-			}	
+			}
 			#endif
 		}
 	}
@@ -484,7 +484,7 @@ void fillGrammaticalArraysRelex(GIAsentence* currentSentenceInList)
 		//TODO;
 		//detect GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE
 		//detect GRAMMATICAL_TENSE_MODIFIER_INFINITIVE
-		
+
 		currentFeatureInList = currentFeatureInList->next;
 	}
 }
@@ -515,7 +515,7 @@ void fillGrammaticalArraysStanford(GIAsentence* currentSentenceInList,  bool GIA
 		currentRelationInList = currentRelationInList->next;
 	}
 	#endif
-				
+
 	//past tense [preliminary only; aux/cop takes precedence], progressive tense, isDate, plurality, isProperNoun extraction
 	extractGrammaticalInformationStanford(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 
@@ -649,12 +649,12 @@ void fillGrammaticalArraysStanford(GIAsentence* currentSentenceInList,  bool GIA
 				{
 					indefiniteDeterminerFound = true;
 				}
-				
+
 				if(definiteDeterminerFound || indefiniteDeterminerFound)
 				{//if condition added 4 July 2013 to ensure only real determiners (the, some, a) are disabled [and not "What" in det(time-2, What-1)]
 					//cout << "disabling feature temp entity" << endl;
 					GIAfeatureTempEntityNodeArray[entityIndexOfDeterminier]->disabled = true;
-					
+
 					#ifdef STANFORD_CORENLP_POS_TAGS_BUG_GIA_WORKAROUND_SET_DETERMINER_DEPENDENT_TO_NOUN
 					string stanfordPOS = FEATURE_POS_TAG_NOUN_NN;
 					featureArrayTemp[entityIndexOfNoun]->stanfordPOS = stanfordPOS;
@@ -822,7 +822,7 @@ void extractGrammaticalInformationFromPOStag(string* POStag, GIAfeature* feature
 		progressiveDetected = true;
 		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] = true;
 	}
-	
+
 	//infinitive tense extraction (added 28 July 2013) + imperative tense extraction (added 10 April 2014)
 	bool infinitiveOrImperativeDetected = false;
 	if(textInTextArray(*POStag, posTagVerbInfinitiveOrImperativeArray, FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES))
@@ -854,7 +854,7 @@ void extractGrammaticalInformationFromPOStag(string* POStag, GIAfeature* feature
 		if((*POStag) == FEATURE_POS_TAG_NOUN_NN)
 		{
 			if(feature->determinerPotentiallySingularDetected)
-			{			
+			{
 				singularDetected = true;
 			}
 			#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER_OR_QUOTATIONS
@@ -891,7 +891,7 @@ void extractGrammaticalInformationFromPOStag(string* POStag, GIAfeature* feature
 	if(textInTextArray(*POStag, featurePOSindicatesPronounTypeArray, FEATURE_POS_TAG_INDICATES_PRONOUN_NUMBER_OF_TYPES))
 	{
 		pronounDetected = true;
-		feature->grammaticalIsPronoun = true;	
+		feature->grammaticalIsPronoun = true;
 	}
 
 	//added 2h2a
@@ -1011,7 +1011,7 @@ void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentit
 				#ifdef GIA_USE_WORD_ORIG
 				entity->wordOrig = currentFeatureInList->word;
 				#endif
-				
+
 				entity->hasAssociatedTime = currentFeatureInList->grammaticalIsDateOrTime;
 
 				applyPOSrelatedGrammaticalInfoToEntity(entity, currentFeatureInList);

@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -143,7 +143,7 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureP
 	{
 		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 		currentSentenceInList->semanticParserSuccessful = true;
-		
+
 		/*
 		GIAfeature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
 		while(currentFeatureInList->next != NULL)
@@ -152,7 +152,7 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureP
 			currentFeatureInList = currentFeatureInList->next;
 		}
 		*/
-		
+
 		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS	//prioritise text corpus defined semantic relations matching full sentence (or GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS)
 		if(!loadSemanticParserCorpusDatabaseFile(currentSentenceInList, currentSentenceInList->firstFeatureInList))
 		{
@@ -177,7 +177,7 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureP
 			bool notFoundASubsetForAtLeastTwoWords = false;		//note this is only applicable for !GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE and GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE:GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_EXTENSIVE (as with !GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_EXTENSIVE; if a subset file is not found for a set of words, it doesn't mean such a feature set has not been parsed, it just means that no semantic relations exist between them)
 			#endif
 			bool stillNotFoundASubset = true;
-	
+
 			int minIndexOfSecondWordInTuple = GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE;
 			for(int secondWordInTupleIndex=currentSentenceInList->maxNumberOfWordsInSentence; secondWordInTupleIndex>=minIndexOfSecondWordInTuple; secondWordInTupleIndex--)	//secondWordInTupleIndex in subset [NB secondWordInTupleIndex>=2 as a subset of 1 is not a subset]
 			{
@@ -196,7 +196,7 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureP
 						#ifdef GIA2_SEMANTIC_PARSER_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS
 						bool foundACorpusSubsetForSecondWordInTuple = false;
 						#endif
-						
+
 						if(currentSentenceInList->firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)
 						{
 							cout << "lookupSemanticParserFiles{} implementation error*: (sentence->firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)" << endl;
@@ -221,7 +221,7 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureP
 								initialiseIntArray(GIA2semanticDependencyRelationProbabilityTotalArray, GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES, 0);
 							#endif
 								GIAfeature* firstFeatureInSentenceSubset = firstFeatureInSentenceSubsetInitial;
-								while(firstFeatureInSentenceSubset->entityIndex <= maxIndexOfFirstWordInTuple)		//changed 2k1a for GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS compatibility: verify that feature entityIndices are not mutated by GIA referencing*	//OLD:	for(int firstWordInSentenceSubsetIndex=1; firstWordInSentenceSubsetIndex<=secondWordInTupleIndex-(GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1); firstWordInSentenceSubsetIndex++)	
+								while(firstFeatureInSentenceSubset->entityIndex <= maxIndexOfFirstWordInTuple)		//changed 2k1a for GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS compatibility: verify that feature entityIndices are not mutated by GIA referencing*	//OLD:	for(int firstWordInSentenceSubsetIndex=1; firstWordInSentenceSubsetIndex<=secondWordInTupleIndex-(GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1); firstWordInSentenceSubsetIndex++)
 								{
 									int firstWordInSentenceSubsetIndex=firstFeatureInSentenceSubset->entityIndex;
 									#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
@@ -238,7 +238,7 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureP
 											int subsetSize = secondWordInTupleIndex-firstWordInSentenceSubsetIndex+1;	//subsetSize aka maxSpread
 
 											//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
-											
+
 											if(loadSemanticParserCorpusDatabaseFile(currentSentenceInList, firstFeatureInSentenceSubset))
 											{
 												#ifdef GIA2_SEMANTIC_PARSER_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS
@@ -302,7 +302,7 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureP
 									cout << "firstWordInTupleIndexRelative = " << firstWordInTupleIndexRelative << endl;
 									cout << "secondWordInTupleIndex = " << secondWordInTupleIndex << endl;
 									#endif
-									
+
 									addTupleSemanticRelationToSentence(currentSentenceInList, semanticRelationTypeOptimisedDatabase, firstWordInTupleIndexRelative, secondWordInTupleIndex);
 								}
 							}
@@ -337,7 +337,7 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureP
 		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
 		}
 		#endif
-		
+
 		/*
 		currentFeatureInList = currentSentenceInList->firstFeatureInList;
 		while(currentFeatureInList->next != NULL)

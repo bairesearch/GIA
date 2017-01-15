@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -459,10 +459,10 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 		paramA.defaultSameSetRelationID = REL1; paramA.defaultSameSetReferenceValue = false;
 		#endif
 		#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-		paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias;				
+		paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias;
 		#else
 		paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias;
-		#endif		
+		#endif
 		paramA.functionEntityRelationID[FUNC_ENT1] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 		paramA.functionEntityRelationID[FUNC_ENT2] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
 		genericDependecyRelationInterpretation(&paramA, REL1);
@@ -488,10 +488,10 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 		paramB.defaultSameSetRelationID = REL1; paramB.defaultSameSetReferenceValue = false;
 		#endif
 		#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-		paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias;			
+		paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias;
 		#else
 		paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias;
-		#endif	
+		#endif
 		paramB.functionEntityRelationID[FUNC_ENT1] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 		paramB.functionEntityRelationID[FUNC_ENT2] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
 		genericDependecyRelationInterpretation(&paramB, REL1);
@@ -2404,7 +2404,7 @@ void linkConjunctionConditions(GIAsentence* currentSentenceInList, bool GIAentit
 
 				bool entityAlreadyExistant = false;
 				int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
-				currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;	
+				currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 				GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 				#ifdef GIA_TRANSLATOR_DEBUG
@@ -2780,7 +2780,7 @@ void createConditionBasedUponPreposition(GIAentityNode* actionOrSubstanceConditi
 		{
 			featureIndexOfPreposition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
 			currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
-		}		
+		}
 		#else
 		int featureIndexOfPreposition = INT_DEFAULT_VALUE;
 		bool prepositionFeatureFound = determineFeatureIndexOfPreposition(currentSentenceInList, currentRelationInList, &featureIndexOfPreposition);

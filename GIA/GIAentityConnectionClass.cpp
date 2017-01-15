@@ -26,7 +26,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  *
  *******************************************************************************/
 
@@ -75,7 +75,7 @@ GIAentityConnection::GIAentityConnection(void)
 	#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 	isAlias = false;
 	#endif
-	
+
 	/*
 	#ifdef GIA_USE_NLG
 	parsedForLanguageGeneration = false;
@@ -123,7 +123,7 @@ GIAentityConnection::GIAentityConnection(string* startEntityName, long startIdIn
 	#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 	isAlias = false;
 	#endif
-	
+
 	/*
 	#ifdef GIA_USE_NLG
 	parsedForLanguageGeneration = false;

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -423,7 +423,7 @@ void extractQuantities(GIAsentence* currentSentenceInList, bool GIAentityNodeArr
 void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts)
 {
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
-	
+
 	#ifdef GIA_TRANSLATOR_CONVERT_AMOD_WITH_NUMBERS_TO_QUANTITY_RELATION
 	//convert amod(piece, 1) to num(piece, 1)
 	while(currentRelationInList->next != NULL)
@@ -440,15 +440,15 @@ void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool G
 				{
 					currentRelationInList->relationType = RELATION_TYPE_QUANTITY;
 				}
-			}	
+			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
-		
+
 		currentRelationInList = currentRelationInList->next;
 	}
 	#endif
-	
+
 	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -806,7 +806,7 @@ void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNo
 						bool entityAlreadyExistant = false;
 						int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
 						currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
-						
+
 						GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 						//now add measure_per condition node
@@ -918,7 +918,7 @@ void extractMeasures(GIAsentence* currentSentenceInList, bool GIAentityNodeArray
 				bool entityAlreadyExistant = false;
 				int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
 				currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
-				
+
 				GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...

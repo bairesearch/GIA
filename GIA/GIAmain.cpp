@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -619,7 +619,7 @@ int main(int argc, char** argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 2l6b 29-December-2016" << endl;
+			cout << "OpenGIA.exe - Project Version: 2l6c 29-December-2016" << endl;
 			exit(1);
 		}
 
@@ -1019,7 +1019,7 @@ bool executeGIA2()
 	vector<GIAentityNode*>* entityNodesActiveListConditionsQuery = new vector<GIAentityNode*>;			//not required - declared for symmetry
 	unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveListQuery = new unordered_map<long, GIAtimeConditionNode*>;
 	map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentencesQuery = new map<int, vector<GIAentityNode*>*>;
-	
+
 	#ifdef GIA_USE_DATABASE
 	initialiseDatabase(readFromDatabase, databaseFolderName, useDatabase, entityNodesActiveListComplete, entityNodesActiveListConcepts);
 	setCurrentDirectory(workingFolder);
@@ -1090,14 +1090,14 @@ bool executeGIA2()
 				outputTextCFFFileName = outputTextAllFileName + ".cff";
 			}
 		}
-		
-		
+
+
 		if(displayInOpenGLAndOutputScreenshot)
 		{
 			initiateOpenGL(rasterImageWidth, rasterImageHeight, 0, 0, false);
 		}
 		//exit(0);
-		
+
 		if(useInputQuery)
 		{
 			if(useOutputTextAllFile)
@@ -1615,7 +1615,7 @@ bool executeGIA2()
 
 		}
 	}
-	
+
 
 	if(useInputQuery)
 	{
@@ -1917,7 +1917,7 @@ bool executeGIA2()
 	{
 		exitOpenGL();
 	}
-		
+
 	return result;
 }
 

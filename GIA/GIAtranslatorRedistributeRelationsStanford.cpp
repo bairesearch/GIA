@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelationsStanford.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1083,7 +1083,7 @@ void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSente
 									currentRelationInList2->relationType = newPrepositionName;
 									#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
 									currentRelationInList2->relationTypeIndex = currentRelationInList2->relationDependentIndex;
-									#endif									
+									#endif
 									currentRelationInList2->relationDependentIndex = currentRelationInList->relationDependentIndex;
 									currentRelationInList2->relationDependent = currentRelationInList->relationDependent;
 

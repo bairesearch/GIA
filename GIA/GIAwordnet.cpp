@@ -26,7 +26,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -88,7 +88,7 @@ int similarityType =
 #define ANTPTR           1	// !
 #define HYPERPTR         2	// @
 #define HYPOPTR          3	// ~
-#define ENTAILPTR        4	//* 
+#define ENTAILPTR        4	//*
 #define SIMPTR           5	// &
 
 #define ISMEMBERPTR      6	// #m
@@ -627,7 +627,7 @@ void findSynonymsOLD(string word, bool* wordIsFound, string listOfSynonyms[], in
 bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char* output, int* newCharIndex, string* lineString, char characterToRecordUntil, char escapeCharacter)
 {
 	*lineString = "";
-	
+
 	bool result = true;
 	int i = 0;
 

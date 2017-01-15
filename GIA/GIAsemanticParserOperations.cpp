@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -104,7 +104,7 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 				{
 					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DETERMINER, entityIndex1, entityIndex2, sameReferenceSet);
 				}
-				
+
 				#ifdef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
 				if(currentRelationInList->relationType == RELATION_TYPE_PRENOMIAL_MODIFIER)	//must correspond to RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES/relationTypePrenominalModifierNameArray
 				{
@@ -155,7 +155,7 @@ void generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, 
 		cout << "isQuery" << endl;
 		entityWord1 = entityWord1Query + GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME;
 	}
-	
+
 	//NB GIA2:GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE does not support queries/GIA2_SUPPORT_QUERIES (ie the special entity name adjustments below)
 	string entityWord2Query = "";
 	if(GIAentityNodeArray[entityIndex2]->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
@@ -192,7 +192,7 @@ void generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, 
 		entityWord2 = GIAentityNodeArray[entityIndex2]->entityName;
 	}
 	#endif
-	
+
 	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD
 	*GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationText(entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet);
 	//cout << "GIA2semanticDependencyRelation = " << GIA2semanticDependencyRelation << endl;
@@ -229,7 +229,7 @@ string generateCorpusFileHeaderText(GIAfeature* firstFeatureInSentence, bool add
 		{
 			appendString = "";
 		}
-		
+
 		if(addPOSinfo)
 		{
 			string GIAconnectionistNetworkPOStypeName = GIAconnectionistNetworkPOStypeNameArray[currentFeatureInSentence->GIAsemanticParserPOStype];
@@ -590,21 +590,21 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeature
 GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeature* firstFeatureInSentenceSubset, int centralWord, bool* optimisedBasedOnContextualConjunctions)
 {
 	bool result = true;
-			
+
 	#ifdef GIA_SEMANTIC_PARSER_TRANSLATOR_DEBUG
 	cout << "generateOptimisedFeatureSubsetBasedOnContextualConjunctions: firstFeatureInSentenceSubset->word = " << firstFeatureInSentenceSubset->word << endl;
 	#endif
-	
+
 	bool commaDetected = false;
 	int indexOfFirstCommaDetected = INT_DEFAULT_VALUE;
 	int indexOfLastCommaDetected = INT_DEFAULT_VALUE;
 	bool conjunctionDetected = false;
 	int indexOfConjunction = INT_DEFAULT_VALUE;
 	bool foundCentralWord = false; 	//redundant because last feature in list will have been set to centralWord
-	
+
 	GIAfeature* currentFeatureInSentenceSubset = firstFeatureInSentenceSubset;
 	int featureIndex = GIA_NLP_START_ENTITY_INDEX;	//1
-	
+
 	while(currentFeatureInSentenceSubset->next != NULL)
 	{
 		if(foundCentralWord)
@@ -620,7 +620,7 @@ GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeatu
 				cout << "currentFeatureInSentenceSubset->entityIndex = " << currentFeatureInSentenceSubset->entityIndex << endl;
 				cout << "featureIndex = " << featureIndex << endl;
 				cout << "currentFeatureInSentenceSubset->lemma = " << currentFeatureInSentenceSubset->lemma << endl;
-				exit(0);	
+				exit(0);
 			}
 
 			if(currentFeatureInSentenceSubset->word == STRING_COMMA)
@@ -642,19 +642,19 @@ GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeatu
 				conjunctionDetected = true;
 			}
 		}
-		
+
 		if(currentFeatureInSentenceSubset->entityIndex == centralWord)
 		{
-			foundCentralWord = true;	
+			foundCentralWord = true;
 		}
-		
+
 		currentFeatureInSentenceSubset = currentFeatureInSentenceSubset->next;
 		featureIndex++;
 	}
-	
+
 	GIAfeature* firstFeatureInOptimisedSentenceSubset = NULL;
 	if((commaDetected && conjunctionDetected) || (indexOfLastCommaDetected != INT_DEFAULT_VALUE))
-	{	
+	{
 		firstFeatureInOptimisedSentenceSubset = new GIAfeature(*firstFeatureInSentenceSubset);	//copy feature
 		GIAfeature* currentFeatureInOptimisedSentenceSubset = firstFeatureInOptimisedSentenceSubset;
 		GIAfeature* currentFeatureInSentenceSubset = currentFeatureInSentenceSubset;
@@ -667,7 +667,7 @@ GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeatu
 			{
 				if(currentlyFilteringSubphrase)
 				{
-					if(((commaDetected && conjunctionDetected) && (featureIndex == indexOfConjunction)) || 
+					if(((commaDetected && conjunctionDetected) && (featureIndex == indexOfConjunction)) ||
 					((indexOfLastCommaDetected != INT_DEFAULT_VALUE) && (featureIndex == indexOfLastCommaDetected)))
 					{
 						currentlyFilteringSubphrase = false;
@@ -688,9 +688,9 @@ GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeatu
 						currentFeatureInOptimisedSentenceSubset = currentFeatureInOptimisedSentenceSubset->next;
 					}
 				}
-			
+
 			}
-			
+
 			currentFeatureInSentenceSubset = currentFeatureInSentenceSubset->next;
 			featureIndex++;
 		}
@@ -702,7 +702,7 @@ GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeatu
 		firstFeatureInOptimisedSentenceSubset = firstFeatureInSentenceSubset;
 		*optimisedBasedOnContextualConjunctions = false;
 	}
-	
+
 	return firstFeatureInOptimisedSentenceSubset;
 }
 #endif

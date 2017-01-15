@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -485,7 +485,7 @@ static string relationGovernorDefinitionNameArray[RELATION_GOVERNOR_DEFINITION_N
 		#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1_REPLACEMENT_INDEX (MAX_NUMBER_OF_WORDS_PER_SENTENCE-2)
 	#endif
 #endif
-#define FEATURE_MAX_NUMBER_OF_ARTIFICIAL_CONDITION_FEATURE_INDICES (15)	//added GIA 2g1a/25-August-2014 
+#define FEATURE_MAX_NUMBER_OF_ARTIFICIAL_CONDITION_FEATURE_INDICES (15)	//added GIA 2g1a/25-August-2014
 #define FEATURE_INDEX_OF_CONJUNCTION_1 (MAX_NUMBER_OF_WORDS_PER_SENTENCE-FEATURE_MAX_NUMBER_OF_ARTIFICIAL_CONDITION_FEATURE_INDICES) 	//added GIA 2f8a/10-July-2014
 #define FEATURE_MAX_NUMBER_OF_CONJUNCTION_FEATURE_INDICES (100)	//some function of NLC_MAXIMUM_NUMBER_OF_CONJUNCTIONS_IN_SENTENCE
 #define FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY (FEATURE_INDEX_OF_CONJUNCTION_1-FEATURE_MAX_NUMBER_OF_CONJUNCTION_FEATURE_INDICES)
@@ -816,7 +816,7 @@ static string relationTypeAdjectiveImpliesSameSetNameArray[RELATION_TYPE_ADJECTI
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES (true)				//this really depends on whether it is possessive or not
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PARATAXIS (false)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CCCOMP (true)
-#define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_INDIRECT_OBJECTS (false)			//changed 2i8e	
+#define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_INDIRECT_OBJECTS (false)			//changed 2i8e
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_DEFINITIONS (false)			//added 2i8g
 #define DEFAULT_SAME_REFERENCE_SET_VALUE (true)
 #define IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING (false)
@@ -943,7 +943,7 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 	//#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL_INVERSE
 	#define FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE "VBPOTENTIALINVERSE"
 	//#endif
-	//#endif	
+	//#endif
 	//#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
 	#define FEATURE_POS_TAG_VERB_VBSTATE "VBSTATE"
 	//#endif
@@ -1234,7 +1234,7 @@ static int featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[
 	static string semanticParserOptimiseBasedOnConjunctionsIllegalSecondWordInTupleArray[GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS_ILLEGAL_CENTRAL_WORD_NUMBER_OF_TYPES] = {",", "and", "or"};
 
 #endif
-		
+
 /*
 //requires updating (add more cases from PENN tree)
 #define GIA_SEMANTIC_PARSER_POS_TYPE_NOUN (0)
@@ -1287,8 +1287,8 @@ static string relationAuxiliaryFutureTenseNameArray[RELATION_AUXILIARY_FUTURE_TE
 	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_NONE (20)
 #endif
 #define GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 7)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
-	
-static string GIA2semanticDependencyRelationNameArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"actionSubject", "actionObject", "conditionSubject", "conditionObject", "property", "property", "definition", "definition", "instance", "actionSubject", "actionObject", "conditionSubject", "conditionObject", "instance", "determiner", "modalAuxiliaryOrCopula", "quantity", "compositionAuxiliary", GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_OR_ALIAS_NAME, "prenominalModifier", "none"};	
+
+static string GIA2semanticDependencyRelationNameArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"actionSubject", "actionObject", "conditionSubject", "conditionObject", "property", "property", "definition", "definition", "instance", "actionSubject", "actionObject", "conditionSubject", "conditionObject", "instance", "determiner", "modalAuxiliaryOrCopula", "quantity", "compositionAuxiliary", GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_OR_ALIAS_NAME, "prenominalModifier", "none"};
 #ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
 #define GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_DIRECTIONS (2)
 #define GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_SAMEREFERENCESET (2)

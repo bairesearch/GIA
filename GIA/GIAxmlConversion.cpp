@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6b 29-December-2016
+ * Project Version: 2l6c 29-December-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -105,7 +105,7 @@ bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*>*
 		//entityNodesActiveListConcepts[entityNodeName] = entityNodeFound;
 		conceptEntityNodesListMap->insert(pair<string, GIAentityNode*>(entityNode->entityName, entityNode));
 	}
-	
+
 	//create entityNodesActiveListSentences based on entityNodesActiveListComplete (just fill every sentence with the same vector entityNodesActiveListComplete, since there is no way a sentence's cross-sentence entity references can be derived from the xml file as they will have different sentenceIndexes. FUTURE: Consider storing a per sentence entity reference list in the GIA xml file);
 	int maxSentenceIndex = 0;
 	for(vector<GIAentityNode*>::iterator entityNodeListIterator = entityNodesActiveListComplete->begin(); entityNodeListIterator < entityNodesActiveListComplete->end(); entityNodeListIterator++)
@@ -115,12 +115,12 @@ bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*>*
 		{
 			maxSentenceIndex = entity->sentenceIndexTemp;
 		}
-	}	
+	}
 	for(int sentenceIndex=GIA_NLP_START_SENTENCE_INDEX; sentenceIndex<maxSentenceIndex; sentenceIndex++)
 	{
 		entityNodesActiveListSentences->insert(pair<int, vector<GIAentityNode*>*>(sentenceIndex, entityNodesActiveListComplete));
 	}
-	
+
 	#ifdef GIA_FREE_MEMORY1
 	delete entityNodesActiveListConcepts;
 	#endif
@@ -596,7 +596,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 	bool inverseConditionTwoWayFound = false;
 	#endif
 	#endif
-	#endif	
+	#endif
 
 	bool entityVectorConnectionNodeFoundArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
@@ -893,7 +893,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 			grammaticalTenseModifierArrayTempFound = true;
 		}
 		#endif
-		
+
 		#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 		#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionType2)
@@ -919,7 +919,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 		}
 		#endif
 		#endif
-		#endif		
+		#endif
 
 		currentAttribute = currentAttribute->nextAttribute;
 	}
@@ -1020,7 +1020,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 			bool isAliasFound = false;
 			#endif
 			#endif
-			
+
 			while(currentAttribute->nextAttribute != NULL)
 			{
 				if(currentAttribute->name == NET_XML_ATTRIBUTE_id)
@@ -1586,7 +1586,7 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalProperNounTemp;
 	currentAttribute->value = convertIntToString(int(currentEntity->grammaticalProperNounTemp));
 	currentAttribute = createNewAttribute(currentAttribute);
-	
+
 	#ifdef GIA_SUPPORT_PREDETERMINERS
 	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalPredeterminerTemp;
 	currentAttribute->value = convertIntToString(int(currentEntity->grammaticalPredeterminerTemp));
@@ -1602,16 +1602,16 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentAttribute->value = convertIntToString((currentEntity->wasReference));
 	currentAttribute = createNewAttribute(currentAttribute);
 	#endif
-	
+
 	currentAttribute->name = NET_XML_ATTRIBUTE_isQuery;
 	currentAttribute->value = convertIntToString(int(currentEntity->isQuery));
 	currentAttribute = createNewAttribute(currentAttribute);
-	
+
 	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp;
 	currentAttribute->value = convertBooleanArrayToString(currentEntity->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
-	currentAttribute = createNewAttribute(currentAttribute);	
+	currentAttribute = createNewAttribute(currentAttribute);
 	#endif
-	
+
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
 	currentAttribute->name = NET_XML_ATTRIBUTE_conditionType2;
@@ -1628,8 +1628,8 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentAttribute = createNewAttribute(currentAttribute);
 	#endif
 	#endif
-	#endif	
-		
+	#endif
+
 
 	XMLparserTag* firstTagL3;
 	XMLparserTag* currentTagL3;
@@ -1672,7 +1672,7 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 						currentAttribute->value = convertIntToString(connection->sentenceIndexTemp);
 						currentAttribute = createNewAttribute(currentAttribute);
 						#endif
-						
+
 						#ifdef GIA_USE_ADVANCED_REFERENCING
 						#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 						currentAttribute->name = NET_XML_ATTRIBUTE_isReference;
@@ -1680,19 +1680,19 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 						currentAttribute = createNewAttribute(currentAttribute);
 						#endif
 						#endif
-						
+
 						#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 						currentAttribute->name = NET_XML_ATTRIBUTE_sameReferenceSet;
 						currentAttribute->value = convertIntToString(int(connection->sameReferenceSet));
 						currentAttribute = createNewAttribute(currentAttribute);
 						#endif
-						
+
 						#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 						currentAttribute->name = NET_XML_ATTRIBUTE_isAlias;
 						currentAttribute->value = convertIntToString(int(connection->isAlias));
 						currentAttribute = createNewAttribute(currentAttribute);
 						#endif
-						
+
 						#endif
 
 						XMLparserTag* newTag3 = new XMLparserTag();	//had to add a null tag
