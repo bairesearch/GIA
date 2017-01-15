@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k2c 11-May-2012
+ * Project Version: 1k3d 11-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
@@ -608,7 +608,7 @@ int main(int argc,char **argv)
 								
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe - Project Version: 1k2c 11-May-2012" << endl;
+			cout << "GIA.exe - Project Version: 1k3d 11-May-2012" << endl;
 			exit(1);
 		}
 
@@ -1066,7 +1066,11 @@ int main(int argc,char **argv)
 			}
 			else
 			{
-				if(confidence >= (maxConfidence-0.0001))
+				#ifdef GIA_QUERY_RELAX_CONFIDENCE_REQUIREMENTS_FOR_YES
+				if(((maxConfidence <= (3.0+GIA_QUERY_DOUBLE_ERROR)) && (confidence >= (maxConfidence-(0.0+GIA_QUERY_DOUBLE_ERROR)))) || ((maxConfidence >= (4.0-GIA_QUERY_DOUBLE_ERROR)) && (confidence >= (maxConfidence-(1.0+GIA_QUERY_DOUBLE_ERROR)))))
+				#else
+				if(confidence >= (maxConfidence-GIA_QUERY_DOUBLE_ERROR))
+				#endif
 				{
 					#ifndef GIA_DO_NOT_PRINT_RESULTS
 					cout << "Answer: Yes." << endl;
@@ -1120,9 +1124,9 @@ int main(int argc,char **argv)
 					
 		//add confidence to answer
 		char tempConfidenceStringCharStar[100]; 
-		sprintf(tempConfidenceStringCharStar, "%0.6f", confidence*10);
+		sprintf(tempConfidenceStringCharStar, "%0.6f", confidence*GIA_QUERY_CONFIDENCE_MULTIPLIER);
 		char tempMaxConfidenceStringCharStar[100]; 
-		sprintf(tempMaxConfidenceStringCharStar, "%0.6f", maxConfidence*10);		
+		sprintf(tempMaxConfidenceStringCharStar, "%0.6f", maxConfidence*GIA_QUERY_CONFIDENCE_MULTIPLIER);		
 		answerString = answerString + "\nconfidence = " + tempConfidenceStringCharStar;			
 		answerString = answerString + "\nmax confidence = " + tempMaxConfidenceStringCharStar;	
 		#ifndef GIA_DO_NOT_PRINT_RESULTS
