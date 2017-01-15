@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j5d 08-June-2015
+ * Project Version: 2j5e 08-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -763,8 +763,15 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									//cout << "sameReferenceSet = " << sameReferenceSet << endl;									
 									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet);
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, functionEntityIndex2, functionEntityIndex3, sameReferenceSet);
+									#ifdef GIA2_CORRECT_POSTAGS_FIX3
+									if(!(currentRelationInList->inverseRelationTwoWay))
+									{
+									#endif
+										GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet);
+										GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, functionEntityIndex2, functionEntityIndex3, sameReferenceSet);
+									#ifdef GIA2_CORRECT_POSTAGS_FIX3
+									}
+									#endif
 									#endif
 									#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
 									if(currentRelationInList->relationTwoWay)	//limitation only works when GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity is called based on a single GIArelation

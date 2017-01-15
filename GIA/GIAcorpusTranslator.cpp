@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j5d 08-June-2015
+ * Project Version: 2j5e 08-June-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -131,7 +131,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
 	cout <<"redistribute Stanford Relations - correct POS tags And Lemmas Of All Continuous Verbs" << endl;
 	#endif
-	redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
+	redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);	
 
 #ifndef GIA_ADVANCED_REFERENCING_DISABLE_LINKING
 	#ifdef GIA_USE_ADVANCED_REFERENCING
@@ -803,7 +803,7 @@ void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInLis
 				{
 					int entity2Index2 = currentRelationInList2->relationDependentIndex;
 					bool sameReferenceSet2 = currentRelationInList2->sameReferenceSet;
-					if(currentRelationInList2->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT])
+					if(currentRelationInList2->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT])
 					{
 						if(entity2Index == entity2Index2)
 						{//found matching conditionType pair
