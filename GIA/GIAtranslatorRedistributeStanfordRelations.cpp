@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7g 30-June-2013
+ * Project Version: 1s7h 03-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -2088,12 +2088,12 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 }
 
 
-void redistributeStanfordRelationsCreateQueryVars(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+void redistributeStanfordRelationsCreateQueryVars(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
 {
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1z10a; redistribute Stanford Relations - Create Query Vars (eg interpret 'who is that' / 'what is the time.'  attr(is-2, Who-1) / attr(is-2, What-1)" << endl;
 	#endif
-	redistributeStanfordRelationsCreateQueryVarsWhoWhat(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	redistributeStanfordRelationsCreateQueryVarsWhoWhat(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1z10b; redistribute Stanford Relations - Create Query Vars (eg interpret 'how much'/'how many' advmod(much-2, How-1) amod(milk-3, much-2))" << endl;
@@ -2125,11 +2125,11 @@ void redistributeStanfordRelationsCreateQueryVars(Sentence * currentSentenceInLi
 	*/
 }
 
-void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
 {
-	//interpret; 'who is that' / 'what is the time.'  attr(is-2, What-1) nsubj(is-2, time-4) -> appos(time-4, _$qVar-1)   /   attr(is-2, Who-1)  nsubj(is-2, that-3) -> appos(That-3, _$qVar-1)	[NB _$qVar can be switched in both cases with respect to GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY]
+	//interpret; 'who is that' / 'what is the time.'  attr(is-2, What-1) + nsubj(is-2, time-4) -> appos(time-4, _$qVar-1)   /   attr(is-2, Who-1) + nsubj(is-2, that-3) -> appos(That-3, _$qVar-1)	[NB _$qVar can be switched in both cases with respect to GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY]
 
-	//interpret; 'Who rode the bike?' / 'What broke the glass?' -> nsubj(rode-2, Who-1) -> nsubj(rode-2, _$qVar-1) / nsubj(broke-2, What-1) -> nsubj(broke-2, _$qVar-1) [added 7 August 2012]
+	//interpret; 'Who rode the bike?' / 'What broke the glass?' -> nsubj(rode-2, Who-1) -> nsubj(rode-2, _$qVar-1)  /  nsubj(broke-2, What-1) -> nsubj(broke-2, _$qVar-1) [added 7 August 2012]
 
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -2190,14 +2190,14 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 										if((currentRelationInList2->relationGovernor == RELATION_ENTITY_BE) && (currentRelationInList->relationGovernor == RELATION_ENTITY_BE))
 										{//found a matching relationship
 
-											//interpret 'who is that'  nsubj(is-2, time-4) / attr(is-2, What-1)  -> appos(time-4, _$qVar-1), 'what is the time.' nsubj(is-2, that-3) attr(is-2, Who-1)   -> appos(That-3, _$qVar-1)	[NB _$qVar can be switched in both cases with respect to GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY]
+											//interpret 'what is the time.' nsubj(is-2, time-4) / attr(is-2, What-1)  -> appos(time-4, _$qVar-1),  'who is that'  nsubj(is-2, that-3) attr(is-2, Who-1)   -> appos(That-3, _$qVar-1)	[NB _$qVar can be switched in both cases with respect to GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY]
 
 											#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG
 											cout << "redistributeStanfordRelationsCreateQueryVarsWhoWhat" << endl;
 											#endif
 
 										#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
-
+											
 											currentRelationInList->disabled =  true;
 											GIAentityNode * oldRedundantBeEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 											disableEntity(oldRedundantBeEntity);
@@ -2253,6 +2253,93 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
+	
+	//added 3 July 2013
+	//interpret; 'what time is it.'  attr(is-3, time-2) + nsubj(is-3, it-4) + det(time-2, What-1) -> appos(time-4, _$qVar-1)
+	currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT)
+			{
+				//now find the associated relation..
+ 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+
+				while(currentRelationInList2->next != NULL)
+				{
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					if(!(currentRelationInList2->disabled))
+					{
+					#endif
+						if(currentRelationInList2->relationType == RELATION_TYPE_ATTRIBUTIVE)
+						{
+							//now find the associated relation..
+ 							Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+							
+							while(currentRelationInList3->next != NULL)
+							{
+								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+								if(!(currentRelationInList3->disabled))
+								{
+								#endif
+									if(currentRelationInList3->relationType == RELATION_TYPE_DETERMINER)
+									{
+
+										bool queryWhatRelationDependentFound = false;
+										for(int i=0; i<FEATURE_QUERY_WORD_WHAT_NUMBER_OF_TYPES; i++)
+										{
+											if(currentRelationInList3->relationDependent == featureQueryWordWhatNameArray[i])
+											{
+												queryWhatRelationDependentFound = true;
+											}
+										}
+										if(queryWhatRelationDependentFound)
+										{
+											if((currentRelationInList2->relationGovernor == RELATION_ENTITY_BE) && (currentRelationInList->relationGovernor == RELATION_ENTITY_BE))
+											{
+												//interpret; 'what time is it.'  attr(is-3, time-2) + nsubj(is-3, it-4) + det(time-2, What-1) -> appos(time-4, _$qVar-1)
+
+												currentRelationInList->disabled =  true;
+												GIAentityNode * oldRedundantBeEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+												disableEntity(oldRedundantBeEntity);
+												GIAentityNode * oldRedundantItEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+												disableEntity(oldRedundantItEntity);
+												
+												currentRelationInList2->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+												currentRelationInList2->relationGovernorIndex = currentRelationInList2->relationDependentIndex;
+												currentRelationInList2->relationGovernor = currentRelationInList2->relationDependent;
+
+												currentRelationInList2->relationDependentIndex =  currentRelationInList3->relationDependentIndex;											
+												currentRelationInList2->relationDependent =  currentRelationInList3->relationDependent;												
+
+												GIAentityNodeArray[currentRelationInList2->relationDependentIndex]->entityName = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What" to _$qVar
+												currentRelationInList2->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+												
+												featureArrayTemp[currentRelationInList2->relationGovernorIndex]->grammaticalIsDefinite = true;	//required such that "time" is treated the same way as when generated by "what is the time?" 
+											}	
+										}
+									}
+								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS	
+								}
+								#endif
+								currentRelationInList3 = currentRelationInList3->next;
+							}						
+						
+						}
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS	
+					}
+					#endif
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}	
 }
 
 
