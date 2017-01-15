@@ -70,8 +70,9 @@ Sentence::Sentence(void)
 	
 	maxNumberOfWordsInSentence = 0;
 	
-	firstRelationInList = NULL;
-
+	firstRelationInList = new Relation();	//added 23 Feb 2012
+	firstFeatureInList = new Feature();	//added 23 Feb 2012
+	
 	next = NULL;
 	previous = NULL;
 	
@@ -84,6 +85,11 @@ Sentence::~Sentence(void)
 	{
 		delete firstRelationInList;
 	}
+	
+	if(firstFeatureInList != NULL)	//added 23 Feb 2012
+	{
+		delete firstFeatureInList;
+	}	
 
 	if(next != NULL)
 	{
@@ -91,5 +97,30 @@ Sentence::~Sentence(void)
 	}
 
 }
+
+#ifdef GIA_RELEX_USE_PARAGRAPH_TAG
+
+Paragraph::Paragraph(void)
+{	
+	firstSentenceInList = new Sentence();
+
+	next = NULL;
+	previous = NULL;
+}
+
+Paragraph::~Paragraph(void)
+{
+	if(firstSentenceInList != NULL)
+	{
+		delete firstSentenceInList;
+	}	
+	
+	if(next != NULL)
+	{
+		delete next;
+	}
+}
+
+#endif
 
 

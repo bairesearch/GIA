@@ -21,6 +21,8 @@
 #include <string>
 using namespace std;
 
+//#define GIA_RELEX_USE_PARAGRAPH_TAG
+
 #define FEATURE_GRAMMATICAL_TENSE_DATE "date"
 #define FEATURE_GRAMMATICAL_TENSE_PAST "past"
 #define FEATURE_TYPE_PUNCTUATION "punctuation"
@@ -108,5 +110,20 @@ public:
 
 	bool isQuestion;
 };
+
+#ifdef GIA_RELEX_USE_PARAGRAPH_TAG
+class Paragraph
+{
+public:
+
+	Paragraph(void);
+	~Paragraph(void);
+
+	Sentence * firstSentenceInList;
+
+	Paragraph * next;
+	Paragraph * previous;	//used for reference lookup
+};
+#endif
 
 #endif

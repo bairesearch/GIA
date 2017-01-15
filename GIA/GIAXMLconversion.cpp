@@ -239,8 +239,13 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 					}
 				}
 				else
-				{
-					cout << "parseSemanticNetTag error: entity node tag not detected";
+				{	
+					if(currentTagUpdatedL3->name != "")	
+					{//NB concept entities nodes should always exist, so this condition is not required (at the moment)
+						cout << "parseSemanticNetTag error 1: entity node tag not detected" << endl;
+						//cout << "tag found: " << currentTagUpdatedL3->name << endl;
+						//cout << "tag expected: " << NET_XML_TAG_entityNode << endl;
+					}
 				}
 				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
 			}
@@ -248,7 +253,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 		}
 		else
 		{
-			cout << "parseSemanticNetTag error: no concept entity container node tag detected";
+			cout << "parseSemanticNetTag error: no concept entity container node tag detected" << endl;
 		}
 		
 		if(currentTagUpdatedL2->name == NET_XML_TAG_propertyEntityNodeContainer)
@@ -304,7 +309,12 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 				}
 				else
 				{
-					cout << "parseSemanticNetTag error: entity node tag not detected";
+					if(currentTagUpdatedL2->name != "")
+					{
+						cout << "parseSemanticNetTag error 2: entity node tag not detected" << endl;
+						//cout << "tag found: " << currentTagUpdatedL3->name << endl;
+						//cout << "tag expected: " << NET_XML_TAG_entityNode << endl;
+					}
 				}
 				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
 			}
@@ -312,7 +322,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 		}
 		else
 		{
-			cout << "parseSemanticNetTag error: no property entity container node tag detected";
+			cout << "parseSemanticNetTag error: no property entity container node tag detected" << endl;
 		}
 		
 		if(currentTagUpdatedL2->name == NET_XML_TAG_actionEntityNodeContainer)
@@ -369,7 +379,12 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 				}
 				else
 				{
-					cout << "parseSemanticNetTag error: entity node tag not detected";
+					if(currentTagUpdatedL3->name != "")
+					{
+						cout << "parseSemanticNetTag error 3: entity node tag not detected" << endl;
+						//cout << "tag found: " << currentTagUpdatedL3->name << endl;
+						//cout << "tag expected: " << NET_XML_TAG_entityNode << endl;
+					}
 				}
 				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
 			}
@@ -377,7 +392,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 		}
 		else
 		{
-			cout << "parseSemanticNetTag error: no action entity container node tag detected";
+			cout << "parseSemanticNetTag error: no action entity container node tag detected" << endl;
 		}	
 		
 		if(currentTagUpdatedL2->name == NET_XML_TAG_conditionEntityNodeContainer)
@@ -434,7 +449,12 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 				}
 				else
 				{
-					cout << "parseSemanticNetTag error: entity node tag not detected";
+					if(currentTagUpdatedL3->name != "")
+					{
+						cout << "parseSemanticNetTag error 4: entity node tag not detected" << endl;
+						//cout << "tag found: " << currentTagUpdatedL3->name << endl;
+						//cout << "tag expected: " << NET_XML_TAG_entityNode << endl;
+					}
 				}
 				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
 			}
@@ -442,12 +462,9 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 		}
 		else
 		{
-			cout << "parseSemanticNetTag error: no action entity container node tag detected";
-		}				
-
-					
+			cout << "parseSemanticNetTag error: no action entity container node tag detected" << endl;
+		}						
 	}
-	
 
 	return result;
 }

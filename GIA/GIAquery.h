@@ -19,7 +19,7 @@
 //#define GIA_QUERY_USE_OLD_REDUNDANT_CODE_SOURCE_IS_CONDITION_AND_HAS_COMPARISON_VARIABLE_ATTACHED	//default: disabled (testing now)
 
 #define GIA_QUERY_TRACE_FIND_MAXIMUM_NUMBER_OF_MATCHED_NODES		//experimental
-//#define GIA_QUERY_TRACE_PAST_ANSWER	//default: disabled [temporarily testing enabled]
+#define GIA_QUERY_TRACE_PAST_ANSWER	//default: disabled [temporarily testing enabled]
 
 //#define GIA_QUERY_TRACE_INSTANTIATIONS	//default: disabled
 #ifdef GIA_QUERY_TRACE_INSTANTIATIONS

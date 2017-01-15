@@ -758,78 +758,103 @@ bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *en
 {
 	bool result = true;
 	
+	#ifdef GIA_RELEX_USE_PARAGRAPH_TAG
+	Paragraph * firstParagraphInList = new Paragraph();
+	Paragraph * currentParagraph = firstParagraphInList;
+	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;	
+	Sentence * currentSentence = firstSentenceInList;	
+	#else
 	Sentence * firstSentenceInList = new Sentence();
-	Relation * newRelation = new Relation();
-	Feature * newFeature = new Feature();
-	firstSentenceInList->firstRelationInList = newRelation;
-	firstSentenceInList->firstFeatureInList = newFeature;
-	Sentence * currentSentence = firstSentenceInList;
+	Sentence * currentSentence = firstSentenceInList;	
+	#endif
 
 	XMLParserTag * firstTagInXMLFile = new XMLParserTag();
 	readXMLFile(inputTextRelexXMLFileName, firstTagInXMLFile);
 
-	XMLParserTag * currentTag = firstTagInXMLFile;
-	currentTag = parseTagDownALevel(currentTag, CFF_XML_TAG_nlparse, &result);
+	#ifdef GIA_RELEX_USE_PARAGRAPH_TAG	
+	XMLParserTag * currentTag2 = firstTagInXMLFile;
+	currentTag2 = parseTagDownALevel(currentTag2, CFF_XML_TAG_nlparse, &result);
 	if(result)
 	{
 		//now for every sentence;
-		while(currentTag->nextTag != NULL)
+		while(currentTag2->nextTag != NULL)
 		{
-			if(currentTag->name == CFF_XML_TAG_sentence)
+			if(currentTag2->name == CFF_XML_TAG_paragraph)
 			{
-				XMLParserTag * firstTagInSentence;
-				firstTagInSentence = parseTagDownALevel(currentTag, CFF_XML_TAG_sentence, &result);	
-				XMLParserTag * firstTagInFirstParse;
-				firstTagInFirstParse = parseTagDownALevel(firstTagInSentence, CFF_XML_TAG_parse, &result);
-
+				XMLParserTag * currentTag = currentTag2;
+	#else
+				XMLParserTag * currentTag = firstTagInXMLFile;
+	#endif
+				currentTag = parseTagDownALevel(currentTag, CFF_XML_TAG_nlparse, &result);
 				if(result)
 				{
-					XMLParserTag * currentTagInParse = firstTagInFirstParse;
-					while(currentTagInParse->nextTag != NULL)
+					//now for every sentence;
+					while(currentTag->nextTag != NULL)
 					{
+						if(currentTag->name == CFF_XML_TAG_sentence)
+						{
+							XMLParserTag * firstTagInSentence;
+							firstTagInSentence = parseTagDownALevel(currentTag, CFF_XML_TAG_sentence, &result);	
+							XMLParserTag * firstTagInFirstParse;
+							firstTagInFirstParse = parseTagDownALevel(firstTagInSentence, CFF_XML_TAG_parse, &result);
 
-						if(currentTagInParse->name == CFF_XML_TAG_relations)
-						{
-							//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
-							int maxNumberOfWordsInSentence = 0;
-							GIATHparseRelationsText(&(currentTagInParse->value), currentSentence->firstRelationInList, &maxNumberOfWordsInSentence);
-							currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
-						}
-						else if(currentTagInParse->name == CFF_XML_TAG_features)
-						{
-							//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
-							GIATHparseFeaturesText(&(currentTagInParse->value), currentSentence->firstFeatureInList, &(currentSentence->isQuestion));
-							
-							if(isQuery)
+							if(result)
 							{
-								if(!(currentSentence->isQuestion))
+								XMLParserTag * currentTagInParse = firstTagInFirstParse;
+								while(currentTagInParse->nextTag != NULL)
 								{
-									cout << "error: GIA query is not a question" << endl;
-									exit(0); 
-								}
-							}						
-							//cout << "fini" << endl;
-						}
 
-						currentTagInParse = currentTagInParse->nextTag;
+									if(currentTagInParse->name == CFF_XML_TAG_relations)
+									{
+										//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
+										int maxNumberOfWordsInSentence = 0;
+										GIATHparseRelationsText(&(currentTagInParse->value), currentSentence->firstRelationInList, &maxNumberOfWordsInSentence);
+										currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
+									}
+									else if(currentTagInParse->name == CFF_XML_TAG_features)
+									{
+										//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
+										GIATHparseFeaturesText(&(currentTagInParse->value), currentSentence->firstFeatureInList, &(currentSentence->isQuestion));
+
+										if(isQuery)
+										{
+											if(!(currentSentence->isQuestion))
+											{
+												cout << "error: GIA query is not a question" << endl;
+												exit(0); 
+											}
+										}						
+										//cout << "fini" << endl;
+									}
+
+									currentTagInParse = currentTagInParse->nextTag;
+								}
+
+							}
+
+							Sentence * newSentence = new Sentence();
+							newSentence->previous = currentSentence;						
+							currentSentence->next = newSentence;
+							currentSentence = currentSentence->next;
+
+						}
+						currentTag = currentTag->nextTag;
 					}
 
 				}
-				
-				Sentence * newSentence = new Sentence();
-				Relation * newRelation = new Relation();
-				Feature * newFeature = new Feature();
-				newSentence->previous = currentSentence;				
-				newSentence->firstRelationInList = newRelation;
-				newSentence->firstFeatureInList = newFeature;					
-				currentSentence->next = newSentence;
-				currentSentence = currentSentence->next;
-
+	#ifdef GIA_RELEX_USE_PARAGRAPH_TAG
+				Sentence * newParagraph = new Paragraph();		
+				newParagraph->previous = currentParagraph;
+				newParagraph->next = newParagraph();
+				firstSentenceInList = newParagraph->firstSentenceInList;	
+				currentSentence = firstSentenceInList;				
+				currentParagraph = currentParagraph->next;
 			}
-			currentTag = currentTag->nextTag;
+			currentTag2 = currentTag2->nextTag;
 		}
-
 	}
+	#endif
+	
 	setTranslatorEntityNodesCompleteList(entityNodesCompleteList);
 	setTranslatorPropertyEntityNodesList(propertyEntityNodesList);
 	setTranslatorActionEntityNodesList(actionEntityNodesList);

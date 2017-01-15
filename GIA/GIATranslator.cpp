@@ -2475,7 +2475,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 		{					
 			if(!(currentRelationInList->subjObjRelationAlreadyAdded))
 			{//add independent action if appropriate
-				cout << "subjectObjectName = " << subjectObjectName << endl;
+				//cout << "subjectObjectName = " << subjectObjectName << endl;
 
 				if(passdefinition)
 				//if(currentRelationInList->relationFunction == RELATION_FUNCTION_DEFINITION_1) 
