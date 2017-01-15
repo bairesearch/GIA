@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2h 18-November-2014
+ * Project Version: 2h2i 18-November-2014
  *
  *******************************************************************************/
 -->
@@ -2137,6 +2137,57 @@
 			</function>
 			<!-- #endif -->
 			
+			<!-- #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
+			<!--
+			<function name="collapseRedundantRelationAndMakeNegativeStanford">
+				<example>
+				eg The chicken has not eaten a pie.: neg(eaten-5, not-4)
+				</example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_neg" />
+				<option disableRelation="true" REL="1" />
+				<option disableEntity="true" REL="1" REL_ENT="2" /> // disable "not" entity
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="negative" value="true" REL="1" REL_ENT="1" />
+				</paramDepRel>
+			</function>	
+			-->	
+			<!-- #endif -->
+
+			<!-- Required for NLC -->
+			<function name="redistributeStanfordRelationsDisablePredeterminers">
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_det|_predet" relationArrayTestSize="2" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="2" relationArrayTest="each|every|all" relationArrayTestSize="3" />
+				<option disableRelation="true" REL="1" />
+				<option disableEntity="true" REL="1" REL_ENT="2" /> <!-- disable "each"/"every"/"all" entity -->
+				</paramDepRel>
+			</function>
+			
+			<!-- Required for NLC -->
+			<!-- added 2f13b 14-July-2014 -->
+			<!-- #ifdefGIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES, -->
+			<function name="redistributeStanfordRelationsDisableRedundantLogicalConditions">
+				<example>
+				eg For all baskets in the house and apples in the tree, eat the pie. prep_for(eat[13], basket[3]) + prep_for(eat[13], apple[8]) + conj_and(baskets-3, apples-8) + !conj_and(apples-8, x)	{disable prep_for(eat[13], apple[8])}
+				</example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="3" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="for" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="for" />
+				<option useRelationArrayTest="true" REL="3" REL_ENT="3" relationArrayTest="_conj_and|_conj_or" relationArrayTestSize="2" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
+				
+				<option useRedistributeSpecialCaseNonExistantRelationCheck="true" REL="3" />
+				<option useRelationArrayTest="true" REL="4" REL_ENT="3" relationArrayTest="_conj_and|_conj_or" relationArrayTestSize="2" />
+				<option useRelationIndexTest="true" REL="4" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="2" />
+				<option disableRelation="true" REL="2" />
+				</paramDepRel>
+			</function>
+			<!-- #endif -->
+
 			<!-- #ifdefGIA_FEATURE_POS_TAG_VERB_STATE -->
 			<function name="redistributeStanfordRelationsActionStateSubjectAndCop">
 				<example><!--
@@ -2199,6 +2250,34 @@
 				</paramDepRel>
 			</function>
 			<!-- #endif -->
+			<!-- #ifdefGIA_FEATURE_POS_TAG_VERB_DESCRIPTION -->
+			<function name="redistributeStanfordRelationsActionDescriptionPoss">
+				<example><!--
+				 Tom's movement is couragous. 
+					poss(movement-3, Tom-1) -> nsubj(movement-3, Tom-1)	[where movement-3, POS tag is FEATURE_POS_TAG_VERB_VBDESCRIPTION] 
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_poss" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="stanfordPOStemp" value="VBDESCRIPTION" REL="1" REL_ENT="1" />
+				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityReassignment="_subj" />
+				</paramDepRel>
+			</function>
+			<function name="redistributeStanfordRelationsActionDescriptionPrepBy">
+				<example><!--
+				 The movement by Tom is couragous.
+					prep_by(movement-2, Tom-4) -> nsubj(movement-3, Tom-1)	[where movement-3, POS tag is FEATURE_POS_TAG_VERB_VBDESCRIPTION] 
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="by" />
+				<option expectToFindPrepositionTest="true" REL="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="stanfordPOStemp" value="VBDESCRIPTION" REL="1" REL_ENT="1" />
+				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityReassignment="_subj" />
+				<option disableEntity="true" REL="1" REL_ENT="3" /> <!-- disable "by" entity -->
+				</paramDepRel>
+			</function>
+			<!-- #endif -->
 			
 			<!-- #ifdefGIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START -->
 			<function name="redistributeStanfordRelationsDisableAuxAndCop">
@@ -2233,57 +2312,6 @@
 				<option disableEntity="true" REL="1" REL_ENT="2" /> <!-- disable "not" entity -->
 				</paramDepRel>
 				<!-- #endif -->	
-			</function>
-			<!-- #endif -->
-			<!-- #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
-			<!--
-			<function name="collapseRedundantRelationAndMakeNegativeStanford">
-				<example>
-				eg The chicken has not eaten a pie.: neg(eaten-5, not-4)
-				</example>
-				<paramDepRel mode="redistribute">
-				<option numberOfRelations="1" />
-				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_neg" />
-				<option disableRelation="true" REL="1" />
-				<option disableEntity="true" REL="1" REL_ENT="2" /> // disable "not" entity
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="negative" value="true" REL="1" REL_ENT="1" />
-				</paramDepRel>
-			</function>	
-			-->	
-			<!-- #endif -->
-
-			<!-- Required for NLC -->
-			<function name="redistributeStanfordRelationsDisablePredeterminers">
-				<paramDepRel mode="redistribute">
-				<option numberOfRelations="1" />
-				<option parseDisabledRelation="true" REL="1" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_det|_predet" relationArrayTestSize="2" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="2" relationArrayTest="each|every|all" relationArrayTestSize="3" />
-				<option disableRelation="true" REL="1" />
-				<option disableEntity="true" REL="1" REL_ENT="2" /> <!-- disable "each"/"every"/"all" entity -->
-				</paramDepRel>
-			</function>
-			
-			<!-- Required for NLC -->
-			<!-- added 2f13b 14-July-2014 -->
-			<!-- #ifdefGIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES, -->
-			<function name="redistributeStanfordRelationsDisableRedundantLogicalConditions">
-				<example>
-				eg For all baskets in the house and apples in the tree, eat the pie. prep_for(eat[13], basket[3]) + prep_for(eat[13], apple[8]) + conj_and(baskets-3, apples-8) + !conj_and(apples-8, x)	{disable prep_for(eat[13], apple[8])}
-				</example>
-				<paramDepRel mode="redistribute">
-				<option numberOfRelations="3" />
-				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="for" />
-				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="for" />
-				<option useRelationArrayTest="true" REL="3" REL_ENT="3" relationArrayTest="_conj_and|_conj_or" relationArrayTestSize="2" />
-				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
-				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
-				
-				<option useRedistributeSpecialCaseNonExistantRelationCheck="true" REL="3" />
-				<option useRelationArrayTest="true" REL="4" REL_ENT="3" relationArrayTest="_conj_and|_conj_or" relationArrayTestSize="2" />
-				<option useRelationIndexTest="true" REL="4" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="2" />
-				<option disableRelation="true" REL="2" />
-				</paramDepRel>
 			</function>
 			<!-- #endif -->
 		
