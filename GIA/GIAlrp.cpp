@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3b 14-January-2017
+ * Project Version: 2p3c 14-January-2017
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -63,7 +63,7 @@ bool GIAlrpClass::initialiseLRP(const string newLRPDataFolderName, const bool ne
 	firstTagInVerbListGlobal = new GIALRPtag();
 	if(!this->loadVerbList(verbListFileName, firstTagInVerbListGlobal))
 	{
-		cout << "!loadVerbList (OpenGIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL requires -lrpfolder to be set): verbListFileName = " << verbListFileName << endl;
+		cout << "!loadVerbList (GIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL requires -lrpfolder to be set): verbListFileName = " << verbListFileName << endl;
 		result = false;
 	}
 	else
@@ -77,7 +77,7 @@ bool GIAlrpClass::initialiseLRP(const string newLRPDataFolderName, const bool ne
 	firstTagInIrregularVerbListGlobal = new GIALRPtag();
 	if(!this->loadIrregularVerbList(irregularVerbListFileName, firstTagInIrregularVerbListGlobal))
 	{
-		cout << "!loadIrregularVerbList (OpenGIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE requires -lrpfolder to be set): irregularVerbListFileName = " << irregularVerbListFileName << endl;
+		cout << "!loadIrregularVerbList (GIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE requires -lrpfolder to be set): irregularVerbListFileName = " << irregularVerbListFileName << endl;
 		result = false;
 	}
 	else
@@ -91,7 +91,7 @@ bool GIAlrpClass::initialiseLRP(const string newLRPDataFolderName, const bool ne
 	firstTagInPrepositionsInverseListGlobal = new GIALRPtag();
 	if(!this->loadPrepositionsInverseList(prepositionsInverseListFileName, firstTagInPrepositionsInverseListGlobal))
 	{
-		cout << "!loadPrepositionsInverseList (OpenGIA with GIA_LRP_NORMALISE_PREPOSITIONS requires -lrpfolder to be set): prepositionsInverseListFileName = " << prepositionsInverseListFileName << endl;
+		cout << "!loadPrepositionsInverseList (GIA with GIA_LRP_NORMALISE_PREPOSITIONS requires -lrpfolder to be set): prepositionsInverseListFileName = " << prepositionsInverseListFileName << endl;
 		result = false;
 	}
 	else
@@ -1887,7 +1887,7 @@ bool GIAlrpClass::determineVerbCaseWrapper(const string word, string* baseNameFo
 	#endif
 	if(!verbListLoaded)
 	{
-		cout << "!verbListLoaded (OpenGIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL requires -lrpfolder to be set): verbListFileName = " << verbListFileName << endl;
+		cout << "!verbListLoaded (GIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL requires -lrpfolder to be set): verbListFileName = " << verbListFileName << endl;
 		result = false;
 	}
 	else
@@ -2100,7 +2100,7 @@ bool GIAlrpClass::determineIfWordIsIrregularVerbContinuousCaseWrapper(const stri
 	string irregularVerbListFileName = lrpDataFolderName + GIA_LRP_IRREGULARVERB_DATABASE_FILE_NAME;
 	if(!irregularVerbListLoaded)
 	{
-		cout << "!irregularVerbListLoaded (OpenGIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE requires -lrpfolder to be set): irregularVerbListFileName = " << irregularVerbListFileName << endl;
+		cout << "!irregularVerbListLoaded (GIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE requires -lrpfolder to be set): irregularVerbListFileName = " << irregularVerbListFileName << endl;
 		result = false;
 	}
 	else
