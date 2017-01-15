@@ -34,6 +34,10 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		
 		GIAEntityNode* currentQueryEntityNode = *entityIterQuery;
 		
+		#ifdef GIA_QUERY_DEBUG
+		cout << "currentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
+		#endif
+		
 		bool foundQueryEntityNodeName = false;
 		long queryEntityNodeIndex = -1;
 		string queryEntityNodeName = currentQueryEntityNode->entityName;
@@ -41,10 +45,6 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		
 		if(foundQueryEntityNodeName)
 		{
-			#ifdef GIA_QUERY_DEBUG
-			cout << "currentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
-			#endif
-				
 			//now start matching structure search for all properties of the identical concept node (to current query entity name) in Semantic Network
 			
 			int numberOfMatchedNodes = 0;	
@@ -128,136 +128,6 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	#endif
 	return queryAnswerNode;
 				
-}
-
-
-
-
-
-GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode * comparisonVariableNode,  bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters, bool isSuitableNodeTypeForInexactAnswer, bool isCondition, GIAEntityNode** queryAnswerPreviousNode, GIAEntityNode* sourceEntityNode, bool sourceIsConditionAndHasComparisonVariableAttached, string * queryAnswerContext, string sourceContext)
-{
-	if(!(entityNode->testedForQueryComparison))
-	{
-		
-		cout << "\tqueryEntityNode = " << queryEntityNode->entityName << endl;
-		cout << "\tentityNode = " << entityNode->entityName << endl;
-			
-		/*	
-		#ifdef GIA_QUERY_USE_EXTRA_LONG_CONTEXT_TRACE
-		generateTexualContextBackwards(queryAnswerContext, sourceContext, entityNode);	
-		#endif
-		*/
-		
-		cout << "*queryAnswerContext = " << *queryAnswerContext << endl;
-		
-
-		bool foundMatch = false;
-		if(sourceIsConditionAndHasComparisonVariableAttached)
-		{
-			if(detectComparisonVariable)
-			{//assumed true
-
-				if(!(*foundAnswer))
-				{//do not overwrite match, if already found match 
-
-					//cout << "queryEntityNode->entityName = " << queryEntityNode->entityName << endl;
-					//cout << "entityNode->entityName = " << entityNode->entityName << endl;			
-					//this case is required in the case an answer is connected to a condition property or a condition definition (both new additions to the algorithm)
-					foundMatch = true;
-				}
-			}	
-		}
-		else
-		{
-			if((queryEntityNode->entityName == entityNode->entityName) || isCondition)	//allow non-equal conditions to be matched during network comparison
-			{
-				if(detectComparisonVariable && comparisonVariableNode->hasQuantity && queryEntityNode->hasQuantity && entityNode->hasQuantity)
-				{//exact match found [NB if a quantity, the queryEntityNode's entityName will not have the comparisonVariable name (_$qVar) specified, and therefore a matched entity node entityName is required]
-					foundMatch = true;
-					#ifdef GIA_QUERY_DEBUG
-					cout << "entityNode->quantityNumber = " << entityNode->quantityNumber << endl;
-					#endif
-				}
-				else
-				{
-					if(isSuitableNodeTypeForInexactAnswer)
-					{
-						if(findBestInexactAnswerAndSetDrawParameters)
-						{
-							foundMatch = true;
-							#ifdef GIA_QUERY_DEBUG
-							cout << "foundBestInexactAnswerAndSetDrawParameters:" << entityNode->entityName << endl;
-							#endif
-							//set queryAnswerNode if entityNode is an object;
-							/*eg;
-							Which house does did Jane buy?
-							Which house is that?
-							What day is it?
-							What house did Jane buy?
-							*/
-
-						}			
-					}
-				}
-			}
-			else if(detectComparisonVariable)
-			{
-				if(queryEntityNode->entityName == comparisonVariableNode->entityName)
-				{//exact match found
-					foundMatch = true;
-				}
-			}
-		}
-				
-		if(foundMatch)
-		{
-			//OLD: if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters))
-
-			*queryAnswerPreviousNode = sourceEntityNode;
-			#ifndef GIA_QUERY_USE_LONG_CONTEXT_TRACE
-			generateTexualContextWithPreviousNodeForwards(queryAnswerContext, sourceContext, entityNode, *queryAnswerPreviousNode);	//*queryAnswerContext = sourceContext;
-			#endif
-
-			entityNode->isAnswerToQuery = true;
-			*foundAnswer = true; 
-			queryAnswerNode = entityNode;
-			#ifdef GIA_QUERY_DEBUG
-			cout << "foundAnswer:" << entityNode->entityName << endl;
-			#endif
-			//CHECKTHIS; need to take into account vector of answers (not just a single answer)
-
-			if(findBestInexactAnswerAndSetDrawParameters)
-			{
-				entityNode->isAnswerContextToQuery = true;			 
-			}
-			else
-			{
-				entityNode->testedForQueryComparison = true;		//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]				
-			}	
-
-		}
-		
-		string queryAnswerContextTemp = "";
-		queryAnswerNode = testEntityNodeForQuery(queryEntityNode, entityNode, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, queryAnswerPreviousNode, &queryAnswerContextTemp);
-
-		#ifdef GIA_QUERY_USE_LONG_CONTEXT_TRACE
-		if(*foundAnswer)
-		{
-			*queryAnswerContext = *queryAnswerContext + queryAnswerContextTemp;
-			generateTexualContextBackwards(queryAnswerContext, sourceContext, entityNode);
-			/*
-			#ifndef GIA_QUERY_USE_EXTRA_LONG_CONTEXT_TRACE
-			generateTexualContextBackwards(queryAnswerContext, sourceContext, entityNode);
-			#endif
-			*/
-		}	
-		#endif
-
-	}
-	
-	return queryAnswerNode;
-	
-	
 }
 
 
@@ -766,6 +636,132 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 }
 
 
+
+GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode * comparisonVariableNode,  bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters, bool isSuitableNodeTypeForInexactAnswer, bool isCondition, GIAEntityNode** queryAnswerPreviousNode, GIAEntityNode* sourceEntityNode, bool sourceIsConditionAndHasComparisonVariableAttached, string * queryAnswerContext, string sourceContext)
+{
+	if(!(entityNode->testedForQueryComparison))
+	{
+		
+		cout << "\tqueryEntityNode = " << queryEntityNode->entityName << endl;
+		cout << "\tentityNode = " << entityNode->entityName << endl;
+			
+		/*	
+		#ifdef GIA_QUERY_USE_EXTRA_LONG_CONTEXT_TRACE
+		generateTexualContextBackwards(queryAnswerContext, sourceContext, entityNode);	
+		#endif
+		*/
+		
+		cout << "*queryAnswerContext = " << *queryAnswerContext << endl;
+		
+
+		bool foundMatch = false;
+		if(sourceIsConditionAndHasComparisonVariableAttached)
+		{
+			if(detectComparisonVariable)
+			{//assumed true
+
+				if(!(*foundAnswer))
+				{//do not overwrite match, if already found match 
+
+					//cout << "queryEntityNode->entityName = " << queryEntityNode->entityName << endl;
+					//cout << "entityNode->entityName = " << entityNode->entityName << endl;			
+					//this case is required in the case an answer is connected to a condition property or a condition definition (both new additions to the algorithm)
+					foundMatch = true;
+				}
+			}	
+		}
+		else
+		{
+			if((queryEntityNode->entityName == entityNode->entityName) || isCondition)	//allow non-equal conditions to be matched during network comparison
+			{
+				if(detectComparisonVariable && comparisonVariableNode->hasQuantity && queryEntityNode->hasQuantity && entityNode->hasQuantity)
+				{//exact match found [NB if a quantity, the queryEntityNode's entityName will not have the comparisonVariable name (_$qVar) specified, and therefore a matched entity node entityName is required]
+					foundMatch = true;
+					#ifdef GIA_QUERY_DEBUG
+					cout << "entityNode->quantityNumber = " << entityNode->quantityNumber << endl;
+					#endif
+				}
+				else
+				{
+					if(isSuitableNodeTypeForInexactAnswer)
+					{
+						if(findBestInexactAnswerAndSetDrawParameters)
+						{
+							foundMatch = true;
+							#ifdef GIA_QUERY_DEBUG
+							cout << "foundBestInexactAnswerAndSetDrawParameters:" << entityNode->entityName << endl;
+							#endif
+							//set queryAnswerNode if entityNode is an object;
+							/*eg;
+							Which house does did Jane buy?
+							Which house is that?
+							What day is it?
+							What house did Jane buy?
+							*/
+
+						}			
+					}
+				}
+			}
+			else if(detectComparisonVariable)
+			{
+				if(queryEntityNode->entityName == comparisonVariableNode->entityName)
+				{//exact match found
+					foundMatch = true;
+				}
+			}
+		}
+				
+		if(foundMatch)
+		{
+			//OLD: if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters))
+
+			*queryAnswerPreviousNode = sourceEntityNode;
+			#ifndef GIA_QUERY_USE_LONG_CONTEXT_TRACE
+			generateTexualContextWithPreviousNodeForwards(queryAnswerContext, sourceContext, entityNode, *queryAnswerPreviousNode);	//*queryAnswerContext = sourceContext;
+			#endif
+
+			entityNode->isAnswerToQuery = true;
+			*foundAnswer = true; 
+			queryAnswerNode = entityNode;
+			#ifdef GIA_QUERY_DEBUG
+			cout << "foundAnswer:" << entityNode->entityName << endl;
+			#endif
+			//CHECKTHIS; need to take into account vector of answers (not just a single answer)
+
+			if(findBestInexactAnswerAndSetDrawParameters)
+			{
+				entityNode->isAnswerContextToQuery = true;			 
+			}
+			else
+			{
+				entityNode->testedForQueryComparison = true;		//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]				
+			}	
+
+		}
+		
+		string queryAnswerContextTemp = "";
+		queryAnswerNode = testEntityNodeForQuery(queryEntityNode, entityNode, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, queryAnswerPreviousNode, &queryAnswerContextTemp);
+
+		#ifdef GIA_QUERY_USE_LONG_CONTEXT_TRACE
+		if(*foundAnswer)
+		{
+			*queryAnswerContext = *queryAnswerContext + queryAnswerContextTemp;
+			generateTexualContextBackwards(queryAnswerContext, sourceContext, entityNode);
+			/*
+			#ifndef GIA_QUERY_USE_EXTRA_LONG_CONTEXT_TRACE
+			generateTexualContextBackwards(queryAnswerContext, sourceContext, entityNode);
+			#endif
+			*/
+		}	
+		#endif
+
+	}
+	
+	return queryAnswerNode;
+	
+	
+}
 
 void generateTexualContextWithPreviousNodeForwards(string * queryAnswerContext, string sourceContext, GIAEntityNode* entityNode, GIAEntityNode* entityNodePrevious)
 {

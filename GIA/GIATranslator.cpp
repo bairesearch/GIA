@@ -2236,6 +2236,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 							//cout << "subjectEntityTemp->entityName = " << subjectEntityTemp->entityName << endl;	
 							//cout << "objectEntityTemp->entityName = " << objectEntityTemp->entityName << endl;
 							
+							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C
 							//find out if the subject is connected to an _advmod, if so create a dummy entity as the subject, and assign the subject as a condition [instead of forming default subject-action-object relationship]
 							bool subjectIsConnectedToAnAdvMod = false;
 							Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
@@ -2349,6 +2350,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								}
 								currentRelationInList3 = currentRelationInList3->next;
 							}	
+							#endif
 
 							#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
 							if(!subjectIsConnectedToAnAdvMod)
@@ -2440,6 +2442,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								}
 							}
 							
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C
 							#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
 							if(!partnerTypeObjectSpecial2ConditionFound || subjectIsConnectedToAnAdvMod)
 							{
@@ -2447,9 +2450,14 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 							}
 							#else
 							foundPartner = true;	
-							#endif
+							#endif							
+						#else
+							foundPartner = true;	
+						#endif
+
 
 						}
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A
 						else
 						{//do not find matching object-subject relationship [search for intermediary {ie redundant} relations, and if so create a condition link between subject and object] 
 
@@ -2469,32 +2477,41 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											{
 												//cout << "b" << endl;
 												if(currentRelationInList3->relationArgument == subjectObjectFunctionEntityArray[OBJECT_INDEX]->entityName)
-												{		
-													//cout << "c" << endl;
-													/* 
-													Eg;	What are the patent claims on?								
-													_obj(on[6], _$qVar[1])
-													_advmod(be[2], on[6])
-													_subj(be[2], claim[5])
-													and/or;
-													_obj(on[6], _$qVar[1])
-													on(be[2], on[6])
-													_subj(be[2], claim[5])													
-													*/
+												{	
+													if(firstIndex == OBJECT_INDEX)
+													{//do not duplicate
+														//cout << "c" << endl;
+														/* 
+														Eg;	What are the patent claims on?								
+														_obj(on[6], _$qVar[1])
+														_advmod(be[2], on[6])
+														_subj(be[2], claim[5])
+														and/or;
+														_obj(on[6], _$qVar[1])
+														on(be[2], on[6])
+														_subj(be[2], claim[5])													
+														*/
 
-													//create a condition link between the object and subject, based upon RELATION_FUNCTION_DEFINITION_1
+														//create a condition link between the object and subject, based upon RELATION_FUNCTION_DEFINITION_1
 
-													GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;
-													GIAEntityNode * specialConditionNode = objectEntityTemp;
-													//cout << "subjectEntityOrProperty->entityName = " << subjectEntityOrProperty->entityName << endl;
-													//cout << "specialConditionNode->entityName = " << specialConditionNode->entityName << endl;
+														GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;
+														GIAEntityNode * specialConditionNode = objectEntityTemp;
 
-													//should really take into account the boolean and of both values: bool relationNegative = GIAEntityNodeArray[currentRelationInList3->relationFunctionIndex]->negative & GIAEntityNodeArray[currentRelationInList3->relationArgumentIndex]->negative;
 
-													GIAEntityNode * conditionTypeConceptEntity = GIAEntityNodeArray[currentRelationInList3->relationArgumentIndex];
-													addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity);														
+														//should really take into account the boolean and of both values: bool relationNegative = GIAEntityNodeArray[currentRelationInList3->relationFunctionIndex]->negative & GIAEntityNodeArray[currentRelationInList3->relationArgumentIndex]->negative;
 
-													foundPartner = true;
+														GIAEntityNode * conditionTypeConceptEntity = GIAEntityNodeArray[currentRelationInList3->relationArgumentIndex];
+
+														/*
+														cout << "subjectEntityOrProperty->entityName = " << subjectEntityOrProperty->entityName << endl;
+														cout << "specialConditionNode->entityName = " << specialConditionNode->entityName << endl;
+														cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl;
+														*/
+														
+														addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity);														
+
+														foundPartner = true;
+													}
 												}
 											}
 										}
@@ -2505,6 +2522,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								}
 							}
 						}
+						#endif
 					}
 					currentRelationInList2 = currentRelationInList2->next;
 				}
@@ -2529,6 +2547,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 						if(firstIndex == SUBJECT_INDEX)
 						{//fired by joe..???? [is there a possible example of this?]
 
+							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B
 							//find out if the subject is connected to an _advmod, if so assign it as an action condition instead of a subject+action
 							bool subjectIsConnectedToAnAdvMod = false;
 							Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
@@ -2564,11 +2583,14 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 							if(!subjectIsConnectedToAnAdvMod)
 							{
+							#endif
 								//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 								GIAEntityNode * subjectEntityTemp = subjectObjectEntityArray[SUBJECT_INDEX];
 
 								addActionToSubject(subjectEntityTemp, actionEntity);	
-							}					
+							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B	
+							}
+							#endif					
 						}
 						else if(firstIndex == OBJECT_INDEX)
 						{//eg the bow was fired
@@ -2695,10 +2717,17 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, GIAEntityN
 		int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
 		string relationType = currentRelationInList->relationType;
 		GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[relationFunctionIndex];				
-		GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[relationArgumentIndex];	
-
-		createConditionBasedUponPreposition(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType, false, conceptEntityNodesList, conceptEntityNamesList);
-
+		GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
+		
+		#ifdef GIA_IGNORE_MEANINGLESS_RELATIONS
+		if(GIAEntityNodeArray[relationArgumentIndex]->entityName != relationType)
+		{//to prevent meaningless relex relations; eg "on(be[2], on[6])"
+		#endif
+			createConditionBasedUponPreposition(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType, false, conceptEntityNodesList, conceptEntityNamesList);
+		#ifdef GIA_IGNORE_MEANINGLESS_RELATIONS
+		}	
+		#endif
+		
 		currentRelationInList = currentRelationInList->next;
 	}
 }
