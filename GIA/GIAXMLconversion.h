@@ -28,7 +28,8 @@ using namespace std;
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
-//#define GIA_SEMANTIC_NET_XML_DEBUG
+#define GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
+#define GIA_SEMANTIC_NET_XML_DEBUG
 
 #define GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
 #define GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
@@ -133,6 +134,7 @@ using namespace std;
 
 
 /*time condition node*/
+#define NET_XML_ATTRIBUTE_conditionName ((string)"conditionName")
 #define NET_XML_ATTRIBUTE_tense ((string)"tense")
 #define NET_XML_ATTRIBUTE_second ((string)"second")
 #define NET_XML_ATTRIBUTE_hour ((string)"hour")
@@ -156,6 +158,9 @@ bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAEntityNode*> *entityN
 	bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<GIAEntityNode*> *entityNodesCompleteList, string entityContainerTagName, long * currentEntityNodeIDInConceptEntityNodesList);
 		XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNode * currentEntity, long currentEntityNodeIDInConceptEntityNodesList);
 			bool generateXMLConditionTimeNodeTagList(XMLParserTag * firstTagInConditionTimeNode, GIATimeConditionNode * conditionTimeNode);
+	#ifdef GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
+	void resetIDsForNodeList(vector<GIAEntityNode*> *entityNodesList, long * currentEntityNodeIDInConceptEntityNodesList);
+	#endif
 	
 bool readSemanticNetXMLFile(string xmlFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<string> * conceptEntityNamesList);
 	bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<string> * conceptEntityNamesList, bool linkConnections);
