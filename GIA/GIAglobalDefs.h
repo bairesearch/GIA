@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9a 26-October-2016
+ * Project Version: 2o9b 26-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -725,7 +725,7 @@
 #include "SHAREDglobalDefs.h"
 
 #ifdef USE_NLC
-	//#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
+	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 #endif
 //#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER	//disabled for OpenGIA (OLD: GIA_USE_CORPUS_DATABASE)
 
@@ -752,12 +752,14 @@
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC			
 		#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO	//2o6a
 	#endif
-	#define GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES	//2m2a
+	#define GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES	//2o2a
 	#ifdef GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES
 		//#define GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES_SUPPORT_QUERY_PLURAL_TO_QUANTITY_MATCH	//added 2o5a, removed 2o7a
 	#endif
 	#ifdef USE_NLC
-		//#define GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ACCEPT_PROPERNOUNS_ISOLATE	//2m5b, disabled 2m5c
+		#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
+			#define GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ACCEPT_PROPERNOUNS_ISOLATE	//2o5b, disabled 2o5c, reenabled 2o9b (assumes that the application built on GIA, eg NLC, can handle their referencing independently)
+		#endif
 	#endif
 #endif
 #ifndef GIA_DISABLE_2n_CODE_FOR_DEBUG
