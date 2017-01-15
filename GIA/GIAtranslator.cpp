@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f19b 23-July-2014
+ * Project Version: 2f19c 23-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1343,13 +1343,13 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 				{
 					//do not overwrite sentence index of source
 					GIAentityNodeArray[w]->entityIndexTemp = w;
-					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes() error: GIAentityNodeArray[" << w << "] entityIndexTemp undefined, is this an artificial entity?" << endl;
+					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes() warning: GIAentityNodeArray[" << w << "] entityIndexTemp undefined, is this an artificial entity?" << endl;
 				}
 				if(GIAentityNodeArray[w]->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
 				{
 					//do not overwrite sentence index of source
 					GIAentityNodeArray[w]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
-					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes() error: GIAentityNodeArray[" << w << "] sentenceIndexTemp undefined, is this an artificial entity?" << endl;
+					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes() warning: GIAentityNodeArray[" << w << "] sentenceIndexTemp undefined, is this an artificial entity?" << endl;
 				}
 			}
 			#else
