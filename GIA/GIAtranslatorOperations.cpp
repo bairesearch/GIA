@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2a 12-December-2016
+ * Project Version: 2p2b 12-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -46,7 +46,7 @@
 #endif
 
 #ifdef GIA_NLC_INTEGRATION
-NLCsentence* firstNLCsentenceInListLocal;
+NLCsentence* firstNLCsentenceInListLocalGIA;
 #endif
 
 static long currentEntityNodeIDinCompleteList;				//For GIA XML generation only
@@ -2110,23 +2110,23 @@ GIAentityNode* getPrimaryNetworkIndexNodeDefiningInstance(GIAentityNode* instanc
 	return primaryNetworkIndexNodeDefiningInstance;
 }
 
-
 #ifdef GIA_NLC_INTEGRATION
-NLCsentence* getFirstNLCsentenceInList()
+NLCsentence* getFirstNLCsentenceInListGIA()
 {
-	return firstNLCsentenceInListLocal;
+	return firstNLCsentenceInListLocalGIA;
 }
-void setFirstNLCsentenceInList(NLCsentence* firstNLCsentenceInListNew)
+void setFirstNLCsentenceInListGIA(NLCsentence* firstNLCsentenceInListNew)
 {
-	firstNLCsentenceInListLocal = firstNLCsentenceInListNew;
+	firstNLCsentenceInListLocalGIA = firstNLCsentenceInListNew;
 }
-bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNode* indefiniteEntity, GIAentityNode* definiteEntity, int* indentationDifferenceFound)
+#ifdef GIA_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContextGIA(GIAentityNode* indefiniteEntity, GIAentityNode* definiteEntity, int* indentationDifferenceFound)
 {
 	bool foundIndefiniteEntity = false;
 
 	if(indefiniteEntity->sentenceIndexTemp < definiteEntity->sentenceIndexTemp)
 	{
-		NLCsentence* currentNLCsentenceInList = firstNLCsentenceInListLocal;
+		NLCsentence* currentNLCsentenceInList = getFirstNLCsentenceInListGIA();
 		bool foundIndefiniteEntitySentence = false;
 		while((currentNLCsentenceInList->next != NULL) && !foundIndefiniteEntitySentence)
 		{
@@ -2173,13 +2173,13 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 				if(minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence < indefiniteEntityNLCsentenceInList->indentation)
 				{
 				       #ifdef GIA_DEBUG
-				       //cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{}: no reference found" << endl;
+				       //cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContextGIA{}: no reference found" << endl;
 				       #endif
 				}
 				else
 				{
 				       #ifdef GIA_DEBUG
-				       //cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{}: entity declared in this function" << endl;
+				       //cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContextGIA{}: entity declared in this function" << endl;
 				       #endif
 				       foundIndefiniteEntity = true;
 				       *indentationDifferenceFound = definiteEntityNLCsentenceInList->indentation - indefiniteEntityNLCsentenceInList->indentation;
@@ -2188,25 +2188,26 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 			else
 			{
 			       #ifdef GIA_DEBUG
-			       //cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{} error: !foundDefiniteEntitySentence" << endl;
+			       //cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContextGIA{} error: !foundDefiniteEntitySentence" << endl;
 			       #endif
 			}
 		}
 		else
 		{
 			#ifdef GIA_DEBUG
-			//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{} error: !foundIndefiniteEntitySentence" << endl;
+			//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContextGIA{} error: !foundIndefiniteEntitySentence" << endl;
 			#endif
 		}
 	}
 
 	return foundIndefiniteEntity;
 }
+#endif
 #ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 bool checkIfSentenceIsMathTextParsablePhrase(GIAsentence* currentSentenceInList)
 {
 	bool sentenceIsMathTextParsablePhrase = false;
-	NLCsentence* currentNLCsentenceInList = firstNLCsentenceInListLocal;
+	NLCsentence* currentNLCsentenceInList = getFirstNLCsentenceInListGIA();
 	while(currentNLCsentenceInList->next != NULL)
 	{
 		if(currentNLCsentenceInList->sentenceIndex == currentSentenceInList->sentenceIndex)
