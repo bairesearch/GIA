@@ -23,7 +23,7 @@
  * File Name: GIAmain.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s5a 28-June-2013
+ * Project Version: 1s6a 28-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -55,8 +55,120 @@ using namespace std;
 
 
 
+#ifndef USE_NLP
 int main(int argc,char **argv);
+#endif
 
+bool executeGIA(
+
+	int NLPfeatureParser,
+	int NLPdependencyRelationsParser,
+	bool NLPrelexCompatibilityMode,
+	bool NLPassumePreCollapsedStanfordRelations,
+
+	int queryNLPfeatureParser,
+	int queryNLPdependencyRelationsParser,
+	bool queryNLPrelexCompatibilityMode	,
+	bool queryNLPassumePreCollapsedStanfordRelations,
+
+	string NLPexeFolderArray[],
+
+	bool useInputTextPlainTXTFile,
+	string inputTextPlainTXTfileName,
+
+#ifdef USE_CE
+	bool useInputTextCodeextensionsTXTFileName,
+	string inputTextCodeextensionsTXTFileName,
+#endif
+
+	bool useInputTextNLPrelationXMLFile,
+	string inputTextNLPrelationXMLfileName,
+	bool useInputTextNLPfeatureXMLFile,
+	string inputTextNLPfeatureXMLfileName,
+	bool useOutputTextCFFFile,
+	string outputTextCFFFileName,
+	bool useInputTextXMLFile,
+	string inputTextXMLFileName,
+	bool useOutputTextXMLFile,
+	string outputTextXMLFileName,
+	bool useOutputTextCXLFile,
+	string outputTextCXLFileName,
+	bool useOutputTextLDRFile,
+	string outputTextLDRFileName,
+	bool useOutputTextPPMFile,
+	string outputTextPPMFileName,
+	bool useOutputTextSVGFile,
+	string outputTextSVGFileName,
+	bool useInputQueryPlainTXTFile,
+	string inputQueryPlainTXTFileName,
+	bool useInputQueryNLPrelationXMLFile,
+	string inputQueryNLPrelationXMLFileName,
+	bool useInputQueryNLPfeatureXMLFile,
+	string inputQueryNLPfeatureXMLFileName,
+	bool useOutputQueryCFFFile,
+	string outputQueryCFFFileName,
+	bool useInputQueryXMLFile,
+	string inputQueryXMLFileName,
+	bool useOutputQueryXMLFile,
+	string outputQueryXMLFileName,
+	bool useOutputQueryCXLFile,
+	string outputQueryCXLFileName,
+	bool useOutputQueryLDRFile,
+	string outputQueryLDRFileName,
+	bool useOutputQueryPPMFile,
+	string outputQueryPPMFileName,
+	bool useOutputQuerySVGFile,
+	string outputQuerySVGFileName,
+	bool useOutputTextAllFile,
+	string outputTextAllFileName,
+	bool useOutputTextAnswerPlainTXTFile,
+	string outputTextAnswerPlainTXTFileName,
+
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
+	bool inputFileList,
+#endif	
+	bool printOutput,
+	bool printOutputQuery,
+	bool displayInOpenGLAndOutputScreenshot,
+
+	int rasterImageWidth,
+	int rasterImageHeight,
+
+	bool useInputQuery,
+
+#ifdef GIA_USE_DATABASE
+	bool readFromDatabase,
+	bool writeToDatabase,
+	bool useDatabase,
+	string databaseFolderName,
+#endif
+
+#ifdef GIA_USE_LRP
+	bool useLRP,
+	bool useOutputLRPTextPlainTXTFile,
+	string outputLRPTextPlainTXTFileName,
+	bool useOutputLRPTextForNLPonlyPlainTXTFile,
+	string outputLRPTextForNLPonlyPlainTXTFileName,
+	bool useOutputQueryLRPTextPlainTXTFile,
+	string outputQueryLRPTextPlainTXTFileName,
+	bool useOutputQueryLRPTextForNLPonlyPlainTXTFile,
+	string outputQueryLRPTextForNLPonlyPlainTXTFileName,
+	string lrpDataFolderName,
+#endif
+
+#ifdef USE_WORDNET
+	int synonymnDetectionStatus,
+#endif
+
+	vector<GIAentityNode*> * entityNodesActiveListComplete,
+	unordered_map<string, GIAentityNode*> * entityNodesActiveListConcepts,
+	vector<GIAentityNode*> * entityNodesActiveListSubstances,
+	vector<GIAentityNode*> * entityNodesActiveListActions,
+	vector<GIAentityNode*> * entityNodesActiveListConditions,
+	unordered_map<long, GIAtimeConditionNode*> * timeConditionNodesActiveList
+	
+	);
+	
 #ifdef USE_CE
 bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, string outputCFFfileName, string NLPexeFolderArray[], vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, CECodeextension * firstCodeextensionInHeirachy, vector<CECodeextension*> * codeextensionsList, bool useCodeextensionsHeirachy);
 #else

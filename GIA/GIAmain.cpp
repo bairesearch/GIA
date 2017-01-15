@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s5a 28-June-2013
+ * Project Version: 1s6a 28-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -115,6 +115,9 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 #ifdef USE_WORDNET
 "\n\t-syndet                            : wordnet synonymn detection (0 - off, 1 - during queries only, 2 - during referencing and queries [def])"
 #endif
+#ifdef GIA_USE_
+
+#endif
 "\n"
 "\n\t-workingfolder [string]            : working directory name for input files (def: same as exe)"
 "\n\t-nlprelexfolder [string]           : directory name for Relex (def: same as exe)"
@@ -133,12 +136,9 @@ static int dependencyRelationsTypes[GIA_NLP_PARSER_NUMBER_OF_TYPES] = {GIA_NLP_D
 int maxNumberSentences;
 #endif
 
+#ifndef USE_NLP
 int main(int argc,char **argv)
 {
-	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-	maxNumberSentences = 0;
-	#endif
-	
 	#ifdef GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
 	initialiseWordNet();
 	string wordExample = "like";
@@ -156,7 +156,7 @@ int main(int argc,char **argv)
 	time(&now);
 	current = localtime(&now);
 	char timeAndDateString[100];
-	sprintf(timeAndDateString, "%i:%i:%i %.2i/%.2i/%i", current->tm_hour, current->tm_min, current->tm_sec, current->tm_mday, (current->tm_mon+1), (current->tm_year + GIA_TM_STRUCT_YEAR_OFFSET));
+	sprintf(timeAndDateString, "%i:%i:%i %.2i/%.2i/%i", current->tm_hour, current->tm_min, current->tm_sec, current->tm_mday, (current->tm_mon+1), (current->tm_year + TM_STRUCT_YEAR_OFFSET));
 	cout << "GIA execution time: " << timeAndDateString << " (start)" << endl;
 
 	bool result = true;
@@ -638,7 +638,7 @@ int main(int argc,char **argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1s5a 28-June-2013" << endl;
+			cout << "OpenGIA.exe - Project Version: 1s6a 28-June-2013" << endl;
 			exit(1);
 		}
 
@@ -650,6 +650,248 @@ int main(int argc,char **argv)
 		printf(errmessage);
 		exit(1);
 	}
+
+	vector<GIAentityNode*> * entityNodesActiveListComplete = new vector<GIAentityNode*>;
+	unordered_map<string, GIAentityNode*> * entityNodesActiveListConcepts = new unordered_map<string, GIAentityNode*>;
+	vector<GIAentityNode*> * entityNodesActiveListSubstances = new vector<GIAentityNode*>;
+	vector<GIAentityNode*> * entityNodesActiveListActions = new vector<GIAentityNode*>;
+	vector<GIAentityNode*> * entityNodesActiveListConditions = new vector<GIAentityNode*>;
+	unordered_map<long, GIAtimeConditionNode*> * timeConditionNodesActiveList = new unordered_map<long, GIAtimeConditionNode*>;
+			
+	executeGIA(
+
+		NLPfeatureParser,
+		NLPdependencyRelationsParser,
+		NLPrelexCompatibilityMode,
+		NLPassumePreCollapsedStanfordRelations,
+
+		queryNLPfeatureParser,
+		queryNLPdependencyRelationsParser,
+		queryNLPrelexCompatibilityMode     ,
+		queryNLPassumePreCollapsedStanfordRelations,
+
+		NLPexeFolderArray,
+
+		useInputTextPlainTXTFile,
+		inputTextPlainTXTfileName,
+
+	#ifdef USE_CE
+		useInputTextCodeextensionsTXTFileName,
+		inputTextCodeextensionsTXTFileName,
+	#endif
+
+		useInputTextNLPrelationXMLFile,
+		inputTextNLPrelationXMLfileName,
+		useInputTextNLPfeatureXMLFile,
+		inputTextNLPfeatureXMLfileName,
+		useOutputTextCFFFile,
+		outputTextCFFFileName,
+		useInputTextXMLFile,
+		inputTextXMLFileName,
+		useOutputTextXMLFile,
+		outputTextXMLFileName,
+		useOutputTextCXLFile,
+		outputTextCXLFileName,
+		useOutputTextLDRFile,
+		outputTextLDRFileName,
+		useOutputTextPPMFile,
+		outputTextPPMFileName,
+		useOutputTextSVGFile,
+		outputTextSVGFileName,
+		useInputQueryPlainTXTFile,
+		inputQueryPlainTXTFileName,
+		useInputQueryNLPrelationXMLFile,
+		inputQueryNLPrelationXMLFileName,
+		useInputQueryNLPfeatureXMLFile,
+		inputQueryNLPfeatureXMLFileName,
+		useOutputQueryCFFFile,
+		outputQueryCFFFileName,
+		useInputQueryXMLFile,
+		inputQueryXMLFileName,
+		useOutputQueryXMLFile,
+		outputQueryXMLFileName,
+		useOutputQueryCXLFile,
+		outputQueryCXLFileName,
+		useOutputQueryLDRFile,
+		outputQueryLDRFileName,
+		useOutputQueryPPMFile,
+		outputQueryPPMFileName,
+		useOutputQuerySVGFile,
+		outputQuerySVGFileName,
+		useOutputTextAllFile,
+		outputTextAllFileName,
+		useOutputTextAnswerPlainTXTFile,
+		outputTextAnswerPlainTXTFileName,
+
+	#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
+		inputFileList,
+	#endif	
+		printOutput,
+		printOutputQuery,
+		displayInOpenGLAndOutputScreenshot,
+
+		rasterImageWidth,
+		rasterImageHeight,
+
+		useInputQuery,
+
+	#ifdef GIA_USE_DATABASE
+		readFromDatabase,
+		writeToDatabase,
+		useDatabase,
+		databaseFolderName,
+	#endif
+
+	#ifdef GIA_USE_LRP
+		useLRP,
+		useOutputLRPTextPlainTXTFile,
+		outputLRPTextPlainTXTFileName,
+		useOutputLRPTextForNLPonlyPlainTXTFile,
+		outputLRPTextForNLPonlyPlainTXTFileName,
+		useOutputQueryLRPTextPlainTXTFile,
+		outputQueryLRPTextPlainTXTFileName,
+		useOutputQueryLRPTextForNLPonlyPlainTXTFile,
+		outputQueryLRPTextForNLPonlyPlainTXTFileName,
+		lrpDataFolderName,
+	#endif
+
+	#ifdef USE_WORDNET
+		synonymnDetectionStatus,
+	#endif
+		
+		entityNodesActiveListComplete,
+		entityNodesActiveListConcepts, 
+		entityNodesActiveListSubstances, 
+		entityNodesActiveListActions, 
+		entityNodesActiveListConditions, 
+		timeConditionNodesActiveList
+	);
+	
+	//print execution time (end)
+	time(&now);
+	current = localtime(&now);
+	sprintf(timeAndDateString, "%i:%i:%i %.2i/%.2i/%i", current->tm_hour, current->tm_min, current->tm_sec, current->tm_mday, (current->tm_mon+1), (current->tm_year + TM_STRUCT_YEAR_OFFSET));
+	cout << "GIA execution time: " << timeAndDateString << " (finish)" << endl;	
+}	
+#endif
+
+
+bool executeGIA(
+
+	int NLPfeatureParser,
+	int NLPdependencyRelationsParser,
+	bool NLPrelexCompatibilityMode,
+	bool NLPassumePreCollapsedStanfordRelations,
+
+	int queryNLPfeatureParser,
+	int queryNLPdependencyRelationsParser,
+	bool queryNLPrelexCompatibilityMode	,
+	bool queryNLPassumePreCollapsedStanfordRelations,
+
+	string NLPexeFolderArray[],
+
+	bool useInputTextPlainTXTFile,
+	string inputTextPlainTXTfileName,
+
+#ifdef USE_CE
+	bool useInputTextCodeextensionsTXTFileName,
+	string inputTextCodeextensionsTXTFileName,
+#endif
+
+	bool useInputTextNLPrelationXMLFile,
+	string inputTextNLPrelationXMLfileName,
+	bool useInputTextNLPfeatureXMLFile,
+	string inputTextNLPfeatureXMLfileName,
+	bool useOutputTextCFFFile,
+	string outputTextCFFFileName,
+	bool useInputTextXMLFile,
+	string inputTextXMLFileName,
+	bool useOutputTextXMLFile,
+	string outputTextXMLFileName,
+	bool useOutputTextCXLFile,
+	string outputTextCXLFileName,
+	bool useOutputTextLDRFile,
+	string outputTextLDRFileName,
+	bool useOutputTextPPMFile,
+	string outputTextPPMFileName,
+	bool useOutputTextSVGFile,
+	string outputTextSVGFileName,
+	bool useInputQueryPlainTXTFile,
+	string inputQueryPlainTXTFileName,
+	bool useInputQueryNLPrelationXMLFile,
+	string inputQueryNLPrelationXMLFileName,
+	bool useInputQueryNLPfeatureXMLFile,
+	string inputQueryNLPfeatureXMLFileName,
+	bool useOutputQueryCFFFile,
+	string outputQueryCFFFileName,
+	bool useInputQueryXMLFile,
+	string inputQueryXMLFileName,
+	bool useOutputQueryXMLFile,
+	string outputQueryXMLFileName,
+	bool useOutputQueryCXLFile,
+	string outputQueryCXLFileName,
+	bool useOutputQueryLDRFile,
+	string outputQueryLDRFileName,
+	bool useOutputQueryPPMFile,
+	string outputQueryPPMFileName,
+	bool useOutputQuerySVGFile,
+	string outputQuerySVGFileName,
+	bool useOutputTextAllFile,
+	string outputTextAllFileName,
+	bool useOutputTextAnswerPlainTXTFile,
+	string outputTextAnswerPlainTXTFileName,
+
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
+	bool inputFileList,
+#endif	
+	bool printOutput,
+	bool printOutputQuery,
+	bool displayInOpenGLAndOutputScreenshot,
+
+	int rasterImageWidth,
+	int rasterImageHeight,
+
+	bool useInputQuery,
+
+#ifdef GIA_USE_DATABASE
+	bool readFromDatabase,
+	bool writeToDatabase,
+	bool useDatabase,
+	string databaseFolderName,
+#endif
+
+#ifdef GIA_USE_LRP
+	bool useLRP,
+	bool useOutputLRPTextPlainTXTFile,
+	string outputLRPTextPlainTXTFileName,
+	bool useOutputLRPTextForNLPonlyPlainTXTFile,
+	string outputLRPTextForNLPonlyPlainTXTFileName,
+	bool useOutputQueryLRPTextPlainTXTFile,
+	string outputQueryLRPTextPlainTXTFileName,
+	bool useOutputQueryLRPTextForNLPonlyPlainTXTFile,
+	string outputQueryLRPTextForNLPonlyPlainTXTFileName,
+	string lrpDataFolderName,
+#endif
+
+#ifdef USE_WORDNET
+	int synonymnDetectionStatus,
+#endif
+
+	vector<GIAentityNode*> * entityNodesActiveListComplete,
+	unordered_map<string, GIAentityNode*> * entityNodesActiveListConcepts,
+	vector<GIAentityNode*> * entityNodesActiveListSubstances,
+	vector<GIAentityNode*> * entityNodesActiveListActions,
+	vector<GIAentityNode*> * entityNodesActiveListConditions,
+	unordered_map<long, GIAtimeConditionNode*> * timeConditionNodesActiveList
+			
+	)
+{
+	bool result = true;
+	
+	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	maxNumberSentences = 0;
+	#endif
+	
 
 	#ifdef GIA_MAIN_DEBUG
 	//cout << "workingFolderCharStar = " << workingFolderCharStar << endl;
@@ -667,13 +909,6 @@ int main(int argc,char **argv)
 	///GIA specific rules.xml file is not used at the moment	[once right variables have been decided upon they will be fed to xml]
 	//fillInGIARulesExternVariables();
 	
-	vector<GIAentityNode*> * entityNodesActiveListComplete = new vector<GIAentityNode*>;
-	unordered_map<string, GIAentityNode*> * entityNodesActiveListConcepts = new unordered_map<string, GIAentityNode*>;
-	vector<GIAentityNode*> * entityNodesActiveListSubstances = new vector<GIAentityNode*>;
-	vector<GIAentityNode*> * entityNodesActiveListActions = new vector<GIAentityNode*>;
-	vector<GIAentityNode*> * entityNodesActiveListConditions = new vector<GIAentityNode*>;
-	unordered_map<long, GIAtimeConditionNode*> * timeConditionNodesActiveList = new unordered_map<long, GIAtimeConditionNode*>;
-
 	vector<GIAentityNode*> * entityNodesActiveListCompleteQuery = new vector<GIAentityNode*>;
 	unordered_map<string, GIAentityNode*> * entityNodesActiveListConceptsQuery = new unordered_map<string, GIAentityNode*>;
 	vector<GIAentityNode*> * entityNodesActiveListSubstancesQuery = new  vector<GIAentityNode*>;			//not required - declared for symmetry
@@ -1562,14 +1797,7 @@ int main(int argc,char **argv)
 	#endif
 	#endif
 
-
-
-	//print execution time (end)
-	time(&now);
-	current = localtime(&now);
-	sprintf(timeAndDateString, "%i:%i:%i %.2i/%.2i/%i", current->tm_hour, current->tm_min, current->tm_sec, current->tm_mday, (current->tm_mon+1), (current->tm_year + GIA_TM_STRUCT_YEAR_OFFSET));
-	cout << "GIA execution time: " << timeAndDateString << " (finish)" << endl;
-
+	return result;
 }
 
 
