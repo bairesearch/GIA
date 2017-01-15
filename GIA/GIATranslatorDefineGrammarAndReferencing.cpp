@@ -108,6 +108,36 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 		
 		currentRelationInList = currentRelationInList->next;
 	}
+	
+	/*
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{	
+		if(GIAEntityNodeArrayFilled[w])
+		{
+			GIAEntityNode * entity = GIAEntityNodeArray[w];
+			cout << "entity->entityName 2 = " << entity->entityName << endl;		
+		}
+	}
+	*/
+		
+	/*
+	currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		string relationType = currentRelationInList->relationType;
+		GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];				
+		GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+		
+		cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;	      
+		cout << "defineActionPropertyConditions actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;
+		cout << "defineActionPropertyConditions actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;		
+		
+		currentRelationInList = currentRelationInList->next;
+				
+	}
+	*/
+	
+		
 }
 
 
@@ -365,7 +395,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 		//cout << "here1" << endl;
 		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 		//perfect tense extraction:
-		if(currentRelationInList->relationType == STANFORD_RELATION_TYPE_MODAL_AUX)
+		if(currentRelationInList->relationType == RELATION_TYPE_MODAL_AUX)
 		{
 			//eg aux (died, has) 	Reagan has died.	[addtogrammar: perfect?]
 			int entityIndexOfAuxillary = currentRelationInList->relationArgumentIndex;
@@ -380,7 +410,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 		}
 		
 		//passive tense extraction:
-		if(currentRelationInList->relationType == STANFORD_RELATION_TYPE_PASSIVE_AUX)
+		if(currentRelationInList->relationType == RELATION_TYPE_PASSIVE_AUX)
 		{
 			//eg auxpass(killed, been) Kennedy has been killed. 	[addtogrammar: passive]	
 			int entityIndexOfAuxillary = currentRelationInList->relationArgumentIndex;
@@ -396,7 +426,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 		
 		//past tense extraction:
 		//NB copulas take precedence over auxillaries in formation of past tense (eg he has been sick;     nsubj ( sick-4 , he-1 ) / aux ( sick-4 , has-2 ) / cop ( sick-4 , been-3 ) )
-		if(currentRelationInList->relationType == STANFORD_RELATION_TYPE_COPULA)
+		if(currentRelationInList->relationType == RELATION_TYPE_COPULA)
 		{
 			//eg cop(smelled, sweet) 	The rose smelled sweet. [THIS APPEARS INCORRECT: stanford currently gives; acomp ( smelled-3 , sweet-4 )]
 			//eg cop(black-5, was-4) 	Alice's cookie was black.
@@ -411,7 +441,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 		
 		//future tense extraction:
 		//overwrite current tense derivations with GRAMMATICAL_TENSE_FUTURE if there is an auxillary containing 'will'
-		if(currentRelationInList->relationType == STANFORD_RELATION_TYPE_MODAL_AUX)	//|| (currentRelationInList->relationType == STANFORD_RELATION_TYPE_PASSIVE_AUX)
+		if(currentRelationInList->relationType == RELATION_TYPE_MODAL_AUX)	//|| (currentRelationInList->relationType == RELATION_TYPE_PASSIVE_AUX)
 		{
 			int auxillaryDependencyIndex = currentRelationInList->relationFunctionIndex;
 			string auxillaryGovernerEntity = currentRelationInList->relationArgument;
@@ -424,18 +454,27 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 			}
 		}
 		
+				
 		//definite/indefinite extraction:
-		if(currentRelationInList->relationType == STANFORD_RELATION_TYPE_DETERMINER)
+		if(currentRelationInList->relationType == RELATION_TYPE_DETERMINER)
 		{
+
+			//cout << "RELATION_TYPE_DETERMINER = " << RELATION_TYPE_DETERMINER << endl;
+			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+			
 			//eg det(cookie, the) 	the cookie. 
 			string determiner = currentRelationInList->relationArgument;
+			//cout << "determiner = " << determiner << endl;
 			if(determiner == GRAMMATICAL_DETERMINER_DEFINITE)
 			{
-				int entityIndexOfDeterminier = currentRelationInList->relationArgumentIndex;
-				int entityIndexOfNoun = currentRelationInList->relationFunctionIndex;
 				
+				int entityIndexOfDeterminier = currentRelationInList->relationArgumentIndex;
+				int entityIndexOfNoun = currentRelationInList->relationFunctionIndex;					
 				GIAEntityNodeArray[entityIndexOfDeterminier]->disabled = true;		
 				GIAEntityNodeGrammaticalIsDefiniteArray[entityIndexOfNoun] = true;
+				
+				//cout << "GIAEntityNodeArray[entityIndexOfDeterminier]->entityName = " << GIAEntityNodeArray[entityIndexOfDeterminier]->entityName << endl;
+				//cout << "GIAEntityNodeArray[entityIndexOfNoun]->entityName = " << GIAEntityNodeArray[entityIndexOfNoun]->entityName << endl;				
 			}
 			/*
 			else if(determiner == GRAMMATICAL_DETERMINER_INDEFINITE)
@@ -457,7 +496,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 
 
 
-void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[])
+void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], string GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[])
 {
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{	
@@ -466,7 +505,8 @@ void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], G
 		if(GIAEntityNodeArrayFilled[w])
 		{
 			GIAEntityNode * entity = GIAEntityNodeArray[w];
-				
+			//cout << "entity->entityName = " << entity->entityName << endl;
+			
 			entity->hasAssociatedTime = GIAEntityNodeIsDateOrStanfordTime[w]; 
 			//cout << "entity->hasAssociatedTime = " << entity->hasAssociatedTime << endl;	
 
@@ -481,9 +521,9 @@ void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], G
 			entity->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[w];
 			entity->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[w];	
 			
-			entity->grammaticalRelexPersonOrStanfordProperNounTemp = GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[w];
-			entity->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[w];
-			entity->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[w];					
+			entity->NERTemp = GIAEntityNodeNERArray[w];
+			entity->NormalizedNERTemp = GIAEntityNodeNormalizedNERArray[w];
+			entity->TimexTemp = GIAEntityNodeTimexArray[w];					
 		}
 	}
 }
@@ -793,7 +833,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 #ifdef GIA_USE_STANFORD_CORENLP
 void linkReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, StanfordCoreNLPCoreference * firstCoreferenceInList, bool GIAEntityNodeIsAReference[])
 {
-	cout << "linkReferencesStanfordCoreNLP(): error - function not yet coded" << endl;
+	//cout << "linkReferencesStanfordCoreNLP(): error - function not yet coded" << endl;
 	//exit(0); 
 	StanfordCoreNLPCoreference * currentCoreferenceInList = firstCoreferenceInList;
 	while(currentCoreferenceInList->next != NULL)
@@ -1080,14 +1120,14 @@ void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence *
 		//cout << "here1" << endl;
 		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 
-		if(currentRelationInList->relationType == STANFORD_RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER)
+		if(currentRelationInList->relationType == RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER)
 		{					
 			//now find the associated object..
  			Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 			while(currentRelationInList2->next != NULL)
 			{	
 				bool partnerTypeRequiredFound = false;					
-				if(currentRelationInList2->relationType == STANFORD_RELATION_TYPE_COMPLEMENT_OF_ADVERBAL_CLAUSE_MODIFIER)
+				if(currentRelationInList2->relationType == RELATION_TYPE_COMPLEMENT_OF_ADVERBAL_CLAUSE_MODIFIER)
 				{
 					partnerTypeRequiredFound = true;
 				}
@@ -1130,7 +1170,7 @@ void redistributeStanfordRelationsClausalSubject(Sentence * currentSentenceInLis
 			while(currentRelationInList2->next != NULL)
 			{	
 				bool partnerTypeRequiredFound = false;					
-				if(currentRelationInList2->relationType == STANFORD_RELATION_TYPE_CLAUSAL_SUBJECT)
+				if(currentRelationInList2->relationType == RELATION_TYPE_CLAUSAL_SUBJECT)
 				{
 					partnerTypeRequiredFound = true;
 				}
@@ -1161,9 +1201,9 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		if(currentRelationInList->relationType == STANFORD_RELATION_TYPE_PHRASAL_VERB_PARTICLE)
+		if(currentRelationInList->relationType == RELATION_TYPE_PHRASAL_VERB_PARTICLE)
 		{
-			//cout << "STANFORD_RELATION_TYPE_PHRASAL_VERB_PARTICLE" << endl;
+			//cout << "RELATION_TYPE_PHRASAL_VERB_PARTICLE" << endl;
 			//eg They shut down the station. 	prt(shut, down) 			
 
 			GIAEntityNode * governerEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
@@ -1183,7 +1223,7 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 void redistributeStanfordRelationsNSubjAndPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
 {
-	//look for nsubj/prep combination, eg nsubj(next-4, garage-2) / prep_to(next-4, house-7)
+	//look for nsubj/prep combination, eg nsubj(next-4, garage-2) / prep_to(next-4, house-7)	=> prep_next_to
 	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1199,20 +1239,26 @@ void redistributeStanfordRelationsNSubjAndPreposition(Sentence * currentSentence
 			{	
 				bool stanfordPrepositionFound = false;
 				string relexPreposition = convertStanfordPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATION_FORMATION_STANFORD, &stanfordPrepositionFound);
-
+				
 				if(stanfordPrepositionFound)
 				{		
 					if(currentRelationInList2->relationFunctionIndex == currentRelationInList->relationFunctionIndex)
 					{//found a matching preposition of object-subject relationship
 					
-																	
-						string newPrepositionName = GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex]->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
-											
-						Relation * subjectOfPrepositionRelation = currentRelationInList;
-						Relation * objectOfPrepositionRelation = currentRelationInList2;
-						subjectOfPrepositionRelation->relationType = RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION;
-						objectOfPrepositionRelation->relationType = RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION;
-						GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex]->entityName = newPrepositionName;
+						if(!(currentRelationInList2->prepositionCombinationAlreadyCreatedTemp))
+						{																	
+							string newPrepositionName = "";
+							newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex]->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
+
+							//cout << "newPrepositionName = " << newPrepositionName << endl;
+
+							Relation * subjectOfPrepositionRelation = currentRelationInList;
+							Relation * objectOfPrepositionRelation = currentRelationInList2;
+							subjectOfPrepositionRelation->relationType = RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION;
+							objectOfPrepositionRelation->relationType = RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION;
+							GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex]->entityName = newPrepositionName;
+							currentRelationInList2->prepositionCombinationAlreadyCreatedTemp = true;
+						}
 					}
 				}
 
@@ -1222,6 +1268,7 @@ void redistributeStanfordRelationsNSubjAndPreposition(Sentence * currentSentence
 		//cout << "here2" << endl;
 		currentRelationInList = currentRelationInList->next;
 	}
+	//cout << "asd" << endl;
 }
 #endif
 

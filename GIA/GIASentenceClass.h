@@ -87,6 +87,10 @@ public:
 	bool subjObjRelationAlreadyAdded;	//Relex Only
 	#endif
 	
+	#ifdef GIA_USE_STANFORD_CORENLP
+	bool prepositionCombinationAlreadyCreatedTemp;
+	#endif	
+	
 	Relation * next;
 };
 

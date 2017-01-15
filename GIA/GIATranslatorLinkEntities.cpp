@@ -1087,9 +1087,35 @@ void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntit
 						*/
 
 						//should really take into account the boolean and of both values: bool relationNegative = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex]->negative & GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex]->negative;
+						
+						//createConditionBasedUponPreposition(entityNode, conditionEntityNode, conditionTypeConceptEntity->entityName, false, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType)
 
-						addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);							
+						
+						bool passedPropositionTime = false;	
+						if(conditionEntityNode->hasAssociatedTime)	//added 10 April 2012 to make stanford compatible
+						{
+							passedPropositionTime = true;
+						}	
+						if(entityNode->hasAssociatedInstanceTemp)
+						{
+							entityNode = entityNode->AssociatedInstanceNodeList.back();	
+						}				
+						if(conditionEntityNode->hasAssociatedInstanceTemp)
+						{
+							conditionEntityNode = conditionEntityNode->AssociatedInstanceNodeList.back();
+						}
+								
+						
+						if(passedPropositionTime)
+						{
+							addTimeConditionToProperty(entityNode, conditionEntityNode, conditionTypeConceptEntity);				
 
+						}
+						else
+						{
+							addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);							
+						}
+						
 					}
 				}
 
@@ -1107,7 +1133,6 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{	
-		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 
 		int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
 		int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
@@ -1115,6 +1140,10 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 		GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[relationFunctionIndex];				
 		GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
 		
+		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;	      
+		//cout << "defineActionPropertyConditions actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;
+		//cout << "defineActionPropertyConditions actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
+				
 		bool passed = true;
 		#ifdef GIA_IGNORE_MEANINGLESS_RELATIONS
 		if(GIAEntityNodeArray[relationArgumentIndex]->entityName == relationType)
@@ -1144,15 +1173,22 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 		}	
 		#endif		
 
-		#ifdef GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
-		for(int i=0; i<RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES; i++)
+		#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
+		if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 		{
-			if(relationType == relationTypeConjugationNameArray[i])
-			{
-				passed = false;
-			}
-		}
 		#endif
+			#ifdef GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
+			for(int i=0; i<RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES; i++)
+			{
+				if(relationType == relationTypeConjugationNameArray[i])
+				{
+					passed = false;
+				}
+			}
+			#endif
+		#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
+		}
+		#endif			
 
 		#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
 		if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
@@ -1319,6 +1355,8 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 		
 	if(passedPreposition)
 	{
+
+		cout << "prepositionName = " << prepositionName << endl;
 		
 		string conditionTypeName = prepositionName;
 		long entityIndex = -1;
@@ -1334,7 +1372,7 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 		if(actionOrPropertyEntity->hasAssociatedInstanceTemp)
 		{
 			actionOrPropertyEntity = actionOrPropertyEntity->AssociatedInstanceNodeList.back();	
-		}				
+		}					
 
 		//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
 		if(actionOrPropertyConditionEntity->hasAssociatedInstanceTemp)
@@ -1344,6 +1382,10 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			//cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl; 
 		}
 
+		cout << "createConditionBasedUponPreposition passedPreposition actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;
+		cout << "createConditionBasedUponPreposition passedPreposition actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
+		cout << "createConditionBasedUponPreposition passedPreposition conditionTypeConceptEntity = " << conditionTypeConceptEntity->entityName << endl;
+			
 		if(passedPropositionTime)
 		{
 			#ifdef GIA_TRANSLATOR_DEBUG
@@ -1423,6 +1465,7 @@ void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * ti
 */
 void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, GIAEntityNode * conditionTypeConceptEntity)
 {	
+	//cout << "addTimeConditionToProperty propertyNode->entityName = " << propertyNode->entityName << endl;
 	timeConditionEntity->conditionType = CONDITION_NODE_TYPE_TIME;
 	
 	/*

@@ -42,7 +42,7 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		if(currentRelationInList->relationType == STANFORD_RELATION_TYPE_NEGATIVE)
+		if(currentRelationInList->relationType == RELATION_TYPE_NEGATIVE)
 		{
 			//eg The chicken has not eaten a pie.: neg(eaten-5, not-4)
 			
@@ -50,7 +50,8 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 			GIAEntityNodeArray[currentRelationInList->relationFunctionIndex]->negative = true;
 			GIAEntityNodeArray[currentRelationInList->relationArgumentIndex]->disabled = true;
 
-		}		
+		}
+		currentRelationInList = currentRelationInList->next;		
 	}
 }
 #endif

@@ -14,15 +14,14 @@
 
 #include "SHAREDglobalDefs.h"
 
-
+//#define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
+//#define GIA_TRANSLATOR_DEBUG
+//#define GIA_NLP_DEBUG
 
 //#define GIA_DRAW_DEBUG
 //#define GIA_DATABASE_DEBUG
-//#define GIA_TRANSLATOR_DEBUG
 //#define GIA_QUERY_DEBUG
 //#define GIA_SEMANTIC_NET_XML_DEBUG
-#define GIA_NLP_DEBUG
-#define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 
 //#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		//this was {effectively} disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
 

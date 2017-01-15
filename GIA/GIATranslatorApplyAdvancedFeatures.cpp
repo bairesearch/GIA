@@ -44,8 +44,12 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntit
 	{
 		GIAEntityNode * governerEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
 		GIAEntityNode * dependentEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+
 		if((governerEntity->NERTemp == FEATURE_NER_DATE) && (dependentEntity->NERTemp == FEATURE_NER_DATE))
 		{
+			//cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
+			//cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
+					
 			governerEntity->disabled = true;
 			dependentEntity->disabled = true;
 		}
@@ -58,48 +62,53 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntit
 		if(GIAEntityNodeArrayFilled[i])
 		{
 			GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
-			if(currentEntity->hasAssociatedTime)
+			if(!(currentEntity->disabled))
 			{
-				GIAEntityNode * timeEntity = currentEntity;
-				if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was created in the current context (eg sentence)
-				//if(timeEntity->AssociatedInstanceNodeList.size() >= 1)
+				if(currentEntity->hasAssociatedTime)
 				{
-					timeEntity = timeEntity->AssociatedInstanceNodeList.back();
-				}
-				else
-				{
-					#ifdef GIA_TRANSLATOR_DEBUG
-					cout << "error: isolated date concept node found (ie has no instance)" << endl;
-					#else
-					cout << "error: [confidential 0]" << endl;	
-					#endif
-				}	
+					cout << "currentEntity->entityName = " << currentEntity->entityName << endl;
 				
-				if(timeEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
-				{
-					if(timeEntity->timeConditionNode != NULL)
+					GIAEntityNode * timeEntity = currentEntity;
+					if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was created in the current context (eg sentence)
+					//if(timeEntity->AssociatedInstanceNodeList.size() >= 1)
 					{
-						timeEntity->timeConditionNode->conditionName = currentEntity->NormalizedNERTemp;
+						timeEntity = timeEntity->AssociatedInstanceNodeList.back();
 					}
 					else
 					{
 						#ifdef GIA_TRANSLATOR_DEBUG
-						cout << "error: isolated date node found (not declared as a time condition)" << endl;
+						cout << "error: isolated date concept node found (ie has no instance) [0]" << endl;
 						#else
-						cout << "error: [confidential 1]" << endl;	
+						cout << "error: [confidential 0]" << endl;	
 						#endif
-						exit(0);	//remove this later
+					}	
+
+					if(timeEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
+					{
+						if(timeEntity->timeConditionNode != NULL)
+						{
+							timeEntity->timeConditionNode->conditionName = currentEntity->NormalizedNERTemp;
+						}
+						else
+						{
+							#ifdef GIA_TRANSLATOR_DEBUG
+							cout << "error: isolated date node found (not declared as a time condition) [1]" << endl;
+							#else
+							cout << "error: [confidential 1]" << endl;	
+							#endif
+							exit(0);	//remove this later
+						}
 					}
+					else
+					{
+						#ifdef GIA_TRANSLATOR_DEBUG
+						cout << "error: isolated date node found (not declared as a time condition) [2]" << endl;
+						#else
+						cout << "error: [confidential 2]" << endl;
+						#endif
+						exit(0);	//remove this later						
+					}			
 				}
-				else
-				{
-					#ifdef GIA_TRANSLATOR_DEBUG
-					cout << "error: isolated date node found (not declared as a time condition)" << endl;
-					#else
-					cout << "error: [confidential 2]" << endl;
-					#endif
-					exit(0);	//remove this later						
-				}			
 			}
 		}
 	}	
@@ -127,7 +136,7 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 				else
 				{
 					#ifdef GIA_TRANSLATOR_DEBUG
-					cout << "error: isolated date concept node found (ie has no instance)" << endl;
+					cout << "error: isolated date concept node found (ie has no instance) [0]" << endl;
 					#else
 					cout << "error: [confidential 0]" << endl;	
 					#endif
@@ -158,7 +167,7 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 					else
 					{
 						#ifdef GIA_TRANSLATOR_DEBUG
-						cout << "error: isolated date node found (not declared as a time condition)" << endl;
+						cout << "error: isolated date node found (not declared as a time condition) [1]" << endl;
 						#else
 						cout << "error: [confidential 1]" << endl;	
 						#endif
@@ -168,7 +177,7 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 				else
 				{
 					#ifdef GIA_TRANSLATOR_DEBUG
-					cout << "error: isolated date node found (not declared as a time condition)" << endl;
+					cout << "error: isolated date node found (not declared as a time condition) [2]" << endl;
 					#else
 					cout << "error: [confidential 2]" << endl;
 					#endif
@@ -202,7 +211,7 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 						else
 						{
 							#ifdef GIA_TRANSLATOR_DEBUG
-							cout << "error: isolated date concept node found (ie has no instance)" << endl;
+							cout << "error: isolated date concept node found (ie has no instance) [0]" << endl;
 							#else
 							cout << "error: [confidential 0]" << endl;	
 							#endif
@@ -266,7 +275,7 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 							else
 							{
 								#ifdef GIA_TRANSLATOR_DEBUG
-								cout << "error: isolated date node found (not declared as a time condition)" << endl;
+								cout << "error: isolated date node found (not declared as a time condition) [3]" << endl;
 								#else
 								cout << "error: [confidential 3]" << endl;
 								#endif
@@ -787,9 +796,9 @@ void defineClausalComplementProperties(Sentence * currentSentenceInList, bool GI
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		if(currentRelationInList->relationType == STANFORD_RELATION_TYPE_CLAUSAL_COMPLEMENT)
+		if(currentRelationInList->relationType == RELATION_TYPE_CLAUSAL_COMPLEMENT)
 		{
-			//cout << "STANFORD_RELATION_TYPE_CLAUSAL_COMPLEMENT" << endl;
+			//cout << "RELATION_TYPE_CLAUSAL_COMPLEMENT" << endl;
 			//eg ccomp(say, like)	He says that you like to swim
 
 			string actionName = currentRelationInList->relationFunction; 

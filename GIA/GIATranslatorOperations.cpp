@@ -674,17 +674,19 @@ string convertStanfordPrepositionToRelex(string * preposition, int NLPdependency
 		int foundStanfordPrepositionPrepend = preposition->find(STANFORD_PARSER_PREPOSITION_PREPEND);	
 		if(foundStanfordPrepositionPrepend == string::npos)
 		{
+			/*
 			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 			cout << "convertStanfordPrepositionToRelex(): error - preposition 'prep_...' not found" << endl;
 			cout << "the following dependency relation was expected to be a preposition = " << *preposition << endl;
 			exit(0);
 			#endif
+			*/
 		}
 		else
 		{
-			int indexOfFirstUnderscoreInPreposition = STANFORD_PARSER_PREPOSITION_PREPEND_LENGTH;
-			int lengthOfPreposition = preposition->length() - (indexOfFirstUnderscoreInPreposition+1);
-			relexPreposition = preposition->substr(indexOfFirstUnderscoreInPreposition+1, lengthOfPreposition);
+			int indexOfFirstRealCharacterInPreposition = STANFORD_PARSER_PREPOSITION_PREPEND_LENGTH;
+			int lengthOfPreposition = preposition->length() - (indexOfFirstRealCharacterInPreposition);
+			relexPreposition = preposition->substr(indexOfFirstRealCharacterInPreposition, lengthOfPreposition);
 			*stanfordPrepositionFound = true;
 		}
 	}

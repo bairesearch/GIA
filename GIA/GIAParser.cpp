@@ -28,16 +28,28 @@
 string convertStanfordRelationToRelex(string * stanfordRelation)
 {
 	//prepend '_'
-	string relationTypeRelexStandard = relationTypeRelexStandard + RELEX_DEPENDENCY_RELATION_PREPENDITION + *stanfordRelation;
+	string relationTypeRelexStandard = "";
+	relationTypeRelexStandard = relationTypeRelexStandard + RELEX_DEPENDENCY_RELATION_PREPENDITION + *stanfordRelation;
 	
 	//now deal with anamolies between dependency relation definitions;
 	for(int i=0; i<GIA_NUMBER_OF_RELEX_VERSUS_STANFORD_DEPENDENCY_RELATION_DISCREPANCIES; i++)
 	{
-		if(*stanfordRelation == relexVersusStanfordDependencyRelations[i][GIA_DEPENDENCY_RELATION_FORMATION_STANFORD])
+		//cout << "relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATION_FORMATION_STANFORD][i] = " << relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATION_FORMATION_STANFORD][i] << endl;
+		//cout << "relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATION_FORMATION_RELEX][i] = " << relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATION_FORMATION_RELEX][i] << endl;
+		
+		if(*stanfordRelation == relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATION_FORMATION_STANFORD][i])
 		{
-			relationTypeRelexStandard = relexVersusStanfordDependencyRelations[i][GIA_DEPENDENCY_RELATION_FORMATION_RELEX];
+			relationTypeRelexStandard = relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATION_FORMATION_RELEX][i];
 		}
 	}
+	
+	bool stanfordPrepositionFound = false;
+	string tempString = convertStanfordPrepositionToRelex(stanfordRelation, GIA_DEPENDENCY_RELATION_FORMATION_STANFORD, &stanfordPrepositionFound);
+	if(stanfordPrepositionFound)
+	{
+		relationTypeRelexStandard = *stanfordRelation;	//do not modify stanford preposition relations "prep_...." to "_prep_..."
+	}
+
 	return relationTypeRelexStandard;
 }
 

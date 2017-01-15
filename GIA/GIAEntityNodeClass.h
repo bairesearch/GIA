@@ -226,9 +226,11 @@ public:
 	bool isObject;			//used for generating non exact answers during queries
 	
 	#ifdef GIA_USE_STANFORD_CORENLP
+	/*
 	int CharacterOffsetBeginTemp;
 	int CharacterOffsetEndTemp;
 	string POSTemp;
+	*/
 	string NERTemp;
 	string NormalizedNERTemp;
 	string TimexTemp;

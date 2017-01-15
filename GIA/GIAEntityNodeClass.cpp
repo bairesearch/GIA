@@ -95,9 +95,11 @@ GIAEntityNode::GIAEntityNode(void)
 	//hasQualityTemp = false;
 	
 	#ifdef GIA_USE_STANFORD_CORENLP
+	/*
 	CharacterOffsetBeginTemp = -1;
 	CharacterOffsetEndTemp = -1;
 	POSTemp = "";
+	*/
 	NERTemp = "";
 	NormalizedNERTemp = "";
 	TimexTemp = "";

@@ -208,6 +208,23 @@ using namespace std;
 //											//cop(black-5, was-4) 	Alice's cookie was black.				Relex: indicates the tense feature: tense(black, past) 				POS Tag of 'was' = VBD  [addtogrammar: tense - past/present/future]	
 #define STANFORD_RELATION_TYPE_DETERMINER "det" 					//det(cookie, the) 	the cookie. 						Relex: RelEx uses the DEFINITE-FLAG feature instead. 			[addtogrammar: definite]
 
+
+#define RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER "_advcl"         
+#define RELATION_TYPE_COMPLEMENT_OF_ADVERBAL_CLAUSE_MODIFIER "_mark"
+#define RELATION_TYPE_CLAUSAL_COMPLEMENT "_ccomp"	       
+#define RELATION_TYPE_COMPLEMENTIZER "_complm"		       
+#define RELATION_TYPE_CLAUSAL_SUBJECT "_csubj"		       
+#define RELATION_TYPE_NEGATIVE "_neg"			       
+//#define RELATION_TYPE_COMPLEMENT_OF_PREPOSITION "_pcomp"      
+#define RELATION_TYPE_PHRASAL_VERB_PARTICLE "_prt"	       
+//#define RELATION_TYPE_SMALL_CLAUSE_COMPLEMENT_OF_VERB "_sc"   
+#define RELATION_TYPE_MODAL_AUX "_aux"			       
+#define RELATION_TYPE_PASSIVE_AUX "_auxpass"		       
+#define RELATION_TYPE_COPULA "_cop"												       
+#define RELATION_TYPE_DETERMINER "_det"  		       
+
+
+
 //negations;
 #define RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES (1)
 #define RELATION_TYPE_NEGATIVE_CONTEXT_1 "not"

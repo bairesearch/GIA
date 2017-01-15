@@ -362,27 +362,28 @@ bool parseStanfordCoreNLPFile(string inputTextNLPParsedXMLFileName, bool isQuery
 						XMLParserTag * governerTagInDep = firstTagInDep; 
 						XMLParserTag * dependentTagInDep = firstTagInDep->nextTag;
 
+						//cout << "currentTagInDependencies->firstAttribute->value = " << currentTagInDependencies->firstAttribute->value << endl;
 						string relationTypeRelexStandard = convertStanfordRelationToRelex(&(currentTagInDependencies->firstAttribute->value));
 						currentRelationInList->relationType = relationTypeRelexStandard;
 
-						string relationArgumentIndexString = governerTagInDep->firstAttribute->value;
-						string relationFunctionIndexString = dependentTagInDep->firstAttribute->value;
+						string relationFunctionIndexString = governerTagInDep->firstAttribute->value;
+						string relationArgumentIndexString = dependentTagInDep->firstAttribute->value;
+						currentRelationInList->relationFunctionIndex = atoi(relationFunctionIndexString.c_str());						
 						currentRelationInList->relationArgumentIndex = atoi(relationArgumentIndexString.c_str());
-						currentRelationInList->relationFunctionIndex = atoi(relationFunctionIndexString.c_str());
 
 						/*
 						//don't use these, use lemmas instead (as per Relex dependency relation definitions)
-						currentRelationInList->relationArgument = governerTagInDep->value;
-						currentRelationInList->relationFunction = dependentTagInDep->value;
+						currentRelationInList->relationFunction = governerTagInDep->value;
+						currentRelationInList->relationArgument = dependentTagInDep->value;						
 						*/				
 						currentFeatureInList = firstFeatureInList;
-						for(int f=0; f<currentRelationInList->relationArgumentIndex; f++)
+						for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationArgumentIndex; f++)
 						{
 							currentFeatureInList = currentFeatureInList->next;
 						} 
 						currentRelationInList->relationArgument = currentFeatureInList->lemma;
 						currentFeatureInList = firstFeatureInList;
-						for(int f=0; f<currentRelationInList->relationFunctionIndex; f++)
+						for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationFunctionIndex; f++)
 						{
 							currentFeatureInList = currentFeatureInList->next;
 						} 				
@@ -427,7 +428,9 @@ bool parseStanfordCoreNLPFile(string inputTextNLPParsedXMLFileName, bool isQuery
 				string representativeString = currentTagInnCoreference->firstAttribute->value;
 				if(representativeString == "true")
 				{
+					#ifdef GIA_NLP_DEBUG
 					cout << "representative found" << endl;
+					#endif
 					currentMentionInList->representative = true;
 				}
 			}
@@ -528,8 +531,8 @@ bool parseStanfordCoreNLPFile(string inputTextNLPParsedXMLFileName, bool isQuery
 				
 		currentSentence = currentSentence->next;	
 	}
-	cout << "exiting prematurely; GIA_NLP_DEBUG complete" << endl; 
-	exit(0);
+	//cout << "exiting prematurely; GIA_NLP_DEBUG complete" << endl; 
+	//exit(0);
 	#endif				
 					
 	return result;

@@ -1030,9 +1030,16 @@ bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * 
 		convertSentenceListRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList, firstClaimInHeirachy, claimsList, NLPparserType, NLPdependencyRelationsType);				
 	#else	
 		#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-		convertParagraphSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstParagraphInList, NLPparserType, NLPdependencyRelationsType);
+		if(NLPparserType == GIA_NLP_PARSER_RELEX)
+		{
+			convertParagraphSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstParagraphInList, NLPparserType, NLPdependencyRelationsType);
+		}
+		else
+		{
+			convertSentenceListRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList, NLPparserType, NLPdependencyRelationsType);
+		}
 		#else
-		convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList, NLPparserType, NLPdependencyRelationsType);	
+		convertSentenceListRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList, NLPparserType, NLPdependencyRelationsType);	
 		#endif
 	#endif
 	

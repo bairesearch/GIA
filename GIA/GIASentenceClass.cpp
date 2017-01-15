@@ -75,7 +75,11 @@ Relation::Relation(void)
 	#ifdef GIA_USE_RELEX
 	subjObjRelationAlreadyAdded = false;	
 	#endif
-	
+
+	#ifdef GIA_USE_STANFORD_CORENLP
+	prepositionCombinationAlreadyCreatedTemp = false;
+	#endif
+		
 	next = NULL;
 }
 
