@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q4d 14-October-2012
+ * Project Version: 1q4e 14-October-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -677,26 +677,33 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 								}
 								cout << "compareEntityNamesResult: queryEntityNode->entityName = " << queryEntityNode->entityName << ", entityNode->entityName = " << entityNode->entityName << endl;
 								#endif
-
-								if(testEntityNodeForQueryOrReferenceSet(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
+								
+								#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+								if((!(queryEntityNode->isSubstance) && !(entityNode->isSubstance)) || ((queryEntityNode->isSubstanceConcept) && (entityNode->isSubstanceConcept)) || (!(queryEntityNode->isSubstanceConcept) && !(entityNode->isSubstanceConcept)))
 								{
-									result = EXACT_MATCH_PASS;
-									
-									#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-									/*
-									#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-									if(referenceTraceParameters->intrasentenceReference)
+								#endif
+									if(testEntityNodeForQueryOrReferenceSet(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
 									{
-										cout << "EXACT_MATCH_PASS" << endl;
+										result = EXACT_MATCH_PASS;
+
+										#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+										/*
+										#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+										if(referenceTraceParameters->intrasentenceReference)
+										{
+											cout << "EXACT_MATCH_PASS" << endl;
+										}
+										#endif
+										*/
+										#endif
 									}
-									#endif
-									*/
-									#endif
+									else
+									{
+										result = EXACT_MATCH_FAIL;
+									}
+								#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 								}
-								else
-								{
-									result = EXACT_MATCH_FAIL;
-								}
+								#endif
 							}
 							else
 							{

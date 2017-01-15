@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q4d 14-October-2012
+ * Project Version: 1q4e 14-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1148,11 +1148,25 @@ void identifyReferenceSetConceptEntityEntrance(GIAEntityNode * entityNode, int *
 				cout << "subj Found" << endl;
 				#endif
 
-				#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY_ACCEPT_PROPERNOUNS
-				if((currentInstance->grammaticalDefiniteTemp) || (currentInstance->grammaticalRelexPersonOrStanfordProperNounTemp))
-				#else
+				bool passDefiniteSetChecks = false;
 				if(currentInstance->grammaticalDefiniteTemp)
+				{
+					passDefiniteSetChecks = true;
+				}
+				#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY_ACCEPT_PROPERNOUNS
+				if(currentInstance->grammaticalRelexPersonOrStanfordProperNounTemp)
+				{
+					passDefiniteSetChecks = true;
+				}
 				#endif
+				#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+				if(currentInstance->isSubstanceConcept)	//&& !(currentInstance->grammaticalDefiniteTemp) - not required, as this is assumed the case already given (currentInstance->isSubstanceConcept); NB "the red dogs" will not be designated as isSubstanceConcept - only "red dogs" will	
+				{
+					passDefiniteSetChecks = true;
+				}
+				#endif
+												
+				if(passDefiniteSetChecks)
 				{
 			#endif
 					#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
@@ -1468,6 +1482,7 @@ GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIA
 		{
 			if(!(entityNode->entityNodeDefiningThisInstance->empty()))
 			{//do not reference concept entities - condition added 16 July 2012
+				
 				#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 				cout << "\taddingEntityCorrespondingBestMatch. entityNode being traced: = " << entityNode->entityName << endl;
 				cout << "entityNode->entityName = " << entityNode->entityName << endl;
