@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntitiesDynamic.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l2a 14-October-2015
+ * Project Version: 2l2b 14-October-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -46,14 +46,14 @@ void linkEntitiesDynamic(GIAsentence* currentSentenceInList, bool GIAentityNodeA
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B3a; linkEntitiesDynamicPrenominalModifierOfNoun{}:" << endl;
 	#endif
-	//linkEntitiesDynamicPrenominalModifierOfNoun(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, entityNodesActiveListSentences);
+	linkEntitiesDynamicPrenominalModifierOfNoun(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, entityNodesActiveListSentences);
 	#endif
 	
 	#ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B3b; linkEntitiesDynamicFromConditions{}:" << endl;
 	#endif
-	//linkEntitiesDynamicFromConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, entityNodesActiveListSentences);
+	linkEntitiesDynamicFromConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, entityNodesActiveListSentences);
 	#endif
 }
 
