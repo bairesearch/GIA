@@ -26,7 +26,7 @@
  * File Name: GIAcorpusOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j1a 15-May-2015
+ * Project Version: 2j1b 15-May-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -203,14 +203,20 @@ string regenerateSentenceText(GIAfeature* firstFeatureInSentence, bool addPOSinf
 	GIAfeature* currentFeatureInSentence = firstFeatureInSentence;
 	while(currentFeatureInSentence->next != NULL)
 	{
+		string appendString = " ";
+		if(currentFeatureInSentence->next->next == NULL)
+		{
+			appendString = "";
+		}
+		
 		if(addPOSinfo)
 		{
 			string GIAconnectionistNetworkPOStypeName = GIAconnectionistNetworkPOStypeNameArray[currentFeatureInSentence->GIAconnectionistNetworkPOStype];
-			sentenceText = sentenceText + currentFeatureInSentence->word + CHAR_FORWARDSLASH + GIAconnectionistNetworkPOStypeName + " ";	//~Stanford Parser format; see parseStanfordParserFile{}:GIATHparseStanfordParseWordsAndPOStagsText()
+			sentenceText = sentenceText + currentFeatureInSentence->word + CHAR_FORWARDSLASH + GIAconnectionistNetworkPOStypeName + appendString;	//~Stanford Parser format; see parseStanfordParserFile{}:GIATHparseStanfordParseWordsAndPOStagsText()
 		}
 		else
 		{
-			sentenceText = sentenceText + currentFeatureInSentence->word + " ";
+			sentenceText = sentenceText + currentFeatureInSentence->word + appendString;
 		}
 		currentFeatureInSentence = currentFeatureInSentence->next;
 	}
