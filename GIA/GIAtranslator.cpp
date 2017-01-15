@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j5e 08-June-2015
+ * Project Version: 2j5f 08-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1380,6 +1380,7 @@ void createNewInverseConditionEntity(GIArelation* currentRelationInList, GIAsent
 	GIAentityNode* inverseConditionEntity = new GIAentityNode();
 	inverseConditionEntity->entityName = inverseConditionName; 
 	inverseConditionEntity->wordOrig = inverseConditionName;	//is this necessary?
+	//why not set inverseConditionEntity->entityIndexTemp and inverseConditionEntity->sentenceIndexTemp?
 	currentRelationInList->relationType = string(STANFORD_PARSER_PREPOSITION_PREPEND) + inverseConditionName;
 	currentRelationInList->relationTypeIndex = inverseConditionEntityIndex;
 	currentRelationInList->inverseRelation = true;	//not required
@@ -1389,7 +1390,9 @@ void createNewInverseConditionEntity(GIArelation* currentRelationInList, GIAsent
 	featureArrayTemp[inverseConditionEntityIndex]->lemma = inverseConditionName;	//is this necessary?
 	featureArrayTemp[inverseConditionEntityIndex]->entityIndex = inverseConditionEntityIndex;
 	currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
-}					
+}		
+
+			
 #endif
 
 
