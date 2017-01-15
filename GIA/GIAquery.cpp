@@ -669,7 +669,11 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{
 			if(entityNode->entityNodeDefiningThisInstance != NULL)
 			{
-				bool isSuitableNodeTypeForInexactAnswer = false;
+				#ifdef GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER
+				bool isSuitableNodeTypeForInexactAnswer = true;	//???
+				#else
+				bool isSuitableNodeTypeForInexactAnswer = false;				
+				#endif
 				string sourceContext = "is ";
 				//cout << "a33" << endl;
 				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->entityNodeDefiningThisInstance, entityNode->entityNodeDefiningThisInstance, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, isSuitableNodeTypeForInexactAnswer, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
@@ -728,7 +732,15 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{
 			for(entityIter = entityNode->AssociatedInstanceNodeList.begin(); entityIter != entityNode->AssociatedInstanceNodeList.end(); entityIter++) 
 			{
-				bool isSuitableNodeTypeForInexactAnswer = false;
+				#ifdef GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER
+					#ifdef GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER_ALLOW_SINGLE_ENTITY_MATCHES
+					bool isSuitableNodeTypeForInexactAnswer = true;
+					#else
+					bool isSuitableNodeTypeForInexactAnswer = false;					
+					#endif
+				#else
+				bool isSuitableNodeTypeForInexactAnswer = false;				
+				#endif
 				#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
 				string sourceContext = "is seen in ";	//is realised in/defines/is instantiated in
 				#else
@@ -1047,8 +1059,8 @@ void traceEntityNode(GIAEntityNode * entityNode, int function, int * numberOfMat
 {
 	if(!(entityNode->queryEntityTraced))
 	{
-		//cout << "entityNode being traced = " << entityNode->entityName << endl;
-		//cout << "*numberOfMatchedNodes = " << *numberOfMatchedNodes << endl;
+		cout << "entityNode being traced = " << entityNode->entityName << endl;
+		cout << "*numberOfMatchedNodes = " << *numberOfMatchedNodes << endl;
 		
 		entityNode->queryEntityTraced = true;
 		*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
