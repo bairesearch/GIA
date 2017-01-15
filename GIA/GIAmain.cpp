@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o4a 15-August-2012
+ * Project Version: 1o4b 16-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -657,7 +657,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1o4a 15-August-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1o4b 16-August-2012" << endl;
 			exit(1);
 		}
 
@@ -1102,11 +1102,15 @@ int main(int argc,char **argv)
 			}
 			else
 			{
+			#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
 				#ifdef GIA_QUERY_RELAX_CONFIDENCE_REQUIREMENTS_FOR_YES
 				if(((maxConfidence <= (3.0+GIA_QUERY_DOUBLE_ERROR)) && (confidence >= (maxConfidence-(0.0+GIA_QUERY_DOUBLE_ERROR)))) || ((maxConfidence >= (4.0-GIA_QUERY_DOUBLE_ERROR)) && (confidence >= (maxConfidence-(1.0+GIA_QUERY_DOUBLE_ERROR)))))
 				#else
 				if(confidence >= (maxConfidence-GIA_QUERY_DOUBLE_ERROR))
 				#endif
+			#else
+				if(confidence >= (maxConfidence-1-GIA_QUERY_DOUBLE_ERROR))
+			#endif
 				{
 					#ifndef GIA_DO_NOT_PRINT_RESULTS
 					cout << "Answer: Yes." << endl;

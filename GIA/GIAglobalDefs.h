@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o4a 15-August-2012
+ * Project Version: 1o4b 16-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -225,7 +225,6 @@
 //#define GIA_DO_NOT_PRINT_RESULTS
 
 //~GIAquery
-#define GIA_QUERY_RELAX_CONFIDENCE_REQUIREMENTS_FOR_YES
 #define GIA_QUERY_DOUBLE_ERROR (0.0001)
 #define GIA_QUERY_CONFIDENCE_MULTIPLIER (10)
 	//these preprocessor have been moved to GIAglobalsDefs.h as they are used in both GIAtranslator.cpp and GIAquery.cpp
