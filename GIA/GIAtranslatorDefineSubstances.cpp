@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2a 17-July-2013
+ * Project Version: 1t2b 18-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -60,6 +60,18 @@ void collapseRedundantRelationAndMakeNegative(Sentence * currentSentenceInList, 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
+	/*
+	eg The chicken has not eaten a pie.: neg(eaten-5, not-4)
+	*/
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, false);	
+	param.numberOfRelations = 1;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_NEGATIVE;
+	param.disableRelation[REL1] = true;
+	param.disableEntity[REL1][REL_ENT2] = true; param.useRedistributeSpecialCaseDisableInstanceAndConcept[REL1][REL_ENT2]= true;	
+	param.useRedistributeSpecialCaseNegativeAssignment[REL1][REL_ENT1] = true;
+	genericDependecyRelationInterpretation(&param, 1);
+#else	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -81,14 +93,29 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
+#endif	
 }
 #endif
 
 #ifdef GIA_USE_RELEX
 void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
-	//_subj(not[5], by[4]), _subj(have[6], not[5])
-
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, false);	
+	param.numberOfRelations = 2;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
+	param.useRelationArrayTest[REL1][REL_ENT1] = true; param.relationArrayTest[REL1][REL_ENT1] = relationContextNegativeNameArray; param.relationArrayTestSize[REL1][REL_ENT1] = RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES;
+	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_SUBJECT;
+	param.useRelationArrayTest[REL2][REL_ENT2] = true; param.relationArrayTest[REL2][REL_ENT2] = relationContextNegativeNameArray; param.relationArrayTestSize[REL2][REL_ENT2] = RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES;
+	param.disableEntity[REL1][REL_ENT1] = true; param.useRedistributeSpecialCaseDisableInstanceAndConcept[REL1][REL_ENT1]= true;	//disable "not" entity
+	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;	
+	param.useRedistributeSpecialCaseNegativeAssignment[REL2][REL_ENT1] = true;
+	param.disableRelation[REL1] = true;
+	genericDependecyRelationInterpretation(&param, 1);
+#else
+	/*
+	eg Space is saved by not having a bulky cart. _subj(not[5], by[4]), _subj(have[6], not[5])
+	*/
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -132,7 +159,7 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 								}
 								if(passed2)
 								{
-									disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList2->relationGovernorIndex]);
+									disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList2->relationGovernorIndex]);	//why has this been disabled? (probably for Draw - do not disable for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK)
 									disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList2->relationDependentIndex]);
 
 									GIAentityNodeArray[currentRelationInList2->relationDependentIndex] = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
@@ -152,6 +179,7 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
+#endif	
 }
 #endif
 
@@ -483,6 +511,27 @@ void defineSubstancesNounsWithDeterminates(Sentence * currentSentenceInList, boo
 
 void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType)
 {
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, true);	
+	paramA.numberOfRelations = 1;
+	paramA.useRelationArrayTest[REL1][REL_ENT3] = true; paramA.relationArrayTest[REL1][REL_ENT3] = relationTypeAdjectiveWhichImplyEntityInstanceNameArray; paramA.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES;
+	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	paramA.functionEntityRelationID[FUNC_ENT1] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
+	genericDependecyRelationInterpretation(&paramA, 1);
+	
+	#ifdef GIA_TRANSLATOR_DEFINE_NOUNS_WITH_PRENOMINAL_MODIFIERS_AS_SUBSTANCES
+	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, NULL, GIAentityNodeArray, true);	
+	paramB.numberOfRelations = 1;
+	paramB.useRelationArrayTest[REL1][REL_ENT3] = true; paramB.relationArrayTest[REL1][REL_ENT3] = relationTypePrenominalModifierNameArray; paramB.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES;
+	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR
+	paramB.functionEntityRelationID[FUNC_ENT1] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
+	#else
+	paramB.functionEntityRelationID[FUNC_ENT1] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
+	#endif
+	genericDependecyRelationInterpretation(&paramB, 1);
+	#endif	
+#else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
@@ -579,11 +628,20 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-	#endif	
+	#endif
+#endif		
 }
 
 void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);	
+	param.numberOfRelations = 1;
+	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeQuantityOrMeasureNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES;
+	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
+	genericDependecyRelationInterpretation(&param, 1);
+#else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
@@ -616,10 +674,19 @@ void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIA
 
 		currentRelationInList = currentRelationInList->next;
 	}
+#endif	
 }
 
 void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);	
+	param.numberOfRelations = 1;
+	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeQuantityOrMeasureSwitchedNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_QUANTITY_OR_MEASURE_SWITCHED_NUMBER_OF_TYPES;
+	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
+	genericDependecyRelationInterpretation(&param, 1);
+#else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -652,11 +719,28 @@ void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAenti
 
 		currentRelationInList = currentRelationInList->next;
 	}
+#endif	
 }
 
 void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
 	//eg There is 	_expl(be[2], there[1]) [Relex]	/ expl(is-2, There-1) [stanford]
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	#ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);	
+	param.numberOfRelations = 1;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_EXPLETIVE;
+	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
+	genericDependecyRelationInterpretation(&param, 1);	
+	#else
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, false);	
+	param.numberOfRelations = 1;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_EXPLETIVE;
+	param.disableEntity[REL1][REL_ENT2] = true;
+	genericDependecyRelationInterpretation(&param, 1);
+	#endif
+#else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
@@ -685,6 +769,7 @@ void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAentityNode 
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
+#endif	
 }
 
 void defineSubstancesPronouns(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
@@ -714,6 +799,14 @@ void defineSubstancesPronouns(Sentence * currentSentenceInList, bool GIAentityNo
 
 void defineSubstancesToBe(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);	
+	param.numberOfRelations = 1;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_BE;
+	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
+	genericDependecyRelationInterpretation(&param, 1);	
+#else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
@@ -740,10 +833,19 @@ void defineSubstancesToBe(Sentence * currentSentenceInList, GIAentityNode * GIAe
 
 		currentRelationInList = currentRelationInList->next;
 	}
+#endif	
 }
 
 void defineActionsToDo(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);	
+	param.numberOfRelations = 1;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
+	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addActionToActionDefinitionDefineSubstances;
+	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
+	genericDependecyRelationInterpretation(&param, 1);	
+#else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
@@ -770,6 +872,7 @@ void defineActionsToDo(Sentence * currentSentenceInList, GIAentityNode * GIAenti
 
 		currentRelationInList = currentRelationInList->next;
 	}
+#endif
 }
 
 void defineSubstancesHasTime(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
@@ -827,6 +930,16 @@ void defineSubstancesNonExplicitPronouns(Sentence * currentSentenceInList, bool 
 
 void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);	
+	param.numberOfRelations = 2;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_INDIRECT_OBJECT;
+	param.useRelationArrayTest[REL2][REL_ENT3] = true; param.relationArrayTest[REL2][REL_ENT3] = relationTypeObjectNameArray; param.relationArrayTestSize[REL2][REL_ENT3] = RELATION_TYPE_OBJECT_NUMBER_OF_TYPES;
+	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
+	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionEntityRelationID[FUNC_ENT1] = REL2; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
+	genericDependecyRelationInterpretation(&param, 1);	
+#else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -883,6 +996,7 @@ void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentity
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
+#endif	
 }
 
 #ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
@@ -997,7 +1111,17 @@ void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, 
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}		
-		
+
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);	
+	param.numberOfRelations = 1;
+	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypePossessivePrepositionsNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES;
+	param.relationTestSpecialCaseIsNotAction[REL1][REL_ENT1] = true;	//Stanford Condition
+	param.relationTestSpecialCaseIsNotToBeComplimentOfAction[REL1][REL_ENT1] = true;	//Relex Condition	
+	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
+	genericDependecyRelationInterpretation(&param, 1);		
+#else		
 	currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
@@ -1062,6 +1186,7 @@ void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, 
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
+#endif	
 }	
 	
 

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2a 17-July-2013
+ * Project Version: 1t2b 18-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -563,7 +563,7 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 		{
 		//#endif
 			bool prepositionFound = false;
-			if(convertPrepositionToRelex(&(currentRelationInList->relationType), NLPdependencyRelationsType, &prepositionFound) == RELATION_TYPE_PREPOSITION_OF)
+			if(convertPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_RELEX, &prepositionFound) == RELATION_TYPE_PREPOSITION_OF)
 			{				
 				int continuousVerbIndex = currentRelationInList->relationGovernorIndex;
 				GIAentityNode * continuousVerbEntity = GIAentityNodeArray[continuousVerbIndex];
@@ -577,7 +577,7 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 						{
 						//#endif
 							bool prepositionFound2 = false;
-							if(convertPrepositionToRelex(&(currentRelationInList2->relationType), NLPdependencyRelationsType, &prepositionFound2) != RELATION_TYPE_PREPOSITION_OF)
+							if(convertPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_RELEX, &prepositionFound2) != RELATION_TYPE_PREPOSITION_OF)
 							{
 								if(currentRelationInList2->relationDependent == currentRelationInList->relationGovernor)
 								{

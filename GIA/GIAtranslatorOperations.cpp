@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2a 17-July-2013
+ * Project Version: 1t2b 18-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -406,7 +406,7 @@ GIAentityNode * addSubstance(GIAentityNode * entity)
 	}
 	#endif
 
-	if(entityNode->isToBeComplimentOfActionTemp)
+	if(entity->isToBeComplimentOfActionTemp)
 	{	
 		newSubstance->isToBeComplimentOfActionTemp = true;
 	} 
@@ -2059,13 +2059,15 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	useRedistributeRelationEntityReassignment = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}}; 			//for entity1, entity2, and entity3 - for renaming relation entities 
 	//redistributeRelationEntityReassignment = {{"", "", ""}, {"", "", ""}, {"", "", ""}, {"", "", ""}}; 	//internal compiler error: Segmentation fault		//for entity1, entity2, and entity3 - relationType, relationGovernorIndex, or relationDependentIndex - for renaming relation entities	
 		//special cases for redistribution
-	
 	useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck = {false, false, false, false, false};
 	useRedistributeSpecialCaseRelationEntityReassignmentConcatonate = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID = {{{-1, -1} , {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}};	    
 	redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID = {{{-1, -1} , {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}};
 	useRedistributeSpecialCaseIsNameQueryAssignment = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	useRedistributeSpecialCaseIsNameAssignment = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
+	useRedistributeSpecialCaseNegativeAssignment = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
+	useRedistributeSpecialCaseQualityAssignment = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
+	useRedistributeSpecialCaseDisableInstanceAndConcept = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	
 		//for execution
 	#ifdef GIA_USE_ADVANCED_REFERENCING
@@ -2625,7 +2627,15 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										if(param->useRedistributeSpecialCaseIsNameAssignment[relationID][relationEntityID])
 										{
 											param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->isName = true;
-										}									
+										}
+										if(param->useRedistributeSpecialCaseNegativeAssignment[relationID][relationEntityID])
+										{
+											param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->negative = true;
+										}	
+										if(param->useRedistributeSpecialCaseQualityAssignment[relationID][relationEntityID])
+										{
+											param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->isSubstanceQuality = true;
+										}																												
 									}
 								}														
 							}
@@ -2646,7 +2656,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										{
 											oldRedundantEntity = param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]];
 										}
-										if(param->executeOrReassign)
+										if((param->executeOrReassign) || param->useRedistributeSpecialCaseDisableInstanceAndConcept[relationID][relationEntityID])
 										{
 											disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(oldRedundantEntity);
 										}
