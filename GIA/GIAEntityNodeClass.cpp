@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p5b 21-September-2012
+ * Project Version: 1p5c 21-September-2012
  *
  *******************************************************************************/
 
@@ -228,6 +228,22 @@ GIAEntityNode::GIAEntityNode(void)
 }
 GIAEntityNode::~GIAEntityNode(void)
 {
+	//delete all connections
+	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+	{
+		for(vector<GIAEntityConnection*>::iterator connectionIter = entityVectorConnectionsArray[i].begin(); connectionIter != entityVectorConnectionsArray[i].end(); connectionIter++)
+		{
+			delete *connectionIter;
+		}
+		entityVectorConnectionsArray[i].clear();
+	}
+
+	#ifdef GIA_SUPPORT_ALIASES
+	aliasList.clear();
+	#endif		
+	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
+	delete conceptEntityLoaded;
+	#endif	
 }
 
 
@@ -446,23 +462,6 @@ void deleteEntitiesInEntityNodeList(vector<GIAEntityNode*> * entityNodesActiveLi
 	for(vector<GIAEntityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 	{
 		GIAEntityNode * entityNode = *entityIter;
-		
-		//delete all connections
-		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-		{
-			for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
-			{
-				delete *connectionIter;
-			}
-			entityNode->entityVectorConnectionsArray[i].clear();
-		}
-					
-		#ifdef GIA_SUPPORT_ALIASES
-		entityNode->aliasList.clear();
-		#endif		
-		#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
-		delete entityNode->conceptEntityLoaded;
-		#endif
 		
 		delete entityNode;
 	}
