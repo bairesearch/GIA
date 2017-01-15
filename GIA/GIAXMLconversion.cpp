@@ -23,7 +23,7 @@
  * File Name: GIAXMLconversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o4b 16-August-2012
+ * Project Version: 1o4c 16-August-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -505,6 +505,9 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
 	bool wordOrigFound = false;
 	#endif
+	#ifdef GIA_SUPPORT_ALIASES
+	bool aliasesFound = false;
+	#endif
 	bool confidenceFound = false;
 	bool isConceptFound = false;
 	bool isSubstanceFound = false;
@@ -573,6 +576,14 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			wordOrigFound = true;
 		}
 		#endif
+		#ifdef GIA_SUPPORT_ALIASES
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_aliases)
+		{
+			string attributeValue = currentAttribute->value.c_str();
+			convertAliasesStringToAliases(entityNode, attributeValue);
+			aliasesFound = true;
+		}
+		#endif		
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_confidence)
 		{
 			double attributeValue = atof(currentAttribute->value.c_str());
@@ -787,11 +798,13 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			result = false;
 		}
 		*/
+		#ifndef GIA_TEMPORARILY_DISABLE_GIA_XML_READ_CHECKS
 		if(!entityVectorConnectionNodeFoundArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE])
 		{
 			cout << "parseEntityNodeTag error: isSubstanceFound && entityNode->isSubstance && !entityNodeDefiningThisSubstanceFound" << endl;
 			result = false;
 		}
+		#endif
 	}
 	else
 	{
@@ -1156,6 +1169,15 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
 	#endif
+	
+	#ifdef GIA_SUPPORT_ALIASES
+	currentAttribute->name = NET_XML_ATTRIBUTE_aliases;
+	convertAliasesToAliasesString(currentEntity, &(currentAttribute->value));
+	
+	newAttribute = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute;
+	currentAttribute = currentAttribute->nextAttribute;
+	#endif	
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_confidence;
 	sprintf(tempString, "%0.6f", (currentEntity->confidence));
@@ -1574,3 +1596,6 @@ bool generateXMLConditionTimeNodeTagList(XMLParserTag * firstTagInConditionTimeN
 
 	return result;
 }
+
+
+	

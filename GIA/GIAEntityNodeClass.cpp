@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o4b 16-August-2012
+ * Project Version: 1o4c 16-August-2012
  *
  *******************************************************************************/
 
@@ -384,4 +384,56 @@ string printQuantityNumberString(GIAEntityNode * entityNode)
 
 	return quantityNumberStringTemp;
 }
+
+#ifdef GIA_SUPPORT_ALIASES
+	
+void convertAliasesStringToAliases(GIAEntityNode * entityNode, string aliasesString)
+{
+	entityNode->aliasList = explode(aliasesString, GIA_ALIASES_CONVERT_TO_STRING_DELIMITER);
+}
+
+void convertAliasesToAliasesString(GIAEntityNode * entityNode, string * aliasesString)
+{
+	*aliasesString = "";
+	for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter != entityNode->aliasList.end(); aliasIter++)
+	{
+		*aliasesString = *aliasesString + *aliasIter + GIA_ALIASES_CONVERT_TO_STRING_DELIMITER;
+	}
+}
+
+//http://stackoverflow.com/questions/890164/how-can-i-split-a-string-by-a-delimiter-into-an-array
+vector<string> explode(const string& str, const char& ch) 
+{
+	string next = "";
+	vector<string> result;
+
+	// For each character in the string
+	for(string::const_iterator it = str.begin(); it != str.end(); it++) 
+	{
+		// If we've hit the terminal character
+		if(*it == ch) 
+		{
+			// If we have some characters accumulated
+			if(next.length() > 0) 
+			{
+				// Add them to the result vector
+				cout << "found alias: " << next << endl;
+				result.push_back(next);
+				next = "";
+			}
+		} 
+		else 
+		{
+			// Accumulate the next character into the sequence
+			next += *it;
+		}
+	}
+
+	return result;
+}
+
+
+
+#endif
+
 

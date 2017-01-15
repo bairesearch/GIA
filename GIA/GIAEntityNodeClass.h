@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o4b 16-August-2012
+ * Project Version: 1o4c 16-August-2012
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -49,6 +49,10 @@
 #include <unordered_map>		//required for GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
 #include <utility> // make_pair	//required for GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
 using namespace std;
+
+#ifdef GIA_SUPPORT_ALIASES
+	#define GIA_ALIASES_CONVERT_TO_STRING_DELIMITER ';'	//has to be different than attribute delimiter used in GIA filesystem database GIA_DATABASE_ATTRIBUTE_DELIMITER
+#endif
 
 #define GRAMMATICAL_TENSE_CONCATONATOR_RELEX "_"
 
@@ -411,5 +415,13 @@ int calculateQuantityMultiplierInt(string quantityMultiplierString);
 
 string printQuantityNumberString(GIAEntityNode * entityNode);
 
+
+#ifdef GIA_SUPPORT_ALIASES
+void convertAliasesStringToAliases(GIAEntityNode * entityNode, string aliasesString);
+void convertAliasesToAliasesString(GIAEntityNode * entityNode, string * aliasesString);
+vector<string> explode(const string& str, const char& ch);
 #endif
+
+#endif
+
 
