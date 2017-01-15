@@ -874,8 +874,9 @@ void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, stri
 void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArrayTemp[]);	//used for intrafunction memory allocation purposes only
 
 bool checkEntityHasPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7d 9 May 2012
+GIAEntityNode * getEntityPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7g 9 May 2012
 
-GIAEntityNode * getEntityPropertyThatWasDeclaredInImmediateContext(GIAEntityNode * entityNode);		//immediate textual context (ie, current sentence) 	//added 1j7e 9 May 2012
 bool checkEntityHasPropertyThatWasDeclaredInImmediateContext(GIAEntityNode * entityNode);		//immediate textual context (ie, current sentence) 	//added 1j7e 9 May 2012
+GIAEntityNode * getEntityPropertyThatWasDeclaredInImmediateContext(GIAEntityNode * entityNode);		//immediate textual context (ie, current sentence) 	//added 1j7e 9 May 2012
 
 #endif

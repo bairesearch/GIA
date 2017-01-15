@@ -175,7 +175,7 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 	if(!(thingEntity->disabled))
 	{			
 	#endif			
-		if(checkEntityHasPropertyThatWasDeclaredInContext(propertyEntity))
+		if(checkEntityHasPropertyThatWasDeclaredInImmediateContext(propertyEntity))
 		{
 			GIAEntityNode * existingProperty = getEntityPropertyThatWasDeclaredInImmediateContext(propertyEntity);	//added 4 May 11a
 
@@ -242,7 +242,7 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 		{	
 			propertyEntity->hasAssociatedInstanceTemp = true;		//added 9 May 2012
 			//cout << "\tbreak; propertyEntity->entityName = " << propertyEntity->entityName << endl;
-			GIAEntityNode * newOrExistingProperty = getEntityPropertyThatWasDeclaredInImmediateContext(propertyEntity);		//added 4 May 11a
+			GIAEntityNode * newOrExistingProperty = getEntityPropertyThatWasDeclaredInContext(propertyEntity);		//added 4 May 11a
 		}
 		else
 		{	
@@ -328,7 +328,7 @@ GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity)
 	#endif
 
 		//configure action node	
-		if(checkEntityHasPropertyThatWasDeclaredInContext(actionEntity))
+		if(checkEntityHasPropertyThatWasDeclaredInImmediateContext(actionEntity))
 		{
 			newOrExistingAction = getEntityPropertyThatWasDeclaredInImmediateContext(actionEntity);	
 
@@ -1147,11 +1147,11 @@ bool checkEntityHasPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode)
 	return result;
 }
 
-GIAEntityNode * getEntityPropertyThatWasDeclaredInImmediateContext(GIAEntityNode * entityNode)
+GIAEntityNode * getEntityPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode)
 {
 	GIAEntityNode * entityNodeAssociatedInstance = entityNode;
 	
-	if(entityNode->hasAssociatedInstanceTemp)
+	if(entityNode->AssociatedInstanceNodeList.size() >= 1)
 	{
 		entityNodeAssociatedInstance = entityNode->AssociatedInstanceNodeList.back();
 	}
@@ -1171,6 +1171,17 @@ bool checkEntityHasPropertyThatWasDeclaredInImmediateContext(GIAEntityNode * ent
 	return result;
 }
 
+GIAEntityNode * getEntityPropertyThatWasDeclaredInImmediateContext(GIAEntityNode * entityNode)
+{
+	GIAEntityNode * entityNodeAssociatedInstance = entityNode;
+	
+	if(entityNode->hasAssociatedInstanceTemp)
+	{
+		entityNodeAssociatedInstance = entityNode->AssociatedInstanceNodeList.back();
+	}
+	
+	return entityNodeAssociatedInstance;
+}
 
 
 
