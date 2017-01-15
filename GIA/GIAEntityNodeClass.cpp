@@ -36,8 +36,10 @@ GIAEntityNode::GIAEntityNode(void)
 	
 	isProperty = false;
 	isAction = false;
-	hasAssociatedProperty = false;
-	hasAssociatedPropertyIsAction = false;
+	isCondition = false;
+	hasAssociatedInstance = false;
+	hasAssociatedInstanceIsAction = false;
+	hasAssociatedInstanceIsCondition = false;
 	hasAssociatedTime = false;
 	
 	//type = undefinedEntityType;
@@ -50,7 +52,7 @@ GIAEntityNode::GIAEntityNode(void)
 	timeConditionNode = NULL;
 	
 	entityNodeContainingThisProperty = NULL;				//if property only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
-	entityNodeDefiningThisPropertyOrAction = NULL; 		
+	entityNodeDefiningThisInstance = NULL; 		
 
 	grammaticalNumber = GRAMMATICAL_NUMBER_UNDEFINED;
 	
@@ -84,7 +86,7 @@ GIAEntityNode::GIAEntityNode(void)
 	
 	entityAlreadyDeclaredInThisContext = false;
 	
-	hasAssociatedPropertyTemp = false;
+	hasAssociatedInstanceTemp = false;
 	
 	isQuery = false;
 	isAnswerToQuery = false;

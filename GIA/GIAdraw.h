@@ -41,11 +41,13 @@ using namespace std;
 
 #define GIA_DRAW_USE_CONNECTION_TYPE_NAME_TEXT (true)
 
+/*
 #define GIA_DRAW_CONDITION_NODE_COLOUR (DAT_FILE_COLOUR_RED)				//this was red in the original spec	
-#define GIA_DRAW_CONDITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was red in the original spec	
-#define GIA_DRAW_CONDITION_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_ORANGE)	//colour not defined in original GIA spec	
+#define GIA_DRAW_CONDITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was red in the original spec
+#define GIA_DRAW_CONDITION_CONNECTION_DEFINITION_COLOUR (DAT_FILE_COLOUR_ORANGE)	//colour not defined in original GIA spec	
 //#define GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//Not used	//this was red in the original GIA spec		[uses whatever colour the definition is already, eg cyan for entity property]
 #define GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//this was red in the original spec			
+*/
 
 #define GIA_DRAW_ACTION_NODE_COLOUR (DAT_FILE_COLOUR_GREEN)				//this was green in the original spec	
 #define GIA_DRAW_ACTION_SUBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_GREEN)			//this was black in the original spec	
@@ -56,6 +58,17 @@ using namespace std;
 #endif
 #define GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_BROWN)		//colour not defined in original GIA spec
 #define GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_BROWN)			//this was dark green to original GIA spec
+
+#define GIA_DRAW_CONDITION_NODE_COLOUR (DAT_FILE_COLOUR_RED)				//this was green in the original spec	
+	#define GIA_DRAW_CONDITION_TIME_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//this was red in the original spec
+#define GIA_DRAW_CONDITION_SUBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was black in the original spec	
+#ifdef GIA_DRAW_USE_CONNECTION_TYPE_NAME_TEXT == (true)
+	#define GIA_DRAW_CONDITION_OBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was black in the original spec	
+#else
+	#define GIA_DRAW_CONDITION_OBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_YELLOW)
+#endif
+#define GIA_DRAW_CONDITION_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_ORANGE)	//colour not defined in original GIA spec
+#define GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//this was dark green to original GIA spec
 
 #define GIA_DRAW_BASICENTITY_CONNECTION_COLOUR (DAT_FILE_COLOUR_BLUE)			//this was black in the original spec
 #define GIA_DRAW_BASICENTITY_NODE_COLOUR (DAT_FILE_COLOUR_BLUE)				//this was blue in the original spec	
@@ -95,11 +108,11 @@ using namespace std;
 #define DRAW_Y_SPACE_BETWEEN_ACTION_DEFINITION_NODES (30)	//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_ACTION_DEFINITION_NODES (-50)	//should not be used during initialiseForPrint
 
-#define DRAW_Y_SPACE_BETWEEN_CONDITION_NODES (20)		//should not be used during initialiseForPrint
-#define DRAW_X_SPACE_BETWEEN_CONDITION_NODES (30)		//should not be used during initialiseForPrint
-#define DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (15)	//should not be used during initialiseForPrint
+#define DRAW_Y_SPACE_BETWEEN_CONDITION_NODES (0)		//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_CONDITION_NODES (100)		//should not be used during initialiseForPrint
+#define DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (100)	//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (0)	//should not be used during initialiseForPrint
-#define DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES (30)	//should not be used during initialiseForPrint
+#define DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES (30)		//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES (-50)	//should not be used during initialiseForPrint
 
 #define DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES (50)			//should not be used during initialiseForPrint

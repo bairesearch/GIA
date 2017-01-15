@@ -358,6 +358,7 @@ int main(int argc,char **argv)
 	vector<GIAEntityNode*> * conceptEntityNodesList = new vector<GIAEntityNode*>;
 	vector<GIAEntityNode*> * propertyEntityNodesList = new vector<GIAEntityNode*>;
 	vector<GIAEntityNode*> * actionEntityNodesList = new vector<GIAEntityNode*>;
+	vector<GIAEntityNode*> * conditionEntityNodesList = new vector<GIAEntityNode*>;
 	vector<string> * conceptEntityNamesList = new vector<string>;
 	vector<GIATimeConditionNode*> * timeConditionNodesList = new vector<GIATimeConditionNode*>;
 	vector<long> * timeConditionNumbersList = new vector<long>;	
@@ -366,6 +367,7 @@ int main(int argc,char **argv)
 	vector<GIAEntityNode*> * conceptEntityNodesListQuery = new vector<GIAEntityNode*>;			//not required - declared for symmetry
 	vector<GIAEntityNode*> * propertyEntityNodesListQuery = new  vector<GIAEntityNode*>;			//not required - declared for symmetry
 	vector<GIAEntityNode*> * actionEntityNodesListQuery = new vector<GIAEntityNode*>;			//not required - declared for symmetry
+	vector<GIAEntityNode*> * conditionEntityNodesListQuery = new vector<GIAEntityNode*>;			//not required - declared for symmetry	
 	vector<string> * conceptEntityNamesListQuery = new vector<string>;					//not required - declared for symmetry
 	vector<GIATimeConditionNode*> * timeConditionNodesListQuery = new vector<GIATimeConditionNode*>;
 	vector<long> * timeConditionNumbersListQuery = new vector<long>;	
@@ -434,7 +436,7 @@ int main(int argc,char **argv)
 		else
 		{
 			//cout << "as" << endl;
-			if(!parseRelexFile(inputRelexXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conceptEntityNamesList, timeConditionNodesList, timeConditionNumbersList))
+			if(!parseRelexFile(inputRelexXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList, timeConditionNodesList, timeConditionNumbersList))
 			{
 				result = false;
 			}
@@ -456,7 +458,7 @@ int main(int argc,char **argv)
 		}
 		else
 		{		
-			if(!readSemanticNetXMLFile(inputXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conceptEntityNamesList))
+			if(!readSemanticNetXMLFile(inputXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList))
 			{
 				result = false;
 			}
@@ -492,7 +494,7 @@ int main(int argc,char **argv)
 		}
 		else
 		{
-			if(!parseRelexFile(queryRelexXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conceptEntityNamesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery))
+			if(!parseRelexFile(queryRelexXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, conceptEntityNamesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery))
 			{
 				result = false;
 			}
@@ -514,7 +516,7 @@ int main(int argc,char **argv)
 		else
 		{		
 			entityNodesCompleteListQuery = new vector<GIAEntityNode*>;
-			if(!readSemanticNetXMLFile(queryXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conceptEntityNamesListQuery))
+			if(!readSemanticNetXMLFile(queryXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, conceptEntityNamesListQuery))
 			{
 				result = false;
 			}
@@ -622,14 +624,14 @@ int main(int argc,char **argv)
 	}			
 	
 	#ifdef GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
-	if(!testReadSemanticNetXMLFile2(entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conceptEntityNamesList))
+	if(!testReadSemanticNetXMLFile2(entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList))
 	{
 		result = false;
 	}
 	#else				
 	if(useOutputXMLFile)
 	{			
-		if(!writeSemanticNetXMLFile(outputXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conceptEntityNamesList))
+		if(!writeSemanticNetXMLFile(outputXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList))
 		{
 			result = false;
 		}
@@ -683,12 +685,12 @@ string printEntityNode(GIAEntityNode * queryAnswerNode)
 		{
 			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->entityNodeContainingThisProperty->entityName, "entityNodeContainingThisProperty (parent)");
 		}	
-		if(queryAnswerNode->entityNodeDefiningThisPropertyOrAction != NULL)
+		if(queryAnswerNode->entityNodeDefiningThisInstance != NULL)
 		{
-			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->entityNodeDefiningThisPropertyOrAction->entityName, "entityNodeDefiningThisPropertyOrAction");
+			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->entityNodeDefiningThisInstance->entityName, "entityNodeDefiningThisInstance");
 		}
 	}	
-	if(queryAnswerNode->hasAssociatedPropertyIsAction)
+	if(queryAnswerNode->hasAssociatedInstanceIsAction)
 	{
 		if(queryAnswerNode->actionSubjectEntity != NULL)
 		{
@@ -699,7 +701,7 @@ string printEntityNode(GIAEntityNode * queryAnswerNode)
 			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->actionObjectEntity->entityName, "actionObjectEntity");
 		}
 	}
-	if(!(queryAnswerNode->hasAssociatedPropertyIsAction))
+	if(!(queryAnswerNode->hasAssociatedInstanceIsAction))
 	{
 		if(queryAnswerNode->ActionNodeList.begin() != queryAnswerNode->ActionNodeList.end())
 		{
@@ -716,6 +718,35 @@ string printEntityNode(GIAEntityNode * queryAnswerNode)
 			}				
 		}
 	}
+	if(queryAnswerNode->hasAssociatedInstanceIsCondition)
+	{
+		if(queryAnswerNode->conditionSubjectEntity != NULL)
+		{
+			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->conditionSubjectEntity->entityName, "conditionSubjectEntity");
+		}
+		if(queryAnswerNode->conditionObjectEntity != NULL)
+		{
+			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->conditionObjectEntity->entityName, "conditionObjectEntity");
+		}
+	} 
+	if(!(queryAnswerNode->hasAssociatedInstanceIsCondition))	//CHECKTHIS; doesnt support recursive conditions at the moment (conditions of conditions)
+	{
+		if(queryAnswerNode->ConditionNodeList.begin() != queryAnswerNode->ConditionNodeList.end())
+		{
+			for(queryAnswerNode->ConditionNodeListIterator = queryAnswerNode->ConditionNodeList.begin(); queryAnswerNode->ConditionNodeListIterator < queryAnswerNode->ConditionNodeList.end(); queryAnswerNode->ConditionNodeListIterator++)
+			{
+				addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->ConditionNodeListIterator))->entityName, "conditionNode(s)");
+			}				
+		}
+		if(queryAnswerNode->IncomingConditionNodeList.begin() != queryAnswerNode->IncomingConditionNodeList.end())
+		{
+			for(queryAnswerNode->IncomingConditionNodeListIterator = queryAnswerNode->IncomingConditionNodeList.begin(); queryAnswerNode->IncomingConditionNodeListIterator < queryAnswerNode->IncomingConditionNodeList.end(); queryAnswerNode->IncomingConditionNodeListIterator++)
+			{		
+				addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->IncomingConditionNodeListIterator))->entityName, "incomingConditionNode(s)");
+			}				
+		}
+	}
+		
 	if(queryAnswerNode->PropertyNodeList.begin() != queryAnswerNode->PropertyNodeList.end())
 	{
 		for(queryAnswerNode->PropertyNodeListIterator = queryAnswerNode->PropertyNodeList.begin(); queryAnswerNode->PropertyNodeListIterator < queryAnswerNode->PropertyNodeList.end(); queryAnswerNode->PropertyNodeListIterator++)
@@ -723,24 +754,7 @@ string printEntityNode(GIAEntityNode * queryAnswerNode)
 			addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->PropertyNodeListIterator))->entityName, "propertyNode(s)");	
 		}				
 	}
-	if(queryAnswerNode->ConditionNodeList.begin() != queryAnswerNode->ConditionNodeList.end())
-	{
-		vector<string>::iterator ConditionNodeTypeListIterator = queryAnswerNode->ConditionNodeTypeList.begin();
-		for(queryAnswerNode->ConditionNodeListIterator = queryAnswerNode->ConditionNodeList.begin(); queryAnswerNode->ConditionNodeListIterator < queryAnswerNode->ConditionNodeList.end(); queryAnswerNode->ConditionNodeListIterator++)
-		{
-			addToPrintEntityNodeString(&printEntityNodeString, ((*(queryAnswerNode->ConditionNodeListIterator))->entityName + ", type = " + *ConditionNodeTypeListIterator), "conditionNode(s)");
-			ConditionNodeTypeListIterator++;
-		}				
-	}
-	if(queryAnswerNode->ConditionNodeReverseList.begin() != queryAnswerNode->ConditionNodeReverseList.end())
-	{
-		vector<string>::iterator ConditionNodeTypeListIterator = queryAnswerNode->ConditionNodeTypeReverseList.begin();
-		for(queryAnswerNode->ConditionNodeReverseListIterator = queryAnswerNode->ConditionNodeReverseList.begin(); queryAnswerNode->ConditionNodeReverseListIterator < queryAnswerNode->ConditionNodeReverseList.end(); queryAnswerNode->ConditionNodeReverseListIterator++)
-		{		
-			addToPrintEntityNodeString(&printEntityNodeString, ((*(queryAnswerNode->ConditionNodeReverseListIterator))->entityName + ", type = " + *ConditionNodeTypeListIterator), "incomingConditionNode(s)");
-			ConditionNodeTypeListIterator++;
-		}				
-	}
+
 	
 	if(!(queryAnswerNode->isProperty))
 	{
@@ -774,7 +788,7 @@ string printEntityNode(GIAEntityNode * queryAnswerNode)
 }
 	
 	
-bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<string> * conceptEntityNamesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList)
+bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<string> * conceptEntityNamesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList)
 {
 	bool result = true;
 	

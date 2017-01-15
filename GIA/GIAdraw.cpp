@@ -84,15 +84,23 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		else if(entityNode->isAction)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is action)" << endl;		
-		}		
-		else if(entityNode->hasAssociatedProperty)
+		}
+		else if(entityNode->isCondition)
+		{
+			cout << "entityNode = " << entityNode->entityName << " (is condition)" << endl;		
+		}				
+		else if(entityNode->hasAssociatedInstance)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (has associated property)" << endl;	
 		}
-		else if(entityNode->hasAssociatedPropertyIsAction)
+		else if(entityNode->hasAssociatedInstanceIsAction)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (has associated property is action)" << endl;
-		} 
+		}
+		else if(entityNode->hasAssociatedInstanceIsCondition)
+		{
+			cout << "entityNode = " << entityNode->entityName << " (has associated property is condition)" << endl;
+		}		 
 		else if(entityNode->hasAssociatedTime)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (has associated time)" << endl;	
@@ -107,8 +115,8 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		/*
 		cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
 		cout << "\tentityNode->isProperty = " << entityNode->isProperty << endl;
-		cout << "\tentityNode->hasAssociatedProperty = " << entityNode->hasAssociatedProperty << endl;
-		cout << "\tentityNode->hasAssociatedPropertyIsAction = " << entityNode->hasAssociatedPropertyIsAction << endl;
+		cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
+		cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;
 		*/
 		
 		entityNode->initialisedForPrinting = true;
@@ -122,18 +130,14 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		int q, r;
 	
 		vec pos1;
-		vec pos2;
-		vec pos3;
-		vec pos4;
-		vec pos5;
-		
+
 		pos1.x = entityNode->printX;
 		pos1.y = entityNode->printY;	
 		pos1.z = DRAW_CONNECTION_Z;
 		
 		//cout << "a1" << endl;
 				
-		//action connections;
+		//action connections
 		q = -DRAW_Y_SPACE_BETWEEN_ACTION_NODES;
 		r = -DRAW_X_SPACE_BETWEEN_ACTION_NODES;		
 		vector<GIAEntityNode*>::iterator actionIter;
@@ -154,9 +158,6 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			q = q + DRAW_Y_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE;
 		}	
 
-
-
-
 		q = -DRAW_Y_SPACE_BETWEEN_ACTION_NODES;
 		r = -DRAW_X_SPACE_BETWEEN_ACTION_NODES;			
 		if(entityNode->actionSubjectEntity != NULL)
@@ -170,10 +171,11 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			if(initialiseOrPrint == DRAW_PRINT)
 			{	
 				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				pos3.x = entityNode->actionSubjectEntity->printX;
-				pos3.y = entityNode->actionSubjectEntity->printY;	
-				pos3.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos3, GIA_DRAW_ACTION_SUBJECT_CONNECTION_COLOUR, writeFileObject, "subject");
+				vec pos2;
+				pos2.x = entityNode->actionSubjectEntity->printX;
+				pos2.y = entityNode->actionSubjectEntity->printY;	
+				pos2.z = DRAW_CONNECTION_Z;
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_ACTION_SUBJECT_CONNECTION_COLOUR, writeFileObject, "subject");
 			}		
 		}
 		q = DRAW_Y_SPACE_BETWEEN_ACTION_NODES;
@@ -186,11 +188,12 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			if(initialiseOrPrint == DRAW_PRINT)
 			{	
 				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-
-				pos4.x = entityNode->actionObjectEntity->printX;
-				pos4.y = entityNode->actionObjectEntity->printY;	
-				pos4.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR, writeFileObject, "object");
+				
+				vec pos2;
+				pos2.x = entityNode->actionObjectEntity->printX;
+				pos2.y = entityNode->actionObjectEntity->printY;	
+				pos2.z = DRAW_CONNECTION_Z;
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR, writeFileObject, "object");
 			}		
 		}
 					
@@ -201,66 +204,59 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
 		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
 		vector<GIAEntityNode*>::iterator ConditionIter;
-		vector<string>::iterator ConditionNodeTypeListIterator = entityNode->ConditionNodeTypeList.begin();
 		for(ConditionIter = entityNode->ConditionNodeList.begin(); ConditionIter != entityNode->ConditionNodeList.end(); ConditionIter++) 
-		{	
+		{				
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-			
-			if(initialiseOrPrint == DRAW_PRINT)
-			{	
-				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				pos5.x = (*ConditionIter)->printX;
-				pos5.y = (*ConditionIter)->printY;	
-				pos5.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject, *ConditionNodeTypeListIterator);
-			}
-			ConditionNodeTypeListIterator++;			
+			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;				
 		}				
-		if(entityNode->timeConditionNode != NULL)
-		{	
-			if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
-			{
-				//cout << "b7" << endl;
-				int timeConditionNodePrintX = x+r;
-				int timeConditionNodePrintY = y+q;
-				currentReferenceInPrintList = initialiseTimeConditionNodeForPrinting(entityNode->timeConditionNode, timeConditionNodePrintY, timeConditionNodePrintX, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-				
-				q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-				
-				//cout << "b8" << endl;
-				if(initialiseOrPrint == DRAW_PRINT)
-				{	
-					//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-
-					pos5.x = timeConditionNodePrintX;
-					pos5.y = timeConditionNodePrintY;	
-					pos5.z = DRAW_CONNECTION_Z;
-					currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject, "time");
-				}
-			}		
-		}
-				
 		//go reverse also...
 		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
-		r = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
-		ConditionNodeTypeListIterator = entityNode->ConditionNodeTypeReverseList.begin();
-		for(ConditionIter = entityNode->ConditionNodeReverseList.begin(); ConditionIter != entityNode->ConditionNodeReverseList.end(); ConditionIter++) 
-		{	
+		r = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;		
+		for(ConditionIter = entityNode->IncomingConditionNodeList.begin(); ConditionIter != entityNode->IncomingConditionNodeList.end(); ConditionIter++) 
+		{						
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y-q, x-r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		
+		}
+			
+		q = -DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_CONDITION_NODES;			
+		if(entityNode->conditionSubjectEntity != NULL)
+		{		
+			//cout << "b5" << endl;
+			//cout << "entityNode->conditionSubjectEntity->initialisedForPrinting = " << entityNode->conditionSubjectEntity->initialisedForPrinting << endl;
+			//cout << "entityNode->conditionSubjectEntity->entityName = " << entityNode->conditionSubjectEntity->entityName << endl;
+			//cout << "entityNode->conditionObjectEntity->entityName = " << entityNode->conditionObjectEntity->entityName << endl;
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->conditionSubjectEntity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			//cout << "b6" << endl;
 			if(initialiseOrPrint == DRAW_PRINT)
 			{	
 				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				pos5.x = (*ConditionIter)->printX;
-				pos5.y = (*ConditionIter)->printY;	
-				pos5.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject, *ConditionNodeTypeListIterator);
-			}	
-			ConditionNodeTypeListIterator++;		
+				vec pos2;
+				pos2.x = entityNode->conditionSubjectEntity->printX;
+				pos2.y = entityNode->conditionSubjectEntity->printY;	
+				pos2.z = DRAW_CONNECTION_Z;
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_SUBJECT_CONNECTION_COLOUR, writeFileObject, "subject");
+			}		
 		}
+		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;				
+		if(entityNode->conditionObjectEntity != NULL)
+		{		
+			//cout << "b7" << endl;
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->conditionObjectEntity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);	
+			//cout << "b8" << endl;
+			if(initialiseOrPrint == DRAW_PRINT)
+			{	
+				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
 				
+				vec pos2;
+				pos2.x = entityNode->conditionObjectEntity->printX;
+				pos2.y = entityNode->conditionObjectEntity->printY;	
+				pos2.z = DRAW_CONNECTION_Z;
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_OBJECT_CONNECTION_COLOUR, writeFileObject, "object");
+			}		
+		}
+						
 		
 		
 		//cout << "a3" << endl;
@@ -290,16 +286,17 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		//go upwards also...
 		q = -DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;
 		r = -DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;		
-		if(entityNode->entityNodeDefiningThisPropertyOrAction != NULL)
+		if(entityNode->entityNodeDefiningThisInstance != NULL)
 		{
 			//cout << "a33" << endl;
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->entityNodeDefiningThisPropertyOrAction, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->entityNodeDefiningThisInstance, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			
 			if(initialiseOrPrint == DRAW_PRINT)
 			{	
 				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				pos2.x = entityNode->entityNodeDefiningThisPropertyOrAction->printX;
-				pos2.y = entityNode->entityNodeDefiningThisPropertyOrAction->printY;	
+				vec pos2;
+				pos2.x = entityNode->entityNodeDefiningThisInstance->printX;
+				pos2.y = entityNode->entityNodeDefiningThisInstance->printY;	
 				pos2.z = DRAW_CONNECTION_Z;							
 				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR, writeFileObject, "instance");
 			}
@@ -316,10 +313,11 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			if(initialiseOrPrint == DRAW_PRINT)
 			{	
 				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				pos3.x = entityNode->entityNodeContainingThisProperty->printX;
-				pos3.y = entityNode->entityNodeContainingThisProperty->printY;	
-				pos3.z = DRAW_CONNECTION_Z;								
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos3, GIA_DRAW_PROPERTY_CONNECTION_COLOUR, writeFileObject, "property");
+				vec pos2;
+				pos2.x = entityNode->entityNodeContainingThisProperty->printX;
+				pos2.y = entityNode->entityNodeContainingThisProperty->printY;	
+				pos2.z = DRAW_CONNECTION_Z;								
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_PROPERTY_CONNECTION_COLOUR, writeFileObject, "property");
 			}
 				
 		}
@@ -337,10 +335,11 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			if(initialiseOrPrint == DRAW_PRINT)
 			{	
 				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				pos4.x = (*entityIter)->printX;
-				pos4.y = (*entityIter)->printY;	
-				pos4.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_BASICENTITY_CONNECTION_COLOUR, writeFileObject, "definition");
+				vec pos2;
+				pos2.x = (*entityIter)->printX;
+				pos2.y = (*entityIter)->printY;	
+				pos2.z = DRAW_CONNECTION_Z;
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_BASICENTITY_CONNECTION_COLOUR, writeFileObject, "definition");
 			}
 			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;
 
@@ -360,7 +359,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		//associated actions and properties [ie does this entity also define an action/verb or a property/adjective? [ie, it is not just a thing/noun]]
 		q = DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;
 		r = DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;	//this used to be - not +		
-		for(entityIter = entityNode->AssociatedPropertyNodeList.begin(); entityIter != entityNode->AssociatedPropertyNodeList.end(); entityIter++) 
+		for(entityIter = entityNode->AssociatedInstanceNodeList.begin(); entityIter != entityNode->AssociatedInstanceNodeList.end(); entityIter++) 
 		{
 			//cout << "as0" << endl;
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
@@ -389,7 +388,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			{
 				entityColour = GIA_DRAW_QUERY_ANSWER_CONTEXT_NODE_COLOUR;
 			}
-			else if(entityNode->hasAssociatedPropertyIsAction)
+			else if(entityNode->hasAssociatedInstanceIsAction)
 			{
 				if(entityNode->hasMeasure)
 				{
@@ -399,7 +398,11 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				{
 					entityColour = GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
 				}
-			}			
+			}
+			else if(entityNode->hasAssociatedInstanceIsCondition)
+			{
+				entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
+			}						
 			else if(entityNode->isProperty)
 			{
 				if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
@@ -423,18 +426,18 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			else if(entityNode->isAction)
 			{
 				entityColour = GIA_DRAW_ACTION_NODE_COLOUR;	
-			}			
+			}
+			/*			
 			else if(entityNode->hasAssociatedTime)
 			{
 				entityColour = GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR;	//clear identify a time node
 			}
-			/*
-			else if(entityNode->hasConditionTime)
+			*/
+			else if(entityNode->isCondition)
 			{
-				entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clear identify a time node
-			}
-			*/		
-			else if(entityNode->hasAssociatedProperty)
+				entityColour = GIA_DRAW_CONDITION_NODE_COLOUR;	//clear identify a time node				
+			}		
+			else if(entityNode->hasAssociatedInstance)
 			{//the original spec seemed to imply that entities that have associated properties (ie, that define properties) are special but they don't appear to be
 				if(!(entityNode->isProperty))
 				{		
@@ -483,15 +486,23 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		else if(entityNode->isAction)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (is action)" << endl;		
-		}		
-		else if(entityNode->hasAssociatedProperty)
+		}
+		else if(entityNode->isCondition)
+		{
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (is condition)" << endl;		
+		}					
+		else if(entityNode->hasAssociatedInstance)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property)" << endl;	
 		}
-		else if(entityNode->hasAssociatedPropertyIsAction)
+		else if(entityNode->hasAssociatedInstanceIsAction)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property is action)" << endl;
 		} 
+		else if(entityNode->hasAssociatedInstanceIsCondition)
+		{
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property is condition)" << endl;
+		}		
 		else if(entityNode->hasAssociatedTime)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated time)" << endl;	
