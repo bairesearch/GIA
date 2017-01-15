@@ -23,7 +23,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c3c 15-January-2014
+ * Project Version: 2c4a 15-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -178,6 +178,8 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			currentRelation->relationType = relationType;
 			currentRelation->relationGovernorIndex = relationGovernorIndex;
 			currentRelation->relationDependentIndex = relationDependentIndex;
+			//cout << "relationGovernor = " << relationGovernor << endl;
+			//cout << "relationDependent = " << relationDependent << endl;
 			//cout << "currentRelation->relationGovernorIndex = " << currentRelation->relationGovernorIndex << endl;
 			//cout << "currentRelation->relationDependentIndex = " << currentRelation->relationDependentIndex << endl;
 
@@ -191,7 +193,9 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			}
 			*/
 			#endif
-
+			
+			//cout << "h1" << endl;
+			
 			#ifdef GIA_NLP_DEBUG
 			//cout << "convertStanfordRelationToRelex" << endl;
 			#endif
@@ -212,35 +216,134 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 				currentRelation->relationGovernor = relationGovernor;
 				currentRelation->relationDependent = relationDependent;
 				*/
-				if(!parseGIA2file || (currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY))
+				bool useLemmaFromFeatureSet = false;
+				if(!parseGIA2file)
 				{
-					Feature * currentFeatureInList = firstFeatureInList;
+					useLemmaFromFeatureSet = true;
+				}
+				else if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+				{
+					#ifdef GIA2_SUPPORT_QUERIES
+					if(!(findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))
+					{
+					#endif
+						useLemmaFromFeatureSet = true;
+					#ifdef GIA2_SUPPORT_QUERIES
+					}
+					#endif
+				}
+				//cout << "h3" << endl;
+				
+				Feature * currentFeatureInList = firstFeatureInList;
+				//cout << "relationDependent = " << relationDependent << endl;
+				//cout << "relationDependentIndex = " << relationDependentIndex << endl;
+				if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+				{
 					for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationDependentIndex; f++)
 					{
 						currentFeatureInList = currentFeatureInList->next;
 					}
+				}
+				//cout << "h3a" << endl;
+				if(useLemmaFromFeatureSet)
+				{
+					//cout << "h3b" << endl;
+					//cout << "currentFeatureInList->lemma = " << currentFeatureInList->lemma << endl;
+
 					currentRelation->relationDependent = currentFeatureInList->lemma;
-					//cout << "currentRelation->relationDependent = " << currentRelation->relationDependent << endl;
+					//cout << "h3c" << endl;
 				}
 				else
 				{
+					//cout << "h3d" << endl;
+					//cout << "relationDependent = " << relationDependent << endl;
 					currentRelation->relationDependent = relationDependent;	//eg "_measure" of _measure-993
+					//cout << "h3e" << endl;
 				}
-				if(!parseGIA2file || (currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY))
+				//cout << "h4" << endl;
+				#ifdef GIA2_SUPPORT_QUERIES
+				if(findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE))
 				{
-					Feature * currentFeatureInList = firstFeatureInList;
+					currentRelation->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+					if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+					{
+						currentFeatureInList->lemma = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+					}
+					if(findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+					{
+						currentRelation->corpusSpecialRelationDependentIsQuery = relationDependent;
+					}
+				}
+				else
+				{
+					if(findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+					{
+						currentRelation->corpusSpecialRelationDependentIsQuery = relationDependent;
+					}				
+				}
+				#endif		
+				//cout << "h5" << endl;
+				useLemmaFromFeatureSet = false;
+				if(!parseGIA2file)
+				{
+					useLemmaFromFeatureSet = true;
+				}
+				else if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+				{
+					#ifdef GIA2_SUPPORT_QUERIES
+					if(!(findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))
+					{
+					#endif
+						useLemmaFromFeatureSet = true;
+					#ifdef GIA2_SUPPORT_QUERIES
+					}
+					#endif
+				}
+				//cout << "h6" << endl;
+				currentFeatureInList = firstFeatureInList;
+				if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+				{
 					for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationGovernorIndex; f++)
 					{
 						currentFeatureInList = currentFeatureInList->next;
 					}
+				}
+				if(useLemmaFromFeatureSet)
+				{
 					currentRelation->relationGovernor = currentFeatureInList->lemma;
 					//cout << "currentRelation->relationGovernor = " << currentRelation->relationGovernor << endl;
 				}
 				else
 				{
+					//cout << "relationGovernor = " << relationGovernor << endl;
 					currentRelation->relationGovernor = relationGovernor;	//eg "_measure" of _measure-993
 				}
+				//cout << "h7" << endl;
+				#ifdef GIA2_SUPPORT_QUERIES
+				if(findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE))
+				{
+					currentRelation->relationGovernor = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+					if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+					{
+						currentFeatureInList->lemma = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+					}
+					if(findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+					{
+						currentRelation->corpusSpecialRelationGovernorIsQuery = relationGovernor;
+					}
+				}
+				else
+				{
+					if(findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+					{
+						currentRelation->corpusSpecialRelationGovernorIsQuery = relationGovernor;
+					}				
+				}
+				//cout << "h8" << endl;
+				#endif	
 			}
+			
+			//cout << "h2" << endl;
 
 			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 			cout << "relation added;" << endl;
@@ -351,6 +454,17 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 	}
 }
 
+#ifdef GIA2_SUPPORT_QUERIES
+bool findString(string entityName, string stringToFind)
+{
+	bool foundqVar = false;
+	if(entityName.find(stringToFind) != -1)
+	{
+		foundqVar = true;
+	}
+	return foundqVar;
+}
+#endif
 
 void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence)
 {

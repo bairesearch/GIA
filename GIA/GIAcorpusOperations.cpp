@@ -23,7 +23,7 @@
  * File Name: GIAcorpusOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c3c 15-January-2014
+ * Project Version: 2c4a 15-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -117,6 +117,53 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 
 string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet) 
 {
+	#ifdef GIA2_SUPPORT_QUERIES
+	string entityWord1 = GIAentityNodeArray[entityIndex1]->entityName;
+	string entityWord2 = GIAentityNodeArray[entityIndex2]->entityName;
+	
+	//cout << "a1" << endl;
+	string entityWord1Query = "";
+	if(GIAentityNodeArray[entityIndex1]->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+	{
+		entityWord1Query = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+	}
+	if(GIAentityNodeArray[entityIndex1]->isNameQuery)
+	{
+		cout << "isNameQuery" << endl;
+		entityWord1 = entityWord1Query + GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME;
+	}
+	else if(GIAentityNodeArray[entityIndex1]->isWhichOrEquivalentWhatQuery)
+	{
+		cout << "isWhichOrEquivalentWhatQuery" << endl;
+		entityWord1 = entityWord1Query + GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME;
+	}
+	else if(GIAentityNodeArray[entityIndex1]->isQuery)
+	{
+		cout << "isQuery" << endl;
+		entityWord1 = entityWord1Query + GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME;
+	}
+
+	string entityWord2Query = "";
+	if(GIAentityNodeArray[entityIndex2]->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+	{
+		entityWord2Query = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+	}	
+	if(GIAentityNodeArray[entityIndex2]->isNameQuery)
+	{
+		cout << "isNameQuery" << endl;
+		entityWord2 = entityWord2Query + GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME;
+	}
+	else if(GIAentityNodeArray[entityIndex2]->isWhichOrEquivalentWhatQuery)
+	{
+		cout << "isWhichOrEquivalentWhatQuery" << endl;
+		entityWord2 = entityWord2Query + GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME;
+	}	
+	else if(GIAentityNodeArray[entityIndex2]->isQuery)
+	{
+		cout << "isQuery" << endl;
+		entityWord2 = entityWord2Query + GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME;
+	}	
+	#else
 	string entityWord1 = GIAentityNodeArray[entityIndex1]->wordOrig;
 	string entityWord2 = GIAentityNodeArray[entityIndex2]->wordOrig;
 	//cout << "entityWord1 = " << entityWord1 << endl;
@@ -130,6 +177,8 @@ string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArra
 	{//why does GIAentityNodes in GIAentityNodeArray that correspond to prepositions not have a "wordOrig" but only have an entityName? (is it related to LRP?) 
 		entityWord2 = GIAentityNodeArray[entityIndex2]->entityName;
 	}
+	#endif
+	//cout << "a2" << endl;
 		
 	string GIA2semanticDependencyRelation = "";
 	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + GIA2semanticDependencyRelationNameArray[connectionType] + "(" + entityWord1 + "-" + convertIntToString(entityIndex1) + ", " + entityWord2 + "-" + convertIntToString(entityIndex2) + ") " + createSameReferenceSetRecord(sameReferenceSet);

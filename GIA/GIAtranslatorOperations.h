@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c3c 15-January-2014
+ * Project Version: 2c4a 15-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -912,12 +912,15 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 	//determiner
 #define FEATURE_POS_TAG_DETERMINER "DET"			//"the" is considered a determiner by Relex
 	//additional (unknown)
-#define FEATURE_POS_TAG_UNKNOWN_FOREIGNWORD_FW "FW"		//ASSUME foreign word is considered a WORD by Relex, eg Tom moves the $5 note.
+#define FEATURE_POS_TAG_UNKNOWN_FOREIGNWORD_FW "FW"		//ASSUME foreign word is considered a WORD by Relex
 #define FEATURE_POS_TAG_UNKNOWN_EXISTENTIAL_THERE "EX"		//"There" is considered a WORD by Relex, eg There is a ball.
-#define FEATURE_POS_TAG_UNKNOWN_LISTITEMMARKER_LS "LS"		//ASSUME list marker is considered a WORD by Relex, eg Tom moves the $5 note.
-#define FEATURE_POS_TAG_UNKNOWN_SYMBOL_SYM "SYM"		//ASSUME symbol is considered a WORD by Relex, eg Tom moves the $5 note.
-#define FEATURE_POS_TAG_PUNCTUATION_HASH "#"			//"#" is considered a WORD by Relex, eg Tom moves the $5 note.
+#define FEATURE_POS_TAG_UNKNOWN_LISTITEMMARKER_LS "LS"		//ASSUME list marker is considered a WORD by Relex,
+#define FEATURE_POS_TAG_UNKNOWN_SYMBOL_SYM "SYM"		//ASSUME symbol is considered a WORD by Relex
+#define FEATURE_POS_TAG_PUNCTUATION_HASH "#"			//"#" is considered a WORD by Relex
 #define FEATURE_POS_TAG_PUNCTUATION_DOLLAR "$"			//"$" is considered a WORD by Relex, eg Tom moves the $5 note.
+#ifdef GIA2_SUPPORT_QUERIES
+#define FEATURE_POS_TAG_PUNCTUATION_QUESTIONMARK "?"		//"?" is considered a WORD by Relex? [CHECKTHIS] //no PENN treebank entry for question mark?
+#endif
 	//predeterminer
 #define FEATURE_POS_TAG_UNKNOWN_PREDETERMINER_PDT "PDT"		//"all" is considered an adjective by Relex, eg He fights all the time.	//http://en.wiktionary.org/wiki/predeterminer		//Parsed incorrectly by Stanford Parser: "three times" is considered an adjective/noun combination by Relex, eg It moves at three times the rate.
 	//posessive ending

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c3c 15-January-2014
+ * Project Version: 2c4a 15-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1965,16 +1965,20 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 	{
 		entityNode->aliasList.push_back(entityNodeToMerge->entityName);
 
-		#ifdef GIA_ALIASES_DEBUG
+		//#ifdef GIA_ALIASES_DEBUG
 		cout << "\n" << endl;
 		cout << "entityNode->entityName = " << entityNode->entityName << endl;
 		cout << "entityNodeToMerge->entityName = " << entityNodeToMerge->entityName << endl;
-		#endif
+		cout << "entityNode->isConcept = " << entityNode->isConcept << endl;
+		cout << "entityNodeToMerge->isConcept = " << entityNodeToMerge->isConcept << endl;
+		//#endif
 
 		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 		{
 			for(vector<GIAentityConnection*>::iterator connectionIter = entityNodeToMerge->entityVectorConnectionsArray[i].begin(); connectionIter != entityNodeToMerge->entityVectorConnectionsArray[i].end(); )
 			{
+				cout << "h1" << endl;
+				
 				bool connectionIterErased = false;
 				//connect entityNodeToMerge ambient node to entityNode
 				GIAentityNode * entityConnectedToEntityToMerge = (*connectionIter)->entity;
@@ -2159,6 +2163,7 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 			#ifdef GIA_SUPPORT_ALIASES
 			entityNode->isNameQuery = entityNodeToMerge->isNameQuery;
 			#endif
+			cout << "isQuery" << endl;
 		}
 		#ifdef GIA_SUPPORT_ALIASES
 		entityNode->isName = entityNodeToMerge->isName;
@@ -2816,15 +2821,15 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								#ifdef GIA_SUPPORT_ALIASES
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias)
 								{
-									mergeEntityNodesAddAlias(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2]);
-									param->GIAentityNodeArray[functionEntityIndex2] = param->GIAentityNodeArray[functionEntityIndex1];
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 									#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
 									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_ENTITY_NODES_ADD_ALIAS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#else
 									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
-									#endif									
+									#endif
+									mergeEntityNodesAddAlias(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2]);
+									param->GIAentityNodeArray[functionEntityIndex2] = param->GIAentityNodeArray[functionEntityIndex1];
 								}
 								#endif
 								#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC

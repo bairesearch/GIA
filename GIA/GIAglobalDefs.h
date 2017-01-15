@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c3c 15-January-2014
+ * Project Version: 2c4a 15-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -517,7 +517,7 @@
 
 #define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS	//GIA 2b4a
 #ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
-	#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER "_"
+	#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER "_"	//this filler does not appear compatible with Relex (Stanford only); try another filler character
 #endif
 
 #define GIA_USE_CORPUS_DATABASE
@@ -539,6 +539,16 @@
 		#define GIA_ADVANCED_REFERENCING_DEBUG_DISABLE_LINKING	//do not link references when generating semantic relation text corpus
 	#endif
 	#define GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
+	#define GIA2_SUPPORT_QUERIES
+	#ifdef GIA2_SUPPORT_QUERIES
+		//new implementation of GIA2_SUPPORT_QUERIES
+		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_QUERY_TAG_TAG_NAME "_$qVarisQuery"
+		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_NAME_QUERY_TAG_TAG_NAME "_$qVarisNameQuery"
+		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME "_$qVarisWhichOrEquivalentWhatQuery"
+		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME "isQuery"
+		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME "isNameQuery"
+		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME "isWhichOrEquivalentWhatQuery"
+	#endif
 #endif
 
 #define GIA_IDENTIFY_REFERENCE_SET_CONCEPT_ENTITY_ENTRANCE_DO_NOT_ENTER_ON_AN_ACTION_NODE	//GIA 2a8a	//this update is required for NLC if statement parsing //this update enforces orginal GIA specification: '//an action is considered by default not to be part of the same reference set as its subject/object (eg "the man fires the bow"). An rcmod /"that" is explicitly required for an action to be considered part of the same reference set as its subject/object (eg "the man that fires the bow...")'

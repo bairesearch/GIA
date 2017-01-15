@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c3c 15-January-2014
+ * Project Version: 2c4a 15-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -177,6 +177,9 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 
 	defineSubstancesBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 
+	#ifdef GIA2_SUPPORT_QUERIES
+	identifyComparisonVariableBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#endif						
 	//cout << "Q9" << endl;
 
 	defineConnectionsBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
@@ -249,7 +252,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	//cout << "Q11" << endl;
 }
 
-									
+							
 void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAconceptNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *sentenceConceptEntityNodesList, int NLPfeatureParser)
 {
 	//code from locateAndAddAllFeatureTempEntities():
@@ -577,6 +580,86 @@ void defineSubstancesBasedOnSemanticRelations(Sentence * currentSentenceInList, 
 		}
 	}
 }
+
+#ifdef GIA2_SUPPORT_QUERIES
+void identifyComparisonVariableBasedOnSemanticRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+{
+	if(currentSentenceInList->isQuestion)
+	{
+		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+		{
+			if(GIAentityNodeArrayFilled[i])
+			{
+				GIAentityNode * entityNode = GIAentityNodeArray[i];
+				if(entityNode->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+				{
+					entityNode->isQuery = true;
+					setComparisonVariableNode(entityNode);
+					setFoundComparisonVariable(true);
+					#ifdef GIA_TRANSLATOR_DEBUG
+					cout << "foundComparisonVariable" << endl;
+					#endif
+				}
+			}
+		}
+	}
+
+	if(currentSentenceInList->isQuestion)
+	{
+		//cout << "isQuestion" << endl;
+		Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+ 		while(currentRelationInList->next != NULL)
+		{
+			GIAentityNode * entityNodes[2];
+			string corpusSpecialRelationIsQuery[2];
+			entityNodes[0] = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+			entityNodes[1] = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+			corpusSpecialRelationIsQuery[0] = currentRelationInList->corpusSpecialRelationGovernorIsQuery;
+			corpusSpecialRelationIsQuery[1] = currentRelationInList->corpusSpecialRelationDependentIsQuery;
+			
+			for(int i=0; i<2; i++)
+			{
+				GIAentityNode * entityNode = entityNodes[i];
+				//cout << "entityNode = " << entityNode->entityName << endl;
+				if(corpusSpecialRelationIsQuery[i] == GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME)
+				{
+					//cout << GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME << endl;
+					entityNode->isQuery = true;
+					setComparisonVariableNode(entityNode);
+					setFoundComparisonVariable(true);
+					#ifdef GIA_TRANSLATOR_DEBUG
+					cout << "foundComparisonVariable" << endl;
+					#endif
+				}
+				else if(corpusSpecialRelationIsQuery[i] == GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME)
+				{
+					//cout << GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME << endl;
+					entityNode->isQuery = true;
+					entityNode->isNameQuery = true;
+					setComparisonVariableNode(entityNode);
+					setFoundComparisonVariable(true);
+					#ifdef GIA_TRANSLATOR_DEBUG
+					cout << "foundComparisonVariable" << endl;
+					#endif
+				}
+				else if(corpusSpecialRelationIsQuery[i] == GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME)
+				{
+					//cout << GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME << endl;
+					entityNode->isQuery = true;
+					entityNode->isWhichOrEquivalentWhatQuery = true;
+					setComparisonVariableNode(entityNode);
+					setFoundComparisonVariable(true);
+					#ifdef GIA_TRANSLATOR_DEBUG
+					cout << "foundComparisonVariable" << endl;
+					#endif
+				}
+			}
+			currentRelationInList = currentRelationInList->next;
+		}
+	}
+}	
+#endif
+	
 
 void defineConnectionsBasedOnSemanticRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
