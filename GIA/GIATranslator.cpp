@@ -1279,6 +1279,8 @@ void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList)
 {
 	if(GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_WHERE_NECESSARY)
 	{
+		cout << "a" << endl;
+		
 		Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{	
@@ -1329,7 +1331,7 @@ void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList)
 							if(currentRelationInList2->relationFunctionIndex == currentRelationInList->relationArgumentIndex)
 							{//found a matching subject-that[obj] relationship that requires function/argument switching
 
-								//cout << "found a matching subject-that[obj] relationship that requires function/argument switching" << endl;
+								cout << "found a matching subject-that[obj] relationship that requires function/argument switching" << endl;
 								passed2 = true;
 								//cout << "partnerTypeRequiredFound: currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
 							}
@@ -2535,12 +2537,17 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 										//NB definitions are only assigned to entities, not properties (instances of entities)
 
+									#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_QUESTIONS_ANOMALY_ADVANCED
+									if(currentSentenceInList->isQuestion == true)
+									#else
 									if(subjectEntityTemp->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+									#endif
 									{
-									#ifdef GIA_TRANSLATOR_DISABLE_OBJ_SUB_QVARIABLE_ANOMALY
+									#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_QUESTIONS_ANOMALY									
 										//switch object/subject variables [transform question into answer form]
 										addDefinitionToEntity(objectEntityTemp, subjectEntityTemp);
 									#else
+										
 										//added 20 October 2011 [what is the time?]
 										GIAEntityNode * actionOrPropertyEntity = objectEntityTemp;				
 										GIAEntityNode * actionOrPropertyConditionEntity = subjectEntityTemp;
@@ -2553,11 +2560,10 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									{
 										//cout << "h2" << endl;
 										addDefinitionToEntity(subjectEntityTemp, objectEntityTemp);
-										
-										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
-										GIAEntityNodeArray[currentRelationInList->relationFunctionIndex]->disabled = true;	//remove lone 'be' artefacts (blue entity nodes). NB these occur because of the nature of the 'is' -> entity definitional substitution procedure	
-										#endif
 									}
+									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+									GIAEntityNodeArray[currentRelationInList->relationFunctionIndex]->disabled = true;	//remove lone 'be' artefacts (blue entity nodes). NB these occur because of the nature of the 'is' -> entity definitional substitution procedure	
+									#endif									
 								}
 								#endif
 								#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC

@@ -151,7 +151,7 @@ void GIATHparseRelationsText(string * relationsText, Relation * firstRelationInL
 
 
 
-void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList)
+void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList, bool * isQuestion)
 {	
 	int numberOfCharactersInRelationsText = featuresText->length();
 	
@@ -196,6 +196,19 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList)
 						break;	
 					}					
 				}
+				
+			#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_QUESTIONS_ANOMALY_ADVANCED
+				//identify is sentence is a question
+				//cout << "currentFeature->type = " << currentFeature->type << endl;
+				if(currentFeature->type == FEATURE_TYPE_PUNCTUATION)
+				{
+					if(currentFeature->word == FEATURE_WORD_QUESTIONMARK)
+					{
+						//cout << "isQuestion == true" << endl;
+						*isQuestion = true;
+					}				
+				}
+			#endif
 
 				/*
 				cout << "feature added;" << endl;

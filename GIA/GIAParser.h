@@ -28,7 +28,7 @@ using namespace std;
 
 
 void GIATHparseRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence);
-void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList);
+void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList, bool * isQuestion);
 
 
 #endif

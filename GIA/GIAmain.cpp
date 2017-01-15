@@ -750,7 +750,8 @@ bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entity
 						else if(currentTagInParse->name == CFF_XML_TAG_features)
 						{
 							//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
-							GIATHparseFeaturesText(&(currentTagInParse->value), currentSentence->firstFeatureInList);
+							GIATHparseFeaturesText(&(currentTagInParse->value), currentSentence->firstFeatureInList, &(currentSentence->isQuestion));
+							//cout << "fini" << endl;
 						}
 
 						currentTagInParse = currentTagInParse->nextTag;
