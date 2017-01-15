@@ -213,6 +213,8 @@ public:
 	bool isAnswerToQuery;
 	bool isAnswerContextToQuery;
 	bool testedForQueryComparison;
+	bool queryIsCondition;
+	string queryConditionType;
 	
 };
 

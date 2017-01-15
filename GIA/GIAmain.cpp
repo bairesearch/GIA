@@ -551,6 +551,11 @@ int main(int argc,char **argv)
 					sprintf(tempQuantityNumberStringCharStar, "%d", queryAnswerNode->quantityNumber);					
 					answerString = answerString + "\nQuantity number: " + tempQuantityNumberStringCharStar;	
 				}
+				if(queryAnswerNode->queryIsCondition)
+				{
+					cout << "Answer is a Condition of type/preposition:" << queryAnswerNode->queryConditionType << endl;
+					answerString = answerString + "\nAnswer is a Condition of type/preposition: " + queryAnswerNode->queryConditionType;	
+				}
 			}
 			//cout << "ahsd2" << endl;
 		}
