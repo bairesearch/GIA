@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParserTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p1a 08-December-2016
+ * Project Version: 2p1b 08-December-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -53,7 +53,7 @@
 #ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 
 //based on convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
-void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, GIAsentence* firstSentenceInList, GIAsentence* currentSentenceInList, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, int NLPfeatureParser, bool linkPreestablishedReferencesGIA,  GIACoreference* firstGIACoreferenceInList)
+void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, GIAsentence* firstSentenceInList, GIAsentence* currentSentenceInList, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, int NLPfeatureParser, bool linkPreestablishedReferencesGIA,  GIAcoreference* firstGIAcoreferenceInList)
 {
 	#ifdef GIA_SEMANTIC_PARSER_TRANSLATOR_DEBUG
 	cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes" << endl;
@@ -166,7 +166,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 		#ifdef GIA_SEMANTIC_PARSER_TRANSLATOR_DEBUG
 		cout << "pass 3ii; link advanced references GIA (eg the red car is fast. Mike drove the red car.)" << endl;
 		#endif
-		linkAdvancedReferencesGIA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, firstGIACoreferenceInList, featureArrayTemp, GIAentityNodeArray, GIAnetworkIndexNodeArray);	//NB second last parameter used to be GIAfeatureTempEntityNodeArray
+		linkAdvancedReferencesGIA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, firstGIAcoreferenceInList, featureArrayTemp, GIAentityNodeArray, GIAnetworkIndexNodeArray);	//NB second last parameter used to be GIAfeatureTempEntityNodeArray
 	}
 	else
 	{

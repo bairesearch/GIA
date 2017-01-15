@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p1a 08-December-2016
+ * Project Version: 2p1b 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1151,7 +1151,7 @@ void identifyReferenceSetNetworkIndexEntityEntrance(GIAentityNode* entityNode, i
 #ifdef GIA_ADVANCED_REFERENCING
 
 //based on answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork();
-void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAentityNode*>* sentenceNetworkIndexEntityNodesList, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIACoreference* firstGIACoreferenceInList, vector<GIAentityNode*>* referenceSetDefiniteEntityList, GIAsentence* currentSentenceInList)	//bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]
+void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAentityNode*>* sentenceNetworkIndexEntityNodesList, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAcoreference* firstGIAcoreferenceInList, vector<GIAentityNode*>* referenceSetDefiniteEntityList, GIAsentence* currentSentenceInList)	//bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]
 {
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "createGIAcoreferenceInListBasedUponIdentifiedReferenceSets{}" << endl;
@@ -1167,7 +1167,7 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 	#endif
 	#endif
 
-	GIACoreference* currentGIAcoreferenceInList = firstGIACoreferenceInList;
+	GIAcoreference* currentGIAcoreferenceInList = firstGIAcoreferenceInList;
 
 	int referenceSetID = 0;
 	for(vector<GIAentityNode*>::iterator referenceSetDefiniteEntityIter = referenceSetDefiniteEntityList->begin(); referenceSetDefiniteEntityIter != referenceSetDefiniteEntityList->end(); referenceSetDefiniteEntityIter++)
@@ -1322,7 +1322,7 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 			traceEntityNode(queryEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISON, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
 			#endif
 
-			//this routine should now record, for each query node, a corresponding (vector of) best match entity node [this 1-x mapping should be used in the final generation of GIACoreference* firstGIACoreferenceInList
+			//this routine should now record, for each query node, a corresponding (vector of) best match entity node [this 1-x mapping should be used in the final generation of GIAcoreference* firstGIAcoreferenceInList
 
 			#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 			currentGIAcoreferenceInList = generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(queryEntityWithMaxNumberNodesMatched, currentGIAcoreferenceInList, foundAtLeastOneMatchIntraSentence);
@@ -1493,7 +1493,7 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 	}
 }
 
-GIACoreference* generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIAentityNode* entityNode, GIACoreference* currentGIAcoreferenceInList, bool intrasentenceReference)
+GIAcoreference* generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIAentityNode* entityNode, GIAcoreference* currentGIAcoreferenceInList, bool intrasentenceReference)
 {
 	bool pass = false;
 	if(!(entityNode->testedForQueryComparison))
@@ -1566,7 +1566,7 @@ GIACoreference* generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIAe
 				GIAMention* newMention  = new GIAMention();
 				referenceMention->next = newMention;
 
-				GIACoreference* newCoreference = new GIACoreference();
+				GIAcoreference* newCoreference = new GIAcoreference();
 				currentGIAcoreferenceInList->next = newCoreference;
 				currentGIAcoreferenceInList = currentGIAcoreferenceInList->next;
 			}
@@ -1598,12 +1598,12 @@ GIACoreference* generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIAe
 
 
 
-void linkAdvancedReferencesGIA(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIACoreference* firstCoreferenceInList, GIAfeature* featureArrayTemp[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAnetworkIndexNodeArray[])
+void linkAdvancedReferencesGIA(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAcoreference* firstCoreferenceInList, GIAfeature* featureArrayTemp[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAnetworkIndexNodeArray[])
 {
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "linkAdvancedReferencesGIA{}" << endl;
 	#endif
-	GIACoreference* currentCoreferenceInList = firstCoreferenceInList;
+	GIAcoreference* currentCoreferenceInList = firstCoreferenceInList;
 	while(currentCoreferenceInList->next != NULL)
 	{
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG

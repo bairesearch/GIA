@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p1a 08-December-2016
+ * Project Version: 2p1b 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -430,7 +430,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		setLinkPreestablishedReferencesGIA(false);
 		#endif
 
-		GIACoreference* firstGIACoreferenceInList = new GIACoreference();
+		GIAcoreference* firstGIAcoreferenceInList = new GIAcoreference();
 		unordered_map<string, GIAentityNode*>* sentenceNetworkIndexEntityNodesList = new unordered_map<string, GIAentityNode*>;
 		unordered_map<long, GIAtimeConditionNode*>* sentenceTimeConditionNodesList = new unordered_map<long, GIAtimeConditionNode*>;
 		long* currentEntityNodeIDInSentenceCompleteList = getCurrentEntityNodeIDinSentenceCompleteList();
@@ -504,13 +504,13 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		#endif
 
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-		cout << "\n\t\t\t GIA_ADVANCED_REFERENCING_DEBUG (3createGIACoreferenceInListBasedUponIdentifiedReferenceSets)\n" << endl;
+		cout << "\n\t\t\t GIA_ADVANCED_REFERENCING_DEBUG (3createGIAcoreferenceInListBasedUponIdentifiedReferenceSets)\n" << endl;
 		#endif
 
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
 		cout << "createGIAcoreferenceInListBasedUponIdentifiedReferenceSets:" << endl;
 		#endif
-		createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(sentenceNetworkIndexEntityNodesList, entityNodesActiveListNetworkIndexes, firstGIACoreferenceInList, &referenceSetDefiniteEntityList, currentSentenceInList);
+		createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(sentenceNetworkIndexEntityNodesList, entityNodesActiveListNetworkIndexes, firstGIAcoreferenceInList, &referenceSetDefiniteEntityList, currentSentenceInList);
 
 		#ifndef GIA_FREE_MEMORY2
 		setSaveNetwork(true);
@@ -539,18 +539,18 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		{
 			if(currentSentenceInList->semanticParserSuccessful)
 			{
-				convertSentenceSemanticRelationsIntoGIAnetworkNodes(entityNodesActiveListNetworkIndexes, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceNetworkIndexEntityNodesListTempNotUsed, entityNodesActiveListSentences, NLPfeatureParser, true, firstGIACoreferenceInList);
+				convertSentenceSemanticRelationsIntoGIAnetworkNodes(entityNodesActiveListNetworkIndexes, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceNetworkIndexEntityNodesListTempNotUsed, entityNodesActiveListSentences, NLPfeatureParser, true, firstGIAcoreferenceInList);
 			}
 		}
 		#endif
 		if(!parseGIA2file || (parseGIA2file && !(currentSentenceInList->semanticParserSuccessful)))
 		{
-			convertSentenceSyntacticRelationsIntoGIAnetworkNodes(entityNodesActiveListNetworkIndexes, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceNetworkIndexEntityNodesListTempNotUsed, entityNodesActiveListSentences, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, true, firstGIACoreferenceInList);
+			convertSentenceSyntacticRelationsIntoGIAnetworkNodes(entityNodesActiveListNetworkIndexes, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceNetworkIndexEntityNodesListTempNotUsed, entityNodesActiveListSentences, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, true, firstGIAcoreferenceInList);
 		}
 
 		#ifdef GIA_FREE_MEMORY1
 		//Clear temporary variables;
-		delete firstGIACoreferenceInList;
+		delete firstGIAcoreferenceInList;
 		delete currentSentenceInListTemp;
 		#ifdef GIA_FREE_MEMORY2
 		deleteEntitiesInEntityNodeList(entityNodesActiveListCompleteTemp);	//what about entities that have been referenced via advanced referencing (and were not added via direct database access) - won't these be deleted also?
@@ -607,7 +607,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#endif
 }
 
-void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, GIAsentence* firstSentenceInList, GIAsentence* currentSentenceInList, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations, bool linkPreestablishedReferencesGIA, GIACoreference* firstGIACoreferenceInList)
+void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, GIAsentence* firstSentenceInList, GIAsentence* currentSentenceInList, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations, bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList)
 {
 	GIArelation* currentRelationInList;
 
@@ -885,7 +885,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "section A3ii; linkAdvancedReferencesGIA (eg the red car is fast. Mike drove the red car.)" << endl;
 		#endif
-		linkAdvancedReferencesGIA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, firstGIACoreferenceInList, featureArrayTemp, GIAfeatureTempEntityNodeArray, GIAnetworkIndexNodeArray);
+		linkAdvancedReferencesGIA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, firstGIAcoreferenceInList, featureArrayTemp, GIAfeatureTempEntityNodeArray, GIAnetworkIndexNodeArray);
 	}
 	else
 	{
