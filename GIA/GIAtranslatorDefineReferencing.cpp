@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b1a 17-December-2013
+ * Project Version: 2b1b 18-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -84,7 +84,7 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 				for(int i=0; i<FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES; i++)
 				{
 					/*
-					//Not required because FEATURE_POS_TAG_WDT/FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME ensures that the correct which or what equivalent query is being asked:
+					//Not required because FEATURE_POS_TAG_WH_DETERMINER_WDT/FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME ensures that the correct which or what equivalent query is being asked:
 					bool passedDependencyRelationCheck = false;
 					if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 					{
@@ -134,7 +134,7 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 						else if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 						{
 							//cannot check the word value here, as the word recorded by the Stanford parser may be capitalised
-							if((currentFeatureInList->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i]) && (currentFeatureInList->stanfordPOS == FEATURE_POS_TAG_WDT))
+							if((currentFeatureInList->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i]) && (currentFeatureInList->stanfordPOS == FEATURE_POS_TAG_WH_DETERMINER_WDT))
 							{//eg lemma=which, POS=WHT
 								#ifdef GIA_TRANSLATOR_DEBUG
 								//cout << "foundQueryWordAcceptedByAlternateMethod" << endl;

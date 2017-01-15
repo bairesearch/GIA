@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b1a 17-December-2013
+ * Project Version: 2b1b 18-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1462,11 +1462,11 @@ GIAentityNode * getEntitySubstanceThatWasDeclaredInContext(GIAentityNode * entit
 #ifdef GIA_USE_ADVANCED_REFERENCING
 bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relation * relation)
 {
-	bool auxillaryIndicatesDifferentReferenceSet = relation->auxillaryIndicatesDifferentReferenceSet;
+	bool auxiliaryIndicatesDifferentReferenceSet = relation->auxiliaryIndicatesDifferentReferenceSet;
 	bool rcmodIndicatesSameReferenceSet = relation->rcmodIndicatesSameReferenceSet;
 
 	bool sameReferenceSet = defaultSameSetValueForRelation;
-	if(auxillaryIndicatesDifferentReferenceSet)
+	if(auxiliaryIndicatesDifferentReferenceSet)
 	{
 		sameReferenceSet = false;
 	}
@@ -1478,7 +1478,7 @@ bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relatio
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "\ndetermineSameReferenceSetValue():" << endl;
 	cout << "\t" << relation->relationType << "(" << relation->relationGovernor << ", " << relation->relationDependent << ")" << endl;
-	cout << "\tauxillaryIndicatesDifferentReferenceSet = " << auxillaryIndicatesDifferentReferenceSet << endl;
+	cout << "\tauxiliaryIndicatesDifferentReferenceSet = " << auxiliaryIndicatesDifferentReferenceSet << endl;
 	cout << "\trcmodIndicatesSameReferenceSet = " << rcmodIndicatesSameReferenceSet << endl;
 	cout << "\tdefaultSameSetValueForRelation = " << defaultSameSetValueForRelation << endl;
 	cout << "\tsameReferenceSet = " << sameReferenceSet << endl;
@@ -2127,7 +2127,7 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	initialiseBoolArray2D(&useRedistributeRelationEntityReassignment[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false); 			//for entity1, entity2, and entity3 - for renaming relation entities
 	//redistributeRelationEntityReassignment = {{"", "", ""}, {"", "", ""}, {"", "", ""}, {"", "", ""}}; 	//internal compiler error: Segmentation fault		//for entity1, entity2, and entity3 - relationType, relationGovernorIndex, or relationDependentIndex - for renaming relation entities
 		//special cases for redistribution
-	initialiseBoolArray1D(useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, false);
+	initialiseBoolArray1D(useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, false);
 	initialiseBoolArray2D(&useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false);
 	initialiseIntArray3D(&redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[0][0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, 2, -1);
 	initialiseIntArray3D(&redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[0][0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, 2, -1);
@@ -2354,10 +2354,10 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 
 					int minRelationToTest = 0;
 					int maxRelationToTest = param->numberOfRelations;
-					bool specialCaseAuxillaryIndicatesDifferentReferenceSetCheck = false;
+					bool specialCaseAuxiliaryIndicatesDifferentReferenceSetCheck = false;
 					if(currentRelationID == param->numberOfRelations)
 					{
-						specialCaseAuxillaryIndicatesDifferentReferenceSetCheck = true;
+						specialCaseAuxiliaryIndicatesDifferentReferenceSetCheck = true;
 						minRelationToTest = param->numberOfRelations;
 						maxRelationToTest = param->numberOfRelations+1;
 					}
@@ -2443,7 +2443,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 							}
 						}
 
-						if(!specialCaseAuxillaryIndicatesDifferentReferenceSetCheck)
+						if(!specialCaseAuxiliaryIndicatesDifferentReferenceSetCheck)
 						{
 							if(param->executeOrReassign)
 							{//execute
@@ -2741,21 +2741,21 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								//special case reassignments
 								for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
 								{
-									if(param->useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck[relationID])
+									if(param->useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[relationID])
 									{
 										#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 										cout << currentRelationID << ": [SpecialCaseAuxCheck]: " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
 										#endif
-										bool auxillaryIndicatesDifferentReferenceSet = true;
+										bool auxiliaryIndicatesDifferentReferenceSet = true;
 										GIAgenericDepRelInterpretationParameters paramTemp = *param;
 										if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1)))
 										{
-											auxillaryIndicatesDifferentReferenceSet = false;
+											auxiliaryIndicatesDifferentReferenceSet = false;
 										}
 										#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
-										cout << "auxillaryIndicatesDifferentReferenceSet = " << auxillaryIndicatesDifferentReferenceSet << endl;
+										cout << "auxiliaryIndicatesDifferentReferenceSet = " << auxiliaryIndicatesDifferentReferenceSet << endl;
 										#endif
-										param->relation[relationID]->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;
+										param->relation[relationID]->auxiliaryIndicatesDifferentReferenceSet = auxiliaryIndicatesDifferentReferenceSet;
 									}
 
 									for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION; relationEntityID++)
@@ -3073,16 +3073,197 @@ string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArra
 	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + GIA2semanticDependencyRelationNameArray[connectionType] + "(" + convertIntToString(entityIndex1) + "-" + entityWord1 + ", " + convertIntToString(entityIndex2) + "-" + entityWord2 + ") [sameReferenceSet=" + convertBoolToString(sameReferenceSet) + "]";
 	return GIA2semanticDependencyRelation;
 }
-string regenerateSentenceText(Sentence * currentSentenceInList) 
+string regenerateSentenceText(Sentence * currentSentenceInList, bool addPOSinfo) 
 {
 	string sentenceText = "";
 	Feature * currentFeatureInSentence = currentSentenceInList->firstFeatureInList;
 	while(currentFeatureInSentence->next != NULL)
 	{
-		sentenceText = sentenceText + currentFeatureInSentence->word + " ";
+		if(addPOSinfo)
+		{
+			sentenceText = sentenceText + currentFeatureInSentence->word + CHAR_FORWARDSLASH + determineGIAconnectionistNetworkPOStypeName(currentFeatureInSentence) + " ";	//~Stanford Parser format; see parseStanfordParserFile():GIATHparseStanfordParseWordsAndPOStagsText()
+		}
+		else
+		{
+			sentenceText = sentenceText + currentFeatureInSentence->word + " ";
+		}
 		currentFeatureInSentence = currentFeatureInSentence->next;
 	}
 	return sentenceText;
+}
+string determineGIAconnectionistNetworkPOStypeName(Feature * currentFeatureInSentence)
+{
+	int GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNDEFINED;
+	string GIAconnectionistNetworkPOStypeName = "";
+
+	for(int i=0; i<ENTITY_CONJUNCTION_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityConjunctionArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_CONJUNCTION;
+		}
+	}	
+	for(int i=0; i<ENTITY_NUMBER_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityNumberArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_NUMBER;
+		}
+	}
+	for(int i=0; i<ENTITY_DETERMINER_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityDeterminerArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_DETERMINER;
+		}
+	}
+	for(int i=0; i<ENTITY_UNKNOWN_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityUnknownArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNKNOWN;
+		}
+	}
+	for(int i=0; i<ENTITY_POSSESSIVEENDING_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityPossessiveEndingArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_POSSESSIVEENDING;
+		}
+	}
+	for(int i=0; i<ENTITY_MODALAUXILIARY_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityModalAuxiliaryArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_MODALAUXILIARY;
+		}
+	}
+	for(int i=0; i<ENTITY_PREPOSITION_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityPrepositionArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_PREPOSITION;
+		}
+	}
+	for(int i=0; i<ENTITY_ADJECTIVE_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityAdjectiveArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADJECTIVE;
+		}
+	}
+	for(int i=0; i<ENTITY_NOUN_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityNounArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_NOUN;
+		}
+	}
+	for(int i=0; i<ENTITY_ADVERB_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityAdverbArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADVERB;
+		}
+	}
+	for(int i=0; i<ENTITY_PRONOUN_PERSONAL_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityPronounPersonalArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_PRONOUN_PERSONAL;
+		}
+	}
+	for(int i=0; i<ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityPronounPossessiveArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_PRONOUN_POSSESSIVE;
+		}
+	}
+	for(int i=0; i<ENTITY_INTERJECTION_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityInterjectionArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_INTERJECTION;
+		}
+	}
+	for(int i=0; i<ENTITY_VERB_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityVerbArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_VERB;
+		}
+	}
+	for(int i=0; i<ENTITY_WH_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityWhArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_WH;
+		}
+	}
+	for(int i=0; i<ENTITY_PUNCTUATION_DIVISION_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityPunctuationDivisionArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_PUNCTUATION_DIVISION;
+		}
+	}
+	for(int i=0; i<ENTITY_PUNCTUATION_QUOTE_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityPunctuationQuoteArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_PUNCTUATION_QUOTE;
+		}
+	}
+	//additional cases required for GIA semantics extraction;
+	for(int i=0; i<ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityAuxiliaryBeingArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_BEING;
+		}
+	}
+	for(int i=0; i<ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityAuxiliaryHavingArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_HAVING;
+		}
+	}
+	for(int i=0; i<ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->stanfordPOS == entityAuxiliaryDoingArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_DOING;
+		}
+	}
+	//cout << "GIAconnectionistNetworkPOStype = " << GIAconnectionistNetworkPOStype << endl;
+	GIAconnectionistNetworkPOStypeName = GIAconnectionistNetworkPOStypeNameArray[GIAconnectionistNetworkPOStype];
+	//cout << "GIAconnectionistNetworkPOStypeName = " << GIAconnectionistNetworkPOStypeName << endl;
+	/*
+	//requires updating (add more cases from PENN tree above)
+	if(currentFeatureInSentence->grammaticalWordType == GRAMMATICAL_WORD_TYPE_NOUN)
+	{
+		GIAconnectionistNetworkPOStypeName = GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NOUN];
+	}
+	else if(currentFeatureInSentence->grammaticalWordType == GRAMMATICAL_WORD_TYPE_VERB)
+	{
+		GIAconnectionistNetworkPOStypeName = GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_VERB_OR_PARTICIPLE];
+	}	
+	else if(currentFeatureInSentence->grammaticalWordType == GRAMMATICAL_WORD_TYPE_ADJ)
+	{
+		GIAconnectionistNetworkPOStypeName = GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADJECTIVE_OR_ADVERB];
+	}	
+	else if(currentFeatureInSentence->grammaticalWordType == GRAMMATICAL_WORD_TYPE_ADV)
+	{
+		GIAconnectionistNetworkPOStypeName = GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADJECTIVE_OR_ADVERB];
+	}	
+	else if(currentFeatureInSentence->grammaticalWordType == GRAMMATICAL_WORD_TYPE_PREP)
+	{
+		GIAconnectionistNetworkPOStypeName = GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_PREPOSITION];
+	}
+	*/	
+	return GIAconnectionistNetworkPOStypeName;		
 }
 #endif	
 									

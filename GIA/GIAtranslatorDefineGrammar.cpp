@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b1a 17-December-2013
+ * Project Version: 2b1b 18-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -150,7 +150,7 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 				GIAfeatureTempEntityNodeArray[relationIndex[i]]->isSubjectTemp = false;
 				GIAfeatureTempEntityNodeArray[relationIndex[i]]->hasSubstanceTemp = false;
 				#ifdef GIA_USE_ADVANCED_REFERENCING
-				//this is required for fillGrammaticalArraysStanford findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet()	[nb these values are applied to concept entities only]
+				//this is required for fillGrammaticalArraysStanford findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet()	[nb these values are applied to concept entities only]
 				GIAfeatureTempEntityNodeArray[relationIndex[i]]->entityIndexTemp = relationIndex[i];
 				GIAfeatureTempEntityNodeArray[relationIndex[i]]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
 				#endif
@@ -597,8 +597,8 @@ void extractPastTense(Feature * featureWithEntityIndex, int entityIndexContainin
 
 
 
-#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILLARY_AND_SET_NOT_SAME_REFERENCE_SET
-void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * currentSentenceInList, int subjectObjectEntityWithAuxillaryEntityIndex, string * subjectObjectEntityWithAuxillaryEntityName)
+#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
+void findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(Sentence * currentSentenceInList, int subjectObjectEntityWithAuxiliaryEntityIndex, string * subjectObjectEntityWithAuxiliaryEntityName)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -624,22 +624,22 @@ void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * cu
 				}
 			}
 
-			#ifndef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILLARY_AND_SET_DIFFERENT_REFERENCE_SET
+			#ifndef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILIARY_AND_SET_DIFFERENT_REFERENCE_SET
 			if(passed)
 			{
 			#endif
-				if(subjectObjectEntityWithAuxillaryEntityIndex = currentRelationInList->relationGovernorIndex)	//CHECK THIS; this used to be currentRelationInList->relationDependentIndex [before 1 June 2012]
+				if(subjectObjectEntityWithAuxiliaryEntityIndex = currentRelationInList->relationGovernorIndex)	//CHECK THIS; this used to be currentRelationInList->relationDependentIndex [before 1 June 2012]
 				{
-					if(*subjectObjectEntityWithAuxillaryEntityName == currentRelationInList->relationGovernor)	//CHECK THIS; this used to be currentRelationInList->relationDependent [before 1 June 2012]
+					if(*subjectObjectEntityWithAuxiliaryEntityName == currentRelationInList->relationGovernor)	//CHECK THIS; this used to be currentRelationInList->relationDependent [before 1 June 2012]
 					{//this check is redundant
-						currentRelationInList->auxillaryIndicatesDifferentReferenceSet = true;
+						currentRelationInList->auxiliaryIndicatesDifferentReferenceSet = true;
 						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 						//cout << "\t\t\t-2currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-						//cout << "\t\t\t-2auxillaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxillaryIndicatesDifferentReferenceSet << endl;
+						//cout << "\t\t\t-2auxiliaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxiliaryIndicatesDifferentReferenceSet << endl;
 						#endif
 					}
 				}
-			#ifndef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILLARY_AND_SET_DIFFERENT_REFERENCE_SET
+			#ifndef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILIARY_AND_SET_DIFFERENT_REFERENCE_SET
 			}
 			#endif
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -677,19 +677,19 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 				#endif
 
 				//eg aux (died, has) 	Reagan has died.	[addtogrammar: perfect?]
-				int entityIndexOfAuxillary = currentRelationInList->relationDependentIndex;
+				int entityIndexOfAuxiliary = currentRelationInList->relationDependentIndex;
 				int entityIndexOfVerb = currentRelationInList->relationGovernorIndex;
 				featureArrayTemp[entityIndexOfVerb]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PERFECT] = true;
-				GIAfeatureTempEntityNodeArray[entityIndexOfAuxillary]->disabled = true;
+				GIAfeatureTempEntityNodeArray[entityIndexOfAuxiliary]->disabled = true;
 
 				/*//this shouldnt be required, as verbs are automatically assumed not to be part of same reference set [see DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS]
-				#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILLARY_AND_SET_NOT_SAME_REFERENCE_SET
-				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, GIAentityNodeArray[entityIndexOfVerb]);
+				#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
+				findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(currentSentenceInList, GIAentityNodeArray[entityIndexOfVerb]);
 				#endif
 				*/
 
-				#ifdef GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILLARY_TO_SET_TENSE_OF_VERB
-				extractPastTense(featureArrayTemp[entityIndexOfVerb], entityIndexOfAuxillary, currentSentenceInList->firstFeatureInList, NLPfeatureParser);
+				#ifdef GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILIARY_TO_SET_TENSE_OF_VERB
+				extractPastTense(featureArrayTemp[entityIndexOfVerb], entityIndexOfAuxiliary, currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 				#endif
 
 			}
@@ -702,19 +702,19 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 				#endif
 
 				//eg auxpass(killed, been) Kennedy has been killed. 	[addtogrammar: passive]
-				int entityIndexOfAuxillary = currentRelationInList->relationDependentIndex;
+				int entityIndexOfAuxiliary = currentRelationInList->relationDependentIndex;
 				int entityIndexOfVerb = currentRelationInList->relationGovernorIndex;
 				featureArrayTemp[entityIndexOfVerb]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PASSIVE] = true;
-				GIAfeatureTempEntityNodeArray[entityIndexOfAuxillary]->disabled = true;
+				GIAfeatureTempEntityNodeArray[entityIndexOfAuxiliary]->disabled = true;
 
 				/*//this shouldnt be required, as verbs are automatically assumed not to be part of same reference set [see DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS]
-				#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILLARY_AND_SET_NOT_SAME_REFERENCE_SET
-				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, GIAentityNodeArray[entityIndexOfVerb]);
+				#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
+				findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(currentSentenceInList, GIAentityNodeArray[entityIndexOfVerb]);
 				#endif
 				*/
 
-				#ifdef GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILLARY_TO_SET_TENSE_OF_VERB
-				extractPastTense(featureArrayTemp[entityIndexOfVerb], entityIndexOfAuxillary, currentSentenceInList->firstFeatureInList, GIAEntityNodeGrammaticalTenseArray, NLPfeatureParser);
+				#ifdef GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILIARY_TO_SET_TENSE_OF_VERB
+				extractPastTense(featureArrayTemp[entityIndexOfVerb], entityIndexOfAuxiliary, currentSentenceInList->firstFeatureInList, GIAEntityNodeGrammaticalTenseArray, NLPfeatureParser);
 				#endif
 
 			}
@@ -736,8 +736,8 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 
 				GIAfeatureTempEntityNodeArray[entityIndexOfCopula]->disabled = true;
 
-				#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILLARY_AND_SET_NOT_SAME_REFERENCE_SET
-				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, entityIndexOfNoun, &entityNameOfNoun);
+				#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
+				findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(currentSentenceInList, entityIndexOfNoun, &entityNameOfNoun);
 				#endif
 
 				#ifdef GIA_TRANSLATOR_DEBUG
@@ -749,20 +749,20 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 			}
 
 			//future tense extraction:
-			//overwrite current tense derivations with GRAMMATICAL_TENSE_FUTURE if there is an auxillary containing 'will'
+			//overwrite current tense derivations with GRAMMATICAL_TENSE_FUTURE if there is an auxiliary containing 'will'
 			if(currentRelationInList->relationType == RELATION_TYPE_MODAL_AUX)	//|| (currentRelationInList->relationType == RELATION_TYPE_PASSIVE_AUX)
 			{
 				#ifndef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 				currentRelationInList->disabled = true;
 				#endif
 
-				int auxillaryDependencyIndex = currentRelationInList->relationGovernorIndex;
-				string auxillaryGovernerEntity = currentRelationInList->relationDependent;
-				for(int i=0; i<RELATION_TYPE_AUXILLARY_GOVERNER_INDICATES_FUTURE_TENSE_NUMBER_OF_TYPES; i++)
+				int auxiliaryDependencyIndex = currentRelationInList->relationGovernorIndex;
+				string auxiliaryGovernerEntity = currentRelationInList->relationDependent;
+				for(int i=0; i<RELATION_TYPE_AUXILIARY_GOVERNER_INDICATES_FUTURE_TENSE_NUMBER_OF_TYPES; i++)
 				{
-					if(relationAuxillaryGovernerIndicatesFutureTenseArray[i] == auxillaryGovernerEntity)
+					if(relationAuxiliaryGovernerIndicatesFutureTenseArray[i] == auxiliaryGovernerEntity)
 					{
-						featureArrayTemp[auxillaryDependencyIndex]->grammaticalTense = GRAMMATICAL_TENSE_FUTURE;
+						featureArrayTemp[auxiliaryDependencyIndex]->grammaticalTense = GRAMMATICAL_TENSE_FUTURE;
 					}
 				}
 			}

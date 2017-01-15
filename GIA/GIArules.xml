@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b1a 17-December-2013
+ * Project Version: 2b1b 18-December-2013
  *
  *******************************************************************************/
 -->
@@ -496,7 +496,7 @@
 				prep_on(are-4, frame-7)
 				rcmod(claims-2, are-4)
 				-->
-				<option useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 				<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="_rcmod" />
 				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
 				<option useRelationIndexTest="true" REL="2" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="1" />
@@ -798,7 +798,7 @@
 				<rcmod(carriage-4, near-7)
 				<prep_to(near-7, horse-10)
 				-->
-				<option useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck="true" REL="0" />
+				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="0" />
 				<option useRelationTest="true" REL="3" REL_ENT="2" relationTest="_rcmod" />
 				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="0" />
 				<option useRelationIndexTest="true" REL="3" REL_ENT="0" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
@@ -1007,7 +1007,7 @@
 					advmod(is-4, away-7)
 					rcmod(rabbit-2, is-4)
 					</example>
-					<option useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 					<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="_rcmod" />
 					<option useRelationIndexTest="true" REL="2" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="1" />
 					<option useRelationTest="true" REL="2" REL_ENT="1" relationTest="be" />
@@ -1077,8 +1077,8 @@
 						<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
 						<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" /> <!-- redundant test -->
 						<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
-						<option useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-						<option useRelationTest="true" REL="2" REL_ENT="0" relationTest="impossibleEntityName" /> <!-- an impossible check which is therefore guaranteed to set auxillaryIndicatesDifferentReferenceSet to true -->
+						<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+						<option useRelationTest="true" REL="2" REL_ENT="0" relationTest="impossibleEntityName" /> <!-- an impossible check which is therefore guaranteed to set auxiliaryIndicatesDifferentReferenceSet to true -->
 						<!-- #endif -->
 						<option numberOfRelations="2" />
 						<!-- <option useRelationArrayTest="true" REL="0" REL_ENT="0" relationArrayTest="JJ|JJR|JJS|RB|RBR|RBS" relationArrayTestSize="6" relationArrayTestSpecialCasePOStemp="true" /> -->
@@ -1100,8 +1100,8 @@
 						<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_cop" />
 						<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
 						<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" /> <!-- redundant test -->
-						<option useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-						<option useRelationTest="true" REL="2" REL_ENT="0" relationTest="impossibleEntityName" /> <!-- an impossible check which is therefore guaranteed to set auxillaryIndicatesDifferentReferenceSet to true -->
+						<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+						<option useRelationTest="true" REL="2" REL_ENT="0" relationTest="impossibleEntityName" /> <!-- an impossible check which is therefore guaranteed to set auxiliaryIndicatesDifferentReferenceSet to true -->
 						<option numberOfRelations="2" />
 						<!-- <option useRelationArrayTest="true" REL="0" REL_ENT="0" relationArrayTest="CD|NN|NNS|NNP|NNPS" relationArrayTestSize="5" relationArrayTestSpecialCasePOStemp="true" /> -->
 						<specialCase type="specialCaseCharacteristicsTestOrVector" variable="stanfordPOStemp" value="CD" REL="0" REL_ENT="0" />
@@ -1136,8 +1136,8 @@
 						<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_cop" />
 						<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
 						<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" /> <!-- redundant test -->
-						<option useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-						<option useRelationTest="true" REL="2" REL_ENT="0" relationTest="impossibleEntityName" /> <!-- an impossible check which is therefore guaranteed to set auxillaryIndicatesDifferentReferenceSet to true -->
+						<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+						<option useRelationTest="true" REL="2" REL_ENT="0" relationTest="impossibleEntityName" /> <!-- an impossible check which is therefore guaranteed to set auxiliaryIndicatesDifferentReferenceSet to true -->
 						<option numberOfRelations="2" />
 						<!-- <option useRelationTest="true" REL="0" REL_ENT="0" relationTest="VBN" relationTestSpecialCasePOStemp="true" /> -->
 						<specialCase type="specialCaseCharacteristicsTestAndVector" variable="stanfordPOStemp" value="VBN" REL="0" REL_ENT="0" />
@@ -1155,7 +1155,7 @@
 					<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_cop" />
 					<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
 					<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
-					<option useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 					<option useRelationTest="true" REL="2" REL_ENT="0" relationTest="impossibleEntityName" />
 					<option numberOfRelations="3" />
 					<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="_det" />
@@ -1174,7 +1174,7 @@
 					<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_cop" />
 					<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
 					<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
-					<option useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 					<option useRelationTest="true" REL="2" REL_ENT="0" relationTest="impossibleEntityName" />
 					<option numberOfRelations="3" />
 					<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="_det" />
@@ -1190,7 +1190,7 @@
 					<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_cop" />
 					<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
 					<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
-					<option useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 					<option useRelationTest="true" REL="2" REL_ENT="0" relationTest="impossibleEntityName" />
 					<option numberOfRelations="2" />
 					<option useRedistributeRelationEntityReassignment="true" REL="0" REL_ENT="2" redistributeRelationEntityReassignment="_appo" />
@@ -1208,7 +1208,7 @@
 					<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_cop" />
 					<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
 					<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
-					<option useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 					<option useRelationTest="true" REL="2" REL_ENT="0" relationTest="impossibleEntityName" />
 					<option numberOfRelations="2" />
 					<option useRedistributeRelationEntityReassignment="true" REL="0" REL_ENT="2" redistributeRelationEntityReassignment="_appo" />
@@ -2495,7 +2495,7 @@
 				Joe is happy. _predadj(Joe[1], happy[3]) [NB Stanford nsubj(happy-3, Joe-1) + cop(happy-3, is-2) gets redistributed to _predadj(Joe[1], happy[3])]
 				--></example>
 				
-				<!-- #ifdefGIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILLARY_AND_SET_NOT_SAME_REFERENCE_SET -->
+				<!-- #ifdefGIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET -->
 				<!--
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />

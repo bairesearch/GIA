@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b1a 17-December-2013
+ * Project Version: 2b1b 18-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -107,7 +107,7 @@ bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity
 	}
 
 	bool foundContinuousVerb = false;
-	//if(actionOrSubstanceEntity->stanfordPOStemp == FEATURE_POS_TAG_VBG)		//Only Stanford Compatible
+	//if(actionOrSubstanceEntity->stanfordPOStemp == FEATURE_POS_TAG_VERB_VBG)		//Only Stanford Compatible
 	if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true))	//Relex compatible
 	{
 		/*
@@ -128,7 +128,7 @@ bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity
 		#endif
 		{
 			foundContinuousVerb = true;
-			string stanfordPOS = FEATURE_POS_TAG_VBG;
+			string stanfordPOS = FEATURE_POS_TAG_VERB_VBG;
 			//cout << "foundVerb2a" << endl;
 			/*
 			Wood is used for making milk.

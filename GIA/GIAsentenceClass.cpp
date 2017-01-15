@@ -23,7 +23,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b1a 17-December-2013
+ * Project Version: 2b1b 18-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -149,7 +149,7 @@ Relation::Relation(void)
 	#endif
 
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	auxillaryIndicatesDifferentReferenceSet = false;
+	auxiliaryIndicatesDifferentReferenceSet = false;
 	rcmodIndicatesSameReferenceSet = false;
 	#endif
 

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b1a 17-December-2013
+ * Project Version: 2b1b 18-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -251,7 +251,7 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 	paramA1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i3);
 	paramA1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i4);
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5C_FEATURES_STANFORD_NER_INDICATES_NAME_CONCATENATION_REQUIRES_POS_NNP
-	EntityCharacteristic entityCharacteristicsTest1ii1("stanfordPOStemp", FEATURE_POS_TAG_NNP);
+	EntityCharacteristic entityCharacteristicsTest1ii1("stanfordPOStemp", FEATURE_POS_TAG_NOUN_NNP);
 	paramA1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest1ii1);
 	paramA1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1ii1);
 	#endif
@@ -378,7 +378,7 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 					{
 						bool featureNERindicatesNameConcatenationRequiredAllowedByPOS = false;
 						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5C_FEATURES_STANFORD_NER_INDICATES_NAME_CONCATENATION_REQUIRES_POS_NNP
-						if((dependentEntity->stanfordPOStemp == FEATURE_POS_TAG_NNP) && (governerEntity->stanfordPOStemp == FEATURE_POS_TAG_NNP))
+						if((dependentEntity->stanfordPOStemp == FEATURE_POS_TAG_NOUN_NNP) && (governerEntity->stanfordPOStemp == FEATURE_POS_TAG_NOUN_NNP))
 						{
 							featureNERindicatesNameConcatenationRequiredAllowedByPOS = true;
 						}
@@ -1134,7 +1134,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	prep_on(are-4, frame-7)
 	rcmod(claims-2, are-4)
 	*/
-	paramC.useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck[REL2] = true;
+	paramC.useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[REL2] = true;
 	paramC.useRelationTest[REL3][REL_ENT3] = true; paramC.relationTest[REL3][REL_ENT3] = RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER;
 	paramC.useRelationIndexTest[REL3][REL_ENT2] = true; paramC.relationIndexTestRelationID[REL3][REL_ENT2] = REL1; paramC.relationIndexTestEntityID[REL3][REL_ENT2] = REL_ENT1;
 	paramC.useRelationIndexTest[REL3][REL_ENT1] = true; paramC.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; paramC.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT2;
@@ -1198,7 +1198,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 										rcmod(claims-2, are-4)
 										*/
 											//NB prepositions imply same reference set by default: "The claims that are on the frame are blue." = "The claims on the frame are blue."
-										bool auxillaryIndicatesDifferentReferenceSet = true;
+										bool auxiliaryIndicatesDifferentReferenceSet = true;
 										Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
 										while(currentRelationInList3->next != NULL)
 										{
@@ -1206,15 +1206,15 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 											{
 												if((currentRelationInList3->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList3->relationGovernorIndex == currentRelationInList->relationDependentIndex) && (currentRelationInList3->relationDependent == RELATION_ENTITY_BE))
 												{
-													auxillaryIndicatesDifferentReferenceSet = false;
+													auxiliaryIndicatesDifferentReferenceSet = false;
 												}
 											}
 											currentRelationInList3 = currentRelationInList3->next;
 										}
-										currentRelationInList2->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;
+										currentRelationInList2->auxiliaryIndicatesDifferentReferenceSet = auxiliaryIndicatesDifferentReferenceSet;
 										#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 										//cout << "\t\t\t0currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
-										//cout << "\t\t\t0auxillaryIndicatesDifferentReferenceSet = " << auxillaryIndicatesDifferentReferenceSet << endl;
+										//cout << "\t\t\t0auxiliaryIndicatesDifferentReferenceSet = " << auxiliaryIndicatesDifferentReferenceSet << endl;
 										#endif
 										#endif
 
@@ -1537,7 +1537,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	//cop(near-7, is-6)
 	//rcmod(carriage-4, near-7)
 	//prep_to(near-7, horse-10)
-	paramOptMultA.useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck[REL1] = true;
+	paramOptMultA.useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[REL1] = true;
 	paramOptMultA.useRelationTest[REL4][REL_ENT3] = true; paramOptMultA.relationTest[REL4][REL_ENT3] = RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER;
 	paramOptMultA.useRelationIndexTest[REL4][REL_ENT2] = true; paramOptMultA.relationIndexTestRelationID[REL4][REL_ENT2] = REL3; paramOptMultA.relationIndexTestEntityID[REL4][REL_ENT2] = REL_ENT1;
 	paramOptMultA.useRelationIndexTest[REL4][REL_ENT1] = true; paramOptMultA.relationIndexTestRelationID[REL4][REL_ENT1] = REL3; paramOptMultA.relationIndexTestEntityID[REL4][REL_ENT1] = REL_ENT2;
@@ -1752,7 +1752,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 															//cop(near-7, is-6)
 															//rcmod(carriage-4, near-7)
 															//prep_to(near-7, horse-10)
-															bool auxillaryIndicatesDifferentReferenceSet = true;
+															bool auxiliaryIndicatesDifferentReferenceSet = true;
 															Relation * currentRelationInList4 = currentSentenceInList->firstRelationInList;
 															while(currentRelationInList4->next != NULL)
 															{
@@ -1760,20 +1760,20 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 																{
 																	if((currentRelationInList4->relationDependentIndex == currentRelationInList3->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList3->relationDependentIndex))		//OLD: before 1 June 2012 code review: if((currentRelationInList4->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList->relationDependentIndex))
 																	{
-																		auxillaryIndicatesDifferentReferenceSet = false;
+																		auxiliaryIndicatesDifferentReferenceSet = false;
 																	}
 																}
 																currentRelationInList4 = currentRelationInList4->next;
 															}
-															#ifdef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILLARY_AND_SET_DIFFERENT_REFERENCE_SET
+															#ifdef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILIARY_AND_SET_DIFFERENT_REFERENCE_SET
 															//need to reset same reference set values on the preposition
 
-															currentRelationInList->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;
+															currentRelationInList->auxiliaryIndicatesDifferentReferenceSet = auxiliaryIndicatesDifferentReferenceSet;
 
 															#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-															//currentRelationInList3->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;
+															//currentRelationInList3->auxiliaryIndicatesDifferentReferenceSet = auxiliaryIndicatesDifferentReferenceSet;
 															//cout << "\t\t\t1currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-															//cout << "\t\t\t1currentRelationInList->auxillaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxillaryIndicatesDifferentReferenceSet << endl;
+															//cout << "\t\t\t1currentRelationInList->auxiliaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxiliaryIndicatesDifferentReferenceSet << endl;
 															#endif
 
 															#endif
@@ -1794,7 +1794,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 															#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 															//cout << "redistributeStanfordRelationsMultiwordPreposition(): newPrepositionName = " << newPrepositionName << endl;
 															//cout << "\t\t\t2currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-															//cout << "\t\t\t2auxillaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxillaryIndicatesDifferentReferenceSet << endl;
+															//cout << "\t\t\t2auxiliaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxiliaryIndicatesDifferentReferenceSet << endl;
 															#endif
 
 															currentRelationInList2->disabled = true;
@@ -2351,7 +2351,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 		advmod(is-4, away-7)
 		rcmod(rabbit-2, is-4)
 		*/
-		param.useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck[REL2] = true;
+		param.useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[REL2] = true;
 		param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER;
 		param.useRelationIndexTest[REL3][REL_ENT1] = true; param.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT2;
 		param.useRelationTest[REL3][REL_ENT2] = true; param.relationTest[REL3][REL_ENT2] = RELATION_ENTITY_BE;
@@ -2410,7 +2410,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 										advmod(is-4, away-7)
 										rcmod(rabbit-2, is-4)
 										*/
-										bool auxillaryIndicatesDifferentReferenceSet = true;
+										bool auxiliaryIndicatesDifferentReferenceSet = true;
 										currentRelationInList3 = currentSentenceInList->firstRelationInList;
 										while(currentRelationInList3->next != NULL)
 										{
@@ -2418,15 +2418,15 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 											{
 												if((currentRelationInList3->relationGovernorIndex == currentRelationInList->relationDependentIndex) && (currentRelationInList3->relationDependent == RELATION_ENTITY_BE))
 												{
-													auxillaryIndicatesDifferentReferenceSet = false;
+													auxiliaryIndicatesDifferentReferenceSet = false;
 												}
 											}
 											currentRelationInList3 = currentRelationInList3->next;
 										}
-										currentRelationInList2->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;	//was currentRelationInList before 1 June 2012 code check
+										currentRelationInList2->auxiliaryIndicatesDifferentReferenceSet = auxiliaryIndicatesDifferentReferenceSet;	//was currentRelationInList before 1 June 2012 code check
 										#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 										//cout << "\t\t\t3currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
-										//cout << "\t\t\t3currentRelationInList2->auxillaryIndicatesDifferentReferenceSet = " << currentRelationInList2->auxillaryIndicatesDifferentReferenceSet << endl;
+										//cout << "\t\t\t3currentRelationInList2->auxiliaryIndicatesDifferentReferenceSet = " << currentRelationInList2->auxiliaryIndicatesDifferentReferenceSet << endl;
 										#endif
 										#endif
 
@@ -2496,8 +2496,8 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 	param.useRelationTest[REL2][REL_ENT2] = true; param.relationTest[REL2][REL_ENT2] = RELATION_ENTITY_BE;
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;	//redundant test
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	param.useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck[REL2] = true;
-	param.useRelationTest[REL3][REL_ENT1] = true; param.relationTest[REL3][REL_ENT1] = "impossibleEntityName";	//an impossible check which is therefore guaranteed to set auxillaryIndicatesDifferentReferenceSet to true
+	param.useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[REL2] = true;
+	param.useRelationTest[REL3][REL_ENT1] = true; param.relationTest[REL3][REL_ENT1] = "impossibleEntityName";	//an impossible check which is therefore guaranteed to set auxiliaryIndicatesDifferentReferenceSet to true
 	#endif
 	#ifndef GIA_OPTIMISE_PERFORMANCE_FOR_RELEX_PATENT_QUERIES_REPLICATION_RATHER_THAN_RELEX_PATENT_SYNTACTIC_PROTOTYPE_OUTPUT_REPLICATION
 		#ifndef GIA_COLLAPSE_COP_RELATION_DEPENDENT_BE_TO_APPOS_NOT_PREDADJ_OLD
@@ -2513,9 +2513,9 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			#endif
 		
 			//paramA.useRelationArrayTest[REL1][REL_ENT1] = true; paramA.relationArrayTest[REL1][REL_ENT1] = featurePOSindicatesAdjectiveOrAdverbTypeArray; paramA.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_OF_TYPES; paramA.relationArrayTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
-			EntityCharacteristic relationArrayTestSpecialCasePOStemp1A("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE);
-			EntityCharacteristic relationArrayTestSpecialCasePOStemp1B("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE_COMPARATIVE);
-			EntityCharacteristic relationArrayTestSpecialCasePOStemp1C("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE_SUPERLATIVE);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp1A("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE_JJ);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp1B("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE_COMPARATIVE_JJR);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp1C("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE_SUPERLATIVE_JJS);
 			EntityCharacteristic relationArrayTestSpecialCasePOStemp1D("stanfordPOStemp", FEATURE_POS_TAG_ADVERB);
 			EntityCharacteristic relationArrayTestSpecialCasePOStemp1E("stanfordPOStemp", FEATURE_POS_TAG_ADVERB_COMPARATIVE);
 			EntityCharacteristic relationArrayTestSpecialCasePOStemp1F("stanfordPOStemp", FEATURE_POS_TAG_ADVERB_SUPERLATIVE);
@@ -2536,11 +2536,11 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 
 			GIAgenericDepRelInterpretationParameters paramB = param;
 			//paramB.useRelationArrayTest[REL1][REL_ENT1] = true; paramB.relationArrayTest[REL1][REL_ENT1] = featurePOSindicatesNounTypeArray; paramB.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_OF_TYPES; paramB.relationArrayTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
-			EntityCharacteristic relationArrayTestSpecialCasePOStemp2A("stanfordPOStemp", FEATURE_POS_TAG_CD);
-			EntityCharacteristic relationArrayTestSpecialCasePOStemp2B("stanfordPOStemp", FEATURE_POS_TAG_NN);
-			EntityCharacteristic relationArrayTestSpecialCasePOStemp2C("stanfordPOStemp", FEATURE_POS_TAG_NNS);
-			EntityCharacteristic relationArrayTestSpecialCasePOStemp2D("stanfordPOStemp", FEATURE_POS_TAG_NNP);
-			EntityCharacteristic relationArrayTestSpecialCasePOStemp2E("stanfordPOStemp", FEATURE_POS_TAG_NNPS);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp2A("stanfordPOStemp", FEATURE_POS_TAG_CARDINALNUMBER_CD);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp2B("stanfordPOStemp", FEATURE_POS_TAG_NOUN_NN);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp2C("stanfordPOStemp", FEATURE_POS_TAG_NOUN_NNS);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp2D("stanfordPOStemp", FEATURE_POS_TAG_NOUN_NNP);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp2E("stanfordPOStemp", FEATURE_POS_TAG_NOUN_NNPS);
 			paramB.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp2A);
 			paramB.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp2B);
 			paramB.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp2C);
@@ -2654,10 +2654,10 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 								{//found a matching object-subject relationship
 
 									#ifdef GIA_USE_ADVANCED_REFERENCING
-									currentRelationInList->auxillaryIndicatesDifferentReferenceSet = true;
+									currentRelationInList->auxiliaryIndicatesDifferentReferenceSet = true;
 									#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 									//cout << "\t\t\t4currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-									//cout << "\t\t\t4currentRelationInList->auxillaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxillaryIndicatesDifferentReferenceSet << endl;
+									//cout << "\t\t\t4currentRelationInList->auxiliaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxiliaryIndicatesDifferentReferenceSet << endl;
 									#endif
 									#endif
 
@@ -2670,7 +2670,7 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 											#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_WORKAROUND_STANFORD_BUG_SINGLE_DIGIT_TIMES_MARKED_AS_ADJECTIVE
 											if(subjectGovernorEntity->NERTemp == FEATURE_NER_TIME)
 											{
-												subjectGovernorEntity->stanfordPOStemp = FEATURE_POS_TAG_CD;
+												subjectGovernorEntity->stanfordPOStemp = FEATURE_POS_TAG_CARDINALNUMBER_CD;
 											}
 											#endif
 
@@ -4025,7 +4025,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhat(Sentence * currentSentence
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
-	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DETERMINER; param.relationTestIsNegative[REL1][REL_ENT3] = true;	//OR if(GIAentityNodeArray[currentRelationInList->relationDependentIndex]->stanfordPOStemp != FEATURE_POS_TAG_WDT)	//to distinguish standard what queries from equivalent which queries eg "what time is it?"
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DETERMINER; param.relationTestIsNegative[REL1][REL_ENT3] = true;	//OR if(GIAentityNodeArray[currentRelationInList->relationDependentIndex]->stanfordPOStemp != FEATURE_POS_TAG_WH_DETERMINER_WDT)	//to distinguish standard what queries from equivalent which queries eg "what time is it?"
 	param.useRelationArrayTest[REL1][REL_ENT2] = true; param.relationArrayTest[REL1][REL_ENT2] = featureQueryWordWhatNameArray; param.relationArrayTestSize[REL1][REL_ENT2] = FEATURE_QUERY_WORD_WHAT_NUMBER_OF_TYPES;
 	param.useRedistributeRelationEntityReassignment[REL1][REL_ENT2] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT2] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What" to _$qVar
 	genericDependecyRelationInterpretation(&param, REL1);
@@ -4041,7 +4041,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhat(Sentence * currentSentence
 		#endif
 		*/
 		//if(currentRelationInList->relationType != RELATION_TYPE_DETERMINER)
-		if(GIAentityNodeArray[currentRelationInList->relationDependentIndex]->stanfordPOStemp != FEATURE_POS_TAG_WDT)	//to distinguish standard what queries from equivalent which queries eg "what time is it?"
+		if(GIAentityNodeArray[currentRelationInList->relationDependentIndex]->stanfordPOStemp != FEATURE_POS_TAG_WH_DETERMINER_WDT)	//to distinguish standard what queries from equivalent which queries eg "what time is it?"
 		{
 			bool queryWhatRelationDependentFound = false;
 			for(int i=0; i<FEATURE_QUERY_WORD_WHAT_NUMBER_OF_TYPES; i++)
