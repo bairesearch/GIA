@@ -26,7 +26,7 @@
  * File Name: GIAbot.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j5h 08-June-2015
+ * Project Version: 2j6a 10-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -36,7 +36,7 @@
 #include "GIAbot.h"
 
 #ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
-void botSwitchFirstAndSecondPerson(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPdependencyRelationsType)
+void botSwitchFirstAndSecondPerson(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -82,6 +82,54 @@ void botSwitchFirstAndSecondPerson(GIAsentence* currentSentenceInList, bool GIAe
 						GIAentityNode* secondPersonEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 						currentRelationInList->relationDependent = featureFirstPersonNameArray[i];
 						secondPersonEntity->entityName = featureFirstPersonNameArray[i];
+					}
+				}
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}
+}
+
+void botSwitchFirstAndSecondPersonSemantic(GIAsentence* currentSentenceInList)
+{
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
+ 	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			bool passedFirstPersonGovernor = false;
+			bool passedFirstPersonDependent = false;
+			for(int i=0; i<FEATURE_FIRST_PERSON_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationGovernor == featureFirstPersonNameArray[i])
+				{
+					currentRelationInList->relationGovernor = featureSecondPersonNameArray[i];
+					passedFirstPersonGovernor = true;
+				}
+				if(currentRelationInList->relationDependent == featureFirstPersonNameArray[i])
+				{
+					currentRelationInList->relationDependent = featureSecondPersonNameArray[i];
+					passedFirstPersonDependent = true;
+				}
+			}
+			for(int i=0; i<FEATURE_SECOND_PERSON_NUMBER_OF_TYPES; i++)
+			{
+				if(!passedFirstPersonGovernor)
+				{
+					if(currentRelationInList->relationGovernor == featureSecondPersonNameArray[i])
+					{
+						currentRelationInList->relationGovernor = featureFirstPersonNameArray[i];
+					}
+				}
+				if(!passedFirstPersonDependent)
+				{
+					if(currentRelationInList->relationDependent == featureSecondPersonNameArray[i])
+					{
+						currentRelationInList->relationDependent = featureFirstPersonNameArray[i];
 					}
 				}
 			}

@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j5h 08-June-2015
+ * Project Version: 2j6a 10-June-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -43,6 +43,9 @@
 #ifdef GIA2_CONNECTIONIST_NETWORK
 #include "GIAnlp.h"
 #include "GIAcorpusDatabase.h"
+#endif
+#ifdef GIA_USE_BOT
+#include "GIAbot.h"
 #endif
 #ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 #include "GIAlrp.h"
@@ -81,10 +84,15 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 		GIAconceptNodeArray[w] = NULL;
 		GIAentityNodeArray[w] = NULL;
 	}
+	
+	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
+	botSwitchFirstAndSecondPersonSemantic(currentSentenceInList);
+	#endif
+	
 	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
 	cout << "locateAndAddAllConceptEntitiesBasedOnSemanticRelations" << endl;
 	#endif
-
+	
 	locateAndAddAllConceptEntitiesBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAconceptNodeArray, entityNodesActiveListConcepts, sentenceConceptEntityNodesList, NLPfeatureParser);
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{

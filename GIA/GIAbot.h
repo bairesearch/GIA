@@ -26,7 +26,7 @@
  * File Name: GIAbot.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j5h 08-June-2015
+ * Project Version: 2j6a 10-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -49,7 +49,8 @@ static string featureSecondPersonNameArray[FEATURE_SECOND_PERSON_NUMBER_OF_TYPES
 static string featureFirstPersonNameArray[FEATURE_FIRST_PERSON_NUMBER_OF_TYPES] = {"i","me","my","mine","myself"};
 
 #ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
-void botSwitchFirstAndSecondPerson(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPdependencyRelationsType);
+void botSwitchFirstAndSecondPerson(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
+void botSwitchFirstAndSecondPersonSemantic(GIAsentence* currentSentenceInList);
 #endif
 
 
