@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u6b 01-October-2013
+ * Project Version: 1u7a 01-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -4404,15 +4404,9 @@ void redistributeStanfordRelationsDisableAuxAndCop(Sentence * currentSentenceInL
 
 	GIAgenericDepRelInterpretationParameters paramD(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	paramD.numberOfRelations = 1;
-	paramD.useRelationTest[REL1][REL_ENT3] = true; paramD.relationTest[REL1][REL_ENT3] = RELATION_TYPE_MODAL_AUX;
+	paramD.useRelationTest[REL1][REL_ENT3] = true; paramD.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DETERMINER;
 	paramD.disableRelation[REL1] = true;
-	genericDependecyRelationInterpretation(&paramD, REL1);
-
-	GIAgenericDepRelInterpretationParameters paramE(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
-	paramE.numberOfRelations = 1;
-	paramE.useRelationTest[REL1][REL_ENT3] = true; paramE.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DETERMINER;
-	paramE.disableRelation[REL1] = true;
-	genericDependecyRelationInterpretation(&paramE, REL1);				
+	genericDependecyRelationInterpretation(&paramD, REL1);				
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -4430,10 +4424,6 @@ void redistributeStanfordRelationsDisableAuxAndCop(Sentence * currentSentenceInL
 				currentRelationInList->disabled = true;
 			}
 			if(currentRelationInList->relationType == RELATION_TYPE_COPULA)
-			{
-				currentRelationInList->disabled = true;
-			}
-			if(currentRelationInList->relationType == RELATION_TYPE_MODAL_AUX)
 			{
 				currentRelationInList->disabled = true;
 			}

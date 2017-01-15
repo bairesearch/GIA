@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u6b 01-October-2013
+ * Project Version: 1u7a 01-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * ?TO DO: extract date information of entities from relex <features> tag area
@@ -89,10 +89,17 @@ void applyAdvancedFeatures(Sentence * currentSentenceInList, bool GIAentityNodeA
 #endif
 
 	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
+	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4j pass; define action concepts (ie specific action concepts)" << endl;
+	cout << "4j pass; define action concepts1 (ie specific action concepts)" << endl;
 	#endif
-	defineActionConcepts(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	defineActionConcepts1(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#endif
+	
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "4k pass; define action concepts (ie specific action concepts)" << endl;
+	#endif
+	defineActionConcepts2(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 }
 
@@ -1185,7 +1192,27 @@ void defineTenseOnlyTimeConditions(Sentence * currentSentenceInList, bool GIAent
 #endif
 
 #ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS	
-void defineActionConcepts(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+void defineActionConcepts1(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+{
+//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	param.numberOfRelations = 1;
+	param.parseDisabledRelation[REL1] = true;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_MODAL_AUX;
+	EntityCharacteristic entityCharacteristicsTest("isAction", "true");	
+	param.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest);
+	EntityCharacteristic useRedistributeSpecialCaseAssignment("isActionConcept", "true");
+	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&useRedistributeSpecialCaseAssignment);
+	genericDependecyRelationInterpretation(&param, REL1);
+//#else
+	//not coded as this function was developed after GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+//#endif
+}
+#endif
+
+void defineActionConcepts2(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {	
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{

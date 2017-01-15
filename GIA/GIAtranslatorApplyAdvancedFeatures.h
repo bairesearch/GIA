@@ -84,7 +84,10 @@ void applyAdvancedFeatures(Sentence * currentSentenceInList, bool GIAentityNodeA
 	#endif
 	
 	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS	
-	void defineActionConcepts(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
+	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	void defineActionConcepts1(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
+	#endif
+	void defineActionConcepts2(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
 	#endif
 
 #endif

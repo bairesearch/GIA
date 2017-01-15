@@ -1668,12 +1668,6 @@
 
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
-				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_aux" />
-				<option disableRelation="true" REL="0" />
-				</paramDepRel>
-
-				<paramDepRel mode="redistribute">
-				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_det" />
 				<option disableRelation="true" REL="0" />
 				</paramDepRel>
@@ -2053,8 +2047,8 @@
 			</function>
 			<!-- #endif -->
 			
-			<function name="redistributeRelexRelationsDisableRedundantObjectRelations">
-				<!-- this function has only been coded for: it is for NLPI testing only!!! -->
+			<!-- NLPI Only (testing) -->
+			<function name="NLPIredistributeRelexRelationsDisableRedundantObjectRelations">
 				<example><!--
 				eg Tom rides the Max's blue bike near the garage
 				near(ride[2], garage[10])
@@ -3102,6 +3096,19 @@
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="grammaticalTenseModifierArrayTemp" value="true" arrayIndex="0" />
 				<option functionToExecuteUponFind="2" />
 				</paramEntity>
+			</function>
+			
+			<function name="defineActionConcepts1">
+				<example>
+				eg She can run to the park. aux(run-3, can-2))
+				</example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option parseDisabledRelation="true" REL="0" /> <!-- aux will have been disabled, so must explicitly allow it to be parsed -->
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_aux" />
+				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isAction" value="true" REL="0" REL_ENT="0" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isActionConcept" value="true" REL="0" REL_ENT="0" />
+				</paramDepRel>
 			</function>						
 		</file>								
 	</translator>
