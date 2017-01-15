@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h11b 20-January-2015
+ * Project Version: 2h11c 20-January-2015
  *
  *******************************************************************************/
 -->
@@ -2054,7 +2054,9 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="2" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalTenseModifierArrayTemp" value="true" arrayIndex="0" REL="1" REL_ENT="1" />
 				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityReassignment="_obj" />
+				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="1" REL_ENT="3" />	<!-- added 2h8b -->
+				<!-- #endif -->
 				</paramDepRel>
 			</function>
 			<!-- #endif -->
@@ -3729,6 +3731,9 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
+				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
+				<option disableEntity="true" REL="1" REL_ENT="3" />
+				<!-- #endif -->
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
