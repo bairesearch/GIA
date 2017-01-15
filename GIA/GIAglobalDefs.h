@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3d 10-July-2015
+ * Project Version: 2k4a 19-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -655,6 +655,8 @@
 #ifdef USE_NLC
 	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 #endif
+//#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER	//disabled for OpenGIA (OLD: GIA_USE_CORPUS_DATABASE)
+
 	
 //#define GIA_DISABLE_2g_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2h_CODE_FOR_DEBUG
@@ -867,7 +869,6 @@
 	#endif
 #endif
 
-#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER	//disabled for OpenGIA (OLD: GIA_USE_CORPUS_DATABASE)
 #ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 	#define USE_GIA2		//GIA 2b1a - sets GIA into semantic parser (OLD: corpus) read mode
 	#ifdef USE_GIA2
