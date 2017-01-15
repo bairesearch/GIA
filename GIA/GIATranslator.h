@@ -167,10 +167,18 @@ using namespace std;
 //conjugations;
 #define GIA_USE_RELEX_1.4.0
 #ifdef GIA_USE_RELEX_1.4.0
-	#define RELATION_TYPE_CONJUGATION_AND "conj_and"
-	#define RELATION_TYPE_CONJUGATION_OR "conj_or"
-	#define RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES (2)
 	#define GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS	//not necessarily currently as; defineConjunctionConditions() currently performs the same function as defineActionPropertyConditions(). It is used at the moment such that the conjunction prepositions are added to the start of the list
+	#ifdef GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
+		#define RELATION_TYPE_CONJUGATION_AND "conj_and"
+		#define RELATION_TYPE_CONJUGATION_OR "conj_or"
+		#define RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES (2)
+		#define GIA_TRANSLATOR_USE_BASIC_CONJUNCTION_CONDITION_TYPE_NAMES
+		#ifdef GIA_TRANSLATOR_USE_BASIC_CONJUNCTION_CONDITION_TYPE_NAMES
+			#define RELATION_TYPE_CONJUGATION_AND_BASIC "and"
+			#define RELATION_TYPE_CONJUGATION_OR_BASIC "or"
+			#define RELATION_TYPE_CONJUGATION_BASIC_NUMBER_OF_TYPES (RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES)
+		#endif
+	#endif
 #endif
 
 //tobe/todo (properties/conditions);

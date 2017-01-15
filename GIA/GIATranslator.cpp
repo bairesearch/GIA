@@ -37,8 +37,11 @@ string relationContextPropositionReasonNameArray[REFERENCE_TYPE_QUESTION_WHY_CON
 
 string relationContextNegativeNameArray[RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES] = {RELATION_TYPE_NEGATIVE_CONTEXT_1};
 
-#ifdef GIA_USE_RELEX_1.4.0
+#ifdef GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
 string relationTypeConjugationNameArray[RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES] = {RELATION_TYPE_CONJUGATION_AND, RELATION_TYPE_CONJUGATION_OR};
+#ifdef GIA_TRANSLATOR_USE_BASIC_CONJUNCTION_CONDITION_TYPE_NAMES
+string relationTypeConjugationBasicNameArray[RELATION_TYPE_CONJUGATION_BASIC_NUMBER_OF_TYPES] = {RELATION_TYPE_CONJUGATION_AND_BASIC, RELATION_TYPE_CONJUGATION_OR_BASIC};
+#endif
 #endif
 	
 string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_THAT};
@@ -4001,6 +4004,9 @@ void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode
 			if(relationType == relationTypeConjugationNameArray[i])
 			{
 				passed = true;	
+				#ifdef GIA_TRANSLATOR_USE_BASIC_CONJUNCTION_CONDITION_TYPE_NAMES
+				relationType = relationTypeConjugationBasicNameArray[i];
+				#endif
 			}
 		}
 		
