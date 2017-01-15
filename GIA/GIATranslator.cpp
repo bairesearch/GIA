@@ -2714,6 +2714,11 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								{//subject-object relationship is a composition [property]
 									addOrConnectPropertyToEntity(subjectEntityTemp, objectEntityTemp);
 										//check can use properties for composition/comprises ; ie, does "tom is happy" = "tom comprises happiness" ?
+									//cout << "a" << endl;
+										
+									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+									GIAEntityNodeArray[currentRelationInList->relationFunctionIndex]->disabled = true;	//remove lone 'be' artefacts (blue entity nodes). NB these occur because of the nature of the 'is' -> entity definitional substitution procedure										
+									#endif
 								}
 								#endif
 								else if(partnerTypeObjectSpecialConditionMeasureDistanceFound)
