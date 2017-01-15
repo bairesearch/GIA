@@ -23,7 +23,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q10a 12-November-2012
+ * Project Version: 1q10b 12-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -660,16 +660,23 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityN
 						}
 						#endif
 
-						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_WITH_BE_AS_DEFINITION_LINK
-						for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_TO_DO_SUBSTANCE_NUMBER_OF_TYPES; i++)
+						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
+						if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 						{
-							if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionToDoSubstanceNameArray[i])
-							{
-								passed2 = true;
-								partnerTypeObjectSpecialConditionToDoSubstanceFound = true;
-							}
-						}
 						#endif
+							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_WITH_BE_AS_DEFINITION_LINK
+							for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_TO_DO_SUBSTANCE_NUMBER_OF_TYPES; i++)
+							{
+								if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionToDoSubstanceNameArray[i])
+								{
+									passed2 = true;
+									partnerTypeObjectSpecialConditionToDoSubstanceFound = true;
+								}
+							}
+							#endif
+						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
+						}
+						#endif							
 
 					#ifdef GIA_TRANSLATOR_RETAIN_SUSPECTED_REDUNDANT_RELEX_CODE
 						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
@@ -1099,17 +1106,24 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityN
 									{
 									#endif
 									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
+										bool passAlreadyAddedConditions = false;
 										#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
-										if(!partnerTypeObjectSpecialConditionToDoSubstanceFound || subjectIsConnectedToAnAdvMod)
+										if(subjectIsConnectedToAnAdvMod)
+										{
+											passAlreadyAddedConditions = true;
+										}
+										#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_WITH_BE_AS_DEFINITION_LINK
+										if(!partnerTypeObjectSpecialConditionToDoSubstanceFound)
+										{
+											passAlreadyAddedConditions = true;
+										}
+										#endif
+										if(passAlreadyAddedConditions)
 										{
 											foundPartner = true;
 											currentRelationInList->subjObjRelationAlreadyAdded = true;
 											currentRelationInList2->subjObjRelationAlreadyAdded = true;
 										}
-										#else
-										foundPartner = true;
-										currentRelationInList->subjObjRelationAlreadyAdded = true;
-										currentRelationInList2->subjObjRelationAlreadyAdded = true;
 										#endif
 									#else
 										foundPartner = true;
