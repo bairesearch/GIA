@@ -162,8 +162,20 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 
 GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode * comparisonVariableNode,  bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters, bool isSuitableNodeTypeForInexactAnswer, bool isCondition, GIAEntityNode** queryAnswerPreviousNode, GIAEntityNode* sourceEntityNode, bool sourceIsConditionAndHasComparisonVariableAttached, string * queryAnswerContext, string sourceContext)
 {
+	//if(findBestInexactAnswerAndSetDrawParameters)
+	//{
+		cout << "queryEntityNode->entityName = " << queryEntityNode->entityName << endl;
+		cout << "entityNode->entityName = " << entityNode->entityName << endl;
+		cout << "findBestInexactAnswerAndSetDrawParameters = " << findBestInexactAnswerAndSetDrawParameters << endl;
+		cout << "entityNode->testedForQueryComparison = " << entityNode->testedForQueryComparison << endl;
+		cout << "findBestInexactAnswerAndSetDrawParameters = " << findBestInexactAnswerAndSetDrawParameters << endl;
+		cout << "entityNode->isAnswerContextToQuery = " << entityNode->isAnswerContextToQuery << endl;
+	//}
+	
 	if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters && !(entityNode->isAnswerContextToQuery)))
 	{
+		cout << "IE-1" << endl;
+
 		
 		//cout << "\tqueryEntityNode = " << queryEntityNode->entityName << endl;
 		//cout << "\tentityNode = " << entityNode->entityName << endl;
@@ -195,6 +207,8 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 		{
 			if(queryEntityNode->entityName == entityNode->entityName)	//allow non-equal conditions to be matched during network comparison
 			{
+				cout << "IE0" << endl;
+
 				if(detectComparisonVariable && comparisonVariableNode->hasQuantity && queryEntityNode->hasQuantity && entityNode->hasQuantity)
 				{//exact match found [NB if a quantity, the queryEntityNode's entityName will not have the comparisonVariable name (_$qVar) specified, and therefore a matched entity node entityName is required]
 					foundMatch = true;
@@ -204,14 +218,14 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 				}
 				else
 				{
-					//cout << "IE1" << endl;
+					cout << "IE1" << endl;
 					if(isSuitableNodeTypeForInexactAnswer)
 					{
-						//cout << "IE2" << endl;
+						cout << "IE2" << endl;
 						
 						if(findBestInexactAnswerAndSetDrawParameters)
 						{
-							//cout << "IE3" << endl;
+							cout << "IE3" << endl;
 							foundMatch = true;
 							#ifdef GIA_QUERY_DEBUG
 							cout << "foundBestInexactAnswerAndSetDrawParameters:" << entityNode->entityName << endl;
@@ -321,8 +335,11 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 	if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters && !(entityNode->isAnswerContextToQuery)))
 	{//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]
 	
+		cout << "entityNode = " << entityNode->entityName << endl;
+	
 		if(findBestInexactAnswerAndSetDrawParameters)
 		{
+			//cout << "TEMP: findBestInexactAnswerAndSetDrawParameters: entityNode = " << entityNode->entityName << endl;
 			entityNode->isAnswerContextToQuery = true;			 
 		}
 		else
@@ -477,8 +494,12 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		for(actionIterQuery = queryEntityNode->IncomingActionNodeList.begin(); actionIterQuery != queryEntityNode->IncomingActionNodeList.end(); actionIterQuery++) 
 		{
 			for(actionIter = entityNode->IncomingActionNodeList.begin(); actionIter != entityNode->IncomingActionNodeList.end(); actionIter++) 
-			{
+			{	
+				#ifdef GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER
+				bool isSuitableNodeTypeForInexactAnswer = true;
+				#else
 				bool isSuitableNodeTypeForInexactAnswer = false;
+				#endif
 				//cout << "A" << endl;
 				string sourceContext = "is ";	//is done to 
 				queryAnswerNode = testReferencedEntityNodeForNameMatch(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, isSuitableNodeTypeForInexactAnswer, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
@@ -490,7 +511,11 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{
 			for(actionIter = entityNode->ActionNodeList.begin(); actionIter != entityNode->ActionNodeList.end(); actionIter++) 
 			{
+				#ifdef GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER
+				bool isSuitableNodeTypeForInexactAnswer = true;
+				#else
 				bool isSuitableNodeTypeForInexactAnswer = false;
+				#endif				
 				string sourceContext = "";
 				//cout << "AAA" << endl;	
 				queryAnswerNode = testReferencedEntityNodeForNameMatch(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, isSuitableNodeTypeForInexactAnswer, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);				
@@ -502,7 +527,11 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{		
 			if(entityNode->actionSubjectEntity != NULL)
 			{		
+				#ifdef GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER
+				bool isSuitableNodeTypeForInexactAnswer = true;
+				#else
 				bool isSuitableNodeTypeForInexactAnswer = false;
+				#endif				
 				string sourceContext = "is done by ";
 				
 				
@@ -563,8 +592,12 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{		
 			if(entityNode->conditionSubjectEntity != NULL)
 			{	
+				#ifdef GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER
+				bool isSuitableNodeTypeForInexactAnswer = true;
+				#else
 				bool isSuitableNodeTypeForInexactAnswer = false;
-				
+				#endif
+								
 				string sourceContext = "";	
 				//cout << "b5" << endl;
 				//cout << "entityNode->conditionSubjectEntity->testedForQueryComparison = " << entityNode->conditionSubjectEntity->testedForQueryComparison << endl;
@@ -603,7 +636,11 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 			for(entityIter = entityNode->PropertyNodeList.begin(); entityIter != entityNode->PropertyNodeList.end(); entityIter++) 
 			{//DRAW SHOULD NOT BE REQUIRED	
 				//cout << "a31" << endl;
+				#ifdef GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER
+				bool isSuitableNodeTypeForInexactAnswer = true;
+				#else
 				bool isSuitableNodeTypeForInexactAnswer = false;
+				#endif				
 				string sourceContext = "has ";
 				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, isSuitableNodeTypeForInexactAnswer, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 			}		
@@ -615,7 +652,11 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 			for(entityIter = entityNode->PropertyNodeReverseList.begin(); entityIter != entityNode->PropertyNodeReverseList.end(); entityIter++) 
 			{	
 				//cout << "a31" << endl;
+				#ifdef GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER
+				bool isSuitableNodeTypeForInexactAnswer = true;
+				#else
 				bool isSuitableNodeTypeForInexactAnswer = false;
+				#endif				
 				string sourceContext = "possessed by ";
 				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, isSuitableNodeTypeForInexactAnswer, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 			}		
@@ -657,9 +698,15 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{
 			for(entityIter = entityNode->EntityNodeDefinitionList.begin(); entityIter != entityNode->EntityNodeDefinitionList.end(); entityIter++) 
 			{
-				bool isSuitableNodeTypeForInexactAnswer = false;
+				//cout << "*entityIter = " << (*entityIter)->entityName << endl;
+				//cout << "*entityIterQuery = " << (*entityIterQuery)->entityName << endl;
+				
+				bool isSuitableNodeTypeForInexactAnswer = true;
 				string sourceContext = "is ";	//is defined by
 				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, isSuitableNodeTypeForInexactAnswer, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);				
+			
+				cout << "done" << endl;
+			
 			}
 		}
 		//go reverse also...	

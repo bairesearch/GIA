@@ -436,7 +436,7 @@ int main(int argc,char **argv)
 		else
 		{
 			//cout << "as" << endl;
-			if(!parseRelexFile(inputRelexXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList, timeConditionNodesList, timeConditionNumbersList))
+			if(!parseRelexFile(inputRelexXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList, timeConditionNodesList, timeConditionNumbersList, false))
 			{
 				result = false;
 			}
@@ -494,7 +494,7 @@ int main(int argc,char **argv)
 		}
 		else
 		{
-			if(!parseRelexFile(queryRelexXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, conceptEntityNamesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery))
+			if(!parseRelexFile(queryRelexXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, conceptEntityNamesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true))
 			{
 				result = false;
 			}
@@ -706,7 +706,7 @@ void executeRelex(string inputPlainTXTFileName, string inputRelexXMLFileName)
 
 
 	
-bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<string> * conceptEntityNamesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList)
+bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<string> * conceptEntityNamesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery)
 {
 	bool result = true;
 	
@@ -751,6 +751,15 @@ bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entity
 						{
 							//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
 							GIATHparseFeaturesText(&(currentTagInParse->value), currentSentence->firstFeatureInList, &(currentSentence->isQuestion));
+							
+							if(isQuery)
+							{
+								if(!(currentSentence->isQuestion))
+								{
+									cout << "error: GIA query is not a question" << endl;
+									exit(0); 
+								}
+							}						
 							//cout << "fini" << endl;
 						}
 
@@ -758,6 +767,7 @@ bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entity
 					}
 
 				}
+				
 				Sentence * newSentence = new Sentence();
 				Relation * newRelation = new Relation();
 				Feature * newFeature = new Feature();
