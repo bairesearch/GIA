@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g1a 25-August-2014
+ * Project Version: 2g1b 25-August-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -916,7 +916,7 @@
 
 //#define GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE
 //#define GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
-#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+//#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 //#define GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG_DISABLE_LINKING
 //#define GIA_LRP_DEBUG
