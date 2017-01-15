@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i8b 11-Apr-2012
+ * Project Version: 1i9a 11-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -202,33 +202,33 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
  	applyGrammaticalInfoToAllConceptEntities(GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAEntityNodeIsDateOrStanfordTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeNERArray, GIAEntityNodeNormalizedNERArray, GIAEntityNodeTimexArray);
 
 	
+	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
-		#ifdef GIA_USE_STANFORD_CORENLP
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1z1; redistribute Stanford Relations - Adverbal Clause Modifier And Complement (eg The accident happened as the night was falling. 	advcl(happen, fall) / mark(fall, as))" << endl;
 		#endif
 		redistributeStanfordRelationsAdverbalClauseModifierAndComplement(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
-		#endif
-		#ifdef GIA_USE_STANFORD_CORENLP
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1z2; redistribute Stanford Relations - Clausal Subject (eg What she said makes sense. 	csubj (make, say)/dobj ( said-3 , What-1 ))" << endl;
 		#endif
 		redistributeStanfordRelationsClausalSubject(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
-		#endif
-		#ifdef GIA_USE_STANFORD_CORENLP
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1z3; redistribute Stanford Relations - Phrasal Verb Particle (eg They shut down the station. 	prt(shut, down))" << endl;
 		#endif
 		redistributeStanfordRelationsPhrasalVerbParticle(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
-		#endif	
-		#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
+		#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1z4 pass; redistribute Stanford Relations NSubj And Preposition" << endl;
 		#endif
 		redistributeStanfordRelationsNSubjAndPreposition(currentSentenceInList, GIAEntityNodeArray);
 		#endif
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1z5; redistribute Stanford Relations - Conjunction And Coordinate (eg I eat a pie or tom rows the boat. 	cc(pie-4, or-5)  conj(pie-4, tom-6))" << endl;
+		#endif
+		redistributeStanfordRelationsConjunctionAndCoordinate(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);		
 	}
+	#endif
 
 		
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -381,10 +381,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "3c pass; define object/subject of preposition" << endl;
 	#endif
-	defineObjectSubjectOfPreposition(currentSentenceInList, GIAEntityNodeArray);
+	defineObjectSubjectOfPreposition(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList, NLPdependencyRelationsType);
 
 	
-#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
+#ifdef GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "3d pass; define conjunction conditions; eg Either Tom and/or Max eat the cake...." << endl;
 	#endif

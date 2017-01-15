@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammarAndReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i8b 11-Apr-2012
+ * Project Version: 1i9a 11-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1149,10 +1149,7 @@ void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence *
 		currentRelationInList = currentRelationInList->next;
 	}
 }				
-#endif				
 
-
-#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 void redistributeStanfordRelationsClausalSubject(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
 	//eg	What she said makes sense. 	csubj (make, say) / dobj ( said-3 , What-1 )
@@ -1193,9 +1190,7 @@ void redistributeStanfordRelationsClausalSubject(Sentence * currentSentenceInLis
 		currentRelationInList = currentRelationInList->next;
 	}
 }				
-#endif	
 
-#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -1217,10 +1212,8 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 	}
 }
 
-#endif
 
 
-#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 void redistributeStanfordRelationsNSubjAndPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
 {
 	//look for nsubj/prep combination, eg nsubj(next-4, garage-2) / prep_to(next-4, house-7)	=> prep_next_to
@@ -1270,7 +1263,65 @@ void redistributeStanfordRelationsNSubjAndPreposition(Sentence * currentSentence
 	}
 	//cout << "asd" << endl;
 }
-#endif
+
+
+void redistributeStanfordRelationsConjunctionAndCoordinate(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+{
+	//eg	I eat a pie or tom rows the boat. 	cc(pie-4, or-5)  conj(pie-4, tom-6)
+	
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{	
+		//cout << "here1" << endl;
+		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+
+		if(currentRelationInList->relationType == RELATION_TYPE_CONJUNCT)
+		{					
+			//now find the associated object..
+ 			Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+			while(currentRelationInList2->next != NULL)
+			{	
+				bool partnerTypeRequiredFound = false;					
+				if(currentRelationInList2->relationType == RELATION_TYPE_COORDINATION)
+				{
+					partnerTypeRequiredFound = true;
+				}
+
+				if(partnerTypeRequiredFound)
+				{		
+					if(currentRelationInList2->relationFunctionIndex == currentRelationInList->relationFunctionIndex)
+					{//found a matching object-subject relationship
+						
+						string newRelationType = "";
+						string coordinationDependent = GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex]->entityName;
+						if(coordinationDependent == RELATION_COORDINATION_DEPENDENT_AND)
+						{
+							newRelationType = RELATION_TYPE_CONJUGATION_AND;
+						}
+						else if(coordinationDependent == RELATION_COORDINATION_DEPENDENT_OR)
+						{
+							newRelationType = RELATION_TYPE_CONJUGATION_OR;
+						}
+						else
+						{
+							cout << "error redistributeStanfordRelationsConjunctionAndCoordinate(): unknown coordination dependent - " << coordinationDependent << endl;
+						}
+						currentRelationInList2->relationType = newRelationType;
+						currentRelationInList->disabled = true;
+					}
+				}
+
+				currentRelationInList2 = currentRelationInList2->next;
+			}
+		}
+		//cout << "here2" << endl;
+		currentRelationInList = currentRelationInList->next;
+	}
+}
+				
+#endif	
+
+
 
 
 

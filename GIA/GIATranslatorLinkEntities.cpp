@@ -3,7 +3,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i8b 11-Apr-2012
+ * Project Version: 1i9a 11-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1044,7 +1044,7 @@ void defineIndirectObjects(Sentence * currentSentenceInList, GIAEntityNode * GIA
 
 
 
-void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1088,9 +1088,9 @@ void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntit
 
 						//should really take into account the boolean and of both values: bool relationNegative = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex]->negative & GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex]->negative;
 						
-						//createConditionBasedUponPreposition(entityNode, conditionEntityNode, conditionTypeConceptEntity->entityName, false, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType)
+						createConditionBasedUponPreposition(entityNode, conditionEntityNode, conditionTypeConceptEntity->entityName, false, conceptEntityNodesList, NLPdependencyRelationsType);
 
-						
+						/*
 						bool passedPropositionTime = false;	
 						if(conditionEntityNode->hasAssociatedTime)	//added 10 April 2012 to make stanford compatible
 						{
@@ -1115,6 +1115,7 @@ void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntit
 						{
 							addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);							
 						}
+						*/
 						
 					}
 				}
