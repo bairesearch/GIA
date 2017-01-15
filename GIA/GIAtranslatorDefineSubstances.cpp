@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t5b 02-August-2013
+ * Project Version: 1t5c 02-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1082,13 +1082,16 @@ void defineSubstancesActionConcepts(Sentence * currentSentenceInList, bool GIAen
 	{
 		if(GIAentityNodeArrayFilled[w])
 		{
-			if((featureArrayTemp[w]->grammaticalWordType == GRAMMATICAL_WORD_TYPE_VERB) && ((featureArrayTemp[w]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true) || (featureArrayTemp[w]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true) || (featureArrayTemp[w]->foundPossibleInfinitiveVerb)))
+			if(!(GIAentityNodeArray[w]->disabled))
 			{
-				GIAentityNode * currentGIAEntityNode = GIAentityNodeArray[w];
-				#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
-				cout << "defineSubstancesActionConcepts: " << currentGIAEntityNode->entityName << endl;
-				#endif				
-				GIAentityNodeArray[w] = addSubstanceToSubstanceDefinition(currentGIAEntityNode);
+				if((featureArrayTemp[w]->grammaticalWordType == GRAMMATICAL_WORD_TYPE_VERB) && ((featureArrayTemp[w]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true) || (featureArrayTemp[w]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true) || (featureArrayTemp[w]->foundPossibleInfinitiveVerb)))
+				{
+					GIAentityNode * currentGIAEntityNode = GIAentityNodeArray[w];
+					#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+					cout << "defineSubstancesActionConcepts: " << currentGIAEntityNode->entityName << endl;
+					#endif				
+					GIAentityNodeArray[w] = addSubstanceToSubstanceDefinition(currentGIAEntityNode);
+				}
 			}
 		}
 	}	
