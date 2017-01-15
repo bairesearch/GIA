@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n2b 15-September-2016
+ * Project Version: 2n2c 15-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -107,17 +107,9 @@ string convertPrepositionToRelex(string* preposition, bool* prepositionFound);	/
 
 void setTranslatorEntityNodesCompleteList(vector<GIAentityNode*>* newEntityNodesCompleteList);
 //void setTranslatorNetworkIndexEntityNodesList(vector<GIAentityNode*>* newNetworkIndexEntityNodesList);
-void setTranslatorSubstanceEntityNodesList(vector<GIAentityNode*>* newSubstanceEntityNodesList);
-void setTranslatorActionEntityNodesList(vector<GIAentityNode*>* newActionEntityNodesList);
-void setTranslatorConditionEntityNodesList(vector<GIAentityNode*>* newConditionEntityNodesList);
-void setTranslatorConceptEntityNodesList(vector<GIAentityNode*>* newConceptEntityNodesList);
 
 vector<GIAentityNode*>* getTranslatorEntityNodesCompleteList();
 //vector<GIAentityNode*>* getTranslatorNetworkIndexEntityNodesList();
-vector<GIAentityNode*>* getTranslatorSubstanceEntityNodesList();
-vector<GIAentityNode*>* getTranslatorActionEntityNodesList();
-vector<GIAentityNode*>* getTranslatorConditionEntityNodesList();
-vector<GIAentityNode*>* getTranslatorConceptEntityNodesList();
 
 void setSaveNetwork(bool val);
 bool getSaveNetwork();
@@ -133,10 +125,6 @@ void setComparisonVariableNode(GIAentityNode* newComparisonVariableNode);
 
 long* getCurrentEntityNodeIDinCompleteList();
 long* getCurrentEntityNodeIDinNetworkIndexEntityNodesList();
-long* getCurrentEntityNodeIDinSubstanceEntityNodesList();
-long* getCurrentEntityNodeIDinActionEntityNodesList();
-long* getCurrentEntityNodeIDinConditionEntityNodesList();
-long* getCurrentEntityNodeIDinConceptEntityNodesList();
 
 long* getCurrentEntityNodeIDinSentenceCompleteList();
 long* getCurrentEntityNodeIDinSentenceNetworkIndexEntityNodesList();
