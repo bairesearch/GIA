@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1c 15-July-2013
+ * Project Version: 1t1d 15-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -309,7 +309,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	interpret; _to-do(design[5], do[7]) + _dep(design[5], what[1]) -> _to-do(design[5], do[7]) + _dep(design[5], do[7]) [see 2c] -> _to-do(design[5], what[1]) [2a]
 	*/	
 	paramOpt2a.useRelationTest[REL1][REL_ENT2] = true; paramOpt2a.relationTest[REL1][REL_ENT2] = RELATION_DEPENDENT_DO;
-	paramOpt2a.disableEntity[REL1][REL_ENT2] = true;
+	paramOpt2a.disableEntity[REL1][REL_ENT2] = true; paramOpt2a.disableEntityUseOriginalValues[REL1][REL_ENT2] = true;
 	paramOpt2a.disableRelation[REL2] = true;
 	paramOpt2a.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
 	paramOpt2a.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT2;	
@@ -586,7 +586,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		paramOptA1.numberOfRelations = 2;
 		paramOptA1.useRelationTest[REL1][REL_ENT2] = true; paramOptA1.relationTest[REL1][REL_ENT2] = RELATION_DEPENDENT_DO;	//this is check required? (perhaps the same case needs to be accounted for when (currentRelationInList->relationDependent != RELATION_DEPENDENT_DO)
 		paramOptA1.disableRelation[REL2] = true;
-		paramOptA1.disableEntity[REL1][REL_ENT2] = true;
+		paramOptA1.disableEntity[REL1][REL_ENT2] = true; paramOptA1.disableEntityUseOriginalValues[REL1][REL_ENT2] = true;
 		paramOptA1.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramOptA1.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramOptA1.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT2;	
 		genericDependecyRelationInterpretation(&paramOptA1, REL1);
 	
@@ -2043,7 +2043,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 	param.useRelationTest[REL1][REL_ENT1] = true; param.relationTest[REL1][REL_ENT1] = RELATION_ENTITY_BE;
 	param.useRelationTest[REL2][REL_ENT1] = true; param.relationTest[REL2][REL_ENT1] = RELATION_ENTITY_BE;
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
-	param.disableEntity[REL1][REL_ENT1] = true;
+	param.disableEntity[REL1][REL_ENT1] = true; param.disableEntityUseOriginalValues[REL1][REL_ENT1] = true;
 	#ifdef GIA_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE_TO_PREDADJ_NOT_SUBJ
 		#ifdef GIA_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE_TO_PREDADJ_NOT_SUBJ_OLD
 		param.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_ADJECTIVE_PREDADJ;
@@ -3107,7 +3107,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 	paramNsubjAndAttr.useRedistributeRelationEntityReassignment[REL2][REL_ENT2] = true; paramNsubjAndAttr.redistributeRelationEntityReassignment[REL2][REL_ENT2] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What"/"Who" to _$qVar
 	#else
 	paramNsubjAndAttr.disableRelation[REL2] = true;
-	paramNsubjAndAttr.disableEntity[REL1][REL_ENT1] = true;
+	paramNsubjAndAttr.disableEntity[REL1][REL_ENT1] = true;	paramNsubjAndAttr.disableEntityUseOriginalValues[REL1][REL_ENT1] = true;
 	paramNsubjAndAttr.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramNsubjAndAttr.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
 	paramNsubjAndAttr.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramNsubjAndAttr.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL2; paramNsubjAndAttr.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;
 	paramNsubjAndAttr.useRedistributeRelationEntityReassignment[REL1][REL_ENT1] = true; paramNsubjAndAttr.redistributeRelationEntityReassignment[REL1][REL_ENT1] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What"/"Who" to _$qVar

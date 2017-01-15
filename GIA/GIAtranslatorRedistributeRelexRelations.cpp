@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1c 15-July-2013
+ * Project Version: 1t1d 15-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -279,7 +279,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 		paramA.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
 		paramA.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;	
 		paramA.disableRelation[REL1] = true;
-		paramA.disableEntity[REL1][REL_ENT1] = true;	//oldRedundantBeEntity
+		paramA.disableEntity[REL1][REL_ENT1] = true;	
 		genericDependecyRelationInterpretation(&paramA, REL1);	
 		#endif
 
@@ -313,7 +313,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 			paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT1;	
 			paramB.useRedistributeRelationEntityReassignment[REL2][REL_ENT2] = true; paramB.redistributeRelationEntityReassignment[REL2][REL_ENT2] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "be" -> "$qvar"
 			paramB.disableRelation[REL1] = true;
-			paramB.disableEntity[REL2][REL_ENT2] = true;	//oldRedundantItEntity
+			paramB.disableEntity[REL2][REL_ENT2] = true; paramB.disableEntityUseOriginalValues[REL2][REL_ENT2] = true;	//oldRedundantItEntity
 			paramB.disableEntityUseOriginalValues[REL2][REL_ENT2] = true;
 			genericDependecyRelationInterpretation(&paramB, REL1);	
 		}
