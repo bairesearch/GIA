@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i29b 05-February-2015
+ * Project Version: 2i30a 06-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -183,7 +183,17 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(GIArelation* currentRe
 										entity2->grammaticalDefiniteTemp = false;
 									}
 									#endif
-									
+									#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_ENSURE_PROPERTY_PARENT_IS_SUBSTANCECONCEPT_IF_NECESSARY
+									if(entity2->isSubstanceConcept)
+									{
+										entity1->isSubstanceConcept = true;
+									}
+									else
+									{
+										entity1->isSubstanceConcept = false;
+									}
+									#endif
+											
 									#ifdef GIA_TRANSLATOR_DEBUG
 									cout << "previousPropertyRelationshipFound" << endl;
 									#endif
@@ -215,9 +225,23 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(GIArelation* currentRe
 												entity2->grammaticalDefiniteTemp = false;
 											}
 											#endif
+											#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_ENSURE_PROPERTY_PARENT_IS_SUBSTANCECONCEPT_IF_NECESSARY
+											if(entity2->isSubstanceConcept)
+											{
+												entity1->isSubstanceConcept = true;
+											}
+											else
+											{
+												entity1->isSubstanceConcept = false;
+											}
+											#endif
 									
 											#ifdef GIA_TRANSLATOR_DEBUG
 											cout << "previousPropertyRelationshipFound" << endl;
+											cout << "entity1 = " << entity1->entityName << endl;
+											cout << "entity2 = " << entity2->entityName << endl;
+											cout << "entity1->grammaticalDefiniteTemp = " << entity1->grammaticalDefiniteTemp << endl;
+											cout << "entity2->grammaticalDefiniteTemp = " << entity2->grammaticalDefiniteTemp << endl;
 											#endif
 
 											GIAentityNode* actionConceptEntity;
