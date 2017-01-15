@@ -7,7 +7,7 @@ CC=g++
 CFLAGS=-c -W --no-warn -I/usr/X11R6/include/ -std=c++0x
 #LDFLAGS=-W --no-warn 
 LDFLAGS=-W --no-warn -lX11 -lglut -lGL -lGLU
-SOURCES= GIAmain.cpp GIAParser.cpp GIATranslator.cpp GIAEntityNodeClass.cpp GIAConditionNodeClass.cpp GIASentenceClass.cpp GIAdraw.cpp GIAXMLconversion.cpp GIACXLconversion.cpp GIAquery.cpp GIAdatabase.cpp GIAnlp.cpp XMLParserClass.cpp XMLrulesClass.cpp LDsvg.cpp LDopengl.cpp LDparser.cpp LDsprite.cpp LDreferenceManipulation.cpp LDreferenceClass.cpp RToperations.cpp  RTparser.cpp  RTpixelMaps.cpp  RTppm.cpp  RTraytracer.cpp  RTreferenceManipulation.cpp  RTscene.cpp  RTviewinfo.cpp SHAREDglobalDefs.cpp SHAREDvector.cpp SHAREDvars.cpp CEcreateLayout.cpp CEClaimClass.cpp
+SOURCES= GIAmain.cpp GIAParser.cpp GIATranslator.cpp GIATranslatorDefineGrammarAndReferencing.cpp GIATranslatorDefineProperties.cpp GIATranslatorLinkEntities.cpp GIATranslatorApplyAdvancedFeatures.cpp GIAEntityNodeClass.cpp GIAConditionNodeClass.cpp GIASentenceClass.cpp GIAdraw.cpp GIAXMLconversion.cpp GIACXLconversion.cpp GIAquery.cpp GIAdatabase.cpp GIAnlp.cpp XMLParserClass.cpp XMLrulesClass.cpp LDsvg.cpp LDopengl.cpp LDparser.cpp LDsprite.cpp LDreferenceManipulation.cpp LDreferenceClass.cpp RToperations.cpp  RTparser.cpp  RTpixelMaps.cpp  RTppm.cpp  RTraytracer.cpp  RTreferenceManipulation.cpp  RTscene.cpp  RTviewinfo.cpp SHAREDglobalDefs.cpp SHAREDvector.cpp SHAREDvars.cpp CEcreateLayout.cpp CEClaimClass.cpp
 LIBTOOLFLAGS = --silent --tag=CC --mode=link gcc -std=gnu99 -g -O2
 
 OBJECTS=$(SOURCES:.cpp=.o)
