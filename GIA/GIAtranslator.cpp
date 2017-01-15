@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1g 31-August-2016
+ * Project Version: 2m1h 31-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1356,7 +1356,8 @@ void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassConceptE
 		#ifdef GIA_DEBUG
 		cout << "linkSubclassEntitiesWithParentClassEntities{}: entity->isSubClass - creating connection between subclass entity and parent" << endl;
 		#endif
-		addDefinitionToEntity(subclassNonspecificSubstanceConcept, parentClassNonspecificSubstanceConcept, true);
+		bool sameReferenceSet = false;	//this is required for dreamModeLinkSpecificConceptsAndActions
+		addDefinitionToEntity(subclassNonspecificSubstanceConcept, parentClassNonspecificSubstanceConcept, sameReferenceSet);
 	}		
 	#else
 	bool subclassToParentEntityConnectionAlreadyMade = false;
