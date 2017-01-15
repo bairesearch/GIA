@@ -1197,6 +1197,71 @@ void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 
 
 
+#ifdef GIA_USE_STANFORD_CORENLP
+void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+{
+	//eliminate all redundant date relations eg num(December-4, 3rd-5)/num(December-4, 1990-7)/nn(3rd-5, December-4)/appos(3rd-5, 1990-7), where both the governer and the dependent have NER tag set to DATE
+
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{			
+		#endif	
+			GIAEntityNode * governerEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
+			GIAEntityNode * dependentEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+
+			bool governerAndDependentBothHaveSameNERvalue = false;
+			for(int i=0; i<FEATURE_NER_EXPLICIT_NUMBER_TYPES; i++)
+			{
+				if((governerEntity->NERTemp == featureNERexplicitTypeArray[i]) && (dependentEntity->NERTemp == featureNERexplicitTypeArray[i]))
+				{
+					governerAndDependentBothHaveSameNERvalue = true;
+				}
+			}
+
+			//if(((governerEntity->NERTemp == FEATURE_NER_DATE) && (dependentEntity->NERTemp == FEATURE_NER_DATE)) || ((governerEntity->NERTemp == FEATURE_NER_MONEY) && (dependentEntity->NERTemp == FEATURE_NER_MONEY)) || ((governerEntity->NERTemp == FEATURE_NER_NUMBER) && (dependentEntity->NERTemp == FEATURE_NER_NUMBER)) || ((governerEntity->NERTemp == FEATURE_NER_TIME) && (dependentEntity->NERTemp == FEATURE_NER_TIME)))
+			if(governerAndDependentBothHaveSameNERvalue)
+			{
+				//cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
+				//cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
+
+				currentRelationInList->disabled = true;			
+
+				disableEntityBasedUponFirstSentenceToAppearInNetwork(dependentEntity);
+				//disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(dependentEntity);	//OLD: before forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)
+
+				bool featureNERindicatesNameConcatenationRequired = false;
+				for(int i=0; i<FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_TYPES; i++)
+				{
+					if(governerEntity->NERTemp == featureNERindicatesNameConcatenationRequiredTypeArray[i])
+					{
+						featureNERindicatesNameConcatenationRequired = true;
+					}
+				}
+
+				//if((governerEntity->NETTemp == FEATURE_NER_PERSON) || (governerEntity->NETTemp == FEATURE_NER_LOCATION) || (governerEntity->NETTemp == FEATURE_NER_ORGANIZATION) || (governerEntity->NETTemp == FEATURE_NER_MISC))
+				if(featureNERindicatesNameConcatenationRequired)
+				{
+					governerEntity->entityName = dependentEntity->entityName + FEATURE_NER_NAME_CONCATENATION_TOKEN + governerEntity->entityName;	//join names together
+
+					/*//OLD: before forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)
+					if(governerEntity->hasAssociatedInstanceTemp)
+					{//disable its property also
+						(governerEntity->AssociatedInstanceNodeList.back())->entityName = governerEntity->entityName;	//join names together
+					}	
+					*/				
+				}
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}			
+		#endif
+		
+		currentRelationInList = currentRelationInList->next;
+	}
+}
+#endif
 
 
 
@@ -2230,7 +2295,6 @@ void redistributeStanfordRelationsPrtAndTmod(Sentence * currentSentenceInList, b
 }
 	
 #endif	
-
 
 
 

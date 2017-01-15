@@ -31,9 +31,6 @@ using namespace std;
 
 
 //
-#ifdef GIA_USE_STANFORD_CORENLP
-void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[]);			//Stanford Specific
-#endif
 
 void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int NLPfeatureParser);					//Stanford Compatible
 	#ifdef GIA_USE_RELEX

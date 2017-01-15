@@ -204,12 +204,28 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
  	applyGrammaticalInfoToAllConceptEntities(GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAEntityNodeIsDateOrStanfordTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeNERArray, GIAEntityNodeNormalizedNERArray, GIAEntityNodeTimexArray, GIAEntityNodePOSArray);
 
 	
+	
+	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
+	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
+	{
+		#ifdef GIA_USE_STANFORD_CORENLP	
+		if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+		{
+			#ifdef GIA_TRANSLATOR_DEBUG
+			cout <<"pass 1z0; disable redundant nodes Stanford Core NLP" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
+			#endif
+			disableRedundantNodesStanfordCoreNLP(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);	
+		}
+		#endif
+	}
+	#endif
+		
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
 	
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "pass 1z1 pass; redistribute Stanford Relations NSubj And Preposition" << endl;
+		cout << "pass 1z1; redistribute Stanford Relations NSubj And Preposition" << endl;
 		#endif
 		redistributeStanfordRelationsMultiwordPreposition(currentSentenceInList, GIAEntityNodeArray);
 							
@@ -439,15 +455,6 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#endif
 	defineActionPropertyConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, NLPdependencyRelationsType);
 
-	#ifdef GIA_USE_STANFORD_CORENLP
-	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
-	{
-		#ifdef GIA_TRANSLATOR_DEBUG
-		cout <<"4a pass; disable redundant nodes Stanford Core NLP" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
-		#endif
-		disableRedundantNodesStanfordCoreNLP(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);	
-	}
-	#endif
 	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout <<"4b pass; extract dates" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
