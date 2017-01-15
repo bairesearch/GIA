@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h12d 21-January-2015
+ * Project Version: 2h12e 21-January-2015
  *
  *******************************************************************************/
 -->
@@ -3926,8 +3926,11 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_to-be" />
 				<option functionToExecuteUponFind="4" />
 				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-				<option defaultSameSetReferenceValue="true" /> //eg The chicken ate the pie that likes to draw.
-				/#endif
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> //determine reference set; eg The pastry tasted awesome./The chicken ate the pie that tasted awesome.
+				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />				
+				//#endif
 				</paramDepRel>
 				-->
 				<!-- #else -->
@@ -3940,7 +3943,10 @@
 				<option functionToExecuteUponFind="8" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
-				<option defaultSameSetReferenceValue="true" /> <!-- eg The chicken ate the pie that likes to draw. -->
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> <!-- determine same reference set; eg The pastry tasted awesome./The chicken ate the pie that tasted awesome. -->
+				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				<!-- #endif -->
 				</paramDepRel>
 				<!-- #endif -->
@@ -3960,7 +3966,10 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_to-do" />
 				<option functionToExecuteUponFind="4" />
 				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-				<option defaultSameSetReferenceValue="true" /> //eg The chicken ate the pie that likes to draw.
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> //determine same reference set; eg Jezel likes to draw./The chicken ate the pie that likes to draw.
+				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				//#endif
 				</paramDepRel>
 				-->
@@ -3974,7 +3983,10 @@
 				<option functionToExecuteUponFind="8" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
-				<option defaultSameSetReferenceValue="true" /> <!-- eg The chicken ate the pie that likes to draw. -->
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> <!-- determine same reference set; eg Jezel likes to draw./The chicken ate the pie that likes to draw. -->
+				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				<!-- #endif -->
 				</paramDepRel>
 				<!-- #endif -->
