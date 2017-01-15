@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16a 27-January-2015
+ * Project Version: 2i16b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -364,7 +364,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 					#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 					cout << currentRelationID << ": " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
 					#endif
-					GIAgenericDepRelInterpretationParameters paramTemp =* param;	//this shouldnt be required anymore with relationFinalResult/relationEntityFinalResult/relationEntityIndexFinalResult... 	//only record parameters (eg relationEntity/relationEntityIndex) if successfully recused - this is required if additional commands are required to be executed based on the successful (result==true) recursion of genericDependecyRelationInterpretation (e.g. in GIAtranslatorRedistributeStanfordRelations.cpp)
+					GIAgenericDepRelInterpretationParameters paramTemp = *param;	//this shouldnt be required anymore with relationFinalResult/relationEntityFinalResult/relationEntityIndexFinalResult... 	//only record parameters (eg relationEntity/relationEntityIndex) if successfully recused - this is required if additional commands are required to be executed based on the successful (result==true) recursion of genericDependecyRelationInterpretation (e.g. in GIAtranslatorRedistributeStanfordRelations.cpp)
 					if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1)))
 					{
 						result = true;
@@ -459,7 +459,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 						cout << "trying to find non allowed relation:" << endl;
 						cout << currentRelationID << ": [SpecialCaseNonExistantRelationCheck]: " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
 						#endif
-						GIAgenericDepRelInterpretationParameters paramTemp =* param;
+						GIAgenericDepRelInterpretationParameters paramTemp = *param;
 						if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1)))
 						{
 							passedEntityMatchTests = false;
@@ -510,7 +510,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									#endif
 									bool auxiliaryIndicatesDifferentReferenceSet = true;
 									bool rcmodIndicatesSameReferenceSet = false;
-									GIAgenericDepRelInterpretationParameters paramTemp =* param;
+									GIAgenericDepRelInterpretationParameters paramTemp = *param;
 									if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1)))
 									{
 										rcmodIndicatesSameReferenceSet = true;

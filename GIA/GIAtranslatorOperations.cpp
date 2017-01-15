@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16a 27-January-2015
+ * Project Version: 2i16b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1241,7 +1241,7 @@ GIAentityNode* addOrConnectHavingPropertyConditionToEntity(GIAentityNode* condit
 string convertPrepositionToRelex(string* preposition, bool* prepositionFound)
 {
 	*prepositionFound = false;
-	string relexPreposition =* preposition;
+	string relexPreposition = *preposition;
 	for(int i=0; i<REFERENCE_TYPE_STANFORD_PARSER_PREPOSITION_PREPEND_NUMBER_OF_TYPES; i++)
 	{
 		string currentStanfordPrepositionPrepend = referenceTypeStanfordParserPrepositionPrependNameArray[i];
@@ -1514,7 +1514,7 @@ void convertRelexPOStypeToWordnetWordType(string* relexPOStype, int* grammatical
 	*grammaticalWordTypeTemp = GRAMMATICAL_WORD_TYPE_UNDEFINED;
 	for(int i=0; i<FEATURE_RELEX_POS_NUMBER_OF_TYPES; i++)
 	{
-		if(featureRelexPOStypeArray[i] ==* relexPOStype)
+		if(featureRelexPOStypeArray[i] == *relexPOStype)
 		{
 			*grammaticalWordTypeTemp = featureRelexPOStypeCrossReferenceWordnetWordTypeArray[i];
 		}
@@ -1534,7 +1534,7 @@ void convertStanfordPOStagToRelexPOStypeAndWordnetWordType(string* POStag, strin
 	*relexPOStype = FEATURE_RELEX_POS_TYPE_WORD;
 	for(int i=0; i<FEATURE_POS_TAG_NUMBER_OF_TYPES_MINIMAL; i++)
 	{
-		if(featurePOStagMinimalArray[i] ==* POStag)
+		if(featurePOStagMinimalArray[i] == *POStag)
 		{
 			*relexPOStype = featurePOStagCrossReferenceRelexPOStypeArray[i];
 		}
@@ -1671,7 +1671,7 @@ GIAentityNode* findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAentityNod
 	GIAentityNode* conditionEntity;
 	#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_BAD1
-	if(GIAentityNodeArrayFilled[featureIndex] && (GIAentityNodeArray[featureIndex]->entityName ==* entityNodeName))
+	if(GIAentityNodeArrayFilled[featureIndex] && (GIAentityNodeArray[featureIndex]->entityName == *entityNodeName))
 	#else
 	if(GIAentityNodeArrayFilled[featureIndex])
 	#endif
@@ -1681,7 +1681,7 @@ GIAentityNode* findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAentityNod
 	else
 	{
 		#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_BAD1
-		if(GIAentityNodeArray[featureIndex]->entityName !=* entityNodeName)
+		if(GIAentityNodeArray[featureIndex]->entityName != *entityNodeName)
 		{
 			//must recreate a concept entity for the preposition as its name has changed based on the redistribution process
 			disableConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[featureIndex]);
@@ -1835,7 +1835,7 @@ GIAentityConnection* findEntityNodePointerInVector(GIAentityNode* entityNode, GI
 		if((*connectionIter)->entity == entityNodeToFind)
 		{
 			*foundNode = true;
-			connectionFound =* connectionIter;
+			connectionFound = *connectionIter;
 		}
 	}
 	return connectionFound;
@@ -1846,10 +1846,10 @@ GIAentityConnection* findEntityNodeNameInVector(GIAentityNode* entityNode, strin
 	GIAentityConnection* connectionFound = NULL;
 	for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entityNode->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
 	{
-		if((*connectionIter)->entity->entityName ==* entityNodeNameToFind)
+		if((*connectionIter)->entity->entityName == *entityNodeNameToFind)
 		{
 			*foundNode = true;
-			connectionFound =* connectionIter;
+			connectionFound = *connectionIter;
 		}
 	}
 	return connectionFound;
@@ -1968,7 +1968,7 @@ bool entityInActiveListComplete(string* entityName, long idInstance)
 	bool entityAlreadyInActiveListComplete = false;
 	for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
 	{
-		GIAentityNode* entityNode =* entityNodesActiveListComplete;
+		GIAentityNode* entityNode = *entityNodesActiveListComplete;
 		if((entityNode->entityName == entityName) && (entityNode->idInstance == idInstance))
 		{
 			entityAlreadyInActiveListComplete = true;
@@ -1983,7 +1983,7 @@ bool entityInActiveListComplete(GIAentityNode* entity)
 	bool entityAlreadyInActiveListComplete = false;
 	for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
 	{
-		GIAentityNode* entityNode =* entityNodesActiveListComplete;
+		GIAentityNode* entityNode = *entityNodesActiveListComplete;
 		if(entityNode == entity)
 		{
 			entityAlreadyInActiveListComplete = true;

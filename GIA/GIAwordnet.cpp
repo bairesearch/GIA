@@ -26,7 +26,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16a 27-January-2015
+ * Project Version: 2i16b 27-January-2015
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -359,7 +359,7 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 							#endif
 
 							string currentWord = currentRelatedSense->words[w];
-							if(currentWord ==* otherWord)
+							if(currentWord == *otherWord)
 							{
 								*entityNamesAreSynonymous = true;
 								#ifdef GIA_WORDNET_DEBUG
@@ -385,7 +385,7 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 					{
 
 						Index* idxOfFirstWordInWords = getindex(currentRelatedSense->words[0], wordNetPOS);	//returns pointer to Index struct representing first word in words[]
-						int senseNumber =* (currentRelatedSense->wnsns);
+						int senseNumber = *(currentRelatedSense->wnsns);
 						int tagCount = GetTagcnt(idxOfFirstWordInWords, senseNumber);
 
 						#ifdef GIA_WORDNET_DEBUG
@@ -643,7 +643,7 @@ bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char* output, int* 
 		{
 			c = output[i+charIndex];
 
-			*lineString =* lineString + c;
+			*lineString = *lineString + c;
 			i++;
 		}
 	}

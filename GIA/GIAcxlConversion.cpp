@@ -26,7 +26,7 @@
  * File Name: GIAcxlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16a 27-January-2015
+ * Project Version: 2i16b 27-January-2015
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  *
@@ -270,7 +270,7 @@ XMLparserTag* addToCXLentityNodeTagList(XMLparserTag* currentTagL1, vector<GIAen
 
 	for(vector<GIAentityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesList->begin(); entityNodesActiveCompleteListIterator < entityNodesList->end(); entityNodesActiveCompleteListIterator++)
 	{
-		GIAentityNode* currentEntity =* entityNodesActiveCompleteListIterator;
+		GIAentityNode* currentEntity = *entityNodesActiveCompleteListIterator;
 
 		#ifndef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_TIME_CONDITION_NODES
 		if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
@@ -292,7 +292,7 @@ XMLparserTag* addToCXLentityNodeTagList(XMLparserTag* currentTagL1, vector<GIAen
 				#endif
 
 				#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
-				currentEntity->idActiveListReorderdIDforXMLsave =* currentCmapNodeIDinCmapNodeList;
+				currentEntity->idActiveListReorderdIDforXMLsave = *currentCmapNodeIDinCmapNodeList;
 				long currentEntityID = currentEntity->idActiveListReorderdIDforXMLsave;
 				#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
 				cout << "DEBUG: currentEntity->idActiveListReorderdIDforXMLsave = " << currentEntity->idActiveListReorderdIDforXMLsave << endl;
@@ -529,7 +529,7 @@ XMLparserTag* addToCXLconnectionNodeTagList(XMLparserTag* currentTagL1, vector<G
 
 	for(vector<GIAentityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesList->begin(); entityNodesActiveCompleteListIterator < entityNodesList->end(); entityNodesActiveCompleteListIterator++)
 	{
-		GIAentityNode* currentEntity =* entityNodesActiveCompleteListIterator;
+		GIAentityNode* currentEntity = *entityNodesActiveCompleteListIterator;
 
 
 		#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
@@ -817,8 +817,8 @@ void resetIDsForNodeList2(vector<GIAentityNode*>* entityNodesList, long* current
 {
 	for(vector<GIAentityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesList->begin(); entityNodesActiveCompleteListIterator < entityNodesList->end(); entityNodesActiveCompleteListIterator++)
 	{
-		GIAentityNode* currentEntity =* entityNodesActiveCompleteListIterator;
-		currentEntity->idActiveListReorderdIDforXMLsave =* currentEntityNodeIDinConceptEntityNodesList;
+		GIAentityNode* currentEntity = *entityNodesActiveCompleteListIterator;
+		currentEntity->idActiveListReorderdIDforXMLsave = *currentEntityNodeIDinConceptEntityNodesList;
 		(*currentEntityNodeIDinConceptEntityNodesList) = (*currentEntityNodeIDinConceptEntityNodesList) + 1;
 	}
 }

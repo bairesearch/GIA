@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16a 27-January-2015
+ * Project Version: 2i16b 27-January-2015
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -1345,7 +1345,7 @@ void resetIDsForNodeList(vector<GIAentityNode*>* entityNodesList, long* currentE
 		if(!(currentEntity->disabled))
 		{
 		#endif
-			currentEntity->idActiveListReorderdIDforXMLsave =* currentEntityNodeIDinEntityNodesActiveCompleteList;
+			currentEntity->idActiveListReorderdIDforXMLsave = *currentEntityNodeIDinEntityNodesActiveCompleteList;
 			(*currentEntityNodeIDinEntityNodesActiveCompleteList) = (*currentEntityNodeIDinEntityNodesActiveCompleteList) + 1;
 		#ifdef GIA_SEMANTIC_NET_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 		}
@@ -1372,7 +1372,7 @@ bool generateXMLentityNodeTagList(XMLparserTag* firstTagInSemanticNet, vector<GI
 
 	for(vector<GIAentityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesList->begin(); entityNodesActiveCompleteListIterator < entityNodesList->end(); entityNodesActiveCompleteListIterator++)
 	{
-		GIAentityNode* currentEntity =* entityNodesActiveCompleteListIterator;
+		GIAentityNode* currentEntity = *entityNodesActiveCompleteListIterator;
 
 		#ifdef GIA_SEMANTIC_NET_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 		//tested 11 Feb 2012; failed

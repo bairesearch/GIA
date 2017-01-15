@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16a 27-January-2015
+ * Project Version: 2i16b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -263,7 +263,7 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirac
 	vector<CECodeextension*>::iterator codeextensionIter;
 	for(codeextensionIter = codeextensionsList->begin(); codeextensionIter != codeextensionsList->end(); codeextensionIter++)
 	{
-		CECodeextension* currentCodeextensionInHeirachy =* codeextensionIter;
+		CECodeextension* currentCodeextensionInHeirachy = *codeextensionIter;
 		currentCodeextensionInHeirachy->sentence = currentSentenceInList;
 		#ifdef GIA_WITH_CE_CONVERT_PUNCTUATION_MARK_CHARACTERS_TO_FULL_STOPS
 		#ifdef GIA_WITH_CE_DEBUG
@@ -290,7 +290,7 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirac
 	#else
 		codeextensionIter = codeextensionsList->begin();
 	#endif
-		CECodeextension* currentCodeextensionInHeirachy =* codeextensionIter;
+		CECodeextension* currentCodeextensionInHeirachy = *codeextensionIter;
 		currentSentenceInList = currentCodeextensionInHeirachy->sentence;
 
 		GIAsentence* lastSentenceInArtificialList = currentSentenceInList;
@@ -405,11 +405,11 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	setTranslatorSubstanceEntityNodesList(entityNodesActiveListSubstancesTemp);
 	setTranslatorActionEntityNodesList(entityNodesActiveListActionsTemp);
 	setTranslatorConditionEntityNodesList(entityNodesActiveListConditionsTemp);
-	long currentEntityNodeIDInCompleteListOriginal =* (getCurrentEntityNodeIDinCompleteList());
-	long currentEntityNodeIDInConceptEntityNodesListOriginal =* (getCurrentEntityNodeIDinConceptEntityNodesList());
-	long currentEntityNodeIDInSubstanceEntityNodesListOriginal =* (getCurrentEntityNodeIDinSubstanceEntityNodesList());
-	long currentEntityNodeIDInActionEntityNodesListOriginal =* (getCurrentEntityNodeIDinActionEntityNodesList());
-	long currentEntityNodeIDInConditionEntityNodesListOriginal =* (getCurrentEntityNodeIDinConditionEntityNodesList());
+	long currentEntityNodeIDInCompleteListOriginal = *(getCurrentEntityNodeIDinCompleteList());
+	long currentEntityNodeIDInConceptEntityNodesListOriginal = *(getCurrentEntityNodeIDinConceptEntityNodesList());
+	long currentEntityNodeIDInSubstanceEntityNodesListOriginal = *(getCurrentEntityNodeIDinSubstanceEntityNodesList());
+	long currentEntityNodeIDInActionEntityNodesListOriginal = *(getCurrentEntityNodeIDinActionEntityNodesList());
+	long currentEntityNodeIDInConditionEntityNodesListOriginal = *(getCurrentEntityNodeIDinConditionEntityNodesList());
 	long currentEntityNodeIDInCompleteListTemp = 0;
 	long currentEntityNodeIDInConceptEntityNodesListTemp = 0;
 	long currentEntityNodeIDInSubstanceEntityNodesListTemp = 0;
@@ -471,7 +471,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	vector<GIAentityNode*> ::iterator sentenceConceptEntityNodesListTempNotUsed1Iter;
 	for(sentenceConceptEntityNodesListTempNotUsed1Iter = sentenceConceptEntityNodesListTempNotUsed1.begin(); sentenceConceptEntityNodesListTempNotUsed1Iter != sentenceConceptEntityNodesListTempNotUsed1.end(); sentenceConceptEntityNodesListTempNotUsed1Iter++)
 	{
-		GIAentityNode* entityNode =* sentenceConceptEntityNodesListTempNotUsed1Iter;
+		GIAentityNode* entityNode = *sentenceConceptEntityNodesListTempNotUsed1Iter;
 		cout << "DEBUG1: entityNode->entityName = " << entityNode->entityName << endl;
 	}
 	unordered_map<string, GIAentityNode*> ::iterator sentenceConceptEntityNodesListIter;
@@ -572,7 +572,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 			unordered_map<string, GIAentityNode*> sentenceConceptEntityNodesListTempNotUsedMap;
 			for(vector<GIAentityNode*>::iterator sentenceConceptEntityNodesListTempNotUsedIter = sentenceConceptEntityNodesListTempNotUsed.begin(); sentenceConceptEntityNodesListTempNotUsedIter != sentenceConceptEntityNodesListTempNotUsed.end(); sentenceConceptEntityNodesListTempNotUsedIter++)
 			{
-				GIAentityNode* conceptEntityNodeTemp =* sentenceConceptEntityNodesListTempNotUsedIter;
+				GIAentityNode* conceptEntityNodeTemp = *sentenceConceptEntityNodesListTempNotUsedIter;
 				string entityNodeNameTemp = conceptEntityNodeTemp->entityName;
 				sentenceConceptEntityNodesListTempNotUsedMap.insert(pair<string, GIAentityNode*>(entityNodeNameTemp, conceptEntityNodeTemp));
 			}

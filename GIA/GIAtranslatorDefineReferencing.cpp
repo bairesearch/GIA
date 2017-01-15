@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16a 27-January-2015
+ * Project Version: 2i16b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1117,7 +1117,7 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode* entityNode, int* r
 
 					if(identifyReferenceSetDetermineNextCourseOfAction(currentInstance, true,* referenceSetID, minimumEntityIndexOfReferenceSet, false))
 					{
-						*referenceSetID	=* referenceSetID + 1;
+						*referenceSetID	= *referenceSetID + 1;
 						referenceSetDefiniteEntityList->push_back(currentInstance);
 						//cout << "*referenceSetID++ = " <<* referenceSetID << endl;
 					}
@@ -1160,7 +1160,7 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 	int referenceSetID = 0;
 	for(vector<GIAentityNode*>::iterator referenceSetDefiniteEntityIter = referenceSetDefiniteEntityList->begin(); referenceSetDefiniteEntityIter != referenceSetDefiniteEntityList->end(); referenceSetDefiniteEntityIter++)
 	{
-		GIAentityNode* referenceSetDefiniteEntity =* referenceSetDefiniteEntityIter;
+		GIAentityNode* referenceSetDefiniteEntity = *referenceSetDefiniteEntityIter;
 		
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
 		cout << "\n* ***************************************** referenceSetID = " << referenceSetID << endl;
@@ -1420,7 +1420,7 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 					if(matchFound)
 					{
 						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-						if((numberOfMatchedNodesTemp >=* maxNumberOfMatchedNodes) && (numberOfMatchedNodesTemp > 1))		//this is required		//NB need to match > 1 nodes (ie, not just match the concept node)
+						if((numberOfMatchedNodesTemp >= *maxNumberOfMatchedNodes) && (numberOfMatchedNodesTemp > 1))		//this is required		//NB need to match > 1 nodes (ie, not just match the concept node)
 						#else
 						if(numberOfMatchedNodesTemp >* maxNumberOfMatchedNodes)
 						#endif
@@ -1771,7 +1771,7 @@ void linkAdvancedReferencesGIA(GIAsentence* currentSentenceInList, bool GIAentit
 							//for(int i((reference->aliasList).size() > 0)	
 							for(vector<string>::iterator aliasIter = reference->aliasList.begin(); aliasIter != reference->aliasList.end(); aliasIter++)	//this will be required depending on which node was declared the primary (alias or non alias) when the  entities where merged during the temporary execution of convertSentenceSemanticRelationsIntoGIAnetworkNodes() on the sentence (sentenceConceptEntityNodesList) for the creation of GIA advanced referencing coreference sets
 							{//advanced referencing has found an alias for the reference, merge it with the referenceSource
-								string referenceAlias =* aliasIter;
+								string referenceAlias = *aliasIter;
 								#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
 								cout << "referenceAlias = " << referenceAlias << endl;
 								#endif
@@ -1870,7 +1870,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 
 	for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
 	{
-		GIAentityNode* currentSpecificConcept =* entityNodesActiveListCompleteIter;
+		GIAentityNode* currentSpecificConcept = *entityNodesActiveListCompleteIter;
 		#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 		cout << "\t identifyReferenceSetsSpecificConcepts currentSpecificConcept = : " << currentSpecificConcept->entityName << endl;
 		#endif
@@ -1909,7 +1909,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 
 					for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
 					{
-						GIAentityNode* entityNode =* entityNodesActiveListCompleteIter;
+						GIAentityNode* entityNode = *entityNodesActiveListCompleteIter;
 						#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 						cout << "\t identifyReferenceSetsSpecificConcepts: " << entityNode->entityName << endl;
 						#endif

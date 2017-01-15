@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16a 27-January-2015
+ * Project Version: 2i16b 27-January-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -142,11 +142,11 @@ GIAentityNode* DBfindOrAddConceptEntityNodeByName(vector<GIAentityNode*>* entity
 			#endif
 
 			GIAentityNode* newEntityNode = new GIAentityNode();
-			newEntityNode->entityName =* entityNodeName;
+			newEntityNode->entityName = *entityNodeName;
 			newEntityNode->idInstance = GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE;
 			newEntityNode->isConcept = true;	//added 10 May 2012
-			newEntityNode->idActiveList =* currentEntityNodeIDinCompleteList;
-			newEntityNode->idActiveEntityTypeList =* currentEntityNodeIDinConceptEntityNodesList;
+			newEntityNode->idActiveList = *currentEntityNodeIDinCompleteList;
+			newEntityNode->idActiveEntityTypeList = *currentEntityNodeIDinConceptEntityNodesList;
 			#ifdef GIA_USE_DATABASE
 			newEntityNode->added = true;
 			#endif
@@ -218,11 +218,11 @@ GIAentityNode* findOrAddConceptEntityNodeByName(vector<GIAentityNode*>* entityNo
 			#endif
 
 			GIAentityNode* newEntityNode = new GIAentityNode();
-			newEntityNode->entityName =* entityNodeName;
+			newEntityNode->entityName = *entityNodeName;
 			newEntityNode->idInstance = GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE;
 			newEntityNode->isConcept = true;	//added 10 May 2012
-			newEntityNode->idActiveList =* currentEntityNodeIDinCompleteList;
-			newEntityNode->idActiveEntityTypeList =* currentEntityNodeIDinConceptEntityNodesList;
+			newEntityNode->idActiveList = *currentEntityNodeIDinCompleteList;
+			newEntityNode->idActiveEntityTypeList = *currentEntityNodeIDinConceptEntityNodesList;
 			#ifdef GIA_USE_DATABASE
 			newEntityNode->added = true;
 			#endif
@@ -928,7 +928,7 @@ void DBreadVectorConnectionEntities(string* entityName, long idInstance, int con
 
 	for(vector<GIAentityConnection*>::iterator connectionIter = entityVectorConnections->begin(); connectionIter != entityVectorConnections->end(); connectionIter++)
 	{
-		GIAentityConnection* connection =* connectionIter;
+		GIAentityConnection* connection = *connectionIter;
 
 		if(!(connection->loaded))
 		{
@@ -1285,7 +1285,7 @@ void writeDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete)
 
 	for(vector<GIAentityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesActiveListComplete->begin(); entityNodesActiveCompleteListIterator != entityNodesActiveListComplete->end(); entityNodesActiveCompleteListIterator++)
 	{
-		GIAentityNode* entityNode =* entityNodesActiveCompleteListIterator;
+		GIAentityNode* entityNode = *entityNodesActiveCompleteListIterator;
 
 		#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 		if(!(entityNode->disabled))	//added 17 August 2012
@@ -1320,7 +1320,7 @@ void writeDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete)
 							int referenceIndex = 0;
 							for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 							{
-								GIAentityConnection* connection =* connectionIter;
+								GIAentityConnection* connection = *connectionIter;
 								#ifdef GIA_DATABASE_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES
 								if(!(connection->entity->disabled))
 								{
@@ -1533,7 +1533,7 @@ void DBwriteVectorConnectionsReferences(string* entityName, long idInstance, int
 
 		for(vector<GIAentityConnection*>::iterator connectionIter = entityVectorConnections->begin(); connectionIter != entityVectorConnections->end(); connectionIter++)
 		{
-			GIAentityConnection* connection =* connectionIter;
+			GIAentityConnection* connection = *connectionIter;
 
 			#ifdef GIA_DATABASE_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES
 			if(!(connection->entity->disabled))
@@ -1829,7 +1829,7 @@ GIAentityNode* findEntityInActiveConceptList(string* entityName, long idInstance
 				vector<GIAentityConnection*>* entityVectorConnections = &(entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]);
 				for(vector<GIAentityConnection*>::iterator connectionIter = entityVectorConnections->begin(); connectionIter != entityVectorConnections->end(); connectionIter++)
 				{
-					GIAentityConnection* currentConnection =* connectionIter;
+					GIAentityConnection* currentConnection = *connectionIter;
 					if(currentConnection->loaded)
 					{
 						GIAentityNode* currentInstance = currentConnection->entity;

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16a 27-January-2015
+ * Project Version: 2i16b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -774,8 +774,8 @@ void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNo
 						{
 							long* currentEntityNodeIDinCompleteList = getCurrentEntityNodeIDinCompleteList();
 							long* currentEntityNodeIDInSubstanceEntityNodesList = getCurrentEntityNodeIDinSubstanceEntityNodesList();
-							newQuantityTimesEntity->idActiveList =* currentEntityNodeIDinCompleteList;
-							newQuantityTimesEntity->idActiveEntityTypeList =* currentEntityNodeIDInSubstanceEntityNodesList;
+							newQuantityTimesEntity->idActiveList = *currentEntityNodeIDinCompleteList;
+							newQuantityTimesEntity->idActiveEntityTypeList = *currentEntityNodeIDInSubstanceEntityNodesList;
 
 							vector<GIAentityNode*>* entityNodesActiveListComplete = getTranslatorEntityNodesCompleteList();
 							entityNodesActiveListComplete->push_back(newQuantityTimesEntity);
@@ -787,7 +787,7 @@ void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNo
 						else
 						{
 							long* currentEntityNodeIDinCompleteList = getCurrentEntityNodeIDinSentenceCompleteList();
-							newQuantityTimesEntity->idActiveList =* currentEntityNodeIDinCompleteList;
+							newQuantityTimesEntity->idActiveList = *currentEntityNodeIDinCompleteList;
 							(*currentEntityNodeIDinCompleteList)++;
 						}
 

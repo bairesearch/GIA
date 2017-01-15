@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16a 27-January-2015
+ * Project Version: 2i16b 27-January-2015
  *
  *******************************************************************************/
 
@@ -529,7 +529,7 @@ void deleteEntitiesInEntityNodeList(vector<GIAentityNode*>* entityNodesActiveLis
 {
 	for(vector<GIAentityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 	{
-		GIAentityNode* entityNode =* entityIter;
+		GIAentityNode* entityNode = *entityIter;
 		#ifdef GIA_FREE_MEMORY_DEBUG
 		cout << "deleting: entityNode: " << entityNode->entityName << endl;
 		#endif
@@ -704,7 +704,7 @@ void convertAliasesToAliasesString(GIAentityNode* entityNode, string* aliasesStr
 	*aliasesString = "";
 	for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter != entityNode->aliasList.end(); aliasIter++)
 	{
-		*aliasesString =* aliasesString +* aliasIter + GIA_ALIASES_CONVERT_TO_STRING_DELIMITER;
+		*aliasesString = *aliasesString +* aliasIter + GIA_ALIASES_CONVERT_TO_STRING_DELIMITER;
 		#ifdef GIA_ALIASES_DEBUG
 		cout << "*aliasesString = " <<* aliasesString << endl;
 		#endif
@@ -737,7 +737,7 @@ vector<string> explode(const string& str, const char& ch)
 		else
 		{
 			// Accumulate the next character into the sequence
-			next +=* it;
+			next += *it;
 		}
 	}
 
@@ -833,7 +833,7 @@ bool testEntityCharacteristics(GIAentityNode* entity, vector<GIAentityCharacteri
 	for(vector<GIAentityCharacteristic*>::iterator entityCharacteristicIter = redistributeSpecialCasePropertiesTestVector->begin(); entityCharacteristicIter != redistributeSpecialCasePropertiesTestVector->end(); entityCharacteristicIter++)
 	{
 		vectorHasItems = true;
-		GIAentityCharacteristic* entityCharacteristic =* entityCharacteristicIter;
+		GIAentityCharacteristic* entityCharacteristic = *entityCharacteristicIter;
 		if(testEntityCharacteristic(entity, entityCharacteristic))
 		{
 			//cout << "passFound" << endl;
@@ -879,7 +879,7 @@ void setEntityCharacteristics(GIAentityNode* entity, vector<GIAentityCharacteris
 {
 	for(vector<GIAentityCharacteristic*>::iterator entityCharacteristicIter = redistributeSpecialCasePropertiesAssignmentVector->begin(); entityCharacteristicIter != redistributeSpecialCasePropertiesAssignmentVector->end(); entityCharacteristicIter++)
 	{
-		GIAentityCharacteristic* entityCharacteristic =* entityCharacteristicIter;
+		GIAentityCharacteristic* entityCharacteristic = *entityCharacteristicIter;
 		setEntityCharacteristic(entity, entityCharacteristic);
 	}
 }
@@ -1327,7 +1327,7 @@ void deleteAllEntitiesInConceptEntityNodeList(unordered_map<string, GIAentityNod
 
 		for(vector<GIAentityNode*>::iterator instanceEntityNodesListIter = conceptEntityNode->associatedInstanceNodeList.begin(); instanceEntityNodesListIter != conceptEntityNode->associatedInstanceNodeList.end(); )
 		{
-			GIAentityNode* instanceEntityNode =* instanceEntityNodesListIter;
+			GIAentityNode* instanceEntityNode = *instanceEntityNodesListIter;
 			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 			{
 				for(vector<GIAentityConnection*>::iterator connectionIter = instanceEntityNode->entityVectorConnectionsArray[i].begin(); connectionIter != instanceEntityNode->entityVectorConnectionsArray[i].end(); connectionIter++)

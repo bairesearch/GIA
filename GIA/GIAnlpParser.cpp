@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16a 27-January-2015
+ * Project Version: 2i16b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -564,7 +564,7 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string* POStagsText, GIAsentence
 				cout << "DEBUG: GIATHparseStanfordParseWordsAndPOStagsText(): currentFeatureInList->stanfordPOS = " << currentFeatureInList->stanfordPOS << endl;
 				#endif
 
-				*maxNumberOfWordsInSentence =* maxNumberOfWordsInSentence + 1;
+				*maxNumberOfWordsInSentence = *maxNumberOfWordsInSentence + 1;
 
 				currentFeatureInList = currentFeatureInList->next;
 				readingWord = true;
@@ -664,7 +664,7 @@ void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsente
 string convertPrepositionToRelex2(string* preposition, bool* prepositionFound)
 {
 	*prepositionFound = false;
-	string relexPreposition =* preposition;
+	string relexPreposition = *preposition;
 	for(int i=0; i<REFERENCE_TYPE_STANFORD_PARSER_PREPOSITION_PREPEND_NUMBER_OF_TYPES; i++)
 	{
 		string currentStanfordPrepositionPrepend = referenceTypeStanfordParserPrepositionPrependNameArray[i];
@@ -769,7 +769,7 @@ void GIATHparseRelexFeaturesText(string* featuresText, GIAsentence* currentSente
 				newFeature->previous = currentFeature;
 				currentFeature->next = newFeature;
 				currentFeature = currentFeature->next;
-				*maxNumberOfWordsInSentence =* maxNumberOfWordsInSentence + 1;
+				*maxNumberOfWordsInSentence = *maxNumberOfWordsInSentence + 1;
 
 				currentFeaturePart = 0;
 				currentItemString = "";

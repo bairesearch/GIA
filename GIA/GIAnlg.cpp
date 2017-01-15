@@ -26,7 +26,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16a 27-January-2015
+ * Project Version: 2i16b 27-January-2015
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -442,8 +442,8 @@ void generateThreeEntitySentenceFromEntityNode(GIAentityNode* entityNode0, strin
 	cout << "nlgDependencyRelation1 = " << nlgDependencyRelation1 << endl;
 	cout << "nlgDependencyRelation2 = " << nlgDependencyRelation2 << endl;
 	#endif
-	*generatedText =* generatedText + nlgDependencyRelation1;
-	*generatedText =* generatedText + nlgDependencyRelation2;
+	*generatedText = *generatedText + nlgDependencyRelation1;
+	*generatedText = *generatedText + nlgDependencyRelation2;
 #else
 	#ifdef GIA_NLG_DEBUG
 	cout << "generateThreeEntitySentenceFromEntityNode(): " << entityNode0->entityName << endl;
@@ -471,13 +471,13 @@ void generateThreeEntitySentenceFromEntityNode(GIAentityNode* entityNode0, strin
 	{
 		if(supportAdditionalLinks)
 		{
-			*generatedText =* generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[1];
+			*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[1];
 		}
 	}
-	*generatedText =* generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[0];
+	*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[0];
 	if(entityNodeAvailableArray[2])
 	{
-		*generatedText =* generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[2];
+		*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[2];
 	}
 
 	#ifdef GIA_NLG_DEBUG
@@ -686,8 +686,8 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 		cout << "nlgDependencyRelation1 = " << nlgDependencyRelation1 << endl;
 		cout << "nlgDependencyRelation2 = " << nlgDependencyRelation2 << endl;
 		#endif
-		*generatedText =* generatedText + nlgDependencyRelation1;
-		*generatedText =* generatedText + nlgDependencyRelation2;
+		*generatedText = *generatedText + nlgDependencyRelation1;
+		*generatedText = *generatedText + nlgDependencyRelation2;
 
 		delete entityNode0;
 	}
@@ -701,7 +701,7 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 		cout << "generateTwoEntitySentenceFromEntityConnection():" << endl;
 		cout << "nlgDependencyRelation1 = " << nlgDependencyRelation1 << endl;
 		#endif
-		*generatedText =* generatedText + nlgDependencyRelation1;
+		*generatedText = *generatedText + nlgDependencyRelation1;
 	}
 #else
 
@@ -722,9 +722,9 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 		else
 		{
 			addDeterminate(entityNode1, &(entityTextExpandedArray[1]));
-			//*generatedText =* generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[2] + NLG_TEXT_SPACE + entityTextExpandedArray[1];
+			//*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[2] + NLG_TEXT_SPACE + entityTextExpandedArray[1];
 			string nlgDefinitionText = determineNLGdefinitionText(entityNode1);	//added 03 August 2012
-			*generatedText =* generatedText + entityTextExpandedArray[1] + NLG_TEXT_SPACE + nlgDefinitionText + NLG_TEXT_SPACE + entityTextExpandedArray[2];
+			*generatedText = *generatedText + entityTextExpandedArray[1] + NLG_TEXT_SPACE + nlgDefinitionText + NLG_TEXT_SPACE + entityTextExpandedArray[2];
 		}
 	}
 	else
@@ -734,7 +734,7 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 		if(!additionalLink)
 		{
 			addDeterminate(entityNode1, &(entityTextExpandedArray[1]));
-			*generatedText =* generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[1];
+			*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[1];
 		}
 
 		if(generateLinkingWord)
@@ -745,13 +745,13 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 			entityTextExpandedArray[0] = linkingWord;
 
 			addDeterminate(entityNode0, &(entityTextExpandedArray[0]));
-			*generatedText =* generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[0];
+			*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[0];
 
 			delete entityNode0;
 		}
 
 		addDeterminate(entityNode2, &(entityTextExpandedArray[2]));
-		*generatedText =* generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[2];
+		*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[2];
 	}
 
 	#ifdef GIA_NLG_DEBUG
@@ -809,9 +809,9 @@ void NLG2generateNLGinputViewFeatureTagsGenericPerSentence(string* generatedNLGi
 	cout << "NLGInputViewFeatureTagPosPunctuationFullstop = " << NLGInputViewFeatureTagPosPunctuationFullstop << endl;
 	#endif
 
-	*generatedNLGinputViewTags =* generatedNLGinputViewTags + NLGInputViewFeatureTagPosDeterminateDefinite;
-	*generatedNLGinputViewTags =* generatedNLGinputViewTags + NLGInputViewFeatureTagPosDeterminateIndefinite;
-	*generatedNLGinputViewTags =* generatedNLGinputViewTags + NLGInputViewFeatureTagPosPunctuationFullstop;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagPosDeterminateDefinite;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagPosDeterminateIndefinite;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagPosPunctuationFullstop;
 }
 
 void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode, int entityIndex, string* generatedNLGinputViewTags)
@@ -990,18 +990,18 @@ void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode
 	#endif
 	cout << "NLGInputViewFeatureTagPos = " << NLGInputViewFeatureTagPos << endl;
 	#endif
-	*generatedNLGinputViewTags =* generatedNLGinputViewTags + NLGInputViewFeatureTagLemma;
-	*generatedNLGinputViewTags =* generatedNLGinputViewTags + NLGInputViewFeatureTagFlagDefinite;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagLemma;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagFlagDefinite;
 	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
-	*generatedNLGinputViewTags =* generatedNLGinputViewTags + NLGInputViewFeatureTagGender;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagGender;
 	#endif
-	*generatedNLGinputViewTags =* generatedNLGinputViewTags + NLGInputViewFeatureTagTense;
-	*generatedNLGinputViewTags =* generatedNLGinputViewTags + NLGInputViewFeatureTagNounNumber;
-	*generatedNLGinputViewTags =* generatedNLGinputViewTags + NLGInputViewFeatureTagInflection;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagTense;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagNounNumber;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagInflection;
 	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
-	*generatedNLGinputViewTags =* generatedNLGinputViewTags + NLGInputViewFeatureTagFlagPerson;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagFlagPerson;
 	#endif
-	*generatedNLGinputViewTags =* generatedNLGinputViewTags + NLGInputViewFeatureTagPos;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagPos;
 
 }
 
