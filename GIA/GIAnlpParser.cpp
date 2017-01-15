@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6b 10-June-2015
+ * Project Version: 2j6c 10-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -45,7 +45,17 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 	//cout << "relationsText = " <<* relationsText << endl;
 	GIArelation* firstRelationInList = currentSentenceInList->firstRelationInList;
 	GIAfeature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
-
+	
+	/*
+	cout << "TEST0" << endl;
+	GIAfeature* currentFeatureInList = firstFeatureInList;
+	while(currentFeatureInList->next != NULL)
+	{
+		cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
+		currentFeatureInList = currentFeatureInList->next;
+	}
+	*/
+	
 	string relationType;
 	string relationGovernor;
 	string relationDependent;
@@ -148,10 +158,10 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 				currentRelation->relationDependent = relationDependent;
 				*/
 				
-				#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
+				#ifdef GIA_USE_LRP
 				if(!(currentRelation->relationDependentRevertedToOfficialLRPTemp))
 				#endif
-				{
+				{					
 					bool useLemmaFromFeatureSet = false;
 					if(!parseGIA2file)
 					{
@@ -225,7 +235,7 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 				}
 				*/				
 				
-				#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
+				#ifdef GIA_USE_LRP
 				if(!(currentRelation->relationGovernorRevertedToOfficialLRPTemp))
 				#endif
 				{
@@ -635,6 +645,19 @@ void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsente
 	#endif
 
 	#ifdef GIA_USE_LRP
+	convertStanfordRelationToRelexLRPreversion(currentRelationInList, currentSentenceInList, stanfordPrepositionFound, tempRelexPrepositionString, &relationTypeRelexStandard);
+	#endif
+	
+	currentRelationInList->relationType = relationTypeRelexStandard;
+	#ifdef GIA_NLP_DEBUG
+	//cout << "relationTypeRelexStandard = " << relationTypeRelexStandard << endl;
+	//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+	#endif
+}
+
+#ifdef GIA_USE_LRP
+void convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList, bool stanfordPrepositionFound, string tempRelexPrepositionString, string* relationTypeRelexStandard)
+{
 	//if(stanfordPrepositionFound)
 	//{
 	if(getUseLRP())
@@ -649,8 +672,8 @@ void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsente
 			string officialLRPentityName = tempFeature->word;
 			if(stanfordPrepositionFound)
 			{
-				relationTypeRelexStandard = "";
-				relationTypeRelexStandard = relationTypeRelexStandard + STANFORD_PARSER_PREPOSITION_PREPEND + officialLRPentityName;
+				*relationTypeRelexStandard = "";
+				*relationTypeRelexStandard = *relationTypeRelexStandard + STANFORD_PARSER_PREPOSITION_PREPEND + officialLRPentityName;
 				#ifdef GIA_NLP_DEBUG
 				//cout << "stanfordPrepositionFound" << endl;
 				//cout << "relationTypeRelexStandard = " << relationTypeRelexStandard << endl;
@@ -659,10 +682,10 @@ void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsente
 			else
 			{
 				cout << "!stanfordPrepositionFound" << endl;
-				relationTypeRelexStandard = officialLRPentityName;
+				*relationTypeRelexStandard = officialLRPentityName;
 			}
 			#ifdef GIA_LRP_DEBUG
-			cout << "convertStanfordRelationToRelex() foundOfficialLRPreplacementString: tempRelexPrepositionString = " << tempRelexPrepositionString << ", relationTypeRelexStandard= " << relationTypeRelexStandard << endl;
+			cout << "convertStanfordRelationToRelexLRPreversion() foundOfficialLRPreplacementString: tempRelexPrepositionString = " << tempRelexPrepositionString << ", *relationTypeRelexStandard= " << *relationTypeRelexStandard << endl;
 			#endif
 		}
 		delete tempFeature;
@@ -681,7 +704,7 @@ void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsente
 			currentRelationInList->relationGovernor = officialLRPentityName;
 			currentRelationInList->relationGovernorRevertedToOfficialLRPTemp = true;
 			#ifdef GIA_LRP_DEBUG
-			cout << "convertStanfordRelationToRelex() foundOfficialLRPreplacementString: relationGovernorForNLPonly = " << relationGovernorForNLPonly << ", currentRelationInList->relationGovernor= " << currentRelationInList->relationGovernor << endl;
+			cout << "convertStanfordRelationToRelexLRPreversion() foundOfficialLRPreplacementString: relationGovernorForNLPonly = " << relationGovernorForNLPonly << ", currentRelationInList->relationGovernor= " << currentRelationInList->relationGovernor << endl;
 			#endif
 		}
 		delete tempFeature;		
@@ -697,20 +720,84 @@ void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsente
 			currentRelationInList->relationDependent = officialLRPentityName;
 			currentRelationInList->relationDependentRevertedToOfficialLRPTemp = true;
 			#ifdef GIA_LRP_DEBUG
-			cout << "convertStanfordRelationToRelex() foundOfficialLRPreplacementString: relationDependentForNLPonly = " << relationDependentForNLPonly << ", currentRelationInList->relationDependent= " << currentRelationInList->relationDependent << endl;
+			cout << "convertStanfordRelationToRelexLRPreversion() foundOfficialLRPreplacementString: relationDependentForNLPonly = " << relationDependentForNLPonly << ", currentRelationInList->relationDependent= " << currentRelationInList->relationDependent << endl;
 			#endif
 		}
 		delete tempFeature;		
 		#endif
 	}
 	//}
-	#endif
-	currentRelationInList->relationType = relationTypeRelexStandard;
-	#ifdef GIA_NLP_DEBUG
-	//cout << "relationTypeRelexStandard = " << relationTypeRelexStandard << endl;
-	//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+}
+#endif
+
+/*
+#ifdef GIA_USE_CORPUS_DATABASE
+void convertGIAsemanticRelation(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList)
+{
+	#ifdef GIA_USE_LRP
+	convertGIAsemanticRelationLRPreversion(currentRelationInList, currentSentenceInList);
 	#endif
 }
+
+#ifdef GIA_USE_LRP
+void convertGIAsemanticRelationLRPreversion(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList)
+{
+	if(getUseLRP())
+	{
+		//if necessary revert temporary/dummy NLP multiword preposition to official LRP form
+		if(currentRelationInList->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+		{
+			GIAfeature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
+			for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationGovernorIndex; f++)
+			{
+				currentFeatureInList = currentFeatureInList->next;
+			}
+			#ifdef GIA_LRP_DEBUG
+			string relationGovernorForNLPonly = currentRelationInList->relationGovernor;
+			cout << "relationGovernorForNLPonly = " << relationGovernorForNLPonly << endl;
+			cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
+			#endif
+			bool foundOfficialLRPreplacementString = false;
+			revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentenceInList, currentRelationInList, false, &foundOfficialLRPreplacementString);
+			if(foundOfficialLRPreplacementString)
+			{
+				string officialLRPentityName = currentFeatureInList->word;
+				currentRelationInList->relationGovernor = officialLRPentityName;
+				currentRelationInList->relationGovernorRevertedToOfficialLRPTemp = true;
+				#ifdef GIA_LRP_DEBUG
+				cout << "convertGIAsemanticRelationLRPreversion() foundOfficialLRPreplacementString: relationGovernorForNLPonly = " << relationGovernorForNLPonly << ", currentRelationInList->relationGovernor= " << currentRelationInList->relationGovernor << endl;
+				#endif
+			}
+		}
+		if(currentRelationInList->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+		{
+			GIAfeature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
+			for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationDependentIndex; f++)
+			{
+				currentFeatureInList = currentFeatureInList->next;
+			}
+			#ifdef GIA_LRP_DEBUG
+			string relationDependentForNLPonly = currentRelationInList->relationDependent;
+			cout << "relationDependentForNLPonly = " << relationDependentForNLPonly << endl;
+			cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
+			#endif
+			bool foundOfficialLRPreplacementString = false;
+			revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentenceInList, currentRelationInList, false, &foundOfficialLRPreplacementString);
+			if(foundOfficialLRPreplacementString)
+			{
+				string officialLRPentityName = currentFeatureInList->word;
+				currentRelationInList->relationDependent = officialLRPentityName;
+				currentRelationInList->relationDependentRevertedToOfficialLRPTemp = true;
+				#ifdef GIA_LRP_DEBUG
+				cout << "convertGIAsemanticRelationLRPreversion() foundOfficialLRPreplacementString: relationDependentForNLPonly = " << relationDependentForNLPonly << ", currentRelationInList->relationDependent= " << currentRelationInList->relationDependent << endl;
+				#endif
+			}
+		}
+	}
+}
+#endif
+#endif
+*/
 
 //assumes prepositions have previously been converted to stanford prep_preposition format during preprocessor (for robustness)
 string convertPrepositionToRelex2(string* preposition, bool* prepositionFound)

@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6b 10-June-2015
+ * Project Version: 2j6c 10-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -53,7 +53,18 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string* POStagsText, GIAsentence
 void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* currentSentenceInList, int* maxNumberOfWordsInSentence, bool featuresNotPreviouslyFilled, bool parseGIA2file, bool NLPrelexCompatibilityMode);
 	void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList);
 		string convertPrepositionToRelex2(string* preposition, bool* prepositionFound);
-
+		#ifdef GIA_USE_LRP
+		void convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList, bool stanfordPrepositionFound, string tempRelexPrepositionString, string* relationTypeRelexStandard);
+		#endif
+	/*
+	#ifdef GIA_USE_CORPUS_DATABASE
+	void convertGIAsemanticRelation(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList);
+		#ifdef GIA_USE_LRP
+		void convertGIAsemanticRelationLRPreversion(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList);
+		#endif
+	#endif
+	*/
+	
 void GIATHparseRelexFeaturesText(string* featuresText, GIAsentence* currentSentenceInList, int* maxNumberOfWordsInSentence);
 void GIATHparseRelexRelationsText(string* relationsText, GIAsentence* currentSentenceInList, int* maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode);
 

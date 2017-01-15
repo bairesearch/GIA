@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6b 10-June-2015
+ * Project Version: 2j6c 10-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -160,7 +160,7 @@ public:
 	int relationGovernorIndex;
 	string relationDependent;
 	int relationDependentIndex;
-	#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
+	#ifdef GIA_USE_LRP
 	bool relationGovernorRevertedToOfficialLRPTemp;
 	bool relationDependentRevertedToOfficialLRPTemp;
 	#endif
@@ -229,6 +229,9 @@ public:
 	string lemma;
 	#ifdef GIA_USE_LRP
 	string wordWithLRPforNLPonly;
+	#endif
+	#ifdef GIA_USE_LRP
+	bool featureRevertedToOfficialLRPTemp;	//not currently used
 	#endif
 
 	#ifdef GIA_USE_RELEX

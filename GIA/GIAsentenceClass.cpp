@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6b 10-June-2015
+ * Project Version: 2j6c 10-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -207,7 +207,10 @@ GIAfeature::GIAfeature(void)
 	#ifdef GIA_USE_LRP
 	wordWithLRPforNLPonly = "";
 	#endif
-
+	#ifdef GIA_USE_LRP
+	featureRevertedToOfficialLRPTemp = "";
+	#endif
+	
 	#ifdef GIA_USE_RELEX
 	type = "";
 	grammar = "";

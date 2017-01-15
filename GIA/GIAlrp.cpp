@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6b 10-June-2015
+ * Project Version: 2j6c 10-June-2015
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -1695,6 +1695,9 @@ bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, GIALR
 						currentTagInPlainTextSentenceTemp2->tagName = tagNameWithLastLetterDropped;
 						currentCorrespondenceInfo->sentenceIndex = currentTagInPlainText->sentenceIndex;
 						currentCorrespondenceInfo->entityIndex = newEntityIndex;	//this is not currently used for LRP collapsed multiword prepositions
+						//#ifdef GIA_USE_CORPUS_DATABASE
+						currentCorrespondenceInfo->lemmaWithLRP = currentTagInPlainTextSentenceTemp2->tagName;	//added 2j6c	//required for GIA2 only?
+						//#endif
 						currentCorrespondenceInfo->wordWithLRP = currentTagInPlainTextSentenceTemp2->tagName;
 						currentCorrespondenceInfo->wordWithLRPforNLPonly = GIA_LRP_DUMMY_COLLAPSED_MULTIWORD_PREPOSITION_NAME_FOR_NLP; //lrpDummyCollapsedMultiwordPrepositionLemmaNameForNLPArray[collapsedMultiwordPrepositionIndex];
 						//collapsedMultiwordPrepositionIndex++;
@@ -1905,6 +1908,7 @@ void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, GIAsentence* curr
 						{
 							feature->word = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP;
 							//feature->lemma = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP;			//lemma is not defined for prepositions
+							feature->featureRevertedToOfficialLRPTemp = true;
 							#ifdef GIA_LRP_DEBUG
 							cout << "(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex == indexOfPrepositionWithMinimumProximityOfGovernorDependentWords)" << endl;
 							cout << "revertNLPtagNameToOfficialLRPtagName{}: foundCorrespondingLRPtag, wordWithLRPforNLPonly = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly << ", wordWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP << endl;
@@ -1932,9 +1936,10 @@ void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, GIAsentence* curr
 					{
 						feature->word = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP;
 						feature->lemma = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->lemmaWithLRP;
-
+						feature->featureRevertedToOfficialLRPTemp = true;
+						
 						#ifdef GIA_LRP_DEBUG
-						cout << "(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex == entityIndexForNonPrepositionsOnly)" << endl;
+						cout << "\t(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex == entityIndexForNonPrepositionsOnly)" << endl;
 						cout << "feature->word = " << feature->word << endl;
 						cout << "feature->lemma = " << feature->lemma << endl;
 						cout << "revertNLPtagNameToOfficialLRPtagName{}: foundCorrespondingLRPtag, wordWithLRPforNLPonly = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly << ", wordWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP << endl;

@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6b 10-June-2015
+ * Project Version: 2j6c 10-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -765,7 +765,7 @@
 	#endif
 #endif
 
-//#define GIA_USE_CORPUS_DATABASE	//disabled for OpenGIA
+#define GIA_USE_CORPUS_DATABASE	//disabled for OpenGIA
 #ifdef GIA_USE_CORPUS_DATABASE
 	#define USE_GIA2		//GIA 2b1a - sets GIA into corpus read mode
 	#ifdef USE_GIA2

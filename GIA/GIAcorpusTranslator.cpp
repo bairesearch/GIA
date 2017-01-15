@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6b 10-June-2015
+ * Project Version: 2j6c 10-June-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -73,6 +73,23 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	}
 	*/
 	#endif
+
+	/*
+	cout << "TEST" << endl;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		if(!(currentRelationInList->disabled))
+		{
+			cout << "relationType = " << currentRelationInList->relationType << endl;
+			cout << "relationGoverner = " << currentRelationInList->relationGovernor << endl;
+			cout << "relationDependent = " << currentRelationInList->relationDependent << endl;
+			cout << "relationGovernerIndex = " << currentRelationInList->relationGovernorIndex << endl;
+			cout << "relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
+		}
+		currentRelationInList = currentRelationInList->next;
+	}
+	*/
 	
 	bool GIAentityNodeArrayFilled[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 	GIAentityNode* GIAconceptNodeArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];

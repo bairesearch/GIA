@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6b 10-June-2015
+ * Project Version: 2j6c 10-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -247,7 +247,7 @@ bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQu
 bool parseNLPparserRelationsFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
-
+	
 	#ifdef GIA_USE_RELEX
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
 	{
@@ -784,7 +784,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 										//cout << "currentRelationInList->relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
 										#endif
 
-										#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
+										#ifdef GIA_USE_LRP
 										if(!(currentRelationInList->relationGovernorRevertedToOfficialLRPTemp))
 										{
 										#endif
@@ -794,7 +794,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 												currentFeatureInList = currentFeatureInList->next;
 											}
 											currentRelationInList->relationGovernor = currentFeatureInList->lemma;
-										#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
+										#ifdef GIA_USE_LRP
 										}
 										if(!(currentRelationInList->relationDependentRevertedToOfficialLRPTemp))
 										{
@@ -805,7 +805,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 												currentFeatureInList = currentFeatureInList->next;
 											}
 											currentRelationInList->relationDependent = currentFeatureInList->lemma;
-										#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
+										#ifdef GIA_USE_LRP
 										}
 										#endif
 										
