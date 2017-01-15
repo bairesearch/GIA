@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h6a 18-January-2015
+ * Project Version: 2h7a 19-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -952,6 +952,13 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 				{//if condition added 4 July 2013 to ensure only real determiners (the, some, a) are disabled [and not "What" in det(time-2, What-1)]
 					//cout << "disabling feature temp entity" << endl;
 					GIAfeatureTempEntityNodeArray[entityIndexOfDeterminier]->disabled = true;
+					
+					#ifdef STANFORD_CORENLP_POS_TAGS_BUG_GIA_WORKAROUND_SET_DETERMINER_DEPENDENT_TO_NOUN
+					string stanfordPOS = FEATURE_POS_TAG_NOUN_NN;
+					featureArrayTemp[entityIndexOfNoun]->stanfordPOS = stanfordPOS;
+					extractPOSrelatedGrammaticalInformationStanford(featureArrayTemp[entityIndexOfNoun]);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
+					//applyPOSrelatedGrammaticalInfoToEntity(GIAfeatureTempEntityNodeArray[entityIndexOfNoun], featureArrayTemp[entityIndexOfNoun]);	//regenerate grammatical information for entity - not required
+					#endif
 				}
 
 				if(definiteDeterminerFound)

@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h6a 18-January-2015
+ * Project Version: 2h7a 19-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -608,12 +608,11 @@
 
 #include "SHAREDglobalDefs.h"
 
-#define GIA_SUPPORT_NUMBER_OF	//added 2g9a/24-September-2014
-#define GIA_SUPPORT_MULTIPLE_DEFINITE_DETERMINERS	//added 2h6a
 
 //#define GIA_DISABLE_2g_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2h_CODE_FOR_DEBUG
 #ifndef GIA_DISABLE_2g_CODE_FOR_DEBUG
+	#define GIA_SUPPORT_NUMBER_OF	//added 2g9a/24-September-2014
 	#ifdef USE_NLC
 		#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 	#endif
@@ -632,6 +631,7 @@
 	#define GIA_XML_RECORD_ADDITIONAL_VARIABLES
 #endif
 #ifndef GIA_DISABLE_2h_CODE_FOR_DEBUG
+	#define GIA_SUPPORT_MULTIPLE_DEFINITE_DETERMINERS	//added 2h6a
 	#define GIA_SPATIOTEMPORAL_NETWORK		//yet to implement ~2h2a/17-November-2014+
 	#ifdef GIA_SPATIOTEMPORAL_NETWORK
 		#define GIA_LRP_NORMALISE_PREPOSITIONS	//added 2h1a/14-November-2014 - required for NLC 1m1a+
@@ -831,8 +831,13 @@
 //variables currently being tested (1p1a+)
 
 #define STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS	//added 22 Sept to enable Stanford CoreNLP to be used to parse dependency relations with comparable (NOT: same) accuracy as stanford parser (ie when stanford CoreNLP is set as both relation and feature parser)
-//#define STANFORD_PARSER_USE_POS_TAGS	//added 23 July 2012 to support Stanford Parser POS tags (which are sometimes more accurate than stanford CoreNLP pos tags)
-
+//#define STANFORD_PARSER_USE_POS_TAGS	//added 23 July 2012 to support Stanford Parser POS tags instead of Stanford CoreNLP POS tags (Stanford Parser POS tags are sometimes more accurate than Stanford CoreNLP POS tags)
+#ifndef STANFORD_PARSER_USE_POS_TAGS
+	#ifndef GIA_DISABLE_2h_CODE_FOR_DEBUG
+		#define STANFORD_CORENLP_POS_TAGS_BUG_GIA_WORKAROUND_SET_DETERMINER_DEPENDENT_TO_NOUN	//added 2h6b - eg "a human" in "A human is a player." should always be interpreted as a noun
+	#endif
+#endif	
+	
 #define GIA_APPLY_BUG_WORKAROUND_WHERE_A_CONCEPT_ENTITY_OF_INSTANCE_0_CAN_HAVE_NODE_DEFINING_INSTANCE
 #define GIA_FREE_MEMORY
 #ifdef GIA_FREE_MEMORY
