@@ -1241,6 +1241,25 @@ void printEntityNodeQualitiesOnly(GIAEntityNode * entityNode, string * printEnti
 	}
 }
 
+void printEntityTimeConditionNodeOnly(GIAEntityNode * entityNode, string * printEntityNodeString)
+{	
+	//cout << "entityNode->entityName = " << entityNode->entityName << endl;
+	
+	if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
+	{
+		if(entityNode->timeConditionNode != NULL)
+		{
+			*printEntityNodeString = *printEntityNodeString + "(";	
+
+			*printEntityNodeString = *printEntityNodeString + "Time: " + entityNode->timeConditionNode->conditionName;
+			
+			*printEntityNodeString = *printEntityNodeString + ")\n";
+		}	
+	}	
+
+}
+
+
 void traceEntityNodeDetermineNextCourseOfAction(string * printEntityNodeString, GIAEntityNode * entityNode, string context, int function, int * numberOfMatchedNodes, bool thisIsInstanceAndPreviousNodeWasDefinition)
 {
 	if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_PRINT)

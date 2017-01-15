@@ -654,10 +654,15 @@ int main(int argc,char **argv)
 			traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_PRINT, &irrelevant, &printEntityNodeString);	
 			answerString = answerString + printEntityNodeString;	
 			#else
-			string printEntityNodeString = "";
-			printEntityNodeQualitiesOnly(queryAnswerNode, &printEntityNodeString);	
-			cout << printEntityNodeString;
-			answerString = answerString + printEntityNodeString;				
+			string printEntityNodeQualitiesString = "";
+			printEntityNodeQualitiesOnly(queryAnswerNode, &printEntityNodeQualitiesString);	
+			cout << printEntityNodeQualitiesString;
+			answerString = answerString + printEntityNodeQualitiesString;
+			
+			string printEntityNodeTimeConditionString = "";
+			printEntityTimeConditionNodeOnly(queryAnswerNode, &printEntityNodeTimeConditionString);	
+			cout << printEntityNodeTimeConditionString;
+			answerString = answerString + printEntityNodeTimeConditionString;								
 			#endif
 					
 			//print AnswerPreviousNode relationship with answerNode

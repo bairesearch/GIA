@@ -62,3 +62,4 @@ double determineMaxConfidenceOfQuerySemanticNetwork(vector<GIAEntityNode*> *conc
 		void traceEntityNodeDetermineNextCourseOfAction(string * printEntityNodeString, GIAEntityNode * entityNode, string context, int function, int * numberOfMatchedNodes, bool thisIsInstanceAndPreviousNodeWasDefinition);
 
 void printEntityNodeQualitiesOnly(GIAEntityNode * entityNode, string * printEntityNodeString);
+void printEntityTimeConditionNodeOnly(GIAEntityNode * entityNode, string * printEntityNodeString);
