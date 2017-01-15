@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j9b 22-June-2015
+ * Project Version: 2j10a 03-July-2015
  *
  *******************************************************************************/
 -->
@@ -2790,21 +2790,25 @@
 			
 			<!-- XML only function (not hard coded) --> 
 			<!-- note this function really should be NLP independent (ie moved from redistributeStanfordRelations to GIAtranslatorRedistributeRelations), but Relex doesn't support rcmods at present -->
-			<function name="redistributeStanfordRelationsDetectPrepositionsConnectedToActionObjectRatherThanAction">
+			<function name="redistributeStanfordRelationsConnectPrepositionsToActionRatherThanActionObject">
 				
 				<!-- #ifdef GIA_STANFORD_PARSER_CONNECT_PREPOSITIONS_TO_ACTION_OBJECT_RATHER_THAN_ACTION -->
 				<example><!--
 				eg1 Move the bike near the car. obj(Move-1, bike-3) + prep_near(bike[3], car[6]) + !prep_from(move[1], x) + !rcmodIndicatesSameReferenceSet(near)  ->obj(Move-1, bike-3) + prep_near(Move-1, car[6])     [assign !sameReferenceSet]
 				NOT: Move the bike that is near the car.
 				ILLEGAL {not supported by English/NLP/GIA/NLC}: Move the bike near the car to the house. (should be "Move the bike that is near the car to the house.")
-				eg2 Move the bike that is near the car to the house.	[NB stanford will connect to condition between car and house, then redistributeStanfordRelationsConnectToAndFromConditions will connect it between bike and house, then redistributeStanfordRelationsDetectPrepositionsConnectedToActionObjectRatherThanAction will connect it between move and house]
+				eg2 Move the bike that is near the car to the house.	[NB stanford will connect to condition between car and house, then redistributeStanfordRelationsConnectToAndFromConditions will connect it between bike and house, then redistributeStanfordRelationsConnectPrepositionsToActionRatherThanActionObject will connect it between move and house]
 				eg3 Move the bike near the car from the house. 
 				--></example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="2" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_obj" />
-				<!-- #ifndefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_ACTION_TYPES -->
-				<!-- <option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy" relationArrayTestSize="2" /> -->
+				<!-- #ifndefGIA_STANFORD_PARSER_CONNECT_PREPOSITIONS_TO_ACTION_RATHER_THAN_ACTION_OBJECT_GENERALISE_ACTION_TYPES -->
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy" relationArrayTestSize="2" />
+				<!-- #else -->
+				<!-- #ifndefGIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
+				<!-- <option useRelationTest="true" REL="1" REL_ENT="1" relationArrayTest="have" relationTestIsNegative="true" /> -->
+				<!-- #endif -->		
 				<!-- #endif -->
 				<option expectToFindPrepositionTest="true" REL="2" />
 				<option useRelationIndexTest="true" REL="1" REL_ENT="2" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
@@ -2822,9 +2826,13 @@
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="2" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_obj" />
-				<!-- #ifndefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_ACTION_TYPES
+				<!-- #ifndefGIA_STANFORD_PARSER_CONNECT_PREPOSITIONS_TO_ACTION_RATHER_THAN_ACTION_OBJECT_GENERALISE_ACTION_TYPES -->
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy" relationArrayTestSize="2" />
-				#endif -->
+				<!-- #else -->
+				<!-- #ifndefGIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
+				<!-- <option useRelationTest="true" REL="1" REL_ENT="1" relationArrayTest="have" relationTestIsNegative="true" /> -->
+				<!-- #endif -->	
+				<!-- #endif -->
 				<!-- #ifdefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_CONDITION_TYPES -->
 				<option expectToFindPrepositionTest="true" REL="2" />
 				<!-- #else -->
