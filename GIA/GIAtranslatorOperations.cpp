@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c2c 14-January-2014
+ * Project Version: 2c2d 14-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1317,12 +1317,15 @@ long * getCurrentEntityNodeIDinSentenceConceptEntityNodesList()
 
 
 
-void applyConceptEntityAlreadyExistsFunction(GIAentityNode * entity, bool entityAlreadyExistant)
+void applyConceptEntityAlreadyExistsFunction(GIAentityNode * entity, bool entityAlreadyExistant, bool tempEntityEnabled)
 {
 	if(entityAlreadyExistant)
 	{
-		entity->disabled = false;
-		entity->firstSentenceToAppearInNetwork = false;
+		if(tempEntityEnabled)
+		{
+			entity->disabled = false;
+			entity->firstSentenceToAppearInNetwork = false;
+		}	
 	}
 	else
 	{
@@ -1605,6 +1608,11 @@ GIAentityNode * findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAentityNo
 
 GIAentityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts)
 {
+	return findOrAddConceptEntityNodeByNameSimpleWrapper(entityNodeName, entityAlreadyExistant, entityNodesActiveListConcepts, true);
+}
+
+GIAentityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, bool tempEntityEnabled)
+{
 	GIAentityNode * entityNodeFound = NULL;
 
 	/*already available locally...
@@ -1627,7 +1635,7 @@ GIAentityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNod
 	long entityIndex = -1;
 	entityNodeFound = findOrAddConceptEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodeName, entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDinCompleteList, &currentEntityNodeIDinConceptEntityNodesList, saveNetwork);
 
-	applyConceptEntityAlreadyExistsFunction(entityNodeFound, *entityAlreadyExistant);
+	applyConceptEntityAlreadyExistsFunction(entityNodeFound, *entityAlreadyExistant, tempEntityEnabled);
 
 	return entityNodeFound;
 }

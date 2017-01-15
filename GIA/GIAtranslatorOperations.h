@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c2c 14-January-2014
+ * Project Version: 2c2d 14-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1150,7 +1150,7 @@ long * getCurrentEntityNodeIDinConditionEntityNodesList();
 long * getCurrentEntityNodeIDinSentenceCompleteList();
 long * getCurrentEntityNodeIDinSentenceConceptEntityNodesList();
 
-void applyConceptEntityAlreadyExistsFunction(GIAentityNode * entity, bool entityAlreadyExistant);
+void applyConceptEntityAlreadyExistsFunction(GIAentityNode * entity, bool entityAlreadyExistant, bool tempEntityEnabled);
 void disableConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNode * entity);
 void disableEntity(GIAentityNode * entity);
 void disableConceptEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAentityNode * entity);	//not used
@@ -1176,7 +1176,8 @@ bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relatio
 #endif
 
 GIAentityNode * findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int featureIndex, string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts);
-GIAentityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts);
+	GIAentityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts);
+		GIAentityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, bool tempEntityEnabled);
 
 void writeVectorConnection(GIAentityNode * entityNode, GIAentityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet);
 	#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES

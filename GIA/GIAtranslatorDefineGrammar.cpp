@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c2c 14-January-2014
+ * Project Version: 2c2d 14-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -224,9 +224,11 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAen
 		{
 			GIAentityNode * featureTempEntityNode = GIAfeatureTempEntityNodeArray[w];
 			//cout << "featureTempEntityNode->entityName = " << featureTempEntityNode->entityName << endl;
-
+			//cout << "!(featureTempEntityNode->disabled) = " << !(featureTempEntityNode->disabled) << endl;
+			
 			bool entityAlreadyExistant = false;
-			GIAentityNode * entity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(featureTempEntityNode->entityName), &entityAlreadyExistant, entityNodesActiveListConcepts);
+			GIAentityNode * entity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(featureTempEntityNode->entityName), &entityAlreadyExistant, entityNodesActiveListConcepts, !(featureTempEntityNode->disabled));
+			//cout << "entity->disabled = " << entity->disabled << endl;
 			GIAentityNodeArray[w] = entity;
 			entity->hasAssociatedInstanceTemp = false;
 			sentenceConceptEntityNodesList->push_back(entity);
@@ -811,7 +813,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 
 				if((determiner == GRAMMATICAL_DETERMINER_DEFINITE) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE))
 				{//if condition added 4 July 2013 to ensure only real determiners (the, some, a) are disabled [and not "What" in det(time-2, What-1)]
-
+					//cout << "disabling feature temp entity" << endl;
 					GIAfeatureTempEntityNodeArray[entityIndexOfDeterminier]->disabled = true;
 				}
 
