@@ -162,25 +162,27 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	}
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "fillGrammaticalArrays" << endl;
+	cout << "pass A;" << endl;
+	cout << "pass 0; locate/add all entities" << endl;
+	#endif
+	locateAndAddAllConceptEntities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, sentenceConceptEntityNodesList, NLPdependencyRelationsType);
+
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1; fillGrammaticalArrays" << endl;
 	#endif
 	fillGrammaticalArrays(currentSentenceInList, GIAEntityNodeIsDate, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, NLPparserType, NLPdependencyRelationsType);
 
-
-
-
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "pass A;" << endl;
-	cout << "pass 1; locate/add all entities" << endl;
+	cout << "pass 1a; applyGrammaticalInfoToAllConceptEntities" << endl;
 	#endif
-	locateAndAddAllConceptEntities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, GIAEntityNodeIsDate, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, sentenceConceptEntityNodesList, NLPdependencyRelationsType);
+ 	applyGrammaticalInfoToAllConceptEntities(GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAEntityNodeIsDate, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray);
 
 	
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
 	{
 		#ifdef GIA_USE_STANFORD_CORENLP
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "pass 1z; redistribute Stanford Relations - Adverbal Clause Modifier And Complement (eg The accident happened as the night was falling. 	advcl(happen, fall) / mark(fall, as))" << endl;
+		cout << "pass 1z1; redistribute Stanford Relations - Adverbal Clause Modifier And Complement (eg The accident happened as the night was falling. 	advcl(happen, fall) / mark(fall, as))" << endl;
 		#endif
 		redistributeStanfordRelationsAdverbalClauseModifierAndComplement(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 		#endif
