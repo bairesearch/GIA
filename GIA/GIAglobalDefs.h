@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g14a 06-November-2014
+ * Project Version: 2h1a 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -611,6 +611,7 @@
 #define GIA_SUPPORT_NUMBER_OF	//added 2g9a/24-September-2014
 
 #ifdef USE_NLC
+	#define GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS	//added 2h1a/14-November-2014 - required for NLC 1m1a+
 	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 	#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 		#define GIA_DISABLE_ALIAS_ENTITY_MERGING	//added 2g11a/21-October-2014 - required for NLC 1k14a+	//IMPORTANT: when activating/deactivating from compilation, ensure GIArules.xml is updated accordingly (search for "GIA_DISABLE_ALIAS_ENTITY_MERGING") 
@@ -969,7 +970,7 @@
 #ifdef USE_NLC
 	#define GIA_INSTANCE_OR_REFERENCE_SET_ID_DEBUG
 #endif
-#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
+//#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
 //#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
 //#define GIA_DREAMMODE_REFERENCING_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE

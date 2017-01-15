@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g14a 06-November-2014
+ * Project Version: 2h1a 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -37,6 +37,9 @@
 #include "GIAdatabase.h"
 #ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 #include "NLCpreprocessorSentenceClass.h"
+#endif
+#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+#include "GIAlrp.h"
 #endif
 
 #ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
@@ -918,6 +921,10 @@ GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * conditionSubjectEn
 	if(!(conditionEntity->disabled))
 	{
 	#endif
+		#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+		identifyConditionTypeAndInvertIfNecessary(&conditionSubjectEntity, &conditionObjectEntity, conditionEntity);
+		#endif
+		
 		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
 		//see if relevant link already exists between the two nodes, and if so use that
 		bool foundNode1 = false;
@@ -955,25 +962,6 @@ GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * conditionSubjectEn
 	}
 	}
 	}
-	#ifdef GIA_TRANSLATOR_DEBUG
-	/*
-	}
-	else
-	{
-		cout << "(conditionTypeConceptEntity->disabled)" << endl;
-	}
-	}
-	else
-	{
-		cout << "(conditionObjectEntity->disabled)" << endl;
-	}
-	}
-	else
-	{
-		cout << "(conditionSubjectEntity->disabled)" << endl;
-	}
-	*/
-	#endif
 	#endif
 
 	return newOrExistingCondition;

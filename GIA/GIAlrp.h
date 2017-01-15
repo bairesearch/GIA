@@ -26,7 +26,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g14a 06-November-2014
+ * Project Version: 2h1a 14-November-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -53,7 +53,6 @@ using namespace std;
 
 #define GIA_LRP_PHRASALVERB_DATABASE_FILE_NAME "CambridgePhrasalVerbs.txt"
 #define GIA_LRP_IRREGULARVERB_DATABASE_FILE_NAME "WikipediaIrregularVerbs.txt"
-#define GIA_LRP_MULTIWORDPREPOSITION_DATABASE_FILE_NAME "WikipediaMultiwordPrepositions.txt"
 #define GIA_LRP_VERB_DATABASE_FILE_NAME "WordnetVerbs.txt"
 #define GIA_LRP_PHRASALVERB_DATABASE_TAG_OR "or"
 #define GIA_LRP_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMETHING_NAME "sth"
@@ -84,6 +83,21 @@ using namespace std;
 #define GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND_LENGTH (1)
 #define GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND_LENGTH (3)
 #define GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_LENGTH (2)
+
+#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+#define GIA_LRP_PREPOSITIONS_DATABASE_TAG_NEXTCOLUMN (CHAR_TAB)
+#define GIA_LRP_PREPOSITIONS_DATABASE_FILE_NAME "WikipediaEnglishClubPrepositionsAndInverse.txt"
+#define GIA_LRP_PREPOSITIONS_DATABASE_NUMBER_OF_TAGS (4)
+#define GIA_LRP_PREPOSITIONS_DATABASE_TAG_CONDITION (1)
+#define GIA_LRP_PREPOSITIONS_DATABASE_TAG_REVERSE_CONDITION (2)
+#define GIA_LRP_PREPOSITIONS_DATABASE_TAG_TYPE (3)
+#define GIA_LRP_PREPOSITIONS_DATABASE_TAG_INVERT_REVERSE_CONDITION_VALID (4)
+#define GIA_LRP_PREPOSITIONS_DATABASE_TAG_INVERT_REVERSE_CONDITION_VALID_VALUE_TRUE "1"
+#define GIA_LRP_PREPOSITIONS_DATABASE_TAG_INVERT_REVERSE_CONDITION_VALID_VALUE_FALSE "0"
+#define GIA_LRP_MULTIWORDPREPOSITION_DATABASE_FILE_NAME "WikipediaEnglishClubMultiwordPrepositions.txt"
+#else
+#define GIA_LRP_MULTIWORDPREPOSITION_DATABASE_FILE_NAME "WikipediaMultiwordPrepositions.txt"
+#endif
 
 #define GIA_LRP_PHRASALVERB_REPLACEMENT_STRING_DEFAULT ""	//will be tense specific
 
@@ -184,6 +198,12 @@ public:
 };
 
 bool initialiseLRP(string newLRPDataFolderName, bool newUseLRP);
+	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
+	bool loadVerbList(string irregularVerbListFileName, GIALRPtag * firstTagInIrregularVerbList);
+	#endif
+	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+	bool loadPrepositionsInverseList(string prepositionsInverseListFileName, GIALRPtag * firstTagInPrepositionsInverseList);
+	#endif
 bool getUseLRP();
 
 GIALRPtagTextCorrespondenceInfo * getCurrentGIALRPtagTextCorrespondenceInfo();
@@ -192,17 +212,15 @@ void initialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
 void deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
 
 bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName);
-	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
-	bool loadVerbList(string irregularVerbListFileName, GIALRPtag * firstTagInIrregularVerbList);
-	#endif
 	bool loadIrregularVerbList(string irregularVerbListFileName, GIALRPtag * firstTagInIrregularVerbList);
 	bool loadPhrasalVerbDataAndGenerateAllTenseVariants(string phrasalVerbDatabaseFileName, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtag * firstTagInIrregularVerbList);
 		bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagInIrregularVerbList);
 			void copyDefaultVerbTenseFormsToAlternateTenseForms(GIALRPtag * baseTag, bool irregularVerbFound);
 	bool loadMultiWordPrepositionData(string multiwordPrepositionListFileName, GIALRPtag * firstTagInMultiwordPrepositionList);
 	bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlainText);
-	bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTagInPlainText, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtag * firstTagInMultiwordPrepositionList, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName, GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo);
-		bool writeTagListToFile(GIALRPtag * firstTagInPlainText, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName);
+	bool searchAndReplacePhrasalVerbs(GIALRPtag * firstTagInPlainText, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo);
+	bool searchAndReplaceMultiwordPrepositions(GIALRPtag * firstTagInPlainText, GIALRPtag * firstTagInMultiwordPrepositionList, GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo);
+	bool writeTagListToFile(GIALRPtag * firstTagInPlainText, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName);
 
 void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentSentenceInList, Relation * currentRelationInListForPrepositionsOnly, bool isPreposition, bool * foundOfficialLRPreplacementString);
 
@@ -216,6 +234,10 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 bool determineIfWordIsIrregularVerbContinuousCaseWrapper(string word, string * baseNameFound);
 bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * firstTagInIrregularVerbList, string * baseNameFound);
 #endif
+#endif
+
+#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+bool identifyConditionTypeAndInvertIfNecessary(GIAentityNode ** conditionSubjectEntity, GIAentityNode ** conditionObjectEntity, GIAentityNode * conditionEntity);
 #endif
 
 #endif

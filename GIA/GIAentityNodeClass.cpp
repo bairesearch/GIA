@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g14a 06-November-2014
+ * Project Version: 2h1a 14-November-2014
  *
  *******************************************************************************/
 
@@ -264,6 +264,10 @@ GIAentityNode::GIAentityNode(void)
 	NLCoriginalNumericalVariableName = "";
 	NLCcontextGeneratedTemp = false;
 	NLCcategoryListCreatedTemp = false;
+	#endif
+	
+	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+	conditionType2 = ""; 
 	#endif
 }
 GIAentityNode::~GIAentityNode(void)

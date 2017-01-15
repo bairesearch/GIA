@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g14a 06-November-2014
+ * Project Version: 2h1a 14-November-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -50,6 +50,10 @@ bool verbListLoaded;
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
 GIALRPtag * firstTagInIrregularVerbListGlobal;
 bool irregularVerbListLoaded;
+#endif
+#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+GIALRPtag * firstTagInPrepositionsInverseListGlobal;
+bool prepositionsInverseListLoaded;
 #endif
 
 bool initialiseLRP(string newLRPDataFolderName, bool newUseLRP)
@@ -87,7 +91,21 @@ bool initialiseLRP(string newLRPDataFolderName, bool newUseLRP)
 		irregularVerbListLoaded = true;
 	}
 	#endif
-
+	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+	string prepositionsInverseListFileName = lrpDataFolderName + GIA_LRP_PREPOSITIONS_DATABASE_FILE_NAME;
+	prepositionsInverseListLoaded = false;
+	firstTagInPrepositionsInverseListGlobal = new GIALRPtag();
+	if(!loadPrepositionsInverseList(prepositionsInverseListFileName, firstTagInPrepositionsInverseListGlobal))
+	{
+		cout << "!loadPrepositionsInverseList (OpenGIA with GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS requires -lrpfolder to be set): prepositionsInverseListFileName = " << prepositionsInverseListFileName << endl;
+		result = false;
+	}
+	else
+	{
+		prepositionsInverseListLoaded = true;
+	}
+	#endif
+		
 	return result;
 }
 bool getUseLRP()
@@ -227,11 +245,21 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 	{
 		result = false;
 	}
-
+	
 	setCurrentDirectory(tempFolderCharStar);
 
 	GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo = getCurrentGIALRPtagTextCorrespondenceInfo();
-	if(!searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(firstTagInPlainText, firstTagInPhrasalVerbList, firstTagInMultiwordPrepositionList, plainTextLRPoutputFileName, plainTextLRPforNLPoutputFileName, firstGIALRPtagCorrespondenceInfo))
+	if(!searchAndReplacePhrasalVerbs(firstTagInPlainText, firstTagInPhrasalVerbList, firstGIALRPtagCorrespondenceInfo))
+	{
+		result = false;
+	}
+
+	if(!searchAndReplaceMultiwordPrepositions(firstTagInPlainText, firstTagInMultiwordPrepositionList, firstGIALRPtagCorrespondenceInfo))
+	{
+		result = false;
+	}	
+	
+	if(!writeTagListToFile(firstTagInPlainText, plainTextLRPoutputFileName, plainTextLRPforNLPoutputFileName))
 	{
 		result = false;
 	}
@@ -1153,13 +1181,9 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlai
 
 
 //NB the collapsed phrasal verb contains precisely 2 entities: phrasalVerbCollapsed, entity2: thing/place/body (eg belong_to + sb/Tom) - thing/place/bodies are not currently being differentiated by the LRP as this information is only first generated at NLP/GIA parse stage
-bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTagInPlainText, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtag * firstTagInMultiwordPrepositionList, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName, GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo)
+bool searchAndReplacePhrasalVerbs(GIALRPtag * firstTagInPlainText, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo)
 {
-	bool result = false;
-
-	//string plainTextInput = "";
-	string plainTextLRPOutput = "";
-	string plainTextLRPforNLPOutput = "";
+	bool result = true;
 
 	GIALRPtagTextCorrespondenceInfo * currentCorrespondenceInfo = firstGIALRPtagCorrespondenceInfo;	//new correspondence info for each found phrasal verb
 
@@ -1549,8 +1573,30 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 			currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
 		}
 
-		currentTagInPlainTextSentence = firstTagInPlainTextSentence;
-		previousTagInPlainTextSentence = NULL;
+
+		currentTagInPlainText = currentTagInPlainText->nextSentence;
+	}
+	
+	return result;
+}
+
+
+bool searchAndReplaceMultiwordPrepositions(GIALRPtag * firstTagInPlainText, GIALRPtag * firstTagInMultiwordPrepositionList, GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo)
+{
+	bool result = true;
+	
+	GIALRPtagTextCorrespondenceInfo * currentCorrespondenceInfo = firstGIALRPtagCorrespondenceInfo;	//new correspondence info for each found multiword preposition
+
+	GIALRPtag * currentTagInPlainText = firstTagInPlainText;
+	while(currentTagInPlainText->nextSentence != NULL)
+	{
+		#ifdef GIA_LRP_DEBUG
+		//cout << "qcurrentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
+		#endif
+			
+		GIALRPtag * firstTagInPlainTextSentence = currentTagInPlainText;
+		GIALRPtag * currentTagInPlainTextSentence = firstTagInPlainTextSentence;
+		GIALRPtag * previousTagInPlainTextSentence = NULL;
 		while(currentTagInPlainTextSentence->nextTag != NULL)
 		{
 			GIALRPtag * currentTagInMultiwordPrepositionList = firstTagInMultiwordPrepositionList;
@@ -1659,11 +1705,6 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 			currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
 		}
 		currentTagInPlainText = currentTagInPlainText->nextSentence;
-	}
-
-	if(!writeTagListToFile(firstTagInPlainText, plainTextLRPoutputFileName, plainTextLRPforNLPoutputFileName))
-	{
-		result = false;
 	}
 
 	return result;
@@ -2096,3 +2137,159 @@ bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * first
 }
 #endif
 
+
+
+#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+bool loadPrepositionsInverseList(string prepositionsInverseListFileName, GIALRPtag * firstTagInPrepositionsInverseList)
+{
+	bool result = true;
+
+	GIALRPtag * currentTagInPrepositionsInverseList = firstTagInPrepositionsInverseList;
+	GIALRPtag * firstTagInRow = currentTagInPrepositionsInverseList;
+	GIALRPtag * currentTagInRow = firstTagInRow;
+
+	ifstream parseFileObject(prepositionsInverseListFileName.c_str());
+	if(!parseFileObject.rdbuf( )->is_open( ))
+	{
+		//txt file does not exist in current directory.
+		cout << "Error: Prepositions Inverse Database File does not exist in current directory: " << prepositionsInverseListFileName << endl;
+		result = false;
+	}
+	else
+	{
+		int lineIndex = 0;
+		int charCount = 0;
+		char currentToken;
+		string currentWord = "";
+		while(parseFileObject.get(currentToken))
+		{
+			if(currentToken == CHAR_NEWLINE)
+			{
+				#ifdef GIA_LRP_DEBUG
+				cout <<	"adding Tag: tagName = " << currentWord << endl;
+				#endif
+
+				currentTagInRow->tagName = currentWord;
+				currentTagInRow->nextTag = new GIALRPtag();
+				currentTagInRow = currentTagInRow->nextTag;
+
+				currentTagInPrepositionsInverseList->nextSentence = new GIALRPtag();
+				currentTagInPrepositionsInverseList = currentTagInPrepositionsInverseList->nextSentence;
+				currentTagInRow = currentTagInPrepositionsInverseList;
+
+				currentWord = "";
+				lineIndex++;
+			}
+			else if(currentToken == GIA_LRP_PREPOSITIONS_DATABASE_TAG_NEXTCOLUMN)
+			{
+				#ifdef GIA_LRP_DEBUG
+				cout <<	"adding Tag: tagName = " << currentWord << endl;
+				#endif
+				
+				currentTagInRow->tagName = currentWord;
+				currentTagInRow->nextTag = new GIALRPtag();
+				currentTagInRow = currentTagInRow->nextTag;
+				
+				currentWord = "";
+			}
+			else
+			{
+				currentWord = currentWord + currentToken;
+			}
+
+			charCount++;
+		}
+		parseFileObject.close();
+	}
+
+	return result;
+}
+
+bool identifyConditionTypeAndInvertIfNecessary(GIAentityNode ** conditionSubjectEntity, GIAentityNode ** conditionObjectEntity, GIAentityNode * conditionEntity)
+{
+	bool conditionInverted = false;
+	
+	//invert condition if necessary
+	GIALRPtag * firstTagInPrepositionsInverseList = firstTagInPrepositionsInverseListGlobal;
+	GIALRPtag * currentTagInPrepositionsInverseList = firstTagInPrepositionsInverseList;
+	while(currentTagInPrepositionsInverseList->nextSentence != NULL)
+	{
+		#ifdef GIA_LRP_DEBUG
+		//cout << "qcurrentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
+		#endif
+		
+		GIALRPtag * firstTagInPrepositionsInverseListSentence = currentTagInPrepositionsInverseList;
+		GIALRPtag * currentTagInPrepositionsInverseListSentence = firstTagInPrepositionsInverseListSentence;
+		bool foundConditionToInvert = false;
+		string conditionNameNew = "";	//= currentTagInPrepositionsInverseList->tagName;
+		for(int i=1; i<=GIA_LRP_PREPOSITIONS_DATABASE_NUMBER_OF_TAGS; i++)
+		{
+			if(i == GIA_LRP_PREPOSITIONS_DATABASE_TAG_CONDITION)
+			{
+				conditionNameNew = currentTagInPrepositionsInverseListSentence->tagName;	//same as currentTagInPrepositionsInverseList->tagName
+			}
+			else if(i == GIA_LRP_PREPOSITIONS_DATABASE_TAG_REVERSE_CONDITION)
+			{
+				if(currentTagInPrepositionsInverseListSentence->tagName == conditionEntity->entityName)
+				{
+					foundConditionToInvert = true;
+					cout << "identifyConditionTypeAndInvertIfNecessary(): foundConditionToInvert: conditionEntity->entityName = " << conditionEntity->entityName << endl;
+
+				}
+			}	
+			else if(i == GIA_LRP_PREPOSITIONS_DATABASE_TAG_INVERT_REVERSE_CONDITION_VALID)
+			{
+				if(foundConditionToInvert)
+				{
+					if(currentTagInPrepositionsInverseListSentence->tagName == GIA_LRP_PREPOSITIONS_DATABASE_TAG_INVERT_REVERSE_CONDITION_VALID_VALUE_TRUE)
+					{
+						conditionInverted = true;
+						cout << "identifyConditionTypeAndInvertIfNecessary(): conditionInverted: conditionNameNew = " << conditionNameNew << endl;
+
+						conditionEntity->entityName = conditionNameNew;
+						conditionEntity->wordOrig = conditionNameNew;	//is this necessary?
+						
+						GIAentityNode * conditionSubjectEntityNew = *conditionObjectEntity;
+						GIAentityNode * conditionObjectEntityNew = *conditionSubjectEntity;
+						*conditionSubjectEntity = conditionSubjectEntityNew;
+						*conditionObjectEntity = conditionObjectEntityNew;
+					}
+				}
+
+			}	
+			currentTagInPrepositionsInverseListSentence = currentTagInPrepositionsInverseListSentence->nextTag;
+		}
+		
+		currentTagInPrepositionsInverseList = currentTagInPrepositionsInverseList->nextSentence;
+	}
+	
+	//identify condition type
+	currentTagInPrepositionsInverseList = firstTagInPrepositionsInverseList;
+	while(currentTagInPrepositionsInverseList->nextSentence != NULL)
+	{
+		#ifdef GIA_LRP_DEBUG
+		//cout << "qcurrentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
+		#endif
+		
+		if(currentTagInPrepositionsInverseList->tagName == conditionEntity->entityName)
+		{
+			GIALRPtag * firstTagInPrepositionsInverseListSentence = currentTagInPrepositionsInverseList;
+			GIALRPtag * currentTagInPrepositionsInverseListSentence = firstTagInPrepositionsInverseListSentence;
+			for(int i=1; i<=GIA_LRP_PREPOSITIONS_DATABASE_NUMBER_OF_TAGS; i++)
+			{
+				if(i == GIA_LRP_PREPOSITIONS_DATABASE_TAG_TYPE)
+				{
+					conditionEntity->conditionType2 = currentTagInPrepositionsInverseListSentence->tagName;
+					cout << "identifyConditionTypeAndInvertIfNecessary(): conditionEntity->conditionType2 = " << conditionEntity->conditionType2 << endl;
+				}		
+				currentTagInPrepositionsInverseListSentence = currentTagInPrepositionsInverseListSentence->nextTag;
+			}
+		}
+		
+		currentTagInPrepositionsInverseList = currentTagInPrepositionsInverseList->nextSentence;
+	}
+		
+	return conditionInverted;
+}
+		
+#endif
