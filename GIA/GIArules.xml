@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4d 18-April-2014
+ * Project Version: 2e4e 18-April-2014
  *
  *******************************************************************************/
 -->
@@ -451,9 +451,9 @@
 					dep(What-1, on-6) + nsubj(What-1, claims-5) + cop(What-1, are-2) => prep_on(claims-3, What-1)
 				--></example>
 				<paramDepRel mode="redistribute">
-				<option numberOfRelations="2" />
+				<option numberOfRelations="3" />
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_dep" />
-				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_nsubj" />
+				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_subj" />
 				<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="_cop" />
 				<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
 				<option useRelationIndexTest="true" REL="2" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
@@ -463,7 +463,7 @@
 				<option disableRelation="true" REL="2" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="0" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="0" redistributeRelationEntityIndexReassignmentRelationEntityID="1" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="0" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="0" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="0" redistributeRelationEntityIndexReassignmentRelationEntityID="0" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="0" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="0" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
 				<option disableEntity="true" REL="2" REL_ENT="1" />
 				</paramDepRel>
 			<!-- #endif -->
@@ -928,23 +928,14 @@
 
 			<!-- #ifdefGIA_REDISTRIBUTE_RELATIONS_SUPPORT_WHAT_IS_THE_NAME_NUMBER_OF_QUERIES -->
 			<function name="redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf">
-				<example><!--interpret;
-				[given 'The name of the dog near the farm is Max.']
-				'What is the name of the red dog near the farm?' [return entity names]
-					nsubj(is-2, name-4) + attr(is-2, What-1) {+ det(name-4, the-3)} + poss/prep_of(name-4, dog-8) -> appos(dog[8], _$qVar[1]) {_name(dog[8], _$qVar)??}
-				'What is the dog's name?'
-					nsubj(is-2, name-6) + attr(is-2, What-1) + poss(name-6, dog-4)
-
-				'What is the number of the red dogs near the farm?' [return entity number/quantity]
-					nsubj(is-2, number-4) + attr(is-2, What-1) {/ det(number-4, the-3)} + poss/prep_of(number-4, dogs-8) -> _quantity(dog[8], _$qVar[1])
-				--></example>
-
-				<example><!--interpret
+				<!-- Supports Stanford Parser/CoreNLP version 2+ e.g. 2013-04-04 -->
+				<!--
+				<example>interpret
 				What is the name of the red dog near the farm? [return entity names]
 					nsubj(is-2, name-4) + attr(is-2, What-1) {+ det(name-4, the-3)} + poss/prep_of(name-4, dog-8) -> appos(dog-1, _$qVar[1]) {_name(That-1, _$qVar)??}
 				'What is the dog's name?'
 					nsubj(is-2, name-6) + attr(is-2, What-1) + poss(name-6, dog-4)
-				--></example>
+				</example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="3" />
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_subj" />
@@ -963,15 +954,61 @@
 				<option disableEntity="true" REL="2" REL_ENT="0" />
 				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_appo" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
-				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityReassignment="_$qVar" /> <!-- convert "What" to _$qVar -->
-				<!-- <option useRedistributeSpecialCaseIsNameQueryAssignment="true" REL="1" REL_ENT="1" /> -->
+				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityReassignment="_$qVar" /> // convert "What" to _$qVar
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNameQuery" value="true" REL="1" REL_ENT="1" />
 				</paramDepRel>
-
-				<example><!--interpret
+				-->
+					<!-- Supports Stanford Parser/CoreNLP version 3+ e.g. 2014-01-04 --> 
+					<example><!--interpret
+					What is the name of the red dog near the farm? [return entity names]
+						nsubj(What-1, name-4) + cop(What-1, is-2) {+ det(name-4, the-3)} + prep_of(name-4, dog-8) -> appos(dog-1, _$qVar[1]) {_name(That-1, _$qVar)??}
+					'What is the dog's name?'
+						nsubj(What-1, name-6) + cop(What-1, is-2) + poss(name-6, dog-4)
+					--></example>
+					<paramDepRel mode="redistribute">
+					<option numberOfRelations="3" />
+					<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_subj" />
+					<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_cop" />
+					<option useRelationArrayTest="true" REL="1" REL_ENT="0" relationArrayTest="what" relationArrayTestSize="1" />
+					<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
+					<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
+					<option useRelationArrayTest="true" REL="2" REL_ENT="2" relationArrayTest="of|_poss" relationArrayTestSize="2" />
+					<option useRelationIndexTest="true" REL="2" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="1" />
+					<option useRelationTest="true" REL="0" REL_ENT="0" relationTest="what" />
+					<option useRelationTest="true" REL="0" REL_ENT="1" relationTest="name" />
+					<option disableRelation="true" REL="0" />
+					<option disableRelation="true" REL="2" />
+					<option disableEntity="true" REL="0" REL_ENT="1" disableEntityUseOriginalValues="true" />
+					<option disableEntity="true" REL="1" REL_ENT="1" disableEntityUseOriginalValues="true" />
+					<option disableEntity="true" REL="2" REL_ENT="2" />
+					<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_appo" />
+					<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+					<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="0" redistributeRelationEntityIndexReassignmentRelationEntityID="0" />
+					<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityReassignment="_$qVar" /> <!-- convert "What" to _$qVar -->
+					<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNameQuery" value="true" REL="1" REL_ENT="1" />
+					</paramDepRel>
+					<!-- Supports Stanford Parser/CoreNLP version 3+ e.g. 2014-01-04 [OLD IMPLEMENTATION] --> 
+					<!--
+					<example>interpret
+					What is the name of the red dog near the farm? [return entity names]
+						nsubj(What-1, name-4) + cop(What-1, is-2) {+ det(name-4, the-3)} + prep_of(name-4, dog-8) -> appos(dog-1, _$qVar[1]) {_name(That-1, _$qVar)??}
+					'What is the dog's name?'
+						nsubj(What-1, name-6) + cop(What-1, is-2) + poss(name-6, dog-4)
+					</example>
+					<paramDepRel mode="redistribute">
+					<option numberOfRelations="1" />
+					<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_subj" />
+					<option useRelationTest="true" REL="0" REL_ENT="0" relationTest="what" />
+					<option useRelationTest="true" REL="0" REL_ENT="1" relationTest="name" />
+					<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNameQuery" value="true" REL="0" REL_ENT="0" />
+					</paramDepRel>
+					-->
+				<!-- Supports Stanford Parser/CoreNLP version 2+ e.g. 2013-04-04 -->		
+				<!--
+				<example>interpret
 				What is the number of the red dogs near the farm? [return entity number/quantity]
 				nsubj(is-2, number-4) + attr(is-2, What-1) {+ det(number-4, the-3)} + poss/prep_of(number-4, dogs-8) -> _quantity(dog[8], _$qVar[1])
-				--></example>
+				</example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="3" />
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_subj" />
@@ -990,8 +1027,35 @@
 				<option disableEntity="true" REL="2" REL_ENT="0" />
 				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_quantity" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
-				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityReassignment="_$qVar" /> <!-- convert "What" to _$qVar -->
+				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityReassignment="_$qVar" /> //convert "What" to _$qVar
 				</paramDepRel>
+				-->
+					<!-- Supports Stanford Parser/CoreNLP version 3+ e.g. 2014-01-04 --> 
+					<example><!--interpret
+					What is the number of the red dogs near the farm? [return entity number/quantity]
+					nsubj(What-1, number-4) + cop(What-1, is-2) {+ det(number-4, the-3)} + poss/prep_of(number-4, dogs-8) -> _quantity(dog[8], _$qVar[1])
+					--></example>
+					<paramDepRel mode="redistribute">
+					<option numberOfRelations="3" />
+					<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_subj" />
+					<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_cop" />
+					<option useRelationArrayTest="true" REL="1" REL_ENT="0" relationArrayTest="what" relationArrayTestSize="1" />
+					<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
+					<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
+					<option useRelationArrayTest="true" REL="2" REL_ENT="2" relationArrayTest="of|_poss" relationArrayTestSize="2" />
+					<option useRelationIndexTest="true" REL="2" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="1" />
+					<option useRelationTest="true" REL="0" REL_ENT="0" relationTest="what" />
+					<option useRelationTest="true" REL="0" REL_ENT="1" relationTest="number" />
+					<option disableRelation="true" REL="0" />
+					<option disableRelation="true" REL="2" />
+					<option disableEntity="true" REL="0" REL_ENT="1" disableEntityUseOriginalValues="true" />
+					<option disableEntity="true" REL="1" REL_ENT="1" disableEntityUseOriginalValues="true" />
+					<option disableEntity="true" REL="2" REL_ENT="2" />
+					<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_quantity" />
+					<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+					<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="0" redistributeRelationEntityIndexReassignmentRelationEntityID="0" />
+					<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityReassignment="_$qVar" /> <!-- convert "What" to _$qVar -->
+					</paramDepRel>
 			</function>
 			<!-- #endif -->
 
@@ -1446,7 +1510,6 @@
 				<option useRedistributeRelationEntityReassignment="true" REL="0" REL_ENT="1" redistributeRelationEntityReassignment="_$qVar" /> <!-- convert "What"/"Who" to _$qVar -->
 				<option useRelationTest="true" REL="0" REL_ENT="1" relationTest="who" />
 				<!-- #ifdefGIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS -->
-				<!-- <option useRedistributeSpecialCaseIsNameQueryAssignment="true" REL="0" REL_ENT="1" /> -->
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNameQuery" value="true" REL="0" REL_ENT="1" />
 				<!-- #endif -->
 				</paramDepRel>
@@ -1490,7 +1553,6 @@
 				<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="who" />
 				<!-- #ifdefGIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS -->
 				<!-- #ifdefGIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY -->
-				<!-- <option useRedistributeSpecialCaseIsNameQueryAssignment="true" REL="1" REL_ENT="1" /> -->
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNameQuery" value="true" REL="1" REL_ENT="1" />
 				<!-- #else -->
 				<!--
@@ -1527,7 +1589,6 @@
 					<option useRelationTest="true" REL="0" REL_ENT="0" relationTest="who" />
 					<!-- #ifdefGIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS -->
 					<!-- #ifdefGIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY -->
-					<!-- <option useRedistributeSpecialCaseIsNameQueryAssignment="true" REL="1" REL_ENT="1" /> -->
 					<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNameQuery" value="true" REL="1" REL_ENT="1" />
 					<!-- #else -->
 					<!--
