@@ -54,7 +54,7 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 {
 	if(propertyEntity->hasAssociatedPropertyTemp)
 	{
-		propertyEntity = propertyEntity->firstAssociatedPropertyNodeInList.back();	//added 4 May 11a
+		GIAEntityNode * existingProperty  = propertyEntity->firstAssociatedPropertyNodeInList.back();	//added 4 May 11a
 
 		if(thingEntity->hasAssociatedPropertyTemp)
 		{
@@ -62,10 +62,11 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 		}
 
 		//configure entity node containing this property
-		thingEntity->firstPropertyNodeInList.push_back(propertyEntity);	
+		thingEntity->firstPropertyNodeInList.push_back(existingProperty);	
 
 		thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-	
+
+		existingProperty->entityNodeContainingThisProperty = thingEntity;		//added 26 Aug 11a	
 	}
 	else
 	{
