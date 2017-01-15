@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i21a 02-February-2015
+ * Project Version: 2i22b 02-February-2015
  *
  *******************************************************************************/
 -->
@@ -1297,7 +1297,8 @@
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
 				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="of|_poss" relationArrayTestSize="2" />	<!-- NB _poss test is an artefact and is no longer required -->
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNumberOf" value="true" REL="1" REL_ENT="1" />				
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNumberOf" value="true" REL="1" REL_ENT="1" />	
+				<assert variable="setDefiniteAfterFinish" REL="2" REL_ENT="2" /> <!-- 2i22b: note must use original relation/entity indices -->			
 				<option disableEntity="true" REL="2" REL_ENT="3" />
 				<option disableEntity="true" REL="2" REL_ENT="1" />
 				<option disableRelation="true" REL="2" />
@@ -1312,6 +1313,7 @@
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="number|amount" relationArrayTestSize="2" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of|_poss" relationArrayTestSize="2" />	<!-- NB _poss test is an artefact and is no longer required -->
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNumberOf" value="true" REL="1" REL_ENT="2" />
+				<assert variable="setDefiniteAfterFinish" REL="1" REL_ENT="2" /> <!-- 2i22b -->	
 				<option disableEntity="true" REL="1" REL_ENT="3" />
 				<option disableEntity="true" REL="1" REL_ENT="1" />
 				<option disableRelation="true" REL="1" />
@@ -3096,6 +3098,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	<!-- added 2i22a -->
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceConcept" value="true" />
 				</paramEntity>
 
@@ -3107,6 +3110,7 @@
 				<!-- #ifndefGIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalPronounTemp" value="false" />
 				<!-- #endif -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	<!-- added 2i22a -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="mustSetIsSubstanceConceptBasedOnApposRelation" value="true" />
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceConcept" value="true" />
 				</paramEntity>
@@ -3119,6 +3123,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wasReference" value="false" />
 				// #endif
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalPronounTemp" value="true" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	//added 2i22a
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceConcept" value="true" />
 				</paramEntity>
 				-->
@@ -3132,6 +3137,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wasReference" value="false" />
 				// #endif
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="true" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	//added 2i22a
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceConcept" value="true" />
 				</paramEntity>
 				-->
