@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c1a 13-January-2014
+ * Project Version: 2c1b 13-January-2014
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -55,6 +55,13 @@ using namespace std;
 #endif
 
 #define GRAMMATICAL_TENSE_CONCATONATOR_RELEX "_"
+
+//these have been moved from GIAtranslatorOperations.h as RELATION_ENTITY_SPECIAL_POSSESSIVE is used by GIAdraw.cpp
+#define RELATION_ENTITY_HAVE "have"
+#define RELATION_ENTITY_SPECIAL_POSSESSIVE (RELATION_ENTITY_HAVE)
+#define RELATION_ENTITY_CAN "can"
+#define RELATION_ENTITY_BE "be"	//eg x is y
+#define RELATION_ENTITY_IT "it"		//used to handle Relex special case query "What [time] is it?"
 
 //extracted from wn.h (WordNet 3.0 library header)
 #define GRAMMATICAL_WORD_TYPE_UNDEFINED (0)

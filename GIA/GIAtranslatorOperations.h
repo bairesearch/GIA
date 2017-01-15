@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c1a 13-January-2014
+ * Project Version: 2c1b 13-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -497,14 +497,11 @@ static string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF
 #define RELATION_GOVERNOR_COMPOSITION_1 "contain"	//eg x contains y
 #define RELATION_GOVERNOR_COMPOSITION_2 "comprise"	//eg x comprises y 
 #define RELATION_GOVERNOR_COMPOSITION_3 "have"		//eg x has y
-#define RELATION_ENTITY_HAVE "have"
 #define RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES 3
 static string relationGovernorCompositionNameArray[RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_GOVERNOR_COMPOSITION_1, RELATION_GOVERNOR_COMPOSITION_2, RELATION_GOVERNOR_COMPOSITION_3};
 
-#define RELATION_ENTITY_CAN "can"
 
 //concepts:
-#define RELATION_ENTITY_BE "be"	//eg x is y
 #define RELATION_GOVERNOR_DEFINITION_NUMBER_OF_TYPES 1
 #define RELATION_TYPE_APPOSITIVE_OF_NOUN "_appo"
 #define STANFORD_RELATION_TYPE_APPOSITIVE_OF_NOUN "appos"
@@ -531,8 +528,8 @@ static string relationGovernorDefinitionNameArray[RELATION_GOVERNOR_DEFINITION_N
 #define FEATURE_INDEX_OF_SPECIAL_CONDITION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-11)
 #define FEATURE_INDEX_OF_TOBE_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-12)
 #define FEATURE_INDEX_OF_QUANTITY_TIMES_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-13)	//added 12 January 2013
-#define FEATURE_INDEX_OF_HAVE_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-14)		//added GIA 2c1a 13 January 2013
-#define FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY (FEATURE_INDEX_OF_HAVE_UNKNOWN)
+#define FEATURE_INDEX_OF_ENTITY_SPECIAL_POSSESSIVE_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-14)		//added GIA 2c1a 13 January 2013
+#define FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY (FEATURE_INDEX_OF_ENTITY_SPECIAL_POSSESSIVE_UNKNOWN)
 
 //questions;
 #define REFERENCE_TYPE_QUESTION_QUERY_WHO "who"
@@ -580,7 +577,6 @@ static string featureQueryWordWhatNameArray[FEATURE_QUERY_WORD_WHAT_NUMBER_OF_TY
 static string relationTypeQueryVariableNameArray[RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW};	//had to add REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW here - need to check execution with relex parser is not affected
 #define FEATURE_QUERY_WHAT_IS_THE_NAME_NUMBER_OF_NUMBER_OF_TYPES 1
 static string featureQueryWhatIsTheNameNumberOfNameArray[FEATURE_QUERY_WHAT_IS_THE_NAME_NUMBER_OF_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_WHAT};
-#define RELATION_ENTITY_IT "it"		//used to handle Relex special case query "What [time] is it?"
 
 //prepositions;
 #define RELATION_TYPE_PREPOSITION_IN "in"

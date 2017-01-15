@@ -23,7 +23,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c1a 13-January-2014
+ * Project Version: 2c1b 13-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -98,6 +98,10 @@ using namespace std;
 #else
 	#define GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_YELLOW)
 #endif
+#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+	#define GIA_DRAW_ACTION_SPECIAL_POSSESSIVE_NODE_COLOUR (DAT_FILE_COLOUR_WHITE)			//new 2c1a
+#endif
+
 #ifdef GIA_DRAW_USE_UNIQUE_COLOURS_FOR_ENTITY_DEFINITION_NODES
 	#define GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_BROWN)			//this was dark green to original GIA specA)
 #else

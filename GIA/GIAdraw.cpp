@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c1a 13-January-2014
+ * Project Version: 2c1b 13-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -40,8 +40,6 @@
 #include "LDsprite.h"
 #include "LDreferenceManipulation.h"
 #include "RTpixelMaps.h"
-
-
 
 int maxXAtAParticularY[MAX_GIA_TREE_DEPTH];
 
@@ -352,8 +350,22 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 			{
 				int q = entityVectorConnectionDrawPosYinitialArray[i];
 				int r = entityVectorConnectionDrawPosXinitialArray[i];
+								
 				for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 				{
+					int qTemp = q;
+					int rTemp = r;
+					#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+					if((entityNode->entityName == RELATION_ENTITY_SPECIAL_POSSESSIVE) || ((*connectionIter)->entity->entityName == RELATION_ENTITY_SPECIAL_POSSESSIVE))
+					{
+						if((i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS) || (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS) || (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT) || (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT))
+						{
+							qTemp = r/4;
+							rTemp = q/4;
+						}
+					}
+					#endif
+					
 					//cout << "\ti = " << i << ", initialiseEntityNodeForPrinting; " << (*connectionIter)->entity->entityName << endl;
 					bool thisIsDefinitionAndPreviousNodeWasInstance = false;
 					#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
@@ -362,7 +374,7 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 						thisIsDefinitionAndPreviousNodeWasInstance = true;
 					}
 					#endif
-					currentReferenceInPrintList = initialiseEntityNodeForPrinting((*connectionIter)->entity, y+q, x+r, printType, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
+					currentReferenceInPrintList = initialiseEntityNodeForPrinting((*connectionIter)->entity, y+qTemp, x+rTemp, printType, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
 
 					bool pass = true;
 					int entityConnectionColour = entityVectorConnectionDrawColourNameArray[i];
@@ -537,6 +549,13 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 				}
 				#endif
 
+				#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+				if(entityNode->entityName == RELATION_ENTITY_SPECIAL_POSSESSIVE)
+				{
+					entityColour = GIA_DRAW_ACTION_SPECIAL_POSSESSIVE_NODE_COLOUR;	
+				}
+				#endif
+					
 				//first, print this action node.
 				string nameOfBox = "";
 				if(entityNode->hasQuantity)

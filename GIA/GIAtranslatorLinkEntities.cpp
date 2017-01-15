@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c1a 13-January-2014
+ * Project Version: 2c1b 13-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -166,7 +166,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, true);
 	paramA.numberOfRelations = 1;
 	paramA.useRelationArrayTest[REL1][REL_ENT3] = true; paramA.relationArrayTest[REL1][REL_ENT3] = relationTypePossessiveNameArray; paramA.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES;
-	paramA.mustGenerateConditionTypeName = true; paramA.conditionTypeEntityDefaultName = RELATION_ENTITY_HAVE; paramA.conditionTypeEntityDefaultIndex = FEATURE_INDEX_OF_HAVE_UNKNOWN;	//create intermediary action 'have'
+	paramA.mustGenerateConditionTypeName = true; paramA.conditionTypeEntityDefaultName = RELATION_ENTITY_SPECIAL_POSSESSIVE; paramA.conditionTypeEntityDefaultIndex = FEATURE_INDEX_OF_ENTITY_SPECIAL_POSSESSIVE_UNKNOWN;	//create intermediary action 'have'
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity;
 	paramA.functionEntityRelationID[FUNC_ENT1] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	paramA.functionEntityRelationID[FUNC_ENT2] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
