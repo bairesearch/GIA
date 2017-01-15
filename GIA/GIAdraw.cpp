@@ -506,7 +506,6 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 					if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
 					{
 						boxThickness = GIA_DRAW_THICKNESS_THICK;
-						cout << "plural: entityNode = " << entityNode->entityName << endl; 
 					}
 
 					if(entityNode->isSubstanceConcept)
