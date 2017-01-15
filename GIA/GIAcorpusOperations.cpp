@@ -26,7 +26,7 @@
  * File Name: GIAcorpusOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j5b 08-June-2015
+ * Project Version: 2j5c 08-June-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -100,6 +100,13 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 				{
 					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DETERMINER, entityIndex1, entityIndex2, sameReferenceSet);
 				}
+				
+				#ifdef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
+				if(currentRelationInList->relationType == RELATION_TYPE_PRENOMIAL_MODIFIER)	//must correspond to RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES/relationTypePrenominalModifierNameArray
+				{
+					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PRENOMINAL_MODIFIER, entityIndex1, entityIndex2, sameReferenceSet);
+				}
+				#endif
 				/*
 				}
 				*/

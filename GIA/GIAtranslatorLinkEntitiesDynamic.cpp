@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntitiesDynamic.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j5b 08-June-2015
+ * Project Version: 2j5c 08-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -72,13 +72,26 @@ void linkEntitiesDynamicPrenominalModifierOfNoun(GIAsentence* currentSentenceInL
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
+		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
+			bool prenominalModifierFound = false;
+			#ifdef GIA_USE_CORPUS_DATABASE
+			if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PRENOMINAL_MODIFIER])
+			{
+				prenominalModifierFound = true;
+			}
+			#endif
 			if(textInTextArray(currentRelationInList->relationType, relationTypePrenominalModifierNameArray, RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES))
 			{
+				prenominalModifierFound = true;
+			}
+			if(prenominalModifierFound)
+			{
 				//prenominal modifier found...
+				//cout << "prenominal modifier found" << endl;
 				
 				string entity1Name = currentRelationInList->relationGovernor;
 				string entity2Name = currentRelationInList->relationDependent;
