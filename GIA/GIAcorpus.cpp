@@ -23,7 +23,7 @@
  * File Name: GIAcorpus.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b6a 09-January-2014
+ * Project Version: 2b6b 09-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -77,7 +77,11 @@ bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParse
 	{
 		if(!lookupCorpusFiles(firstParagraphInList, NLPfeatureParser))	//finds all corresponding GIA2 semantic dependency files and parses them
 		{	
-			cout << "warning: GIA2 corpus entry not found (sentences cannot be parsed)" << endl;
+			#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
+			cout << "warning: GIA2 corpus entry not found (will generate corpus entry)" << endl;			
+			#else
+			cout << "error: GIA2 corpus entry not found (sentences cannot be parsed)" << endl;
+			#endif
 			result = false;
 		}
 	}
@@ -86,7 +90,11 @@ bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParse
 	#endif
 		if(!lookupCorpusFiles(firstParagraphInList->firstSentenceInList, NLPfeatureParser))	//finds all corresponding GIA2 semantic dependency files and parses them
 		{	
-			cout << "warning: GIA2 corpus entry not found (sentences cannot be parsed)" << endl;
+			#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
+			cout << "warning: GIA2 corpus entry not found (will generate corpus entry)" << endl;			
+			#else
+			cout << "error: GIA2 corpus entry not found (sentences cannot be parsed)" << endl;
+			#endif
 			result = false;
 		}
 	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS

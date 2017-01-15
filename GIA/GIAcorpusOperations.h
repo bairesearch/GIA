@@ -23,7 +23,7 @@
  * File Name: GIAcorpusOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b6a 09-January-2014
+ * Project Version: 2b6b 09-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -75,10 +75,10 @@ static string featurePOStagPunctuationDivisionArray[FEATURE_POS_TAG_PUNCTUATION_
 static string featurePOStagPunctuationQuoteArray[FEATURE_POS_TAG_PUNCTUATION_QUOTE_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_PUNCTUATION_QUOTE_FULLSTOP, FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTBRACKET, FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTBRACKET, FEATURE_POS_TAG_PUNCTUATION_QUOTE_STRAIGHTDOUBLEQUOTE, FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTOPENSINGLEQUOTE, FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTOPENDOUBLEQUOTE, FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTCLOSESINGLEQUOTE, FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTCLOSEDOUBLEQUOTE};
 
 //http://en.wikipedia.org/wiki/English_auxiliaries_and_contractions
-#define ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES (5)
+#define ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES (7)
 #define ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES (3)
 #define ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES (3)
-static string entityAuxiliaryBeingArray[ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES] = {"am", "is", "are", "was", "were"};
+static string entityAuxiliaryBeingArray[ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES] = {"am", "is", "are", "was", "were", "be", "being"};	//RBB added "be"/"being"
 static string entityAuxiliaryHavingArray[ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES] = {"have", "has", "had"};
 static string entityAuxiliaryDoingArray[ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES] = {"do", "does", "did"};
 
