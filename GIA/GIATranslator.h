@@ -34,6 +34,9 @@ using namespace std;
 
 //#define GIA_TRANSLATOR_DEBUG
 
+//#define GIA_TRANSLATOR_USE_NEW_ACTION_SUBJECT_RELATION_FUNCTION_DEFINITION_IMPLEMENTATION	//if undefined then "tom is being an idiot"= an instance of tom is an idoit. if defined then tom has (a property) of idiocy [NOT YET IMPLEMENTED]
+
+
 #define GIA_TRANSLATOR_ACTION_DEFINITION_CODE_SIMPLIFICATION
 
 #define GIA_TRANSLATOR_DISABLE_OBJ_SUB_QVARIABLE_ANOMALY
@@ -119,6 +122,11 @@ using namespace std;
 #define RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION "_pobj"
 #define RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION "_psubj"
 
+
+//#define ARBITRARY_SUBJECT_FINAL_IMPLEMENTATION	//in final implementation, the arbitrary subject should be determined during the referencing stage of sentence parsing
+#ifndef ARBITRARY_SUBJECT_FINAL_IMPLEMENTATION
+	#define ARBITRARY_SUBJECT_SPECIAL_CONCEPT_NODE_NAME "arbitrarySubject"
+#endif
 
 //prepositions are now added explicitly
 /*

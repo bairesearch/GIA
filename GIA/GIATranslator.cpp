@@ -1634,6 +1634,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 												
 						if(partnerTypeRequiredFound)
 						{
+							GIAEntityNode * objectEntityTemp = subjectObjectEntityArray[OBJECT_INDEX];
+							GIAEntityNode * subjectEntityTemp = subjectObjectEntityArray[SUBJECT_INDEX];
+														
 							if(relationFunctionIndex == relationFunctionIndex2)
 							{//found a matching object-subject relationship
 								
@@ -1644,9 +1647,65 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 								#endif
 								//cout << "subjectObjectEntityArray[secondIndex]->entityName = " << subjectObjectEntityArray[secondIndex]->entityName << endl;	
 
-								//cout << "subjectObjectEntityArray[SUBJECT_INDEX]->entityName = " << subjectObjectEntityArray[SUBJECT_INDEX]->entityName << endl;	
-								//cout << "subjectObjectEntityArray[OBJECT_INDEX]->entityName = " << subjectObjectEntityArray[OBJECT_INDEX]->entityName << endl;
+								//cout << "subjectEntityTemp->entityName = " << subjectEntityTemp->entityName << endl;	
+								//cout << "objectEntityTemp->entityName = " << objectEntityTemp->entityName << endl;
 
+								//find out if the subject is connected to an _advmod, if so create a dummy entity as the subject, and assign the subject as a condition [instead of forming default subject-action-object relationship]
+								bool subjectIsConnectedToAnAdvMod = false;
+								Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+								while(currentRelationInList3->next != NULL)
+								{
+									if(currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_3)
+									{
+										if(subjectEntityTemp->entityName == currentRelationInList3->relationArgument)
+										{//subject is connected to an _advmod
+											subjectIsConnectedToAnAdvMod = true;
+
+											
+											#ifdef ARBITRARY_SUBJECT_FINAL_IMPLEMENTATION
+											cout << "error: ARBITRARY_SUBJECT_FINAL_IMPLEMENTATION not yet coded; in final implementation, the arbitrary subject should be determined during the referencing stage of sentence parsing" << endl;
+											#else
+											//create arbitrarySubjectSpecialConceptEntityNode
+											string arbitrarySubjectSpecialConceptEntityNodeName = ARBITRARY_SUBJECT_SPECIAL_CONCEPT_NODE_NAME;
+											long entityIndex = -1;
+											bool entityAlreadyExistant = false;											
+											GIAEntityNode * arbitrarySubjectSpecialConceptEntityNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &arbitrarySubjectSpecialConceptEntityNodeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+											subjectEntityTemp = arbitrarySubjectSpecialConceptEntityNode;
+											#endif
+											
+											GIAEntityNode * actionOrPropertyConditionEntity;
+											GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[currentRelationInList3->relationFunctionIndex];
+											string relationType = subjectEntityTemp->entityName;
+											
+											
+											//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
+											if(passdefinition || partnerTypeObjectSpecialConditionFound)
+											{
+												actionOrPropertyConditionEntity = arbitrarySubjectSpecialConceptEntityNode;
+											}
+											else if(passcomposition)
+											{
+												actionOrPropertyConditionEntity = objectEntityTemp;	//= subjectObjectEntityArray[SUBJECT_INDEX], = old subjectEntityTemp;
+											}
+											else
+											{
+												actionOrPropertyConditionEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
+												cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
+												addActionToActionDefinition(actionOrPropertyConditionEntity);	//not required is done later?
+											}
+											
+											cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
+											
+											createConditionBasedUponPreposition(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType);	
+											
+																		
+										}
+									}
+									currentRelationInList3 = currentRelationInList3->next;
+								}	
+								
+															
+								
 								//if(currentRelationInList->relationFunction == RELATION_FUNCTION_DEFINITION_1) 
 								if(passdefinition)
 								{//expected subject-object relationship is a definition "is"
@@ -1654,34 +1713,34 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 										//NB definitions are only assigned to entities, not properties (instances of entities)
 									
-									if(subjectObjectEntityArray[SUBJECT_INDEX]->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+									if(subjectEntityTemp->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 									{
 									#ifdef GIA_TRANSLATOR_DISABLE_OBJ_SUB_QVARIABLE_ANOMALY
 										//switch object/subject variables [transform question into answer form]
-										addDefinitionToEntity(subjectObjectEntityArray[OBJECT_INDEX], subjectObjectEntityArray[SUBJECT_INDEX]);
+										addDefinitionToEntity(objectEntityTemp, subjectEntityTemp);
 									#else
 										//added 20 October 2011 [what is the time?]
 										string relationType = currentRelationInList->relationFunction;
-										GIAEntityNode * actionOrPropertyEntity = subjectObjectEntityArray[OBJECT_INDEX];				
-										GIAEntityNode * actionOrPropertyConditionEntity = subjectObjectEntityArray[SUBJECT_INDEX];	
+										GIAEntityNode * actionOrPropertyEntity = objectEntityTemp;				
+										GIAEntityNode * actionOrPropertyConditionEntity = subjectEntityTemp;	
 										createConditionBasedUponPreposition(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType);
 									#endif	
 									}
 									else
 									{
 										
-										addDefinitionToEntity(subjectObjectEntityArray[SUBJECT_INDEX], subjectObjectEntityArray[OBJECT_INDEX]);
+										addDefinitionToEntity(subjectEntityTemp, objectEntityTemp);
 									}
 								}
 								//else if((currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_1) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_2) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_3))
 								else if(passcomposition)
 								{//subject-object relationship is a composition [property]
-									addOrConnectPropertyToEntity(subjectObjectEntityArray[SUBJECT_INDEX], subjectObjectEntityArray[OBJECT_INDEX]);
+									addOrConnectPropertyToEntity(subjectEntityTemp, objectEntityTemp);
 										//check can use properties for composition/comprises ; ie, does "tom is happy" = "tom comprises happiness" ?
 								}
 								else if(partnerTypeObjectSpecialConditionFound)
 								{
-									GIAEntityNode * subjectEntityOrProperty = subjectObjectEntityArray[SUBJECT_INDEX];
+									GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;
 									GIAEntityNode * specialConditionNode = GIAEntityNodeArray[relationFunctionIndex2];
 									//cout << "subjectEntityOrProperty->entityName = " << subjectEntityOrProperty->entityName << endl;
 									//cout << "specialConditionNode->entityName = " << specialConditionNode->entityName << endl;			
@@ -1694,8 +1753,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 									GIAEntityNode * actionEntity = GIAEntityNodeArray[relationFunctionIndex];
 									
 									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-									GIAEntityNode * subjectEntityTemp = subjectObjectEntityArray[SUBJECT_INDEX];
-									GIAEntityNode * objectEntityTemp = subjectObjectEntityArray[OBJECT_INDEX];
+									GIAEntityNode * subjectEntityTemp = subjectEntityTemp;
+									GIAEntityNode * objectEntityTemp = objectEntityTemp;
 
 									/*
 									cout << "SUBJECT_INDEX = " << SUBJECT_INDEX << endl;
@@ -1704,8 +1763,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 									cout << "secondIndex = " << secondIndex << endl;
 									cout << "subjectObjectName[SUBJECT_INDEX] = " << subjectObjectName[SUBJECT_INDEX] << endl;
 									cout << "subjectObjectName[OBJECT_INDEX] = " << subjectObjectName[OBJECT_INDEX] << endl;
-									cout << "subjectObjectEntityArray[SUBJECT_INDEX]->entityName = " << subjectObjectEntityArray[SUBJECT_INDEX]->entityName << endl;																	
-									cout << "subjectObjectEntityArray[OBJECT_INDEX]->entityName = " << subjectObjectEntityArray[OBJECT_INDEX]->entityName << endl;
+									cout << "subjectEntityTemp->entityName = " << subjectEntityTemp->entityName << endl;																	
+									cout << "objectEntityTemp->entityName = " << objectEntityTemp->entityName << endl;
 									cout << "relationArgumentIndex = " << relationArgumentIndex << endl;
 									cout << "relationArgumentIndex2 = " << relationArgumentIndex2 << endl;
 									*/
@@ -1750,8 +1809,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 
 														//create a condition link between the object and subject, based upon RELATION_FUNCTION_DEFINITION_1
 
-														GIAEntityNode * subjectEntityOrProperty = subjectObjectEntityArray[SUBJECT_INDEX];
-														GIAEntityNode * specialConditionNode = subjectObjectEntityArray[OBJECT_INDEX];
+														GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;
+														GIAEntityNode * specialConditionNode = objectEntityTemp;
 														//cout << "subjectEntityOrProperty->entityName = " << subjectEntityOrProperty->entityName << endl;
 														//cout << "specialConditionNode->entityName = " << specialConditionNode->entityName << endl;			
 														addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, currentRelationInList3->relationArgument);
@@ -1765,7 +1824,6 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 											currentRelationInList3 = currentRelationInList3->next;											
 										}
 									}
-
 								}
 							}
 						}
