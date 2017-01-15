@@ -3,7 +3,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i7a 10-Apr-2012
+ * Project Version: 1i8a 10-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -18,16 +18,16 @@
 
 
 
-void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int NLPparserType)
+void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int NLPfeatureParser)
 {	
 	#ifdef GIA_USE_RELEX
-	if(NLPparserType == GIA_NLP_PARSER_RELEX)
+	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
 		extractDatesRelex(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 	}
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
-	if(NLPparserType == GIA_NLP_PARSER_STANFORD_CORENLP)
+	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
 		extractDatesStanfordCoreNLP(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 	}	
@@ -714,7 +714,7 @@ void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode
 {//NB defineConjunctionConditions() currently performs the same function as defineActionPropertyConditions()
 
 	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
+	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
 	#endif
 			

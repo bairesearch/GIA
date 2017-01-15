@@ -3,7 +3,7 @@
  * File Name: GIAnlp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i7a 10-Apr-2012
+ * Project Version: 1i8a 10-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -66,17 +66,17 @@
 static string StanfordCoreNLP_relationSetNameArray[StanfordCoreNLP_numberOfDependencySetsPerSentence] = {StanfordCoreNLP_XML_TAG_basicdependencies, StanfordCoreNLP_XML_TAG_collapseddependencies, StanfordCoreNLP_XML_TAG_collapsedccprocesseddependencies};
 
 				
-void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPParsedXMLFileName, int NLPparserType);
+void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelationXMLFileName, int NLPParser, bool NLPparserType);
 
-bool parseNLPParserFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList, int NLPparserType, bool NLPrelexCompatibilityMode);
+bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputTextNLPfeatureXMLFileName, bool isQuery, Paragraph * firstParagraphInList, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode);
 	#ifdef GIA_USE_RELEX
-	bool parseRelexFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList, bool NLPrelexCompatibilityMode);
+	bool parseRelexFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragraph * firstParagraphInList, bool parseRelations, bool parseFeatures, bool NLPrelexCompatibilityMode, bool createNewSentences);
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
-	bool parseStanfordCoreNLPFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList);
+	bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragraph * firstParagraphInList, bool parseRelations, bool parseFeatures, bool createNewSentences);
 	#endif
 	#ifdef GIA_USE_STANFORD_PARSER
-	bool parseStanfordParserFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList);
+	bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragraph * firstParagraphInList, bool createNewSentences);
 	#endif
 
 #endif

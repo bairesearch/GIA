@@ -3,7 +3,7 @@
  * File Name: GIAParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i7a 10-Apr-2012
+ * Project Version: 1i8a 10-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of CFF File
  *
@@ -34,17 +34,17 @@ string convertStanfordRelationToRelex(string * stanfordRelation)
 	//now deal with anamolies between dependency relation definitions;
 	for(int i=0; i<GIA_NUMBER_OF_RELEX_VERSUS_STANFORD_DEPENDENCY_RELATION_DISCREPANCIES; i++)
 	{
-		//cout << "relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATION_FORMATION_STANFORD][i] = " << relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATION_FORMATION_STANFORD][i] << endl;
-		//cout << "relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATION_FORMATION_RELEX][i] = " << relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATION_FORMATION_RELEX][i] << endl;
+		//cout << "relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i] = " << relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i] << endl;
+		//cout << "relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i] = " << relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i] << endl;
 		
-		if(*stanfordRelation == relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATION_FORMATION_STANFORD][i])
+		if(*stanfordRelation == relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i])
 		{
-			relationTypeRelexStandard = relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATION_FORMATION_RELEX][i];
+			relationTypeRelexStandard = relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i];
 		}
 	}
 	
 	bool stanfordPrepositionFound = false;
-	string tempString = convertStanfordPrepositionToRelex(stanfordRelation, GIA_DEPENDENCY_RELATION_FORMATION_STANFORD, &stanfordPrepositionFound);
+	string tempString = convertStanfordPrepositionToRelex(stanfordRelation, GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
 	if(stanfordPrepositionFound)
 	{
 		relationTypeRelexStandard = *stanfordRelation;	//do not modify stanford preposition relations "prep_...." to "_prep_..."
@@ -280,6 +280,11 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Relation * fi
 
 			currentItemString[0] = '\0';
 			currentRelationPart++; 
+			
+			if(c == CHAR_COMMA)
+			{
+				characterIndex++;	//skip space after ,
+			}
 		}
 		else
 		{
