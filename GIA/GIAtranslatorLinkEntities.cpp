@@ -89,9 +89,9 @@ void linkEntitiesDynamicPrenominalModifierOfNoun(Sentence * currentSentenceInLis
 				if(!direction1Found && !direction2Found)
 				{
 					//use default linking (property link)
-					//#ifdef GIA_TRANSLATOR_DEBUG
+					#ifdef GIA_TRANSLATOR_DEBUG
 					cout << "!previousRelationshipFound: creating default property link" << endl;
-					//#endif
+					#endif
 					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 					bool sameReferenceSet = true;
 					#else
@@ -173,9 +173,9 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(Relation* currentRelat
 								previousRelationshipFound = true;
 								previousDefinitionRelationshipFound = true;
 
-								//#ifdef GIA_TRANSLATOR_DEBUG
+								#ifdef GIA_TRANSLATOR_DEBUG
 								cout << "previousDefinitionRelationshipFound" << endl;
-								//#endif
+								#endif
 									
 								#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_SWITCH_DEFINITION_LINKS_IF_NON_MATCHING_SUBSTANCE_CONCEPTS
 								if(((definitionEntity->isSubstanceConcept) && (entity2->isSubstanceConcept)) || (!(definitionEntity->isSubstanceConcept) && !(entity2->isSubstanceConcept)))
@@ -203,9 +203,9 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(Relation* currentRelat
 								previousRelationshipFound = true;
 								previousPropertyRelationshipFound = true;
 
-								//#ifdef GIA_TRANSLATOR_DEBUG
+								#ifdef GIA_TRANSLATOR_DEBUG
 								cout << "previousPropertyRelationshipFound" << endl;
-								//#endif
+								#endif
 								GIAentityNodeArray[entity2Index] = addOrConnectPropertyToEntity(entity1, entity2, sameReferenceSet);
 							}
 						}
@@ -242,9 +242,9 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(Relation* currentRelat
 										previousRelationshipFound = true;
 										previousPropertyRelationshipFound = true;
 
-										//#ifdef GIA_TRANSLATOR_DEBUG
+										#ifdef GIA_TRANSLATOR_DEBUG
 										cout << "previousPropertyRelationshipFound" << endl;
-										//#endif
+										#endif
 
 										GIAentityNode * actionConceptEntity;
 
@@ -300,9 +300,9 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(Relation* currentRelat
 									previousRelationshipFound = true;
 									previousConditionRelationshipFound = true;
 
-									//#ifdef GIA_TRANSLATOR_DEBUG
+									#ifdef GIA_TRANSLATOR_DEBUG
 									cout << "previousConditionRelationshipFound" << endl;
-									//#endif
+									#endif
 
 									GIAentityNode * conditionConceptEntity;
 									#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
