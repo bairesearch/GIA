@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k7a 21-August-2015
+ * Project Version: 2k8a 06-September-2015
  *
  *******************************************************************************/
 -->
@@ -2749,7 +2749,7 @@
 				
 				<!-- #ifdefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND -->
 				<example><!--
-				eg1 Move the chicken from the pie to the apple. _obj(move[1], chicken[3]) + prep_from(move[1], pie[6]) + prep_to(pie[6], apple[9]) + !rcmodIndicatesSameReferenceSet(to) -> _obj(move[1], chicken[3]) + prep_from(move[1], pie[6]) + prep_to(move[1], apple[9])	[assign !sameReferenceSet]
+				eg1 Move the chicken from the pie to the apple. _obj(move[1], chicken[3]) + prep_from(move[1], pie[6]) + prep_to(pie[6], apple[9]) + !rcmodIndicatesSameReferenceSet(to) -> _obj(move[1], chicken[3]) + prep_from(move[1], pie[6]) + prep_to(move[1], apple[9])
 				NOT: Move the chicken from the car that is near the apple.
 				--></example>
 				<paramDepRel mode="redistribute">
@@ -2758,7 +2758,7 @@
 				<!-- #ifdefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_ACTION_TYPES -->
 				<!-- <option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="of" relationArrayTestSize="1" relationTestIsNegative="true" /> -->
 				<!-- #else -->
-				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy" relationArrayTestSize="2" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy|read|write" relationArrayTestSize="4" />
 				<!-- #endif -->
 				<!-- #ifdefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_CONDITION_TYPES -->
 				<!-- changed 2j7a -->
@@ -2773,13 +2773,30 @@
 				<option useRedistributeSpecialCaseRcmodIndicatesSameReferenceSetNotTest="true" REL="3" />	<!-- added 2j7a -->
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
 				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="3" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="3" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+				</paramDepRel>
+				
+				<!-- added 2k8a -->
+				<example><!--
+				eg1 read the countries from a file called countries.xml to the company. _obj(read[1], country[3]) + prep_from(read[1], file[6]) + _appo(file[6], countries.xml[8]) + nmod:to(countries.xml-8, company-11) -> _obj(read[1], country[3]) + prep_from(read[1], file[6]) + nmod:to(read[1], company-11)
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="4" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_obj" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="read|write" relationArrayTestSize="2" />
+				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="from" relationArrayTestSize="1" />
+				<option useRelationArrayTest="true" REL="3" REL_ENT="3" relationArrayTest="_appo" relationArrayTestSize="1" />
+				<option useRelationArrayTest="true" REL="4" REL_ENT="3" relationArrayTest="to" relationArrayTestSize="1" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="4" relationIndexTestEntityID="1" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="4" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 				</paramDepRel>
 				
 				<!-- #ifdefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_CONDITION_TYPES -->
 				<!-- added 2j7a -->
 				<example><!--
-				eg1 Move the chicken near the pie to the apple _obj(Move-1, chicken-3) + prep_near(chicken-3, pie-6) + prep_to(pie-6, apple-9) + !rcmodIndicatesSameReferenceSet(near) -> _obj(move[1], chicken[3]) + prep_near(chicken[1], pie[6]) + prep_to(chicken[1], apple[9])	[assign !sameReferenceSet]
+				eg1 Move the chicken near the pie to the apple _obj(Move-1, chicken-3) + prep_near(chicken-3, pie-6) + prep_to(pie-6, apple-9) + !rcmodIndicatesSameReferenceSet(near) -> _obj(move[1], chicken[3]) + prep_near(chicken[1], pie[6]) + prep_to(chicken[1], apple[9])
 				NOT: Move the bike that is near the car. 
 				--></example>
 				<paramDepRel mode="redistribute">
@@ -2788,11 +2805,10 @@
 				<!-- #ifdefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_ACTION_TYPES -->
 				<!-- <option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="of" relationArrayTestSize="1" relationTestIsNegative="true" /> -->
 				<!-- #else -->
-				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy" relationArrayTestSize="2" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy|read|write" relationArrayTestSize="4" />
 				<!-- #endif -->
 				<option expectToFindPrepositionTest="true" REL="2" />
 				<option expectToFindPrepositionTest="true" REL="3" />
-				<!-- #endif -->
 				<option useRedistributeSpecialCaseRcmodIndicatesSameReferenceSetNotTest="true" REL="3" />	<!-- added 2j7a -->
 				<option useRelationIndexTest="true" REL="1" REL_ENT="2" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
 				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
