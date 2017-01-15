@@ -458,7 +458,7 @@ public:
 	int NLClogicalConditionConjunctionIndex;
 	bool NLCcontextGenerated;		//added NLC 1g14b/15-July-2014
 	string NLCoriginalNumericalVariableName;	//added NLC 1h1d/24-July-2014
-	bool NLCcontextGeneratedTemp;		//added NLC 1k19d/31-October-2014
+	bool NLCcontextGeneratedTemp;		//added NLC 1l2d/31-October-2014
 	#endif
 };
 
