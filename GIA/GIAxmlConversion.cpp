@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1e 12-September-2016
+ * Project Version: 2n1f 12-September-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -325,7 +325,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 
 	bool conditionTypeFound = false;
 
-	bool hasAssociatedSubstanceFound = false;
+	bool hasAssociatedInstanceFound = false;
 	bool hasAssociatedTimeFound = false;
 	bool negativeFound = false;
 	bool disabledFound = false;
@@ -432,19 +432,19 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 		{
 			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->hasAssociatedInstance = attributeValue;
-			hasAssociatedSubstanceFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedTime)
-		{
-			bool attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->hasAssociatedTime = attributeValue;
-			hasAssociatedTimeFound = true;
+			hasAssociatedInstanceFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isActionConcept)
 		{
 			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->isActionConcept = attributeValue;
 			isActionConceptFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedTime)
+		{
+			bool attributeValue = convertStringToInt(currentAttribute->value);
+			entityNode->hasAssociatedTime = attributeValue;
+			hasAssociatedTimeFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_negative)
 		{
@@ -1132,16 +1132,16 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentAttribute->value = convertIntToString(currentEntity->entityType);
 	currentAttribute = createNewAttribute(currentAttribute);
 
+	currentAttribute->name = NET_XML_ATTRIBUTE_isActionConcept;
+	currentAttribute->value = convertIntToString(int(currentEntity->isActionConcept));
+	currentAttribute = createNewAttribute(currentAttribute);
+
 	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedInstance;
 	currentAttribute->value = convertIntToString(int(currentEntity->hasAssociatedInstance));
 	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedTime;
 	currentAttribute->value = convertIntToString(int(currentEntity->hasAssociatedTime));
-	currentAttribute = createNewAttribute(currentAttribute);
-
-	currentAttribute->name = NET_XML_ATTRIBUTE_isActionConcept;
-	currentAttribute->value = convertIntToString(int(currentEntity->isActionConcept));
 	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_negative;

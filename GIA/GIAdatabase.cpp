@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1e 12-September-2016
+ * Project Version: 2n1f 12-September-2016
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -1049,7 +1049,7 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 
 	/*
 	Format:
-	idActiveList,entityName,confidence,isNetworkIndex,isSubstance,isAction,isCondition,hasAssociatedInstance,hasAssociatedTime,isSubstanceQuality,isConcept,disabled,conditionType,grammaticalNumber,hasQuantity,quantityNumber,quantityNumberString,quantityModifier,quantityModifierString,hasQuantityMultiplier,hasMeasure,measureType
+	idActiveList,entityName,wordOrig,confidence,entityType,hasAssociatedInstance,hasAssociatedTime,disabled,conditionType,grammaticalNumber,hasQuantity,quantityNumber,quantityNumberString,quantityModifier,quantityModifierString,hasQuantityMultiplier,hasMeasure,measureType
 	//format derived from GIA XML file
 	*/
 
@@ -1381,7 +1381,7 @@ void DBwriteEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 	#endif
 	/*
 	Format:
-	idActiveList,entityName,confidence,isNetworkIndex,isSubstance,isAction,isCondition,hasAssociatedInstance,hasAssociatedTime,isSubstanceQuality,isConcept,disabled,conditionType,grammaticalNumber,hasQuantity,quantityNumber,quantityNumberString,quantityModifier,quantityModifierString,hasQuantityMultiplier,hasMeasure,measureType
+	idActiveList,entityName,confidence,entityType,hasAssociatedInstance,hasAssociatedTime,disabled,conditionType,grammaticalNumber,hasQuantity,quantityNumber,quantityNumberString,quantityModifier,quantityModifierString,hasQuantityMultiplier,hasMeasure,measureType
 	//format derived from GIA XML file
 	*/
 
@@ -1433,7 +1433,7 @@ void DBwriteEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 			quantityModifierString = quantityModifierString.substr(0, GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_STRING_MAX_LENGTH-1);
 		}
 
-		fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, entityName.c_str(), wordOrig.c_str(), aliasesString.c_str(), entity->confidence, int(entity->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX), int(entity->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE), int(entity->entityType == GIA_ENTITY_TYPE_TYPE_ACTION), int(entity->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION), int(entity->hasAssociatedInstance), int(entity->hasAssociatedTime), int(entity->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY), int(entity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), entity->quantityNumber, quantityNumberString.c_str(), entity->quantityModifier, quantityModifierString.c_str(), int(entity->hasQuantityMultiplier), int(entity->hasMeasure), entity->measureType);
+		fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, entityName.c_str(), wordOrig.c_str(), aliasesString.c_str(), entity->confidence, entity->entityType, int(entity->hasAssociatedInstance), int(entity->hasAssociatedTime), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), entity->quantityNumber, quantityNumberString.c_str(), entity->quantityModifier, quantityModifierString.c_str(), int(entity->hasQuantityMultiplier), int(entity->hasMeasure), entity->measureType);
 		//fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str());
 		fclose(pFile);
 	}
