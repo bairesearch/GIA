@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammarAndReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i10a 12-Apr-2012
+ * Project Version: 1i10c 12-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1351,7 +1351,7 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 
 void redistributeStanfordRelationsNSubjAndPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
 {
-	//look for nsubj/prep combination, eg nsubj(next-4, garage-2) / prep_to(next-4, house-7)	=> prep_next_to
+	//look for nsubj/prep combination, eg nsubj(next-4, garage-2) / prep_to(next-4, house-7)	=> prep_subj(next_to, house) / prep_subj(next_to, garage) 
 	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1512,12 +1512,12 @@ void redistributeStanfordRelationsGenerateUnparsedQuantityModifers(Sentence * cu
 
 void redistributeStanfordRelationsGenerateMeasures(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
-	//eg1	years old - npadvmod(old, years) / _measure_time(old[7], years[6])		   {IRRELEVANT years: <NER>NUMBER</NER>} + old: <NER>DURATION</NER>
-	//eg2	meters away - _measure_distance(away[6], meter[5]) / npadvmod(away-6, meters-5) 
-	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
+		//eg1	years old - npadvmod(old, years) -> _measure_time(old[7], years[6])		   {IRRELEVANT years: <NER>NUMBER</NER>} + old: <NER>DURATION</NER>
+		//eg2	meters away - npadvmod(away-6, meters-5) -> _measure_distance(away[6], meter[5])  
+	
 		if(currentRelationInList->relationType == RELATION_TYPE_NOUNPHRASEASADVERBIALMODIFIER)
 		{
 			//cout << "RELATION_TYPE_NOUNPHRASEASADVERBIALMODIFIER" << endl;
@@ -1538,6 +1538,25 @@ void redistributeStanfordRelationsGenerateMeasures(Sentence * currentSentenceInL
 				currentRelationInList->relationType = RELATION_TYPE_MEASURE_UNKNOWN;
 			}
 		}
+		
+		//eg3 dep(times-4, day-6) -> measure_dependency(times-4, day-6)			{Relex: _measure_per(times[4], day[6])}
+			
+		if(currentRelationInList->relationType == RELATION_TYPE_DEPENDENT)
+		{
+			//cout << "RELATION_TYPE_DEPENDENT" << endl;
+
+			GIAEntityNode * governerEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
+			GIAEntityNode * dependentEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+			
+			if(dependentEntity->NERTemp == FEATURE_NER_DURATION)
+			{
+				currentRelationInList->relationType = RELATION_TYPE_MEASURE_DEPENDENCY_UNKNOWN;
+			}
+			else
+			{
+				//do nothing
+			}			
+		}		
 					
 		currentRelationInList = currentRelationInList->next;
 	}

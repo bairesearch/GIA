@@ -3,7 +3,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i10a 12-Apr-2012
+ * Project Version: 1i10c 12-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -743,28 +743,36 @@ void extractMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntity
 	{	
 		//cout << "here1" << endl;
 		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-		bool pass = false;
+		bool measureFound = false;
 		int measureTypeIndex = MEASURE_TYPE_UNDEFINED;
 		for(int i=0; i<RELATION_TYPE_MEASURE_NUMBER_OF_TYPES; i++)
 		{
 			if(currentRelationInList->relationType == relationTypeMeasureNameArray[i])
 			{
 				measureTypeIndex = i;
-				pass = true;
+				measureFound = true;
 			}
 		}																		
-		if(pass)
+		if(measureFound)
 		{
+			bool measureDependencyFound = false;
+			for(int i=0; i<RELATION_TYPE_MEASURE_DEPENDENCY_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypeMeasureDependencyNameArray[i])
+				{
+					measureDependencyFound = true;
+				}
+			}
+				
 			int relationQuantityIndex = 0;
 			int relationMeasureIndex = 0;
-			if(currentRelationInList->relationType == RELATION_TYPE_MEASURE_PER)
+			if(measureDependencyFound)
 			{
 				relationQuantityIndex = currentRelationInList->relationGovernorIndex;
 				relationMeasureIndex = currentRelationInList->relationDependentIndex;			
 			}
 			else
 			{
-
 				relationQuantityIndex = currentRelationInList->relationDependentIndex;
 				relationMeasureIndex = currentRelationInList->relationGovernorIndex;										
 			}
@@ -791,7 +799,7 @@ void extractMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntity
 				long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();				
 				GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
 
-				if(currentRelationInList->relationType == RELATION_TYPE_MEASURE_PER)
+				if(measureDependencyFound)
 				{
 					addOrConnectPropertyConditionToEntity(quantityEntity, measurePropertyEntity, conditionTypeConceptEntity);
 				}
