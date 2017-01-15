@@ -31,20 +31,23 @@ using namespace std;
 
 #define MAX_GIA_TREE_DEPTH (100)
 
-#define GIA_DRAW_CONDITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was red in the original spec	
 #define GIA_DRAW_CONDITION_NODE_COLOUR (DAT_FILE_COLOUR_RED)				//this was red in the original spec	
-#define GIA_DRAW_ACTION_CONNECTION_COLOUR (DAT_FILE_COLOUR_GREEN)			//this was black in the original spec	
-#define GIA_DRAW_ACTION_NODE_COLOUR (DAT_FILE_COLOUR_GREEN)				//this was green in the original spec	
-#define GIA_DRAW_BASICENTITY_CONNECTION_COLOUR (DAT_FILE_COLOUR_BLUE)			//this was black in the original spec
-#define GIA_DRAW_BASICENTITY_NODE_COLOUR (DAT_FILE_COLOUR_BLUE)				//this was blue in the original spec	
-#define GIA_DRAW_PROPERTY_CONNECTION_COLOUR (DAT_FILE_COLOUR_CYAN)			//this was magenta/purple in the original spec	
-#define GIA_DRAW_PROPERTY_NODE_COLOUR (DAT_FILE_COLOUR_CYAN)				//this was cyan(?) in the original spec	
-
+#define GIA_DRAW_CONDITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was red in the original spec	
 #define GIA_DRAW_CONDITION_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_ORANGE)	//colour not defined in original GIA spec	
-//#define GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//Not used	//this was red in the original GIA spec
+//#define GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//Not used	//this was red in the original GIA spec		[uses whatever colour the definition is already, eg cyan for entity property]
 #define GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//this was red in the original spec			
+
+#define GIA_DRAW_ACTION_NODE_COLOUR (DAT_FILE_COLOUR_GREEN)				//this was green in the original spec	
+#define GIA_DRAW_ACTION_SUBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_GREEN)			//this was black in the original spec	
+#define GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_YELLOW)			//this was black in the original spec	
 #define GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_BROWN)		//colour not defined in original GIA spec
 #define GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_BROWN)			//this was dark green to original GIA spec
+
+#define GIA_DRAW_BASICENTITY_CONNECTION_COLOUR (DAT_FILE_COLOUR_BLUE)			//this was black in the original spec
+#define GIA_DRAW_BASICENTITY_NODE_COLOUR (DAT_FILE_COLOUR_BLUE)				//this was blue in the original spec	
+
+#define GIA_DRAW_PROPERTY_CONNECTION_COLOUR (DAT_FILE_COLOUR_CYAN)			//this was magenta/purple in the original spec	
+#define GIA_DRAW_PROPERTY_NODE_COLOUR (DAT_FILE_COLOUR_CYAN)				//this was cyan(?) in the original spec	
 #define GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_MAGENTA)	//colour not defined in original GIA spec	
 #define GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_MAGENTA)		//Not used	//this was cyan(?) in the original spec			
 
@@ -57,34 +60,34 @@ using namespace std;
 #define GIA_DRAW_PROPERTY_NODE_HEIGHT (5)
 #define GIA_DRAW_PROPERTY_NODE_WIDTH (20)
 
-#define DRAW_X_INITIAL_OFFSET (100)
+#define DRAW_X_INITIAL_OFFSET (200)
 #define DRAW_Y_INITIAL_OFFSET (0)
 
 #define DRAW_Y_SPACE_BETWEEN_ENTITIES (0)				//OLD: should really be 1 for initialiseForPrint
-#define DRAW_X_SPACE_BETWEEN_ENTITIES (100)
+#define DRAW_X_SPACE_BETWEEN_ENTITIES (200)
 #define DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE (50)			//OLD: should really be 1 for initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE (0)
 
 #define DRAW_Y_SPACE_BETWEEN_ACTION_NODES (0)
-#define DRAW_X_SPACE_BETWEEN_ACTION_NODES (50)		//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_ACTION_NODES (100)		//should not be used during initialiseForPrint
 #define DRAW_Y_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE (15)
 #define DRAW_X_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE (0)		//should not be used during initialiseForPrint
-#define DRAW_Y_SPACE_BETWEEN_ACTION_DEFINITION_NODES (50)	//should not be used during initialiseForPrint
-#define DRAW_X_SPACE_BETWEEN_ACTION_DEFINITION_NODES (0)	//should not be used during initialiseForPrint
+#define DRAW_Y_SPACE_BETWEEN_ACTION_DEFINITION_NODES (30)	//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_ACTION_DEFINITION_NODES (-50)	//should not be used during initialiseForPrint
 
 #define DRAW_Y_SPACE_BETWEEN_CONDITION_NODES (0)		//should not be used during initialiseForPrint
-#define DRAW_X_SPACE_BETWEEN_CONDITION_NODES (50)		//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_CONDITION_NODES (30)		//should not be used during initialiseForPrint
 #define DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (15)	//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (0)	//should not be used during initialiseForPrint
-#define DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES (15)	//should not be used during initialiseForPrint
-#define DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES (50)	//should not be used during initialiseForPrint
+#define DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES (30)	//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES (-50)	//should not be used during initialiseForPrint
 
 #define DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES (50)			//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_PROPERTY_NODES (0)	
 #define DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE (15)	//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE (0)	//should not be used during initialiseForPrint
 #define DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES (30)	//should not be used during initialiseForPrint
-#define DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES (-25)	//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES (-50)	//should not be used during initialiseForPrint
 
 #define SVG_SCALE_FACTOR (1)
 #define SVG_TEXT_SCALE_FACTOR (5)
