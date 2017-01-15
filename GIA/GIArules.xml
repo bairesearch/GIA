@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c3b 15-January-2014
+ * Project Version: 2c3c 15-January-2014
  *
  *******************************************************************************/
 -->
@@ -2594,7 +2594,9 @@
 				The fish, a carp, swam deeply. _appo(fish[2], carp[5])
 				--></example>
 				<paramDepRel mode="execute">
-				<assert variable="linkPreestablishedReferencesGIA" />
+				<!-- #ifdefGIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA -->
+				<!-- <assert variable="linkPreestablishedReferencesGIA" /> -->
+				<!-- #endif -->
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_appo" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isSubstance" value="true" REL="0" REL_ENT="0" />
@@ -2615,7 +2617,9 @@
 				</paramDepRel>
 
 				<paramDepRel mode="execute">
-				<assert variable="linkPreestablishedReferencesGIA" />
+				<!-- #ifdefGIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA -->
+				<!-- <assert variable="linkPreestablishedReferencesGIA" /> -->
+				<!-- #endif -->
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_appo" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isSubstance" value="true" REL="0" REL_ENT="0" />

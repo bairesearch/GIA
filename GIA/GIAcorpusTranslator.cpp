@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c3b 15-January-2014
+ * Project Version: 2c3c 15-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -466,7 +466,7 @@ void defineSubstancesBasedOnSemanticRelations(Sentence * currentSentenceInList, 
 	#endif
 	defineSubstancesAllNodes(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#else
-	cout << "error: USE_GIA2 currently requires GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS (as it simplifies coding)" 		
+	cout << "error: USE_GIA2 currently requires GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS (as it simplifies coding)";	
 	#endif
 	
 	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS

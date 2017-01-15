@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c3b 15-January-2014
+ * Project Version: 2c3c 15-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -513,6 +513,8 @@
 
 #include "SHAREDglobalDefs.h"
 
+//#define GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA //disabled GIA 2b3c [disabling required for GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN] - CHECKTHIS does not cause problems with alternative test scenarios
+
 #define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS	//GIA 2b4a
 #ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
 	#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER "_"
@@ -528,7 +530,6 @@
 		#else
 			#define GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE 	
 		#endif
-		//#define GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
 	#else
 		//this compilation is for development purposes only:
 		#define GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN 
@@ -537,6 +538,7 @@
 		#endif
 		#define GIA_ADVANCED_REFERENCING_DEBUG_DISABLE_LINKING	//do not link references when generating semantic relation text corpus
 	#endif
+	#define GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
 #endif
 
 #define GIA_IDENTIFY_REFERENCE_SET_CONCEPT_ENTITY_ENTRANCE_DO_NOT_ENTER_ON_AN_ACTION_NODE	//GIA 2a8a	//this update is required for NLC if statement parsing //this update enforces orginal GIA specification: '//an action is considered by default not to be part of the same reference set as its subject/object (eg "the man fires the bow"). An rcmod /"that" is explicitly required for an action to be considered part of the same reference set as its subject/object (eg "the man that fires the bow...")'
