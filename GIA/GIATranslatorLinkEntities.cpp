@@ -3,7 +3,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7c 09-May-2012
+ * Project Version: 1j7f 09-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1277,16 +1277,15 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 
 					//cout << "a" << endl;
 
-					GIAEntityNode * actionOrProperty = actionOrPropertyEntity;
-					if(actionOrPropertyEntity->hasAssociatedInstanceTemp)
+					//this section was completely changed (perhaps fixed) in version 9 May 2012 - test this...
+					if(checkEntityHasPropertyThatWasDeclaredInImmediateContext(actionOrPropertyEntity))		 	//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)	//changed 9 May 2012					
+					//if(checkEntityHasPropertyThatWasDeclaredInContext(actionOrPropertyEntity))		
+					//if(actionOrProperty->PropertyNodeReverseList.size() >= 1)	//OR if(actionOrProperty->hasAssociatedInstance)?	[original before 9 May 2012]
 					{
-						actionOrProperty = actionOrPropertyEntity->AssociatedInstanceNodeList.back();
-					}
-
-					if(actionOrProperty->PropertyNodeReverseList.size() >= 1)	//CHECKTHIS; NB only concerned if it was created in the current context (eg sentence) - how can test this?		
-					{
+						GIAEntityNode * actionOrProperty = getEntityPropertyThatWasDeclaredInImmediateContext(actionOrPropertyEntity);		//added entityAlreadyDeclaredInThisContext condition 9 May 2012
+					
 						//cout << "b" << endl;
-						if(actionOrProperty->PropertyNodeReverseList.back()->isAction)
+						if(actionOrProperty->isAction)
 						{
 							/*
 							NB not in this case "She grew tired of the pie." 
@@ -1465,19 +1464,11 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 		}		
 		//cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl; 
 	
-		//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
-		if(actionOrPropertyEntity->hasAssociatedInstanceTemp)
-		{
-			actionOrPropertyEntity = actionOrPropertyEntity->AssociatedInstanceNodeList.back();	
-		}					
+		//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context		
+		actionOrPropertyEntity = getEntityPropertyThatWasDeclaredInImmediateContext(actionOrPropertyEntity);	//added entityAlreadyDeclaredInThisContext condition 9 May 2012			
 
 		//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
-		if(actionOrPropertyConditionEntity->hasAssociatedInstanceTemp)
-		{
-			//cout << "actionOrPropertyConditionEntity->hasAssociatedInstanceTemp" << endl;
-			actionOrPropertyConditionEntity = actionOrPropertyConditionEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-			//cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl; 
-		}
+		actionOrPropertyConditionEntity = getEntityPropertyThatWasDeclaredInImmediateContext(actionOrPropertyConditionEntity);	//added entityAlreadyDeclaredInThisContext condition 9 May 2012	
 
 		//cout << "createConditionBasedUponPreposition passedPreposition actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;
 		//cout << "createConditionBasedUponPreposition passedPreposition actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
@@ -1527,12 +1518,7 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 	{//required for extractDatesStanfordCoreNLP 
 	
 		//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
-		if(actionOrPropertyConditionEntity->hasAssociatedInstanceTemp)
-		{
-			//cout << "actionOrPropertyConditionEntity->hasAssociatedInstanceTemp" << endl;
-			actionOrPropertyConditionEntity = actionOrPropertyConditionEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-			//cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl; 
-		}
+		actionOrPropertyConditionEntity = getEntityPropertyThatWasDeclaredInImmediateContext(actionOrPropertyConditionEntity);	//added entityAlreadyDeclaredInThisContext condition 9 May 2012	
 				
 		addTimeToProperty(actionOrPropertyConditionEntity);	
 	}

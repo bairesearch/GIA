@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7c 09-May-2012
+ * Project Version: 1j7f 09-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -29,12 +29,14 @@ using namespace std;
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_PARTMOD_DEAL_WITH_PROGRESSIVE_ANOMALY
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP		//working on this now (1j6h)
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION	//added in addition to this; the pre-process of "two word prepositions" eg from http://en.wikipedia.org/wiki/List_of_English_prepositions, or post process (currently implemented)
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION_OLD
 
 
+//#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
 
 #ifndef GIA_STANFORD_CORE_NLP_DO_NOT_USE_CODEPENDENCIES
 	#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
@@ -226,7 +228,7 @@ using namespace std;
 //actions (obj/subj relationships):
 #define RELATION_TYPE_OBJECT "_obj"			//eg eats y	[? be y]
 #define RELATION_TYPE_OBJECT_THAT "_that"		//there is a place that we go
-#define RELATION_TYPE_OBJECT_NUMBER_OF_TYPES (3)
+#define RELATION_TYPE_OBJECT_NUMBER_OF_TYPES (2)
 #define RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES (1)
 #define STANFORD_RELATION_TYPE_OBJECT "dobj"
 #define STANFORD_RELATION_TYPE_INFINITIVAL_MODIFIER "infmod"				//Relex usually generates a plain _obj
@@ -683,7 +685,7 @@ static string relationTypeConjugationNameArray[RELATION_TYPE_CONJUGATION_NUMBER_
 static string relationTypeConjugationBasicNameArray[RELATION_TYPE_CONJUGATION_BASIC_NUMBER_OF_TYPES] = {RELATION_TYPE_CONJUGATION_AND_BASIC, RELATION_TYPE_CONJUGATION_OR_BASIC};
 #endif
 	
-static string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_PARTICIPIAL_MODIFIER, RELATION_TYPE_OBJECT_THAT};
+static string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_THAT};	//removed RELATION_TYPE_PARTICIPIAL_MODIFIER 9 May 2012 (this is now dealt with in GIATranslatorRedistributeStanfordRelations.cpp)
 #ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
 static string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_SUBJECT_EXPLETIVE};
 #else
@@ -870,5 +872,10 @@ void convertRelexPOSTypeToWordnetWordType(string * relexPOStype, int * wordNetPO
 void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, string * relexPOStype, int * wordNetPOS);		
 
 void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArrayTemp[]);	//used for intrafunction memory allocation purposes only
+
+bool checkEntityHasPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7d 9 May 2012
+
+GIAEntityNode * getEntityPropertyThatWasDeclaredInImmediateContext(GIAEntityNode * entityNode);		//immediate textual context (ie, current sentence) 	//added 1j7e 9 May 2012
+bool checkEntityHasPropertyThatWasDeclaredInImmediateContext(GIAEntityNode * entityNode);		//immediate textual context (ie, current sentence) 	//added 1j7e 9 May 2012
 
 #endif

@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7c 09-May-2012
+ * Project Version: 1j7f 09-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific version of shared globals (replace if compiling other projects)
  *
@@ -15,16 +15,18 @@
 #include "SHAREDglobalDefs.h"
 
 //variables currently under attention for testing purposes
-#define WORDNET_SEARCH_RELATED_SYNSETS		//TESTING THIS NOW (1j2b)
+#define WORDNET_SEARCH_RELATED_SYNSETS
 //#define GIA_DISABLE_REFERENCING		//default: off	{this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}
 //#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		//{//this should only be enabled with Relex??} 	//this was (effectively) disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
+#define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
+
+//variables passed testing:
 #ifndef GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS
 	#define FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION 	//added 26 April 2012
 #endif
 #define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 #define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
 //#define GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
-#define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 
 //Debug;
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG

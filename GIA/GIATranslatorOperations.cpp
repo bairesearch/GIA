@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7c 09-May-2012
+ * Project Version: 1j7f 09-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -174,28 +174,10 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 	{	
 	if(!(thingEntity->disabled))
 	{			
-	#endif	
-			
-		if(propertyEntity->entityAlreadyDeclaredInThisContext)
+	#endif			
+		if(checkEntityHasPropertyThatWasDeclaredInContext(propertyEntity))
 		{
-			if(!(propertyEntity->hasAssociatedInstanceTemp))
-			{
-				propertyEntity->hasAssociatedInstanceTemp = true;
-			}	
-			//cout << "1. propertyEntity->entityName = " << propertyEntity->entityName << endl; 
-		}
-
-		if(thingEntity->entityAlreadyDeclaredInThisContext)
-		{
-			if(!(thingEntity->hasAssociatedInstanceTemp))
-			{
-				thingEntity->hasAssociatedInstanceTemp = true;
-			}	
-		}
-
-		if(propertyEntity->hasAssociatedInstanceTemp)
-		{
-			GIAEntityNode * existingProperty  = propertyEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
+			GIAEntityNode * existingProperty = getEntityPropertyThatWasDeclaredInImmediateContext(propertyEntity);	//added 4 May 11a
 
 			/*
 			if(propertyEntity->hasQualityTemp)
@@ -204,10 +186,7 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 			}
 			*/
 
-			if(thingEntity->hasAssociatedInstanceTemp)
-			{		
-				thingEntity = thingEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-			}
+			thingEntity = getEntityPropertyThatWasDeclaredInImmediateContext(thingEntity);	//added 4 May 11a
 
 			//configure entity node containing this property
 			thingEntity->PropertyNodeList.push_back(existingProperty);	
@@ -220,13 +199,7 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 		}
 		else
 		{
-			if(thingEntity->hasAssociatedInstanceTemp)
-			{	
-				//cout << "thingEntity = " << thingEntity->entityName << endl;
-				//cout << "propertyEntity = " << propertyEntity->entityName << endl;
-
-				thingEntity = thingEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-			}
+			thingEntity = getEntityPropertyThatWasDeclaredInImmediateContext(thingEntity);	//added 4 May 11a
 
 			//cout << "thingEntity = " << thingEntity->entityName << endl;
 
@@ -265,19 +238,11 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 
 		GIAEntityNode * newOrExistingProperty;
 
-		if(propertyEntity->entityAlreadyDeclaredInThisContext)
-		{
-			if(!(propertyEntity->hasAssociatedInstanceTemp))
-			{
-				propertyEntity->hasAssociatedInstanceTemp = true;
-			}	
-		}
-
-		if(propertyEntity->hasAssociatedInstanceTemp)
+		if(checkEntityHasPropertyThatWasDeclaredInContext(propertyEntity))
 		{	
-			//cout << "break; propertyEntity->entityName = " << propertyEntity->entityName << endl;
-			GIAEntityNode * newOrExistingProperty = propertyEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-
+			propertyEntity->hasAssociatedInstanceTemp = true;		//added 9 May 2012
+			//cout << "\tbreak; propertyEntity->entityName = " << propertyEntity->entityName << endl;
+			GIAEntityNode * newOrExistingProperty = getEntityPropertyThatWasDeclaredInImmediateContext(propertyEntity);		//added 4 May 11a
 		}
 		else
 		{	
@@ -362,19 +327,10 @@ GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity)
 	{				
 	#endif
 
-		if(actionEntity->entityAlreadyDeclaredInThisContext)
-		{//CHECK THIS; need to convert to action node here also? ie hasAssociatedInstanceIsAction->true? [must look at generated semanticNet.xml and see if any propertyNodeContainers contain action nodes..., or if any actionNodeContainers do not contain property nodes...]
-			if(!(actionEntity->hasAssociatedInstanceTemp))
-			{	
-				//cout << "actionEntity->entityAlreadyDeclaredInThisContext as a property:" << actionEntity->entityName << endl;
-				actionEntity->hasAssociatedInstanceTemp = true;
-			}
-		}
-
 		//configure action node	
-		if(actionEntity->hasAssociatedInstanceTemp)
+		if(checkEntityHasPropertyThatWasDeclaredInContext(actionEntity))
 		{
-			newOrExistingAction = actionEntity->AssociatedInstanceNodeList.back();	
+			newOrExistingAction = getEntityPropertyThatWasDeclaredInImmediateContext(actionEntity);	
 
 			if(actionEntity->hasAssociatedInstanceIsAction == false)
 			{//upgrade associated property to action
@@ -559,17 +515,8 @@ void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definiti
 	{					
 	#endif
 			
-		if(thingEntity->hasAssociatedInstanceTemp)
-		{
-			//cout << "thingEntity = thingEntity->AssociatedInstanceNodeList.back()" << endl;
-			thingEntity = thingEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-		}
-
-		if(definitionEntity->hasAssociatedInstanceTemp)
-		{
-			//cout << "definitionEntity = definitionEntity->AssociatedInstanceNodeList.back()" << endl;
-			definitionEntity = definitionEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-		}
+		thingEntity = getEntityPropertyThatWasDeclaredInImmediateContext(thingEntity);
+		definitionEntity = getEntityPropertyThatWasDeclaredInImmediateContext(definitionEntity);
 
 		//configure entity node
 		thingEntity->EntityNodeDefinitionList.push_back(definitionEntity);
@@ -613,11 +560,8 @@ void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEnti
 
 void addActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingAction)
 {		
-	if(subjectEntity->hasAssociatedInstanceTemp)
-	{
-		subjectEntity = subjectEntity->AssociatedInstanceNodeList.back();
-	}
-	
+	subjectEntity = getEntityPropertyThatWasDeclaredInImmediateContext(subjectEntity);
+
 	//configure subject entity node
 	subjectEntity->ActionNodeList.push_back(newOrExistingAction);
 	
@@ -646,11 +590,8 @@ void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEnt
 }
 
 void addActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction)
-{		
-	if(objectEntity->hasAssociatedInstanceTemp)
-	{
-		objectEntity = objectEntity->AssociatedInstanceNodeList.back();
-	}
+{	
+	objectEntity = getEntityPropertyThatWasDeclaredInImmediateContext(objectEntity);
 		
 	//configure object entity node
 	objectEntity->IncomingActionNodeList.push_back(newOrExistingAction);
@@ -691,14 +632,9 @@ void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntity
 	{					
 	#endif
 	
-		if(entityNode->hasAssociatedInstanceTemp)
-		{
-			entityNode = entityNode->AssociatedInstanceNodeList.back();
-		}
-		if(conditionEntityNode->hasAssociatedInstanceTemp)
-		{
-			conditionEntityNode = conditionEntityNode->AssociatedInstanceNodeList.back();
-		}										
+		entityNode = getEntityPropertyThatWasDeclaredInImmediateContext(entityNode);
+		conditionEntityNode = getEntityPropertyThatWasDeclaredInImmediateContext(conditionEntityNode);
+												
 		addConditionToProperty(entityNode, conditionEntityNode, conditionTypeConceptEntity);
 		
 	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
@@ -719,14 +655,8 @@ void addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GI
 	{					
 	#endif
 	
-		if(entityNode->hasAssociatedInstanceTemp)
-		{
-			entityNode = entityNode->AssociatedInstanceNodeList.back();
-		}
-		if(conditionDefinitionNode->hasAssociatedInstanceTemp)
-		{
-			conditionDefinitionNode = conditionDefinitionNode->AssociatedInstanceNodeList.back();
-		}
+		entityNode = getEntityPropertyThatWasDeclaredInImmediateContext(entityNode);
+		conditionDefinitionNode = getEntityPropertyThatWasDeclaredInImmediateContext(conditionDefinitionNode);
 
 		GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
 		newCondition->negative = negative;	//overwrite negative with orrect one from context; ie that from "being" entity node
@@ -756,14 +686,8 @@ void addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIA
 	{					
 	#endif
 	
-		if(entityNode->hasAssociatedInstanceTemp)
-		{
-			entityNode = entityNode->AssociatedInstanceNodeList.back();
-		}
-		if(conditionPropertyNode->hasAssociatedInstanceTemp)
-		{
-			conditionPropertyNode = conditionPropertyNode->AssociatedInstanceNodeList.back();
-		}	
+		entityNode = getEntityPropertyThatWasDeclaredInImmediateContext(entityNode);
+		conditionPropertyNode = getEntityPropertyThatWasDeclaredInImmediateContext(conditionPropertyNode);	
 
 		GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
 		newCondition->negative = negative;	//overwrite negative with correct one from context; ie that from "having" entity node
@@ -830,6 +754,8 @@ GIAEntityNode * addCondition(GIAEntityNode * conditionEntity)
 	conditionEntity->hasAssociatedInstanceTemp = true;
 	newCondition->isCondition = true;
 	newCondition->negative = conditionEntity->negative;
+	
+	conditionEntity->entityAlreadyDeclaredInThisContext = true;	//added 9 May 2012
 	
 	return newCondition;	
 }
@@ -1038,7 +964,7 @@ void disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAEntityNo
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 	entity->disabled = true;
 	
-	if(entity->hasAssociatedInstanceTemp)	//CHECKTHIS; only disable the instance if it was created in the current context (eg sentence)
+	if(entity->hasAssociatedInstanceTemp)	//CHECKTHIS; only disable the instance if it was created in the immediate context (eg sentence)
 	//if(entity->AssociatedInstanceNodeList.size() >= 1)
 	{	
 		//cout << "entity->AssociatedInstanceNodeList.back()->disabled = " << entity->AssociatedInstanceNodeList.back()->entityName << endl;	
@@ -1084,7 +1010,7 @@ void disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAEntityNo
 	}
 	entity->disabled = true;
 	
-	if(entity->hasAssociatedInstanceTemp)	//CHECKTHIS; only disable the instance if it was created in the current context (eg sentence)
+	if(entity->hasAssociatedInstanceTemp)	//CHECKTHIS; only disable the instance if it was created in the immediate context (eg sentence)
 	//if(entity->AssociatedInstanceNodeList.size() >= 1)
 	{	
 		//cout << "entity->AssociatedInstanceNodeList.back()->disabled = " << entity->AssociatedInstanceNodeList.back()->entityName << endl;	
@@ -1207,5 +1133,46 @@ void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArr
 	}
 	*/
 }
+
+
+bool checkEntityHasPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode)
+{
+	bool result = false;
+
+	if(entityNode->entityAlreadyDeclaredInThisContext)
+	{
+		result = true;	
+	}
+	
+	return result;
+}
+
+GIAEntityNode * getEntityPropertyThatWasDeclaredInImmediateContext(GIAEntityNode * entityNode)
+{
+	GIAEntityNode * entityNodeAssociatedInstance = entityNode;
+	
+	if(entityNode->hasAssociatedInstanceTemp)
+	{
+		entityNodeAssociatedInstance = entityNode->AssociatedInstanceNodeList.back();
+	}
+	
+	return entityNodeAssociatedInstance;
+}
+
+bool checkEntityHasPropertyThatWasDeclaredInImmediateContext(GIAEntityNode * entityNode)
+{
+	bool result = false;
+
+	if(entityNode->hasAssociatedInstanceTemp)
+	{
+		result = true;	
+	}
+	
+	return result;
+}
+
+
+
+
 
 

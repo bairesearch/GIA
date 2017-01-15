@@ -3,7 +3,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7c 09-May-2012
+ * Project Version: 1j7f 09-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -53,8 +53,7 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntit
 					//cout << "currentEntity->entityName = " << currentEntity->entityName << endl;
 				
 					GIAEntityNode * timeEntity = currentEntity;
-					if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was created in the current context (eg sentence)
-					//if(timeEntity->AssociatedInstanceNodeList.size() >= 1)
+					if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)
 					{
 						timeEntity = timeEntity->AssociatedInstanceNodeList.back();
 					}
@@ -115,8 +114,7 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 			if(currentEntity->hasAssociatedTime)
 			{
 				GIAEntityNode * timeEntity = currentEntity;
-				if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was created in the current context (eg sentence)
-				//if(timeEntity->AssociatedInstanceNodeList.size() >= 1)
+				if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)
 				{
 					timeEntity = timeEntity->AssociatedInstanceNodeList.back();
 				}
@@ -194,8 +192,7 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 						if(currentEntity->hasAssociatedTime)
 						{	
 							GIAEntityNode * timeEntity = currentEntity;			
-							if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was created in the current context (eg sentence)
-							//if(timeEntity->AssociatedInstanceNodeList.size() >= 1)
+							if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)
 							{
 								timeEntity = timeEntity->AssociatedInstanceNodeList.back();
 							}
@@ -288,8 +285,7 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 			if(currentEntity->hasAssociatedTime)
 			{
 				GIAEntityNode * timeEntity = currentEntity;			
-				if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was created in the current context (eg sentence)
-				//if(timeEntity->AssociatedInstanceNodeList.size() >= 1)
+				if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)
 				{
 					timeEntity = timeEntity->AssociatedInstanceNodeList.back();
 				}
@@ -383,8 +379,8 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, GIAEntit
 
 				if(quantityEntity->NERTemp != FEATURE_NER_DATE)		//do not assume quantity entities when dealing with Stanford Dates (as they have already been parsed).	//OLD: if(!(quantityEntity->hasAssociatedTime))  [NO because must support times, eg The operation happened at 3:30pm. num(pm-6, 3:30-5)prep_at(happened-3, pm-6)]
 				{
-					if(quantityEntity->AssociatedInstanceNodeList.size() >= 1)
-					//if(quantityEntity->AssociatedInstanceNodeList.back() != NULL) - this is dangerous/impossible to use; it will not return NULL if pop_back() has been executed on the vector				
+					if(quantityEntity->hasAssociatedInstanceTemp)		//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)		//changed 9 May 2012
+					//if(quantityEntity->AssociatedInstanceNodeList.size() >= 1)	//OR if(quantityEntity->hasAssociatedInstance)?		
 					{
 						GIAEntityNode * quantityProperty = quantityEntity->AssociatedInstanceNodeList.back();
 						quantityProperty->hasQuantity = true;
@@ -495,8 +491,8 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, GIAEntit
 					if(!(currentEntity->hasAssociatedTime))
 					{//do not assume quantity entities when dealing with Stanford Dates, eg num(March-5, 11th-6)  / num(March-5, 1973-8)
 
-						if(currentEntity->AssociatedInstanceNodeList.size() >= 1)
-						//if(quantityEntity->AssociatedInstanceNodeList.back() != NULL) - this is dangerous/impossible to use; it will not return NULL if pop_back() has been executed on the vector				
+						if(currentEntity->hasAssociatedInstanceTemp)		//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)		//changed 9 May 2012
+						//if(currentEntity->AssociatedInstanceNodeList.size() >= 1)	//OR if(currentEntity->hasAssociatedInstance)?
 						{
 							GIAEntityNode * quantityProperty = currentEntity->AssociatedInstanceNodeList.back();
 							quantityProperty->hasQuantity = true;
@@ -541,8 +537,9 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, GIAEntityNode * GI
 				if(!(quantityEntity->hasAssociatedTime))
 				{//do not assume quantity entities when dealing with Stanford Dates, eg num(March-5, 11th-6)  / num(March-5, 1973-8)
 				*/
-					if(quantityEntity->AssociatedInstanceNodeList.size() >= 1)
-					//if(quantityEntity->AssociatedInstanceNodeList.back() != NULL) - this is dangerous/impossible to use; it will not return NULL if pop_back() has been executed on the vector				
+				
+					if(quantityEntity->hasAssociatedInstanceTemp)		//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)		//changed 9 May 2012			
+					//if(quantityEntity->AssociatedInstanceNodeList.size() >= 1)	//OR if(quantityEntity->hasAssociatedInstance)?
 					{
 						GIAEntityNode * quantityProperty = quantityEntity->AssociatedInstanceNodeList.back();
 						quantityProperty->hasQuantity = true;
@@ -768,8 +765,9 @@ void extractMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntity
 
 				GIAEntityNode * measureEntity = GIAEntityNodeArray[relationMeasureIndex];
 				GIAEntityNode * quantityEntity = GIAEntityNodeArray[relationQuantityIndex];
-				if(measureEntity->AssociatedInstanceNodeList.size() >= 1)
-				//if(measureEntity->AssociatedInstanceNodeList.back() != NULL) - this is dangerous/impossible to use; it will not return NULL if pop_back() has been executed on the vector
+				
+				if(measureEntity->hasAssociatedInstanceTemp)		//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)			//changed 9 May 2012					
+				//if(measureEntity->AssociatedInstanceNodeList.size() >= 1)	//OR if(measureEntity->hasAssociatedInstance)?
 				{
 					GIAEntityNode * measurePropertyEntity = measureEntity->AssociatedInstanceNodeList.back();
 					measurePropertyEntity->hasMeasure = true;
@@ -841,8 +839,8 @@ void extractQualities(Sentence * currentSentenceInList, GIAEntityNode * GIAEntit
 					GIAEntityNode * thingEntity = GIAEntityNodeArray[relationGovernorIndex];
 					GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
 
-					if(propertyEntity->AssociatedInstanceNodeList.size() >= 1)
-					//if(propertyEntity->AssociatedInstanceNodeList.back() != NULL) - this is dangerous/impossible to use; it will not return NULL if pop_back() has been executed on the vector
+					if(propertyEntity->hasAssociatedInstanceTemp)		//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)		//changed 9 May 2012							
+					//if(propertyEntity->AssociatedInstanceNodeList.size() >= 1)	//OR if(propertyEntity->hasAssociatedInstance)?
 					{
 						GIAEntityNode * qualityPropertyEntity = propertyEntity->AssociatedInstanceNodeList.back();
 						qualityPropertyEntity->hasQuality = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]	
@@ -993,20 +991,12 @@ void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode
 				//cout << "as1" << endl;
 
 				//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
-				if(actionOrPropertyEntity->hasAssociatedInstanceTemp)
-				{
-					actionOrPropertyEntity = actionOrPropertyEntity->AssociatedInstanceNodeList.back();	
-				}		
+				actionOrPropertyEntity = getEntityPropertyThatWasDeclaredInImmediateContext(actionOrPropertyEntity);	
 
 				//cout << "as2" << endl;		
 
 				//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
-				if(actionOrPropertyConditionEntity->hasAssociatedInstanceTemp)
-				{
-					//cout << "actionOrPropertyConditionEntity->hasAssociatedInstanceTemp" << endl;
-					actionOrPropertyConditionEntity = actionOrPropertyConditionEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-					//cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl; 
-				}
+				actionOrPropertyConditionEntity = getEntityPropertyThatWasDeclaredInImmediateContext(actionOrPropertyConditionEntity);	
 
 				//cout << "as3" << endl;
 

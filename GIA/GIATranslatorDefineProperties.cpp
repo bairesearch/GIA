@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineProperties.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7c 09-May-2012
+ * Project Version: 1j7f 09-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -120,7 +120,6 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 									GIAEntityNodeArray[currentRelationInList2->relationDependentIndex] = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
 									GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->negative = true;
 									currentRelationInList->disabled = true;
-
 								}
 							}
 						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -139,7 +138,7 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 #endif
 
 void definePropertiesObjectsAndSubjectsWithProperties(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
-{
+{		
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{	
 		if(GIAEntityNodeArrayFilled[i])
@@ -199,8 +198,10 @@ void definePropertiesNounsWithDeterminates(bool GIAEntityNodeArrayFilled[], GIAE
 						}
 						if(passed)
 						{
+							//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;
 							//cout << "as1" << endl;
 							addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
+							//cout << "as2" << endl;
 						}
 					}
 				}
