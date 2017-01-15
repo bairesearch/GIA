@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r10b 28-November-2012
+ * Project Version: 1r10c 28-November-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -1067,7 +1067,7 @@ void DBreadEntityNodeFile(string * entityFileName, GIAentityNode* entity)
 
 	/*
 	Format:
-	idActiveList,entityName,confidence,isConcept,isSubstance,isAction,isCondition,hasAssociatedInstance,hasAssociatedInstanceIsAction,hasAssociatedSubstanceIsCondition,hasAssociatedTime,isSubstanceQuality,isSubstanceConcept,disabled,conditionType,grammaticalNumber,hasQuantity,hasMeasure
+	idActiveList,entityName,confidence,isConcept,isSubstance,isAction,isCondition,hasAssociatedInstance,hasAssociatedInstanceIsAction,hasAssociatedSubstanceIsCondition,hasAssociatedTime,isSubstanceQuality,isSubstanceConcept,disabled,conditionType,grammaticalNumber,hasQuantity,quantityNumber,quantityNumberString,quantityModifier,quantityModifierString,hasQuantityMultiplier,hasMeasure,measureType
 	//format derived from GIA XML file
 	*/
 
@@ -1085,6 +1085,9 @@ void DBreadEntityNodeFile(string * entityFileName, GIAentityNode* entity)
 	{
 		//these need to be converted back to booleans
 
+		char entityNameCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
+		char wordOrigCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
+		char aliasesCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
 		int isConcept;
 		int isSubstance;
 		int isAction;
@@ -1099,12 +1102,12 @@ void DBreadEntityNodeFile(string * entityFileName, GIAentityNode* entity)
 		//int conditionType;
 		//int grammaticalNumber;
 		int hasQuantity;
+		char quantityNumberStringCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
+		char quantityModifierStringCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
+		int hasQuantityMultiplier;
 		int hasMeasure;
-
-		char entityNameCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
-		char wordOrigCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
-		char aliasesCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
-		int result = fscanf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_READ, &(entity->idActiveList), entityNameCharStarTemp, wordOrigCharStarTemp, aliasesCharStarTemp, &(entity->confidence), &isConcept, &isSubstance, &isAction, &isCondition, &hasAssociatedInstance, &hasAssociatedInstanceIsAction, &hasAssociatedInstanceIsCondition, &hasAssociatedTime, &isSubstanceQuality, &isSubstanceConcept, &disabled, &(entity->conditionType), &(entity->grammaticalNumber), &hasQuantity, &hasMeasure);
+		
+		int result = fscanf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_READ, &(entity->idActiveList), entityNameCharStarTemp, wordOrigCharStarTemp, aliasesCharStarTemp, &(entity->confidence), &isConcept, &isSubstance, &isAction, &isCondition, &hasAssociatedInstance, &hasAssociatedInstanceIsAction, &hasAssociatedInstanceIsCondition, &hasAssociatedTime, &isSubstanceQuality, &isSubstanceConcept, &disabled, &(entity->conditionType), &(entity->grammaticalNumber), &hasQuantity, &(entity->quantityNumber), quantityNumberStringCharStarTemp, &(entity->quantityModifier), quantityModifierStringCharStarTemp, &hasQuantityMultiplier, &hasMeasure, &(entity->measureType));
 		if(result > 0)	//&& (result != EOF)
 		{
 			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
@@ -1151,6 +1154,9 @@ void DBreadEntityNodeFile(string * entityFileName, GIAentityNode* entity)
 			//entity->conditionType = conditionType;
 			//entity->grammaticalNumber = grammaticalNumber;
 			entity->hasQuantity = bool(hasQuantity);
+			entity->quantityNumberString = DBreplaceBlankString(string(quantityNumberStringCharStarTemp));
+			entity->quantityModifierString = DBreplaceBlankString(string(quantityModifierStringCharStarTemp));
+			entity->hasQuantityMultiplier = bool(hasQuantityMultiplier);			
 			entity->hasMeasure = bool(hasMeasure);
 
 			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
@@ -1172,7 +1178,14 @@ void DBreadEntityNodeFile(string * entityFileName, GIAentityNode* entity)
 			cout << "\tDBreadEntityNodeFile(): entity->conditionType = " << entity->conditionType << endl;
 			cout << "\tDBreadEntityNodeFile(): entity->grammaticalNumber = " << entity->grammaticalNumber << endl;
 			cout << "\tDBreadEntityNodeFile(): entity->hasQuantity = " << int(entity->hasQuantity) << endl;
+			cout << "\tDBreadEntityNodeFile(): entity->quantityNumber = " << int(entity->quantityNumber) << endl;
+			cout << "\tDBreadEntityNodeFile(): entity->quantityNumberString = " << entity->quantityNumberString) << endl;
+			cout << "\tDBreadEntityNodeFile(): entity->quantityModifier = " << entity->quantityModifier << endl;
+			cout << "\tDBreadEntityNodeFile(): entity->quantityModifierString = " << entity->quantityModifierString << endl;
+			cout << "\tDBreadEntityNodeFile(): entity->hasQuantity = " << int(entity->hasQuantity) << endl;
+			cout << "\tDBreadEntityNodeFile(): entity->hasQuantityMultiplier = " << int(entity->hasQuantityMultiplier) << endl;			
 			cout << "\tDBreadEntityNodeFile(): entity->hasMeasure = " << int(entity->hasMeasure) << endl;
+			cout << "\tDBreadEntityNodeFile(): entity->measureType = " << entity->measureType << endl;
 			*/
 			#endif
 		}
@@ -1400,7 +1413,7 @@ void DBwriteEntityNodeFile(string * entityFileName, GIAentityNode* entity)
 	#endif
 	/*
 	Format:
-	idActiveList,entityName,confidence,isConcept,isSubstance,isAction,isCondition,hasAssociatedInstance,hasAssociatedInstanceIsAction,hasAssociatedSubstanceIsCondition,hasAssociatedTime,isSubstanceQuality,isSubstanceConcept,disabled,conditionType,grammaticalNumber,hasQuantity,hasMeasure
+	idActiveList,entityName,confidence,isConcept,isSubstance,isAction,isCondition,hasAssociatedInstance,hasAssociatedInstanceIsAction,hasAssociatedSubstanceIsCondition,hasAssociatedTime,isSubstanceQuality,isSubstanceConcept,disabled,conditionType,grammaticalNumber,hasQuantity,quantityNumber,quantityNumberString,quantityModifier,quantityModifierString,hasQuantityMultiplier,hasMeasure,measureType
 	//format derived from GIA XML file
 	*/
 
@@ -1420,8 +1433,12 @@ void DBwriteEntityNodeFile(string * entityFileName, GIAentityNode* entity)
 		convertAliasesToAliasesString(entity, &aliasesString);
 		#endif
 		aliasesString = DBaddBlankString(aliasesString);
-
-		fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str(), wordOrig.c_str(), aliasesString.c_str(), entity->confidence, int(entity->isConcept), int(entity->isSubstance), int(entity->isAction), int(entity->isCondition), int(entity->hasAssociatedInstance), int(entity->hasAssociatedInstanceIsAction), int(entity->hasAssociatedInstanceIsCondition), int(entity->hasAssociatedTime), int(entity->isSubstanceQuality), int(entity->isSubstanceConcept), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), int(entity->hasMeasure));
+		string quantityNumberString = "";
+		quantityNumberString = DBaddBlankString(entity->quantityNumberString);
+		string quantityModifierString = "";
+		quantityModifierString = DBaddBlankString(entity->quantityModifierString);
+				
+		fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str(), wordOrig.c_str(), aliasesString.c_str(), entity->confidence, int(entity->isConcept), int(entity->isSubstance), int(entity->isAction), int(entity->isCondition), int(entity->hasAssociatedInstance), int(entity->hasAssociatedInstanceIsAction), int(entity->hasAssociatedInstanceIsCondition), int(entity->hasAssociatedTime), int(entity->isSubstanceQuality), int(entity->isSubstanceConcept), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), entity->quantityNumber, quantityNumberString.c_str(), entity->quantityModifier, quantityModifierString.c_str(), int(entity->hasQuantityMultiplier), int(entity->hasMeasure), entity->measureType);
 		//fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str());
 		fclose(pFile);
 	}

@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r10b 28-November-2012
+ * Project Version: 1r10c 28-November-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -67,8 +67,13 @@ using namespace std;
 	#define GIA_DATABASE_ENTITY_NODE_MAX_NUMBER_ALIASES (3)
 	#define GIA_DATABASE_ENTITY_NODE_ALIASES_STRING_MAX_LENGTH (GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH*GIA_DATABASE_ENTITY_NODE_MAX_NUMBER_ALIASES)
 	#define GIA_DATABASE_INSTANCE_ID_MAX_LENGTH 10		//10 billion instances allowed
-	#define GIA_DATABASE_ENTITY_GRAMMATICAL_NUMBER_MAX_LENGTH 9	//1 billion - NB if this is increased, then grammaticalNumber must be made a long instead of an int
+	#define GIA_DATABASE_ENTITY_GRAMMATICAL_NUMBER_MAX_LENGTH (9)	//1 billion - NB if this is increased, then grammaticalNumber must be made a long instead of an int
 	#define GIA_ACTIVE_LIST_ID_MAX_LENGTH 19		//~billion billion ids allowed in active list (allows reading/writing database to XML - which is highly unrealistic)
+	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_NUMBER_MAX_LENGTH (9)
+	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_MAX_LENGTH (9)	
+	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_NUMBER_STRING_MAX_LENGTH (10)		//important: GIA database can only support quantity number strings <= 10 digits
+	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_STRING_MAX_LENGTH (10)	//important: GIA database can only support quantity modifer strings <= 10 digits
+	#define GIA_DATABASE_ENTITY_NODE_MEASURE_TYPE_MAX_LENGTH (2)
 	/*
 	#define GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH_STRING "GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH"
 	#define GIA_DATABASE_INSTANCE_ID_MAX_LENGTH_STRING "GIA_DATABASE_INSTANCE_ID_MAX_LENGTH"
@@ -80,6 +85,11 @@ using namespace std;
 	#define GIA_DATABASE_INSTANCE_ID_MAX_LENGTH_STRING "10"
 	#define GIA_DATABASE_ENTITY_GRAMMATICAL_NUMBER_MAX_LENGTH_STRING "9"
 	#define GIA_ACTIVE_LIST_ID_MAX_LENGTH_STRING "19"
+	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_NUMBER_MAX_LENGTH_STRING "9"
+	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_MAX_LENGTH_STRING "9"	
+	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_NUMBER_STRING_MAX_LENGTH_STRING "9"
+	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_STRING_MAX_LENGTH_STRING "9"
+	#define GIA_DATABASE_ENTITY_NODE_MEASURE_TYPE_MAX_LENGTH_STRING "2"
 
 	#define GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME ((string)"GIAKBdatabase/")
 	#define GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME "/home/systemusername/source/"	 //this could be "/mnt/serverNameX/" once configuring appropriate NFS Linux File Sharing in /etc/fstab	
@@ -121,18 +131,18 @@ using namespace std;
 	#define GIA_DATABASE_ATTRIBUTE_DELIMITER '|'
 	#ifdef GIA_DATABASE_SAVE_WITH_LEADING_ZEROS
 
-		#define GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_READ "%ld|%s |%s |%s |%lf|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d\n"
+		#define GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_READ "%ld|%s |%s |%s |%lf|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d |%s |%d |%s |%d|%d|%d\n"
 		#define GIA_DATABASE_TIME_CONDITION_NODE_FILE_FORMAT_READ "%s |%d|%lf|%d|%d|%d|%d|%ld|%lf|%ld|%d|%d\n"	//used to be %1i %1i at end
 		#define GIA_DATABASE_REFERENCES_FILE_FORMAT_READ "%s |%ld\n"
 
-		#define GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE "%0" GIA_ACTIVE_LIST_ID_MAX_LENGTH_STRING "ld|%" GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH_STRING "s |%" GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH_STRING "s |%" GIA_DATABASE_ENTITY_NODE_ALIASES_STRING_MAX_LENGTH_STRING "s |%0.6lf|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%0" GIA_DATABASE_ENTITY_GRAMMATICAL_NUMBER_MAX_LENGTH_STRING "d|%01d|%01d\n"
+		#define GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE "%0" GIA_ACTIVE_LIST_ID_MAX_LENGTH_STRING "ld|%" GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH_STRING "s |%" GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH_STRING "s |%" GIA_DATABASE_ENTITY_NODE_ALIASES_STRING_MAX_LENGTH_STRING "s |%0.6lf|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%0" GIA_DATABASE_ENTITY_GRAMMATICAL_NUMBER_MAX_LENGTH_STRING "d|%01d|%0" GIA_DATABASE_ENTITY_NODE_QUANTITY_NUMBER_MAX_LENGTH_STRING "d|%" GIA_DATABASE_ENTITY_NODE_QUANTITY_NUMBER_STRING_MAX_LENGTH_STRING "s |%0" GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_MAX_LENGTH_STRING "d|%" GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_STRING_MAX_LENGTH_STRING "s |%01d|%01d|%0" GIA_DATABASE_ENTITY_NODE_MEASURE_TYPE_MAX_LENGTH_STRING "d\n"
 		#define GIA_DATABASE_TIME_CONDITION_NODE_FILE_FORMAT_WRITE "%" GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH_STRING "s |%02d|%0.6lf|%02d|%01d|%02d|%02d|%020ld|%0.6lf|%020ld|%01d|%01d\n"	//used to be %1i %1i at end
 		#define GIA_DATABASE_REFERENCES_FILE_FORMAT_WRITE "%" GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH_STRING "s |%0" GIA_DATABASE_INSTANCE_ID_MAX_LENGTH_STRING "ld\n"
 
 		#define GIA_DATABASE_REFERENCES_FILE_NUMBER_CHARACTERS_PER_LINE ((GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH-1) + 2 + GIA_DATABASE_INSTANCE_ID_MAX_LENGTH + 1)		//includes new line character
 
 	#else
-		#define GIA_DATABASE_ENTITY_NODE_FILE_FORMAT "%ld %s %s %0.6lf %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n"
+		#define GIA_DATABASE_ENTITY_NODE_FILE_FORMAT "%ld %s %s %0.6lf %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %s %d %s %d %d %d\n"
 		#define GIA_DATABASE_TIME_CONDITION_NODE_FILE_FORMAT "%s %d %0.6lf %d %d %d %d %ld %0.6lf %ld %i %i\n"
 		#define GIA_DATABASE_REFERENCES_FILE_FORMAT "%s %ld\n"
 	#endif
