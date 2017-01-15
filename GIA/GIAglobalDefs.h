@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k5d 21-July-2015
+ * Project Version: 2k5e 21-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -76,7 +76,7 @@
  *		--------------------------------------
  *
  *			(Linux Ubuntu 14.04 Only)
- *			sudo apt-get install wordnet wordnet-dev[?] wordnet-sense-index OR;
+ *			sudo apt-get install wordnet wordnet-sense-index OR;
  *			sudo dpkg -i wordnet_1%3a3.0-32_amd64.deb wordnet-base_1%3a3.0-32_all.deb wordnet-dev_1%3a3.0-32_amd64.deb wordnet-gui_1%3a3.0-32_amd64.deb wordnet-sense-index_1%3a3.0-32_all.deb
  *
  *			(Linux EL5 Only)
@@ -693,7 +693,7 @@
 	#define GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION	//added 2k3a	//supported by GIA2 including GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE (unlike GIA_RECORD_RCMOD_SET_INFORMATION)  //only required to identify subject (primary entity holding math value) in nlp parsable phrase
 	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
 		//#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//note this preprocessor check is not enforced: use the new implementation regardless of whether GIA advanced referencing is set or not set
-			#define GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION	//added 2k3a, removed 2k3c //record possessionAuxiliaryHaveArtificial info	//required by GIA advanced referencing
+			//#define GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION	//added 2k3a, removed 2k3c //record possessionAuxiliaryHaveArtificial info	//required by GIA advanced referencing
 			#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_HYBRID	//added 2k3c
 		//#endif
 	#endif		
