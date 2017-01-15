@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -1046,7 +1046,7 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlai
 					#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
 					if(readingQuotation)
 					{
-						currentWord = currentWord + GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER;					
+						currentWord = currentWord + GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER;
 					}
 					else
 					{
@@ -1055,7 +1055,7 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlai
 						{
 							#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
 							if(currentWord != "")
-							{//do not add empty tag after closing quotation marks 
+							{//do not add empty tag after closing quotation marks
 							#endif
 								currentTagInPlainTextSentence->tagName = currentWord;
 								currentTagInPlainTextSentence->entityIndex = entityIndex;

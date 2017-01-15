@@ -23,7 +23,7 @@
  * File Name: GIAcorpusOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -116,7 +116,7 @@ static string entityPredeterminerArray[ENTITY_PREDETERMINER_ARRAY_NUMBER_OF_TYPE
 	//predeterminer could be merged with adjective
 
 //not required for Stanford CoreNLP as "an" lemma is "a" (but is required for Relex)
-#define GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES (2)	
+#define GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES (2)
 static string grammaticalDeterminerIndefiniteArray[GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_INDEFINITE, GRAMMATICAL_DETERMINER_INDEFINITE_FIRST_LETTER_VOWEL};	//NB this intentionally discludes GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL "some" as this is handled the same as a definite determinier by GIA2 POS tag system
 
 
@@ -174,9 +174,9 @@ static string GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_
 
 //the following definitions must map to relationGovernorCompositionNameArray[]:
 #define RELATION_GOVERNOR_COMPOSITION_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES (3)
-static string relationGovernorCompositionPastTenseNameArray[RELATION_GOVERNOR_COMPOSITION_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"contained", "comprised", "had"};	
+static string relationGovernorCompositionPastTenseNameArray[RELATION_GOVERNOR_COMPOSITION_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"contained", "comprised", "had"};
 #define RELATION_GOVERNOR_COMPOSITION_CONTINUOUS_TENSE_NAME_ARRAY_NUMBER_OF_TYPES (3)
-static string relationGovernorCompositionContinuousTenseNameArray[RELATION_GOVERNOR_COMPOSITION_CONTINUOUS_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"containing", "comprised" "having"};	
+static string relationGovernorCompositionContinuousTenseNameArray[RELATION_GOVERNOR_COMPOSITION_CONTINUOUS_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"containing", "comprised" "having"};
 #define RELATION_AUXILIARY_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES (4)
 static string relationAuxiliaryPastTenseNameArray[RELATION_AUXILIARY_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"was", "were", "had", "did"};
 #define RELATION_AUXILIARY_FUTURE_TENSE_NAME_ARRAY_NUMBER_OF_TYPES (1)

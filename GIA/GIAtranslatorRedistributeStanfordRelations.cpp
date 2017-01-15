@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -207,7 +207,7 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 	redistributeStanfordRelationsAuxHave(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 	*/
-	
+
 	#ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 	//added 12 July 2013
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -1110,7 +1110,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 #ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
-	/*eg [case added GIA 2c1c] 
+	/*eg [case added GIA 2c1c]
 	The chicken is not near the house.
 	nsubj(is-3, chicken-2) + prep_near(is-3, house-7) + neg(is-3, not-4) -> neg(near-5, not-4)
 	The chicken is sometimes near the house.
@@ -1129,10 +1129,10 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	paramC2.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT1] = true; paramC2.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT1] = REL2; paramC2.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT1] = REL_ENT3;
 	genericDependecyRelationInterpretation(&paramC2, REL1);
 	#endif
-	
+
 	//eg1 look for nsubj/prep combination, eg nsubj(are-4, claims-3) + prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)
 	//eg2 case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; The claims that are on the frame are blue. , nsubj(are-4, claims-2) + prep_on(are-4, frame-7) + rcmod(claims-2, are-4)
-		//OLD: look for nsubj/prep combination, eg nsubj(next-4, garage-2) + prep_to(next-4, house-7)	=> prep_subj(next_to, house) + prep_subj(next_to, garage)	
+		//OLD: look for nsubj/prep combination, eg nsubj(next-4, garage-2) + prep_to(next-4, house-7)	=> prep_subj(next_to, house) + prep_subj(next_to, garage)
 		//general parameters
 	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramC.numberOfRelations = 2;
@@ -2538,13 +2538,13 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 		if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 		{
 			param.numberOfRelations = 2;
-			
+
 			GIAgenericDepRelInterpretationParameters paramA = param;
 			#ifdef GIA_TRANSLATOR_SUPPORT_CSUB_AND_COP_GENERATE_ADJECTIVES
 			paramA.useRelationTest[REL1][REL_ENT3] = false;
 			paramA.useRelationArrayTest[REL1][REL_ENT3] = true; paramA.relationArrayTest[REL1][REL_ENT3] = relationTypeSubjectCsubjNameArray; paramA.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_CSUBJ_NUMBER_OF_TYPES;
 			#endif
-		
+
 			//paramA.useRelationArrayTest[REL1][REL_ENT1] = true; paramA.relationArrayTest[REL1][REL_ENT1] = featurePOSindicatesAdjectiveOrAdverbTypeArray; paramA.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_OF_TYPES; paramA.relationArrayTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
 			EntityCharacteristic relationArrayTestSpecialCasePOStemp1A("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE_JJ);
 			EntityCharacteristic relationArrayTestSpecialCasePOStemp1B("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE_COMPARATIVE_JJR);
@@ -2873,9 +2873,9 @@ void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence *
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT2;
 	param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT3] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT3] = REL_ENT2;
 	genericDependecyRelationInterpretation(&param, REL1);
-	
+
 	//NEW
-	//eg If the cow is blue fight the turtle, else fight the pie. : csubj(fight-6, blue-5) + mark(blue-5, If-1) -> prep_if(blue-5, fight-6) 
+	//eg If the cow is blue fight the turtle, else fight the pie. : csubj(fight-6, blue-5) + mark(blue-5, If-1) -> prep_if(blue-5, fight-6)
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CLAUSAL_SUBJECT;
@@ -4494,7 +4494,7 @@ void redistributeStanfordRelationsDisableAuxAndCop(Sentence * currentSentenceInL
 	paramD.useRelationTest[REL1][REL_ENT3] = true; paramD.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DETERMINER;
 	paramD.disableRelation[REL1] = true;
 	genericDependecyRelationInterpretation(&paramD, REL1);
-	
+
 	#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	//added GIA 1c1a
 	GIAgenericDepRelInterpretationParameters paramE(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);

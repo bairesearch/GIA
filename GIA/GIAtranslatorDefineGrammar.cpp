@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -150,8 +150,8 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 				GIAfeatureTempEntityNodeArray[relationIndex[i]]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
 				#endif
 			}
-		}							
-										
+		}
+
 		currentRelationInList = currentRelationInList->next;
 	}
 
@@ -186,7 +186,7 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 		currentRelationInList = currentRelationInList->next;
 	}
 	#endif
-	
+
 	#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -506,7 +506,7 @@ void extractGrammaticalInformationFromPOStag(string * POStag, Feature * feature)
 	{
 		if(*POStag == posTagVerbInfinitiveOrImperativeArray[i])
 		{
-			//cout << "infinitiveOrImperativeDetected:" << feature->lemma << endl;	
+			//cout << "infinitiveOrImperativeDetected:" << feature->lemma << endl;
 			infinitiveOrImperativeDetected = true;
 		}
 	}

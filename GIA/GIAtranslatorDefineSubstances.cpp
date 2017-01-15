@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -48,14 +48,14 @@ void defineSubstances(Sentence * currentSentenceInList, bool GIAentityNodeArrayF
 	cout << "0a1 pass; define substances (expletives eg 'there' in 'there is a place');" << endl;
 	#endif
 	defineSubstancesExpletives(currentSentenceInList, GIAentityNodeArray);
-	
+
 	#ifdef GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0a2 pass; define substances all nodes" << endl;
 	#endif
 	defineSubstancesAllNodes(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
-		
+
 	#ifdef GIA_ASSIGN_SUBSTANCE_TO_ALL_DEFINITIVE_NOUNS
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0b pass; define substances (definite nouns); eg the house" << endl;
@@ -1445,7 +1445,7 @@ void defineSubstancesActions(Sentence * currentSentenceInList, GIAentityNode * G
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	param.useRelationArrayTest[REL1][REL_ENT1] = true; param.relationArrayTest[REL1][REL_ENT1] = linkHavingPropertyConditionsAndBeingDefinitionConditionsSpecialEntityNameArray; param.relationArrayTestSize[REL1][REL_ENT1] = RELATION_TYPE_HAVING_AND_BEING_SPECIAL_ENTITY_NUMBER_OF_TYPES; param.relationArrayTestIsNegative[REL1][REL_ENT1] = true;	//exceptions required for linkHavingPropertyConditionsAndBeingDefinitionConditions()
 	#endif
-	
+
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 	genericDependecyRelationInterpretation(&param, REL1);
@@ -1506,5 +1506,5 @@ void defineSubstancesAllNodes(Sentence * currentSentenceInList, bool GIAentityNo
 	genericEntityInterpretation(&param);
 	#else
 	cout << "defineSubstancesAllNodes() error: not coded as this function was developed after GIA_USE_GENERIC_ENTITY_INTERPRETATION" << endl;
-	#endif	
+	#endif
 }

@@ -23,7 +23,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -185,7 +185,7 @@ public:
 	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 	bool isNameTemp;
 	#endif
-	
+
 	#ifdef GIA_USE_CORPUS_DATABASE
 	bool sameReferenceSet;
 	#ifdef GIA2_SUPPORT_QUERIES
@@ -193,7 +193,7 @@ public:
 	string corpusSpecialRelationDependentIsQuery;
 	#endif
 	#endif
-	
+
 	Relation * next;
 };
 
@@ -252,7 +252,7 @@ public:
 	#ifdef GIA_USE_CORPUS_DATABASE
 	int GIAconnectionistNetworkPOStype;
 	#endif
-	
+
 	Feature * next;
 	Feature * previous;	//used for reference lookup
 };
@@ -289,7 +289,7 @@ public:
 	Sentence * previous;	//used for reference lookup
 
 	bool isQuestion;
-	
+
 	bool corpusLookupSuccessful;
 };
 

@@ -23,7 +23,7 @@
  * File Name: GIAcorpusDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -75,7 +75,7 @@ void closeCorpusFile()
 {
 	corpusWriteFileObjectStream.close();
 }
-	
+
 void saveTextLineToCurrentCorpusFile(string sentenceText)
 {
 	writeStringToFileObject2(sentenceText, &corpusWriteFileObjectStream);
@@ -113,7 +113,7 @@ bool loadCorpusFileSemanticDependencyRelations(Sentence * currentSentenceInList,
 		currentSentenceInList->corpusLookupSuccessful = false;
 	}
 	else
-	{	
+	{
 		//cout << "1 corpusLookupSuccessful" << endl;
 		currentSentenceInList->corpusLookupSuccessful = true;
 	}
@@ -144,16 +144,16 @@ string corpusDBgenerateFileName(Feature * firstFeatureInList)
 		fileName = fileName + folderName;					//eg network/server/GIAcorpusDatabase/denovedenocorpus.txt
 		#else
 		fileName = fileName + folderName + "/";
-		checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&folderName);		//eg network/server/GIAcorpusDatabase/de/no/ve/de/no/corpus.txt	
+		checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&folderName);		//eg network/server/GIAcorpusDatabase/de/no/ve/de/no/corpus.txt
 		#endif
-		currentFeatureInSentence = currentFeatureInSentence->next;	
+		currentFeatureInSentence = currentFeatureInSentence->next;
 	}
 	#ifdef GIA_CORPUS_DATABASE_FILESYSTEM_USE_FLAT_FILE
 	fileName = fileName + GIA_CORPUS_DATABASE_FILESYSTEM_DEFAULT_FILE_NAME;
 	#else
 	fileName = GIA_CORPUS_DATABASE_FILESYSTEM_DEFAULT_FILE_NAME;
 	#endif
-	
+
 	//#ifdef GIA_DATABASE_DEBUG
 	cout << "fileName = " << fileName << endl;
 	//#endif

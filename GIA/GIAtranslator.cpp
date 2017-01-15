@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -92,9 +92,9 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 	bool result = true;
 
 	//cout << "ak1" << endl;
-	
+
 	setCurrentGIALRPtagTextCorrespondenceInfo(isQuery);	//required for local variable access
-	if(!parseGIA2file)	
+	if(!parseGIA2file)
 	{
 		if(!parseNLPparserFile(inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode))
 		{
@@ -105,10 +105,10 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 	{
 		//semantic dependency relations and features have already been parsed
 	}
-	
+
 	//cout << "ak2" << endl;
 
-	int NLPdependencyRelationsType = dependencyRelationsTypes[NLPdependencyRelationsParser];	
+	int NLPdependencyRelationsType = dependencyRelationsTypes[NLPdependencyRelationsParser];
 	if(NLPrelexCompatibilityMode)
 	{//untested
 		if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
@@ -128,7 +128,7 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 	}
 
 	//cout << "ak3" << endl;
-	
+
 	setCurrentDirectory(tempFolderCharStar);
 
 	//cout << "ak4" << endl;
@@ -156,7 +156,7 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 		currentSentenceInList = currentSentenceInList->next;
 	}
 	#endif
-	
+
 	//cout << "ak6" << endl;
 
 	return result;
@@ -218,12 +218,12 @@ bool createSemanticNetworkBasedUponDependencyParsedSentences(Paragraph * firstPa
 	#ifdef USE_CE
 	}
 	#endif
-	
+
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "record concept nodes as disabled if they are not permanent (used for printing/xml write purposes)" << endl;
 	#endif
 	recordConceptNodesAsDisabledIfTheyAreNotPermanent(entityNodesActiveListConcepts);
-		
+
 	#ifdef GIA_USE_DATABASE
 	if(isQuery)
 	{
@@ -453,7 +453,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#ifdef GIA_RECORD_LINK_PREESTABLISHED_REFERENCES_GIA
 	setLinkPreestablishedReferencesGIA(false);
 	#endif
-	
+
 	GIACoreference * firstGIACoreferenceInList = new GIACoreference();
 	unordered_map<string, GIAentityNode*> * sentenceConceptEntityNodesList = new unordered_map<string, GIAentityNode*>;
 	unordered_map<long, GIAtimeConditionNode*> * sentenceTimeConditionNodesList = new unordered_map<long, GIAtimeConditionNode*>;
@@ -479,7 +479,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		//cout << "2 !corpusLookupSuccessful" << endl;
 		convertSentenceSyntacticRelationsIntoGIAnetworkNodes(sentenceConceptEntityNodesList, sentenceTimeConditionNodesList, firstSentenceInList, currentSentenceInListTemp, &sentenceConceptEntityNodesListTempNotUsed1, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, false, NULL);
 	}
-	
+
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (2identifyReferenceSets)\n" << endl;
 	#endif
@@ -528,7 +528,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#ifdef GIA_RECORD_LINK_PREESTABLISHED_REFERENCES_GIA
 	setLinkPreestablishedReferencesGIA(true);
 	#endif
-	
+
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (4convertSentenceRelationsIntoGIAnetworkNodes)\n" << endl;
 	#endif
@@ -563,9 +563,9 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	{
 		convertSentenceSyntacticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, true, firstGIACoreferenceInList);
 	}
-	
+
 	//cout << "ak1" << endl;
-	
+
 	#ifdef GIA_FREE_MEMORY1
 	//Clear temporary variables;
 	delete firstGIACoreferenceInList;
@@ -606,14 +606,14 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		#endif
 	cout << "End for colours only...\n\n" << endl;
 	#endif
-	
+
 	//cout << "ak2" << endl;
 #else
 
 	vector<GIAentityNode*> sentenceConceptEntityNodesListTempNotUsed;
 	#ifdef GIA_USE_CORPUS_DATABASE
 	if(parseGIA2file)
-	{	
+	{
 		if(currentSentenceInList->corpusLookupSuccessful)
 		{
 			convertSentenceSemanticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser);
@@ -622,7 +622,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#endif
 	if(!parseGIA2file || (parseGIA2file && !(currentSentenceInList->corpusLookupSuccessful)))
 	{
-		convertSentenceSyntacticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);	
+		convertSentenceSyntacticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
 	}
 #endif
 }
@@ -645,14 +645,14 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		currentRelationInList = currentRelationInList->next;
 	}
 	*/
-	
-	
+
+
 	#ifndef GIA_USE_ADVANCED_REFERENCING
 	bool linkPreestablishedReferencesGIA = true;	//irrelevant
 	#endif
-	
+
 	//cout << "linkPreestablishedReferencesGIA = " << linkPreestablishedReferencesGIA << endl;
-	
+
 	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	string corpusFileName = "";
 	if(!linkPreestablishedReferencesGIA)
@@ -721,7 +721,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	}
 	#endif
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
-	else if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)	//NB stanford dependency relations are required [ie not just Stanford POS tags] such that det/aux information can be extracted	//updated 2d1a 21 Jan 2013 - changed 'if' to 'else if' 
+	else if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)	//NB stanford dependency relations are required [ie not just Stanford POS tags] such that det/aux information can be extracted	//updated 2d1a 21 Jan 2013 - changed 'if' to 'else if'
 	{
 		fillGrammaticalArraysStanford(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPfeatureParser, featureArrayTemp);
 	}
@@ -781,9 +781,9 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " disabled" << endl;
 			}
 		}
-	}	
+	}
 	*/
-	
+
 	#ifdef GIA_TRANSLATOR_DEBUG
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -832,7 +832,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
 	botSwitchFirstAndSecondPerson(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPdependencyRelationsType);
 	#endif
-	
+
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1d; locate/add all entities [execution#2]" << endl;
 	#endif
@@ -1316,14 +1316,14 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		}
 	}
 	#endif
-	
+
 	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	if(!linkPreestablishedReferencesGIA)
 	{
 		GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(GIAentityNodeArray, currentSentenceInList, linkPreestablishedReferencesGIA, NLPdependencyRelationsType);
 	}
 	#endif
-		
+
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "record sentence nodes as permanent if they are still enabled" << endl;
 	#endif
@@ -1373,7 +1373,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		if(!generateAllPermutationsFromSemanticRelationsFile(corpusFileName, NLPfeatureParser))
 		{
 			cout << "generateAllPermutationsFromSemanticRelationsFile() failed" << endl;
-			exit(0); 
+			exit(0);
 		}
 		#endif
 	}
@@ -1502,7 +1502,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 													cout << "applyGIATranslatorGenericXMLfunctions() error: illegal currentParamTag->firstAttribute->value = " << currentParamTag->firstAttribute->value << endl;
 												}
 											}
-											
+
 											/*
 											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "():" << endl;
 											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -1551,7 +1551,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))
 											{
 												result = false;
-											}	
+											}
 
 											/*
 											if(functionName == "redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs")
@@ -1594,10 +1594,12 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 			}
 		}
 	}
+	return result;
 }
 
 bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depRelOrEntity, bool executeOrReassign, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA, string functionName)
 {
+	bool result = true;
 	if(currentParamTag->firstLowerLevelTag != NULL)
 	{
 		#ifdef GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
@@ -1781,6 +1783,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 			else
 			{
 				cout << "applyGIATranslatorGenericXMLparam(): error - illegal param tag:" << currentConfigurationTag->name  << endl;
+				result = false;
 				//exit(0);
 			}
 
@@ -1835,8 +1838,10 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 	else
 	{
 		cout << "applyGIATranslatorGenericXMLparam(): error - param has no options/special case tags: currentParamTag->name" << currentParamTag->name << endl;
+		result = false;
 		//exit(0);
 	}
+	return result;
 }
 
 
@@ -1887,10 +1892,12 @@ bool genericInterpretationGenerateSpecialCase(XMLparserTag * xmlTag, EntityChara
 	{
 		cout << "genericEntityInterpretationApplySpecialCase() error: !(typeFound && variableFound && valueFound)" << endl;
 	}
+	return result;
 }
 
 bool genericDepRelInterpretationApplySpecialCase(EntityCharacteristic * entityCharacteristics, GIAgenericDepRelInterpretationParameters * paramDepRel, int REL, int REL_ENT, string type)
 {
+	bool result = true;
 	if(type == "specialCaseCharacteristicsTestAndVector")
 	{
 		paramDepRel->specialCaseCharacteristicsTestAndVector[REL][REL_ENT].push_back(entityCharacteristics);
@@ -1915,7 +1922,9 @@ bool genericDepRelInterpretationApplySpecialCase(EntityCharacteristic * entityCh
 	else
 	{
 		cout << "genericDepRelInterpretationApplySpecialCase() error: illegal type" << endl;
+		result = false;
 	}
+	return result;
 }
 
 
@@ -2024,6 +2033,7 @@ bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParame
 
 bool genericEntityInterpretationApplySpecialCase(EntityCharacteristic * entityCharacteristics, GIAgenericEntityInterpretationParameters * paramEntity, string type)
 {
+	bool result = true;
 	if(type == "specialCaseCharacteristicsTestAndVector")
 	{
 		paramEntity->specialCaseCharacteristicsTestAndVector.push_back(entityCharacteristics);
@@ -2039,7 +2049,9 @@ bool genericEntityInterpretationApplySpecialCase(EntityCharacteristic * entityCh
 	else
 	{
 		cout << "genericEntityInterpretationApplySpecialCase() error: illegal type: " << type << endl;
+		result = false;
 	}
+	return result;
 }
 
 bool genericEntityInterpretationApplyOptions(GIAgenericEntityInterpretationParameters * paramEntity, XMLparserTag * xmlTag)

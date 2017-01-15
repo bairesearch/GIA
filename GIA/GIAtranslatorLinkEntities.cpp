@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -69,7 +69,7 @@ void linkEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFille
 		linkDependentActionsType1(currentSentenceInList, GIAentityNodeArray);
 	}
 	#endif
-	
+
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -474,7 +474,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 	#ifdef GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA
 	}
 	#endif
-	
+
 	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, NULL, GIAentityNodeArray, true);
 	paramC.numberOfRelations = 1;
 	paramC.useRelationTest[REL1][REL_ENT3] = true; paramC.relationTest[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
@@ -2333,7 +2333,7 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAentityN
 	paramD.useRelationTest[REL1][REL_ENT3] = true; paramD.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CONJUGATION_YET;
 	paramD.conditionTypeEntityDefaultName = RELATION_TYPE_CONJUGATION_YET_BASIC; //change the conditionType name (_conj_yet -> yet)
 	genericDependecyRelationInterpretation(&paramD, REL1);
-	
+
 	GIAgenericDepRelInterpretationParameters paramE = param;
 	paramE.useRelationTest[REL1][REL_ENT3] = true; paramE.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CONJUGATION_NOR;
 	paramE.conditionTypeEntityDefaultName = RELATION_TYPE_CONJUGATION_NOR_BASIC; //change the conditionType name (_conj_nor -> nor)

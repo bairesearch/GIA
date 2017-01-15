@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -546,7 +546,7 @@ int main(int argc,char **argv)
 			corpusDatabaseFolderName = corpusDatabaseFolderName + '/';
 		}
 	#endif
-	
+
 	#ifdef GIA_USE_LRP
 		if(argumentExists(argc,argv,"-lrp"))
 		{
@@ -636,7 +636,7 @@ int main(int argc,char **argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1t4b 27-July-2013" << endl;
+			cout << "OpenGIA.exe - Project Version: 2e4g 19-April-2014" << endl;
 			exit(1);
 		}
 
@@ -868,7 +868,7 @@ bool executeGIA(
 #ifdef GIA_USE_CORPUS_DATABASE
 	string corpusDatabaseFolderName,
 #endif
-	
+
 #ifdef GIA_USE_LRP
 	bool useLRP,
 	bool useOutputLRPTextPlainTXTFile,
@@ -1039,10 +1039,10 @@ int main2(int argc,char **argv)
 	initialiseDatabase(readFromDatabase, databaseFolderName, useDatabase, entityNodesActiveListComplete, entityNodesActiveListConcepts);
 	setCurrentDirectory(workingFolderCharStar);
 	#endif
-	
+
 	#ifdef GIA_USE_CORPUS_DATABASE
 	initialiseCorpusDatabase(corpusDatabaseFolderName);
-	#endif		
+	#endif
 
 	#ifdef USE_WORDNET
 	initialiseWordNet(synonymnDetectionStatus);
@@ -1389,22 +1389,22 @@ int main2(int argc,char **argv)
 			else
 			{
 				#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
-				executeNLPparser(inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, NLPdependencyRelationsParser, NLPexeFolderArray, true, NLPrelexCompatibilityMode);	
+				executeNLPparser(inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, NLPdependencyRelationsParser, NLPexeFolderArray, true, NLPrelexCompatibilityMode);
 				if(inputTextNLPfeatureXMLfileName != inputTextNLPrelationXMLfileName)
 				{
 				#endif
 					#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 					executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, NLPfeatureParser, NLPexeFolderArray, false, true);
 					#else
-					executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, NLPfeatureParser, NLPexeFolderArray, false, NLPrelexCompatibilityMode);			
+					executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, NLPfeatureParser, NLPexeFolderArray, false, NLPrelexCompatibilityMode);
 					#endif
 				#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 				}
 				#endif
 				useInputTextNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
-				
+
 				setCurrentDirectory(tempFolderCharStar);
-				
+
 				/*
 				#ifdef GIA_USE_LRP
 				convertRevertNLPtagNamesToOfficialLRPOutput(NLPdependencyRelationsParser, NLPfeatureParser, LRPTextForNLPonlyPlainTXTFileName, LRPTextPlainTXTFileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName);
@@ -1458,7 +1458,7 @@ int main2(int argc,char **argv)
 		}
 
 		if(useInputTextXMLFile)
-		{			
+		{
 			#ifdef GIA_MAIN_DEBUG
 			//cout << "useInputTextXMLFile" << endl;
 			#endif
@@ -1546,13 +1546,13 @@ int main2(int argc,char **argv)
 				#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray, false, true);
 				#else
-				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray, false, NLPrelexCompatibilityMode);		
+				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray, false, NLPrelexCompatibilityMode);
 				#endif
 			#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 			}
 			#endif
 			useInputQueryNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
-			
+
 			setCurrentDirectory(tempFolderCharStar);
 
 			/*
@@ -1850,7 +1850,7 @@ int main2(int argc,char **argv)
 	setCurrentDirectory(tempFolderCharStar);
 
 	//cout << "ak7" << endl;
-	
+
 	if(printOutput)
 	{
 		printGIAnetworkNodes(entityNodesActiveListComplete, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile, useOutputTextSVGFile, *maxNumberSentences);

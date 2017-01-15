@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -350,7 +350,7 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 			{
 				int q = entityVectorConnectionDrawPosYinitialArray[i];
 				int r = entityVectorConnectionDrawPosXinitialArray[i];
-								
+
 				for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 				{
 					int qTemp = q;
@@ -365,7 +365,7 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 						}
 					}
 					#endif
-					
+
 					//cout << "\ti = " << i << ", initialiseEntityNodeForPrinting; " << (*connectionIter)->entity->entityName << endl;
 					bool thisIsDefinitionAndPreviousNodeWasInstance = false;
 					#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
@@ -552,10 +552,10 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 				#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 				if(entityNode->entityName == RELATION_ENTITY_SPECIAL_POSSESSIVE)
 				{
-					entityColour = GIA_DRAW_ACTION_SPECIAL_POSSESSIVE_NODE_COLOUR;	
+					entityColour = GIA_DRAW_ACTION_SPECIAL_POSSESSIVE_NODE_COLOUR;
 				}
 				#endif
-					
+
 				//first, print this action node.
 				string nameOfBox = "";
 				if(entityNode->hasQuantity)

@@ -23,7 +23,7 @@
  * File Name: GIAcorpusOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -85,7 +85,7 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 				{
 				*/
 				//NB these must correspond to GIA2syntacticDependencyRelationSecondaryNameArray/GIA2_SYNTACTIC_DEPENDENCY_RELATION_SECONDARY_NUMBER_OF_TYPES:
-				
+
 				if(currentRelationInList->relationType == RELATION_TYPE_MODAL_AUX)	//same as auxiliary
 				{
 					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet);
@@ -118,15 +118,15 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 	{
 		cout << "GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial() error: function currently requires Stanford parser/CoreNLP" << endl;
 	}
-	#endif	
+	#endif
 }
 
-string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet) 
+string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet)
 {
 	#ifdef GIA2_SUPPORT_QUERIES
 	string entityWord1 = GIAentityNodeArray[entityIndex1]->entityName;
 	string entityWord2 = GIAentityNodeArray[entityIndex2]->entityName;
-	
+
 	//cout << "a1" << endl;
 	string entityWord1Query = "";
 	if(GIAentityNodeArray[entityIndex1]->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
@@ -153,7 +153,7 @@ string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArra
 	if(GIAentityNodeArray[entityIndex2]->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 	{
 		entityWord2Query = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
-	}	
+	}
 	if(GIAentityNodeArray[entityIndex2]->isNameQuery)
 	{
 		cout << "isNameQuery" << endl;
@@ -163,39 +163,39 @@ string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArra
 	{
 		cout << "isWhichOrEquivalentWhatQuery" << endl;
 		entityWord2 = entityWord2Query + GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME;
-	}	
+	}
 	else if(GIAentityNodeArray[entityIndex2]->isQuery)
 	{
 		cout << "isQuery" << endl;
 		entityWord2 = entityWord2Query + GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME;
-	}	
+	}
 	#else
 	string entityWord1 = GIAentityNodeArray[entityIndex1]->wordOrig;
 	string entityWord2 = GIAentityNodeArray[entityIndex2]->wordOrig;
 	//cout << "entityWord1 = " << entityWord1 << endl;
 	//cout << "entityWord2 = " << entityWord2 << endl;
-	//lemmas are in general not recorded as they are irrelevant (wordOrig is only recorded for debugging purposes and internal/manual/inhouse development of the corpus); only the entity indicies require recording 
+	//lemmas are in general not recorded as they are irrelevant (wordOrig is only recorded for debugging purposes and internal/manual/inhouse development of the corpus); only the entity indicies require recording
 	if(entityWord1 == "")
-	{//why does GIAentityNodes in GIAentityNodeArray that correspond to prepositions not have a "wordOrig" but only have an entityName? (is it related to LRP?) 
+	{//why does GIAentityNodes in GIAentityNodeArray that correspond to prepositions not have a "wordOrig" but only have an entityName? (is it related to LRP?)
 		entityWord1 = GIAentityNodeArray[entityIndex1]->entityName;
 	}
 	if(entityWord2 == "")
-	{//why does GIAentityNodes in GIAentityNodeArray that correspond to prepositions not have a "wordOrig" but only have an entityName? (is it related to LRP?) 
+	{//why does GIAentityNodes in GIAentityNodeArray that correspond to prepositions not have a "wordOrig" but only have an entityName? (is it related to LRP?)
 		entityWord2 = GIAentityNodeArray[entityIndex2]->entityName;
 	}
 	#endif
 	//cout << "a2" << endl;
-		
+
 	string GIA2semanticDependencyRelation = "";
 	GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationSimple(entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet);
 	//cout << "GIA2semanticDependencyRelation = " << GIA2semanticDependencyRelation << endl;
 	return GIA2semanticDependencyRelation;
 }
 
-string generateGIA2semanticDependencyRelationSimple(string entityName1, string entityName2, string semanticRelation, int entityIndex1, int entityIndex2, bool sameReferenceSet) 
+string generateGIA2semanticDependencyRelationSimple(string entityName1, string entityName2, string semanticRelation, int entityIndex1, int entityIndex2, bool sameReferenceSet)
 {
 	//cout << "a2" << endl;
-		
+
 	string GIA2semanticDependencyRelation = "";
 	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + semanticRelation + "(" + entityName1 + "-" + convertIntToString(entityIndex1) + ", " + entityName2 + "-" + convertIntToString(entityIndex2) + ") " + createSameReferenceSetRecord(sameReferenceSet);
 	//cout << "GIA2semanticDependencyRelation = " << GIA2semanticDependencyRelation << endl;
@@ -209,7 +209,7 @@ string createSameReferenceSetRecord(bool sameReferenceSet)
 }
 
 //preconditions: determineGIAconnectionistNetworkPOStypeNames() has been executed
-string regenerateSentenceText(Feature * firstFeatureInSentence, bool addPOSinfo, int NLPfeatureParser) 
+string regenerateSentenceText(Feature * firstFeatureInSentence, bool addPOSinfo, int NLPfeatureParser)
 {
 	//cout << "regenerateSentenceText1" << endl;
 	string sentenceText = "";
@@ -241,14 +241,14 @@ void determineGIAconnectionistNetworkPOStypeNames(Feature * firstFeatureInList, 
 		{
 			determineGIAconnectionistNetworkPOStypeNameStanford(currentFeatureInSentence);
 		}
-		else if(NLPfeatureParser == GIA_NLP_PARSER_RELEX) 
+		else if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 		{
 			#ifndef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 			cout << "warning: determineGIAconnectionistNetworkPOStypeNames() is supported, but Relex cannot generate det and aux syntactic relations (required to be stored by GIA connectionist network as 'GIA semantic relations' to reextract instances/substances and tense)" << endl;
 			#endif
 			determineGIAconnectionistNetworkPOStypeNameRelex(currentFeatureInSentence);
 		}
-	
+
 		currentFeatureInSentence = currentFeatureInSentence->next;
 	}
 }
@@ -264,7 +264,7 @@ void determineGIAconnectionistNetworkPOStypeNameStanford(Feature * currentFeatur
 		{
 			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_COORDINATINGCONJUNCTION;
 		}
-	}	
+	}
 	for(int i=0; i<FEATURE_POS_TAG_NUMBER_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagNumberArray[i])
@@ -422,7 +422,7 @@ void determineGIAconnectionistNetworkPOStypeNameStanford(Feature * currentFeatur
 		}
 	}
 	#endif
-	
+
 	/*
 	//requires updating (add more cases from PENN tree above)
 	if(currentFeatureInSentence->grammaticalWordType == GRAMMATICAL_WORD_TYPE_NOUN)
@@ -432,24 +432,24 @@ void determineGIAconnectionistNetworkPOStypeNameStanford(Feature * currentFeatur
 	else if(currentFeatureInSentence->grammaticalWordType == GRAMMATICAL_WORD_TYPE_VERB)
 	{
 		GIAconnectionistNetworkPOStypeName = GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_VERB_OR_PARTICIPLE];
-	}	
+	}
 	else if(currentFeatureInSentence->grammaticalWordType == GRAMMATICAL_WORD_TYPE_ADJ)
 	{
 		GIAconnectionistNetworkPOStypeName = GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADJECTIVE_OR_ADVERB];
-	}	
+	}
 	else if(currentFeatureInSentence->grammaticalWordType == GRAMMATICAL_WORD_TYPE_ADV)
 	{
 		GIAconnectionistNetworkPOStypeName = GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADJECTIVE_OR_ADVERB];
-	}	
+	}
 	else if(currentFeatureInSentence->grammaticalWordType == GRAMMATICAL_WORD_TYPE_PREP)
 	{
 		GIAconnectionistNetworkPOStypeName = GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_PREPOSITION];
 	}
 	*/
-		
+
 	currentFeatureInSentence->GIAconnectionistNetworkPOStype = GIAconnectionistNetworkPOStype;
 	//cout << "GIAconnectionistNetworkPOStype = " << GIAconnectionistNetworkPOStype << endl;
-	
+
 }
 
 
@@ -463,11 +463,11 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(Feature * currentFeatureIn
 		{
 			//cout << "featureRelexPOStypeArray[i] = " << featureRelexPOStypeArray[i] << endl;
 			//cout << "i = " << i << endl;
-			//cout << "featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i] = " << featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i] << endl; 
+			//cout << "featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i] = " << featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i] << endl;
 			GIAconnectionistNetworkPOStype = featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i];
 		}
 	}
-		
+
 	//additional cases not identified by [/mapped to existing] Relex Word Type:
 	for(int i=0; i<ENTITY_WH_ARRAY_NUMBER_OF_TYPES; i++)
 	{
@@ -525,9 +525,9 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(Feature * currentFeatureIn
 			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_PREDETERMINER;
 		}
 	}
-	
+
 	//GIA_CONNECTIONIST_NETWORK_POS_TYPE_INTERJECTION not currently supported by Relex
-					
+
 	//additional cases required for GIA semantics extraction;
 	for(int i=0; i<ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES; i++)
 	{
@@ -560,7 +560,7 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(Feature * currentFeatureIn
 		}
 	}
 	#endif
-	
+
 	currentFeatureInSentence->GIAconnectionistNetworkPOStype = GIAconnectionistNetworkPOStype;
 	//cout << "GIAconnectionistNetworkPOStype = " << GIAconnectionistNetworkPOStype << endl;
 }

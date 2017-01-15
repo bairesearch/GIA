@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -493,7 +493,7 @@ static string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF
 //properties:	[NB properties are attached to either another substance or a straight entity);]
 //substances (derived from obj/subj relationships);
 #define RELATION_GOVERNOR_COMPOSITION_1 "contain"	//eg x contains y
-#define RELATION_GOVERNOR_COMPOSITION_2 "comprise"	//eg x comprises y 
+#define RELATION_GOVERNOR_COMPOSITION_2 "comprise"	//eg x comprises y
 #define RELATION_GOVERNOR_COMPOSITION_3 "have"		//eg x has y
 #define RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES 3
 static string relationGovernorCompositionNameArray[RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_GOVERNOR_COMPOSITION_1, RELATION_GOVERNOR_COMPOSITION_2, RELATION_GOVERNOR_COMPOSITION_3};
@@ -903,7 +903,7 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 	//conjunction
 #define FEATURE_POS_TAG_COORDINATING_CONJUNCTION_CC "CC"	//"and" is considered a noun by Relex, eg There are 3 chickens and 4 bats.
 	//number
-#define FEATURE_POS_TAG_CARDINALNUMBER_CD "CD"			//"3" is considered an adjective by Relex, eg There are 3 chickens.	//required for when "one" is misinterpreted as the number 'one', or for times eg "6:45"	
+#define FEATURE_POS_TAG_CARDINALNUMBER_CD "CD"			//"3" is considered an adjective by Relex, eg There are 3 chickens.	//required for when "one" is misinterpreted as the number 'one', or for times eg "6:45"
 	//determiner
 #define FEATURE_POS_TAG_DETERMINER "DET"			//"the" is considered a determiner by Relex
 	//additional (unknown)
@@ -1097,19 +1097,19 @@ GIAentityNode * addActionToActionDefinitionDefineSubstances(GIAentityNode * acti
 	GIAentityNode * addAction(GIAentityNode * actionEntity);
 	void upgradeSubstanceToAction(GIAentityNode * substance);
 		void eraseSubstanceFromSubstanceList(GIAentityNode * existingEntity);
-		
+
 GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionEntityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet);
-GIAentityNode * addOrConnectConditionToSubject(GIAentityNode * entityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet);	
+GIAentityNode * addOrConnectConditionToSubject(GIAentityNode * entityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet);
 GIAentityNode * addOrConnectConditionToObject(GIAentityNode * conditionEntity, GIAentityNode * conditionTypeEntity, bool sameReferenceSet);
 	void connectConditionInstanceToSubject(GIAentityNode * subjectEntity, GIAentityNode * newOrExistingCondition, bool sameReferenceSet);
 	void connectConditionInstanceToObject(GIAentityNode * objectEntity, GIAentityNode * newOrExistingCondition, bool sameReferenceSet);
 GIAentityNode * addConditionToConditionDefinition(GIAentityNode * conditionTypeEntity);
-	GIAentityNode * addCondition(GIAentityNode * conditionEntity);	
+	GIAentityNode * addCondition(GIAentityNode * conditionEntity);
 
 #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 GIAentityNode * addOrConnectBeingDefinitionConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionDefinitionNode, GIAentityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
 GIAentityNode * addOrConnectHavingPropertyConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionSubstanceNode, GIAentityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
-#endif	
+#endif
 
 string convertPrepositionToRelex(string * preposition, bool * prepositionFound);	//converts prep_preposition to preposition
 
@@ -1297,7 +1297,7 @@ public:
 	#else
 	int relationEntityIndexFinalResult[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];
 	#endif
-	
+
 		//predefined values tests
 	bool useRelationTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
 	string relationTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
@@ -1356,7 +1356,7 @@ public:
 	bool mustGenerateConditionTypeName;
 	string conditionTypeEntityDefaultName;
 	int conditionTypeEntityDefaultIndex;
-	
+
 		//for cleanup
 	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 	bool disableEntity[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];		//for entity1 and entity2

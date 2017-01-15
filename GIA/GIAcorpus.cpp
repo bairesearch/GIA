@@ -23,7 +23,7 @@
  * File Name: GIAcorpus.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -57,11 +57,11 @@ using namespace std;
 bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(Paragraph * firstParagraphInList, string inputPlainTXTFileName, string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, string outputCFFfileName, string NLPexeFolderArray[], vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, int * maxNumberSentences)
 {
 	bool parseGIA2file = true;
-		
+
 	bool result = true;
-	
+
 	//cout << "cf1" << endl;
-	
+
 	#ifdef STANFORD_PARSER_USE_POS_TAGS
 	cout << "error: performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences() doesn't support STANFORD_PARSER_USE_POS_TAGS" << endl;
 	#endif
@@ -70,16 +70,16 @@ bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParse
 	{
 		result = false;
 	}
-	
+
 	//cout << "cf1b" << endl;
-	
+
 	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
 		if(!lookupCorpusFiles(firstParagraphInList, NLPfeatureParser))	//finds all corresponding GIA2 semantic dependency files and parses them
-		{	
+		{
 			#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
-			cout << "warning: GIA2 corpus entry not found (will generate corpus entry)" << endl;			
+			cout << "warning: GIA2 corpus entry not found (will generate corpus entry)" << endl;
 			#else
 			#ifdef GIA2_PARSE_PARTIALLY_FILLED_SEMANTIC_RELATIONS
 			cout << "error: GIA2 corpus entry not found (partial sentence will be parsed)" << endl;
@@ -94,9 +94,9 @@ bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParse
 	{
 	#endif
 		if(!lookupCorpusFiles(firstParagraphInList->firstSentenceInList, NLPfeatureParser))	//finds all corresponding GIA2 semantic dependency files and parses them
-		{	
+		{
 			#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
-			cout << "warning: GIA2 corpus entry not found (will generate corpus entry)" << endl;			
+			cout << "warning: GIA2 corpus entry not found (will generate corpus entry)" << endl;
 			#else
 			#ifdef GIA2_PARSE_PARTIALLY_FILLED_SEMANTIC_RELATIONS
 			cout << "error: GIA2 corpus entry not found (partial sentence will be parsed)" << endl;
@@ -108,7 +108,7 @@ bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParse
 		}
 	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 	}
-	#endif	
+	#endif
 
 	//cout << "cf2" << endl;
 
@@ -121,20 +121,20 @@ bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParse
 	}
 	#else
 	inputTextNLPrelationXMLfileName = "";				//irrelevant (not used)
-	NLPdependencyRelationsParser = GIA_NLP_PARSER_STANFORD_PARSER;	//irrelevant (not used) - always set to Stanford Parser (as a standard parser type file is used to store GIA2 semantic dependency relations)			
+	NLPdependencyRelationsParser = GIA_NLP_PARSER_STANFORD_PARSER;	//irrelevant (not used) - always set to Stanford Parser (as a standard parser type file is used to store GIA2 semantic dependency relations)
 	NLPrelexCompatibilityMode = false; 		//irrelevant (not used) - only used when parsing syntatic dependency relations of a Relex file, and performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences() does not parse any syntactic dependency relations
 	NLPassumePreCollapsedStanfordRelations = false;	//irrelevant (not used) - only used when executing convertSentenceSyntacticRelationsIntoGIAnetworkNodes(), and performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences() does not execute convertSentenceSyntacticRelationsIntoGIAnetworkNodes()
-	#endif	
+	#endif
 
 	//cout << "cf3" << endl;
-	
+
 	if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputCFFfileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, true))	//inputTextNLPrelationXMLfileName/inputTextNLPfeatureXMLfileName/NLPfeatureParser/NLPdependencyRelationsParser/NLPrelexCompatibilityMode/NLPassumePreCollapsedStanfordRelations not used (relations and features have already been parsed)
 	{
 		result = false;
 	}
 
 	//cout << "cf4" << endl;
-	
+
 }
 
 bool lookupCorpusFiles(Paragraph * firstParagraphInList, int NLPfeatureParser)
@@ -189,7 +189,7 @@ bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser)
 				if(stillNotFoundASubset)
 				{
 					#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
-					if(!notFoundASubsetForAtLeastTwoWords)	//NB !notFoundASubsetForAtLeastTwoWords condition is optional; it is used because syntactic relations will be used in this case regardless, see "warning: GIA2 corpus entry not found (will generate corpus entry)" 
+					if(!notFoundASubsetForAtLeastTwoWords)	//NB !notFoundASubsetForAtLeastTwoWords condition is optional; it is used because syntactic relations will be used in this case regardless, see "warning: GIA2 corpus entry not found (will generate corpus entry)"
 					{
 					#endif
 						//#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
@@ -226,7 +226,7 @@ bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser)
 							cout << "************************ warning: notFoundASubsetForAtLeastTwoWords ******************" << endl;
 							notFoundASubsetForAtLeastTwoWords = true;
 						}
-						centralFeatureInSentence->next = recordOfFeatureAfterCentralFeatureInSentence;	//restore temporarily disconnected node at end of sentence subset					
+						centralFeatureInSentence->next = recordOfFeatureAfterCentralFeatureInSentence;	//restore temporarily disconnected node at end of sentence subset
 					#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
 					}
 					#endif
@@ -243,7 +243,7 @@ bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser)
 			#else
 			result = false;
 			currentSentenceInList->corpusLookupSuccessful = false;
-			#endif	
+			#endif
 		}
 
 		//cout << "here3" << endl;

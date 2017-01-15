@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -955,7 +955,7 @@ GIAentityNode * addOrConnectConditionToSubject(GIAentityNode * entityNode, GIAen
 		*/
 
 		newOrExistingCondition = addConditionToConditionDefinition(conditionTypeEntity);
-		
+
 		#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		//required to compensate for defineSubstancesActions() being exectuted before linkDependentActionsType1()
 		newOrExistingCondition->isSubstance = false;	//required because defineSubstancesActions() defines substances [not actions]
@@ -1002,7 +1002,7 @@ GIAentityNode * addOrConnectConditionToObject(GIAentityNode * conditionEntityNod
 		*/
 
 		newOrExistingCondition = addConditionToConditionDefinition(conditionTypeEntity);
-		
+
 		#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		//required to compensate for defineSubstancesActions() being exectuted before linkDependentActionsType1()
 		newOrExistingCondition->isSubstance = false;	//required because defineSubstancesActions() defines substances [not actions]
@@ -1324,7 +1324,7 @@ void applyConceptEntityAlreadyExistsFunction(GIAentityNode * entity, bool entity
 		{
 			entity->disabled = false;
 			entity->firstSentenceToAppearInNetwork = false;
-		}	
+		}
 	}
 	else
 	{
@@ -1601,7 +1601,7 @@ GIAentityNode * findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAentityNo
 	{
 		#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_BAD1
 		if(GIAentityNodeArray[featureIndex]->entityName != *entityNodeName)
-		{	
+		{
 			//must recreate a concept entity for the preposition as its name has changed based on the redistribution process
 			disableConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[featureIndex]);
 		}
@@ -1977,7 +1977,7 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 			for(vector<GIAentityConnection*>::iterator connectionIter = entityNodeToMerge->entityVectorConnectionsArray[i].begin(); connectionIter != entityNodeToMerge->entityVectorConnectionsArray[i].end(); )
 			{
 				//cout << "h1" << endl;
-				
+
 				bool connectionIterErased = false;
 				//connect entityNodeToMerge ambient node to entityNode
 				GIAentityNode * entityConnectedToEntityToMerge = (*connectionIter)->entity;
@@ -2156,7 +2156,7 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 			entityNode->measureType = entityNodeToMerge->measureType;
 		}
 		if(entityNodeToMerge->isQuery)
-		{	
+		{
 			//cout << "entityNodeToMerge->isQuery = " << entityNodeToMerge->isQuery << endl;
 			entityNode->isQuery = entityNodeToMerge->isQuery;
 			entityNode->isWhichOrEquivalentWhatQuery = entityNodeToMerge->isWhichOrEquivalentWhatQuery;
@@ -2226,7 +2226,7 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	#else
 	initialiseIntArray2D(&relationEntityIndexFinalResult[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION, -1);
 	#endif
-	
+
 		//predefined values tests
 	initialiseBoolArray2D(&useRelationTest[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false);
 	//relationTest = {{"", "", ""}, {"", "", ""}, {"", "", ""}, {"", "", ""}};	//internal compiler error: Segmentation fault
@@ -2374,13 +2374,13 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 			param->relationEntity[currentRelationID][REL_ENT3] = convertPrepositionToRelex(&(param->relationEntity[currentRelationID][REL_ENT3]), &(param->relationEntityPrepFound[currentRelationID]));	//convert stanford prep_x to relex x
 			param->relationEntityIndex[currentRelationID][REL_ENT1] = param->relation[currentRelationID]->relationGovernorIndex;
 			param->relationEntityIndex[currentRelationID][REL_ENT2] = param->relation[currentRelationID]->relationDependentIndex;
-			
+
 			#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 			//added GIA 2c2a for redistributeStanfordRelationsMultiwordPreposition();
 			bool prepositionFound = false;
 			string prepositionName = convertPrepositionToRelex(&(param->relation[currentRelationID]->relationType), &prepositionFound);
 			if(prepositionFound)
-			{	
+			{
 				int prepositionEntityIndex = -1;
 				bool prepositionFeatureFound = determineFeatureIndexOfPreposition(param->currentSentenceInList, &prepositionName, &(param->relationEntityIndex[currentRelationID][REL_ENT3]));
 				if(prepositionFeatureFound)
@@ -2391,7 +2391,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 				}
 			}
 			#endif
-			
+
 				//required to swap variables via redistributeRelationEntityIndexReassignmentUseOriginalValues;
 			param->relationEntityOriginal[currentRelationID][REL_ENT1] = param->relationEntity[currentRelationID][REL_ENT1];
 			param->relationEntityOriginal[currentRelationID][REL_ENT2] = param->relationEntity[currentRelationID][REL_ENT2];
@@ -2594,7 +2594,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 							#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 							for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION; relationEntityID++)
 							#else
-							for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION; relationEntityID++)							
+							for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION; relationEntityID++)
 							#endif
 							{
 								param->relationEntityFinalResult[relationID][relationEntityID] = param->relationEntity[relationID][relationEntityID];
@@ -2628,7 +2628,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								int functionEntityIndex4special = param->relationEntityIndex[param->functionEntityRelationID[FUNC_ENT4_SPECIAL]][param->functionEntityRelationEntityID[FUNC_ENT4_SPECIAL]];
 
 								//if(param->functionToExecuteUponFind is a condition....
-								if((param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity) 
+								if((param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity)
 								#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 								|| (param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity)
 								|| (param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity)
@@ -2677,7 +2677,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									}
 								}
 								#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity) 
+								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity)
 								{
 									if(param->mustGenerateConditionTypeName)
 									{
@@ -2805,7 +2805,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet);
 									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, functionEntityIndex3, functionEntityIndex2, sameReferenceSet);
-									#endif								
+									#endif
 								}
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity)
 								{
@@ -2815,7 +2815,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet);
 									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, functionEntityIndex3, functionEntityIndex2, sameReferenceSet);
-									#endif	
+									#endif
 								}
 								#endif
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntity)
@@ -2877,7 +2877,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 												param->relationEntityIndex[relationID][relationEntityID] = param->relationEntityIndex[param->redistributeRelationEntityIndexReassignmentRelationID[relationID][relationEntityID]][param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID]];
 												param->relationEntity[relationID][relationEntityID] = param->relationEntity[param->redistributeRelationEntityIndexReassignmentRelationID[relationID][relationEntityID]][param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID]];
 												//cout << "param->redistributeRelationEntityIndexReassignmentRelationID[relationID][relationEntityID] = " << param->redistributeRelationEntityIndexReassignmentRelationID[relationID][relationEntityID] << endl;
-												//cout << "param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID] = " << param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID] << endl;												
+												//cout << "param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID] = " << param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID] << endl;
 												//cout << "param->relationEntityIndex[relationID][relationEntityID] = " << param->relationEntityIndex[relationID][relationEntityID] << endl;
 												//cout << "param->relationEntity[relationID][relationEntityID] = " << param->relationEntity[relationID][relationEntityID] << endl;
 											}

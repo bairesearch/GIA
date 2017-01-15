@@ -23,7 +23,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4f 19-April-2014
+ * Project Version: 2e4g 19-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -160,7 +160,7 @@ Relation::Relation(void)
 	corpusSpecialRelationDependentIsQuery = "";
 	#endif
 	#endif
-	
+
 	next = NULL;
 }
 
@@ -225,7 +225,7 @@ Feature::Feature(void)
 	#ifdef GIA_USE_CORPUS_DATABASE
 	GIAconnectionistNetworkPOStype = 0;	//ie GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNDEFINED
 	#endif
-	
+
 	next = NULL;
 	previous = NULL;
 }
@@ -264,7 +264,7 @@ Sentence::Sentence(void)
 	previous = NULL;
 
 	isQuestion = false;
-	
+
 	corpusLookupSuccessful = false;
 }
 
@@ -371,7 +371,7 @@ void copyRelations(Relation * firstRelationInListToCopy, Relation * firstRelatio
 		currentRelation->corpusSpecialRelationDependentIsQuery = currentRelationToCopy->corpusSpecialRelationDependentIsQuery;
 		#endif
 		#endif
-	
+
 		Relation * newRelation = new Relation();
 		//newRelation->previous = currentRelation;
 		currentRelation->next = newRelation;
