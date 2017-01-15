@@ -1418,14 +1418,6 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			//passedPropositionUnknown = true;		//removed 17 April 2012
 			passedPreposition = true;		
 		}
-		
-		for(int i=0; i<RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES; i++)	//this code shouldnt be required, because the qvar should be detected within one of the above loop (as per stanford)
-		{
-			if(prepositionName == relationTypeQVariableNameArray[i])
-			{
-				passedPreposition = true;	
-			}
-		}
 	}
 	else if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
@@ -1435,6 +1427,13 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			passedPreposition = true;		
 		}	
 	}
+	for(int i=0; i<RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES; i++)	//this code should only be required for 'how' qvar, because the other qvars should be detected within one of the above loops
+	{
+		if(prepositionName == relationTypeQVariableNameArray[i])
+		{
+			passedPreposition = true;	
+		}
+	}	
 	//cout << "prepositionName = " << prepositionName << endl;
 
 		

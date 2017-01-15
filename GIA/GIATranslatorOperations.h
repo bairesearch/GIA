@@ -458,11 +458,6 @@ used
 #define REFERENCE_TYPE_PERSON_PLURAL_THEY "it"
 */
 
-//prepositions;
-#define STANFORD_PARSER_PREPOSITION_PREPEND "prep_"
-#define STANFORD_PARSER_PREPOSITION_PREPEND_LENGTH (5)
-#define STANFORD_PARSER_PREPOSITION_DELIMITER "_"
-
 //questions;
 #define REFERENCE_TYPE_QUESTION_QUERY_WHO "who"
 #define REFERENCE_TYPE_QUESTION_QUERY_WHAT "what"
@@ -473,7 +468,7 @@ used
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN "_%atTime"
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE "_%atLocation"
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY "_%because"
-#define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW "prep_how"
+#define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW "_%how"	//these needs to be a new integer (and not "prep_how") to prevent concept entity node overwrite within redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy()
 #define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX (MAX_NUMBER_OF_WORDS_PER_SENTENCE-1)
 //#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_QUANTITY_NUMBER_REPLACEMENT -9999
 #define REFERENCE_TYPE_QUESTION_WHEN_CONTEXT_NUMBER_OF_TYPES (15)	//Eg what is the time?
@@ -484,7 +479,10 @@ used
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN_REPLACEMENT "RELATION_TYPE_PREPOSITION_AT"	//must also set hasAssociatedTime to true
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY_REPLACEMENT "RELATION_TYPE_PREPOSITION_BECAUSE"
 
-
+//prepositions;
+#define STANFORD_PARSER_PREPOSITION_PREPEND "prep_"
+#define STANFORD_PARSER_PREPOSITION_PREPEND_LENGTH (5)
+#define STANFORD_PARSER_PREPOSITION_DELIMITER "_"
 
 /*************************************************************************************/
 
@@ -650,8 +648,8 @@ static string featureQueryWordHowWhenWhereWhySpecialCaseNameArray[FEATURE_QUERY_
 static string featureQueryWordHowWhenWhereWhySpecialCaseCrossReferenceQueryVariableNameArray[FEATURE_QUERY_WORD_HOW_WHEN_WHERE_WHY_SPECIAL_CASE_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE};
 */
 
-#define RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES (3)
-static string relationTypeQVariableNameArray[RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY};	//could add REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW here - but not going to do this in case of a Relex break
+#define RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES (4)
+static string relationTypeQVariableNameArray[RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW};	//had to add REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW here - need to check execution with relex parser is not affected
 
 static string relationTypePropositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {"in", "on", "after", "ago", "before", "between", "by", "during", "for", "to", "till", "until", "past", "since", "up_to", "within", "over", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
 	//http://www.englisch-hilfen.de/en/grammar/preposition_time.htm + is [time is] etc
