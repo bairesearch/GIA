@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i31a 06-February-2015
+ * Project Version: 2i31b 06-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -95,6 +95,8 @@ void linkEntitiesDynamicPrenominalModifierOfNoun(GIAsentence* currentSentenceInL
 						entity2->grammaticalDefiniteTemp = false;
 					}
 					#endif
+					
+					/*//removed 2i30c - the rationale behind this change is that if the correct relationship between the items in the _nn case is unknown, then it is best not to reassign substanceConcepts thereof
 					#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_ENSURE_PROPERTY_PARENT_IS_SUBSTANCECONCEPT_IF_NECESSARY
 					if(entity2->isSubstanceConcept)
 					{
@@ -105,6 +107,7 @@ void linkEntitiesDynamicPrenominalModifierOfNoun(GIAsentence* currentSentenceInL
 						entity1->isSubstanceConcept = false;
 					}
 					#endif
+					*/
 											
 					//use default linking (property link)
 					#ifdef GIA_TRANSLATOR_DEBUG

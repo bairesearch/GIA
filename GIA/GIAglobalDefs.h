@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i31a 06-February-2015
+ * Project Version: 2i31b 06-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -617,7 +617,7 @@
 #ifndef GIA_DISABLE_2g_CODE_FOR_DEBUG
 	#define GIA_SUPPORT_NUMBER_OF	//added 2g9a/24-September-2014
 	#ifdef USE_NLC
-		//#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
+		#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 		#define GIA_SUPPORT_NLC_INTEGRATION	//GIA uses NLCsentence code
 		#ifdef GIA_SUPPORT_NLC_INTEGRATION
 			#define GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS 	//added 2i24a
