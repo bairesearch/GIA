@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n4a 26-September-2016
+ * Project Version: 2n4b 26-September-2016
  *
  *******************************************************************************/
 
@@ -276,7 +276,7 @@ GIAentityNode::GIAentityNode(void)
 	#endif
 	NLCisAlias = false;
 	NLCidInstanceBackup = INT_DEFAULT_VALUE;
-	NLCbooleanStatmentIndefiniteEntity = false;
+	NLClogicalConditionIndefiniteEntity = false;
 	#endif
 
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
@@ -508,7 +508,7 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	#endif
 	NLCisAlias = false;
 	NLCidInstanceBackup = INT_DEFAULT_VALUE;
-	NLCbooleanStatmentIndefiniteEntity = false;
+	NLClogicalConditionIndefiniteEntity = false;
 	#endif
 
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
