@@ -106,12 +106,46 @@
 	<translator>
 		<file name="GIAtranslatorRedistributeStanfordRelations">
 		
+			<!-- XML only function (not hard coded) --> 
+			<!-- #ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER -->
+			<function name="redistributeStanfordRelationsCase">
+				<example><!--
+				eg1 The ball is in the park. nsubj(park-6, ball-2) + cop(park-6, is-3) + case(park-6, in-4) -> prep_in(ball-2, park-6)	[assign !sameReferenceSet]
+				eg2 The chicken that is near the river has an apple. nsubj(river-7, chicken-2) + cop(river-7, is-4) + case(river-7, near-5) + acl:relcl/rcmod(chicken-2, river-7) -> prep_near(chicken-2, river-7)	[assign sameReferenceSet]
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="3" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_cop" />
+				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_case" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
+				<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="be" />
+				
+				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+				<option useRelationTest="true" REL="4" REL_ENT="3" relationTest="_rcmod" />
+				<option useRelationIndexTest="true" REL="4" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
+				<option useRelationIndexTest="true" REL="4" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
+				
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
+				<option disableRelation="true" REL="2" />
+				<option disableRelation="true" REL="3" />
+				<option disableEntity="true" REL="2" REL_ENT="2" />	<!-- disable is -->
+
+				</paramDepRel>
+			</function>
+			<!-- #endif -->
+			<!-- #endif -->
+			
 			<!-- XML only function (not hard coded) -->
 			<!-- #ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER -->
+			<!-- not generalisable (example "There is a new movie we can see." is not supported by GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER):
 			<function name="redistributeStanfordRelationsSwitchAclRelclRelations">
-				<example><!--
+				<example>
 				eg interpret 'There is a new movie we can see.'			acl:relcl(movie-5, see-8) -> dobj(see-8, movie-5) [+ sameReferenceSet]
-				--></example>
+				</example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_acl:relcl" />
@@ -121,6 +155,7 @@
 				<option useRedistributeSpecialCaseRcmodIndicatesSameReferenceSet="true" REL="1" />
 				</paramDepRel>
 			</function>
+			-->
 			<function name="redistributeStanfordRelationsConvertCompoundToQuantityOrNNrelation">
 				<example><!--
 				eg interpret 'Robert ate 4 times a day.'			compound(times-4, 4-3) -> number(times-4, 4-3)
@@ -2658,6 +2693,7 @@
 				</paramDepRel>
 			
 			</function>
+
 		</file>
 		<file name="GIAtranslatorRedistributeRelexRelations">
 					
