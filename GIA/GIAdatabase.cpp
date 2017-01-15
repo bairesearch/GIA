@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r12d 28-November-2012
+ * Project Version: 1r12e 28-November-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -1453,8 +1453,35 @@ void DBwriteEntityNodeFile(string * entityFileName, GIAentityNode* entity)
 		quantityNumberString = DBaddBlankString(entity->quantityNumberString);
 		string quantityModifierString = "";
 		quantityModifierString = DBaddBlankString(entity->quantityModifierString);
-				
-		fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str(), wordOrig.c_str(), aliasesString.c_str(), entity->confidence, int(entity->isConcept), int(entity->isSubstance), int(entity->isAction), int(entity->isCondition), int(entity->hasAssociatedInstance), int(entity->hasAssociatedInstanceIsAction), int(entity->hasAssociatedInstanceIsCondition), int(entity->hasAssociatedTime), int(entity->isSubstanceQuality), int(entity->isSubstanceConcept), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), entity->quantityNumber, quantityNumberString.c_str(), entity->quantityModifier, quantityModifierString.c_str(), int(entity->hasQuantityMultiplier), int(entity->hasMeasure), entity->measureType);
+		string entityName = (entity->entityName);
+		
+		if(entityName.length() > GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH-1)
+		{
+			cout << "error: entityName.length() > GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH-1" << endl;
+			entityName = entityName.substr(0, GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH-1); 
+		}
+		if(wordOrig.length() > GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH-1)
+		{
+			cout << "error: wordOrig.length() > GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH-1" << endl;
+			wordOrig = wordOrig.substr(0, GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH-1);
+		}
+		if(aliasesString.length() > GIA_DATABASE_ENTITY_NODE_ALIASES_STRING_MAX_LENGTH-1)
+		{
+			cout << "error: aliasesString.length() > GIA_DATABASE_ENTITY_NODE_ALIASES_STRING_MAX_LENGTH-1" << endl;
+			aliasesString = aliasesString.substr(0, GIA_DATABASE_ENTITY_NODE_ALIASES_STRING_MAX_LENGTH-1);
+		}
+		if(quantityNumberString.length() > GIA_DATABASE_ENTITY_NODE_QUANTITY_NUMBER_STRING_MAX_LENGTH-1)
+		{
+			cout << "error: quantityNumberString.length() > GIA_DATABASE_ENTITY_NODE_QUANTITY_NUMBER_STRING_MAX_LENGTH-1" << endl;
+			quantityNumberString = quantityNumberString.substr(0, GIA_DATABASE_ENTITY_NODE_QUANTITY_NUMBER_STRING_MAX_LENGTH-1);
+		}
+		if(quantityModifierString.length() > GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_STRING_MAX_LENGTH-1)
+		{
+			cout << "error: quantityModifierString.length() > GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_STRING_MAX_LENGTH-1" << endl;
+			quantityModifierString = quantityModifierString.substr(0, GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_STRING_MAX_LENGTH-1);
+		}
+											
+		fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, entityName.c_str(), wordOrig.c_str(), aliasesString.c_str(), entity->confidence, int(entity->isConcept), int(entity->isSubstance), int(entity->isAction), int(entity->isCondition), int(entity->hasAssociatedInstance), int(entity->hasAssociatedInstanceIsAction), int(entity->hasAssociatedInstanceIsCondition), int(entity->hasAssociatedTime), int(entity->isSubstanceQuality), int(entity->isSubstanceConcept), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), entity->quantityNumber, quantityNumberString.c_str(), entity->quantityModifier, quantityModifierString.c_str(), int(entity->hasQuantityMultiplier), int(entity->hasMeasure), entity->measureType);
 		//fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str());
 		fclose(pFile);
 	}
@@ -1974,7 +2001,7 @@ GIAentityNode * getPrimaryConceptNodeDefiningInstance(GIAentityNode * instanceEn
 			GIAentityNode * conceptEntityNode = (*connectionIter)->entity;
 			if(instanceEntity->entityName == conceptEntityNode->entityName)
 			{
-				cout << "primaryConceptNodeDefiningInstance = conceptEntityNode" << endl;
+				//cout << "primaryConceptNodeDefiningInstance = conceptEntityNode" << endl;
 				primaryConceptNodeDefiningInstance = conceptEntityNode;
 			}
 		}
