@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j4a 07-June-2015
+ * Project Version: 2j5a 08-June-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -35,7 +35,7 @@
 #include "GIAcorpusTranslator.h"
 #include "GIAcorpusOperations.h"
 #include "GIAtranslatorDefineGrammar.h"
-#include "GIAtranslatorRedistributeRelexRelations.h"
+#include "GIAtranslatorRedistributeRelations.h"
 #include "GIAtranslatorDefineReferencing.h"
 #include "GIAtranslatorDefineSubstances.h"
 #include "GIAtranslatorApplyAdvancedFeatures.h"
@@ -119,10 +119,6 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	#endif
 
 	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
-	cout << "applyGrammaticalInfoToAllEntities" << endl;
-	#endif
-
-	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1b; applyGrammaticalInfoToAllEntities" << endl;
 	#endif
  	applyGrammaticalInfoToAllEntities(GIAentityNodeArrayFilled, GIAentityNodeArray, currentSentenceInList->firstFeatureInList);
@@ -131,7 +127,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	cout << "redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs" << endl;
 	#endif
 
-	#ifdef GIA_TRANSLATOR_DEBUG
+	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
 	cout <<"redistribute Stanford Relations - correct POS tags And Lemmas Of All Continuous Verbs" << endl;
 	#endif
 	redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
@@ -143,7 +139,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		cout << "\n\t\t\t GIA_USE_ADVANCED_REFERENCING_DEBUG (5linkAdvancedReferencesGIA)\n" << endl;
 		#endif
-		#ifdef GIA_TRANSLATOR_DEBUG
+		#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
 		cout << "pass 3ii; link advanced references GIA (eg the red car is fast. Mike drove the red car.)" << endl;
 		#endif
 		linkAdvancedReferencesGIA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, firstGIACoreferenceInList, featureArrayTemp, GIAentityNodeArray, GIAconceptNodeArray);	//NB second last parameter used to be GIAfeatureTempEntityNodeArray
@@ -158,7 +154,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 		if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 		{
 		#endif
-			#ifdef GIA_TRANSLATOR_DEBUG
+			#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
 			cout << "pass 3i; link pronominal references Relex (eg his/her with joe/emily)" << endl;
 			#endif
 			linkPronounReferencesRelex(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp);	//NB third parameter used to be GIAfeatureTempEntityNodeArray
@@ -167,7 +163,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 		#ifdef GIA_USE_STANFORD_CORENLP
 		else if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 		{
-			#ifdef GIA_TRANSLATOR_DEBUG
+			#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
 			cout << "pass 3i; link pronominal references Stanford CoreNLP (eg his/her with joe/emily)" << endl;
 			#endif
 			linkPronounAndTextualContextReferencesStanfordCoreNLP(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, GIAentityNodeArray, entityNodesActiveListConcepts, firstSentenceInList->firstCoreferenceInList, featureArrayTemp);	//NB third parameter used to be GIAfeatureTempEntityNodeArray
@@ -323,11 +319,11 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(GIAsentence* current
 		relationIndex[0] = currentRelationInList->relationGovernorIndex;
 		relationIndex[1] = currentRelationInList->relationDependentIndex;
 
-		#ifdef GIA_TRANSLATOR_DEBUG
-		//cout << "relationIndex[0]  = " << relationIndex[0] << endl;
-		//cout << "relationIndex[1]  = " << relationIndex[1] << endl;
-		//cout << "name[0]  = " << name[0] << endl;
-		//cout << "name[1]  = " << name[1] << endl;
+		#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
+		cout << "\trelationIndex[0]  = " << relationIndex[0] << endl;
+		cout << "relationIndex[1]  = " << relationIndex[1] << endl;
+		cout << "name[0]  = " << name[0] << endl;
+		cout << "name[1]  = " << name[1] << endl;
 		#endif
 
 		for(int i=0; i<2; i++)
@@ -356,6 +352,32 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(GIAsentence* current
 
 				sentenceConceptEntityNodesList->push_back(conceptEntity);
 
+				#ifdef GIA2_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES
+				if(relationIndex[i] >= FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+				{
+					conceptEntity->wordOrig = conceptEntity->entityName;
+					
+					GIAfeature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
+					bool foundFeature = false;
+					while(currentFeatureInList->next != NULL)
+					{
+						if((currentFeatureInList->lemma == name[i]) && (currentFeatureInList->entityIndex == relationIndex[i]))
+						{
+							foundFeature = true;
+						}
+						currentFeatureInList = currentFeatureInList->next;
+					}
+					if(!foundFeature)
+					{
+						currentFeatureInList->word = name[i];
+						currentFeatureInList->lemma = name[i];
+						currentFeatureInList->entityIndex = relationIndex[i];
+						GIAfeature* newFeature = new GIAfeature();
+						currentFeatureInList->next = newFeature;
+					}					
+				}
+				#endif
+				
 				/*
 				//temporarily disabled this code;
 				//TODO: detect isQuery and negative from GIA semanticRelation argument (yet to implement)
@@ -387,7 +409,7 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(GIAsentence* current
 				GIAconceptNodeArray[relationIndex[i]]->entityIndexTemp = relationIndex[i];
 				GIAconceptNodeArray[relationIndex[i]]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
 				#endif
-				*/
+				*/	
 			}
 		}
 

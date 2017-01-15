@@ -23,18 +23,18 @@
 
 /*******************************************************************************
  *
- * File Name: GIAtranslatorRedistributeStanfordRelations.h
+ * File Name: GIAtranslatorRedistributeRelationsStanford.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j4a 07-June-2015
+ * Project Version: 2j5a 08-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS
-#define HEADER_GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS
+#ifndef HEADER_GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_STANFORD
+#define HEADER_GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_STANFORD
 
 #include "GIAglobalDefs.h"
 #include "GIAsentenceClass.h"

@@ -23,18 +23,18 @@
 
 /*******************************************************************************
  *
- * File Name: GIAtranslatorRedistributeRelexRelations.h
+ * File Name: GIAtranslatorRedistributeRelationsRelex.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j4a 07-June-2015
+ * Project Version: 2j5a 08-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_TRANSLATOR_REDISTRIBUTE_RELEX_RELATIONS
-#define HEADER_GIA_TRANSLATOR_REDISTRIBUTE_RELEX_RELATIONS
+#ifndef HEADER_GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_RELEX
+#define HEADER_GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_RELEX
 
 #include "GIAglobalDefs.h"
 #include "GIAsentenceClass.h"
@@ -42,14 +42,6 @@
 #include "GIAentityConnectionClass.h"
 #include "GIAconditionNodeClass.h"
 #include "GIAtranslatorOperations.h"
-
-//should move the following to GIAtranslatorRedistributeStanfordAndRelations.h/.cpp
-#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
-void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[]);	//Stanford Specific? (may require Relex equivalent redistribution function)
-	bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeature* currentFeature);
-		//bool determineVerbCase(string* word);
-
-#endif
 
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 void redistributeRelexRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser, GIAfeature* featureArrayTemp[]);
@@ -80,5 +72,5 @@ void redistributeRelexRelations(GIAsentence* currentSentenceInList, bool GIAenti
 	#endif
 	#endif
 	void switchArgumentsAndFunctionsWhereNecessaryRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
-	#endif
+#endif
 #endif

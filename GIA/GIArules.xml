@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j2b 18-May-2015
+ * Project Version: 2j5a 08-June-2015
  *
  *******************************************************************************/
 -->
@@ -104,7 +104,7 @@
 		
 	</draw>
 	<translator>
-		<file name="GIAtranslatorRedistributeStanfordRelations">
+		<file name="GIAtranslatorRedistributeRelationsStanford">
 			
 			<!-- XML only function (not hard coded) --> 
 			<!-- #ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER -->
@@ -2740,7 +2740,7 @@
 			
 
 		</file>
-		<file name="GIAtranslatorRedistributeRelexRelations">
+		<file name="GIAtranslatorRedistributeRelationsRelex">
 					
 			<function name="collapseRedundantRelationAndMakeNegativeRelex">
 				<example><!--
@@ -3820,7 +3820,7 @@
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<!-- <option defaultSameSetReferenceValue="true" /> -->	<!-- CHECKTHIS; OLD: before 2h2c -->
-				<!-- FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeStanfordRelations -->
+				<!-- FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeRelationsStanford -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
@@ -4348,7 +4348,7 @@
 				<option functionToExecuteUponFind="4" />
 				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				//<defaultSameSetReferenceValue="true" />	//CHECKTHIS; OLD: before 2i8e
-				// FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeStanfordRelations
+				// FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeRelationsStanford
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> //determine reference set; eg The pastry tasted awesome./The chicken ate the pie that tasted awesome.
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
@@ -4367,7 +4367,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<!-- <defaultSameSetReferenceValue="true" /> 	//CHECKTHIS; OLD: before 2i8e -->
-				<!-- FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeStanfordRelations -->
+				<!-- FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeRelationsStanford -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> <!-- determine same reference set; eg The pastry tasted awesome./The chicken ate the pie that tasted awesome. -->
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
@@ -4392,7 +4392,7 @@
 				<option functionToExecuteUponFind="4" />
 				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				//<defaultSameSetReferenceValue="true" />	//CHECKTHIS; OLD: before 2i8e
-				// FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeStanfordRelations
+				// FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeRelationsStanford
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> //determine same reference set; eg Jezel likes to draw./The chicken ate the pie that likes to draw.
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
@@ -4411,7 +4411,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<!-- <defaultSameSetReferenceValue="true" /> 	//CHECKTHIS; OLD: before 2i8e -->
-				<!-- FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeStanfordRelations -->
+				<!-- FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeRelationsStanford -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> <!-- determine same reference set; eg Jezel likes to draw./The chicken ate the pie that likes to draw. -->
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />

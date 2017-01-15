@@ -23,25 +23,32 @@
 
 /*******************************************************************************
  *
- * File Name: GIAcorpus.h
+ * File Name: GIAtranslatorRedistributeRelations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 2j5a 08-June-2015
- * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
+ * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
+ * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_CORPUS
-#define HEADER_GIA_CORPUS
+#ifndef HEADER_GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS
+#define HEADER_GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS
 
 #include "GIAglobalDefs.h"
 #include "GIAsentenceClass.h"
+#include "GIAentityNodeClass.h"
+#include "GIAentityConnectionClass.h"
+#include "GIAconditionNodeClass.h"
+#include "GIAtranslatorOperations.h"
 
-#ifdef GIA_USE_CORPUS_DATABASE
-bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAparagraph* firstParagraphInList, string inputPlainTXTFileName, string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, string outputCFFfileName, string NLPexeFolderArray[], vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, int* maxNumberSentences);
-	bool lookupCorpusFiles(GIAparagraph* firstParagraphInList, int NLPfeatureParser);
-		bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser);
+//should move the following to GIAtranslatorRedistributeStanfordAndRelations.h/.cpp
+#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
+void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[]);	//Stanford Specific? (may require Relex equivalent redistribution function)
+	bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeature* currentFeature);
+		//bool determineVerbCase(string* word);
+
 #endif
 
 #endif

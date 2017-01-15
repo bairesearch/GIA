@@ -23,17 +23,17 @@
 
 /*******************************************************************************
  *
- * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
+ * File Name: GIAtranslatorRedistributeRelationsStanford.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j4a 07-June-2015
+ * Project Version: 2j5a 08-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
  *******************************************************************************/
 
 
-#include "GIAtranslatorRedistributeStanfordRelations.h"
+#include "GIAtranslatorRedistributeRelationsStanford.h"
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 	#include "GIAlrp.h"
 #endif
@@ -3535,7 +3535,7 @@ void redistributeStanfordRelationsCreateQueryVars(GIAsentence* currentSentenceIn
 	redistributeStanfordRelationsCreateQueryVarsWhat(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 
 	/*
-	//this is now done at the beginning of GIAtranslatorRedistributeStanfordRelations.cpp
+	//this is now done at the beginning of GIAtranslatorRedistributeRelationsStanford.cpp
 	#ifdef GIA_TRANSLATOR_DEBUG
 	//added 28 October 2012
 	cout << "pass 1z10f; redistribute Stanford Relations - query variables connected to action-preposition-action (eg interpret 'Where are apples used for eating?'  _%atLocation(use[4], _$qVar[1]) + prepc_for(use[4], eat[6]) -> _%atLocation(eat[6], _$qVar[1]) )" << endl;

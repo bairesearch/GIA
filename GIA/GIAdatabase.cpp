@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j4a 07-June-2015
+ * Project Version: 2j5a 08-June-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -1115,7 +1115,7 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 			#endif
 
 			entity->entityName = entityNameCharStarTemp;
-			#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
+			#ifdef GIA_USE_WORD_ORIG
 			entity->wordOrig = DBreplaceBlankString(string(wordOrigCharStarTemp));
 			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 			//cout << "entityNameCharStarTemp = " << entityNameCharStarTemp << endl;

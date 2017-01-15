@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j4a 07-June-2015
+ * Project Version: 2j5a 08-June-2015
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -289,7 +289,7 @@ public:
 
 	/*GIA Entity Name*/
 	string entityName;
-	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
+	#ifdef GIA_USE_WORD_ORIG
 	string wordOrig;		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
 	#endif
 	double confidence;		//not currently used

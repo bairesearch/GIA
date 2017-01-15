@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j4a 07-June-2015
+ * Project Version: 2j5a 08-June-2015
  *
  *******************************************************************************/
 
@@ -69,8 +69,8 @@ GIAentityNode::GIAentityNode(void)
 
 	/*GIA Entity Name*/
 	entityName = "";
-	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
-	wordOrig = "";		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
+	#ifdef GIA_USE_WORD_ORIG
+	wordOrig = "";
 	#endif
 	confidence = 1.0;
 
@@ -299,8 +299,8 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 
 	GIA Entity Name
 	entityName = newEntityName;
-	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
-	wordOrig = "";		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
+	#ifdef GIA_USE_WORD_ORIG
+	wordOrig = "";
 	#endif
 	confidence = 1.0;
 

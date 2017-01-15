@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j4a 07-June-2015
+ * Project Version: 2j5a 08-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -124,8 +124,6 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 			*/
 			#endif
 
-			//cout << "h1" << endl;
-
 			#ifdef GIA_NLP_DEBUG
 			//cout << "convertStanfordRelationToRelex" << endl;
 			#endif
@@ -165,7 +163,6 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 					}
 					#endif
 				}
-				//cout << "h3" << endl;
 
 				GIAfeature* currentFeatureInList = firstFeatureInList;
 				//cout << "relationDependent = " << relationDependent << endl;
@@ -177,23 +174,17 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 						currentFeatureInList = currentFeatureInList->next;
 					}
 				}
-				//cout << "h3a" << endl;
 				if(useLemmaFromFeatureSet)
 				{
-					//cout << "h3b" << endl;
 					//cout << "currentFeatureInList->lemma = " << currentFeatureInList->lemma << endl;
 
 					currentRelation->relationDependent = currentFeatureInList->lemma;
-					//cout << "h3c" << endl;
 				}
 				else
 				{
-					//cout << "h3d" << endl;
 					//cout << "relationDependent = " << relationDependent << endl;
 					currentRelation->relationDependent = relationDependent;	//eg "_measure" of _measure-993
-					//cout << "h3e" << endl;
 				}
-				//cout << "h4" << endl;
 				#ifdef GIA2_SUPPORT_QUERIES
 				if(parseGIA2file)	//condition added 1d1a
 				{
@@ -218,7 +209,6 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 					}
 				}
 				#endif
-				//cout << "h5" << endl;
 				useLemmaFromFeatureSet = false;
 				if(!parseGIA2file)
 				{
@@ -235,7 +225,6 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 					}
 					#endif
 				}
-				//cout << "h6" << endl;
 				currentFeatureInList = firstFeatureInList;
 				if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
 				{
@@ -254,7 +243,6 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 					//cout << "relationGovernor = " << relationGovernor << endl;
 					currentRelation->relationGovernor = relationGovernor;	//eg "_measure" of _measure-993
 				}
-				//cout << "h7" << endl;
 				#ifdef GIA2_SUPPORT_QUERIES
 				if(parseGIA2file)	//condition added 1d1a
 				{
@@ -277,12 +265,9 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 							currentRelation->corpusSpecialRelationGovernorIsQuery = relationGovernor;
 						}
 					}
-					//cout << "h8" << endl;
 				}
 				#endif
 			}
-
-			//cout << "h2" << endl;
 
 			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 			cout << "relation added;" << endl;

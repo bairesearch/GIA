@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j4a 07-June-2015
+ * Project Version: 2j5a 08-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -370,7 +370,7 @@ GIAentityNode* addSubstance(GIAentityNode* entity)
 	addInstanceEntityNodeToActiveLists(newSubstance);
 
 	newSubstance->entityName = entity->entityName;
-	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
+	#ifdef GIA_USE_WORD_ORIG
 	newSubstance->wordOrig = entity->wordOrig;
 	#endif
 	newSubstance->idInstance = determineNextIdInstance(entity);
@@ -835,7 +835,7 @@ GIAentityNode* addAction(GIAentityNode* actionEntity)
 	addInstanceEntityNodeToActiveLists(newAction);
 
 	newAction->entityName = actionEntity->entityName;
-	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
+	#ifdef GIA_USE_WORD_ORIG
 	newAction->wordOrig = actionEntity->wordOrig;
 	#endif
 	newAction->idInstance = determineNextIdInstance(actionEntity);
@@ -1162,7 +1162,7 @@ GIAentityNode* addCondition(GIAentityNode* conditionEntity)
 	addInstanceEntityNodeToActiveLists(newCondition);
 
 	newCondition->entityName = conditionEntity->entityName;
-	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
+	#ifdef GIA_USE_WORD_ORIG
 	newCondition->wordOrig = conditionEntity->wordOrig;
 	#endif
 	newCondition->idInstance = determineNextIdInstance(conditionEntity);

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j4a 07-June-2015
+ * Project Version: 2j5a 08-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -395,7 +395,7 @@ used
 #define STANFORD_RELATION_TYPE_PASSIVE_NOMINAL_SUBJECT "nsubjpass" 			//nsubjpass(thrown, rocks) 	rocks were thrown 				Relex: RelEx identifies these as _obj, and marks verb with passive feature.
 #define STANFORD_RELATION_TYPE_PARTICIPIAL_MODIFIER "partmod" 				//RelEx usually generates a plain _obj. [however GIA keeps it as a separate relation, as it uses it elsewhere for multiword preposition collapse purposes]
 #define RELATION_TYPE_PARTICIPIAL_MODIFIER "_partmod"
-static string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_THAT_RELEX};	//removed RELATION_TYPE_PARTICIPIAL_MODIFIER 9 May 2012 (this is now dealt with in GIAtranslatorRedistributeStanfordRelations.cpp)
+static string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_THAT_RELEX};	//removed RELATION_TYPE_PARTICIPIAL_MODIFIER 9 May 2012 (this is now dealt with in GIAtranslatorRedistributeRelationsStanford.cpp)
 
 
 //actions (subj relationships):

@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j4a 07-June-2015
+ * Project Version: 2j5a 08-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -624,6 +624,7 @@
 		//#define GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_CORRECT_SAME_REFERENCE_SET
 	#endif
 	#define GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_FIX_BUG
+	//#define GIA2_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES	//considered for 2j5a but rejected
 #endif
 #ifndef GIA_DISABLE_2g_CODE_FOR_DEBUG
 	#define GIA_SUPPORT_NUMBER_OF	//added 2g9a/24-September-2014
@@ -760,7 +761,7 @@
 	#endif
 #endif
 
-//#define GIA_USE_CORPUS_DATABASE	//disabled for OpenGIA
+#define GIA_USE_CORPUS_DATABASE	//disabled for OpenGIA
 #ifdef GIA_USE_CORPUS_DATABASE
 	#define USE_GIA2		//GIA 2b1a - sets GIA into corpus read mode
 	#ifdef USE_GIA2
@@ -827,7 +828,7 @@
 
 //variables currently being tested (1t1a+)
 #define GIA_TRANSLATOR_XML_INTERPRETATION
-//#define GIA_TEMPORARY_COMPILATION_GCC_FLAG_E_PREPROCESS_TRANSLATOR_XML_FILES	//for use with compileGIAstopAfterPreprocessingXML.bat only: g++ -E GIAmain.cpp GIAparser.cpp GIAtranslator.cpp GIAtranslatorDefineGrammar.cpp GIAtranslatorDefineReferencing.cpp GIAtranslatorRedistributeStanfordRelations.xml GIAtranslatorRedistributeRelexRelations.xml GIAtranslatorDefineSubstances.xml GIAtranslatorLinkEntities.xml GIAtranslatorApplyAdvancedFeatures.xml GIAtranslatorOperations.cpp GIAentityNodeClass.cpp GIAentityConnectionClass.cpp GIAconditionNodeClass.cpp GIAsentenceClass.cpp GIAdraw.cpp GIAxmlConversion.cpp GIAcxlConversion.cpp GIAquery.cpp GIAdatabase.cpp GIAnlp.cpp GIAwordnet.cpp GIAnlg.cpp GIAlrp.cpp GIAbot.cpp XMLparserClass.cpp XMLrulesClass.cpp LDsvg.cpp LDopengl.cpp LDparser.cpp LDsprite.cpp LDreferenceManipulation.cpp LDreferenceClass.cpp RToperations.cpp  RTparser.cpp  RTpixelMaps.cpp  RTppm.cpp  RTraytracer.cpp  RTreferenceManipulation.cpp  RTscene.cpp  RTviewinfo.cpp SHAREDglobalDefs.cpp SHAREDvector.cpp SHAREDvars.cpp
+//#define GIA_TEMPORARY_COMPILATION_GCC_FLAG_E_PREPROCESS_TRANSLATOR_XML_FILES	//for use with compileGIAstopAfterPreprocessingXML.bat only: g++ -E GIAmain.cpp GIAparser.cpp GIAtranslator.cpp GIAtranslatorDefineGrammar.cpp GIAtranslatorDefineReferencing.cpp GIAtranslatorRedistributeRelationsStanford.xml GIAtranslatorRedistributeRelationsRelex.xml GIAtranslatorDefineSubstances.xml GIAtranslatorLinkEntities.xml GIAtranslatorApplyAdvancedFeatures.xml GIAtranslatorOperations.cpp GIAentityNodeClass.cpp GIAentityConnectionClass.cpp GIAconditionNodeClass.cpp GIAsentenceClass.cpp GIAdraw.cpp GIAxmlConversion.cpp GIAcxlConversion.cpp GIAquery.cpp GIAdatabase.cpp GIAnlp.cpp GIAwordnet.cpp GIAnlg.cpp GIAlrp.cpp GIAbot.cpp XMLparserClass.cpp XMLrulesClass.cpp LDsvg.cpp LDopengl.cpp LDparser.cpp LDsprite.cpp LDreferenceManipulation.cpp LDreferenceClass.cpp RToperations.cpp  RTparser.cpp  RTpixelMaps.cpp  RTppm.cpp  RTraytracer.cpp  RTreferenceManipulation.cpp  RTscene.cpp  RTviewinfo.cpp SHAREDglobalDefs.cpp SHAREDvector.cpp SHAREDvars.cpp
 //#define GIA_DO_NOT_USE_UNTESTED_BUGFIX_REGARDING_grammaticalDefiniteIndexOfDeterminerTemp	//1t6b
 #define GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
 #define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
@@ -920,7 +921,7 @@
 			//#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CORRECT_POS_TAGS_EVEN_IF_LEMMAS_DETECTED_BY_NLP		//this would require thorough testing before enabling (plus it is not required at present)
 		#endif
 	#endif
-
+	#define GIA_USE_WORD_ORIG	//NB wordOrig is now used by more than just NLG (it is also used by LRP)
 	//#define GIA_LRP_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
 #endif
 
@@ -954,6 +955,7 @@
 		#define GIA_NLG_DEBUG_MANUALLY_HARDCODE_INTO_NLG2
 	#endif
 	#define GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR	//NB even NLG2 requires origWord not lemma, so a morphology generator is required in both
+	#define GIA_USE_WORD_ORIG	//NB wordOrig is now used by more than just NLG (it is also used by LRP)	
 #endif
 
 //variables currently being tested (1n1a+)
@@ -1093,6 +1095,7 @@
 	#define GIA_INSTANCE_OR_REFERENCE_SET_ID_DEBUG
 #endif
 
+//#define GIA_CORPUS_TRANSLATOR_DEBUG
 //#define GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
 //#define GIA_DREAMMODE_REFERENCING_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE
