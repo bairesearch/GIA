@@ -96,6 +96,8 @@ using namespace std;
 #define NET_XML_ATTRIBUTE_hasAssociatedPropertyIsAction ((string)"hasAssociatedInstanceIsAction")
 #define NET_XML_ATTRIBUTE_hasAssociatedPropertyIsCondition ((string)"hasAssociatedPropertyIsCondition")
 #define NET_XML_ATTRIBUTE_hasAssociatedTime ((string)"hasAssociatedTime")
+#define NET_XML_ATTRIBUTE_disabled ((string)"disabled")
+
 //
 #define NET_XML_TAG_ActionNodeList ((string)"ActionNodeList")
 #define NET_XML_TAG_IncomingActionNodeList ((string)"IncomingActionNodeList")

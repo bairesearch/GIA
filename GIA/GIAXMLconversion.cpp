@@ -480,6 +480,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 	bool hasAssociatedPropertyIsActionFound = false;
 	bool hasAssociatedPropertyIsConditionFound = false;
 	bool hasAssociatedTimeFound = false;
+	bool disabledFound = false;
 	
 	bool grammaticalNumberFound = false;
 	bool hasQuantityFound = false;
@@ -584,7 +585,13 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			entityNode->hasAssociatedTime = attributeValue;
 			hasAssociatedTimeFound = true;
 		}
-		
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_disabled)
+		{
+			bool attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->disabled = attributeValue;
+			disabledFound = true;
+		}
+				
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_actionSubjectEntity)
 		{
 			if(currentAttribute->value != GIA_SEMANTIC_NET_XML_NULL_NODE_ID)
@@ -845,13 +852,13 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		
 		if(currentTagUpdatedL3->name == NET_XML_TAG_timeConditionNode)
 		{
-			cout << "timeConditionNode: " << endl;
+			//cout << "timeConditionNode: " << endl;
 			entityNode->timeConditionNode = new GIATimeConditionNode();
 			if(!parseTimeConditionNodeTag(currentTagUpdatedL3, entityNode->timeConditionNode))
 			{
 				result = false;
 			}	
-			cout << "END timeConditionNode: " << endl;
+			//cout << "END timeConditionNode: " << endl;
 			timeConditionNodeFound = true;				
 		}
 					
@@ -1305,10 +1312,13 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 	{
 		GIAEntityNode * currentEntity = *entityNodesCompleteListIterator;
 
+		//if(!(currentEntity->disabled))
+		//{//tested 11 Feb 2012; failed
 		currentTagL1 = generateXMLEntityNodeTag(currentTagL1, currentEntity, *currentEntityNodeIDInConceptEntityNodesList);
 		
 		(*currentEntityNodeIDInConceptEntityNodesList) = (*currentEntityNodeIDInConceptEntityNodesList) + 1;
-
+		//}
+		
 		//cout << "h5f" << endl;
 	}
 
@@ -1413,6 +1423,14 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedTime;
 	sprintf(tempString, "%d", int(currentEntity->hasAssociatedTime));
 	currentAttribute->value = tempString;
+	
+	newAttribute = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute;
+	currentAttribute = currentAttribute->nextAttribute;	
+
+	currentAttribute->name = NET_XML_ATTRIBUTE_disabled;
+	sprintf(tempString, "%d", int(currentEntity->disabled));
+	currentAttribute->value = tempString;	
 
 	//cout << "h5c2" << endl;
 
