@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2i 23-July-2013
+ * Project Version: 1t2j 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1921,6 +1921,7 @@ void linkObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIAen
 							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
 							{//found a matching preposition of object-subject relationship
 								
+								
 								GIAentityNode * entityNode = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
 								GIAentityNode * conditionEntityNode = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 								GIAentityNode * conditionTypeConceptEntity = GIAentityNodeArray[currentRelationInList2->relationGovernorIndex];
@@ -1938,11 +1939,17 @@ void linkObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIAen
 								*/
 								#endif
 								
-								//should really take into account the boolean and of both values: bool relationNegative = GIAentityNodeArray[currentRelationInList->relationGovernorIndex]->negative & GIAentityNodeArray[currentRelationInList2->relationGovernorIndex]->negative;
+								//OLD: should really take into account the boolean and of both values: bool relationNegative = GIAentityNodeArray[currentRelationInList->relationGovernorIndex]->negative & GIAentityNodeArray[currentRelationInList2->relationGovernorIndex]->negative;
+								//OLD: createConditionBasedUponPreposition(entityNode, conditionEntityNode, conditionTypeConceptEntity->entityName, false, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType, sameReferenceSet);
 
-								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//CHECK THIS... linkObjectSubjectOfPreposition use DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS?
-								createConditionBasedUponPreposition(entityNode, conditionEntityNode, conditionTypeConceptEntity->entityName, false, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType, sameReferenceSet);
-
+								#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS
+								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//CHECK THIS... linkObjectSubjectOfPreposition use DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS?								
+								GIAentityNodeArray[currentRelationInList2->relationGovernorIndex] = addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity, sameReferenceSet);
+								#else
+								addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
+								#endif
+	
+			
 								/*OLD:
 								bool passedPrepositionTime = false;
 								if(conditionEntityNode->hasAssociatedTime)	//added 10 April 2012 to make stanford compatible
