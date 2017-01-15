@@ -279,7 +279,7 @@ GIAentityNode::GIAentityNode(void)
 	#endif
 }
 #ifdef USE_NLC
-GIAentityNode::GIAentityNode(string newEntityName)
+GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the above constructor - NB must create GIAentityNode::initialiseVariables if this constructor is actually in use
 {
 	/*GIA Internal Entity Referencing*/
 	idActiveList = 0;
