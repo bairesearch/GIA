@@ -210,6 +210,7 @@ void definePropertiesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 	A book is an animal (definition connection, bat = concept, animal = concept)		GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_3_GOVERNOR_INDEFINITE_DEPENDENT_INDEFINITE
 	Bat is an animal. (definition connection, bat = concept or property [if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS] with isName==true, animal = concept)	GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_4_GOVERNOR_NAME_DEPENDENT_INDEFINITE
 	The bat is Max. (double definition connection, bat = property, animal = concept or property [if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS] with isName==true)		GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_5_GOVERNOR_DEFINITE_DEPENDENT_NAME	[assumes definePropertiesDefiniteNouns() executed]
+	Bat is the animal. (double definition connection, bat = concept or property [if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS] with isName==true, animal = property)	GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_6_GOVERNOR_NAME_DEPENDENT_DEFINITE
 	*/
 					
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
