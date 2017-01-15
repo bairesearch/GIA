@@ -3,7 +3,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4b 21-July-2012
+ * Project Version: 1n4c 23-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -733,10 +733,12 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuer
 	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;
 	Sentence * currentSentence = firstSentenceInList;
 
-	string currentDependencyRelationSetString = "";
+	string currentStanfordParserOutputParagraphString = "";
 
-	bool parsingDependencyRelations = false;	//parse tree is first set in list
-
+	bool parsingWordsAndTags = true;
+	bool parsingPenn = false;	
+	bool parsingTypedDependencies = false;	//parse tree is first set in list
+	
 	ifstream parseFileObject(inputTextNLPrelationXMLFileName.c_str());
 	if(!parseFileObject.rdbuf( )->is_open( ))
 	{
@@ -757,33 +759,14 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuer
 				{
 					newLineDetected = false;
 					//two consecutive new line characters detected..
-					if(parsingDependencyRelations)
+					if(parsingWordsAndTags)
 					{
-						//cout << "parsingDependencyRelationsSTART" << endl;
-
-						int maxNumberOfWordsInSentence = 0;
-						bool featuresNotPreviouslyFilled = createNewSentences;
-						//cout << "currentDependencyRelationSetString = " << currentDependencyRelationSetString << endl;
-						GIATHparseStanfordParserRelationsText(&currentDependencyRelationSetString, currentSentence, &maxNumberOfWordsInSentence, featuresNotPreviouslyFilled);
-
-						//cout << "parsingDependencyRelationsEND" << endl;
-						currentDependencyRelationSetString = "";
-						if(createNewSentences)
-						{
-							Sentence * newSentence = new Sentence();
-							newSentence->previous = currentSentence;
-							currentSentence->next = newSentence;
-						}
-						currentSentence = currentSentence->next;
-
-						parsingDependencyRelations = false;
-					}
-					else
-					{
-						parsingDependencyRelations = true;
-
+						parsingWordsAndTags = false;
+						parsingPenn = true;
+						
+						#ifdef STANFORD_PARSER_SENTENCE_SKIP_SUPPORT
 						//take into account sentences skipped by Stanford Parser - added 30 June 2012 to disregard (eg large) sentences that have been skipped
-						int numberOfSentencesSkipped = countSubstring(currentDependencyRelationSetString, STANFORD_PARSER_SENTENCE_SKIPPED_TEXT);
+						int numberOfSentencesSkipped = countSubstring(currentStanfordParserOutputParagraphString, STANFORD_PARSER_SENTENCE_SKIPPED_TEXT);
 						for(int i=0; i<numberOfSentencesSkipped; i++)
 						{
 							//cout << "numberOfSentencesSkipped = " << numberOfSentencesSkipped << endl;
@@ -794,21 +777,59 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuer
 								currentSentence->next = newSentence;
 							}
 							currentSentence = currentSentence->next;
-						}
+						}						
+						#endif
+						
+						#ifdef STANFORD_PARSER_USE_POS_TAGS	//overwrite
+						int maxNumberOfWordsInSentence = 0;
+						bool featuresNotPreviouslyFilled = createNewSentences;
+						cout << "currentStanfordParserOutputParagraphString = " << currentStanfordParserOutputParagraphString << endl;
+						GIATHparseStanfordParseWordsAndPOSTagsText(&currentStanfordParserOutputParagraphString, currentSentence, &maxNumberOfWordsInSentence);						
+						#endif
+						
+						currentStanfordParserOutputParagraphString = "";	//reset currentStanfordParserOutputParagraphString for parsing of dependency relations						
+						
+					}
+					else if(parsingPenn)
+					{
+						parsingPenn = false;
+						parsingTypedDependencies = true;
 
-						currentDependencyRelationSetString = "";	//reset currentDependencyRelationSetString for parsing of dependency relations
+						currentStanfordParserOutputParagraphString = "";	//reset currentStanfordParserOutputParagraphString for parsing of dependency relations
+					}					
+					else if(parsingTypedDependencies)
+					{
+						//cout << "parsingDependencyRelationsSTART" << endl;
+
+						int maxNumberOfWordsInSentence = 0;
+						bool featuresNotPreviouslyFilled = createNewSentences;
+						//cout << "currentStanfordParserOutputParagraphString = " << currentStanfordParserOutputParagraphString << endl;
+						GIATHparseStanfordParserRelationsText(&currentStanfordParserOutputParagraphString, currentSentence, &maxNumberOfWordsInSentence, featuresNotPreviouslyFilled);
+
+						//cout << "parsingDependencyRelationsEND" << endl;
+						currentStanfordParserOutputParagraphString = "";
+						if(createNewSentences)
+						{
+							Sentence * newSentence = new Sentence();
+							newSentence->previous = currentSentence;
+							currentSentence->next = newSentence;
+						}
+						currentSentence = currentSentence->next;
+
+						parsingTypedDependencies = false;
+						parsingWordsAndTags = true;
 					}
 				}
 				else
 				{
-					currentDependencyRelationSetString = currentDependencyRelationSetString + currentToken;
+					currentStanfordParserOutputParagraphString = currentStanfordParserOutputParagraphString + currentToken;
 					newLineDetected = true;
 				}
 			}
 			else
 			{
 				newLineDetected = false;
-				currentDependencyRelationSetString = currentDependencyRelationSetString + currentToken;
+				currentStanfordParserOutputParagraphString = currentStanfordParserOutputParagraphString + currentToken;
 			}
 
 			charCount++;

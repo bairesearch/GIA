@@ -3,7 +3,7 @@
  * File Name: GIAParser.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4b 21-July-2012
+ * Project Version: 1n4c 23-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of CFF File
  *
@@ -31,6 +31,9 @@ using namespace std;
 string convertStanfordRelationToRelex(string * stanfordRelation);
 void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode);
 void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence, bool featuresNotPreviouslyFilled);
+#ifdef STANFORD_PARSER_USE_POS_TAGS
+void GIATHparseStanfordParseWordsAndPOSTagsText(string * POStagsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence);
+#endif
 void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList, bool * isQuestion);
 
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT

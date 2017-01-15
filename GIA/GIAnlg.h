@@ -3,7 +3,7 @@
  * File Name: GIAnlg.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4b 21-July-2012
+ * Project Version: 1n4c 23-July-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -29,6 +29,8 @@ public:
 	NLGSentence * next;
 };
 
+#define GIA_NLG_SUPPORT_PERSON_AND_GENDER
+
 #define NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS
 #define NLG_INPUTVIEW_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
 #define NLG_INPUTVIEW_TWO_ENTITY_SENTENCES_SUPPORT_TWO_DEPENDENCY_RELATIONS
@@ -46,17 +48,19 @@ public:
 #define NLG_INPUTVIEW_FEATURE_TAG_GOVERNOR_DEFINITE "the"
 #define NLG_INPUTVIEW_FEATURE_TAG_GOVERNOR_INDEFINITE "a"
 #define NLG_INPUTVIEW_FEATURE_TAG_NAME_INFLECTION "inflection-TAG"
+#define NLG_INPUTVIEW_FEATURE_TAG_GOVERNOR_FULLSTOP "."
+#define NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_FULLSTOP "punctuation"
+
 
 static bool nlgSentenceThreeEntitiesGenerateVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, false, false, false, false, false, true, true, true, true, false};
-//static bool nlgSentenceThreeEntitiesGenerateAdditionsVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, true, false, false, false, false, false, false, true, false, false};
-static bool nlgSentenceThreeEntitiesGenerateAdditionsVectorConnectionsArray[NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT};
+#define NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS (2)
+static int nlgSentenceThreeEntitiesGenerateAdditionsVectorConnectionsArray[NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT};
 static bool nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityConnection[NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS] = {false, true};
 
-#define NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS (2)
 
 static bool nlgSentenceTwoEntitiesGenerateVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, true, false, true, false, false, false, false, false, false, false};
 
-static string nlgSentenceThreeEntitiesDependencyRelationVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"", "", "", "", "", "", "", "", "", RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION, RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION, RELATION_TYPE_SUBJECT, RELATION_TYPE_OBJECT, ""};
+static string nlgSentenceThreeEntitiesDependencyRelationVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"", "", "", "", "", "", "", "", "", RELATION_TYPE_SUBJECT, RELATION_TYPE_OBJECT, RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION, RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION, ""};
 /*
 //static string nlgSentenceTwoEntitiesDependencyRelationGovernorVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"", "", "", "", RELATION_TYPE_POSSESSIVE, "", RELATION_TYPE_APPOSITIVE_OF_NOUN, "", "", "", "", "", "", ""};	//not correct as differentiate between qualities and non-quality properties
 //static string nlgSentenceTwoEntitiesDependencyRelationGovernorVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"", "", "", "", "has", "", "is", "", "", "", "", "", "", ""};
@@ -75,9 +79,9 @@ static string grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_
 using namespace std;
 
 NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSentence * currentNLGsentence);
-	void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode, string * generatedText, int connectionType1, int connectionType2);
-	void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode, GIAEntityConnection * entityConnection, string * generatedText, int connectionType);
-		void generateRelexFeatureTagsGenericPerSentence(string * generatedRelexTags);
+	void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, string * generatedText, int connectionType1, int connectionType2, int startEntityIndex, bool supportAdditionalLinks);
+	void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode0, GIAEntityConnection * entityConnection, string * generatedText, int connectionType, int startEntityIndex);
+		void generateNLGInputViewFeatureTagsGenericPerSentence(string * generatedRelexTags);
 		void generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNode, int entityIndex, string * generatedRelexTags);
 			string generateNLGInputViewLine(string type, string governor, string dependent);
 

@@ -3,7 +3,7 @@
  * File Name: GIAnlp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4b 21-July-2012
+ * Project Version: 1n4c 23-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -17,6 +17,7 @@
 
 #define GIA_TM_STRUCT_YEAR_OFFSET 1900
 
+#define STANFORD_PARSER_SENTENCE_SKIP_SUPPORT
 #define STANFORD_PARSER_SENTENCE_SKIPPED_TEXT "Sentence skipped"
 
 #define Relex_CFF_XML_TAG_nlparse ((string)"nlparse")

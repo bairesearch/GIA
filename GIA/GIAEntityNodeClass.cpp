@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4b 21-July-2012
+ * Project Version: 1n4c 23-July-2012
  *
  *******************************************************************************/
 
@@ -40,6 +40,9 @@ GIAEntityNode::GIAEntityNode(void)
 	idInstance = 0;
 
 	entityName = "";
+	#ifdef GIA_USE_NLG_BUG_IN_NLG2_REQUIRES_ORIG_WORD_NOT_LEMMA
+	wordOrig = "";		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
+	#endif	
 	confidence = 1.0;
 
 	isConcept = false;

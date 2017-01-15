@@ -3,7 +3,7 @@
  * File Name: GIAParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4b 21-July-2012
+ * Project Version: 1n4c 23-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of CFF File
  *
@@ -331,6 +331,73 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 }
 
 
+#ifdef STANFORD_PARSER_USE_POS_TAGS
+void GIATHparseStanfordParseWordsAndPOSTagsText(string * POStagsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence)
+{
+	Feature * firstFeatureInList = currentSentenceInList->firstFeatureInList;
+	Feature * currentFeatureInList = firstFeatureInList;
+
+	*maxNumberOfWordsInSentence = 0;
+
+	int numberOfCharactersInWordsAndPOSTagsText = POStagsText->length();
+
+	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
+	currentItemString[0] = '\0';
+
+	/* Data file layout example
+
+	The/DT strongest/JJS rain/NN ever/RB recorded/VBN in/IN India/NNP
+	shut/VBD down/RP the/DT financial/JJ hub/NN of/IN Mumbai/NNP ,/,
+	snapped/VBD communication/NN lines/NNS ,/, closed/VBD airports/NNS
+	and/CC forced/VBD thousands/NNS of/IN people/NNS to/TO sleep/VB in/IN
+	their/PRP$ offices/NNS or/CC walk/VB home/NN during/IN the/DT night/NN
+	,/, officials/NNS said/VBD today/NN ./. 
+
+	*/
+
+	bool readingWord = true;	//else reading POS tag
+	int characterIndex = 0;
+	//cout << "h1" << endl;
+
+	while(characterIndex < numberOfCharactersInWordsAndPOSTagsText)
+	{
+		char c = (*POStagsText)[characterIndex];
+		//cout << "c = " << c << endl;
+
+		if(c == CHAR_NEWLINE || c == CHAR_SPACE)
+		{
+			if(readingWord)
+			{
+				cout << "GIATHparseStanfordParseWordsAndPOSTagsText() error: (c == CHAR_NEWLINE) && readingWord" << endl;
+			}
+			else
+			{
+				currentFeatureInList->stanfordPOS = currentItemString;
+				#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
+				cout << "DEBUG: GIATHparseStanfordParseWordsAndPOSTagsText(): currentFeatureInList->stanfordPOS = " << currentFeatureInList->stanfordPOS << endl;
+				#endif
+				currentFeatureInList = currentFeatureInList->next;
+				readingWord = true;
+				currentItemString[0] = '\0';
+			}
+		}
+		else if(c == CHAR_FORWARDSLASH)
+		{
+			readingWord = false;
+			currentItemString[0] = '\0';
+		}
+		else
+		{
+			char characterString[2];
+			characterString[0] = c;
+			characterString[1] = '\0';
+			strcat(currentItemString, characterString);
+		}
+
+		characterIndex++;
+	}
+}
+#endif
 
 
 void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList, bool * isQuestion)
