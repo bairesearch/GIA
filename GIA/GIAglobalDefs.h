@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i35a 19-March-2015
+ * Project Version: 2i36a 19-March-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -728,9 +728,22 @@
 #endif
 #define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_DEFINITION_BASIC
 
-#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS	//GIA 2b4a
-#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
-	#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER "_"	//this filler does not appear compatible with Relex (Stanford only); try another filler character (NB "-" doesn't work with Relex either)
+#ifdef USE_NLC
+	#define GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS	//added 2i36a
+	#ifdef GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS
+		#define GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS_FILLER "_"	//this must be synced with NLC_PREPROCESSOR_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER
+	#endif
+#else
+	//#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS	//GIA 2b4a	//disabled 2i36a
+	#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
+		#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER "_"	//this filler does not appear compatible with Relex (Stanford only); try another filler character (NB "-" doesn't work with Relex either)
+		#define GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS	//added 2i36a
+		#ifdef GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS
+			#define GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS_FILLER (GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER)
+		#endif
+	#endif
+#endif
+#ifdef GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS
 	#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
 		#define GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER_OR_QUOTATIONS	//2i21a
 	#endif
