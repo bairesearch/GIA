@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i1b 14-Mar-2012
+ * Project Version: 1j1a 2-Apr-2012
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
@@ -86,10 +86,16 @@ using namespace std;
 #include "GIAXMLconversion.h"
 #include "GIACXLconversion.h"
 #include "GIAdatabase.h"
+#include "GIAglobalDefs.h"	//NEW
 #include "XMLParserClass.h"
 #include "XMLrulesClass.h"
 #include "LDsprite.h"
 #include "LDopengl.h"
+#ifdef USE_CE
+	#include "CEcreateLayout.h"
+	#include "CEClaimClass.h"
+	#include "CEvars.h"
+#endif
 
 static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any of the following\n"
 "\n\t-itxt [string]     : plain text .txt input filename to be parsed by Relex (def: inputText.txt)"
@@ -1014,10 +1020,37 @@ bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *en
 	setTranslatorConditionEntityNodesList(conditionEntityNodesList);
 	
 	initialiseGIATranslatorForTexualContext();
-	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-	convertParagraphSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstParagraphInList);
-	#else
-	convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList);	
+	
+	#ifdef USE_CE
+		//generate claims heirachy
+
+		string claimLayoutFileName = "claimsLayout.txt";
+		string claimEnumeratedFileName = inputTextRelexXMLFileName;
+		string subclaimPrependPartA = CE_SUB_CLAIM_PREPEND_PART_A_DEFAULT;
+		string subclaimPrependPartC = CE_SUB_CLAIM_PREPEND_PART_C_DEFAULT;
+		#ifdef GIA_WITH_CE_DERIVE_SUBCLAIM_PREPEND
+		bool deriveSubclaimPrepend = true;
+		#else
+		bool deriveSubclaimPrepend = false;		
+		#endif
+		
+		bool generateClaimClassHeirachy = true;		//NB this is required for external applications needing to extract claims layout information using CE
+		CEClaim * firstClaimInHeirachy = new CEClaim();		
+		vector<CEClaim*> * claimsList = new vector<CEClaim*>;
+	
+		if(!deriveSubclaimPrependAndCreateClaimsLayout(claimEnumeratedFileName, claimLayoutFileName, subclaimPrependPartA, subclaimPrependPartC, deriveSubclaimPrepend, generateClaimClassHeirachy, firstClaimInHeirachy, claimsList))
+		{
+			result = false;
+		}
+		
+		convertParagraphSentenceRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstParagraphInList, firstClaimInHeirachy, claimsList);		
+			
+	#else	
+		#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
+		convertParagraphSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstParagraphInList);
+		#else
+		convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList);	
+		#endif
 	#endif
 	
 	return result;
