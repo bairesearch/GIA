@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammarAndReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i16a 18-Apr-2012
+ * Project Version: 1j1a 20-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1230,7 +1230,7 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 				currentRelationInList->disabled = true;			
 
 				disableEntityBasedUponFirstSentenceToAppearInNetwork(dependentEntity);
-				//disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(dependentEntity);	//OLD: before forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)
+				//disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(dependentEntity);	//OLD: before moving disableRedundantNodesStanfordCoreNLP() forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)
 
 				bool featureNERindicatesNameConcatenationRequired = false;
 				for(int i=0; i<FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_TYPES; i++)
@@ -1246,7 +1246,7 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 				{
 					governerEntity->entityName = dependentEntity->entityName + FEATURE_NER_NAME_CONCATENATION_TOKEN + governerEntity->entityName;	//join names together
 
-					/*//OLD: before forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)
+					/*//OLD: before moving disableRedundantNodesStanfordCoreNLP() forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)
 					if(governerEntity->hasAssociatedInstanceTemp)
 					{//disable its property also
 						(governerEntity->AssociatedInstanceNodeList.back())->entityName = governerEntity->entityName;	//join names together
