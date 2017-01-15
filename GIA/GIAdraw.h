@@ -61,7 +61,7 @@ using namespace std;
 #define GIA_DRAW_PROPERTY_NODE_WIDTH (20)
 
 #define DRAW_X_INITIAL_OFFSET (200)
-#define DRAW_Y_INITIAL_OFFSET (0)
+#define DRAW_Y_INITIAL_OFFSET (100)
 
 #define DRAW_Y_SPACE_BETWEEN_ENTITIES (0)				//OLD: should really be 1 for initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_ENTITIES (200)
@@ -75,7 +75,7 @@ using namespace std;
 #define DRAW_Y_SPACE_BETWEEN_ACTION_DEFINITION_NODES (30)	//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_ACTION_DEFINITION_NODES (-50)	//should not be used during initialiseForPrint
 
-#define DRAW_Y_SPACE_BETWEEN_CONDITION_NODES (0)		//should not be used during initialiseForPrint
+#define DRAW_Y_SPACE_BETWEEN_CONDITION_NODES (10)		//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_CONDITION_NODES (30)		//should not be used during initialiseForPrint
 #define DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (15)	//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (0)	//should not be used during initialiseForPrint
@@ -83,7 +83,7 @@ using namespace std;
 #define DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES (-50)	//should not be used during initialiseForPrint
 
 #define DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES (50)			//should not be used during initialiseForPrint
-#define DRAW_X_SPACE_BETWEEN_PROPERTY_NODES (0)	
+#define DRAW_X_SPACE_BETWEEN_PROPERTY_NODES (30)	
 #define DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE (15)	//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE (0)	//should not be used during initialiseForPrint
 #define DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES (30)	//should not be used during initialiseForPrint

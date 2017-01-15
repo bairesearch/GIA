@@ -249,8 +249,8 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			}
 				
 		}
-		q = DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;		//this used to be - not +
-		r = DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;			
+		q = -DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES;		//this used to be - not +
+		r = -DRAW_X_SPACE_BETWEEN_PROPERTY_NODES;			
 		if(entityNode->entityNodeContainingThisProperty != NULL)
 		{
 			//cout << "a34" << endl;
