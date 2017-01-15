@@ -69,6 +69,13 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 			
 			queryAnswerNodeTemp = testEntityNodeForQuery(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodes, false, &queryPeviousAnswerNodeTemp, &queryAnswerContextTemp, false);
 
+			#ifdef GIA_QUERY_TRACE_FIND_MAXIMUM_NUMBER_OF_MATCHED_NODES
+			//resetQuerySemanticNetworkAlreadyTracedNodes;
+			int irrelevant;
+			string printEntityNodeString = "";
+			traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISON, &irrelevant, &printEntityNodeString, false);				
+			#endif
+			
 			double currentConfidence = (double)numberOfMatchedNodes;	//NB confidence value definition for query network structure matching is currently very simple; it is just equal to the number of matched nodes found 
 
 			//cout << "currentConfidence = " << currentConfidence << endl;
@@ -195,7 +202,11 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 	#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES
 	if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters && !(entityNode->isAnswerContextToQuery)))
 	#else
+	#ifdef GIA_QUERY_TRACE_FIND_MAXIMUM_NUMBER_OF_MATCHED_NODES
+	if(!(queryEntityNode->testedForQueryComparison))	
+	#else
 	if(!(entityNode->testedForQueryComparison))	
+	#endif
 	#endif
 	{
 		//cout << "IE-2" << endl;
@@ -327,7 +338,11 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 			else
 			{
 			#endif
-				entityNode->testedForQueryComparison = true;		//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]				
+				#ifdef GIA_QUERY_TRACE_FIND_MAXIMUM_NUMBER_OF_MATCHED_NODES
+				queryEntityNode->testedForQueryComparison = true;	
+				#else
+				entityNode->testedForQueryComparison = true;	//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]		
+				#endif			
 			#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES
 			}	
 			#endif
@@ -397,7 +412,11 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 	#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES					
 	if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters && !(entityNode->isAnswerContextToQuery)))
 	#else
+	#ifdef GIA_QUERY_TRACE_FIND_MAXIMUM_NUMBER_OF_MATCHED_NODES
+	if(!(queryEntityNode->testedForQueryComparison))	
+	#else
 	if(!(entityNode->testedForQueryComparison))	
+	#endif
 	#endif
 	{//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]
 	
@@ -406,6 +425,7 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		cout << "\tentityNode = " << entityNode->entityName << endl;
 		*/
 		
+		#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES
 		if(findBestInexactAnswerAndSetDrawParameters)
 		{
 			//cout << "TEMP: findBestInexactAnswerAndSetDrawParameters: entityNode = " << entityNode->entityName << endl;
@@ -413,8 +433,15 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		}
 		else
 		{
-			entityNode->testedForQueryComparison = true;		//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]				
+		#endif
+			#ifdef GIA_QUERY_TRACE_FIND_MAXIMUM_NUMBER_OF_MATCHED_NODES
+			queryEntityNode->testedForQueryComparison = true;	
+			#else
+			entityNode->testedForQueryComparison = true;	//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]		
+			#endif			
+		#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES
 		}
+		#endif
 		
 		#ifdef GIA_QUERY_DEBUG
 		//cout << "\tfindBestInexactAnswerAndSetDrawParameters = " << findBestInexactAnswerAndSetDrawParameters << endl;
@@ -1128,6 +1155,10 @@ void traceEntityNodeDetermineNextCourseOfAction(string * printEntityNodeString, 
 	{
 		traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition);
 	}
+	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISON)
+	{
+		traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition);
+	}	
 	else
 	{
 		cout << "error: illegal trace entity nodes function" << endl;
@@ -1154,6 +1185,11 @@ void traceEntityNode(GIAEntityNode * entityNode, int function, int * numberOfMat
 			*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
 		}
 		#endif
+		
+		if(GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISON)
+		{
+			entityNode->testedForQueryComparison = false;
+		}
 
 		//if(!(entityNode->hasAssociatedInstanceIsAction))
 		//{

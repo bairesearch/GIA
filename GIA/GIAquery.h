@@ -14,7 +14,9 @@
 
 //#define GIA_QUERY_DEBUG
 
+#define GIA_QUERY_TRACE_FIND_MAXIMUM_NUMBER_OF_MATCHED_NODES		//experimental
 //#define GIA_QUERY_TRACE_PAST_ANSWER	//default: disabled [temporarily testing enabled]
+
 //#define GIA_QUERY_TRACE_INSTANTIATIONS	//default: disabled
 #ifdef GIA_QUERY_TRACE_INSTANTIATIONS
 	//#define GIA_QUERY_TRACE_INSTANTIATIONS_OLD_TEXTUAL_OUTPUT
@@ -39,6 +41,7 @@
 
 #define GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_PRINT (1)
 #define GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES (2)
+#define GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISON (3)
 
 GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, vector<GIAEntityNode*> *conceptEntityNodesListQuery, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, double * confidence, GIAEntityNode** queryAnswerPreviousNode, string * queryAnswerContext);
 	GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters, GIAEntityNode** queryAnswerPreviousNode, string * queryAnswerContext, bool thisIsInstanceAndPreviousNodeWasDefinition);
