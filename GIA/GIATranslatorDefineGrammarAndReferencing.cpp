@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammarAndReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j5a 30-Apr-2012
+ * Project Version: 1j6a 01-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1307,13 +1307,6 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 			//if(((governerEntity->NERTemp == FEATURE_NER_DATE) && (dependentEntity->NERTemp == FEATURE_NER_DATE)) || ((governerEntity->NERTemp == FEATURE_NER_MONEY) && (dependentEntity->NERTemp == FEATURE_NER_MONEY)) || ((governerEntity->NERTemp == FEATURE_NER_NUMBER) && (dependentEntity->NERTemp == FEATURE_NER_NUMBER)) || ((governerEntity->NERTemp == FEATURE_NER_TIME) && (dependentEntity->NERTemp == FEATURE_NER_TIME)))
 			if(governerAndDependentBothHaveSameNERvalue)
 			{
-				//cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
-				//cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
-
-				currentRelationInList->disabled = true;			
-
-				disableEntityBasedUponFirstSentenceToAppearInNetwork(dependentEntity);
-				//disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(dependentEntity);	//OLD: before moving disableRedundantNodesStanfordCoreNLP() forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)
 
 				bool featureNERindicatesNameConcatenationRequired = false;
 				for(int i=0; i<FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_TYPES; i++)
@@ -1327,15 +1320,47 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 				//if((governerEntity->NETTemp == FEATURE_NER_PERSON) || (governerEntity->NETTemp == FEATURE_NER_LOCATION) || (governerEntity->NETTemp == FEATURE_NER_ORGANIZATION) || (governerEntity->NETTemp == FEATURE_NER_MISC))
 				if(featureNERindicatesNameConcatenationRequired)
 				{
-					governerEntity->entityName = dependentEntity->entityName + FEATURE_NER_NAME_CONCATENATION_TOKEN + governerEntity->entityName;	//join names together
+					bool featureNERindicatesNameConcatenationRequiredAllowedByPOS = false;
+					#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5C_FEATURES_STANFORD_NER_INDICATES_NAME_CONCATENATION_REQUIRES_POS_NNP
+					if((dependentEntity->stanfordPOSTemp == FEATURE_POS_TAG_NNP) && (governerEntity->stanfordPOSTemp == FEATURE_POS_TAG_NNP))
+					{
+						featureNERindicatesNameConcatenationRequiredAllowedByPOS = true;
+					}
+					#else
+					featureNERindicatesNameConcatenationRequiredAllowedByPOS = true;
+					#endif
+					
+					if(featureNERindicatesNameConcatenationRequiredAllowedByPOS)
+					{
+						governerEntity->entityName = dependentEntity->entityName + FEATURE_NER_NAME_CONCATENATION_TOKEN + governerEntity->entityName;	//join names together
+						/*//OLD: before moving disableRedundantNodesStanfordCoreNLP() forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)
+						if(governerEntity->hasAssociatedInstanceTemp)
+						{//disable its property also
+							(governerEntity->AssociatedInstanceNodeList.back())->entityName = governerEntity->entityName;	//join names together
+						}	
+						*/
+						
+						//cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
+						//cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
 
-					/*//OLD: before moving disableRedundantNodesStanfordCoreNLP() forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)
-					if(governerEntity->hasAssociatedInstanceTemp)
-					{//disable its property also
-						(governerEntity->AssociatedInstanceNodeList.back())->entityName = governerEntity->entityName;	//join names together
-					}	
-					*/				
+						currentRelationInList->disabled = true;			
+
+						disableEntityBasedUponFirstSentenceToAppearInNetwork(dependentEntity);
+						//disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(dependentEntity);	//OLD: before moving disableRedundantNodesStanfordCoreNLP() forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)					
+					}
 				}
+				else
+				{
+					//cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
+					//cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
+
+					currentRelationInList->disabled = true;			
+
+					disableEntityBasedUponFirstSentenceToAppearInNetwork(dependentEntity);
+					//disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(dependentEntity);	//OLD: before moving disableRedundantNodesStanfordCoreNLP() forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)
+				
+				}
+
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			

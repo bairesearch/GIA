@@ -3,7 +3,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j5a 30-Apr-2012
+ * Project Version: 1j6a 01-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -86,12 +86,14 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntit
 					}
 					else
 					{
+						#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5B_RELATIONS_COMPENSATE_FOR_INACCURATE_STANFORD_DATE_TAGGING
 						#ifdef GIA_TRANSLATOR_DEBUG
 						cout << "error: isolated date node found (not declared as a time condition) [2]" << endl;
 						#else
 						cout << "error: [confidential 2]" << endl;
 						#endif
-						exit(0);	//remove this later						
+						exit(0);	//remove this later	
+						#endif					
 					}			
 				}
 			}
