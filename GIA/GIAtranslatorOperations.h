@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s2a 24-June-2013
+ * Project Version: 1s3a 27-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -51,6 +51,7 @@ using namespace std;
 #include "GIAconditionNodeClass.h"
 
 #define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES	//added 11 August 2012	[this is designed to work with GIA_SUPPORT_ALIASES]
+	#define GIA_TRANSLATOR_INTERPRET_IN_AS_POSSESSIVE_FOR_SUBSTANCES
 	//#define GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES	//added 8 August 2012		//Not used - already coded - reuse Relex code in linkConditions instead (GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES)
 #ifndef STANFORD_PARSER_USE_POS_TAGS
 	#define GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS //added 28 October 2012b
@@ -539,6 +540,7 @@ used
 #endif
 
 //prepositions are now added explicitly
+#define RELATION_TYPE_PREPOSITION_IN "in"
 /*
 #define RELATION_TYPE_PREPOSITION_ON "on"		//eg rides on tuesday		[ride tuesday]		//this forms the action condition; "when"
 #define RELATION_TYPE_PREPOSITION_AT "at"		//eg rides at the palace	[ride palace]	//this forms the action condition; "where"
@@ -548,9 +550,16 @@ used
 #define RELATION_TYPE_PREPOSITION_WHEN "when"	//eg joe fires his bow when john drives fast.	[fire drive]	//this forms the action condition; "when" [not time, but in association with another action]
 #define RELATION_TYPE_PREPOSITION_BECAUSE "because"
 */
-
-
 #define RELATION_TYPE_OF "of"		//eg [she grew tired] of it	 "She grew tired of the pie."  / "The house of Kriton is blue."	//detect if function and argument are both nouns/substance entities; if so then create a substance connection. if a function is a verb/action, then create a condition connection.
+
+#ifdef GIA_TRANSLATOR_INTERPRET_IN_AS_POSSESSIVE_FOR_SUBSTANCES
+	#define RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES (2)
+#else
+	#define RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES (1)
+#endif
+
+
+
 
 //action/substance reasons [NOT YET IMPLEMENTED ???]
 #define RELATION_TYPE_PREPOSITION_SUCH_THAT "such"
@@ -891,7 +900,11 @@ static int referenceTypePersonCrossReferenceGenderArray[REFERENCE_TYPE_PERSON_NU
 static bool referenceTypePersonCrossReferenceDefiniteArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {false, true, true, true, true};
 static bool referenceTypePersonCrossReferencePersonArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {GRAMMATICAL_PERSON_UNDEFINED, GRAMMATICAL_PERSON, GRAMMATICAL_PERSON, GRAMMATICAL_PERSON_UNDEFINED, GRAMMATICAL_PERSON_UNDEFINED};
 
-
+#ifdef GIA_TRANSLATOR_INTERPRET_IN_AS_POSSESSIVE_FOR_SUBSTANCES
+static string relationTypePossessivePrepositionsNameArray[RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES] = {RELATION_TYPE_OF, RELATION_TYPE_PREPOSITION_IN};
+#else
+static string relationTypePossessivePrepositionsNameArray[RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_IN};
+#endif
 
 
 #ifdef GIA_TRANSLATOR_INTERPRET_CLAUSAL_COMPLEMENT_AS_ACTION_OBJECT_INSTEAD_OF_ACTION_PROPERTY
