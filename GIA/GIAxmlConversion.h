@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f21a 20-August-2014
+ * Project Version: 2f22a 21-August-2014
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -202,9 +202,12 @@ using namespace std;
 #define NET_XML_ATTRIBUTE_entityIndexTemp ((string)"entityIndexTemp")	//this is only used for NLC
 #define NET_XML_ATTRIBUTE_wasReference ((string)"wasReference")	//this is only used for NLC
 #define NET_XML_ATTRIBUTE_isQuery ((string)"isQuery")	//this is only used for NLC
-#endif
 #ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 #define NET_XML_ATTRIBUTE_isReference ((string)"isReference")	//this is only used for NLC
+#endif
+#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
+#define NET_XML_ATTRIBUTE_sameReferenceSet ((string)"sameReferenceSet")	//this is only used for NLC
+#endif
 #endif
 
 static string entityVectorConnectionXMLtagNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {NET_XML_TAG_ActionNodeList, NET_XML_TAG_IncomingActionNodeList, NET_XML_TAG_ConditionNodeList, NET_XML_TAG_IncomingConditionNodeList, NET_XML_TAG_SubstanceNodeList, NET_XML_TAG_SubstanceNodeReverseList, NET_XML_TAG_EntityNodeDefinitionList, NET_XML_TAG_EntityNodeDefinitionReverseList, NET_XML_TAG_AssociatedSubstanceNodeList, NET_XML_TAG_actionSubjectEntity, NET_XML_TAG_actionObjectEntity, NET_XML_TAG_conditionSubjectEntity, NET_XML_TAG_conditionObjectEntity, NET_XML_TAG_entityNodeDefiningThisSubstance};
