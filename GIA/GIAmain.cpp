@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17b 27-January-2015
+ * Project Version: 2i14a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -639,7 +639,7 @@ int main(int argc,char* *argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 2h17b 27-January-2015" << endl;
+			cout << "OpenGIA.exe - Project Version: 2i14a 27-January-2015" << endl;
 			exit(1);
 		}
 
@@ -657,6 +657,7 @@ int main(int argc,char* *argv)
 	vector<GIAentityNode*>* entityNodesActiveListSubstances = new vector<GIAentityNode*>;
 	vector<GIAentityNode*>* entityNodesActiveListActions = new vector<GIAentityNode*>;
 	vector<GIAentityNode*>* entityNodesActiveListConditions = new vector<GIAentityNode*>;
+	map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences = new map<int, vector<GIAentityNode*>*>;
 	unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList = new unordered_map<long, GIAtimeConditionNode*>;
 
 	int maxNumberSentences;
@@ -771,6 +772,7 @@ int main(int argc,char* *argv)
 		entityNodesActiveListSubstances,
 		entityNodesActiveListActions,
 		entityNodesActiveListConditions,
+		entityNodesActiveListSentences,
 		timeConditionNodesActiveList,
 
 		&maxNumberSentences
@@ -894,6 +896,7 @@ bool executeGIA(
 	vector<GIAentityNode*>* entityNodesActiveListSubstances,
 	vector<GIAentityNode*>* entityNodesActiveListActions,
 	vector<GIAentityNode*>* entityNodesActiveListConditions,
+	map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences,
 	unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList,
 
 	int* maxNumberSentences
@@ -1035,7 +1038,8 @@ bool executeGIA2()
 	vector<GIAentityNode*>* entityNodesActiveListActionsQuery = new vector<GIAentityNode*>;			//not required - declared for symmetry
 	vector<GIAentityNode*>* entityNodesActiveListConditionsQuery = new vector<GIAentityNode*>;			//not required - declared for symmetry
 	unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveListQuery = new unordered_map<long, GIAtimeConditionNode*>;
-
+	map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentencesQuery = new map<int, vector<GIAentityNode*>*>;
+	
 	#ifdef GIA_USE_DATABASE
 	initialiseDatabase(readFromDatabase, databaseFolderName, useDatabase, entityNodesActiveListComplete, entityNodesActiveListConcepts);
 	setCurrentDirectory(workingFolderCharStar);
@@ -1446,9 +1450,9 @@ bool executeGIA2()
 				}
 				#else
 				#ifdef USE_CE
-				if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, false, firstCodeextensionInHeirachy, codeextensionsList, useCodeextensionsHeirachy))
+				if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListSentences, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, false, firstCodeextensionInHeirachy, codeextensionsList, useCodeextensionsHeirachy))
 				#else
-				if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, false))
+				if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListSentences, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, false))
 				#endif
 				{
 					result = false;
@@ -1588,9 +1592,9 @@ bool executeGIA2()
 			#ifdef USE_CE
 			CECodeextension* firstCodeextensionInHeirachy;
 			vector<CECodeextension*>* codeextensionsList;
-			if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, false, firstCodeextensionInHeirachy, codeextensionsList, false))
+			if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, entityNodesActiveListSentencesQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, false, firstCodeextensionInHeirachy, codeextensionsList, false))
 			#else
-			if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, false))
+			if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, entityNodesActiveListSentencesQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, false))
 			#endif
 			{
 				result = false;
