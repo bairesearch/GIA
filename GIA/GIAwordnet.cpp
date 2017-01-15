@@ -23,7 +23,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p8a 23-September-2012
+ * Project Version: 1p8b 23-September-2012
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -205,7 +205,8 @@ SynsetPtr findMostPopularSynsets(string * word, bool * wordIsFound, int wordNetP
 {
 	int maximumNumberOfTagsAcrossSimilarityTypes = 0;
 	SynsetPtr senseOutputWithHighestTagsAcrossSimilarityTypes = NULL;
-
+	bool senseOutputWithHighestTagsAcrossSimilarityTypesMustFree = false;
+	
 	for(int similarityTypeIndex = 0; similarityTypeIndex<WORDNET_DATA_ENTRY_POINTERS_INDICATING_SIMILAR_SYNSETS_NUMBER_OF_TYPES; similarityTypeIndex++)
 	{
 		int similarityType = wordnetDataEntryPointersIndicatingSimilarSynsetsArray[similarityTypeIndex];
@@ -224,11 +225,19 @@ SynsetPtr findMostPopularSynsets(string * word, bool * wordIsFound, int wordNetP
 				#ifdef GIA_FREE_MEMORY3
 				if(senseOutputWithHighestTagsAcrossSimilarityTypes != NULL)
 				{//senseOutputWithHighestTagsAcrossSimilarityTypes may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)
-					if(senseOutputWithHighestTagsPassedNewSynsetMustFree)
+					if(senseOutputWithHighestTagsAcrossSimilarityTypesMustFree)
 					{						
 						free_synset(senseOutputWithHighestTagsAcrossSimilarityTypes);	//Free a synset							
 					}
 				}
+				if(senseOutputWithHighestTagsPassedNewSynsetMustFree)
+				{
+					senseOutputWithHighestTagsAcrossSimilarityTypesMustFree = true;
+				}	
+				else
+				{
+					senseOutputWithHighestTagsAcrossSimilarityTypesMustFree = false;
+				}			
 				#endif			
 				maximumNumberOfTagsAcrossSimilarityTypes = maximumNumberOfTags;
 				senseOutputWithHighestTagsAcrossSimilarityTypes = senseOutputWithHighestTags;
