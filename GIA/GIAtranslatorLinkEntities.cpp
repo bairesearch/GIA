@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u11a 13-October-2013
+ * Project Version: 2a1a 27-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -81,7 +81,7 @@ void linkEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFille
 	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	//26 July 2013 - shifted linkIndirectObjects before linkSubjectObjectRelationships for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK (as obj is disableRelationDuringLink by linkSubjectObjectRelationships) - note defineToBeAndToDoPropertiesAndConditions is also reliant on at least a subj being active [but not a subj and obj combination like linkIndirectObjects]: check this does not require shifting either
+	//26 July 2013 - shifted linkIndirectObjects before linkSubjectObjectRelationships for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK (as obj is disableRelationDuringLink by linkSubjectObjectRelationships) - note defineToBeAndToDoConditions is also reliant on at least a subj being active [but not a subj and obj combination like linkIndirectObjects]: check this does not require shifting either
 	cout << "3a pass; link properties (define indirect objects); eg The officer gave the youth a ride. _iobj(give, youth) +  _obj(give[3], ride[7])" << endl;
 	#endif
 	linkIndirectObjects(currentSentenceInList, GIAentityNodeArray);
@@ -1625,7 +1625,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 										else if(partnerTypeObjectSpecialConditionToDoSubstanceFound)
 										{
 											partnerTypeObjectSpecialConditionToDoSubstanceFoundAssumeUsed = false;
-											//relevant code is executed in function defineToBeAndToDoPropertiesAndConditions() instead
+											//relevant code is executed in function defineToBeAndToDoConditions() instead
 										}
 										#endif
 										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TOBE_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK_AND_ACTION_DEFINITION
@@ -1815,7 +1815,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 											}
 										}
 										#endif
-										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
+										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_OR_TOBE_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
 										//[search for special relation _to-do AND _subj, and if so create a substance link between subject and object]
 										if(!foundPartner)
 										{//do not overwrite usage of subj/obj if a direct link [ie action] has been found (this condition probably/may not be required)
