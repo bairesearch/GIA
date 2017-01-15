@@ -162,7 +162,7 @@ GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
 	propertyEntity->AssociatedInstanceNodeList.push_back(newProperty);
 
 	propertyEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
-
+		
 	return newProperty;	
 }
 
@@ -264,6 +264,14 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 	else
 	{	
 		GIAEntityNode * newProperty = addProperty(propertyEntity);
+		
+		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
+		if(propertyEntity->isQuery)
+		{
+			propertyEntity->isQuery = false;
+			newProperty->isQuery = true;
+		}
+		#endif		
 	}	
 }
 
@@ -1295,7 +1303,8 @@ void identifyComparisonVariable(Sentence * currentSentenceInList, bool GIAEntity
 				}
 			}			
 		}
-
+		
+		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
 		if(!foundComparisonVariable)
 		{//define comparison variable; define required answer entity as the next noun after the question word/lemma eg "house/person" 
 			
@@ -1340,8 +1349,10 @@ void identifyComparisonVariable(Sentence * currentSentenceInList, bool GIAEntity
 							queryComparisonVariableEntityNode->isQuery = true;
 							foundComparisonVariable = true;								
 							comparisonVariableNode = queryComparisonVariableEntityNode;
+							#ifdef GIA_TRANSLATOR_DEBUG
 							cout << "foundComparisonVariable" << endl;
 							cout << "queryComparisonVariableEntityNode->entityName = " << queryComparisonVariableEntityNode->entityName << endl;
+							#endif
 						}
 						else
 						{
@@ -1353,6 +1364,7 @@ void identifyComparisonVariable(Sentence * currentSentenceInList, bool GIAEntity
 				currentFeatureInList = currentFeatureInList->next;
 			}
 		}
+		#endif
 	}
 	/*
 	else

@@ -193,7 +193,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 	
 	if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters && !(entityNode->isAnswerContextToQuery)))
 	{
-		//cout << "IE-1" << endl;
+		//cout << "IE-2" << endl;
 
 		
 		//cout << "\tqueryEntityNode = " << queryEntityNode->entityName << endl;
@@ -211,6 +211,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 		bool foundMatch = false;
 		if(sourceIsConditionAndHasComparisonVariableAttached)
 		{
+			//cout << "IE-1a" << endl;
 			//cout << "HERE" << endl;
 			
 			if(!(*foundAnswer))
@@ -219,22 +220,40 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 				//cout << "queryEntityNode->entityName = " << queryEntityNode->entityName << endl;
 				//cout << "entityNode->entityName = " << entityNode->entityName << endl;			
 				//this case is required in the case an answer is connected to a condition property or a condition definition (both new additions to the algorithm)
+				#ifdef GIA_QUERY_DEBUG
+				cout << "sourceIsConditionAndHasComparisonVariableAttached" << endl;
+				cout << "\t foundMatch:" << entityNode->entityName << endl;
+				#endif
 				foundMatch = true;
 			}
 		}
 		else
 		{
+			//cout << "IE-1b" << endl;
+
 			if(queryEntityNode->entityName == entityNode->entityName)	//allow non-equal conditions to be matched during network comparison
 			{
 				//cout << "IE0" << endl;
 
-				if(detectComparisonVariable && comparisonVariableNode->hasQuantity && queryEntityNode->hasQuantity && entityNode->hasQuantity)
+				if(comparisonVariableNode->hasQuantity && queryEntityNode->hasQuantity && entityNode->hasQuantity)
 				{//exact match found [NB if a quantity, the queryEntityNode's entityName will not have the comparisonVariable name (_$qVar) specified, and therefore a matched entity node entityName is required]
 					foundMatch = true;
 					#ifdef GIA_QUERY_DEBUG
+					cout << "detectComparisonVariable && (queryEntityNode->entityName == entityNode->entityName) && (comparisonVariableNode->hasQuantity && queryEntityNode->hasQuantity && entityNode->hasQuantity)" << endl;					
+					cout << "\t foundMatch:" << entityNode->entityName << endl;
 					cout << "entityNode->quantityNumberString = " << entityNode->quantityNumberString << endl;
 					#endif
 				}
+				//#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES	- this preprocessor definition needs to be moved to ...globalVars.h; as it is used in both GIAtranslator.cpp and GIAquery.cpp
+				else if(queryEntityNode->isQuery)				
+				{//added support for which query (alternate method of comparison node detection/designation/definition) 
+					foundMatch = true;
+					#ifdef GIA_QUERY_DEBUG
+					cout << "detectComparisonVariable && (queryEntityNode->entityName == entityNode->entityName) && (queryEntityNode->isQuery)" << endl;					
+					cout << "\t foundMatch:" << entityNode->entityName << endl;
+					#endif					
+				}
+				//#endif
 				else
 				{
 					//cout << "IE1" << endl;
@@ -246,9 +265,10 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 						{
 							//cout << "IE3" << endl;
 							foundMatch = true;
-							//#ifdef GIA_QUERY_DEBUG
+							#ifdef GIA_QUERY_DEBUG
+							cout << "(queryEntityNode->entityName == entityNode->entityName) && isSuitableNodeTypeForInexactAnswer" << endl;
 							cout << "foundBestInexactAnswerAndSetDrawParameters:" << entityNode->entityName << endl;
-							//#endif
+							#endif
 							//set queryAnswerNode if entityNode is an object;
 							/*eg;
 							Which house does did Jane buy?
@@ -263,9 +283,14 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 			}
 			else if(detectComparisonVariable)
 			{
-				if(queryEntityNode->entityName == comparisonVariableNode->entityName)
+				//cout << "IE0b" << endl;
+				if(queryEntityNode->entityName == comparisonVariableNode->entityName)	//implied: (queryEntityNode->isQuery)
 				{//exact match found
 					foundMatch = true;
+					#ifdef GIA_QUERY_DEBUG
+					cout << "detectComparisonVariable && (queryEntityNode->entityName == comparisonVariableNode->entityName)" << endl;
+					cout << "\t foundMatch:" << entityNode->entityName << endl;
+					#endif					
 				}
 			}
 		}

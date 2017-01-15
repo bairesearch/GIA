@@ -12,7 +12,7 @@
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
-#define GIA_QUERY_DEBUG
+//#define GIA_QUERY_DEBUG
 
 //#define GIA_QUERY_TRACE_PAST_ANSWER	//default: disabled [temporarily testing enabled]
 //#define GIA_QUERY_TRACE_INSTANTIATIONS	//default: disabled
