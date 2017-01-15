@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i27b 04-February-2015
+ * Project Version: 2i28a 04-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -175,7 +175,15 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(GIArelation* currentRe
 								{
 									previousRelationshipFound = true;
 									previousPropertyRelationshipFound = true;
-
+									
+									#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_ENSURE_PROPERTY_PARENT_IS_DEFINITE
+									if(entity2->grammaticalDefiniteTemp)
+									{
+										entity1->grammaticalDefiniteTemp = true;
+										entity2->grammaticalDefiniteTemp = false;
+									}
+									#endif
+									
 									#ifdef GIA_TRANSLATOR_DEBUG
 									cout << "previousPropertyRelationshipFound" << endl;
 									#endif
@@ -200,6 +208,14 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(GIArelation* currentRe
 											previousRelationshipFound = true;
 											previousPropertyRelationshipFound = true;
 
+											#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_ENSURE_PROPERTY_PARENT_IS_DEFINITE
+											if(entity2->grammaticalDefiniteTemp)
+											{
+												entity1->grammaticalDefiniteTemp = true;
+												entity2->grammaticalDefiniteTemp = false;
+											}
+											#endif
+									
 											#ifdef GIA_TRANSLATOR_DEBUG
 											cout << "previousPropertyRelationshipFound" << endl;
 											#endif

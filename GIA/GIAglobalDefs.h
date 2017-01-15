@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i27b 04-February-2015
+ * Project Version: 2i28a 04-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -655,7 +655,10 @@
 	#define GIA_TRANSLATOR_DO_NOT_CREATE_SUBSTANCE_CONCEPT_PROPERTIES_FOR_NON_SUBSTANCE_CONCEPT_PARENTS	//2i10a
 	#ifdef GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
 		#define GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS	//2i9a	//requires GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS (this is required such that only the instance list of a concept need be parsed when tracing both its definitions and properties/conditions)
-		#define GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_SWITCH_DEFINITION_LINKS_IF_NON_MATCHING_SUBSTANCE_CONCEPTS	//2i10b - designed to enable compatibility with NLC
+		#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS
+			#define GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_SWITCH_DEFINITION_LINKS_IF_NON_MATCHING_SUBSTANCE_CONCEPTS	//2i10b - designed to enable compatibility with NLC
+			#define GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_ENSURE_PROPERTY_PARENT_IS_DEFINITE	//2i28a
+		#endif
 	#endif
 	#define GIA_TRANSLATOR_ADAPT_ENTITY_LINKING_FOR_SUBSTANCE_CONCEPTS	//2i7a
 	#define GIA_REFERENCING_QUERY_SUPPORT_SAME_REFERENCE_SET_TESTS		//2i6a
