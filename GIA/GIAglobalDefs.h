@@ -653,7 +653,7 @@
 #include "SHAREDglobalDefs.h"
 
 #ifdef USE_NLC
-	//#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
+	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 #endif
 //#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER	//disabled for OpenGIA (OLD: GIA_USE_CORPUS_DATABASE)
 
@@ -665,14 +665,14 @@
 //#define GIA_DISABLE_2k_CODE_FOR_DEBUG
 
 #ifndef GIA_DISABLE_2k_CODE_FOR_DEBUG
-	//#ifdef GIA2_SEMANTIC_PARSER	//hasn't been defined yet
+	//#ifdef GIA2_SEMANTIC_PARSER	//has not yet been defined
 		#define GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS	//2k1a [UNTESTED]		//NB training a connectionist network with this optimisation requires the NLP to directly connect the primary entity (object) in each subphrase to the subject, with the conjunction relations being auxiliary to these connections (not supported by Stanford Parser/CoreNLP at present; to implement a workaround see NLC removeRedundantConditionConjunctions/addConjunctionsConnectedToConditionConjunctionObject for related code)
 		#define GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE	//2k3a
 		#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
 			//#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS	//for offline reimplementions of GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE only
 			#define GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_EXTENSIVE	//added 2k3d; record semantic relation tuple files for all non-existant relations 
 			#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_EXTENSIVE
-				//#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH	//hasn't been defined yet
+				//#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH	//has not yet been defined
 					#define GIA2_SEMANTIC_PARSER_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS	//added 2k3d
 				//#endif
 			#endif
@@ -680,7 +680,7 @@
 			#define GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS	//original GIA2 implementation: semantic relation designation based on text corpus lookup (indexed by POS permutation)
 			#ifdef GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
 				#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
-				//#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH	//hasn't been defined yet
+				//#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH	//has not yet been defined
 					#define GIA2_SEMANTIC_PARSER_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS	//added 2k3d
 				//#endif
 			#endif
@@ -724,7 +724,7 @@
 		#define GIA2_CORRECT_POSTAGS_FIX1	//2j5a
 		#define GIA2_CORRECT_POSTAGS_FIX2	//2j5d
 	#endif
-	//#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//hasn't been defined yet
+	//#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//has not yet been defined
 		#ifndef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
 			#define GIA_RECORD_RCMOD_SET_INFORMATION	//added 2j8a, disabled 2k3a (not supported by GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE)	//was only required to identify subject (primary entity holding math value) in nlp parsable phrase, but possessionAuxiliaryHave is now used for this purpose	//originally implemented 2i16a but rejected
 		#endif
