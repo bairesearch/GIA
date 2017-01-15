@@ -26,7 +26,7 @@
  * File Name: GIAmain.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -42,6 +42,22 @@
 #ifdef USE_CE
 	#include "CECodeextensionClass.h"
 #endif
+#include "GIAtranslator.h"
+#include "GIAtranslatorOperations.h"
+#include "GIAdraw.h"
+#include "GIAquery.h"
+#include "GIAxmlConversion.h"
+#include "GIAcxlConversion.h"
+#include "GIAdatabase.h"
+#include "GIAnlp.h"
+#include "XMLrulesClass.h"
+#include "LDsprite.h"
+#include "LDopengl.h"
+#include "GIAwordnet.h"
+#include "GIAnlg.h"
+#include "GIAlrp.h"
+#include "GIAsemanticParser.h"
+#include "GIAsemanticParserDatabase.h"
 
 #define GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST (1000000)
 //#define GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
@@ -49,10 +65,32 @@
 
 
 #ifndef USE_NLC
-int main(const int argc, const char** argv);
+	int main(const int argc, const char** argv);
 #endif
 
-bool executeGIA(
+class GIAmainClass
+{
+	private: SHAREDvarsClass SHAREDvars;
+	private: GIAtranslatorClass GIAtranslator;
+	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
+	private: GIAdatabaseClass GIAdatabase;
+	private: GIAlrpClass GIAlrp;
+	private: GIAnlpClass GIAnlp;
+	private: XMLrulesClassClass XMLrulesClass;
+	private: GIAqueryClass GIAquery;
+	private: GIAwordnetClass GIAwordnet;
+	private: GIAdrawClass GIAdraw;
+	private: LDopenglClass LDopengl;
+	private: LDspriteClass LDsprite;
+	private: GIAxmlConversionClass GIAxmlConversion;
+	private: GIAcxlConversionClass GIAcxlConversion;
+	private: GIAnlgClass GIAnlg;
+	#ifdef USE_GIA2
+	private: GIAsemanticParserClass GIAsemanticParser;
+	private: GIAsemanticParserDatabaseClass GIAsemanticParserDatabase;
+	#endif
+
+public: bool executeGIA(
 
 	int NLPfeatureParser,
 	int NLPdependencyRelationsParser,
@@ -166,11 +204,12 @@ bool executeGIA(
 	);
 
 #ifdef GIA_INPUT_FILE_LISTS
-int getFilesFromFileList(const string inputListFileName, string* inputFileNameArray);
+	public: int getFilesFromFileList(const string inputListFileName, string* inputFileNameArray);
 #endif
 
 #ifdef USE_CS_WORKAROUND
-bool executeGIA2();
+	public: bool executeGIA2();
 #endif
+};
 
 #endif

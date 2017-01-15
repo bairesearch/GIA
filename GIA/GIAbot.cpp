@@ -26,7 +26,7 @@
  * File Name: GIAbot.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -36,7 +36,7 @@
 #include "GIAbot.h"
 
 #ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
-void botSwitchFirstAndSecondPerson(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void GIAbotClass::botSwitchFirstAndSecondPerson(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -92,7 +92,7 @@ void botSwitchFirstAndSecondPerson(GIAsentence* currentSentenceInList, const boo
 	}
 }
 
-void botSwitchFirstAndSecondPersonSemantic(GIAsentence* currentSentenceInList)
+void GIAbotClass::botSwitchFirstAndSecondPersonSemantic(GIAsentence* currentSentenceInList)
 {
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)

@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -34,7 +34,6 @@
 
 
 #include "GIAdatabase.h"
-#include "SHAREDvars.h"	//file io
 
 #define CHAR_NEWLINE '\n'
 
@@ -56,26 +55,26 @@ unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndexDBa
 
 #endif
 
-GIAentityNode* findOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, string* entityNodeName, bool* found, const long* index, const bool addIfNonexistant, long* currentEntityNodeIDinCompleteList, long* currentEntityNodeIDinNetworkIndexEntityNodesList, const bool saveNetwork)
+GIAentityNode* GIAdatabaseClass::findOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, string* entityNodeName, bool* found, const long* index, const bool addIfNonexistant, long* currentEntityNodeIDinCompleteList, long* currentEntityNodeIDinNetworkIndexEntityNodesList, const bool saveNetwork)
 {
 	#ifdef GIA_DATABASE
 	GIAentityNode* entityNodeFound = NULL;
 	if((useDatabase == GIA_DATABASE_TRUE_READ_INACTIVE) || (useDatabase == GIA_DATABASE_TRUE_READ_ACTIVE))
 	{
-		entityNodeFound = DBfindOrAddNetworkIndexEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, entityNodeName, found, index, addIfNonexistant, currentEntityNodeIDinCompleteList, currentEntityNodeIDinNetworkIndexEntityNodesList, saveNetwork);
+		entityNodeFound = this->DBfindOrAddNetworkIndexEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, entityNodeName, found, index, addIfNonexistant, currentEntityNodeIDinCompleteList, currentEntityNodeIDinNetworkIndexEntityNodesList, saveNetwork);
 	}
 	else if(useDatabase == GIA_DATABASE_FALSE)
 	{
-		entityNodeFound = LocalFindOrAddNetworkIndexEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, entityNodeName, found, index, addIfNonexistant, currentEntityNodeIDinCompleteList, currentEntityNodeIDinNetworkIndexEntityNodesList, saveNetwork);
+		entityNodeFound = this->LocalFindOrAddNetworkIndexEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, entityNodeName, found, index, addIfNonexistant, currentEntityNodeIDinCompleteList, currentEntityNodeIDinNetworkIndexEntityNodesList, saveNetwork);
 	}
 	#else
-	entityNodeFound = LocalFindOrAddNetworkIndexEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, entityNodeName, found, index, addIfNonexistant, currentEntityNodeIDinCompleteList, currentEntityNodeIDinNetworkIndexEntityNodesList, saveNetwork);
+	entityNodeFound = this->LocalFindOrAddNetworkIndexEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, entityNodeName, found, index, addIfNonexistant, currentEntityNodeIDinCompleteList, currentEntityNodeIDinNetworkIndexEntityNodesList, saveNetwork);
 	#endif
 	return entityNodeFound;
 }
 
 #ifdef GIA_DATABASE
-GIAentityNode* DBfindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, string* entityNodeName, bool* found, const long* index, const bool addIfNonexistant, long* currentEntityNodeIDinCompleteList, long* currentEntityNodeIDinNetworkIndexEntityNodesList, const bool saveNetwork)
+GIAentityNode* GIAdatabaseClass::DBfindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, string* entityNodeName, bool* found, const long* index, const bool addIfNonexistant, long* currentEntityNodeIDinCompleteList, long* currentEntityNodeIDinNetworkIndexEntityNodesList, const bool saveNetwork)
 {
 	GIAentityNode* entityNodeFound = NULL;
 
@@ -112,9 +111,9 @@ GIAentityNode* DBfindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* e
 			#endif
 			//load the networkIndex node from the database into RAM
 			networkIndexEntityNode = new GIAentityNode();
-			DBreadNetworkIndexEntityNode(entityNodeName, networkIndexEntityNode);
+			this->DBreadNetworkIndexEntityNode(entityNodeName, networkIndexEntityNode);
 			entityNodesActiveListNetworkIndexes->insert(pair<string, GIAentityNode*>(*entityNodeName, networkIndexEntityNode));
-			addEntityNodesActiveListCompleteFastIndexDBcache(networkIndexEntityNode);	//added 2 Nov 2012	//CHECK THIS
+			this->addEntityNodesActiveListCompleteFastIndexDBcache(networkIndexEntityNode);	//added 2 Nov 2012	//CHECK THIS
 
 			#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 			networkIndexEntityNodesLoadedListIterator->second = true;
@@ -158,7 +157,7 @@ GIAentityNode* DBfindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* e
 			if(saveNetwork)
 			{
 				entityNodesActiveListComplete->push_back(newEntityNode);						//?not used for database...
-				addEntityNodesActiveListCompleteFastIndexDBactive(newEntityNode);	//added 2 Nov 2012
+				this->addEntityNodesActiveListCompleteFastIndexDBactive(newEntityNode);	//added 2 Nov 2012
 			}
 			(*currentEntityNodeIDinCompleteList) = (*currentEntityNodeIDinCompleteList) + 1;				//?used to indicate that this new node may need to be updated on the database
 
@@ -192,7 +191,7 @@ GIAentityNode* DBfindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* e
 
 
 //uses fast search algorithm
-GIAentityNode* LocalFindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, string* entityNodeName, bool* found, const long* index, const bool addIfNonexistant, long* currentEntityNodeIDinCompleteList, long* currentEntityNodeIDinNetworkIndexEntityNodesList, const bool saveNetwork)
+GIAentityNode* GIAdatabaseClass::LocalFindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, string* entityNodeName, bool* found, const long* index, const bool addIfNonexistant, long* currentEntityNodeIDinCompleteList, long* currentEntityNodeIDinNetworkIndexEntityNodesList, const bool saveNetwork)
 {
 	GIAentityNode* entityNodeFound = NULL;
 
@@ -252,7 +251,7 @@ GIAentityNode* LocalFindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>
 }
 
 
-GIAentityNode* findActiveEntityNodeByID(const long EntityNodeID, const vector<GIAentityNode*>* entityNodesActiveListComplete)
+GIAentityNode* GIAdatabaseClass::findActiveEntityNodeByID(const long EntityNodeID, const vector<GIAentityNode*>* entityNodesActiveListComplete)
 {
 	GIAentityNode* foundEntityNode = NULL;
 	foundEntityNode = entityNodesActiveListComplete->at(EntityNodeID);
@@ -274,7 +273,7 @@ GIAentityNode* findActiveEntityNodeByID(const long EntityNodeID, const vector<GI
 
 
 
-long maximumLong(long a, const long b)
+long GIAdatabaseClass::maximumLong(long a, const long b)
 {
 	if(a > b)
 	{
@@ -297,9 +296,9 @@ long maximumLong(long a, const long b)
 
 #ifdef GIA_DATABASE
 
-bool DBdirectoryExists(string* folderName)
+bool GIAdatabaseClass::DBdirectoryExists(string* folderName)
 {
-	bool folderExists = directoryExists(folderName);
+	bool folderExists = SHAREDvars.directoryExists(folderName);
 	if(folderExists)
 	{
 		#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
@@ -310,14 +309,14 @@ bool DBdirectoryExists(string* folderName)
 	return folderExists;
 }
 
-bool DBcreateDirectory(string* folderName)
+bool GIAdatabaseClass::DBcreateDirectory(string* folderName)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "\tDBcreateDirectory: folderName = " <<* folderName << endl;
 	#endif
 	bool result = true;
 
-	createDirectory(folderName);
+	SHAREDvars.createDirectory(folderName);
 	/*removed debug support for Windows;
 	#ifndef LINUX
 	if(CreateDirectory(folderName->c_str(), 0) == 0)	//if( _mkdir(folderName->c_str()) != 0)	//
@@ -330,13 +329,13 @@ bool DBcreateDirectory(string* folderName)
 	return result;
 }
 
-bool DBsetCurrentDirectory(string* folderName)
+bool GIAdatabaseClass::DBsetCurrentDirectory(string* folderName)
 {
 	bool result = true;
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "\tDBsetCurrentDirectory: folderName = " <<* folderName << endl;
 	#endif
-	setCurrentDirectory(folderName);
+	SHAREDvars.setCurrentDirectory(folderName);
 	/*removed debug support for Windows;
 	#ifndef LINUX
 	if(SetCurrentDirectory(folderName->c_str()) == 0)
@@ -348,23 +347,23 @@ bool DBsetCurrentDirectory(string* folderName)
 	return result;
 }
 
-bool checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(string* folderName)
+bool GIAdatabaseClass::checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(string* folderName)
 {
 	bool result = true;
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "checkIfFolderExistsAndIfNotMakeAndSetAsCurrent: folderName = " <<* folderName << endl;
 	#endif
-	if(!DBdirectoryExists(folderName))
+	if(!this->DBdirectoryExists(folderName))
 	{
-		DBcreateDirectory(folderName);
+		this->DBcreateDirectory(folderName);
 	}
-	DBsetCurrentDirectory(folderName);
+	this->DBsetCurrentDirectory(folderName);
 
 	return result;
 }
 
 
-string DBgenerateServerDatabaseName(const string* entityName, const int fileType, const string defaultDatabaseName, string databaseFolderNameUserChoice)
+string GIAdatabaseClass::DBgenerateServerDatabaseName(const string* entityName, const int fileType, const string defaultDatabaseName, string databaseFolderNameUserChoice)
 {
 	string databaseName;
 	if(fileType == GIA_DATABASE_GENERATE_FILENAME_FILE_NETWORK_INDEX_ENTITY_NODES_LIST)
@@ -410,17 +409,17 @@ string DBgenerateServerDatabaseName(const string* entityName, const int fileType
 }
 
 //NB idInstance 0 corresponds to the networkIndex entity (null instance)
-string DBgenerateFileName(string* entityName, const long idInstance, const int connectionType, const int fileType)
+string GIAdatabaseClass::DBgenerateFileName(string* entityName, const long idInstance, const int connectionType, const int fileType)
 {
 
 	//eg network/server/GIAdatabase/e/x/a/example/1/2/3/instance123000000/{vectorConnectionsReferencesConnectionTypeX}.txt	//OLD: //eg network/server/GIAdatabase/e/x/a/example/1/2/3/{vectorConnectionsReferencesConnectionTypeX}/instance123000000.txt
-	string serverName = DBgenerateServerDatabaseName(entityName, fileType, GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, databaseFolderName);
+	string serverName = this->DBgenerateServerDatabaseName(entityName, fileType, GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, databaseFolderName);
 	string fileName = serverName;
 
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "1fileName = " << fileName << endl;
 	#endif
-	DBsetCurrentDirectory(&fileName);
+	this->DBsetCurrentDirectory(&fileName);
 
 	if(fileType == GIA_DATABASE_GENERATE_FILENAME_FILE_NETWORK_INDEX_ENTITY_NODES_LIST)
 	{
@@ -450,10 +449,10 @@ string DBgenerateFileName(string* entityName, const long idInstance, const int c
 			string folderName = "";
 			folderName = folderName + entityName->at(level);
 			fileName = fileName + folderName + "/";
-			checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&folderName);
+			this->checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&folderName);
 		}
 		fileName = fileName +* entityName + "/";
-		checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(entityName);
+		this->checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(entityName);
 
 		#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 		cout << "2fileName = " << fileName << endl;
@@ -471,10 +470,10 @@ string DBgenerateFileName(string* entityName, const long idInstance, const int c
 			char idLevelChar2 = idInstanceString.at(levelOfChar2);
 			folderName = folderName + idLevelChar1 + idLevelChar2;
 			fileName = fileName + folderName + "/";
-			checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&folderName);
+			this->checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&folderName);
 		}
 		fileName = fileName + idInstanceString + "/";
-		checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&idInstanceString);
+		this->checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&idInstanceString);
 
 		#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 		cout << "3fileName = " << fileName << endl;
@@ -563,13 +562,13 @@ void DBreadReferencesFile(string* referencesFileName, GIAentityNode* entity)
 
 
 #ifdef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
-void DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
+void GIAdatabaseClass::DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 	#ifdef GIA_DATABASE_DEBUG
 	cout << "DBreadDatabase... (GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ)" << endl;
 	#endif
 
-	initialiseDBentityNodesActiveListCompleteFastIndexDBcache();
+	this->initialiseDBentityNodesActiveListCompleteFastIndexDBcache();
 
 	//based on code from DBwriteNetworkIndexEntityNodesLoadedList()
 	#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
@@ -593,7 +592,7 @@ void DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unord
 
 		//check to see if entity already loaded into RAM via a different connection (in TempActiveList; ie, DB only)...
 		bool entityFoundInActiveListCompleteFastIndexDBcache = false;
-		GIAentityNode* entityNodeFoundDBcache = findEntityNodesActiveListCompleteFastIndexDBcache(&(networkIndexEntityName), GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE, &entityFoundInActiveListCompleteFastIndexDBcache);
+		GIAentityNode* entityNodeFoundDBcache = this->findEntityNodesActiveListCompleteFastIndexDBcache(&(networkIndexEntityName), GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE, &entityFoundInActiveListCompleteFastIndexDBcache);
 
 		GIAentityNode* networkIndexEntityNode = NULL;
 		if(entityFoundInActiveListCompleteFastIndexDBcache)
@@ -608,8 +607,8 @@ void DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unord
 		{
 			//load the networkIndex node from the database into RAM
 			networkIndexEntityNode = new GIAentityNode();
-			DBreadNetworkIndexEntityNode(&networkIndexEntityName, networkIndexEntityNode);
-			addEntityNodesActiveListCompleteFastIndexDBcache(networkIndexEntityNode);
+			this->DBreadNetworkIndexEntityNode(&networkIndexEntityName, networkIndexEntityNode);
+			this->addEntityNodesActiveListCompleteFastIndexDBcache(networkIndexEntityNode);
 		}
 
 		entityNodesActiveListNetworkIndexes->insert(pair<string, GIAentityNode*>(networkIndexEntityName, networkIndexEntityNode));
@@ -630,7 +629,7 @@ void DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unord
 		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 		{
 			//read all instances
-			DBreadVectorConnections(networkIndexEntityNode, i);
+			this->DBreadVectorConnections(networkIndexEntityNode, i);
 		}
 
 		#ifdef GIA_DEBUG
@@ -655,7 +654,7 @@ void DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unord
 				for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 				{
 					//read all instances
-					DBreadVectorConnections(entityNode, i);
+					this->DBreadVectorConnections(entityNode, i);
 				}
 			#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 			}
@@ -663,58 +662,58 @@ void DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unord
 		}
 	}
 
-	clearDBentityNodesActiveListCompleteFastIndexDBcache();
+	this->clearDBentityNodesActiveListCompleteFastIndexDBcache();
 }
 #endif
 
 
 
 
-void initialiseDatabase(const bool readFromDatabase, const string newDatabaseFolderName, const bool useDatabase, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
+void GIAdatabaseClass::initialiseDatabase(const bool readFromDatabase, const string newDatabaseFolderName, const bool useDatabase, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 	if(useDatabase)
 	{
 		databaseFolderName = newDatabaseFolderName;
 
-		initialiseDBnetworkIndexEntityNodesLoadedList();
+		this->initialiseDBnetworkIndexEntityNodesLoadedList();
 
-		DBreadNetworkIndexEntityNodesLoadedList();
+		this->DBreadNetworkIndexEntityNodesLoadedList();
 
-		initialiseDBentityNodesActiveListCompleteFastIndexDBactive();
+		this->initialiseDBentityNodesActiveListCompleteFastIndexDBactive();
 
 		#ifdef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
-		DBreadDatabase(entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes);
+		this->DBreadDatabase(entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes);
 		#endif
 
 		#ifndef GIA_DATABASE_CLEAR_CACHE_EVERY_SENTENCE
-		initialiseDBentityNodesActiveListCompleteFastIndexDBcache();
+		this->initialiseDBentityNodesActiveListCompleteFastIndexDBcache();
 		#endif
 
 		if(readFromDatabase)
 		{
-			setUseDatabase(GIA_DATABASE_TRUE_READ_ACTIVE);
+			this->setUseDatabase(GIA_DATABASE_TRUE_READ_ACTIVE);
 		}
 		else
 		{
-			setUseDatabase(GIA_DATABASE_TRUE_READ_INACTIVE);
+			this->setUseDatabase(GIA_DATABASE_TRUE_READ_INACTIVE);
 		}
 		/*
-		setUseDatabase(GIA_DATABASE_TRUE_READ_INACTIVE);	//OLD: at initialisation (/by default), do not activate read (use active list instead)
+		this->setUseDatabase(GIA_DATABASE_TRUE_READ_INACTIVE);	//OLD: at initialisation (/by default), do not activate read (use active list instead)
 		*/
 	}
 	else
 	{
-		setUseDatabase(GIA_DATABASE_FALSE);
+		this->setUseDatabase(GIA_DATABASE_FALSE);
 	}
 }
 
-void DBreadNetworkIndexEntityNodesLoadedList()	//unordered_map<string, bool>* DBnetworkIndexEntityNodesLoadedListLocal
+void GIAdatabaseClass::DBreadNetworkIndexEntityNodesLoadedList()	//unordered_map<string, bool>* DBnetworkIndexEntityNodesLoadedListLocal
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBreadNetworkIndexEntityNodesLoadedList{}" << endl;
 	#endif
 
-	string networkIndexEntityNodesListFileName = DBgenerateFileName(NULL, NULL, NULL, GIA_DATABASE_GENERATE_FILENAME_FILE_NETWORK_INDEX_ENTITY_NODES_LIST);
+	string networkIndexEntityNodesListFileName = this->DBgenerateFileName(NULL, NULL, NULL, GIA_DATABASE_GENERATE_FILENAME_FILE_NETWORK_INDEX_ENTITY_NODES_LIST);
 
 #ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 	ifstream parseFileObject(networkIndexEntityNodesListFileName.c_str());
@@ -774,7 +773,7 @@ void DBreadNetworkIndexEntityNodesLoadedList()	//unordered_map<string, bool>* DB
 #endif
 
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	DBprintNetworkIndexEntityNodesLoadedList("DBprintNetworkIndexEntityNodesLoadedList{}");
+	this->DBprintNetworkIndexEntityNodesLoadedList("DBprintNetworkIndexEntityNodesLoadedList{}");
 	#endif
 }
 
@@ -783,7 +782,7 @@ void DBreadNetworkIndexEntityNodesLoadedList()	//unordered_map<string, bool>* DB
 
 
 
-void DBreadVectorConnections(GIAentityNode* entityNode, int connectionType)
+void GIAdatabaseClass::DBreadVectorConnections(GIAentityNode* entityNode, int connectionType)
 {
 	#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 	if(!(entityNode->disabled))	//Added 17 August 2012 (is this required? - entities should not have been written to database in first place with GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES)
@@ -795,7 +794,7 @@ void DBreadVectorConnections(GIAentityNode* entityNode, int connectionType)
 
 		if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
 		{
-			DBreadVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsArray[connectionType]));
+			this->DBreadVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsArray[connectionType]));
 			entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType] = true;
 		}
 		else
@@ -805,7 +804,7 @@ void DBreadVectorConnections(GIAentityNode* entityNode, int connectionType)
 			#endif
 		}
 
-		DBreadVectorConnectionEntities(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsArray[connectionType]));
+		this->DBreadVectorConnectionEntities(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsArray[connectionType]));
 	#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 	}
 	#endif
@@ -813,7 +812,7 @@ void DBreadVectorConnections(GIAentityNode* entityNode, int connectionType)
 
 //this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
 //assume vectorConnectionSubstances has not been populated
-void DBreadVectorConnectionsReferences(string* entityName, const long idInstance, const int connectionType, vector<GIAentityConnection*>* entityVectorConnections)
+void GIAdatabaseClass::DBreadVectorConnectionsReferences(string* entityName, const long idInstance, const int connectionType, vector<GIAentityConnection*>* entityVectorConnections)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBreadVectorConnectionsReferences{}: entityName = " <<* entityName << ", connectionType = " << connectionType << endl;
@@ -827,7 +826,7 @@ void DBreadVectorConnectionsReferences(string* entityName, const long idInstance
 	entityName,idInstance
 	*/
 
-	string referencesFileName = DBgenerateFileName(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
+	string referencesFileName = this->DBgenerateFileName(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBreadVectorConnectionsReferences{}: referencesFileName = " << referencesFileName << endl;
 	#endif
@@ -872,7 +871,7 @@ void DBreadVectorConnectionsReferences(string* entityName, const long idInstance
 
 }
 
-void DBreadVectorConnectionsReference(string* entityName, const long idInstance, const int connectionType, string* entityVectorConnectionsName, long* entityVectorConnectionsID, const long referenceIndex)
+void GIAdatabaseClass::DBreadVectorConnectionsReference(string* entityName, const long idInstance, const int connectionType, string* entityVectorConnectionsName, long* entityVectorConnectionsID, const long referenceIndex)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBreadVectorConnectionsReference{}: entityName = " <<* entityName << endl;
@@ -886,7 +885,7 @@ void DBreadVectorConnectionsReference(string* entityName, const long idInstance,
 	entityName,idInstance
 	*/
 
-	string referencesFileName = DBgenerateFileName(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
+	string referencesFileName = this->DBgenerateFileName(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
 
 	//determine position in file to write...
 	int positionOfReference = GIA_DATABASE_REFERENCES_FILE_NUMBER_CHARACTERS_PER_LINE*referenceIndex;
@@ -918,7 +917,7 @@ void DBreadVectorConnectionsReference(string* entityName, const long idInstance,
 
 
 //assumes entityVectorConnections list is not already populated (ie, not already intialised with null pointers / GIA entity nodes)
-void DBreadVectorConnectionEntities(string* entityName, long idInstance, const int connectionType, vector<GIAentityConnection*>* entityVectorConnections)
+void GIAdatabaseClass::DBreadVectorConnectionEntities(string* entityName, long idInstance, const int connectionType, vector<GIAentityConnection*>* entityVectorConnections)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBreadVectorConnectionEntities{}: entityName = " <<* entityName << ", idInstance = " << idInstance << ", connectionType = " << connectionType << endl;
@@ -932,11 +931,11 @@ void DBreadVectorConnectionEntities(string* entityName, long idInstance, const i
 		{
 			//check to see if entity already loaded into RAM via a different connection (in activeList)...
 			bool entityFoundInActiveListCompleteFastIndexDBactive = false;
-			GIAentityNode* entityNodeFoundDBactive = findEntityNodesActiveListCompleteFastIndexDBactive(&(connection->entityName), connection->idInstance, &entityFoundInActiveListCompleteFastIndexDBactive);
+			GIAentityNode* entityNodeFoundDBactive = this->findEntityNodesActiveListCompleteFastIndexDBactive(&(connection->entityName), connection->idInstance, &entityFoundInActiveListCompleteFastIndexDBactive);
 
 			//check to see if entity already loaded into RAM via a different connection (in TempActiveList; ie, DB only)...
 			bool entityFoundInActiveListCompleteFastIndexDBcache = false;
-			GIAentityNode* entityNodeFoundDBcache = findEntityNodesActiveListCompleteFastIndexDBcache(&(connection->entityName), connection->idInstance, &entityFoundInActiveListCompleteFastIndexDBcache);
+			GIAentityNode* entityNodeFoundDBcache = this->findEntityNodesActiveListCompleteFastIndexDBcache(&(connection->entityName), connection->idInstance, &entityFoundInActiveListCompleteFastIndexDBcache);
 
 			bool alreadyInRAM = false;
 			if(entityFoundInActiveListCompleteFastIndexDBactive)
@@ -967,10 +966,10 @@ void DBreadVectorConnectionEntities(string* entityName, long idInstance, const i
 				cout << "connection->idInstance = " << connection->idInstance << endl;
 				#endif
 				GIAentityNode* entity = new GIAentityNode();
-				DBreadEntityNode(&(connection->entityName), connection->idInstance, entity);
+				this->DBreadEntityNode(&(connection->entityName), connection->idInstance, entity);
 				connection->entity = entity;
 
-				addEntityNodesActiveListCompleteFastIndexDBcache(entity);
+				this->addEntityNodesActiveListCompleteFastIndexDBcache(entity);
 			}
 
 			connection->loaded = true;
@@ -989,14 +988,14 @@ void DBreadVectorConnectionEntities(string* entityName, long idInstance, const i
 }
 
 
-void DBreadNetworkIndexEntityNode(string* entityName, GIAentityNode* networkIndexEntityNode)
+void GIAdatabaseClass::DBreadNetworkIndexEntityNode(string* entityName, GIAentityNode* networkIndexEntityNode)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBreadNetworkIndexEntityNode{}" << endl;
 	#endif
 
 	int idInstance = GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE;
-	DBreadEntityNode(entityName, idInstance, networkIndexEntityNode);
+	this->DBreadEntityNode(entityName, idInstance, networkIndexEntityNode);
 
 	#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 	//added 18 June 2012 - now networkIndex entity nodes have their reference names/ids loaded upon first access in DB (this is required such that new idInstances can be assigned correctly)
@@ -1008,7 +1007,7 @@ void DBreadNetworkIndexEntityNode(string* entityName, GIAentityNode* networkInde
 			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 			cout << "networkIndexEntityNode->idInstance = " << networkIndexEntityNode->idInstance << endl;
 			#endif
-			DBreadVectorConnectionsReferences(&(networkIndexEntityNode->entityName), networkIndexEntityNode->idInstance, i, &(networkIndexEntityNode->entityVectorConnectionsArray[i]));
+			this->DBreadVectorConnectionsReferences(&(networkIndexEntityNode->entityName), networkIndexEntityNode->idInstance, i, &(networkIndexEntityNode->entityVectorConnectionsArray[i]));
 			networkIndexEntityNode->entityVectorConnectionsReferenceListLoadedArray[i] = true;
 		}
 	}
@@ -1018,30 +1017,30 @@ void DBreadNetworkIndexEntityNode(string* entityName, GIAentityNode* networkInde
 
 
 
-void DBreadEntityNode(string* entityName, long idInstance, GIAentityNode* entityNode)
+void GIAdatabaseClass::DBreadEntityNode(string* entityName, long idInstance, GIAentityNode* entityNode)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBreadEntityNode{}: entityName = " <<* entityName << ", idInstance = " << idInstance << endl;
 	#endif
 
-	string entityFileName = DBgenerateFileName(entityName, idInstance, GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY);
-	DBreadEntityNodeFile(&entityFileName, entityNode);
+	string entityFileName = this->DBgenerateFileName(entityName, idInstance, GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY);
+	this->DBreadEntityNodeFile(&entityFileName, entityNode);
 	entityNode->idInstance = idInstance;
 
 	if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
 	{
 		entityNode->timeConditionNode = new GIAtimeConditionNode();
-		string timeConditionFileName = DBgenerateFileName(entityName, idInstance, GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_TIME_CONDITION_NODE);
-		DBreadTimeConditionNodeFile(&timeConditionFileName, entityNode->timeConditionNode);
+		string timeConditionFileName = this->DBgenerateFileName(entityName, idInstance, GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_TIME_CONDITION_NODE);
+		this->DBreadTimeConditionNodeFile(&timeConditionFileName, entityNode->timeConditionNode);
 	}
 
-	DBsetEntityConnectionsReferenceListsLoaded(entityNode, false);
+	GIAentityNodeClass.DBsetEntityConnectionsReferenceListsLoaded(entityNode, false);
 	//do not read references
 }
 
 
 //this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
-void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
+void GIAdatabaseClass::DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBreadEntityNodeFile{}: entityFileName = " <<* entityFileName << ", entity = " << entity->entityName << endl;
@@ -1098,15 +1097,15 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 
 			entity->entityName = entityNameCharStarTemp;
 			#ifdef GIA_WORD_ORIG
-			entity->wordOrig = DBreplaceBlankString(string(wordOrigCharStarTemp));
+			entity->wordOrig = this->DBreplaceBlankString(string(wordOrigCharStarTemp));
 			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 			//cout << "entityNameCharStarTemp = " << entityNameCharStarTemp << endl;
 			//cout << "wordOrigCharStarTemp = " << wordOrigCharStarTemp << endl;
 			#endif
 			#endif
 			#ifdef GIA_ALIASES
-			string aliasesString = DBreplaceBlankString(string(aliasesCharStarTemp));
-			convertAliasesStringToAliases(entity, aliasesString);
+			string aliasesString = this->DBreplaceBlankString(string(aliasesCharStarTemp));
+			GIAentityNodeClass.convertAliasesStringToAliases(entity, aliasesString);
 			#endif
 			entity->entityType = entityType;
 			entity->hasAssociatedInstance = bool(hasAssociatedInstance);
@@ -1115,8 +1114,8 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 			//entity->conditionType = conditionType;
 			//entity->grammaticalNumber = grammaticalNumber;
 			entity->hasQuantity = bool(hasQuantity);
-			entity->quantityNumberString = DBreplaceBlankString(string(quantityNumberStringCharStarTemp));
-			entity->quantityModifierString = DBreplaceBlankString(string(quantityModifierStringCharStarTemp));
+			entity->quantityNumberString = this->DBreplaceBlankString(string(quantityNumberStringCharStarTemp));
+			entity->quantityModifierString = this->DBreplaceBlankString(string(quantityModifierStringCharStarTemp));
 			entity->hasQuantityMultiplier = bool(hasQuantityMultiplier);
 			entity->hasMeasure = bool(hasMeasure);
 
@@ -1178,7 +1177,7 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 }
 
 //this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
-void DBreadTimeConditionNodeFile(string* timeConditionFileName, GIAtimeConditionNode* timeCondition)
+void GIAdatabaseClass::DBreadTimeConditionNodeFile(string* timeConditionFileName, GIAtimeConditionNode* timeCondition)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBreadTimeConditionNodeFile{}: timeConditionFileName = " <<* timeConditionFileName << endl;		//UNTESTED AS YET
@@ -1232,22 +1231,22 @@ void DBreadTimeConditionNodeFile(string* timeConditionFileName, GIAtimeCondition
 
 
 
-void writeAndCloseDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete)
+void GIAdatabaseClass::writeAndCloseDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete)
 {
 	#ifdef GIA_DATABASE_DEBUG
 	cout << "writeAndCloseDatabase{}" << endl;
 	#endif
 
-	writeDatabase(entityNodesActiveListComplete);
+	this->writeDatabase(entityNodesActiveListComplete);
 
-	DBwriteNetworkIndexEntityNodesLoadedList();
+	this->DBwriteNetworkIndexEntityNodesLoadedList();
 
 	#ifdef GIA_DATABASE_DEBUG
 	//cout << "writeAndCloseDatabase() finish" << endl;
 	#endif
 }
 
-void writeDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete)
+void GIAdatabaseClass::writeDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete)
 {
 	#ifdef GIA_DATABASE_DEBUG
 	cout << "writeDatabase{}" << endl;
@@ -1264,7 +1263,7 @@ void writeDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete)
 			if(entityNode->added || entityNode->modified)
 			{
 				//(re-)write node itself
-				DBwriteEntityNode(&(entityNode->entityName), entityNode->idInstance, entityNode);
+				this->DBwriteEntityNode(&(entityNode->entityName), entityNode->idInstance, entityNode);
 			}
 
 			#ifdef GIA_DATABASE_DO_NOT_WRITE_CONNECTIONS_FROM_DISABLED_ENTITY_NODES
@@ -1283,7 +1282,7 @@ void writeDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete)
 							//cout << "DBwriteVectorConnectionsReferences" << endl;
 							#endif
 							//write all vector connection references
-							DBwriteVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, i, &(entityNode->entityVectorConnectionsArray[i]));
+							this->DBwriteVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, i, &(entityNode->entityVectorConnectionsArray[i]));
 						}
 						else
 						{
@@ -1300,14 +1299,14 @@ void writeDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete)
 										#ifdef GIA_DATABASE_DEBUG
 										//cout << "DBmodifyVectorConnectionsReference" << endl;
 										#endif
-										DBmodifyVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance, referenceIndex);
+										this->DBmodifyVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance, referenceIndex);
 									}
 									else if(connection->added)
 									{//added; append vector connection reference
 										#ifdef GIA_DATABASE_DEBUG
 										//cout << "DBappendVectorConnectionsReference" << endl;
 										#endif
-										DBappendVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance);
+										this->DBappendVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance);
 									}
 								#ifdef GIA_DATABASE_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES
 								}
@@ -1354,18 +1353,18 @@ void writeDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete)
 
 
 
-void DBwriteEntityNode(string* entityName, const long idInstance, GIAentityNode* entityNode)
+void GIAdatabaseClass::DBwriteEntityNode(string* entityName, const long idInstance, GIAentityNode* entityNode)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBwriteEntityNode{}: entityName = " <<* entityName << endl;
 	#endif
-	string entityFileName = DBgenerateFileName(entityName, idInstance, GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY);
-	DBwriteEntityNodeFile(&entityFileName, entityNode);
+	string entityFileName = this->DBgenerateFileName(entityName, idInstance, GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY);
+	this->DBwriteEntityNodeFile(&entityFileName, entityNode);
 
 	if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
 	{
-		string timeConditionFileName = DBgenerateFileName(entityName, idInstance, GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_TIME_CONDITION_NODE);
-		DBwriteTimeConditionNodeFile(&timeConditionFileName, entityNode->timeConditionNode);
+		string timeConditionFileName = this->DBgenerateFileName(entityName, idInstance, GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_TIME_CONDITION_NODE);
+		this->DBwriteTimeConditionNodeFile(&timeConditionFileName, entityNode->timeConditionNode);
 	}
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	//cout << "DBwriteEntityNode finish" << endl;
@@ -1374,7 +1373,7 @@ void DBwriteEntityNode(string* entityName, const long idInstance, GIAentityNode*
 
 
 //this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
-void DBwriteEntityNodeFile(string* entityFileName, GIAentityNode* entity)
+void GIAdatabaseClass::DBwriteEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBwriteEntityNodeFile{}: entityFileName = " <<* entityFileName << ", entity = " << entity->entityName << endl;
@@ -1395,16 +1394,16 @@ void DBwriteEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 	else
 	{
 		string wordOrig = "";
-		wordOrig = DBaddBlankString(entity->wordOrig);
+		wordOrig = this->DBaddBlankString(entity->wordOrig);
 		string aliasesString = "";
 		#ifdef GIA_ALIASES
-		convertAliasesToAliasesString(entity, &aliasesString);
+		GIAentityNodeClass.convertAliasesToAliasesString(entity, &aliasesString);
 		#endif
-		aliasesString = DBaddBlankString(aliasesString);
+		aliasesString = this->DBaddBlankString(aliasesString);
 		string quantityNumberString = "";
-		quantityNumberString = DBaddBlankString(entity->quantityNumberString);
+		quantityNumberString = this->DBaddBlankString(entity->quantityNumberString);
 		string quantityModifierString = "";
-		quantityModifierString = DBaddBlankString(entity->quantityModifierString);
+		quantityModifierString = this->DBaddBlankString(entity->quantityModifierString);
 		string entityName = (entity->entityName);
 
 		if(entityName.length() > GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH-1)
@@ -1440,7 +1439,7 @@ void DBwriteEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 }
 
 //this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
-void DBwriteTimeConditionNodeFile(string* timeConditionFileName, const GIAtimeConditionNode* timeCondition)
+void GIAdatabaseClass::DBwriteTimeConditionNodeFile(string* timeConditionFileName, const GIAtimeConditionNode* timeCondition)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBwriteTimeConditionNodeFile{}: timeConditionFileName = " <<* timeConditionFileName << endl;
@@ -1470,7 +1469,7 @@ void DBwriteTimeConditionNodeFile(string* timeConditionFileName, const GIAtimeCo
 
 
 //this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
-void DBwriteVectorConnectionsReferences(string* entityName, const long idInstance, const int connectionType, vector<GIAentityConnection*>* entityVectorConnections)
+void GIAdatabaseClass::DBwriteVectorConnectionsReferences(string* entityName, const long idInstance, const int connectionType, vector<GIAentityConnection*>* entityVectorConnections)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBwriteVectorConnectionsReferences{}: entityName = " <<* entityName << endl;
@@ -1484,7 +1483,7 @@ void DBwriteVectorConnectionsReferences(string* entityName, const long idInstanc
 	entityName,idInstance
 	*/
 
-	string referencesFileName = DBgenerateFileName(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
+	string referencesFileName = this->DBgenerateFileName(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
 	//now write file
 
 
@@ -1529,7 +1528,7 @@ void DBwriteVectorConnectionsReferences(string* entityName, const long idInstanc
 	}
 }
 
-void DBmodifyVectorConnectionsReference(string* entityName, const long idInstance, const int connectionType, const string* entityVectorConnectionsName, const long entityVectorConnectionsID, const long referenceIndex)
+void GIAdatabaseClass::DBmodifyVectorConnectionsReference(string* entityName, const long idInstance, const int connectionType, const string* entityVectorConnectionsName, const long entityVectorConnectionsID, const long referenceIndex)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBmodifyVectorConnectionsReference{}: entityName = " <<* entityName << endl;
@@ -1543,7 +1542,7 @@ void DBmodifyVectorConnectionsReference(string* entityName, const long idInstanc
 	entityName,idInstance
 	*/
 
-	string referencesFileName = DBgenerateFileName(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
+	string referencesFileName = this->DBgenerateFileName(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
 	const char* fileNameCharStar = referencesFileName.c_str();
 
 	//determine position in file to write...
@@ -1572,7 +1571,7 @@ void DBmodifyVectorConnectionsReference(string* entityName, const long idInstanc
 	}
 }
 
-void DBappendVectorConnectionsReference(string* entityName, const long idInstance, const int connectionType, const string* entityVectorConnectionsName, const long entityVectorConnectionsID)
+void GIAdatabaseClass::DBappendVectorConnectionsReference(string* entityName, const long idInstance, const int connectionType, const string* entityVectorConnectionsName, const long entityVectorConnectionsID)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBappendVectorConnectionsReference{}: entityName = " <<* entityName << endl;
@@ -1586,7 +1585,7 @@ void DBappendVectorConnectionsReference(string* entityName, const long idInstanc
 	entityName,idInstance <--- append
 	*/
 
-	string referencesFileName = DBgenerateFileName(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
+	string referencesFileName = this->DBgenerateFileName(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
 	const char* fileNameCharStar = referencesFileName.c_str();
 
 	//now write file
@@ -1612,13 +1611,13 @@ void DBappendVectorConnectionsReference(string* entityName, const long idInstanc
 }
 
 
-void DBwriteNetworkIndexEntityNodesLoadedList()	//unordered_map<string, bool>* DBnetworkIndexEntityNodesLoadedList
+void GIAdatabaseClass::DBwriteNetworkIndexEntityNodesLoadedList()	//unordered_map<string, bool>* DBnetworkIndexEntityNodesLoadedList
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBwriteNetworkIndexEntityNodesLoadedList{}" << endl;
 	#endif
 
-	string networkIndexEntityNodesListFileName = DBgenerateFileName(NULL, NULL, NULL, GIA_DATABASE_GENERATE_FILENAME_FILE_NETWORK_INDEX_ENTITY_NODES_LIST);
+	string networkIndexEntityNodesListFileName = this->DBgenerateFileName(NULL, NULL, NULL, GIA_DATABASE_GENERATE_FILENAME_FILE_NETWORK_INDEX_ENTITY_NODES_LIST);
 	#ifdef GIA_DEBUG
 	//cout << "networkIndexEntityNodesListFileName = " << networkIndexEntityNodesListFileName << endl;
 	#endif
@@ -1684,7 +1683,7 @@ void DBwriteNetworkIndexEntityNodesLoadedList()	//unordered_map<string, bool>* D
 #endif
 }
 
-void closeDatabase()
+void GIAdatabaseClass::closeDatabase()
 {
 	//no action
 }
@@ -1696,7 +1695,7 @@ void closeDatabase()
 
 
 
-void DBprintNetworkIndexEntityNodesLoadedList(const string executionStage)
+void GIAdatabaseClass::DBprintNetworkIndexEntityNodesLoadedList(const string executionStage)
 {
 	cout << "DBprintNetworkIndexEntityNodesLoadedList{}:" << executionStage << endl;
 
@@ -1723,11 +1722,11 @@ void DBprintNetworkIndexEntityNodesLoadedList(const string executionStage)
 }
 
 
-long DBreadNetworkIndexEntityNumberOfInstances(string* entityNodeName)		//OLD: GIAentityNode* entityNodeName
+long GIAdatabaseClass::DBreadNetworkIndexEntityNumberOfInstances(string* entityNodeName)		//OLD: GIAentityNode* entityNodeName
 {
 	int idInstance = GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE;
 	int connectionType = GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES;
-	long numberOfReferences = DBreadNumberOfReferencesInList(entityNodeName, idInstance, connectionType);
+	long numberOfReferences = this->DBreadNumberOfReferencesInList(entityNodeName, idInstance, connectionType);
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBreadNetworkIndexEntityNumberOfInstances{}: numberOfReferences = " << numberOfReferences << endl;
 	#endif
@@ -1735,9 +1734,9 @@ long DBreadNetworkIndexEntityNumberOfInstances(string* entityNodeName)		//OLD: G
 }
 
 //given GIA_DATABASE_INSTANCE_ID_MAX_ORDER (9), this implies there are up to than 9.999 billion instances, and as such a 32 bit signed int is insufficient [max +2147483648 ~= 2 billion, so a 64bit signed long is required)
-long DBreadNumberOfReferencesInList(string* entityNodeName, const long idInstance, const int connectionType)	//OLD: GIAentityNode* entityNodeName
+long GIAdatabaseClass::DBreadNumberOfReferencesInList(string* entityNodeName, const long idInstance, const int connectionType)	//OLD: GIAentityNode* entityNodeName
 {
-	string referencesFileName = DBgenerateFileName(entityNodeName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
+	string referencesFileName = this->DBgenerateFileName(entityNodeName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
 
 	#ifdef GIA_DATABASE_SAVE_WITH_LEADING_ZEROS
  	FILE* pFile = NULL;
@@ -1760,7 +1759,7 @@ long DBreadNumberOfReferencesInList(string* entityNodeName, const long idInstanc
 }
 
 
-void initialiseDBnetworkIndexEntityNodesLoadedList()
+void GIAdatabaseClass::initialiseDBnetworkIndexEntityNodesLoadedList()
 {
 	#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 	DBnetworkIndexEntityNodesLoadedList = new unordered_map<string, bool>;
@@ -1769,16 +1768,16 @@ void initialiseDBnetworkIndexEntityNodesLoadedList()
 	#endif
 }
 
-void setUseDatabase(const int value)
+void GIAdatabaseClass::setUseDatabase(const int value)
 {
 	useDatabase = value;
 }
-int getUseDatabase()
+int GIAdatabaseClass::getUseDatabase()
 {
 	return useDatabase;
 }
 
-GIAentityNode* findEntityInActiveNetworkIndexList(string* entityName, const long idInstance, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, bool* alreadyInRAM)
+GIAentityNode* GIAdatabaseClass::findEntityInActiveNetworkIndexList(string* entityName, const long idInstance, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, bool* alreadyInRAM)
 {
 	*alreadyInRAM = false;
 	GIAentityNode* entityNodeFoundInRAM = NULL;
@@ -1824,21 +1823,21 @@ GIAentityNode* findEntityInActiveNetworkIndexList(string* entityName, const long
 	return entityNodeFoundInRAM;
 }
 
-GIAentityNode* findEntityNodesActiveListCompleteFastIndexDBcache(const string* entityName, const long idInstance, bool* foundNode)
+GIAentityNode* GIAdatabaseClass::findEntityNodesActiveListCompleteFastIndexDBcache(const string* entityName, const long idInstance, bool* foundNode)
 {
-	return findEntityNodesActiveListCompleteFastIndex(entityName, idInstance, foundNode, entityNodesActiveListCompleteFastIndexDBcache);
+	return this->findEntityNodesActiveListCompleteFastIndex(entityName, idInstance, foundNode, entityNodesActiveListCompleteFastIndexDBcache);
 }
 
-GIAentityNode* findEntityNodesActiveListCompleteFastIndexDBactive(const string* entityName, const long idInstance, bool* foundNode)
+GIAentityNode* GIAdatabaseClass::findEntityNodesActiveListCompleteFastIndexDBactive(const string* entityName, const long idInstance, bool* foundNode)
 {
-	return findEntityNodesActiveListCompleteFastIndex(entityName, idInstance, foundNode, entityNodesActiveListCompleteFastIndexDBactive);
+	return this->findEntityNodesActiveListCompleteFastIndex(entityName, idInstance, foundNode, entityNodesActiveListCompleteFastIndexDBactive);
 }
 
-GIAentityNode* findEntityNodesActiveListCompleteFastIndex(const string* entityName, const long idInstance, bool* foundNode, const unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndex)
+GIAentityNode* GIAdatabaseClass::findEntityNodesActiveListCompleteFastIndex(const string* entityName, const long idInstance, bool* foundNode, const unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndex)
 {
 	*foundNode = false;
 	GIAentityNode* foundEntityNode = NULL;
-	string entityNodesTempActiveListCompleteIndex = createEntityNodesActiveListCompleteFastIndexIndex(entityName, idInstance);
+	string entityNodesTempActiveListCompleteIndex = this->createEntityNodesActiveListCompleteFastIndexIndex(entityName, idInstance);
 
 	unordered_map<string, GIAentityNode*>::iterator entityNodesTempActiveListCompleteIterator = entityNodesActiveListCompleteFastIndexDBcache->find(entityNodesTempActiveListCompleteIndex);
 
@@ -1851,10 +1850,10 @@ GIAentityNode* findEntityNodesActiveListCompleteFastIndex(const string* entityNa
 	return foundEntityNode;
 }
 
-string createEntityNodesActiveListCompleteFastIndexIndex(const string* entityName, const long idInstance)
+string GIAdatabaseClass::createEntityNodesActiveListCompleteFastIndexIndex(const string* entityName, const long idInstance)
 {
 
-	string idInstanceString = convertLongToString(idInstance);
+	string idInstanceString = SHAREDvars.convertLongToString(idInstance);
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "idInstanceString = " << idInstanceString << endl;
 	#endif
@@ -1870,56 +1869,56 @@ string createEntityNodesActiveListCompleteFastIndexIndex(const string* entityNam
 	return entityNodesTempActiveListCompleteIndex;
 }
 
-void addEntityNodesActiveListCompleteFastIndexDBcache(GIAentityNode* entityNode)
+void GIAdatabaseClass::addEntityNodesActiveListCompleteFastIndexDBcache(GIAentityNode* entityNode)
 {
-	addEntityNodesActiveListCompleteFastIndex(entityNode, entityNodesActiveListCompleteFastIndexDBcache);
+	this->addEntityNodesActiveListCompleteFastIndex(entityNode, entityNodesActiveListCompleteFastIndexDBcache);
 }
 
-void addEntityNodesActiveListCompleteFastIndexDBactive(GIAentityNode* entityNode)
+void GIAdatabaseClass::addEntityNodesActiveListCompleteFastIndexDBactive(GIAentityNode* entityNode)
 {
-	addEntityNodesActiveListCompleteFastIndex(entityNode, entityNodesActiveListCompleteFastIndexDBactive);
+	this->addEntityNodesActiveListCompleteFastIndex(entityNode, entityNodesActiveListCompleteFastIndexDBactive);
 }
 
-void addEntityNodesActiveListCompleteFastIndex(GIAentityNode* entityNode, unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndex)
+void GIAdatabaseClass::addEntityNodesActiveListCompleteFastIndex(GIAentityNode* entityNode, unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndex)
 {
 	string entityName = entityNode->entityName;
 	long idInstance = entityNode->idInstance;
-	string entityNodesTempActiveListCompleteIndex = createEntityNodesActiveListCompleteFastIndexIndex(&entityName, idInstance);
+	string entityNodesTempActiveListCompleteIndex = this->createEntityNodesActiveListCompleteFastIndexIndex(&entityName, idInstance);
 
 	entityNodesActiveListCompleteFastIndex->insert(pair<string, GIAentityNode*>(entityNodesTempActiveListCompleteIndex, entityNode));
 }
 
-void initialiseDBentityNodesActiveListCompleteFastIndexDBcache()
+void GIAdatabaseClass::initialiseDBentityNodesActiveListCompleteFastIndexDBcache()
 {
 	entityNodesActiveListCompleteFastIndexDBcache = new unordered_map<string, GIAentityNode*>;
 }
 
-void initialiseDBentityNodesActiveListCompleteFastIndexDBactive()
+void GIAdatabaseClass::initialiseDBentityNodesActiveListCompleteFastIndexDBactive()
 {
 	entityNodesActiveListCompleteFastIndexDBactive = new unordered_map<string, GIAentityNode*>;
 }
 
-void clearDBentityNodesActiveListCompleteFastIndexDBcache()
+void GIAdatabaseClass::clearDBentityNodesActiveListCompleteFastIndexDBcache()
 {
 	entityNodesActiveListCompleteFastIndexDBcache->clear();
 }
 
-void clearDBentityNodesActiveListCompleteFastIndexDBactive()
+void GIAdatabaseClass::clearDBentityNodesActiveListCompleteFastIndexDBactive()
 {
 	entityNodesActiveListCompleteFastIndexDBactive->clear();
 }
 
-void setDBentityNodesActiveListCompleteFastIndexDBactive(unordered_map<string, GIAentityNode*>* newEntityNodesActiveListCompleteFastIndexDBactive)
+void GIAdatabaseClass::setDBentityNodesActiveListCompleteFastIndexDBactive(unordered_map<string, GIAentityNode*>* newEntityNodesActiveListCompleteFastIndexDBactive)
 {
 	entityNodesActiveListCompleteFastIndexDBactive = newEntityNodesActiveListCompleteFastIndexDBactive;
 }
 
-unordered_map<string, GIAentityNode*>* getDBentityNodesActiveListCompleteFastIndexDBactive()
+unordered_map<string, GIAentityNode*>* GIAdatabaseClass::getDBentityNodesActiveListCompleteFastIndexDBactive()
 {
 	return entityNodesActiveListCompleteFastIndexDBactive;
 }
 
-string DBreplaceBlankString(string word)
+string GIAdatabaseClass::DBreplaceBlankString(string word)
 {
 	string wordWithBlankStringReplaced = word;
 	if(word == GIA_DATABASE_BLANK_STRING)
@@ -1929,7 +1928,7 @@ string DBreplaceBlankString(string word)
 	return wordWithBlankStringReplaced;
 }
 
-string DBaddBlankString(string word)
+string GIAdatabaseClass::DBaddBlankString(string word)
 {
 	string wordWithBlankStringAdded = word;
 	if(word == "")

@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -34,7 +34,6 @@
 
 
 #include "GIAlrp.h"
-#include "SHAREDvars.h"	//file io
 
 static string lrpDataFolderName;
 static bool useLRP;
@@ -51,7 +50,7 @@ GIALRPtag* firstTagInPrepositionsInverseListGlobal;
 bool prepositionsInverseListLoaded;
 #endif
 
-bool initialiseLRP(const string newLRPDataFolderName, const bool newUseLRP)
+bool GIAlrpClass::initialiseLRP(const string newLRPDataFolderName, const bool newUseLRP)
 {
 	bool result = true;
 
@@ -62,7 +61,7 @@ bool initialiseLRP(const string newLRPDataFolderName, const bool newUseLRP)
 	string verbListFileName = lrpDataFolderName + GIA_LRP_VERB_DATABASE_FILE_NAME;
 	verbListLoaded = false;
 	firstTagInVerbListGlobal = new GIALRPtag();
-	if(!loadVerbList(verbListFileName, firstTagInVerbListGlobal))
+	if(!this->loadVerbList(verbListFileName, firstTagInVerbListGlobal))
 	{
 		cout << "!loadVerbList (OpenGIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL requires -lrpfolder to be set): verbListFileName = " << verbListFileName << endl;
 		result = false;
@@ -76,7 +75,7 @@ bool initialiseLRP(const string newLRPDataFolderName, const bool newUseLRP)
 	string irregularVerbListFileName = lrpDataFolderName + GIA_LRP_IRREGULARVERB_DATABASE_FILE_NAME;
 	irregularVerbListLoaded = false;
 	firstTagInIrregularVerbListGlobal = new GIALRPtag();
-	if(!loadIrregularVerbList(irregularVerbListFileName, firstTagInIrregularVerbListGlobal))
+	if(!this->loadIrregularVerbList(irregularVerbListFileName, firstTagInIrregularVerbListGlobal))
 	{
 		cout << "!loadIrregularVerbList (OpenGIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE requires -lrpfolder to be set): irregularVerbListFileName = " << irregularVerbListFileName << endl;
 		result = false;
@@ -90,7 +89,7 @@ bool initialiseLRP(const string newLRPDataFolderName, const bool newUseLRP)
 	string prepositionsInverseListFileName = lrpDataFolderName + GIA_LRP_PREPOSITIONS_DATABASE_FILE_NAME;
 	prepositionsInverseListLoaded = false;
 	firstTagInPrepositionsInverseListGlobal = new GIALRPtag();
-	if(!loadPrepositionsInverseList(prepositionsInverseListFileName, firstTagInPrepositionsInverseListGlobal))
+	if(!this->loadPrepositionsInverseList(prepositionsInverseListFileName, firstTagInPrepositionsInverseListGlobal))
 	{
 		cout << "!loadPrepositionsInverseList (OpenGIA with GIA_LRP_NORMALISE_PREPOSITIONS requires -lrpfolder to be set): prepositionsInverseListFileName = " << prepositionsInverseListFileName << endl;
 		result = false;
@@ -103,7 +102,7 @@ bool initialiseLRP(const string newLRPDataFolderName, const bool newUseLRP)
 
 	return result;
 }
-bool getUseLRP()
+bool GIAlrpClass::getUseLRP()
 {
 	return useLRP;
 }
@@ -164,11 +163,11 @@ GIALRPtagTextCorrespondenceInfo::~GIALRPtagTextCorrespondenceInfo(void)
 GIALRPtagTextCorrespondenceInfo* textGIALRPtagTextCorrespondenceInfo;
 GIALRPtagTextCorrespondenceInfo* queryGIALRPtagTextCorrespondenceInfo;
 GIALRPtagTextCorrespondenceInfo* currentGIALRPtagTextCorrespondenceInfo;
-GIALRPtagTextCorrespondenceInfo* getCurrentGIALRPtagTextCorrespondenceInfo()
+GIALRPtagTextCorrespondenceInfo* GIAlrpClass::getCurrentGIALRPtagTextCorrespondenceInfo()
 {
 	return currentGIALRPtagTextCorrespondenceInfo;
 }
-void setCurrentGIALRPtagTextCorrespondenceInfo(const bool isQuery)
+void GIAlrpClass::setCurrentGIALRPtagTextCorrespondenceInfo(const bool isQuery)
 {
 	if(isQuery)
 	{
@@ -179,7 +178,7 @@ void setCurrentGIALRPtagTextCorrespondenceInfo(const bool isQuery)
 		currentGIALRPtagTextCorrespondenceInfo = textGIALRPtagTextCorrespondenceInfo;
 	}
 }
-void initialiseCurrentGIALRPtagTextCorrespondenceInfo(const bool isQuery)
+void GIAlrpClass::initialiseCurrentGIALRPtagTextCorrespondenceInfo(const bool isQuery)
 {
 	if(isQuery)
 	{
@@ -190,7 +189,7 @@ void initialiseCurrentGIALRPtagTextCorrespondenceInfo(const bool isQuery)
 		textGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();
 	}
 }
-void deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(const bool isQuery)
+void GIAlrpClass::deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(const bool isQuery)
 {
 	if(isQuery)
 	{
@@ -203,7 +202,7 @@ void deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(const bool isQuery)
 }
 
 
-bool parseTextFileAndReduceLanguage(const string plainTextInputFileName, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName)
+bool GIAlrpClass::parseTextFileAndReduceLanguage(const string plainTextInputFileName, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName)
 {
 	bool result = true;
 
@@ -216,35 +215,35 @@ bool parseTextFileAndReduceLanguage(const string plainTextInputFileName, const s
 
 	string irregularVerbListFileName = lrpDataFolderName + GIA_LRP_IRREGULARVERB_DATABASE_FILE_NAME;
 	GIALRPtag* firstTagInIrregularVerbList = new GIALRPtag();
-	if(!loadIrregularVerbList(irregularVerbListFileName, firstTagInIrregularVerbList))
+	if(!this->loadIrregularVerbList(irregularVerbListFileName, firstTagInIrregularVerbList))
 	{
 		result = false;
 	}
 
 	string phrasalVerbListFileName = lrpDataFolderName + GIA_LRP_PHRASALVERB_DATABASE_FILE_NAME;
 	GIALRPtag* firstTagInPhrasalVerbList = new GIALRPtag();
-	if(!loadPhrasalVerbDataAndGenerateAllTenseVariants(phrasalVerbListFileName, firstTagInPhrasalVerbList, firstTagInIrregularVerbList))
+	if(!this->loadPhrasalVerbDataAndGenerateAllTenseVariants(phrasalVerbListFileName, firstTagInPhrasalVerbList, firstTagInIrregularVerbList))
 	{
 		result = false;
 	}
 
 	string multiwordPrepositionListFileName = lrpDataFolderName + GIA_LRP_MULTIWORDPREPOSITION_DATABASE_FILE_NAME;
 	GIALRPtag* firstTagInMultiwordPrepositionList = new GIALRPtag();
-	if(!loadMultiWordPrepositionData(multiwordPrepositionListFileName, firstTagInMultiwordPrepositionList))
+	if(!this->loadMultiWordPrepositionData(multiwordPrepositionListFileName, firstTagInMultiwordPrepositionList))
 	{
 		result = false;
 	}
 
 	GIALRPtag* firstTagInPlainText = new GIALRPtag();
-	if(!loadPlainTextFile(plainTextInputFileName, firstTagInPlainText))
+	if(!this->loadPlainTextFile(plainTextInputFileName, firstTagInPlainText))
 	{
 		result = false;
 	}
 
-	setCurrentDirectory(tempFolder);
+	SHAREDvars.setCurrentDirectory(tempFolder);
 
-	GIALRPtagTextCorrespondenceInfo* currentGIALRPtagCorrespondenceInfo = getCurrentGIALRPtagTextCorrespondenceInfo();
-	if(!searchAndReplacePhrasalVerbs(firstTagInPlainText, firstTagInPhrasalVerbList, currentGIALRPtagCorrespondenceInfo))
+	GIALRPtagTextCorrespondenceInfo* currentGIALRPtagCorrespondenceInfo = this->getCurrentGIALRPtagTextCorrespondenceInfo();
+	if(!this->searchAndReplacePhrasalVerbs(firstTagInPlainText, firstTagInPhrasalVerbList, currentGIALRPtagCorrespondenceInfo))
 	{
 		result = false;
 	}
@@ -253,12 +252,12 @@ bool parseTextFileAndReduceLanguage(const string plainTextInputFileName, const s
 	{
 		currentGIALRPtagCorrespondenceInfo = currentGIALRPtagCorrespondenceInfo->next;	//added 2j6d (add to end of list)
 	}
-	if(!searchAndReplaceMultiwordPrepositions(firstTagInPlainText, firstTagInMultiwordPrepositionList, currentGIALRPtagCorrespondenceInfo))
+	if(!this->searchAndReplaceMultiwordPrepositions(firstTagInPlainText, firstTagInMultiwordPrepositionList, currentGIALRPtagCorrespondenceInfo))
 	{
 		result = false;
 	}
 
-	if(!writeTagListToFile(firstTagInPlainText, plainTextLRPoutputFileName, plainTextLRPforNLPoutputFileName))
+	if(!this->writeTagListToFile(firstTagInPlainText, plainTextLRPoutputFileName, plainTextLRPforNLPoutputFileName))
 	{
 		result = false;
 	}
@@ -267,7 +266,7 @@ bool parseTextFileAndReduceLanguage(const string plainTextInputFileName, const s
 }
 
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
-bool loadVerbList(const string irregularVerbListFileName, GIALRPtag* firstTagInIrregularVerbList)
+bool GIAlrpClass::loadVerbList(const string irregularVerbListFileName, GIALRPtag* firstTagInIrregularVerbList)
 {
 	bool result = true;
 
@@ -311,7 +310,7 @@ bool loadVerbList(const string irregularVerbListFileName, GIALRPtag* firstTagInI
 #endif
 
 
-bool loadIrregularVerbList(const string irregularVerbListFileName, GIALRPtag* firstTagInIrregularVerbList)
+bool GIAlrpClass::loadIrregularVerbList(const string irregularVerbListFileName, GIALRPtag* firstTagInIrregularVerbList)
 {
 	bool result = true;
 
@@ -405,7 +404,7 @@ generate all tenses variations of the verb based upon a) rules and b) irregular 
 */
 
 //NB current implementation cannot take into account 3 alternate tags (ie x/y/z)
-bool loadPhrasalVerbDataAndGenerateAllTenseVariants(const string phrasalVerbDatabaseFileName, GIALRPtag* firstTagInPhrasalVerbList, GIALRPtag* firstTagInIrregularVerbList)
+bool GIAlrpClass::loadPhrasalVerbDataAndGenerateAllTenseVariants(const string phrasalVerbDatabaseFileName, GIALRPtag* firstTagInPhrasalVerbList, GIALRPtag* firstTagInIrregularVerbList)
 {
 	bool result = true;
 
@@ -467,7 +466,7 @@ bool loadPhrasalVerbDataAndGenerateAllTenseVariants(const string phrasalVerbData
 					}
 					bool foundTagArbitraryName = false;
 					int i;
-					if(textInTextArray(currentWord, lrpPhrasalVerbDatabaseTagArbitraryNameArray, GIA_LRP_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMEBODY_NUMBER_OF_TYPES, &i))
+					if(SHAREDvars.textInTextArray(currentWord, lrpPhrasalVerbDatabaseTagArbitraryNameArray, GIA_LRP_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMEBODY_NUMBER_OF_TYPES, &i))
 					{
 						foundTagArbitraryName = true;
 						currentTagInPhrasalVerb->tagSpecialArbitraryName = true;
@@ -475,7 +474,7 @@ bool loadPhrasalVerbDataAndGenerateAllTenseVariants(const string phrasalVerbData
 					}
 					if(currentTagInPhrasalVerb->base)
 					{
-						generateTenseVariantsOfVerbBase(currentTagInPhrasalVerb, firstTagInIrregularVerbList);
+						this->generateTenseVariantsOfVerbBase(currentTagInPhrasalVerb, firstTagInIrregularVerbList);
 					}
 					#ifdef GIA_LRP_DEBUG
 					cout <<	"adding Tag: tagName = " << currentTagInPhrasalVerb->tagName << endl;
@@ -574,7 +573,7 @@ bool loadPhrasalVerbDataAndGenerateAllTenseVariants(const string phrasalVerbData
 				}
 				bool foundTagArbitraryName = false;
 				int i;
-				if(textInTextArray(currentWord, lrpPhrasalVerbDatabaseTagArbitraryNameArray, GIA_LRP_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMEBODY_NUMBER_OF_TYPES, &i))
+				if(SHAREDvars.textInTextArray(currentWord, lrpPhrasalVerbDatabaseTagArbitraryNameArray, GIA_LRP_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMEBODY_NUMBER_OF_TYPES, &i))
 				{
 					foundTagArbitraryName = true;
 					currentTagInPhrasalVerb->tagSpecialArbitraryName = true;
@@ -582,7 +581,7 @@ bool loadPhrasalVerbDataAndGenerateAllTenseVariants(const string phrasalVerbData
 				}
 				if(currentTagInPhrasalVerb->base)
 				{
-					generateTenseVariantsOfVerbBase(currentTagInPhrasalVerb, firstTagInIrregularVerbList);
+					this->generateTenseVariantsOfVerbBase(currentTagInPhrasalVerb, firstTagInIrregularVerbList);
 				}
 				#ifdef GIA_LRP_DEBUG
 				cout <<	"adding Tag: tagName = " << currentTagInPhrasalVerb->tagName << endl;
@@ -637,11 +636,11 @@ bool loadPhrasalVerbDataAndGenerateAllTenseVariants(const string phrasalVerbData
 
 
 
-bool generateTenseVariantsOfVerbBase(GIALRPtag* baseTag, GIALRPtag* firstTagInIrregularVerbList)
+bool GIAlrpClass::generateTenseVariantsOfVerbBase(GIALRPtag* baseTag, GIALRPtag* firstTagInIrregularVerbList)
 {
 	bool result = true;
 
-	string base = convertStringToLowerCase(&(baseTag->tagName));
+	string base = SHAREDvars.convertStringToLowerCase(&(baseTag->tagName));
 
 	//1. check if irregular past / past participle case
 	bool irregularVerbFound = false;
@@ -712,15 +711,15 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag* baseTag, GIALRPtag* firstTagInIr
 	bool secondLastCharacterIsVowel = false;
 	bool thirdLastCharacterIsVowel = false;
 	//bool verbDoubleConsonantRule1LastLetterException = false;
-	if(charInCharArray(lastCharacterInBase, englishVowelArray, GIA_LRP_NUMBER_OF_VOWELS))
+	if(SHAREDvars.charInCharArray(lastCharacterInBase, englishVowelArray, GIA_LRP_NUMBER_OF_VOWELS))
 	{
 		lastCharacterIsVowel = true;
 	}
-	if(charInCharArray(secondLastCharacterInBase, englishVowelArray, GIA_LRP_NUMBER_OF_VOWELS))
+	if(SHAREDvars.charInCharArray(secondLastCharacterInBase, englishVowelArray, GIA_LRP_NUMBER_OF_VOWELS))
 	{
 		secondLastCharacterIsVowel = true;
 	}
-	if(charInCharArray(thirdLastCharacterInBase, englishVowelArray, GIA_LRP_NUMBER_OF_VOWELS))
+	if(SHAREDvars.charInCharArray(thirdLastCharacterInBase, englishVowelArray, GIA_LRP_NUMBER_OF_VOWELS))
 	{
 		thirdLastCharacterIsVowel = true;
 	}
@@ -825,7 +824,7 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag* baseTag, GIALRPtag* firstTagInIr
 
 		if(!rule1b)
 		{
-			copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
+			this->copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
 		}
 	}
 	//Rule 2: Words ending in E
@@ -852,7 +851,7 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag* baseTag, GIALRPtag* firstTagInIr
 			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
 		}
 
-		copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
+		this->copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
 	}
 	//Rule 3: Words ending in Y
 	else if(rule3a)
@@ -878,7 +877,7 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag* baseTag, GIALRPtag* firstTagInIr
 			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3;
 		}
 
-		copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
+		this->copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
 	}
 	//Rule 4: Other words...
 	else if(rule3b || rule4)
@@ -910,7 +909,7 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag* baseTag, GIALRPtag* firstTagInIr
 			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
 		}
 
-		copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
+		this->copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
 	}
 
 	#ifdef GIA_LRP_DEBUG
@@ -929,7 +928,7 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag* baseTag, GIALRPtag* firstTagInIr
 	return result;
 }
 
-void copyDefaultVerbTenseFormsToAlternateTenseForms(GIALRPtag* baseTag, const bool irregularVerbFound)
+void GIAlrpClass::copyDefaultVerbTenseFormsToAlternateTenseForms(GIALRPtag* baseTag, const bool irregularVerbFound)
 {
 	baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD];
 	baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD];
@@ -941,7 +940,7 @@ void copyDefaultVerbTenseFormsToAlternateTenseForms(GIALRPtag* baseTag, const bo
 
 }
 
-bool loadMultiWordPrepositionData(const string multiwordPrepositionListFileName, GIALRPtag* firstTagInMultiwordPrepositionList)
+bool GIAlrpClass::loadMultiWordPrepositionData(const string multiwordPrepositionListFileName, GIALRPtag* firstTagInMultiwordPrepositionList)
 {
 	bool result = true;
 
@@ -998,7 +997,7 @@ bool loadMultiWordPrepositionData(const string multiwordPrepositionListFileName,
 	return result;
 }
 
-bool loadPlainTextFile(const string plainTextInputFileName, GIALRPtag* firstTagInPlainText)
+bool GIAlrpClass::loadPlainTextFile(const string plainTextInputFileName, GIALRPtag* firstTagInPlainText)
 {
 	bool result = true;
 
@@ -1006,7 +1005,7 @@ bool loadPlainTextFile(const string plainTextInputFileName, GIALRPtag* firstTagI
 	GIALRPtag* firstTagInPlainTextSentence = currentTagInPlainText;
 	GIALRPtag* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 
-	string fileContents = getFileContents(plainTextInputFileName);
+	string fileContents = SHAREDvars.getFileContents(plainTextInputFileName);
 
 	int charCount = 0;
 	char currentToken;
@@ -1021,10 +1020,10 @@ bool loadPlainTextFile(const string plainTextInputFileName, GIALRPtag* firstTagI
 	{
 		currentToken = fileContents[charCount];
 		bool punctuationMarkFound = false;
-		if(charInCharArray(currentToken, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
+		if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
 		{
 			#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-			if(!isIntrawordPunctuationMark(charCount, &fileContents))
+			if(!this->isIntrawordPunctuationMark(charCount, &fileContents))
 			{
 			#endif
 				punctuationMarkFound = true;
@@ -1033,13 +1032,13 @@ bool loadPlainTextFile(const string plainTextInputFileName, GIALRPtag* firstTagI
 			#endif
 		}
 		bool whiteSpaceFound = false;
-		if(charInCharArray(currentToken, nlpWhitespaceCharacterArray, GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS))
+		if(SHAREDvars.charInCharArray(currentToken, nlpWhitespaceCharacterArray, GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS))
 		{
 			whiteSpaceFound = true;
 		}
 		#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
 		bool quotationMarkFound = false;
-		if(charInCharArray(currentToken, nlpQuotationMarkCharacterArray, GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS))
+		if(SHAREDvars.charInCharArray(currentToken, nlpQuotationMarkCharacterArray, GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS))
 		{
 			quotationMarkFound = true;
 		}
@@ -1112,10 +1111,10 @@ bool loadPlainTextFile(const string plainTextInputFileName, GIALRPtag* firstTagI
 							currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
 
 							bool endOfSentencePunctuationMarkFound = false;
-							if(charInCharArray(currentToken, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
+							if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
 							{
 								#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-								if(!isIntrawordPunctuationMark(charCount, &fileContents))
+								if(!this->isIntrawordPunctuationMark(charCount, &fileContents))
 								{
 								#endif
 									endOfSentencePunctuationMarkFound = true;
@@ -1181,7 +1180,7 @@ bool loadPlainTextFile(const string plainTextInputFileName, GIALRPtag* firstTagI
 }
 
 #ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-bool isIntrawordPunctuationMark(int indexOfCurrentToken, string* lineContents)
+bool GIAlrpClass::isIntrawordPunctuationMark(int indexOfCurrentToken, string* lineContents)
 {
 	bool intrawordPunctuationMark = false;
 	char currentToken = (*lineContents)[indexOfCurrentToken];
@@ -1190,7 +1189,7 @@ bool isIntrawordPunctuationMark(int indexOfCurrentToken, string* lineContents)
 		if(indexOfCurrentToken < lineContents->length()-1)	//ensure fullstop is not immediately succeded by an alphabetical character, which indicates that the fullstop is part of a filename, eg "people.xml"
 		{
 			char characterImmediatelySucceedingPunctuationMark = (*lineContents)[indexOfCurrentToken+1];
-			bool isPunctuationMarkImmediatelySucceededByAlphanumericCharacter = charInCharArray(characterImmediatelySucceedingPunctuationMark, GIALRPNLPparsableCharacters, GIA_LRP_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES);
+			bool isPunctuationMarkImmediatelySucceededByAlphanumericCharacter = SHAREDvars.charInCharArray(characterImmediatelySucceedingPunctuationMark, GIALRPNLPparsableCharacters, GIA_LRP_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES);
 			#ifdef GIA_DEBUG
 			//cout << "isIntrawordPunctuationMark{}: characterImmediatelySucceedingPunctuationMark = " << characterImmediatelySucceedingPunctuationMark << endl;
 			//cout << "isIntrawordPunctuationMark{}: isPunctuationMarkImmediatelySucceededByAlphanumericCharacter = " << isPunctuationMarkImmediatelySucceededByAlphanumericCharacter << endl;
@@ -1207,7 +1206,7 @@ bool isIntrawordPunctuationMark(int indexOfCurrentToken, string* lineContents)
 
 
 //NB the collapsed phrasal verb contains precisely 2 entities: phrasalVerbCollapsed, entity2: thing/place/body (eg belong_to + sb/Tom) - thing/place/bodies are not currently being differentiated by the LRP as this information is only first generated at NLP/GIA parse stage
-bool searchAndReplacePhrasalVerbs(GIALRPtag* firstTagInPlainText, GIALRPtag* firstTagInPhrasalVerbList, GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo)
+bool GIAlrpClass::searchAndReplacePhrasalVerbs(GIALRPtag* firstTagInPlainText, GIALRPtag* firstTagInPhrasalVerbList, GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo)
 {
 	bool result = true;
 
@@ -1515,7 +1514,7 @@ bool searchAndReplacePhrasalVerbs(GIALRPtag* firstTagInPlainText, GIALRPtag* fir
 }
 
 
-bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, const GIALRPtag* firstTagInMultiwordPrepositionList, GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo)
+bool GIAlrpClass::searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, const GIALRPtag* firstTagInMultiwordPrepositionList, GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo)
 {
 	bool result = true;
 
@@ -1630,7 +1629,7 @@ bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, const
 	return result;
 }
 
-bool writeTagListToFile(const GIALRPtag* firstTagInPlainText, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName)
+bool GIAlrpClass::writeTagListToFile(const GIALRPtag* firstTagInPlainText, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName)
 {
 	bool result = true;
 
@@ -1694,7 +1693,7 @@ bool writeTagListToFile(const GIALRPtag* firstTagInPlainText, const string plain
 }
 
 //NB preposition reversion routine will not work for RelEx as RelEx defines dependency relations based on lemmas not words...
-void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, const GIAsentence* currentSentenceInList, const GIArelation* currentRelationInListForPrepositionsOnly, const bool isPreposition, bool* foundOfficialLRPreplacementString)
+void GIAlrpClass::revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, const GIAsentence* currentSentenceInList, const GIArelation* currentRelationInListForPrepositionsOnly, const bool isPreposition, bool* foundOfficialLRPreplacementString)
 {
 	int entityIndexForNonPrepositionsOnly = feature->entityIndex;
 
@@ -1710,7 +1709,7 @@ void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, const GIAsentence
 	string word = feature->word;
 	//string lemma = feature->lemma;	//only used for prepositions (dependency relation) calculations, where lemma has already been calculated via revertNLPtagNameToOfficialLRPtagName()
 
-	GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo = getCurrentGIALRPtagTextCorrespondenceInfo();
+	GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo = this->getCurrentGIALRPtagTextCorrespondenceInfo();
 
 	int sentenceIndex = currentSentenceInList->sentenceIndex;
 
@@ -1878,7 +1877,7 @@ void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, const GIAsentence
 
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
 //warning: this function is only currently developed for infinitive and continuous case
-bool determineVerbCaseWrapper(const string word, string* baseNameFound, int* grammaticalTenseModifier)
+bool GIAlrpClass::determineVerbCaseWrapper(const string word, string* baseNameFound, int* grammaticalTenseModifier)
 {
 	bool result = true;
 	bool foundVerbCase = false;
@@ -1896,13 +1895,13 @@ bool determineVerbCaseWrapper(const string word, string* baseNameFound, int* gra
 		#ifdef GIA_DEBUG
 		//cout << "determineVerbCase: " << endl;
 		#endif
-		foundVerbCase = determineVerbCase(word, firstTagInVerbListGlobal, baseNameFound, grammaticalTenseModifier);
+		foundVerbCase = this->determineVerbCase(word, firstTagInVerbListGlobal, baseNameFound, grammaticalTenseModifier);
 	}
 	return foundVerbCase;
 }
 
 //warning: this function is only currently developed for infinitive and continuous case
-bool determineVerbCase(const string word, GIALRPtag* firstTagInVerbList, string* baseNameFound, int* grammaticalTenseModifier)
+bool GIAlrpClass::determineVerbCase(const string word, GIALRPtag* firstTagInVerbList, string* baseNameFound, int* grammaticalTenseModifier)
 {
 	bool foundVerbCase = false;
 
@@ -1928,7 +1927,7 @@ bool determineVerbCase(const string word, GIALRPtag* firstTagInVerbList, string*
 	int numberOfCharactersInBaseTenseFormAppend = 0;
 	while(currentTagInVerbList->nextSentence != NULL)
 	{
-		string wordLowerCase = convertStringToLowerCase(&word);
+		string wordLowerCase = SHAREDvars.convertStringToLowerCase(&word);
 		string base = currentTagInVerbList->tagName;
 
 		if(wordLowerCase == base)
@@ -1950,48 +1949,48 @@ bool determineVerbCase(const string word, GIALRPtag* firstTagInVerbList, string*
 
 				//GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP _ing:
 				//continuous rule 1a/3b/4: thinking/happening/entering
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP);
 				//continuous rule 1b: running - "run" + "n" [run n] + "ing"
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base+lastCharacterInBase, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base+lastCharacterInBase, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP);
 				//continuous rule 2: changing - "chang" [change e] + "ing"
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP);
 				/*
 				//continuous rule 3a: N/A !marriing (use marrying)
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP);
 				*/
 
 				#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
 				//added 2h2a
 				//GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND _able:
 				//potential rule 1a/3b/4: thinkable/changeable
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP);
 				//potential rule 1b: running - "run" + "n" [run n] + "able"
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base+lastCharacterInBase, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base+lastCharacterInBase, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP);
 				/*
 				//potential rule 2: N/A !changable (use changeable)
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP);
 				*/
 				//potential rule 3a: running - "marr" + "i" + "able"
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base+baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND_CASE3, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base+baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND_CASE3, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP);
 				#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL_INVERSE
 				//added 2h2c
 				//GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP _ive:
 				//potential rule 1ai: -> ive eg resistive/adaptive
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP);
 				//potential rule 1aii: -> itive eg additive
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE1II, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE1II, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP);
 				//potential rule 1aiii: -> ative eg affirmative
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE1III, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE1III, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP);
 				/*
 				//potential rule 1b: running - "run" + "n" [run n] + "itive"
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base+lastCharacterInBase, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base+lastCharacterInBase, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP);
 				*/
 				//potential rule 2i: e -> itive eg competitive/definitive/accomodative
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE2, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE2, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP);
 				//potential rule 2ii: e -> ment + ive eg judgementive
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE2II, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE2II, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP);
 				//potential rule 3a: y -> iment + ive eg supplimentive
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE3, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE3, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP);
 				#endif
 				#endif
 
@@ -1999,64 +1998,64 @@ bool determineVerbCase(const string word, GIALRPtag* firstTagInVerbList, string*
 				//added 2h2a
 				//GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND _ed:
 				//possible state rule 1a/3b/4: visited/opened
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP);
 				//possible state rule 1b: rubbed/stopped/referred/admitted - "rub" + "b" + "ed"
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base+lastCharacterInBase, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base+lastCharacterInBase, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP);
 				//possible state rule 2: smiled/fined - "smil" [change e] + "ed"
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP);
 				//possible state rule 3a: studied/married - "marr" + "i" + "ed"
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP);
 				#endif
 
 				#ifdef GIA_FEATURE_POS_TAG_VERB_DESCRIPTION
 				//added 2h2d
 				//GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP _ment:
 				//potential rule 1ai: -> ment eg movement/government/derailment/detainment/enjoyment
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				//potential rule 1aii: -> ament eg disarmament
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE1II, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE1II, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				//potential rule 1aiii: -> lment eg enrollment/installment/fulfillment
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE1III, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE1III, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				/*
 				//potential rule 1b: running - "run" + "n" [run n] + "itive"
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base+lastCharacterInBase, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_INVERSE_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base+lastCharacterInBase, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_INVERSE_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				*/
 				//potential rule 2i: e -> ment eg judgement/dislodgment
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE2, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE2, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				/*
 				//potential rule 2ii: e -> ment + ive eg judgementive
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE2II, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE2II, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				*/
 				//potential rule 3a: y -> iment eg worriment/suppliment/embodiment
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE3, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE3, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				//potential rule 5: pt -> pment eg entrapment/equipment
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast2LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE5, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast2LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE5, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 
 				//GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP _ion:
 				//potential rule 1ai: -> ion eg absorption/abstraction/adaptation
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				//potential rule 1aii: -> ition eg addition
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE1II, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE1II, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				//potential rule 1aiii: -> ation eg acceptation/affirmation
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE1III, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE1III, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				/*
 				//potential rule 1b: running - "run" + "n" [run n] + "itive"
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base+lastCharacterInBase, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_INVERSE_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, base+lastCharacterInBase, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_INVERSE_APPEND, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				*/
 				//potential rule 2i: e -> ion eg relation/acclimatisation/accommodation/activation/accretion
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				//potential rule 2ii: e -> ition + ive eg competition/composition/definition
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2II, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2II, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				//potential rule 2iii: e -> ation + ive eg admiration/organisation
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2III, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2III, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				//potential rule 3a: ify -> ification eg subjectification/amplification/ammonification/identification/beautification
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE3, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast1LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE3, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				//potential rule 6i: aim -> amation eg acclamation {acclimation?}
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast3LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6I, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast3LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6I, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				//potential rule 6i: ide -> ision eg division
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast3LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6II, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast3LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6II, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				//potential rule 6iii: ish -> ition eg abolition/demolition
-				testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast3LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6III, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
+				this->testVerbCase(currentTagInVerbList->tagName, wordLowerCase, baseWithLast3LettersDropped, GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6III, &numberOfCharactersInBaseTenseFormAppend, &foundVerbCase, baseNameFound, grammaticalTenseModifier, GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP);
 				#endif
 			}
 		}
@@ -2075,7 +2074,7 @@ bool determineVerbCase(const string word, GIALRPtag* firstTagInVerbList, string*
 	return foundVerbCase;
 }
 
-void testVerbCase(string tagName, const string wordLowerCase, const string baseTenseFormStart, string baseTenseFormAppend, int* numberOfCharactersInBaseTenseFormAppend, bool* foundVerbCase, string* baseNameFound, int* grammaticalTenseModifier, int grammaticalTenseModifierNew)
+void GIAlrpClass::testVerbCase(string tagName, const string wordLowerCase, const string baseTenseFormStart, string baseTenseFormAppend, int* numberOfCharactersInBaseTenseFormAppend, bool* foundVerbCase, string* baseNameFound, int* grammaticalTenseModifier, int grammaticalTenseModifierNew)
 {
 	if(baseTenseFormAppend.length() >* numberOfCharactersInBaseTenseFormAppend)
 	{
@@ -2094,7 +2093,7 @@ void testVerbCase(string tagName, const string wordLowerCase, const string baseT
 
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
 //NB determineIfWordIsIrregularVerbContinuousCaseWrapper() can be used instead of determineVerbCaseWrapper(), as Stanford only has a problem identifying verbs (pos tag "VBG") when they are irregular varbs
-bool determineIfWordIsIrregularVerbContinuousCaseWrapper(const string word, string* baseNameFound)
+bool GIAlrpClass::determineIfWordIsIrregularVerbContinuousCaseWrapper(const string word, string* baseNameFound)
 {
 	bool result = true;
 	bool foundIrregularVerbContinuousCase = false;
@@ -2106,13 +2105,13 @@ bool determineIfWordIsIrregularVerbContinuousCaseWrapper(const string word, stri
 	}
 	else
 	{
-		foundIrregularVerbContinuousCase = determineIfWordIsIrregularVerbContinuousCase(word, firstTagInIrregularVerbListGlobal, baseNameFound);
+		foundIrregularVerbContinuousCase = this->determineIfWordIsIrregularVerbContinuousCase(word, firstTagInIrregularVerbListGlobal, baseNameFound);
 	}
 	return foundIrregularVerbContinuousCase;
 }
 
 
-bool determineIfWordIsIrregularVerbContinuousCase(const string word, GIALRPtag* firstTagInIrregularVerbList, string* baseNameFound)
+bool GIAlrpClass::determineIfWordIsIrregularVerbContinuousCase(const string word, GIALRPtag* firstTagInIrregularVerbList, string* baseNameFound)
 {
 	bool foundIrregularVerbContinuousCase = false;
 
@@ -2123,7 +2122,7 @@ bool determineIfWordIsIrregularVerbContinuousCase(const string word, GIALRPtag* 
 		GIALRPtag* currentTagInIrregularVerb = currentTagInIrregularVerbList;
 		while(currentTagInIrregularVerb->nextTag != NULL)
 		{
-			string wordLowerCase = convertStringToLowerCase(&word);
+			string wordLowerCase = SHAREDvars.convertStringToLowerCase(&word);
 
 			if(irregularVerbTagIndex == 3)
 			{
@@ -2177,7 +2176,7 @@ bool determineIfWordIsIrregularVerbContinuousCase(const string word, GIALRPtag* 
 
 
 #ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-bool loadPrepositionsInverseList(const string prepositionsInverseListFileName, GIALRPtag* firstTagInPrepositionsInverseList)
+bool GIAlrpClass::loadPrepositionsInverseList(const string prepositionsInverseListFileName, GIALRPtag* firstTagInPrepositionsInverseList)
 {
 	bool result = true;
 
@@ -2242,7 +2241,7 @@ bool loadPrepositionsInverseList(const string prepositionsInverseListFileName, G
 	return result;
 }
 
-void detectIfInverseOrTwoWayConditionRequired(const string conditionName, bool* inverseConditionRequired, bool* twoWayConditionRequired, string* inverseConditionName)
+void GIAlrpClass::detectIfInverseOrTwoWayConditionRequired(const string conditionName, bool* inverseConditionRequired, bool* twoWayConditionRequired, string* inverseConditionName)
 {
 	GIALRPtag* firstTagInPrepositionsInverseList = firstTagInPrepositionsInverseListGlobal;
 
@@ -2309,7 +2308,7 @@ void detectIfInverseOrTwoWayConditionRequired(const string conditionName, bool* 
 }
 
 #ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
-bool identifyConditionType(GIAentityNode* conditionEntity)
+bool GIAlrpClass::identifyConditionType(GIAentityNode* conditionEntity)
 {
 	bool conditionTypeIdentified = false;
 

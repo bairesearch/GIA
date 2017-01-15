@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelationsRelex.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -42,35 +42,43 @@
 #include "GIAentityConnectionClass.h"
 #include "GIAconditionNodeClass.h"
 #include "GIAtranslatorOperations.h"
+	#include "GIAlrp.h"
+#include "GIAtranslatorDefineGrammar.h"
+#include "SHAREDvars.h"	//required for convertStringToLowerCase
 
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
-void redistributeRelexRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser, GIAfeature* featureArrayTemp[]);
-	void collapseRedundantRelationAndMakeNegativeRelex(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[]);
+class GIAtranslatorRedistributeRelationsRelexClass
+{
+	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
+	private: GIAtranslatorGenericClass GIAtranslatorGeneric;
+	public: void redistributeRelexRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser, GIAfeature* featureArrayTemp[]);
+		public: void collapseRedundantRelationAndMakeNegativeRelex(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[]);
 	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
-	void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationAllWithADefinitionFunctionAsPropertyLinks(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
+		private: void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationAllWithADefinitionFunctionAsPropertyLinks(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
 	#endif
 	#endif
 	#ifdef GIA_ALIASES_RELEX_COMPATIBILITY
-	void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser, GIAfeature* featureArrayTemp[]);
+		private: void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser, GIAfeature* featureArrayTemp[]);
 	#endif
 	#ifdef GIA_WHO_QUERY_ALIAS_ANSWERS
-	void redistributeRelexRelationsDetectNameQueries(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], constEffective GIAfeature* featureArrayTemp[]);
+		private: void redistributeRelexRelationsDetectNameQueries(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], constEffective GIAfeature* featureArrayTemp[]);
 	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS
-	void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
+		private: void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
 	#endif
 	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
-	void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
+		private: void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
 	#endif
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A_RELATIONS_DISREGARD_REDUNDANT_DEFINITION_RELATIONS
-	void redistributeRelexRelationsDisregardRedundantDefinitionRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
+		private: void redistributeRelexRelationsDisregardRedundantDefinitionRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
 	#endif
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_RELATION_AS_ACTION_CONDITION
-	void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], constEffective GIAentityNode* GIAentityNodeArray[]);
+		private: void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], constEffective GIAentityNode* GIAentityNodeArray[]);
 	#endif
 	#endif
-	void switchArgumentsAndFunctionsWhereNecessaryRelex(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], constEffective GIAentityNode* GIAentityNodeArray[]);
+		private: void switchArgumentsAndFunctionsWhereNecessaryRelex(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], constEffective GIAentityNode* GIAentityNodeArray[]);
+};
 #endif
 #endif

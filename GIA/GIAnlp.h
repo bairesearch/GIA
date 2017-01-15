@@ -26,7 +26,7 @@
  * File Name: GIAnlp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -37,6 +37,12 @@
 
 #include "GIAglobalDefs.h"
 #include "GIAsentenceClass.h"
+#include "XMLparserClass.h"
+#include "XMLrulesClass.h"
+#include "GIAnlpParser.h"
+#include "GIAtranslatorDefs.h" //required for featureNERtypeArray only
+#include "GIAlrp.h"
+#include "SHAREDvars.h"	//file io
 
 #define STANFORD_PARSER_SENTENCE_SKIP_SUPPORT
 #define STANFORD_PARSER_SENTENCE_SKIPPED_TEXT "GIAsentence skipped"
@@ -115,25 +121,33 @@ static string StanfordCoreNLP_relationSetAttributesNameArray[StanfordCoreNLP_num
 #endif
 static string StanfordCoreNLP_relationSetNameArray[StanfordCoreNLP_numberOfDependencySetsPerSentence] = {StanfordCoreNLP_XML_TAG_basicdependencies, StanfordCoreNLP_XML_TAG_collapseddependencies, StanfordCoreNLP_XML_TAG_collapsedccprocesseddependencies};
 
-void executeNLPparser(const string inputTextPlainTXTfileName, const string inputTextNLPXMLfileName, const int NLPParser, const string NLPexeFolderArray[], const bool parseRelationsOrFeatures, const bool NLPrelexCompatibilityMode);
+class GIAnlpClass
+{
+	private: SHAREDvarsClass SHAREDvars;
+	private: XMLparserClassClass XMLparserClass;
+	private: GIAnlpParserClass GIAnlpParser;
+	private: GIAlrpClass GIAlrp;
+	public: void executeNLPparser(const string inputTextPlainTXTfileName, const string inputTextNLPXMLfileName, const int NLPParser, const string NLPexeFolderArray[], const bool parseRelationsOrFeatures, const bool NLPrelexCompatibilityMode);
 
-bool parseNLPparserFile(const string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPfeatureParser, const int NLPdependencyRelationsParser, const bool NLPrelexCompatibilityMode);
-	bool parseNLPparserFeaturesFile(const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPfeatureParser, bool* createNewSentences);
-	bool parseNLPparserRelationsFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPdependencyRelationsParser, const bool NLPrelexCompatibilityMode, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed);
+	public: bool parseNLPparserFile(const string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPfeatureParser, const int NLPdependencyRelationsParser, const bool NLPrelexCompatibilityMode);
+		public: bool parseNLPparserFeaturesFile(const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPfeatureParser, bool* createNewSentences);
+		public: bool parseNLPparserRelationsFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPdependencyRelationsParser, const bool NLPrelexCompatibilityMode, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed);
 		#ifdef GIA_RELEX
-		bool parseRelexFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const bool parseRelations, const bool parseFeatures, const bool NLPrelexCompatibilityMode, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed);
+			private: bool parseRelexFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const bool parseRelations, const bool parseFeatures, const bool NLPrelexCompatibilityMode, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed);
 		#endif
 		#ifdef GIA_STANFORD_CORENLP
-		bool parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const bool parseRelations, const bool parseFeatures, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed);
+			private: bool parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const bool parseRelations, const bool parseFeatures, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed);
 		#endif
 		#ifdef GIA_STANFORD_PARSER
-		bool parseStanfordParserFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed);
-			bool parseStanfordParserFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const bool createNewSentences, const bool parseGIA2file, const bool onlyParseIfCorpusLookupFailed);
+			public: bool parseStanfordParserFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed);
+				public: bool parseStanfordParserFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const bool createNewSentences, const bool parseGIA2file, const bool onlyParseIfCorpusLookupFailed);
 		#endif
-			int countSubstring(const std::string& str, const std::string& sub);
+				private: int countSubstring(const std::string& str, const std::string& sub);
 
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
-void outputInternalRelationsInRelexFormat(const string* nameOfRelexCompactFormatCFFfile, const string* originalInputFileName, GIAparagraph* firstParagraphInList, const int NLPdependencyRelationsParser, const int NLPfeatureParser, const string NLPexeFolderArray[]);
+	public: void outputInternalRelationsInRelexFormat(const string* nameOfRelexCompactFormatCFFfile, const string* originalInputFileName, GIAparagraph* firstParagraphInList, const int NLPdependencyRelationsParser, const int NLPfeatureParser, const string NLPexeFolderArray[]);
 #endif
+};
+
 
 #endif

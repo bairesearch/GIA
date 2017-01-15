@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -42,34 +42,40 @@
 #include "GIAentityConnectionClass.h"
 #include "GIAconditionNodeClass.h"
 #include "GIAtranslatorOperations.h"
+#include "GIAdatabase.h"
+#include "GIAsemanticParserOperations.h"
 
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
-void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType, const bool linkPreestablishedReferencesGIA);
+class GIAtranslatorLinkEntitiesClass
+{
+	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
+	public: void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType, const bool linkPreestablishedReferencesGIA);
 	//1-3
-	void linkPropertiesPossessiveRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[]);								//Stanford Compatible
-	void linkPropertiesDescriptiveRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], const int NLPdependencyRelationsType);				//Stanford Compatible
-	void linkEntityDefinitionsAppositiveOfNouns(const GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], const bool linkPreestablishedReferencesGIA);			//Stanford Compatible
-	void linkDependentActionsType1(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[]);
+		private: void linkPropertiesPossessiveRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[]);								//Stanford Compatible
+		private: void linkPropertiesDescriptiveRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], const int NLPdependencyRelationsType);				//Stanford Compatible
+		private: void linkEntityDefinitionsAppositiveOfNouns(const GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], const bool linkPreestablishedReferencesGIA);			//Stanford Compatible
+		private: void linkDependentActionsType1(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[]);
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-	void linkHavingPropertyConditionsAndBeingDefinitionConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType);
+		private: void linkHavingPropertyConditionsAndBeingDefinitionConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType);
 	#endif
-	void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType);	//Stanford Compatible
-	void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], const unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType);	//Stanford Compatible
-	void linkIndirectObjects(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[]);										//Stanford Compatible
-	void linkObjectSubjectOfPreposition(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType);		//Stanford Compatible
-	void linkConjunctionConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes);	//Stanford Compatible;
-	void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType);	//Stanford Compatible
+		private: void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType);	//Stanford Compatible
+		private: void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], const unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType);	//Stanford Compatible
+		private: void linkIndirectObjects(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[]);										//Stanford Compatible
+		private: void linkObjectSubjectOfPreposition(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType);		//Stanford Compatible
+		private: void linkConjunctionConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes);	//Stanford Compatible;
+		private: void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType);	//Stanford Compatible
 		#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
-		void createConditionBasedUponPreposition(GIAentityNode* actionOrSubstanceConditionSubjectEntity, GIAentityNode* actionOrSubstanceConditionObjectEntity, const GIArelation* currentRelationInList, const bool negative, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType, bool sameReferenceSet);
-			void addTimeToSubstance(GIAentityNode* timeConditionEntity);															//Stanford Compatible
-			GIAentityNode* addTimeConditionToEntity(GIAentityNode* substanceNode, GIAentityNode* timeConditionEntity, GIAentityNode* conditionNetworkIndexEntity, bool sameReferenceSet);	   //Stanford Compatible
-			GIAentityNode* addLocationConditionToEntity(GIAentityNode* substanceNode, GIAentityNode* locationConditionEntity, GIAentityNode* conditionNetworkIndexEntity, bool sameReferenceSet);  //Stanford Compatible
-			GIAentityNode* addReasonConditionToEntity(GIAentityNode* substanceNode, GIAentityNode* reasonConditionEntity, GIAentityNode* conditionNetworkIndexEntity, bool sameReferenceSet);	   //Stanford Compatible
-			GIAentityNode* addGenericConditionToEntity(GIAentityNode* substanceNode, GIAentityNode* substanceConditionEntity, GIAentityNode* conditionNetworkIndexEntity, bool sameReferenceSet);  //Stanford Compatible
+			private: void createConditionBasedUponPreposition(GIAentityNode* actionOrSubstanceConditionSubjectEntity, GIAentityNode* actionOrSubstanceConditionObjectEntity, const GIArelation* currentRelationInList, const bool negative, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType, bool sameReferenceSet);
+				public: void addTimeToSubstance(GIAentityNode* timeConditionEntity);															//Stanford Compatible
+				private: GIAentityNode* addTimeConditionToEntity(GIAentityNode* substanceNode, GIAentityNode* timeConditionEntity, GIAentityNode* conditionNetworkIndexEntity, bool sameReferenceSet);	   //Stanford Compatible
+				private: GIAentityNode* addLocationConditionToEntity(GIAentityNode* substanceNode, GIAentityNode* locationConditionEntity, GIAentityNode* conditionNetworkIndexEntity, bool sameReferenceSet);  //Stanford Compatible
+				private: GIAentityNode* addReasonConditionToEntity(GIAentityNode* substanceNode, GIAentityNode* reasonConditionEntity, GIAentityNode* conditionNetworkIndexEntity, bool sameReferenceSet);	   //Stanford Compatible
+				private: GIAentityNode* addGenericConditionToEntity(GIAentityNode* substanceNode, GIAentityNode* substanceConditionEntity, GIAentityNode* conditionNetworkIndexEntity, bool sameReferenceSet);  //Stanford Compatible
 		#endif
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
-	string performPrepositionReduction(string relationType);
+		private: string performPrepositionReduction(string relationType);
 	#endif
-	void linkDependentActionsType2(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes);
+		private: void linkDependentActionsType2(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes);
+};
 	#endif
 #endif

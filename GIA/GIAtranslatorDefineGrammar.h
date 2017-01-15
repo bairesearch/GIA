@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -42,33 +42,42 @@
 #include "GIAentityConnectionClass.h"
 #include "GIAconditionNodeClass.h"
 #include "GIAtranslatorOperations.h"
+#include "GIAtranslatorGeneric.h"
+#include "GIAdatabase.h"
 
 //#define GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILIARY_TO_SET_TENSE_OF_VERB	//this seems theoretically possible pased upon the examples given (ie because the tense stanfordPOS information is replicated in both the auxiliary and the verb)
 
 
 
 //Pass A
-void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], const int NLPdependencyRelationsType);
-void locateAndAddAllNetworkIndexEntities(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, const int NLPdependencyRelationsType, GIAentityNode* GIAfeatureTempEntityNodeArray[]);
+class GIAtranslatorDefineGrammarClass
+{
+	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
+	private: GIAtranslatorGenericClass GIAtranslatorGeneric;
+	private: SHAREDvarsClass SHAREDvars;
+	public: void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], const int NLPdependencyRelationsType);
+	public: void locateAndAddAllNetworkIndexEntities(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, const int NLPdependencyRelationsType, GIAentityNode* GIAfeatureTempEntityNodeArray[]);
 
 #ifdef GIA_RELEX
-void fillGrammaticalArraysRelex(GIAsentence* currentSentenceInList);
+	public: void fillGrammaticalArraysRelex(GIAsentence* currentSentenceInList);
 #endif
 //uses dependency relations to derive grammar [uses stanfordPOS/NER information to derive grammar, if NLPfeatureParser == Stanford Core NLP]
 #ifdef GIA_STANFORD_DEPENDENCY_RELATIONS
-void fillGrammaticalArraysStanford(GIAsentence* currentSentenceInList,  const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], const int NLPfeatureParser, GIAfeature* featureArrayTemp[]);
-	void extractPastTense(GIAfeature* featureWithEntityIndex, const int entityIndexContainingTenseIndication, const GIAfeature* firstFeatureInList, const int NLPfeatureParser);
-		void extractPastTenseFromPOStag(const string* POStag, GIAfeature* feature);
-	void extractGrammaticalInformationStanford(GIAfeature* firstFeatureInList, const int NLPfeatureParser);
-		void extractPOSrelatedGrammaticalInformationStanford(GIAfeature* currentFeature);
-			void extractGrammaticalInformationFromPOStag(const string* POStag, GIAfeature* feature);
+	public: void fillGrammaticalArraysStanford(GIAsentence* currentSentenceInList,  const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], const int NLPfeatureParser, GIAfeature* featureArrayTemp[]);
+		private: void extractPastTense(GIAfeature* featureWithEntityIndex, const int entityIndexContainingTenseIndication, const GIAfeature* firstFeatureInList, const int NLPfeatureParser);
+			private: void extractPastTenseFromPOStag(const string* POStag, GIAfeature* feature);
+		public: void extractGrammaticalInformationStanford(GIAfeature* firstFeatureInList, const int NLPfeatureParser);
+			public: void extractPOSrelatedGrammaticalInformationStanford(GIAfeature* currentFeature);
+				private: void extractGrammaticalInformationFromPOStag(const string* POStag, GIAfeature* feature);
 #endif
 
-void applyGrammaticalInfoToAllEntities(const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* firstFeatureInSentence);
-	void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode* entity, GIAfeature* currentFeatureInList);
+	public: void applyGrammaticalInfoToAllEntities(const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* firstFeatureInSentence);
+		public: void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode* entity, GIAfeature* currentFeatureInList);
 
 #ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
-void findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(GIAsentence* currentSentenceInList, const int subjectObjectEntityWithAuxiliaryEntityIndex, const string* subjectObjectEntityWithAuxiliaryEntityName);
+	private: void findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(GIAsentence* currentSentenceInList, const int subjectObjectEntityWithAuxiliaryEntityIndex, const string* subjectObjectEntityWithAuxiliaryEntityName);
 #endif
+};
+
 
 #endif

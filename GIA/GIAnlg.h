@@ -26,7 +26,7 @@
  * File Name: GIAnlg.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -39,6 +39,7 @@
 #include "GIAglobalDefs.h"
 #include "GIAentityNodeClass.h"
 #include "GIAtranslatorOperations.h"
+#include "GIAtranslatorDefineGrammar.h"
 
 class GIANLGSentence
 {
@@ -122,22 +123,27 @@ static string nlgSentenceThreeEntitiesDependencyRelationVectorConnectionsArray[G
 static string grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES] = {"undefined", ".n", ".v", "adj", "adv", "prep", "satellite"};
 
 
-GIANLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, GIANLGSentence* currentNLGsentence, bool isQueryAnswerContext, int isQueryAnswerContextRound);
-	void generateThreeEntitySentenceFromEntityNode(GIAentityNode* entityNode0, string* generatedText, int connectionType1, int connectionType2, const int startEntityIndex, const bool supportAdditionalLinks);
-	void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, GIAentityConnection* entityConnection, string* generatedText, const int connectionType, const int startEntityIndex, const bool additionalLink);
+class GIAnlgClass
+{
+	private: SHAREDvarsClass SHAREDvars;
+	private: GIAentityNodeClassClass GIAentityNodeClass;
+	public: GIANLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, GIANLGSentence* currentNLGsentence, bool isQueryAnswerContext, int isQueryAnswerContextRound);
+		private: void generateThreeEntitySentenceFromEntityNode(GIAentityNode* entityNode0, string* generatedText, int connectionType1, int connectionType2, const int startEntityIndex, const bool supportAdditionalLinks);
+		private: void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, GIAentityConnection* entityConnection, string* generatedText, const int connectionType, const int startEntityIndex, const bool additionalLink);
 		#ifdef GIA_NLG2
-		void NLG2generateNLGinputViewFeatureTagsGenericPerSentence(string* generatedNLGinputViewTags);
-		void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode, const int entityIndex, string* generatedNLGinputViewTags);
-			string NLG2generateNLGinputViewLine(const string type, const string governor, const string dependent);
+			private: void NLG2generateNLGinputViewFeatureTagsGenericPerSentence(string* generatedNLGinputViewTags);
+			private: void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode, const int entityIndex, string* generatedNLGinputViewTags);
+				private: string NLG2generateNLGinputViewLine(const string type, const string governor, const string dependent);
 		#else
-		void addDeterminate(const GIAentityNode* entityNode, string* entityTextExpanded);
-			string calcDeterminate(const GIAentityNode* entityNode);
+			private: void addDeterminate(const GIAentityNode* entityNode, string* entityTextExpanded);
+				private: string calcDeterminate(const GIAentityNode* entityNode);
 		#endif
 
-string getWordOrig(const GIAentityNode* entityNode);
+	private: string getWordOrig(const GIAentityNode* entityNode);
 
-string determineNLGdefinitionText(const GIAentityNode* entityNode);
-string determineNLGpossessionText(const GIAentityNode* entityNode);
+	private: string determineNLGdefinitionText(const GIAentityNode* entityNode);
+	private: string determineNLGpossessionText(const GIAentityNode* entityNode);
+};
 
 #endif
 

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -41,6 +41,8 @@
 #include "GIAentityNodeClass.h"
 #include "GIAentityConnectionClass.h"
 #include "GIAconditionNodeClass.h"
+#include "GIAtranslatorOperations.h"
+#include "GIAsemanticParserOperations.h"
 //#include "GIAtranslatorDefs.h"
 
 
@@ -290,22 +292,31 @@ public:
 #endif
 
 
-#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 
-void initialiseBoolArray1D(bool* boolArray, const int size, int value);
-void initialiseBoolArray2D(bool* boolArray, const int size1, const int size2, int value);
-void initialiseIntArray1D(int* intArray, const int size, int value);
-void initialiseIntArray2D(int* intArray, const int size1, const int size2, int value);
-void initialiseIntArray3D(int* intArray, const int size1, const int size2, const int size3, int value);
+class GIAtranslatorGenericClass
+{
+	private: GIAentityNodeClassClass GIAentityNodeClass;
+	private: SHAREDvarsClass SHAREDvars;
+	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
+	#ifdef USE_GIA2
+	private: GIAsemanticParserOperationsClass GIAsemanticParserOperations;
+	#endif
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION	
+	public: void initialiseBoolArray1D(bool* boolArray, const int size, int value);
+	public: void initialiseBoolArray2D(bool* boolArray, const int size1, const int size2, int value);
+	public: void initialiseIntArray1D(int* intArray, const int size, int value);
+	public: void initialiseIntArray2D(int* intArray, const int size1, const int size2, int value);
+	public: void initialiseIntArray3D(int* intArray, const int size1, const int size2, const int size3, int value);
 
-bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters* param, int currentRelationID);
+	public: bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters* param, int currentRelationID);
 
 #endif
 
 #ifdef GIA_GENERIC_ENTITY_INTERPRETATION
-bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters* param);
+	public: bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters* param);
 #endif
 
-bool determineFeatureIndexOfPreposition(GIAsentence* currentSentenceInList, const GIArelation* prepositionRelation, int* indexOfPreposition);
+	public: bool determineFeatureIndexOfPreposition(GIAsentence* currentSentenceInList, const GIArelation* prepositionRelation, int* indexOfPreposition);
+};
 
 #endif

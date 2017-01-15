@@ -26,13 +26,12 @@
  * File Name: GIAconditionNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  *
  *******************************************************************************/
 
 
 #include "GIAconditionNodeClass.h"
-#include "SHAREDvars.h"
 
 //~? [eg past, wednesday, etc]
 GIAtimeConditionNode::GIAtimeConditionNode(void)
@@ -63,7 +62,7 @@ GIAtimeConditionNode::~GIAtimeConditionNode(void)
 }
 
 
-string generateDateTimeConditionName(const int dayOfMonth, const int month, const long year)
+string GIAconditionNodeClassClass::generateDateTimeConditionName(const int dayOfMonth, const int month, const long year)
 {
 	string dayOfMonthString = "";
 	string monthString = "";
@@ -77,15 +76,15 @@ string generateDateTimeConditionName(const int dayOfMonth, const int month, cons
 
 	if(dayOfMonth != TIME_DAY_OF_MONTH_UNDEFINED)
 	{
-		dayOfMonthString = convertIntToString(dayOfMonth);
+		dayOfMonthString = SHAREDvars.convertIntToString(dayOfMonth);
 	}
 	if(month != TIME_MONTH_UNDEFINED)
 	{
-		monthString = convertIntToString(month);
+		monthString = SHAREDvars.convertIntToString(month);
 	}
 	if(year != TIME_YEAR_UNDEFINED)
 	{
-		yearString = convertIntToString(year);
+		yearString = SHAREDvars.convertIntToString(year);
 	}
 	string dateTimeConditionName = "";
 

@@ -21,22 +21,17 @@
  * File Name: GIAsemanticParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
 
 
 #include "GIAsemanticParser.h"
-#include "GIAsemanticParserOperations.h"
-#include "GIAsemanticParserDatabase.h"
-#include "GIAnlp.h"
-#include "GIAtranslator.h"
-#include "SHAREDvars.h"	//file io
 
 #ifdef USE_GIA2
 
-bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAparagraph* firstParagraphInList, const string inputPlainTXTFileName, string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName, const string NLPexeFolderArray[], vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, const bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, int* maxNumberSentences)
+bool GIAsemanticParserClass::performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAparagraph* firstParagraphInList, const string inputPlainTXTFileName, string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName, const string NLPexeFolderArray[], vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, const bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, int* maxNumberSentences)
 {
 	bool parseGIA2file = true;
 
@@ -46,7 +41,7 @@ bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDepende
 	cout << "error: performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences{} doesn't support STANFORD_PARSER_USE_POS_TAGS (because the semantic relations word types being written must match those being read [and read can only use feature parser])" << endl;
 	#endif
 	bool createNewSentences = true;
-	if(!parseNLPparserFeaturesFile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, NLPfeatureParser, &createNewSentences))
+	if(!GIAnlp.parseNLPparserFeaturesFile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, NLPfeatureParser, &createNewSentences))
 	{
 		result = false;
 	}
@@ -54,7 +49,7 @@ bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDepende
 	#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
-		if(!lookupSemanticParserFiles(firstParagraphInList, NLPfeatureParser))	//finds all corresponding GIA2 semantic dependency files and parses them
+		if(!this->lookupSemanticParserFiles(firstParagraphInList, NLPfeatureParser))	//finds all corresponding GIA2 semantic dependency files and parses them
 		{
 			#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
 			cout << "warning: GIA2 corpus entry not found (will generate corpus entry)" << endl;
@@ -71,7 +66,7 @@ bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDepende
 	else
 	{
 	#endif
-		if(!lookupSemanticParserFiles(firstParagraphInList->firstSentenceInList, NLPfeatureParser))	//finds all corresponding GIA2 semantic dependency files and parses them
+		if(!this->lookupSemanticParserFiles(firstParagraphInList->firstSentenceInList, NLPfeatureParser))	//finds all corresponding GIA2 semantic dependency files and parses them
 		{
 			#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
 			cout << "warning: GIA2 corpus entry not found (will generate corpus entry)" << endl;
@@ -89,9 +84,9 @@ bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDepende
 	#endif
 
 	#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
-	setCurrentDirectory(tempFolder);
+	SHAREDvars.setCurrentDirectory(tempFolder);
 	bool onlyParseIfCorpusLookupFailed = true;
-	if(!parseNLPparserRelationsFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, createNewSentences, onlyParseIfCorpusLookupFailed))
+	if(!GIAnlp.parseNLPparserRelationsFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, createNewSentences, onlyParseIfCorpusLookupFailed))
 	{
 		result = false;
 	}
@@ -102,20 +97,20 @@ bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDepende
 	NLPassumePreCollapsedStanfordRelations = false;	//irrelevant (not used) - only used when executing convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}, and performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences{} does not execute convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}
 	#endif
 
-	if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputCFFfileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, entityNodesActiveListSentences, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, true))	//inputTextNLPrelationXMLfileName/inputTextNLPfeatureXMLfileName/NLPfeatureParser/NLPdependencyRelationsParser/NLPrelexCompatibilityMode/NLPassumePreCollapsedStanfordRelations not used (relations and features have already been parsed)
+	if(!GIAtranslator.parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputCFFfileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, entityNodesActiveListSentences, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, true))	//inputTextNLPrelationXMLfileName/inputTextNLPfeatureXMLfileName/NLPfeatureParser/NLPdependencyRelationsParser/NLPrelexCompatibilityMode/NLPassumePreCollapsedStanfordRelations not used (relations and features have already been parsed)
 	{
 		result = false;
 	}
 }
 
-bool lookupSemanticParserFiles(GIAparagraph* firstParagraphInList, const int NLPfeatureParser)
+bool GIAsemanticParserClass::lookupSemanticParserFiles(GIAparagraph* firstParagraphInList, const int NLPfeatureParser)
 {
 	bool result = true;
 	GIAparagraph* currentParagraphInList = firstParagraphInList;
 	while(currentParagraphInList->next != NULL)
 	{
 		GIAsentence* firstSentenceInList = currentParagraphInList->firstSentenceInList;
-		if(!lookupSemanticParserFiles(firstSentenceInList, NLPfeatureParser))
+		if(!this->lookupSemanticParserFiles(firstSentenceInList, NLPfeatureParser))
 		{
 			result = false;
 		}
@@ -124,13 +119,13 @@ bool lookupSemanticParserFiles(GIAparagraph* firstParagraphInList, const int NLP
 	return result;
 }
 
-bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfeatureParser)
+bool GIAsemanticParserClass::lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfeatureParser)
 {
 	bool result = true;
 	GIAsentence* currentSentenceInList = firstSentenceInList;
 	while(currentSentenceInList->next != NULL)
 	{
-		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
+		GIAsemanticParserOperations.determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 		currentSentenceInList->semanticParserSuccessful = true;
 
 		/*
@@ -143,7 +138,7 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfe
 		*/
 
 		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS	//prioritise text corpus defined semantic relations matching full sentence (or GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS)
-		if(!loadSemanticParserCorpusDatabaseFile(currentSentenceInList, currentSentenceInList->firstFeatureInList))
+		if(!GIAsemanticParserDatabase.loadSemanticParserCorpusDatabaseFile(currentSentenceInList, currentSentenceInList->firstFeatureInList))
 		{
 		#endif
 			#ifdef GIA2_SEMANTIC_PARSER
@@ -192,10 +187,10 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfe
 							exit(0);
 						}
 						#ifdef GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS
-						if(!textInTextArray(secondWordInTupleFeature->word, semanticParserOptimiseBasedOnConjunctionsIllegalSecondWordInTupleArray, GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS_ILLEGAL_CENTRAL_WORD_NUMBER_OF_TYPES))
+						if(!SHAREDvars.textInTextArray(secondWordInTupleFeature->word, semanticParserOptimiseBasedOnConjunctionsIllegalSecondWordInTupleArray, GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS_ILLEGAL_CENTRAL_WORD_NUMBER_OF_TYPES))
 						{
 							bool optimisedBasedOnContextualConjunctions = false;
-							GIAfeature* firstFeatureInSentenceSubsetInitial = generateOptimisedFeatureSubsetBasedOnContextualConjunctions(currentSentenceInList->firstFeatureInList, secondWordInTupleIndex, &optimisedBasedOnContextualConjunctions);
+							GIAfeature* firstFeatureInSentenceSubsetInitial = GIAsemanticParserOperations.generateOptimisedFeatureSubsetBasedOnContextualConjunctions(currentSentenceInList->firstFeatureInList, secondWordInTupleIndex, &optimisedBasedOnContextualConjunctions);
 						#else
 							GIAfeature* firstFeatureInSentenceSubsetInitial = currentSentenceInList->firstFeatureInList;
 						#endif
@@ -207,7 +202,7 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfe
 							for(int firstWordInTupleIndex = GIA_NLP_START_ENTITY_INDEX; firstWordInTupleIndex <= maxIndexOfFirstWordInTuple; firstWordInTupleIndex++)
 							{
 								int GIA2semanticDependencyRelationProbabilityTotalArray[GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES];
-								initialiseIntArray(GIA2semanticDependencyRelationProbabilityTotalArray, GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES, 0);
+								GIAsemanticParserDatabase.initialiseIntArray(GIA2semanticDependencyRelationProbabilityTotalArray, GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES, 0);
 							#endif
 								GIAfeature* firstFeatureInSentenceSubset = firstFeatureInSentenceSubsetInitial;
 								while(firstFeatureInSentenceSubset->entityIndex <= maxIndexOfFirstWordInTuple)		//changed 2k1a for GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS compatibility: verify that feature entityIndices are not mutated by GIA referencing*	//OLD:	for(int firstWordInSentenceSubsetIndex=1; firstWordInSentenceSubsetIndex<=secondWordInTupleIndex-(GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1); firstWordInSentenceSubsetIndex++)
@@ -228,7 +223,7 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfe
 
 											//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
 
-											if(loadSemanticParserCorpusDatabaseFile(currentSentenceInList, firstFeatureInSentenceSubset))
+											if(GIAsemanticParserDatabase.loadSemanticParserCorpusDatabaseFile(currentSentenceInList, firstFeatureInSentenceSubset))
 											{
 												#ifdef GIA2_SEMANTIC_PARSER_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS
 												foundACorpusSubsetForSecondWordInTuple = true;
@@ -242,11 +237,11 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfe
 										#endif
 
 										#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
-										int firstWordInTupleIndexRelative = calculateFirstWordInTupleIndexRelative(firstWordInTupleIndex, firstWordInSentenceSubsetIndex);
+										int firstWordInTupleIndexRelative = GIAsemanticParserOperations.calculateFirstWordInTupleIndexRelative(firstWordInTupleIndex, firstWordInSentenceSubsetIndex);
 										int GIA2semanticDependencyRelationProbabilityArray[GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES];
 										int GIA2semanticDependencyRelationAssignedArray[GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES];
 										int GIA2semanticDependencyRelationRejectedArray[GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES];
-										if(loadSemanticParserOptimisedDatabaseFile(firstFeatureInSentenceSubset, firstWordInTupleIndexRelative, GIA2semanticDependencyRelationProbabilityArray, GIA2semanticDependencyRelationAssignedArray, GIA2semanticDependencyRelationRejectedArray))
+										if(GIAsemanticParserDatabase.loadSemanticParserOptimisedDatabaseFile(firstFeatureInSentenceSubset, firstWordInTupleIndexRelative, GIA2semanticDependencyRelationProbabilityArray, GIA2semanticDependencyRelationAssignedArray, GIA2semanticDependencyRelationRejectedArray))
 										{
 											#ifdef GIA2_SEMANTIC_PARSER_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS
 											foundACorpusSubsetForSecondWordInTuple = true;
@@ -283,7 +278,7 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfe
 								}
 								if(semanticRelationTypeOptimisedDatabase != INT_DEFAULT_VALUE)
 								{
-									int firstWordInTupleIndexRelative = calculateFirstWordInTupleIndexRelative(firstWordInTupleIndex, firstFeatureInSentenceSubsetInitial->entityIndex);
+									int firstWordInTupleIndexRelative = GIAsemanticParserOperations.calculateFirstWordInTupleIndexRelative(firstWordInTupleIndex, firstFeatureInSentenceSubsetInitial->entityIndex);
 
 									#ifdef GIA2_SEMANTIC_PARSER_DEBUG
 									cout << "maxProbabilityOfSemanticRelationTypesInTuple = " << maxProbabilityOfSemanticRelationTypesInTuple << endl;
@@ -292,7 +287,7 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfe
 									cout << "secondWordInTupleIndex = " << secondWordInTupleIndex << endl;
 									#endif
 
-									addTupleSemanticRelationToSentence(currentSentenceInList, semanticRelationTypeOptimisedDatabase, firstWordInTupleIndexRelative, secondWordInTupleIndex);
+									GIAsemanticParserDatabase.addTupleSemanticRelationToSentence(currentSentenceInList, semanticRelationTypeOptimisedDatabase, firstWordInTupleIndexRelative, secondWordInTupleIndex);
 								}
 							}
 							#endif

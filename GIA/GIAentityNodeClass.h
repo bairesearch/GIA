@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -590,58 +590,63 @@ public:
 };
 
 
+
+class GIAentityNodeClassClass
+{
+	private: SHAREDvarsClass SHAREDvars;
 #ifdef GIA_DATABASE
-void DBsetEntityConnectionsReferenceListsLoaded(GIAentityNode* entityNode, bool loaded);
+	public: void DBsetEntityConnectionsReferenceListsLoaded(GIAentityNode* entityNode, bool loaded);
 #endif
 
-void disconnectNodeFromAllButDefinitions(const GIAentityNode* entityNode);
+	public: void disconnectNodeFromAllButDefinitions(const GIAentityNode* entityNode);
 
 
-int calculateQuantityNumberInt(const string quantityNumberString);
-int calculateQuantityModifierInt(const string quantityModifierString);
-int calculateQuantityMultiplierInt(const string quantityMultiplierString);
+	public: int calculateQuantityNumberInt(const string quantityNumberString);
+	private: int calculateQuantityModifierInt(const string quantityModifierString);
+	public: int calculateQuantityMultiplierInt(const string quantityMultiplierString);
 
-string printQuantityNumberString(const GIAentityNode* entityNode);
+	public: string printQuantityNumberString(const GIAentityNode* entityNode);
 
 
 #ifdef GIA_ALIASES
-void convertAliasesStringToAliases(GIAentityNode* entityNode, string aliasesString);
-void convertAliasesToAliasesString(GIAentityNode* entityNode, string* aliasesString);
-vector<string> explode(const string& str, const char& ch);
-string* convertDelimitedStringToArray(const string str, const char delimiter);
+	public: void convertAliasesStringToAliases(GIAentityNode* entityNode, string aliasesString);
+	public: void convertAliasesToAliasesString(GIAentityNode* entityNode, string* aliasesString);
+	private: vector<string> explode(const string& str, const char& ch);
+	public: string* convertDelimitedStringToArray(const string str, const char delimiter);
 #endif
 
-void deleteEntitiesInEntityNodeList(vector<GIAentityNode*>* entityNodesActiveListComplete);
+	public: void deleteEntitiesInEntityNodeList(vector<GIAentityNode*>* entityNodesActiveListComplete);
 
 #ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
-bool testEntityCharacteristics(const GIAentityNode* entity, vector<GIAentityCharacteristic*>* redistributeSpecialCasePropertiesTestVector, const bool andOrOr);
-	bool testEntityCharacteristic(const GIAentityNode* entity, const GIAentityCharacteristic* entityCharacteristic);
-		void testEntityCharacteristicIterationbool(const bool entityVal, const GIAentityCharacteristic* entityCharacteristicTest, const string iterationVariable, bool* foundMatch);
-		void testEntityCharacteristicIterationint(const int entityVal, const GIAentityCharacteristic* entityCharacteristicTest, const string iterationVariable, bool* foundMatch);
-		void testEntityCharacteristicIterationstring(const string entityVal, const GIAentityCharacteristic* entityCharacteristicTest, const string iterationVariable, bool* foundMatch);
-void setEntityCharacteristics(GIAentityNode* entity, vector<GIAentityCharacteristic*>* redistributeSpecialCasePropertiesAssignmentVector);
-	bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic);
-		void setEntityCharacteristicIterationbool(bool* entityVal, const GIAentityCharacteristic* entityCharacteristicSet, const string iterationVariable, bool* foundMatch);
-		void setEntityCharacteristicIterationint(int* entityVal, const GIAentityCharacteristic* entityCharacteristicSet, const string iterationVariable, bool* foundMatch);
-		void setEntityCharacteristicIterationstring(string* entityVal, const GIAentityCharacteristic* entityCharacteristicSet, const string iterationVariable, bool* foundMatch);
+	public: bool testEntityCharacteristics(const GIAentityNode* entity, vector<GIAentityCharacteristic*>* redistributeSpecialCasePropertiesTestVector, const bool andOrOr);
+		public: bool testEntityCharacteristic(const GIAentityNode* entity, const GIAentityCharacteristic* entityCharacteristic);
+			private: void testEntityCharacteristicIterationbool(const bool entityVal, const GIAentityCharacteristic* entityCharacteristicTest, const string iterationVariable, bool* foundMatch);
+			private: void testEntityCharacteristicIterationint(const int entityVal, const GIAentityCharacteristic* entityCharacteristicTest, const string iterationVariable, bool* foundMatch);
+			private: void testEntityCharacteristicIterationstring(const string entityVal, const GIAentityCharacteristic* entityCharacteristicTest, const string iterationVariable, bool* foundMatch);
+	public: void setEntityCharacteristics(GIAentityNode* entity, vector<GIAentityCharacteristic*>* redistributeSpecialCasePropertiesAssignmentVector);
+		public: bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic);
+			private: void setEntityCharacteristicIterationbool(bool* entityVal, const GIAentityCharacteristic* entityCharacteristicSet, const string iterationVariable, bool* foundMatch);
+			private: void setEntityCharacteristicIterationint(int* entityVal, const GIAentityCharacteristic* entityCharacteristicSet, const string iterationVariable, bool* foundMatch);
+			private: void setEntityCharacteristicIterationstring(string* entityVal, const GIAentityCharacteristic* entityCharacteristicSet, const string iterationVariable, bool* foundMatch);
 	#define ENTITY_CHARACTERISTIC_MAX_VALUE_SIZE (100)
-	bool getEntityCharacteristic(const GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic);	//fills in entityCharacteristic->value based on entityCharacteristic->name
-		void getEntityCharacteristicIterationbool(const bool entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch);
-		void getEntityCharacteristicIterationint(const int entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch);
-		void getEntityCharacteristicIterationstring(const string entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch);
+		public: bool getEntityCharacteristic(const GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic);	//fills in entityCharacteristic->value based on entityCharacteristic->name
+			private: void getEntityCharacteristicIterationbool(const bool entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch);
+			private: void getEntityCharacteristicIterationint(const int entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch);
+			private: void getEntityCharacteristicIterationstring(const string entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch);
 #endif
 
 #ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-bool isActionSpecialPossessive(const GIAentityNode* actionEntity);
+	public: bool isActionSpecialPossessive(const GIAentityNode* actionEntity);
 #endif
 
 #ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
-string getParentClassEntityNameFromSubClassEntityName(string subClassEntityName);
-string getChildClassEntityNameFromSubClassEntityName(const string subClassEntityName);
-string createSubClassEntityName(const string childEntityName, const string parentEntityName);
+	public: string getParentClassEntityNameFromSubClassEntityName(string subClassEntityName);
+	public: string getChildClassEntityNameFromSubClassEntityName(const string subClassEntityName);
+	public: string createSubClassEntityName(const string childEntityName, const string parentEntityName);
 #endif
 
-bool detectPredeterminerNonReference(const GIAentityNode* entity);
+	public: bool detectPredeterminerNonReference(const GIAentityNode* entity);
+};
 
 #endif
 

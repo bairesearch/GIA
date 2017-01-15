@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -35,17 +35,14 @@
 
 #include "GIAtranslatorRedistributeRelations.h"
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
-	#include "GIAlrp.h"
 #endif
-#include "GIAtranslatorDefineGrammar.h"
-#include "SHAREDvars.h"	//required for convertStringToLowerCase
 
 
 
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 
 //NB Translator:fillGrammaticalArraysStanford{}:extractGrammaticalInformationStanford{}:extractPOSrelatedGrammaticalInformationStanford{}:extractGrammaticalInformationFromPOStag{} performs initial infinitive/imperative determination based on NLP tags and previous word "to" (and sets previousWordInSentenceIsTo for redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs{}:extractPOSrelatedGrammaticalInformationStanford{}:extractGrammaticalInformationFromPOStag{} to reperform infinitive/imperative determination in case Stanford parser/CoreNLP failed to tag the word correctly ie as VB);
-void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
+void GIAtranslatorRedistributeRelationsClass::redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
 {
 	//eg What is wood used in the delivering of?   interpret prep_of(xing, y) as obj(xing, y) )
 
@@ -73,7 +70,7 @@ void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(GIAs
 			if(featureArrayTemp[governorIndex] != NULL)
 			{
 			#endif
-				if(correctVerbPOStagAndLemma(governorEntity, featureArrayTemp[governorIndex]))
+				if(this->correctVerbPOStagAndLemma(governorEntity, featureArrayTemp[governorIndex]))
 				{
 					currentRelationInList->relationGovernor = governorEntity->entityName;
 				}
@@ -82,7 +79,7 @@ void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(GIAs
 			if(featureArrayTemp[dependentIndex] != NULL)
 			{
 			#endif
-				if(correctVerbPOStagAndLemma(dependentEntity, featureArrayTemp[dependentIndex]))
+				if(this->correctVerbPOStagAndLemma(dependentEntity, featureArrayTemp[dependentIndex]))
 				{
 					currentRelationInList->relationDependent = dependentEntity->entityName;
 				}
@@ -101,7 +98,7 @@ void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(GIAs
 
 //note this function tags all "continuous verbs" as VBG (even those which perhaps should be left as NNP because they appear at the beginning at the sentence eg "Swimming is good exercise.")
 //note this function can perhaps only be strictly used in circumstances where the continuous verb appears at the end of the sentence eg GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION (because "-ing" cannot be used in itself to detect continuous verbs - as there are some which perhaps should be left as NNP when they appear at the beginning at the sentence eg "Swimming is good exercise.")
-bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeature* currentFeature)
+bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeature* currentFeature)
 {
 	bool updatedLemma = false;
 	#ifdef GIA2_CORRECT_POSTAGS_FIX1
@@ -116,7 +113,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 		string baseNameFound = "";
 		int grammaticalTenseModifier = INT_DEFAULT_VALUE;
 
-		bool foundContinuousOrInfinitiveOrImperativeOrPotentialVerb = determineVerbCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound, &grammaticalTenseModifier);
+		bool foundContinuousOrInfinitiveOrImperativeOrPotentialVerb = GIAlrp.determineVerbCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound, &grammaticalTenseModifier);
 		#ifdef GIA_DEBUG
 		//cout << "foundContinuousOrInfinitiveOrImperativeOrPotentialVerb = " << foundContinuousOrInfinitiveOrImperativeOrPotentialVerb << endl;
 		//cout << "actionOrSubstanceEntity->wordOrig = " << actionOrSubstanceEntity->wordOrig << endl;
@@ -142,8 +139,8 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 					string stanfordPOS = FEATURE_POS_TAG_VERB_VB;	//FUTURE GIA - consider using new non-standard pos tage FEATURE_POS_TAG_VERB_VBDESCRIPTION instead of reusing FEATURE_POS_TAG_VERB_VBs
 
 					currentFeature->stanfordPOS = stanfordPOS;
-					extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
-					applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
+					GIAtranslatorDefineGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
+					GIAtranslatorDefineGrammar.applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
 				}
 			}
 		}
@@ -165,7 +162,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 			//cout << "1 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
 			#endif
 			#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
-			if(determineIfWordIsIrregularVerbContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))
+			if(GIAlrp.determineIfWordIsIrregularVerbContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))
 			#elif defined GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
 			if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP))
 			#endif
@@ -180,7 +177,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 				What is wood used in the making of?
 				NB making is an irregular verb and will be tagged incorrectly by both Stanford coreNLP and Stanford Parser (this example appears correct @stanford-parser-2013-04-05/stanford-corenlp-2013-04-04 + @stanford-parser-full-2014-01-04/stanford-corenlp-full-2014-01-04)
 				*/
-				string wordOrigLowerCase = convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
+				string wordOrigLowerCase = SHAREDvars.convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
 				if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = Swimming, and entityName = swimming; then apply the lemma correction
 				{
 					#ifdef GIA_DEBUG
@@ -193,14 +190,14 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 
 					#ifndef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CORRECT_POS_TAGS_EVEN_IF_LEMMAS_DETECTED_BY_NLP_PROGRESSIVE_CASE
 					currentFeature->stanfordPOS = stanfordPOS;
-					extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
-					applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
+					GIAtranslatorDefineGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
+					GIAtranslatorDefineGrammar.applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
 					#endif
 				}
 				#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CORRECT_POS_TAGS_EVEN_IF_LEMMAS_DETECTED_BY_NLP_PROGRESSIVE_CASE
 				currentFeature->stanfordPOS = stanfordPOS;
-				extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
-				applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
+				GIAtranslatorDefineGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
+				GIAtranslatorDefineGrammar.applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
 				#endif
 			}
 
@@ -235,7 +232,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 				//cout << "foundVerb FEATURE_POS_TAG_VERB_VBPOTENTIAL" << endl;
 				#endif
 
-				string wordOrigLowerCase = convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
+				string wordOrigLowerCase = SHAREDvars.convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
 				if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = runnable, and entityName (NLP identified lemma) = runnable; then apply the lemma correction
 				{
 					updatedLemma = true;
@@ -244,14 +241,14 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 
 					#ifndef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CORRECT_POS_TAGS_EVEN_IF_LEMMAS_DETECTED_BY_NLP
 					currentFeature->stanfordPOS = stanfordPOS;
-					extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
-					applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
+					GIAtranslatorDefineGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
+					GIAtranslatorDefineGrammar.applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
 					#endif
 				}
 				#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CORRECT_POS_TAGS_EVEN_IF_LEMMAS_DETECTED_BY_NLP
 				currentFeature->stanfordPOS = stanfordPOS;
-				extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
-				applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
+				GIAtranslatorDefineGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
+				GIAtranslatorDefineGrammar.applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
 				#endif
 			}
 		}
@@ -265,7 +262,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 				//cout << "foundVerb FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE" << endl;
 				#endif
 
-				string wordOrigLowerCase = convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
+				string wordOrigLowerCase = SHAREDvars.convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
 				if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = runnable, and entityName (NLP identified lemma) = runnable; then apply the lemma correction
 				{
 					updatedLemma = true;
@@ -274,14 +271,14 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 
 					#ifndef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CORRECT_POS_TAGS_EVEN_IF_LEMMAS_DETECTED_BY_NLP
 					currentFeature->stanfordPOS = stanfordPOS;
-					extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
-					applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
+					GIAtranslatorDefineGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
+					GIAtranslatorDefineGrammar.applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
 					#endif
 				}
 				#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CORRECT_POS_TAGS_EVEN_IF_LEMMAS_DETECTED_BY_NLP
 				currentFeature->stanfordPOS = stanfordPOS;
-				extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
-				applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
+				GIAtranslatorDefineGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
+				GIAtranslatorDefineGrammar.applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
 				#endif
 			}
 		}
@@ -298,8 +295,8 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBSTATE;
 
 				currentFeature->stanfordPOS = stanfordPOS;
-				extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
-				applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
+				GIAtranslatorDefineGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
+				GIAtranslatorDefineGrammar.applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
 			}
 		}
 		#endif
@@ -313,7 +310,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 				#endif
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBDESCRIPTION;
 
-				string wordOrigLowerCase = convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
+				string wordOrigLowerCase = SHAREDvars.convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
 				if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = runnable, and entityName (NLP identified lemma) = runnable; then apply the lemma correction
 				{
 					updatedLemma = true;
@@ -322,14 +319,14 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 
 					#ifndef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CORRECT_POS_TAGS_EVEN_IF_LEMMAS_DETECTED_BY_NLP
 					currentFeature->stanfordPOS = stanfordPOS;
-					extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
-					applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
+					GIAtranslatorDefineGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
+					GIAtranslatorDefineGrammar.applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
 					#endif
 				}
 				#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CORRECT_POS_TAGS_EVEN_IF_LEMMAS_DETECTED_BY_NLP
 				currentFeature->stanfordPOS = stanfordPOS;
-				extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
-				applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
+				GIAtranslatorDefineGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
+				GIAtranslatorDefineGrammar.applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
 				#endif
 			}
 		}

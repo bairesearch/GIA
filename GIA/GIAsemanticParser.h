@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParser.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -32,11 +32,24 @@
 
 #include "GIAglobalDefs.h"
 #include "GIAsentenceClass.h"
+#include "GIAsemanticParserOperations.h"
+#include "GIAsemanticParserDatabase.h"
+#include "GIAnlp.h"
+#include "GIAtranslator.h"
+#include "SHAREDvars.h"	//file io
 
 #ifdef USE_GIA2
-bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAparagraph* firstParagraphInList, const string inputPlainTXTFileName, string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName, const string NLPexeFolderArray[], vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, const bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, int* maxNumberSentences);
-	bool lookupSemanticParserFiles(GIAparagraph* firstParagraphInList, const int NLPfeatureParser);
-		bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfeatureParser);
+class GIAsemanticParserClass
+{
+	private: SHAREDvarsClass SHAREDvars;
+	private: GIAnlpClass GIAnlp;
+	private: GIAtranslatorClass GIAtranslator;
+	private: GIAsemanticParserOperationsClass GIAsemanticParserOperations;
+	private: GIAsemanticParserDatabaseClass GIAsemanticParserDatabase;
+	public: bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAparagraph* firstParagraphInList, const string inputPlainTXTFileName, string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName, const string NLPexeFolderArray[], vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, const bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, int* maxNumberSentences);
+		private: bool lookupSemanticParserFiles(GIAparagraph* firstParagraphInList, const int NLPfeatureParser);
+			private: bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfeatureParser);
+};
 #endif
 
 #endif

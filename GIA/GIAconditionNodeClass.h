@@ -26,7 +26,7 @@
  * File Name: GIAconditionNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3a 14-January-2017
+ * Project Version: 2p3b 14-January-2017
  *
  *******************************************************************************/
 
@@ -35,6 +35,7 @@
 #define HEADER_GIA_CONDITION_NODE_CLASS
 
 #include "GIAglobalDefs.h"
+#include "SHAREDvars.h"
 
 
 //class GIAtimeConditionNode;
@@ -134,7 +135,11 @@ public:
 #define TIME_DATE_DISPLAY_FORMAT_STANDARD (2)
 #define TIME_DATE_DISPLAY_FORMAT_AUSTRALIAN (3)
 #define TIME_DATE_DISPLAY_FORMAT (TIME_DATE_DISPLAY_FORMAT_AUSTRALIAN)
-string generateDateTimeConditionName(const int dayOfMonth, const int month, const long year);
+class GIAconditionNodeClassClass
+{
+	private: SHAREDvarsClass SHAREDvars;
+	public: string generateDateTimeConditionName(const int dayOfMonth, const int month, const long year);
+};
 
 
 #endif
