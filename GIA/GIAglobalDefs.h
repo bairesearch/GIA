@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f14a 15-July-2014
+ * Project Version: 2f14b 15-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -608,6 +608,9 @@
 
 #include "SHAREDglobalDefs.h"
 
+#ifdef USE_NLC
+	#define GIA_STORE_CONNECTION_SENTENCE_INDEX
+#endif
 //#define GIA_ENABLE_WARNINGS
 #define GIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES	//added 2f13a 14-July-2014
 #define GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES	//added 2f8a 09-July-2014
@@ -758,7 +761,9 @@
 #endif
 	//NB the phrase 'substance concept'/'substance quality' is a misnomer, as concepts and qualities are not really substances [NB concepts are considered secondary substances in Aristotle's categories, but GIA has a separate Entity class for concepts marked by isConcept: which is confusingly not being used in this case of 'specific concepts' - a software development/history artefact]" << endl;
 
-#define GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
+#ifndef GIA_STORE_CONNECTION_SENTENCE_INDEX
+	#define GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
+#endif
 #ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
 	#define GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_PROPERTIES_AND_DEFINITIONS
 	#define GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
@@ -857,7 +862,9 @@
 #ifdef GIA_USE_ADVANCED_REFERENCING
 	#define GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
 	#define GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES	//added 29 June 2013
-	#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
+	#ifndef GIA_STORE_CONNECTION_SENTENCE_INDEX
+		#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
+	#endif
 	//#define GIA_ADVANCED_REFERENCING_UPDATE_NOT_NECESSARY_OR_TESTED
 	#define GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 	#define GIA_ADVANCED_REFERENCING_ORIGINAL

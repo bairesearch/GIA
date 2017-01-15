@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f14a 15-July-2014
+ * Project Version: 2f14b 15-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1724,7 +1724,9 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 							#endif
 							#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 							referenceSource->wasReference = true;
+							#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 							referenceSourceConcept->wasReference = true;
+							#endif
 							#endif
 
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE

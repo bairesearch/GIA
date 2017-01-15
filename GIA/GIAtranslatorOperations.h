@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f14a 15-July-2014
+ * Project Version: 2f14b 15-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -150,6 +150,11 @@ long * getCurrentEntityNodeIDinConditionEntityNodesList();
 long * getCurrentEntityNodeIDinSentenceCompleteList();
 long * getCurrentEntityNodeIDinSentenceConceptEntityNodesList();
 
+#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
+bool getCurrentSentenceIndex();
+void setCurrentSentenceIndex(int value);
+#endif
+
 void applyConceptEntityAlreadyExistsFunction(GIAentityNode * entity, bool entityAlreadyExistant, bool tempEntityEnabled);
 void disableConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNode * entity);
 void disableEntity(GIAentityNode * entity);
@@ -180,10 +185,8 @@ GIAentityNode * findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAentityNo
 		GIAentityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, bool tempEntityEnabled);
 
 void writeVectorConnection(GIAentityNode * entityNode, GIAentityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet);
-	#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
 	GIAentityConnection * findEntityNodePointerInVector(GIAentityNode * entityNode, GIAentityNode * entityNodeToFind, int connectionType, bool * foundNode);
 	GIAentityConnection * findEntityNodeNameInVector(GIAentityNode * entityNode, string * entityNodeNameToFind, int connectionType, bool * foundNode);
-	#endif
 
 long determineNextIdInstance(GIAentityNode * entity);
 

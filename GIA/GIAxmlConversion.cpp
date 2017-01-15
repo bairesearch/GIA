@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f14a 15-July-2014
+ * Project Version: 2f14b 15-July-2014
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -553,7 +553,7 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 	bool printTextYFound = false;
 
 	#ifdef USE_NLC
-	bool sentenceIndexFound = false;
+	bool sentenceIndexTempFound = false;
 	bool grammaticalDefiniteTempFound = false;
 	bool grammaticalIndefinitePluralTempFound = false;
 	bool grammaticalProperNounTempFound = false;
@@ -797,11 +797,11 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 		}
 
 		#ifdef USE_NLC
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_sentenceIndex)
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_sentenceIndexTemp)
 		{
 			int attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->sentenceIndexTemp = attributeValue;
-			sentenceIndexFound = true;
+			sentenceIndexTempFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalDefiniteTemp)
 		{
@@ -913,24 +913,65 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag * firstTagInEntityVecto
 			//cout <<  entityVectorConnectionXMLtagNameCrossReferenceNodeTypeArray[entityVectorConnectionIndex] << " nodeReference: " << endl;
 			#endif
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
-			long attributeValue = atol(currentAttribute->value.c_str());
-			long idActiveList = attributeValue;
-			GIAentityNode * entity = findActiveEntityNodeByID(idActiveList, entityNodesActiveListComplete);
+			
+			long idActiveList = INT_DEFAULT_VALUE;
 			GIAentityConnection * newConnection = new GIAentityConnection();
-			newConnection->entity = entity;
-			#ifdef GIA_USE_DATABASE
-			newConnection->referenceLoaded = true;
-			newConnection->entityName = entity->entityName;
-			newConnection->idInstance = entity->idInstance;
-			newConnection->loaded = true;
-			newConnection->modified = false;
-			newConnection->added = true;
+			
+			bool idFound = false;
+			#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
+			bool sentenceIndexTempFound = false;
 			#endif
-			entityNode->entityVectorConnectionsArray[entityVectorConnectionIndex].push_back(newConnection);
-			#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-			//cout << "attributeValue = " << attributeValue << endl;
-			//cout << "refID = " << findActiveEntityNodeByID(attributeValue, entityNodesActiveListComplete)->idActiveList << endl;
-			#endif
+			
+			while(currentAttribute->nextAttribute != NULL)
+			{
+				if(currentAttribute->name == NET_XML_ATTRIBUTE_id)
+				{
+					long attributeValue = atol(currentAttribute->value.c_str());
+					idActiveList = attributeValue;
+					idFound = true;
+					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
+					//cout << "connection idActiveList = " << idActiveList << endl;
+					#endif
+				}
+				#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
+				else if(currentAttribute->name == NET_XML_ATTRIBUTE_sentenceIndexTemp)
+				{
+					int attributeValue = atoi(currentAttribute->value.c_str());
+					newConnection->sentenceIndexTemp = attributeValue;
+					sentenceIndexTempFound = true;
+					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
+					//cout << "connection idActiveList = " << idActiveList << endl;
+					#endif
+					
+				}
+				#endif
+
+				currentAttribute = currentAttribute->nextAttribute;
+			}
+			if(idFound)
+			{        
+				long attributeValue = atol(currentAttribute->value.c_str());
+				long idActiveList = attributeValue;
+				GIAentityNode * entity = findActiveEntityNodeByID(idActiveList, entityNodesActiveListComplete);
+				newConnection->entity = entity;
+				#ifdef GIA_USE_DATABASE
+				newConnection->referenceLoaded = true;
+				newConnection->entityName = entity->entityName;
+				newConnection->idInstance = entity->idInstance;
+				newConnection->loaded = true;
+				newConnection->modified = false;
+				newConnection->added = true;
+				#endif
+				entityNode->entityVectorConnectionsArray[entityVectorConnectionIndex].push_back(newConnection);
+				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
+				//cout << "attributeValue = " << attributeValue << endl;
+				//cout << "refID = " << findActiveEntityNodeByID(attributeValue, entityNodesActiveListComplete)->idActiveList << endl;
+				#endif
+			}
+			else
+			{
+				cout << "parseEntityVectorConnectionNodeListTag() error: !idFound" << endl;
+			}
 		}
 		else
 		{
@@ -1526,7 +1567,7 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 	#endif
 
 	#ifdef USE_NLC
-	currentAttribute->name = NET_XML_ATTRIBUTE_sentenceIndex;
+	currentAttribute->name = NET_XML_ATTRIBUTE_sentenceIndexTemp;
 	sprintf(tempString, "%d", (currentEntity->sentenceIndexTemp));
 	currentAttribute->value = tempString;
 
@@ -1612,6 +1653,16 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 						XMLParserAttribute * newAttribute = new XMLParserAttribute();
 						currentAttribute->nextAttribute = newAttribute;
 						currentAttribute = currentAttribute->nextAttribute;
+						
+						#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
+						currentAttribute->name = NET_XML_ATTRIBUTE_sentenceIndexTemp;
+						sprintf(tempString, "%ld", connectionEntityNode->sentenceIndexTemp);
+						currentAttribute->value = tempString;
+
+						newAttribute = new XMLParserAttribute();
+						currentAttribute->nextAttribute = newAttribute;
+						currentAttribute = currentAttribute->nextAttribute;
+						#endif
 
 						XMLparserTag * newTag3 = new XMLparserTag();	//had to add a null tag
 						currentTagL3->nextTag = newTag3;

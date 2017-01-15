@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f14a 15-July-2014
+ * Project Version: 2f14b 15-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -59,6 +59,10 @@ static long currentEntityNodeIDInSentenceConceptEntityNodesList;	//For GIA Advan
 
 static bool foundComparisonVariable;
 static GIAentityNode* comparisonVariableNode;
+
+#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
+static int currentSentenceIndex;
+#endif
 
 #ifdef GIA_USE_CORPUS_DATABASE
 #include "GIAcorpusOperations.h"
@@ -1317,7 +1321,16 @@ long * getCurrentEntityNodeIDinSentenceConceptEntityNodesList()
 	return &currentEntityNodeIDInSentenceConceptEntityNodesList;
 }
 
-
+#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
+bool getCurrentSentenceIndex()
+{
+	return currentSentenceIndex;
+}
+void setCurrentSentenceIndex(int value)
+{
+	currentSentenceIndex = value;
+}
+#endif
 
 
 void applyConceptEntityAlreadyExistsFunction(GIAentityNode * entity, bool entityAlreadyExistant, bool tempEntityEnabled)
@@ -1722,6 +1735,11 @@ void writeVectorConnection(GIAentityNode * entityNode, GIAentityNode * entityNod
 				newConnection->added = true;		//this allows for fast update of the DB (append reference connections)
 			}
 			#endif
+			
+			#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
+			newConnection->sentenceIndexTemp = getCurrentSentenceIndex(); 
+			#endif
+			
 		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_PROPERTIES_AND_DEFINITIONS
 		}
 		#endif
@@ -1730,7 +1748,6 @@ void writeVectorConnection(GIAentityNode * entityNode, GIAentityNode * entityNod
 	#endif
 }
 
-#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
 
 GIAentityConnection * findEntityNodePointerInVector(GIAentityNode * entityNode, GIAentityNode * entityNodeToFind, int connectionType, bool * foundNode)
 {
@@ -1760,7 +1777,6 @@ GIAentityConnection * findEntityNodeNameInVector(GIAentityNode * entityNode, str
 	return connectionFound;
 }
 
-#endif
 
 
 long determineNextIdInstance(GIAentityNode * entity)
