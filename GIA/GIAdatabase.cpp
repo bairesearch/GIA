@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r10g 28-November-2012
+ * Project Version: 1r11e 28-November-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -660,15 +660,23 @@ void DBreadDatabase(vector<GIAentityNode*> *entityNodesActiveListComplete, unord
 		for(vector<GIAentityConnection*>::iterator connectionIter = (conceptEntityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]).begin(); connectionIter != (conceptEntityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]).end(); connectionIter++)
 		{
 			GIAentityNode* entityNode = (*connectionIter)->entity;
-			entityNodesActiveListComplete->push_back(entityNode);				
-			#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-			entityNode->wasReference = true;	//required for node to be printed
-			#endif
-			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+		
+			#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+			if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[0]))	//test if entity has already had its connections loaded (and therefore has already been added to entityNodesActiveListComplete) 
 			{
-				//read all instances
-				DBreadVectorConnections(entityNode, i);
+			#endif
+				entityNodesActiveListComplete->push_back(entityNode);				
+				#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+				entityNode->wasReference = true;	//required for node to be printed
+				#endif
+				for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+				{
+					//read all instances
+					DBreadVectorConnections(entityNode, i);
+				}
+			#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 			}
+			#endif				
 		}			
 	}
 	
