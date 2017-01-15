@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p10b 23-September-2012
+ * Project Version: 1p10c 24-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -631,7 +631,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1p10b 23-September-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1p10c 24-September-2012" << endl;
 			exit(1);
 		}
 
@@ -661,22 +661,22 @@ int main(int argc,char **argv)
 	//fillInGIARulesExternVariables();
 
 	#ifdef GIA_USE_DATABASE
-	if(useDatabase)
-	{
-		openDatabase(readFromDatabase, databaseFolderName);
-
-		#ifdef LINUX
-		chdir(workingFolderCharStar);
-		#else
-		::SetCurrentDirectory(workingFolderCharStar);
-		#endif		
-	}
+	initialiseDatabase(readFromDatabase, databaseFolderName, useDatabase);
+	#ifdef LINUX
+	chdir(workingFolderCharStar);
+	#else
+	::SetCurrentDirectory(workingFolderCharStar);
+	#endif		
 	#endif
 	
 	#ifdef USE_WORDNET
 	initialiseWordNet(synonymnDetectionStatus);
 	#endif	
 
+	#ifdef GIA_USE_LRP
+	initialiseLRP(lrpDataFolderName, useLRP);
+	#endif
+	
 	vector<GIAEntityNode*> * entityNodesActiveListComplete = new vector<GIAEntityNode*>;
 	unordered_map<string, GIAEntityNode*> * entityNodesActiveListConcepts = new unordered_map<string, GIAEntityNode*>;
 	vector<GIAEntityNode*> * entityNodesActiveListSubstances = new vector<GIAEntityNode*>;
@@ -861,7 +861,6 @@ int main(int argc,char **argv)
 #ifdef GIA_USE_LRP
 	if(useLRP)
 	{
-		initialiseLRP(lrpDataFolderName);
 		if(useInputQuery)
 		{
 			setCurrentGIALRPtagTextCorrespondenceInfo(true);	//required for local variable access

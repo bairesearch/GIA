@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p10b 23-September-2012
+ * Project Version: 1p10c 24-September-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -37,10 +37,17 @@
 
 #include "GIAlrp.h"
 
-static string lrpDataFolderName; 	
-void initialiseLRP(string newlrpDataFolderName)
+static string lrpDataFolderName;
+static bool useLRP; 
+	
+void initialiseLRP(string newlrpDataFolderName, bool newUseLRP)
 {
+	useLRP = newUseLRP;
 	lrpDataFolderName = newlrpDataFolderName;
+}
+bool getUseLRP()
+{
+	return useLRP;
 }
 
 GIALRPtag::GIALRPtag(void)

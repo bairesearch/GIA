@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p10b 23-September-2012
+ * Project Version: 1p10c 24-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -545,6 +545,9 @@
 //#define GIA_QUERIES_MUST_BE_QUESTIONS	//disabled 30 June 2012 for IPentity support
 
 #define GIA_USE_LRP
+#ifdef GIA_USE_LRP
+	//#define GIA_LRP_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
+#endif
 
 #define GIA_SUPPORT_ALIASES
 #define GIA_TEMPORARILY_DISABLE_GIA_XML_READ_CHECKS

@@ -23,7 +23,7 @@
  * File Name: GIACXLconversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p10b 23-September-2012
+ * Project Version: 1p10c 24-September-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  *
@@ -181,7 +181,9 @@ bool writeCMapToolsCXLFile(string xmlFileName, vector<GIAEntityNode*> *entityNod
 		result = false;
 	}
 
+	#ifdef GIA_FREE_MEMORY1
 	delete firstTagInXMLFile;
+	#endif
 	
 	#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
 	cout << "DEBUG writeXMLFile done " << endl;

@@ -23,7 +23,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p10b 23-September-2012
+ * Project Version: 1p10c 24-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -591,9 +591,12 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 					if(parseFeatures)
 					{//process lemma only if parsing features
 						#ifdef GIA_USE_LRP
-						bool foundOfficialLRPreplacementString = false;
-						Relation * currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
-						revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentence, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
+						if(getUseLRP())
+						{						
+							bool foundOfficialLRPreplacementString = false;
+							Relation * currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
+							revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentence, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
+						}
 						#endif
 						#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PRONOUN_LEMMA_CASE_ASSIGNMENT_BUG_MAKE_ALL_LEMMAS_LOWER_CASE
 						string lemma = currentFeatureInList->lemma;
