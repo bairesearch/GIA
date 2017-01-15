@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2a 18-November-2014
+ * Project Version: 2h2b 18-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -901,6 +901,9 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 #ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
 #define FEATURE_POS_TAG_VERB_VBPOTENTIAL "VBPOTENTIAL"
 #endif	
+#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
+#define FEATURE_POS_TAG_VERB_VBSTATE "VBSTATE"
+#endif
 	//wh
 #define FEATURE_POS_TAG_WH_DETERMINER_WDT "WDT"				//"What"/"Which" is considered an adjective by Relex, eg What time is it?/Which marble is it?
 #define FEATURE_POS_TAG_WH_PRONOUN_WP "WP"				//"What" is considered a WORD by Relex, eg What happened?
@@ -928,15 +931,21 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 #ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
 #define FEATURE_POS_TAG_VERB_POTENTIAL_NUMBER_OF_TYPES 1	//not detected by POS standard
 #endif
-#define FEATURE_POS_TAG_VERB_STATE_NUMBER_OF_TYPES 1
-static string posTagVerbPastArray[FEATURE_POS_TAG_VERB_PAST_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBD};	//updated 2h2a - note this used to include FEATURE_POS_TAG_VERB_VBN but reimplemented as GIA is updated to deal with posTagVerbStateArray independently
+#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
+#define FEATURE_POS_TAG_VERB_STATE_NUMBER_OF_TYPES 1	//not detected by POS standard
+#endif
+static string posTagVerbPastArray[FEATURE_POS_TAG_VERB_PAST_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBD};
 static string posTagVerbPresentArray[FEATURE_POS_TAG_VERB_PRESENT_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBP, FEATURE_POS_TAG_VERB_VBZ};
 static string posTagVerbProgressiveArray[FEATURE_POS_TAG_VERB_PROGRESSIVE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBG};
 static string posTagVerbInfinitiveOrImperativeArray[FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VB};
 #ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
 static string posTagVerbPotentialArray[FEATURE_POS_TAG_VERB_POTENTIAL_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBPOTENTIAL};	//not detected by POS standard
 #endif
-static string posTagVerbStateArray[FEATURE_POS_TAG_VERB_STATE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBN};
+#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
+static string posTagVerbStateArray[FEATURE_POS_TAG_VERB_STATE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBSTATE};	//not detected by POS standard
+#endif
+//#define FEATURE_POS_TAG_VERB_STANFORD_CORENLP_POSSIBLE_STATE_NUMBER_OF_TYPES 1
+//static string posTagVerbStanfordCoreNLPpossibleStateArray[FEATURE_POS_TAG_VERB_STANFORD_CORENLP_POSSIBLE_STATE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBN};
 
 #define FEATURE_POS_TAG_PROPER_NOUN_NUMBER_OF_TYPES 2
 #define FEATURE_POS_TAG_COMMON_NOUN_NUMBER_OF_TYPES 2

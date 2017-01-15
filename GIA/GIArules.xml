@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2a 18-November-2014
+ * Project Version: 2h2b 18-November-2014
  *
  *******************************************************************************/
 -->
@@ -2133,6 +2133,25 @@
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
+				</paramDepRel>
+			</function>
+			<!-- #endif -->
+			
+			<!-- #ifdefGIA_FEATURE_POS_TAG_VERB_STATE -->
+			<function name="redistributeStanfordRelationsActionStateSubjectAndCop">
+				<!-- Supports Stanford Parser/CoreNLP version 3+ e.g. 2014-01-04 --> 
+				<example><!--
+				The door is open.
+					nsubj(open-4, door-2) + cop(open-4, is-3) => obj(open-4, door-2)	[where open POS tag is FEATURE_POS_TAG_VERB_VBSTATE/GRAMMATICAL_TENSE_MODIFIER_STATE] 
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="2" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_cop" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="stanfordPOStemp" value="VBSTATE" REL="1" REL_ENT="1" />
+				<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="be" />
+				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityReassignment="_obj" />
 				</paramDepRel>
 			</function>
 			<!-- #endif -->

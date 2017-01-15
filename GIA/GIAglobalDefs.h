@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2a 18-November-2014
+ * Project Version: 2h2b 18-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -641,6 +641,7 @@
 		#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW	//added 2h1c/14-November-2014 - required for NLC 1m1a+
 	#endif
 	#define GIA_FEATURE_POS_TAG_VERB_POTENTIAL	//added 2h2a/18-November-2014 - required for NLC 1m2a+	- adds new non-standard pos tag for "able" words
+	#define GIA_FEATURE_POS_TAG_VERB_STATE	//added 2h2b/18-November-2014 - required for NLC 1m2a+	- adds new non-standard pos tag for states "eg open/opened" words
 #endif
 
 #ifdef USE_NLC

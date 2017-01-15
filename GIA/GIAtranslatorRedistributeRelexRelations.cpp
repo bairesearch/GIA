@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2a 18-November-2014
+ * Project Version: 2h2b 18-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -107,7 +107,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 		{
 			cout << "correctVerbPOStagAndLemma(): expectation error; FEATURE_POS_TAG_VERB_VB already defined" << endl;
 		}
-		if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_OR_PRESENT_NOT_THIRD_PERSON_SINGULAR_TEMP))
+		if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_OR_PRESENT_NOT_THIRD_PERSON_SINGULAR_OR_STATE_TEMP))
 		{
 			//Should the NLP settings be overruled here - is a verb base form always an imperative or infinitive? Answer = NO; Therefore only perform upgrade for special infinitive cases
 			if(currentFeature->previousWordInSentenceIsTo)
@@ -215,6 +215,25 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 		}
 	}
 	#endif
+	#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
+	if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && ((grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_OR_PRESENT_NOT_THIRD_PERSON_SINGULAR_OR_STATE_TEMP) || (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP)))
+	{
+		if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ)	//NB "is ..." and "is ..ed" (not Stanford CoreNLP/Relex) verbs may be marked as JJ/adjective by Stanford/Relex POS tagger eg "It is open"/"He is tired."
+		{
+			string stanfordPOS = FEATURE_POS_TAG_VERB_VBSTATE;
+			//cout << "foundVerb FEATURE_POS_TAG_VERB_VBSTATE" << endl;
+
+			//cout << "actionOrSubstanceEntity->wordOrig = " << actionOrSubstanceEntity->wordOrig << endl;
+			//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
+			//cout << "foundPotentialVerb" << endl;
+
+			currentFeature->stanfordPOS = stanfordPOS;
+
+			extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
+			applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
+		}
+	}
+	#endif
 
 	return updatedLemma;
 }
@@ -238,12 +257,12 @@ bool determineVerbCase(string * word)
 
 	bool foundVerbContinuousCase = false;
 
-	if(word->length() > GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND_LENGTH)
+	if(word->length() > GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND_LENGTH)
 	{
 		continuousVerbFound = true;
-		string ing = GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+		string ing = GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
 		int ingIndex = 0;
-		for(int i = word->length()-GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND_LENGTH; i < word->length(); i++)
+		for(int i = word->length()-GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND_LENGTH; i < word->length(); i++)
 		{
 			if((*word)[i] != ing[ingIndex])
 			{
@@ -263,13 +282,13 @@ bool determineVerbCase(string * word)
 	int wordStringLength = word->length();
 	//cout << "word = " << *word << endl;
 	//cout << "wordStringLength = " << wordStringLength << endl;
-	if(wordStringLength > GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND)
+	if(wordStringLength > GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND)
 	{
-		int wordTenseFormContinuousAppendLength = string(GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND).length();
+		int wordTenseFormContinuousAppendLength = string(GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND).length();
 		string lastThreeLettersOfWord = word->substr(wordStringLength-wordTenseFormContinuousAppendLength, wordTenseFormContinuousAppendLength);
 		//cout << "wordTenseFormContinuousAppendLength = " << wordTenseFormContinuousAppendLength << endl;
 		//cout << "lastThreeLettersOfWord = " << lastThreeLettersOfWord << endl;
-		if(lastThreeLettersOfWord == GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND)
+		if(lastThreeLettersOfWord == GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND)
 		{
 			foundVerbContinuousCase = true;
 		}

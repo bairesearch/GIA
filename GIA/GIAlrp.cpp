@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2a 18-November-2014
+ * Project Version: 2h2b 18-November-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -792,6 +792,7 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagIn
 	baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base;
 	baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base;
 
+	//Rule 1: Words ending with a Consonant-Vowel-Consonant Pattern
 	if(rule1)
 	{
 		#ifdef GIA_LRP_DEBUG
@@ -799,33 +800,39 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagIn
 		#endif
 
 		//a. generate present tense form
-		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
+		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
 		if(rule1b)
 		{
-			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
+			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
 		}
 
 		//b. generate continuous tense form
-		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+		//happening/entering
+		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
 		if(rule1b)
 		{
-			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base + lastCharacterInBase + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;	//double consonant
+			//hopping/sitting
+			//beginning/permitting
+			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base + lastCharacterInBase + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;	//double consonant
 		}
 
 		if(!irregularVerbFound)
 		{
 			//c. generate past tense form
-			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
+			//visited/opened
+			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
 			if(rule1b)
 			{
-				baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base + lastCharacterInBase + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;	//double consonant
+				//rubbed/stopped
+				//referred/admitted
+				baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base + lastCharacterInBase + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;	//double consonant
 			}
 
 			//d. generate past participle form (assume same as past form)
-			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
+			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
 			if(rule1b)
 			{
-				baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base + lastCharacterInBase + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;	//double consonant
+				baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base + lastCharacterInBase + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;	//double consonant
 			}
 		}
 
@@ -834,6 +841,7 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagIn
 			copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
 		}
 	}
+	//Rule 2: Words ending in E
 	else if(rule2)
 	{
 		#ifdef GIA_LRP_DEBUG
@@ -841,22 +849,25 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagIn
 		#endif
 
 		//a. generate present tense form
-		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
+		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
 
 		//b. generate continuous tense form
-		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+		//dancing/skating
+		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
 
 		if(!irregularVerbFound)
 		{
 			//c. generate past tense form
-			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
+			//smiled/fined
+			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
 
 			//d. generate past participle form (assume same as past form)
-			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
+			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
 		}
 
 		copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
 	}
+	//Rule 3: Words ending in Y
 	else if(rule3a)
 	{
 		#ifdef GIA_LRP_DEBUG
@@ -864,22 +875,25 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagIn
 		#endif
 
 		//a. generate present tense form
-		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND_CASE3;
+		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND_CASE3;
 
 		//b. generate continuous tense form
-		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+		//carrying/replying
+		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
 
 		if(!irregularVerbFound)
 		{
 			//c. generate past tense form
-			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3;
+			//studied/married
+			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3;
 
 			//d. generate past participle form (assume same as past form)
-			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3;
+			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3;
 		}
 
 		copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
 	}
+	//Rule 4: Other words...
 	else if(rule3b || rule4)
 	{
 		#ifdef GIA_LRP_DEBUG
@@ -889,18 +903,24 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagIn
 		#endif
 
 		//a. generate present tense form
-		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
+		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
 
 		//b. generate continuous tense form
-		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+		//enjoying/straying
+		//needing/beeping
+		//needing/laughing
+		baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
 
 		if(!irregularVerbFound)
 		{
 			//c. generate past tense form
-			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
+			//played/stayed
+			//dreamed/rained
+			//parked/earned
+			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
 
 			//d. generate past participle form (assume same as past form)
-			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
+			baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
 		}
 
 		copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
@@ -1988,7 +2008,7 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 		being?
 		becoming?
 
-	This code uses a subset of code from generateTenseVariantsOfVerbBase (note generateTenseVariantsOfVerbBase is not used itself as this code is designed to be liberal/robust and detect all possible continuous verbs without being subject to theoretical grammar rules)
+	This code uses a subset of code from generateTenseVariantsOfVerbBase (note generateTenseVariantsOfVerbBase is not used itself as this code is designed to be liberal/robust and detect all possible verbs without being subject to theoretical grammar rules)
 	*/
 
 	GIALRPtag * currentTagInVerbList = firstTagInVerbList;
@@ -2000,71 +2020,135 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 
 		if(wordLowerCase == base)
 		{
-			*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_OR_PRESENT_NOT_THIRD_PERSON_SINGULAR_TEMP;
+			*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_OR_PRESENT_NOT_THIRD_PERSON_SINGULAR_OR_STATE_TEMP;
 			foundVerbCase = true;
 		}
 		else
 		{
-			//continuous case 1: thinking
-			string hypotheticalVerbVariantCase1 = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
-			if(wordLowerCase == hypotheticalVerbVariantCase1)
+			int baseStringLength = base.length();
+			int indexOfLastCharacterInBase = baseStringLength-1;
+			char lastCharacterInBase = base[indexOfLastCharacterInBase];
+			string baseWithLastLetterDropped = base.substr(0, baseStringLength-1);
+			
+			//continuous rule 1a/3b/4: thinking/happening/entering
+			string hypotheticalVerbVariantCase1a = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase1a)
 			{
 				foundVerbCase = true;
 				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE;
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
-
-			//continuous case 2: running - "run" + "n" [run n] + "ing"
-			int baseStringLength = base.length();
-			int indexOfLastCharacterInBase = baseStringLength-1;
-			char lastCharacterInBase = base[indexOfLastCharacterInBase];
-			string hypotheticalVerbVariantCase2 = base + lastCharacterInBase + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+			//continuous rule 1b: running - "run" + "n" [run n] + "ing"
+			string hypotheticalVerbVariantCase1b = base + lastCharacterInBase + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase1b)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			//continuous rule 2: changing - "chang" [change e] + "ing"
+			string hypotheticalVerbVariantCase2 = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
 			if(wordLowerCase == hypotheticalVerbVariantCase2)
 			{
 				foundVerbCase = true;
 				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE;
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
-
-			//continuous case 3: changing - "chang" [change e] + "ing"
-			string baseWithLastLetterDropped = base.substr(0, baseStringLength-1);
-			string hypotheticalVerbVariantCase3 = baseWithLastLetterDropped + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
-			if(wordLowerCase == hypotheticalVerbVariantCase3)
+			/*
+			//continuous rule 3a: N/A !marriing (use marrying)
+			hypotheticalVerbVariantCase3a = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase3a)
 			{
 				foundVerbCase = true;
 				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE;
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
-
+			*/
 			//cout << "continuous hypotheticalVerbVariantCase1 = " << hypotheticalVerbVariantCase1 << endl;
 			//cout << "continuous hypotheticalVerbVariantCase2 = " << hypotheticalVerbVariantCase2 << endl;
 			//cout << "continuous hypotheticalVerbVariantCase3 = " << hypotheticalVerbVariantCase3 << endl;
 			
 			#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
 			//added 2h2a
-			//potential case 1: thinkable/changeable
-			hypotheticalVerbVariantCase1 = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND;
-			if(wordLowerCase == hypotheticalVerbVariantCase1)
+			//potential rule 1a/3b/4: thinkable/changeable
+			hypotheticalVerbVariantCase1a = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase1a)
 			{
 				foundVerbCase = true;
 				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL;
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
-			//potential case 2: running - "run" + "n" [run n] + "able"
-			baseStringLength = base.length();
-			indexOfLastCharacterInBase = baseStringLength-1;
-			lastCharacterInBase = base[indexOfLastCharacterInBase];
-			hypotheticalVerbVariantCase2 = base + lastCharacterInBase + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND;
+			//potential rule 1b: running - "run" + "n" [run n] + "able"
+			hypotheticalVerbVariantCase1b = base + lastCharacterInBase + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase1b)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			/*
+			//potential rule 2: N/A !changable (use changeable)
+			string hypotheticalVerbVariantCase2 = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND;
 			if(wordLowerCase == hypotheticalVerbVariantCase2)
 			{
 				foundVerbCase = true;
 				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL;
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
+			*/
+			//potential rule 3a: running - "marr" + "i" + "able"
+			string hypotheticalVerbVariantCase3a = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND_CASE3;
+			if(wordLowerCase == hypotheticalVerbVariantCase3a)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			//cout << "potential hypotheticalVerbVariantCase1 = " << hypotheticalVerbVariantCase1 << endl;
+			//cout << "potential hypotheticalVerbVariantCase2 = " << hypotheticalVerbVariantCase2 << endl;
+			//cout << "potential hypotheticalVerbVariantCase3 = " << hypotheticalVerbVariantCase3 << endl;
 			#endif
+			
+			#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
+			//added 2h2a
+			//possible state rule 1a/3b/4: visited/opened
+			hypotheticalVerbVariantCase1a = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase1a)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			//possible state rule 1b: rubbed/stopped/referred/admitted - "rub" + "b" + "ed"
+			hypotheticalVerbVariantCase1b = base + lastCharacterInBase + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase1b)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			//possible state rule 2: smiled/fined - "smil" [change e] + "ed"
+			hypotheticalVerbVariantCase2 = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase2)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			//possible state rule 3a: studied/married - "marr" + "i" + "ed"
+			hypotheticalVerbVariantCase3a = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3;
+			if(wordLowerCase == hypotheticalVerbVariantCase3a)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
 
 			//cout << "potential hypotheticalVerbVariantCase1 = " << hypotheticalVerbVariantCase1 << endl;
 			//cout << "potential hypotheticalVerbVariantCase2 = " << hypotheticalVerbVariantCase2 << endl;
+			//cout << "potential hypotheticalVerbVariantCase3 = " << hypotheticalVerbVariantCase3 << endl;
+			//cout << "potential hypotheticalVerbVariantCase4 = " << hypotheticalVerbVariantCase4 << endl;
+			#endif
 		}
 
 		currentTagInVerbList = currentTagInVerbList->nextSentence;
@@ -2144,8 +2228,8 @@ bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * first
 		//cout << "baseWithLastLetterDropped = " << baseWithLastLetterDropped << endl;
 		#endif
 
-		string irregularVerbContinuousForm1 =  irregularVerbBaseForm + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
-		string irregularVerbContinuousForm2 = baseWithLastLetterDropped + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+		string irregularVerbContinuousForm1 =  irregularVerbBaseForm + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+		string irregularVerbContinuousForm2 = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
 
 		if((word == irregularVerbContinuousForm1) || (word == irregularVerbContinuousForm2))
 		{
