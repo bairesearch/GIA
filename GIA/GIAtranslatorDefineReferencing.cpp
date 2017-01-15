@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o5a 21-October-2016
+ * Project Version: 2o5b 21-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -2166,25 +2166,32 @@ void identifyReferenceSet(GIAentityNode* entityNode, int referenceSetID, int min
 	entityNode->referenceSetID = referenceSetID;
 	entityNode->minimumEntityIndexOfReferenceSet = minimumEntityIndexOfReferenceSet;
 
-	#ifdef GIA_DEBUG
-	//cout << "\tentityNode->referenceSetID = " << entityNode->referenceSetID << endl;
-	//cout << "\tentityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
-	#endif
-	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+	#ifdef GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ACCEPT_PROPERNOUNS_ISOLATE
+	if(!(entityNode->grammaticalProperNounTemp))
 	{
-		if(!(entityNode->entityVectorConnectionsArray[i].empty()))
+	#endif
+		#ifdef GIA_DEBUG
+		//cout << "\tentityNode->referenceSetID = " << entityNode->referenceSetID << endl;
+		//cout << "\tentityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
+		#endif
+		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 		{
-			for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter < entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
+			if(!(entityNode->entityVectorConnectionsArray[i].empty()))
 			{
-				bool isProperty = false;
-				if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)
+				for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter < entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 				{
-					isProperty = true;
+					bool isProperty = false;
+					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)
+					{
+						isProperty = true;
+					}
+					identifyReferenceSetDetermineNextCourseOfAction((*connectionIter)->entity, ((*connectionIter)->sameReferenceSet), referenceSetID, minimumEntityIndexOfReferenceSet, isProperty);
 				}
-				identifyReferenceSetDetermineNextCourseOfAction((*connectionIter)->entity, ((*connectionIter)->sameReferenceSet), referenceSetID, minimumEntityIndexOfReferenceSet, isProperty);
 			}
 		}
+	#ifdef GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ACCEPT_PROPERNOUNS_ISOLATE
 	}
+	#endif
 }
 #endif
 
