@@ -3,7 +3,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n1a 15-July-2012
+ * Project Version: 1n1b 15-July-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -592,6 +592,8 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 		#ifdef GIA_USE_ADVANCED_REFERENCING
 		else
 		{
+			//cout << "queryEntityNode->referenceSetID = " << queryEntityNode->referenceSetID << endl;
+			//cout << "referenceTraceParameters->referenceSetID = " << referenceTraceParameters->referenceSetID << endl;			
 			if((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))	//only trace paths of same reference set ID
 			{
 				//cout << "SDF" << endl;
@@ -637,12 +639,14 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 				}
 				else
 				{
+					//cout << "(queryEntityNode->referenceSetID == GIA_REFERENCE_SET_ID_UNDEFINED)" << endl;
 					result = EXACT_MATCH_OUT_OF_BOUNDS;	//CHECKTHIS
 				}
 				#endif
 			}
 			else
 			{
+				//cout << "EXACT_MATCH_OUT_OF_BOUNDS1" << endl;
 				 result = EXACT_MATCH_OUT_OF_BOUNDS;
 			}
 		}
@@ -650,7 +654,8 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 	}
 	else
 	{
-		 result = EXACT_MATCH_OUT_OF_BOUNDS;
+		//cout << "EXACT_MATCH_OUT_OF_BOUNDS1" << endl;	
+		result = EXACT_MATCH_OUT_OF_BOUNDS;
 	}
 
 	return result;
@@ -917,12 +922,15 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 
 						//cout << "fin-1" << endl;
 						int exactMatchTemp = testReferencedEntityNodeForExactNameMatch((*connectionIterQuery)->entity, (*connectionIter)->entity, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParametersTemp, referenceTraceParameters);
+						//cout << "exactMatchTemp = " << exactMatchTemp << endl;
 						if(exactMatchTemp == EXACT_MATCH_PASS)
 						{
+							//cout << "foundExactMatchPass" << endl;
 							foundExactMatchPass = true;
 						}
 						else if(exactMatchTemp == EXACT_MATCH_FAIL)
 						{
+							//cout << "foundExactMatchFail" << endl;
 							foundExactMatchFail = true;
 						}
 						//cout << "fin0" << endl;
@@ -1245,6 +1253,16 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 		queryEntityNode->testedForQueryComparisonTemp = true;
 
 	}
+	/*
+	else
+	{
+		cout << "DEBUG: already set" << endl;
+		cout << "entityNode->testedForQueryComparison = " << entityNode->testedForQueryComparison << endl;
+		cout << "queryEntityNode->testedForQueryComparison = " << queryEntityNode->testedForQueryComparison << endl;
+		cout << "entityNode->testedForQueryComparisonTemp = " << entityNode->testedForQueryComparisonTemp << endl;
+		cout << "queryEntityNode->testedForQueryComparisonTemp = " << queryEntityNode->testedForQueryComparisonTemp << endl;
+	}
+	*/
 
 
 	return exactMatch;
