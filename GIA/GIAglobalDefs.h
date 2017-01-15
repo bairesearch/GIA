@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10b 05-July-2013
+ * Project Version: 1s10c 05-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -576,8 +576,13 @@
 
 #define GIA_USE_LRP
 #ifdef GIA_USE_LRP
-	#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS	//added 28 October 2012b - requires GIA_USE_LRP
-	/*//#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION*/
+	#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
+	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
+		//#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE	//added 28 October 2012b - requires GIA_USE_LRP for reading of WikipediaIrregularVerbs.txt - this is used to normalise the tagging of continuous verbs (eg in the making of): it is not 100% successful as corrections are limited to irregular continous verbs (WikipediaIrregularVerbs.txt)
+		#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL		//alternate implementation added 5 July 2013 - requires GIA_USE_LRP for reading of WordnetVerbs.txt - this is used to normalise the tagging of continuous verbs (eg in the making of)
+		//#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION
+	#endif
+	
 	//#define GIA_LRP_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
 #endif
 

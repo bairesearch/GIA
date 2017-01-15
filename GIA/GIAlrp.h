@@ -23,7 +23,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10b 05-July-2013
+ * Project Version: 1s10c 05-July-2013
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -51,6 +51,7 @@ using namespace std;
 #define GIA_LRP_PHRASALVERB_DATABASE_FILE_NAME "CambridgePhrasalVerbs.txt"
 #define GIA_LRP_IRREGULARVERB_DATABASE_FILE_NAME "WikipediaIrregularVerbs.txt"
 #define GIA_LRP_MULTIWORDPREPOSITION_DATABASE_FILE_NAME "WikipediaMultiwordPrepositions.txt"
+#define GIA_LRP_VERB_DATABASE_FILE_NAME "WordnetVerbs.txt"
 #define GIA_LRP_PHRASALVERB_DATABASE_TAG_OR "or"
 #define GIA_LRP_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMETHING_NAME "sth"
 #define GIA_LRP_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMEWHERE_NAME "swh"
@@ -77,6 +78,9 @@ using namespace std;
 #define GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND "ed"
 #define GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND_CASE3 "ies"
 #define GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3 "ied"
+#define GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND_LENGTH (1)
+#define GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND_LENGTH (3)
+#define GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_LENGTH (2)
 
 #define GIA_LRP_PHRASALVERB_REPLACEMENT_STRING_DEFAULT ""	//will be tense specific
 
@@ -174,7 +178,7 @@ public:
 	GIALRPtagTextCorrespondenceInfo * next;
 };
 
-void initialiseLRP(string newLRPDataFolderName, bool newUseLRP);
+bool initialiseLRP(string newLRPDataFolderName, bool newUseLRP);
 bool getUseLRP();
 
 GIALRPtagTextCorrespondenceInfo * getCurrentGIALRPtagTextCorrespondenceInfo();
@@ -183,6 +187,9 @@ void initialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
 void deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
 
 bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName);
+	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
+	bool loadVerbList(string irregularVerbListFileName, GIALRPtag * firstTagInIrregularVerbList);
+	#endif
 	bool loadIrregularVerbList(string irregularVerbListFileName, GIALRPtag * firstTagInIrregularVerbList);
 	bool loadPhrasalVerbDataAndGenerateAllTenseVariants(string phrasalVerbDatabaseFileName, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtag * firstTagInIrregularVerbList);
 		bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagInIrregularVerbList);
@@ -198,9 +205,14 @@ void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentS
 string convertStringToLowerCase(string * arbitraryCaseString);
 
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
+#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
+bool determineIfWordIsContinuousCaseWrapper(string word, string * baseNameFound);
+bool determineIfWordIsVerbContinuousCase(string word, GIALRPtag * firstTagInVerbList, string * baseNameFound);
+#endif
+#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
 bool determineIfWordIsIrregularVerbContinuousCaseWrapper(string word, string * baseNameFound);
 bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * firstTagInIrregularVerbList, string * baseNameFound);
 #endif
-	
+#endif	
 	
 #endif

@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10b 05-July-2013
+ * Project Version: 1s10c 05-July-2013
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -43,11 +43,52 @@
 
 static string lrpDataFolderName;
 static bool useLRP; 
-	
-void initialiseLRP(string newLRPDataFolderName, bool newUseLRP)
+#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
+GIALRPtag * firstTagInVerbListGlobal;
+bool verbListLoaded;
+#endif
+#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
+GIALRPtag * firstTagInIrregularVerbListGlobal;
+bool irregularVerbListLoaded;
+#endif
+
+bool initialiseLRP(string newLRPDataFolderName, bool newUseLRP)
 {
+	bool result = true;
+	
 	useLRP = newUseLRP;
 	lrpDataFolderName = newLRPDataFolderName;
+
+	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
+	string verbListFileName = lrpDataFolderName + GIA_LRP_VERB_DATABASE_FILE_NAME;
+	verbListLoaded = false;
+	firstTagInVerbListGlobal = new GIALRPtag();
+	if(!loadVerbList(verbListFileName, firstTagInVerbListGlobal))
+	{
+		cout << "!loadVerbList (OpenGIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL requires -lrpfolder to be set): verbListFileName = " << verbListFileName << endl;
+		result = false;
+	}
+	else
+	{
+		verbListLoaded = true;
+	}	
+	#endif	
+	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
+	string irregularVerbListFileName = lrpDataFolderName + GIA_LRP_IRREGULARVERB_DATABASE_FILE_NAME;
+	irregularVerbListLoaded = false;
+	firstTagInIrregularVerbListGlobal = new GIALRPtag();
+	if(!loadIrregularVerbList(irregularVerbListFileName, firstTagInIrregularVerbListGlobal))
+	{
+		cout << "!loadIrregularVerbList (OpenGIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE requires -lrpfolder to be set): irregularVerbListFileName = " << irregularVerbListFileName << endl;
+		result = false;
+	}
+	else
+	{
+		irregularVerbListLoaded = true;
+	}	
+	#endif
+	
+	return result;
 }
 bool getUseLRP()
 {
@@ -201,6 +242,51 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 
 	return result;
 }
+
+#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
+bool loadVerbList(string irregularVerbListFileName, GIALRPtag * firstTagInIrregularVerbList)
+{
+	bool result = true;
+	
+	GIALRPtag * currentTagInIrregularVerbList = firstTagInIrregularVerbList;
+
+	ifstream parseFileObject(irregularVerbListFileName.c_str());
+	if(!parseFileObject.rdbuf( )->is_open( ))
+	{
+		//txt file does not exist in current directory.
+		cout << "Error: Irregular Verb Database File does not exist in current directory: " << irregularVerbListFileName << endl;
+		result = false;
+	}
+	else
+	{
+		int charCount = 0;
+		char currentToken;
+		int wordIndex = 0;
+		string currentWord = "";
+		bool currentWordAlternate = false;
+		while(parseFileObject.get(currentToken))
+		{
+			if(currentToken == CHAR_NEWLINE)
+			{
+				currentTagInIrregularVerbList->tagName = currentWord;
+				currentTagInIrregularVerbList->nextSentence = new GIALRPtag();
+				currentTagInIrregularVerbList = currentTagInIrregularVerbList->nextSentence;
+				currentWord = "";	
+				
+			}
+			else
+			{
+				currentWord = currentWord + currentToken;
+			}
+
+			charCount++;
+		}
+		parseFileObject.close();
+	}
+	
+	return result;
+}
+#endif
 
 
 bool loadIrregularVerbList(string irregularVerbListFileName, GIALRPtag * firstTagInIrregularVerbList)
@@ -1772,22 +1858,120 @@ string convertStringToLowerCase(string * arbitraryCaseString)
 
 
 
-#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
-//NB determineIfWordIsIrregularVerbContinuousCaseWrapper() could be used instead of determineIfWordIsVerbContinuousCase(), as Stanford only has a problem identifying verbs (pos tag "VBG") when they are irregular varbs
+#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
+bool determineIfWordIsContinuousCaseWrapper(string word, string * baseNameFound)
+{
+	bool result = true;
+	bool foundVerbContinuousCase = false;
+	string verbListFileName = lrpDataFolderName + GIA_LRP_VERB_DATABASE_FILE_NAME;
+	//cout << "determineIfWordIsContinuousCaseWrapper: " << endl;
+	if(!verbListLoaded)
+	{
+		cout << "!verbListLoaded (OpenGIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL requires -lrpfolder to be set): verbListFileName = " << verbListFileName << endl;
+		result = false;
+	}
+	else
+	{
+		//cout << "determineIfWordIsVerbContinuousCase: " << endl;
+		foundVerbContinuousCase = determineIfWordIsVerbContinuousCase(word, firstTagInVerbListGlobal, baseNameFound);
+		//cout << "determineIfWordIsVerbContinuousCase end: " << endl;
+	}
+	return foundVerbContinuousCase;
+}	
+
+
+bool determineIfWordIsVerbContinuousCase(string word, GIALRPtag * firstTagInVerbList, string * baseNameFound)
+{
+	bool foundVerbContinuousCase = false;
+
+	/*
+	detectContinuousVerbBasic Algorithm:
+	
+	Note a simple check for "ing" is not posssible as;
+		some nouns end in ing also eg "thing"
+	Note a simple "ing" appendition check against a verb infinitive list is not possible because there are some grammatical variants;
+		Case 1: thinking
+		Case 2: running - "run" + "n" [run n] + "ing" 
+		Case 3: changing - "chang" [change e] + "ing" 
+	
+		ongoing?
+		outstanding?
+		being?
+		becoming?
+		
+	This code uses a subset of code from generateTenseVariantsOfVerbBase (note generateTenseVariantsOfVerbBase is not used itself as this code is designed to be liberal/robust and detect all possible continuous verbs without being subject to theoretical grammar rules)
+	*/
+		
+	GIALRPtag * currentTagInVerbList = firstTagInVerbList;
+	while(currentTagInVerbList->nextSentence != NULL)
+	{
+		//cout << "\t currentTagInVerbList->tagName = " << currentTagInVerbList->tagName << endl;
+		string wordLowerCase = convertStringToLowerCase(&word);
+		string base = currentTagInVerbList->tagName;
+
+		//case 1: thinking
+		string hypotheticalVerbVariantCase1 = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+		if(wordLowerCase == hypotheticalVerbVariantCase1)
+		{
+			foundVerbContinuousCase = true;
+			*baseNameFound = currentTagInVerbList->tagName;	
+		}		
+		
+		//case 2: running - "run" + "n" [run n] + "ing" 
+		int baseStringLength = base.length();
+		int indexOfLastCharacterInBase = baseStringLength-1;
+		char lastCharacterInBase = base[indexOfLastCharacterInBase];
+		string hypotheticalVerbVariantCase2 = base + lastCharacterInBase + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+		if(wordLowerCase == hypotheticalVerbVariantCase2)
+		{
+			foundVerbContinuousCase = true;
+			*baseNameFound = currentTagInVerbList->tagName;	
+		}
+					
+		//case 3: changing - "chang" [change e] + "ing" 
+		string baseWithLastLetterDropped = base.substr(0, baseStringLength-1);
+		string hypotheticalVerbVariantCase3 = baseWithLastLetterDropped + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+		if(wordLowerCase == hypotheticalVerbVariantCase3)
+		{
+			foundVerbContinuousCase = true;
+			*baseNameFound = currentTagInVerbList->tagName;	
+		}
+		
+		//cout << "hypotheticalVerbVariantCase1 = " << hypotheticalVerbVariantCase1 << endl;
+		//cout << "hypotheticalVerbVariantCase2 = " << hypotheticalVerbVariantCase2 << endl;
+		//cout << "hypotheticalVerbVariantCase3 = " << hypotheticalVerbVariantCase3 << endl;
+		
+		currentTagInVerbList = currentTagInVerbList->nextSentence;
+	}
+
+	#ifdef GIA_LRP_DEBUG
+	if(foundVerbContinuousCase)
+	{
+		cout << "foundVerbContinuousCase baseNameFound = " << *baseNameFound << endl;
+	}		
+	//cout << "baseWithLastLetterDropped = " << baseWithLastLetterDropped << endl;
+	#endif
+		
+	return foundVerbContinuousCase;
+}
+#endif
+
+
+#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
+//NB determineIfWordIsIrregularVerbContinuousCaseWrapper() can be used instead of determineIfWordIsContinuousCaseWrapper(), as Stanford only has a problem identifying verbs (pos tag "VBG") when they are irregular varbs
 bool determineIfWordIsIrregularVerbContinuousCaseWrapper(string word, string * baseNameFound)
 {
 	bool result = true;
 	bool foundIrregularVerbContinuousCase = false;
 	string irregularVerbListFileName = lrpDataFolderName + GIA_LRP_IRREGULARVERB_DATABASE_FILE_NAME;
-	GIALRPtag * firstTagInIrregularVerbList = new GIALRPtag();
-	if(!loadIrregularVerbList(irregularVerbListFileName, firstTagInIrregularVerbList))
+	if(!irregularVerbListLoaded)
 	{
-		cout << "!loadIrregularVerbList (OpenGIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS requires -lrpfolder to be set): irregularVerbListFileName = " << irregularVerbListFileName << endl;
+		cout << "!irregularVerbListLoaded (OpenGIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE requires -lrpfolder to be set): irregularVerbListFileName = " << irregularVerbListFileName << endl;
 		result = false;
 	}
 	else
 	{
-		foundIrregularVerbContinuousCase = determineIfWordIsIrregularVerbContinuousCase(word, firstTagInIrregularVerbList, baseNameFound);
+		foundIrregularVerbContinuousCase = determineIfWordIsIrregularVerbContinuousCase(word, firstTagInIrregularVerbListGlobal, baseNameFound);
 	}
 	return foundIrregularVerbContinuousCase;
 }	
