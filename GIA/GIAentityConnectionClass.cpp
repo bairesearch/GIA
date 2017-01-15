@@ -26,7 +26,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f20a 27-July-2014
+ * Project Version: 2f21a 20-August-2014
  *
  *******************************************************************************/
 
@@ -59,6 +59,10 @@ GIAentityConnection::GIAentityConnection(void)
 	NLCparsedForCodeBlocks = false;
 	NLCparsedForlogicalConditionOperations = false;
 	negative = false;
+	NLCcontextGenerated = false;
+	#endif
+	#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
+	isReference = false;
 	#endif
 	#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 	sentenceIndexTemp = GIA_SENTENCE_INDEX_UNDEFINED2;

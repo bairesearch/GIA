@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f20a 27-July-2014
+ * Project Version: 2f21a 20-August-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -514,8 +514,8 @@ static string relationGovernorDefinitionNameArray[RELATION_GOVERNOR_DEFINITION_N
 #define FEATURE_INDEX_OF_SPECIAL_CONDITION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-11)
 #define FEATURE_INDEX_OF_TOBE_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-12)
 #define FEATURE_INDEX_OF_QUANTITY_TIMES_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-13)	//added 12 January 2013
-#define FEATURE_INDEX_OF_ENTITY_SPECIAL_POSSESSIVE_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-14)		//added GIA 2c1a 13 January 2013
-#define FEATURE_INDEX_OF_CONJUNCTION_1 (MAX_NUMBER_OF_WORDS_PER_SENTENCE-15) 	//added GIA 2f8a 10-July-2014
+#define FEATURE_INDEX_OF_ENTITY_SPECIAL_POSSESSIVE_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-14)		//added GIA 2c1a/13 January 2013
+#define FEATURE_INDEX_OF_CONJUNCTION_1 (MAX_NUMBER_OF_WORDS_PER_SENTENCE-15) 	//added GIA 2f8a/10-July-2014
 #define FEATURE_MAX_NUMBER_OF_CONJUNCTION_FEATURE_INDICES (100)	//some function of NLC_MAXIMUM_NUMBER_OF_CONJUNCTIONS_IN_SENTENCE
 #define FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY (FEATURE_INDEX_OF_CONJUNCTION_1-FEATURE_MAX_NUMBER_OF_CONJUNCTION_FEATURE_INDICES)
 

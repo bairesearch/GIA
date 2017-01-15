@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f20a 27-July-2014
+ * Project Version: 2f21a 20-August-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1715,6 +1715,14 @@ GIAentityConnection * writeVectorConnection(GIAentityNode * entityNode, GIAentit
 
 			newConnection = new GIAentityConnection();
 			newConnection->entity = entityNodeToAdd;
+			#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
+			bool foundNode = false;
+			findEntityNodePointerInVector(entityNode, entityNodeToAdd, connectionType, &foundNode);
+			if(foundNode)
+			{
+				newConnection->isReference = true;
+			}
+			#endif			
 			vectorConnection->push_back(newConnection);
 
 			#ifdef GIA_USE_ADVANCED_REFERENCING

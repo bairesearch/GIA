@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f20a 27-July-2014
+ * Project Version: 2f21a 20-August-2014
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -448,14 +448,14 @@ public:
 	//bool parsedForNLCcodeBlocksActionRound;
 	//bool parsedForNLCclassHeirarchy;
 	bool NLCisSingularArgument;
-	bool NLClocalListVariableHasBeenDeclared;	//added NLC 1g8a 11-July-2014
-	bool NLClocalListVariableHasBeenInitialised;	//renamed NLC 1g8a 11-July-2014
+	bool NLClocalListVariableHasBeenDeclared;	//added NLC 1g8a/11-July-2014
+	bool NLClocalListVariableHasBeenInitialised;	//renamed NLC 1g8a/11-July-2014
 	bool NLClogicalConditionOperation;		//required as some logical condition operation conditions (prepositions) require sentence context for detection (eg "for each/all/every")
 	bool NLCparsedForlogicalConditionOperations;
 	bool NLCconjunctionCondition;
 	int NLClogicalConditionConjunctionIndex;
-	bool NLCcontextGenerated;		//added NLC 1g14b 15-July-2014
-	string NLCoriginalNumericalVariableName;	//added NLC 1h1d 24-July-2014
+	bool NLCcontextGenerated;		//added NLC 1g14b/15-July-2014
+	string NLCoriginalNumericalVariableName;	//added NLC 1h1d/24-July-2014
 	#endif
 };
 
