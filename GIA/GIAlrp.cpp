@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p9a 23-September-2012
+ * Project Version: 1p10a 23-September-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -125,7 +125,11 @@ void initialiseCurrentGIALRPtagTextCorrespondenceInfo()
 bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainTextLRPOutputFileName, string plainTextLRPforNLPOutputFileName)
 {
 	bool result = true;
-
+	
+	#ifdef GIA_LRP_DEBUG
+	cout << "lrpDataFolderName= " << lrpDataFolderName << endl;
+	#endif
+	
 	string irregularVerbListFileName = lrpDataFolderName + GIA_LRP_IRREGULARVERB_DATABASE_FILE_NAME;
 	GIALRPtag * firstTagInIrregularVerbList = new GIALRPtag();
 	if(!loadIrregularVerbList(irregularVerbListFileName, firstTagInIrregularVerbList))
@@ -1287,12 +1291,12 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 				while(currentTagInPlainTextSentenceTemp2->nextTag != NULL)
 				{
 					#ifdef GIA_LRP_DEBUG
-					//cout << "u23c currentTagInPlainTextSentenceTemp2->tagName = " << currentTagInPlainTextSentenceTemp2->tagName << endl;
+					cout << "u23c currentTagInPlainTextSentenceTemp2->tagName = " << currentTagInPlainTextSentenceTemp2->tagName << endl;
 					#endif
 					if(currentTagInPlainTextSentenceTemp2->collapsedPhrasalVerbExactDefinedSection)
 					{//create a new correspondenceInfo
 						#ifdef GIA_LRP_DEBUG
-						//cout << "u23d" << endl;
+						cout << "u23d" << endl;
 						#endif
 						string tagNameLemma = currentTagInPlainTextSentenceTemp2->tagNameLemma;
 						string tagName = currentTagInPlainTextSentenceTemp2->tagName;
@@ -1333,7 +1337,14 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 			#ifdef GIA_LRP_DEBUG
 			//cout << "u24" << endl;
 			#endif
-			
+			previousTagInPlainTextSentence = currentTagInPlainTextSentence;
+			currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;			
+		}
+
+		currentTagInPlainTextSentence = firstTagInPlainTextSentence;
+		previousTagInPlainTextSentence = NULL;
+		while(currentTagInPlainTextSentence->nextTag != NULL)
+		{		
 			GIALRPtag * currentTagInMultiwordPrepositionList = firstTagInMultiwordPrepositionList;
 			bool foundAtLeastOneMultiwordPrepositionInSentenceAndCollapsed = false;
 			while(currentTagInMultiwordPrepositionList->nextSentence != NULL)
@@ -1365,8 +1376,8 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 					else
 					{
 						#ifdef GIA_LRP_DEBUG
-						//cout << "u24b" << endl;
-						//cout << "currentTagInPlainTextSentenceTemp->tagName  = " << currentTagInPlainTextSentenceTemp->tagName << endl;
+						cout << "u24b" << endl;
+						cout << "currentTagInPlainTextSentenceTemp->tagName  = " << currentTagInPlainTextSentenceTemp->tagName << endl;
 						#endif
 						currentTagInCollapsedMultiwordPreposition->collapsedMultiwordPreposition = true;
 						currentTagInCollapsedMultiwordPreposition->tagName = currentTagInCollapsedMultiwordPreposition->tagName + currentTagInPlainTextSentenceTemp->tagName + "_";
@@ -1379,10 +1390,10 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 				if(stillFoundPrepositionMatch && foundAtLeastOneMatch)
 				{
 					#ifdef GIA_LRP_DEBUG
-					//cout << "u24d" << endl;
+					cout << "u24d" << endl;
 					#endif
 					//reduce all entities
-					firstTagInCollapsedMultiwordPreposition->nextTag = currentTagInPlainTextSentenceTemp;
+					currentTagInCollapsedMultiwordPreposition->nextTag = currentTagInPlainTextSentenceTemp;
 					previousTagInPlainTextSentence->nextTag = firstTagInCollapsedMultiwordPreposition;
 
 					foundAtLeastOneMultiwordPrepositionInSentenceAndCollapsed = true;
@@ -1399,11 +1410,14 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 				GIALRPtag * currentTagInPlainTextSentenceTemp2 = firstTagInPlainTextSentence;
 				int newEntityIndex = GIA_NLP_START_ENTITY_INDEX;
 				//int collapsedMultiwordPrepositionIndex = 0;
-				//#ifdef GIA_LRP_DEBUG
+				#ifdef GIA_LRP_DEBUG
 				cout << "foundAtLeastOneMultiwordPrepositionInSentenceAndCollapsed" << endl;
-				//#endif
+				#endif
 				while(currentTagInPlainTextSentenceTemp2->nextTag != NULL)
 				{
+					#ifdef GIA_LRP_DEBUG
+					cout << "currentTagInPlainTextSentenceTemp2->tagName = " << currentTagInPlainTextSentenceTemp2->tagName << endl;
+					#endif				
 					if(currentTagInPlainTextSentenceTemp2->collapsedMultiwordPreposition)
 					{//create a new correspondenceInfo
 						string tagName = currentTagInPlainTextSentenceTemp2->tagName;
@@ -1506,10 +1520,15 @@ bool writeTagListToFile(GIALRPtag * firstTagInPlainText, string plainTextLRPOutp
 	
 	return result;
 }				
-				
+
+//NB preposition reversion routine will not work for RelEx as RelEx defines dependency relations based on lemmas not words...			
 void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentSentenceInList, Relation * currentRelationInListForPrepositionsOnly, bool isPreposition, bool * foundOfficialLRPreplacementString)
 {
 	int entityIndexForNonPrepositionsOnly = feature->entityIndex;
+	
+	//save original values for NLP only (required during a multiword preposition replacement with an adjacent multiword verb
+	feature->wordWithLRPforNLPonly = feature->word;
+	
 	string word = feature->word;
 	//string lemma = feature->lemma;	//only used for prepositions (dependency relation) calculations, where lemma has already been calculated via revertNLPtagNameToOfficialLRPtagName()
 	
@@ -1571,10 +1590,10 @@ void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentS
 						#ifdef GIA_LRP_DEBUG2
 						cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
 						#endif
-						if(currentFeatureInList->word == relationGovernor)
+						if(currentFeatureInList->wordWithLRPforNLPonly == relationGovernor)
 						{
 							#ifdef GIA_LRP_DEBUG2
-							cout << "(currentFeatureInList->word == relationGovernor)" << endl;
+							cout << "(currentFeatureInList->wordWithLRPforNLPonly == relationGovernor)" << endl;
 							#endif
 							indexOfLastInstanceOfGovernor = currentFeatureInList->entityIndex;
 						}					
@@ -1585,10 +1604,10 @@ void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentS
 							#endif
 							indexOfLastInstanceOfPreposition = currentFeatureInList->entityIndex;
 						}
-						if(currentFeatureInList->word == relationDependent)
+						if(currentFeatureInList->wordWithLRPforNLPonly == relationDependent)
 						{
 							#ifdef GIA_LRP_DEBUG2
-							cout << "(currentFeatureInList->word == relationDependent)" << endl;
+							cout << "(currentFeatureInList->wordWithLRPforNLPonly == relationDependent)" << endl;
 							#endif
 							
 							indexOfLastInstanceOfDependent = currentFeatureInList->entityIndex;

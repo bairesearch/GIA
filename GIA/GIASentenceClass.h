@@ -23,7 +23,7 @@
  * File Name: GIASentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p9a 23-September-2012
+ * Project Version: 1p10a 23-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -189,6 +189,9 @@ public:
 	int entityIndex;
 	string word;
 	string lemma;
+	#ifdef GIA_USE_LRP
+	string wordWithLRPforNLPonly;
+	#endif
 
 	#ifdef GIA_USE_RELEX
 	string type;
