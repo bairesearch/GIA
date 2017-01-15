@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h12a 21-January-2015
+ * Project Version: 2h12b 21-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -501,6 +501,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 							{//execute
 								#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 								bool sameReferenceSet;
+								//not setting defaultSameSetRelationID (ie leaving it at INT_DEFAULT_VALUE) will enforce the sameReferenceSet value to be the defaultSameSetReferenceValue regardless of auxiliaryIndicatesDifferentReferenceSet and rcmodIndicatesSameReferenceSet
 								if(param->defaultSameSetRelationID == INT_DEFAULT_VALUE)
 								{
 									sameReferenceSet = param->defaultSameSetReferenceValue;
