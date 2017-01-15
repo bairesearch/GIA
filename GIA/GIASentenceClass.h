@@ -3,8 +3,8 @@
  * File Name: GIASentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i4a 3-Apr-2012
- * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
+ * Project Version: 1i6a 4-Apr-2012
+ * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
 
@@ -100,7 +100,6 @@ public:
 	bool isQuestion;
 };
 
-#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 class Paragraph
 {
 public:
@@ -113,6 +112,5 @@ public:
 	Paragraph * next;
 	Paragraph * previous;	//used for reference lookup
 };
-#endif
 
 #endif

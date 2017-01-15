@@ -3,8 +3,8 @@
  * File Name: GIASentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i4a 3-Apr-2012
- * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
+ * Project Version: 1i6a 4-Apr-2012
+ * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
 
@@ -98,7 +98,6 @@ Sentence::~Sentence(void)
 
 }
 
-#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 
 Paragraph::Paragraph(void)
 {	
@@ -121,6 +120,5 @@ Paragraph::~Paragraph(void)
 	}
 }
 
-#endif
 
 

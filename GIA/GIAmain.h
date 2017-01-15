@@ -3,8 +3,8 @@
  * File Name: GIAmain.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i4a 3-Apr-2012
- * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
+ * Project Version: 1i6a 4-Apr-2012
+ * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
 
@@ -37,12 +37,35 @@
 
 
 int main(int argc,char **argv);
-#ifdef USE_CE	
-bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList);
-#else
-bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery);
+bool parseNLPParserFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList);
+#ifdef GIA_USE_RELEX
+bool parseRelexFile(string inputTextNLPParserXMLFileName, bool isQuery, Paragraph * firstParagraphInList);
+#elif defined GIA_USE_STANFORD_PARSER
+bool parseStanfordParserFile(string inputTextNLPParserXMLFileName, bool isQuery, Paragraph * firstParagraphInList);
+#elif defined GIA_USE_STANFORD_CORENLP
+bool parseStanfordCoreNLPFile(string inputTextNLPParserXMLFileName, bool isQuery, Paragraph * firstParagraphInList);
 #endif
-void executeRelex(string inputPlainTXTFileName, string inputRelexXMLFileName);
+
+void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPParsedXMLFileName);
+#ifdef GIA_USE_RELEX
+void executeRelex(string inputPlainTXTFileName, string inputNLPParserXMLFileName);
+#elif defined GIA_USE_STANFORD_PARSER
+bool executeStanfordParser(string inputTextNLPParserXMLFileName, bool isQuery, Paragraph * firstParagraphInList);
+#elif defined GIA_USE_STANFORD_CORENLP
+bool executeStanfordCoreNLP(string inputTextNLPParserXMLFileName, bool isQuery, Paragraph * firstParagraphInList);
+#endif
+
+#ifdef USE_CE	
+bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList);
+#else
+bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery);
+#endif
+
+#ifdef USE_CE	
+bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList);
+#else
+bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery);
+#endif
 
 
 #endif

@@ -3,8 +3,8 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i4a 3-Apr-2012
- * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
+ * Project Version: 1i6a 4-Apr-2012
+ * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific version of shared globals (replace if compiling other projects)
  *
  *******************************************************************************/
@@ -23,6 +23,17 @@
 //#define GIA_SEMANTIC_NET_XML_DEBUG
 
 //~GIATranslator
+
+#define GIA_USE_STANFORD_PARSER
+#define GIA_USE_STANFORD_CORENLP	//a more advanced implementation of stanford parser (with lemma, entity name detection, etc: Stanford CoreNLP integrates all our NLP tools for the English language, including the part-of-speech (POS) tagger, the named entity recognizer (NER), the parser, and the coreference resolution system)
+//#define GIA_USE_RELEX
+#ifdef GIA_USE_RELEX
+	#define GIA_USE_RELEX_1.4.0	//default: enabled (otherwise use Relex 1.3.0)
+	#ifdef GIA_USE_RELEX_1.4.0
+		#define GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS		//BAI paragraph tag support has not yet been added to Relex 1.3.0
+	#endif
+#endif
+
 #define GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR	//this is required (the current set of code has had the alternative case removed - see GIATranslator.cpp.copyWithDataStructureOptions for an example set of code that supports disabling this feature)
 #define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE "_$qVar"
 #define GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
@@ -34,14 +45,12 @@
 	#define GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_WHERE_NECESSARY (1)
 	#define GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_ONLY_WHEN_REQUIRED (1)
 #endif
-#define GIA_USE_RELEX_1.4.0
 
 //~GIAmain
 #define GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 //#define GIA_DO_NOT_PRINT_RESULTS
 #define GIA_RELEX_EXECUTABLE_NAME "execute-relex.sh"
 //OLD: #define GIA_RELEX_EXECUTABLE_RELATIVE_PATH_NAME "/relex-1.3.0/"	//gets added to executable path name
-#define GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 #ifdef USE_CE
 	#define GIA_WITH_CE_DERIVE_SUBCLAIM_PREPEND
 #endif

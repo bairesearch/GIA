@@ -3,8 +3,8 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i4a 3-Apr-2012
- * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
+ * Project Version: 1i6a 4-Apr-2012
+ * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
  * TO DO: extract date information of entities from relex <features> tag area
@@ -228,14 +228,8 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, 
 #endif
 
 #ifdef USE_CE
-void convertParagraphSentenceRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIATimeConditionNode*> *timeConditionNodesList, vector<long> *timeConditionNumbersList, Paragraph * firstParagraphInList, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList)
+void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIATimeConditionNode*> *timeConditionNodesList, vector<long> *timeConditionNumbersList, Sentence * firstSentenceInList, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList)
 {
-	if(firstParagraphInList->next->next != NULL)
-	{
-		cout << "convertParagraphSentenceRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(): error - CE only supports a single paragraph of text, one claim per line" << endl;
-		exit(0);
-	}
-	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;
 	Sentence * currentSentenceInList;
 	
 	currentSentenceInList = firstSentenceInList;	
@@ -472,11 +466,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#endif
 	defineObjectSubjectOfPreposition(currentSentenceInList, GIAEntityNodeArray);
 
+#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "3d pass; define conjunction conditions; eg Either Tom and/or Max eat the cake...." << endl;
 	#endif
 	defineConjunctionConditions(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList);	
-
+#endif
 
 
 	#ifdef GIA_TRANSLATOR_DEBUG
