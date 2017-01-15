@@ -424,6 +424,7 @@ Reference * initialiseActionNodeForPrinting(GIAActionNode * actionNode, int y, i
 		//cout << "b1" << endl;
 		int q, r;
 		
+		#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 		//conditions connections
 		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
 		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
@@ -442,6 +443,7 @@ Reference * initialiseActionNodeForPrinting(GIAActionNode * actionNode, int y, i
 			currentReferenceInPrintList = initialiseConditionNodeForPrinting((*ConditionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		}
+		#endif
 		
 		//cout << "b2" << endl;
 		
@@ -551,7 +553,8 @@ Reference * initialiseConditionNodeForPrinting(GIAConditionNode * conditionNode,
 		int q, r;
 			
 		q = -DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
-		r = -DRAW_X_SPACE_BETWEEN_CONDITION_NODES;				
+		r = -DRAW_X_SPACE_BETWEEN_CONDITION_NODES;	
+		#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS			
 		if(conditionNode->parentIsAction)
 		{	
 			//cout << "HERE1" << endl;
@@ -568,6 +571,7 @@ Reference * initialiseConditionNodeForPrinting(GIAConditionNode * conditionNode,
 		}
 		else
 		{
+		#endif
 			//cout << "HERE2" << endl;
 			
 			if(conditionNode->parentProperty != NULL)
@@ -580,10 +584,13 @@ Reference * initialiseConditionNodeForPrinting(GIAConditionNode * conditionNode,
 				
 				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject);
 			}
+		#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS	
 		}
+		#endif
 		
 		q = -DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
-		r = -DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;		
+		r = -DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
+		#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS		
 		if(conditionNode->conditionIsAction)
 		{
 			//cout << "HERE3" << endl;
@@ -601,6 +608,7 @@ Reference * initialiseConditionNodeForPrinting(GIAConditionNode * conditionNode,
 		}
 		else
 		{
+		#endif
 			//cout << "HERE4" << endl;
 			
 			if(conditionNode->conditionEntity != NULL)
@@ -617,7 +625,9 @@ Reference * initialiseConditionNodeForPrinting(GIAConditionNode * conditionNode,
 			}
 			
 			//cout << "HERE5" << endl;
+		#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS	
 		}
+		#endif
 
 		if(initialiseOrPrint == DRAW_PRINT)
 		{	

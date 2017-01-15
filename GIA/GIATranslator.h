@@ -193,7 +193,9 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
 
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense);
+#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 void addTenseOnlyTimeConditionToAction(GIAActionNode * actionNode, int tense);
+#endif
 
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity);
 
@@ -202,13 +204,17 @@ GIAActionNode * addAction(GIAEntityNode * actionEntity);
 void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity);
 void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
 
+#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 void addLocationConditionToAction(GIAActionNode * actionNode, GIAEntityNode * locationConditionEntity);
 void addTimeConditionToAction(GIAActionNode * actionNode, GIAEntityNode * timeConditionEntity);
+#endif
 void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity);
 void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity);
+#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 void addActionConditionToAction(GIAActionNode * actionNode, GIAActionNode * actionConditionActionNode);
 void addPropertyConditionToAction(GIAActionNode * actionNode, GIAEntityNode * propertyConditionEntity);
 void addActionConditionToProperty(GIAEntityNode * propertyNode, GIAActionNode * actionConditionActionNode);
+#endif
 void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity);
 	//property to property relationship - these they in actual fact represent different levels of detail in information to property to action / action to action nodes - direct property to property relationships are missing the action/connectivity information
 

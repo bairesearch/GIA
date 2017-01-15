@@ -202,8 +202,10 @@ bool readSemanticNetXMLFile(string xmlFileName, vector<GIAEntityNode*> *entityNo
 			bool parseConditionNodeListTag(XMLParserTag * firstTagInConditionNodeList, GIAEntityNode * entityNode, vector<GIAConditionNode*> *conditionNodesCompleteList);
 			bool parseConditionNodeReverseListTag(XMLParserTag * firstTagInConditionNodeReverseList, GIAEntityNode * entityNode, vector<GIAConditionNode*> *conditionNodesCompleteList);
 		bool parseActionNodeTag(XMLParserTag * firstTagInActionNode, GIAActionNode * actionNode, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAActionNode*> *actionNodesCompleteList, vector<GIAConditionNode*> *conditionNodesCompleteList);
+			#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 			bool parseConditionNodeListInActionTag(XMLParserTag * firstTagInConditionNodeList, GIAActionNode * actionNode, vector<GIAConditionNode*> *conditionNodesCompleteList);	
 			bool parseConditionNodeReverseListInActionTag(XMLParserTag * firstTagInConditionNodeReverseList, GIAActionNode * actionNode, vector<GIAConditionNode*> *conditionNodesCompleteList);				
+			#endif
 		bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionNode * conditionNode, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAActionNode*> *actionNodesCompleteList, vector<GIAConditionNode*> *conditionNodesCompleteList);
 			bool parseTimeConditionNodeTag(XMLParserTag * firstTagInTimeConditionNode, GIATimeConditionNode * timeConditionNode);
 

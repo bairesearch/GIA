@@ -81,8 +81,11 @@ public:
 	double confidence;
 	
 	//this MAY NEED to be replaced with a vector of action/property/location/time descriptive node pointers
+	#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 	bool conditionIsAction;	//ie, strictly speaking, entity not action
 	GIAActionNode * conditionAction;		//ie, this condition is defined by a (far off) action node
+	#endif
+
 	GIAEntityNode * conditionEntity;		//ie, this condition [eg where] is defined by a (far off) entity/property node
 		//entityWhenTheActionOccured / entityWhereTheActionOccured / etc
 			//eg an entity named "tuesday" - this is not important
@@ -94,9 +97,11 @@ public:
 		//NB this property, condition, would generally be associated with the entity performing the action [or the entity upon which the action is applied?], but not necessarily [requires more thought] - it may depend upon how selfish the entity is
 	*/
 	
-	
+	#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 	bool parentIsAction;		//or parent is property
 	GIAActionNode * parentAction;		//ie, this condition is a condition for the parent action
+	#endif
+	
 	GIAEntityNode * parentProperty;		//ie, this condition is a condition for the parent property
 	
 

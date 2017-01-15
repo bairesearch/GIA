@@ -18,12 +18,16 @@ GIAConditionNode::GIAConditionNode(void)
 	conditionName = "";
 	confidence = 1.0;
 
+	#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 	conditionIsAction = false;
 	conditionAction = NULL;
+	#endif
 	conditionEntity = NULL;
 	
+	#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 	parentIsAction = false;
 	parentAction = NULL;
+	#endif
 	parentProperty = NULL;
 	
 	conditionType = CONDITION_NODE_TYPE_UNDEFINED;

@@ -55,18 +55,20 @@ public:
 	string actionName;
 	double confidence;
 
+	#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 	//NB a reason appears to be the reverse of a condition
 	
 	//list of conditions
 
 	//conditions: where, how, when
-	
+		
 	vector<GIAConditionNode*> ConditionNodeList;
 	vector<GIAConditionNode*>::iterator ConditionNodeListIterator;
 
 	//reasons: why	[reverse action lookups; NB these may only be action conditions]
 	vector<GIAConditionNode*> ConditionNodeReverseList;
 	vector<GIAConditionNode*>::iterator ConditionNodeReverseListIterator;	
+	#endif
 	
 	//a template entity for the associated concept of this action/verb (eg verb=study, associated entity/noun = study):
 	GIAEntityNode * entityNodeDefiningThisAction;

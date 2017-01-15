@@ -886,6 +886,7 @@ bool parseActionNodeTag(XMLParserTag * firstTagInActionNode, GIAActionNode * act
 		currentAttribute = currentAttribute->nextAttribute;
 	}
 
+	#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 	XMLParserTag * currentTagUpdatedL3 = firstTagInActionNode->firstLowerLevelTag;
 	while(currentTagUpdatedL3->nextTag != NULL)
 	{
@@ -910,6 +911,7 @@ bool parseActionNodeTag(XMLParserTag * firstTagInActionNode, GIAActionNode * act
 		
 		currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
 	}
+	#endif
 			
 				
 	if(!entityNodeDefiningThisActionFound)
@@ -934,6 +936,7 @@ bool parseActionNodeTag(XMLParserTag * firstTagInActionNode, GIAActionNode * act
 	return result;	
 }
 
+#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 bool parseConditionNodeListInActionTag(XMLParserTag * firstTagInConditionNodeList, GIAActionNode * actionNode, vector<GIAConditionNode*> *conditionNodesCompleteList)
 {
 	XMLParserTag * currentTagUpdatedL1 = firstTagInConditionNodeList;
@@ -973,6 +976,7 @@ bool parseConditionNodeReverseListInActionTag(XMLParserTag * firstTagInCondition
 		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
 	}
 }
+#endif
 
 
 bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionNode * conditionNode, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAActionNode*> *actionNodesCompleteList, vector<GIAConditionNode*> *conditionNodesCompleteList)
@@ -1015,6 +1019,7 @@ bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionN
 			conditionNode->conditionName = attributeValue;
 			conditionNameFound = true;
 		}
+		#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionIsAction)
 		{
 			bool attributeValue = atoi(currentAttribute->value.c_str());
@@ -1030,6 +1035,7 @@ bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionN
 				conditionActionFound = true;
 			}
 		}
+		#endif
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionEntity)
 		{			
 			if(currentAttribute->value != GIA_SEMANTIC_NET_XML_NULL_NODE_ID)
@@ -1039,6 +1045,7 @@ bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionN
 				conditionEntityFound = true;
 			}
 		}
+		#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_parentIsAction)
 		{
 			bool attributeValue = atoi(currentAttribute->value.c_str());
@@ -1054,6 +1061,7 @@ bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionN
 				parentActionFound = true;
 			}
 		}
+		#endif
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_parentProperty)
 		{
 			if(currentAttribute->value != GIA_SEMANTIC_NET_XML_NULL_NODE_ID)
@@ -1129,7 +1137,7 @@ bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionN
 		}
 	}
 			
-				
+	#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS			
 	if(parentIsActionFound)
 	{	
 		if(conditionNode->parentIsAction)
@@ -1137,10 +1145,12 @@ bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionN
 			if(!parentActionFound)
 			{
 				cout << "parseConditionNodeTag error: parentIsActionFound && parentIsAction && !parentActionFound" << endl;
+				result = false;	
 			}
 			if(parentPropertyFound)
 			{
 				cout << "parseConditionNodeTag error: parentIsActionFound && parentIsAction && parentProperty" << endl;
+				result = false;	
 			}
 		}
 		else
@@ -1148,19 +1158,25 @@ bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionN
 			if(parentActionFound)
 			{
 				cout << "parseConditionNodeTag error: parentIsActionFound && !parentIsAction && parentActionFound" << endl;
+				result = false;	
 			}
+	#endif		
 			if(!parentPropertyFound)
 			{
 				cout << "parseConditionNodeTag error: parentIsActionFound && !parentIsAction && !parentPropertyFound" << endl;
-			}		
-		}		
-		result = false;				
+				result = false;	
+			}
+	#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS				
+		}					
 	}
 	else
 	{
 		cout << "parseConditionNodeTag error: !parentIsActionFound" << endl;
+		result = false;	
 	}
+	#endif
 	
+	#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 	if(conditionIsActionFound)
 	{	
 		if(conditionNode->conditionIsAction)
@@ -1168,10 +1184,12 @@ bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionN
 			if(!conditionActionFound)
 			{
 				cout << "parseConditionNodeTag error: conditionIsActionFound && conditionIsAction && !conditionActionFound" << endl;
+				result = false;	
 			}
 			if(conditionEntityFound)
 			{
 				cout << "parseConditionNodeTag error: conditionIsActionFound && conditionIsAction && conditionEntityFound" << endl;
+				result = false;	
 			}
 		}
 		else
@@ -1179,18 +1197,23 @@ bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionN
 			if(conditionActionFound)
 			{
 				cout << "parseConditionNodeTag error: conditionIsActionFound && !conditionIsAction && conditionActionFound" << endl;
+				result = false;	
 			}
+	#endif
 			if(!conditionEntityFound)
 			{
 				cout << "parseConditionNodeTag error: conditionIsActionFound && !conditionIsAction && !conditionEntityFound" << endl;
-			}		
+				result = false;	
+			}
+	#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS					
 		}		
-		result = false;				
 	}
 	else
 	{
 		cout << "parseConditionNodeTag error: !conditionIsActionFound" << endl;
+		result = false;	
 	}
+	#endif
 
 	/*
 	if(printXFound && printYFound && printXIndexFound && printYIndexFound && printTextXFound && printTextYFound)
@@ -2122,10 +2145,10 @@ bool generateXMLActionNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		}
 		#endif		
 
+		#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 		XMLParserTag * firstTagL3;
 		XMLParserTag * currentTagL3;
-		XMLParserTag * newTag2;
-			
+		XMLParserTag * newTag2;	
 		#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
 		if(currentAction->ConditionNodeList.begin() != currentAction->ConditionNodeList.end())
 		{
@@ -2159,7 +2182,6 @@ bool generateXMLActionNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
 		}
 		#endif
-
 		#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
 		if(currentAction->ConditionNodeReverseList.begin() != currentAction->ConditionNodeReverseList.end())
 		{
@@ -2193,6 +2215,7 @@ bool generateXMLActionNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 			//cout << "h5e" << endl;
 		#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS	
 		}
+		#endif
 		#endif
 
 		XMLParserTag * newTag = new XMLParserTag();
@@ -2257,6 +2280,7 @@ bool generateXMLConditionNodeTagList(XMLParserTag * firstTagInSemanticNet, vecto
 		currentAttribute->nextAttribute = newAttribute2;
 		currentAttribute = currentAttribute->nextAttribute;
 		
+		#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
 		currentAttribute->name = NET_XML_ATTRIBUTE_conditionIsAction;
 		sprintf(tempString, "%d", int(currentCondition->conditionIsAction));
 		currentAttribute->value = tempString;
@@ -2264,7 +2288,9 @@ bool generateXMLConditionNodeTagList(XMLParserTag * firstTagInSemanticNet, vecto
 		XMLParserAttribute * newAttribute3 = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute3;
 		currentAttribute = currentAttribute->nextAttribute;
+		#endif
 	
+		#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS	
 		if(currentCondition->conditionIsAction)
 		{
 			
@@ -2292,6 +2318,7 @@ bool generateXMLConditionNodeTagList(XMLParserTag * firstTagInSemanticNet, vecto
 		}
 		else
 		{
+		#endif
 			if(currentCondition->conditionEntity != NULL)
 			{
 				currentAttribute->name = NET_XML_ATTRIBUTE_conditionEntity;
@@ -2313,8 +2340,11 @@ bool generateXMLConditionNodeTagList(XMLParserTag * firstTagInSemanticNet, vecto
 				currentAttribute = currentAttribute->nextAttribute;			
 			}
 			#endif
+		#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS		
 		}
+		#endif
 		
+		#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS	
 		currentAttribute->name = NET_XML_ATTRIBUTE_parentIsAction;
 		sprintf(tempString, "%d", int(currentCondition->parentIsAction));
 		currentAttribute->value = tempString;
@@ -2322,8 +2352,9 @@ bool generateXMLConditionNodeTagList(XMLParserTag * firstTagInSemanticNet, vecto
 		XMLParserAttribute * newAttribute6 = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute6;
 		currentAttribute = currentAttribute->nextAttribute;
+		#endif
 
-
+		#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS	
 		if(currentCondition->parentIsAction)
 		{
 			if(currentCondition->parentAction != NULL)
@@ -2350,6 +2381,7 @@ bool generateXMLConditionNodeTagList(XMLParserTag * firstTagInSemanticNet, vecto
 		}
 		else
 		{
+		#endif
 			
 			if(currentCondition->parentProperty != NULL)
 			{
@@ -2372,7 +2404,9 @@ bool generateXMLConditionNodeTagList(XMLParserTag * firstTagInSemanticNet, vecto
 				currentAttribute = currentAttribute->nextAttribute;				
 			}
 			#endif
+		#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS		
 		}
+		#endif
 
 		currentAttribute->name = NET_XML_ATTRIBUTE_conditionType;
 		sprintf(tempString, "%d", currentCondition->conditionType);
