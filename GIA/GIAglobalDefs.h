@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r2a 12-November-2012
+ * Project Version: 1r3a 13-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -515,6 +515,8 @@
 
 //variables currently being tested (1o1a+)
 
+#define GIA_TRANSLATOR_INTERPRET_CLAUSAL_COMPLEMENT_AS_ACTION_OBJECT_INSTEAD_OF_ACTION_PROPERTY	//added to bring Stanford back into line with Relex: eg He says that you like to swim / ccomp(say, like) -> obj(say, like), Moses knew I was angry. / ccomp(knew-2, angry-5) ->  obj(knew-2, angry-5
+
 #define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR	//interpret "toy"/"red" as property of "shop"/"dog" (originally "shop"/"dog" was interpreted as property of "toy"/"red")
 #ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
 	#define GIA_TRANSLATOR_DEFINE_NOUNS_WITH_PRENOMINAL_MODIFIERS_AS_SUBSTANCES		//only enable this when "toy" is property of "shop" (ie do not enable this when "shop" is property of "toy")
@@ -522,7 +524,7 @@
 
 #define GIA_SUPPORT_SPECIFIC_CONCEPTS	//added 1q4a to take into account specific concepts eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
 #ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-	#define GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS_AND_PROPERNOUNS	//added 1r1a
+	#define GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS_AND_PROPERNOUNS	//added 1q10a
 #endif
 	//NB the phrase 'substance concept'/'substance quality' is a misnomer, as concepts and qualities are not really substances [NB concepts are considered secondary substances in Aristotle's categories, but GIA has a separate Entity class for concepts marked by isConcept: which is confusingly not being used in this case of 'specific concepts' - a software development/history artefact]" << endl;
 	

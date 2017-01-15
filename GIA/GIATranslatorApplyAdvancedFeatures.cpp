@@ -23,7 +23,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r2a 12-November-2012
+ * Project Version: 1r3a 13-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * ?TO DO: extract date information of entities from relex <features> tag area
@@ -957,6 +957,7 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAEntityN
 
 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
+#ifndef GIA_TRANSLATOR_INTERPRET_CLAUSAL_COMPLEMENT_AS_ACTION_OBJECT_INSTEAD_OF_ACTION_PROPERTY
 void defineClausalComplementProperties(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -993,4 +994,5 @@ void defineClausalComplementProperties(Sentence * currentSentenceInList, bool GI
 		currentRelationInList = currentRelationInList->next;
 	}
 }
+#endif
 #endif
