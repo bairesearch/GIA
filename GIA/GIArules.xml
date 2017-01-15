@@ -445,11 +445,13 @@
 				<option expectToFindPrepositionTest="true" REL="1" />
 				<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
 				<!-- #ifdefGIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION_OLD -->
+				<!--
 				<option useRedistributeRelationEntityReassignment="true" REL="0" REL_ENT="2" redistributeRelationEntityReassignment="_psubj" />
 				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_pobj" />
 				<option useRedistributeSpecialCaseRelationEntityReassignmentConcatonate="true" REL="1" REL_ENT="0" />
 					<option redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID="1" REL="1" REL_ENT="0" swapIndex="0" redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID="0" />
 					<option redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID="1" REL="1" REL_ENT="0" swapIndex="1" redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID="2" />
+				-->
 				<!-- #else -->
 				<option useRelationTest="true" REL="0" REL_ENT="0" relationTest="be" />
 				<option useRelationTest="true" REL="1" REL_ENT="0" relationTest="be" />
@@ -814,7 +816,7 @@
 				<option useRelationArrayTest="true" REL="2" REL_ENT="2" relationArrayTest="_subj|_obj" relationArrayTestSize="2" />
 				<!-- note the following test should not be required as disabled relations eg cop are not being parsed: "if(!(currentRelationInList->prepositionCombinationAlreadyCreatedTemp))" -->
 				<option numberOfRelations="3" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="2" relationArrayTest="_subj|_obj" relationArrayTestSize="2" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="2" relationArrayTest="_to-be|_partmod" relationArrayTestSize="2" />
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
 				<option useRelationIndexTest="true" REL="2" REL_ENT="0" relationIndexTestRelationID="1" relationIndexTestEntityID="0" />
 				<!-- <option disableRelation="true" REL="1" /> //removed 15 July 2013 to allow double use of partmod eg "The Co-cart is a high quality, ultra compact, lightweight cart, also known as a trolley or buggie.: partmod(quality-6, known-15) + prep_as(known-15, trolley-18) + prep_as(known-15, buggie-20) -> prep_know_as(quality[6], trolley[18]) + prep_know_as(quality[6], buggie[20]) -->
@@ -1523,7 +1525,7 @@
 				--></example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
-				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_det" relationTestIsNegative="true" /> <!-- OR if(GIAentityNodeArray[currentRelationInList->relationDependentIndex]->stanfordPOStemp != "WDT")
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_det" relationTestIsNegative="true" /> <!-- OR if(GIAentityNodeArray[currentRelationInList->relationDependentIndex]->stanfordPOStemp != "WDT")-->
 				<option useRelationArrayTest="true" REL="0" REL_ENT="1" relationArrayTest="what" relationArrayTestSize="1" />
 				<option useRedistributeRelationEntityReassignment="true" REL="0" REL_ENT="1" redistributeRelationEntityReassignment="_$qVar" /> <!-- convert "What" to _$qVar -->
 				</paramDepRel>
@@ -2221,7 +2223,7 @@
 			<!-- #ifndefGIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE -->
 			<function name="defineSubstancesNonExplicitPronouns">
 				<paramEntity mode="execute">
-				<option useEntityArrayTest="true" entityArrayTest="featureTypeTreatAsPronounIeSubstance" /> <option entityArrayTestSize="1" />
+				<option useEntityArrayTest="true" entityArrayTest="that" entityArrayTestSize="1" />
 				<!-- #ifdefGIA_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE_ASSIGN_DETERMINATE_SINGULAR -->
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="grammaticalNumber" value="2" /> <!-- added 14 August 2012 (select any value from referenceTypeHasDeterminateCrossReferenceNumberArray[]) -->
 				<!-- #endif -->
@@ -2752,7 +2754,7 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option functionToExecuteUponFind="8" />
-				<option conditionTypeEntityDefaultIndex="999" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
+				<option conditionTypeEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
 				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="0" />
 				<option functionEntityRelationID="0" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="0" FUNC_ENT="2" functionEntityRelationEntityID="2" />
@@ -2766,7 +2768,7 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option functionToExecuteUponFind="8" />
-				<option conditionTypeEntityDefaultIndex="999" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
+				<option conditionTypeEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
 				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="0" />
 				<option functionEntityRelationID="0" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="0" FUNC_ENT="2" functionEntityRelationEntityID="2" />
