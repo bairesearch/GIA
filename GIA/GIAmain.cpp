@@ -84,6 +84,7 @@ using namespace std;
 #include "GIAdraw.h"
 #include "GIAquery.h"
 #include "GIAXMLconversion.h"
+#include "GIAdatabase.h"
 #include "XMLParserClass.h"
 #include "XMLrulesClass.h"
 #include "LDsprite.h"
@@ -513,7 +514,7 @@ int main(int argc,char **argv)
 			if(!parseRelexFile(inputQueryRelexXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true))
 			{
 				result = false;
-			}
+			}					
 		}
 
 	#ifdef GIA_DEBUG_PRINT_QUERY_SEMANTIC_NETWORK		

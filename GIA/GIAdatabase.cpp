@@ -19,6 +19,8 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 	
 	map<string, GIAEntityNode*> ::iterator conceptEntityNodesListIterator;
 	conceptEntityNodesListIterator = conceptEntityNodesList->find(*entityNodeName);
+	
+	
 	if(conceptEntityNodesListIterator != conceptEntityNodesList->end())
 	{//concept entity found	
 		#ifdef GIA_DATABASE_DEBUG
@@ -30,22 +32,25 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 	else
 	{//concept entity not found - add it to the map
 		
-		#ifdef GIA_DATABASE_DEBUG
-		cout << "adding entity node; " << *entityNodeName << endl;
-		#endif
+		if(addIfNonexistant)
+		{
+			#ifdef GIA_DATABASE_DEBUG
+			cout << "adding entity node; " << *entityNodeName << endl;
+			#endif
 
-		entityNodeFound = new GIAEntityNode();
-		entityNodeFound->id = *currentEntityNodeIDInCompleteList;
-		entityNodeFound->idSecondary = *currentEntityNodeIDInConceptEntityNodesList;
+			entityNodeFound = new GIAEntityNode();
+			entityNodeFound->id = *currentEntityNodeIDInCompleteList;
+			entityNodeFound->idSecondary = *currentEntityNodeIDInConceptEntityNodesList;
 
-		entityNodesCompleteList->push_back(entityNodeFound);
-		(*currentEntityNodeIDInCompleteList) = (*currentEntityNodeIDInCompleteList) + 1;
-		
-		//conceptEntityNodesList[entityNodeName] = entityNodeFound;
-		conceptEntityNodesList->insert(pair<string, GIAEntityNode*>(*entityNodeName, entityNodeFound));
-		(*currentEntityNodeIDInConceptEntityNodesList) = (*currentEntityNodeIDInConceptEntityNodesList) + 1;
+			entityNodesCompleteList->push_back(entityNodeFound);
+			(*currentEntityNodeIDInCompleteList) = (*currentEntityNodeIDInCompleteList) + 1;
 
-		entityNodeFound->entityName = *entityNodeName;	
+			//conceptEntityNodesList[entityNodeName] = entityNodeFound;
+			conceptEntityNodesList->insert(pair<string, GIAEntityNode*>(*entityNodeName, entityNodeFound));
+			(*currentEntityNodeIDInConceptEntityNodesList) = (*currentEntityNodeIDInConceptEntityNodesList) + 1;
+
+			entityNodeFound->entityName = *entityNodeName;	
+		}
 	}
 
 	return entityNodeFound;

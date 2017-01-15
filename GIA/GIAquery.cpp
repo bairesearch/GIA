@@ -36,12 +36,17 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	for(entityIterQuery = conceptEntityNodesListQuery->begin(); entityIterQuery != conceptEntityNodesListQuery->end(); entityIterQuery++) 
 	{//for each node in query semantic net;
 		
+		//cout << "entityIterQuery->second->entityName = " << entityIterQuery->second->entityName << endl;
 		GIAEntityNode* currentQueryEntityNode = entityIterQuery->second;
 		
 		bool foundQueryEntityNodeName = false;
 		long queryEntityNodeIndex = -1;
 		string queryEntityNodeName = currentQueryEntityNode->entityName;
+		//cout << "saf1" << endl;
+		
 		GIAEntityNode * conceptEntityMatchingCurrentQueryEntity = findOrAddEntityNodeByName(NULL, conceptEntityNodesList, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL);
+		
+		//cout << "saf2" << endl;
 		
 		if(foundQueryEntityNodeName)
 		{
