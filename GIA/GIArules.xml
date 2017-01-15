@@ -1863,6 +1863,8 @@
 				<!-- <option relationTestSpecialCaseContinousVerb="true" REL="0" REL_ENT="0" /> -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="2" REL="0" REL_ENT="0" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalTenseModifierArrayTemp" value="true" arrayIndex="0" REL="0" REL_ENT="0" />
+				<option useRelationTest="true" REL="0" REL_ENT="1" relationTest="_$qVar" relationTestIsNegative="true" />	<!-- added 31 Aug 2013 -->
+				<option useRelationIndexTest="true" REL="0" REL_ENT="2" relationIndexTestRelationID="0" relationIndexTestEntityID="1" relationIndexTestIsNegative="true" /> <!-- added 31 Aug 2013 -->	
 				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="of" relationTestIsNegative="true" />
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
 				<option useRedistributeRelationEntityReassignment="true" REL="0" REL_ENT="2" redistributeRelationEntityReassignment="_obj" />
@@ -1873,7 +1875,7 @@
 				<option numberOfRelations="2" />
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="of" />
 				<!-- <option relationTestSpecialCaseContinousVerb="true" REL="0" REL_ENT="0" /> -->
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wordNetPOS" value="2" REL="0" REL_ENT="0" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="2" REL="0" REL_ENT="0" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalTenseModifierArrayTemp" value="true" arrayIndex="0" REL="0" REL_ENT="0" />
 				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_obj" />
 				<option useRelationTest="true" REL="0" REL_ENT="1" relationTest="of" />
@@ -1884,13 +1886,13 @@
 				<option disableRelation="true" REL="0" />
 				<option disableEntity="true" REL="0" REL_ENT="1" />
 				</paramDepRel>
-
-				<!-- eg What is wood used in the delivering of? interpret _obj(making[6], _cloth[8]) + _obj(of[8], _$qVar[1]) -> _obj(making[7], _$qVar[1]) -->
+				
+				<!-- removed 31 Aug 2013 -->		
+				<!--	
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="2" />
-				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_obj" /> <!-- assuming it has been overwritten with object via execution of paramA -->
-				<!-- <option relationTestSpecialCaseContinousVerb="true" REL="0" REL_ENT="0" /> -->
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wordNetPOS" value="2" REL="0" REL_ENT="0" />
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_obj" /> //assuming it has been overwritten with object via execution of paramA
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="2" REL="0" REL_ENT="0" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalTenseModifierArrayTemp" value="true" arrayIndex="0" REL="0" REL_ENT="0" />
 				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_obj" />
 				<option useRelationTest="true" REL="0" REL_ENT="1" relationTest="of" />
@@ -1900,7 +1902,9 @@
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="0" redistributeRelationEntityIndexReassignmentRelationEntityID="0" />
 				<option disableRelation="true" REL="0" />
 				<option disableEntity="true" REL="0" REL_ENT="1" />
-				</paramDepRel>
+				</paramDepRel>	
+				-->			
+
 			</function>
 			<!-- #endif -->
 

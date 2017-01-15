@@ -763,7 +763,7 @@ void redistributeRelexRelationsDetectNameQueries(Sentence * currentSentenceInLis
 void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 	//eg1 Yarn is used in the making of cloth.	of(making[6], cloth[8]) + in(use[3], making[6])  -> _obj(making[6], _cloth[8])
-	//eg2 What is yarn used in the making of?   interpret  of(making[7], of[8]) + _obj(of[8], _$qVar[1])  -> _obj(making[7], _$qVar[1])
+	//eg2 What is yarn used in the making of?   interpret  of(making[7], of[8]) + _obj(of[8], _$qVar[1]) [+ ignore: in(use[4], making[7])  -> _obj(making[7], _$qVar[1])
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 2;
@@ -776,6 +776,8 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 
 	//eg Yarn is used in the making of cloth.	of(making[6], cloth[8]) + in(use[3], making[6]) -> _obj(making[6], _cloth[8])
 	GIAgenericDepRelInterpretationParameters paramA = param;
+	paramA.useRelationTest[REL1][REL_ENT2] = true; paramA.relationTest[REL1][REL_ENT2] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;  paramA.relationTestIsNegative[REL1][REL_ENT2] = true;	//added 31 Aug 2013	
+	paramA.useRelationIndexTest[REL1][REL_ENT3] = true; paramA.relationIndexTestRelationID[REL1][REL_ENT3] = REL1; paramA.relationIndexTestEntityID[REL1][REL_ENT3] = REL_ENT2; paramA.relationIndexTestIsNegative[REL1][REL_ENT3] = true;	//added 31 Aug 2013
 	paramA.useRelationTest[REL2][REL_ENT3] = true; paramA.relationTest[REL2][REL_ENT3] = RELATION_TYPE_PREPOSITION_OF; paramA.relationTestIsNegative[REL2][REL_ENT3] = true;
 	paramA.useRelationIndexTest[REL2][REL_ENT2] = true; paramA.relationIndexTestRelationID[REL2][REL_ENT2] = REL1; paramA.relationIndexTestEntityID[REL2][REL_ENT2] = REL_ENT1;
 	paramA.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramA.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_OBJECT;
@@ -793,11 +795,12 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 	paramB.disableEntity[REL1][REL_ENT2] = true;
 	genericDependecyRelationInterpretation(&paramB, REL1);
 	
+	/* removed 31 Aug 2013
 	//eg What is wood used in the delivering of?   interpret  _obj(making[6], _cloth[8]) + _obj(of[8], _$qVar[1])  -> _obj(making[7], _$qVar[1])
 	GIAgenericDepRelInterpretationParameters paramC = paramB;
 	paramC.useRelationTest[REL1][REL_ENT3] = true; paramC.relationTest[REL1][REL_ENT3] = RELATION_TYPE_OBJECT;	//assuming it has been overwritten with object via execution of paramA
 	genericDependecyRelationInterpretation(&paramC, REL1);
-		
+	*/
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)

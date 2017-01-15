@@ -1091,9 +1091,16 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 													cout << "applyGIATranslatorGenericXMLfunctions() error: illegal currentParamTag->firstAttribute->value = " << currentParamTag->firstAttribute->value << endl;
 												}
 											}
+
+																						
+											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation 
+											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))
+											{
+												result = false;
+											}
 											
 											/*
-											if(functionName == "redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction")
+											if(functionName == "redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs")
 											{
 												cout << "\t\t" << tempindex << ": dependency relations: " << endl;
 												tempindex++;
@@ -1112,12 +1119,6 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 												}
 											}
 											*/											
-								
-											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation 
-											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))
-											{
-												result = false;
-											}
 										}
 										currentParamTag = currentParamTag->nextTag;
 									}

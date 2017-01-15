@@ -574,15 +574,13 @@ bool testEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacterist
 	{
 		vectorHasItems = true;
 		EntityCharacteristic * entityCharacteristic = *entityCharacteristicIter;
-		//cout << "entityCharacteristic = " << entityCharacteristic->name << ", " << entityCharacteristic->value << endl;
-		//cout << "entity->stanfordPOStemp = " << entity->stanfordPOStemp << endl;
 		if(testEntityCharacteristic(entity, entityCharacteristic))
 		{
 			//cout << "passFound" << endl;
 			passFound = true;	
 		}
 		else
-		{
+		{	
 			failureFound = true;
 		}
 		//cout << "done" << endl;

@@ -2172,8 +2172,12 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 				}														
 				if(param->useRelationTest[currentRelationID][relationEntityID])
 				{
+					//cout << "\t useRelationTest: " << currentRelationID << ", " << relationEntityID << " = " << param->relationTest[currentRelationID][relationEntityID] << endl;	
+				
 					if(passedRelation)
 					{
+						//cout << "\t passedRelation useRelationTest: " << currentRelationID << ", " << relationEntityID << " = " << param->relationTest[currentRelationID][relationEntityID] << endl;	
+						
 						passedRelation = false;					
 						if(param->relationTestIsNegative[currentRelationID][relationEntityID])
 						{//negative
