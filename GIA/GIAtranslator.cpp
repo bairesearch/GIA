@@ -1085,18 +1085,29 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 			//record sentenceIndex for concept entity nodes also (NB cannot use GIAconceptNodeArray here as it won't include concept entity nodes for prepositions)
 			if(!(GIAentityNodeArray[w]->entityNodeDefiningThisInstance->empty()))
 			{
-				GIAentityNode * conceptNode = getPrimaryConceptNodeDefiningInstance(GIAentityNodeArray[w]);
-				if(conceptNode->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
-				{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network 
-					//cout << "assigning: " <<  currentSentenceInList->sentenceIndex << endl;
-					conceptNode->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
-				}
-				/*No problem detected here:
-				if(conceptNode->sentenceIndexTemp == 0)
+				#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+				GIAentityNode * instanceEntity = GIAentityNodeArray[w];
+				for(vector<GIAentityConnection*>::iterator connectionIter = instanceEntity->entityNodeDefiningThisInstance->begin(); connectionIter != instanceEntity->entityNodeDefiningThisInstance->end(); connectionIter++)
 				{
-					cout << "error: invalid sentence id" << endl;
+					GIAentityNode * conceptNode = (*connectionIter)->entity;
+				#else
+					GIAentityNode * conceptNode = getPrimaryConceptNodeDefiningInstance(GIAentityNodeArray[w]);
+				#endif
+				
+					if(conceptNode->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
+					{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network 
+						//cout << "assigning: " <<  currentSentenceInList->sentenceIndex << endl;
+						conceptNode->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
+					}
+					/*No problem detected here:
+					if(conceptNode->sentenceIndexTemp == 0)
+					{
+						cout << "error: invalid sentence id" << endl;
+					}
+					*/
+				#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE	
 				}
-				*/
+				#endif
 			}
 			#endif
 			

@@ -230,12 +230,10 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	if((entityNode->sentenceIndexTemp == sentenceIndex) || (entityNode->wasReference))	//condition (entityNode->wasReference) added 12 October 2012 1q3b
 	{
-	#endif	
-		cout << "\t\t1" << endl;	
+	#endif		
 		//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
 		if(!(entityNode->initialisedForPrinting) && !(entityNode->disabled))
 		{
-			cout << "\t\t2" << endl;
 			/*
 			cout << "\nentityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp << endl;
 			cout << "entityNode->entityName = " << entityNode->entityName << endl;
@@ -331,7 +329,7 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 				int r = entityVectorConnectionDrawPosXinitialArray[i];
 				for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 				{
-					cout << "\ti = " << i << ", initialiseEntityNodeForPrinting; " << (*connectionIter)->entity->entityName << endl;
+					//cout << "\ti = " << i << ", initialiseEntityNodeForPrinting; " << (*connectionIter)->entity->entityName << endl;
 					currentReferenceInPrintList = initialiseEntityNodeForPrinting((*connectionIter)->entity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, currentTag, sentenceIndex);
 
 					bool pass = true;
