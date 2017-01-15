@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p3a 18-September-2012
+ * Project Version: 1p4a 19-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -513,6 +513,9 @@
 
 #include "SHAREDglobalDefs.h"
 
+#define GIA_SUPPORT_INPUT_FILE_LISTS
+#define GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+
 #ifdef USE_CE
 	#define GIA_WITH_CE_CONVERT_PUNCTUATION_MARK_CHARACTERS_TO_FULL_STOPS
 	#ifdef GIA_WITH_CE_CONVERT_PUNCTUATION_MARK_CHARACTERS_TO_FULL_STOPS
@@ -593,11 +596,11 @@
 	//#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS_WORK_WITH_MULTIPLE_SENTENCES
 #endif
 //#define GIA_ALIASES_DEBUG
-//#define GIA_ADVANCED_REFERENCING_DEBUG  	      //just finished first debug using this (1l5f)
+//#define GIA_ADVANCED_REFERENCING_DEBUG  	  //just finished first debug using this (1l5f)
 //#define GIA_QUERY_DEBUG
 //#define GIA_STANFORD_CORENLP_CODEPENDENCY_PRONOMINAL_REFERENCING_DEBUG
 //#define GIA_DATABASE_DEBUG_FILESYSTEM_IO
-//#define GIA_DATABASE_DEBUG		      //this needs to be debugged (not yet tested)
+//#define GIA_DATABASE_DEBUG		  //this needs to be debugged (not yet tested)
 //#define GIA_QUERY_MULTIPLE_ANSWERS_DEBUG      //just finished first debug using this (1l2a)
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET

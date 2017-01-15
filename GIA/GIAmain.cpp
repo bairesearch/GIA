@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p3a 18-September-2012
+ * Project Version: 1p4a 19-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -73,6 +73,9 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 "\n\t-ionlprelq [string]: query NLP dependency relation parser .xml intermediary input/output filename (def: inputNLPrelationQuery.xml)"
 "\n\t-ionlptagq [string]: query NLP feature tag parser .xml intermediary input/output filename (def: inputNLPfeatureQuery.xml)"
 "\n\t-ixmlq [string]    : query semantic network definition .xml input filename (def: semanticNetQuery.xml)"
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS
+"\n\t-ilist		: all input files will be treated as file lists (new line delimited)"
+#endif
 "\n\t-oxml [string]     : semantic network definition .xml output filename (def: semanticNet.xml)"
 "\n\t-ocxl [string]     : semantic network display .cxl vector graphics output filename (def: semanticNet.cxl)"
 "\n\t-osvg [string]     : semantic network display .svg 2D vector graphics output filename (def: semanticNet.svg)"
@@ -210,6 +213,9 @@ int main(int argc,char **argv)
 	bool useOutputTextAnswerPlainTXTFile = false;
 	string outputTextAnswerPlainTXTFileName = "answer.txt";
 
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
+	bool inputFileList = false;
+#endif	
 	bool printOutput = false;
 	bool printOutputQuery = false;
 	bool displayInOpenGLAndOutputScreenshot = true;
@@ -316,6 +322,13 @@ int main(int argc,char **argv)
 			useInputQueryXMLFile = true;
 			useInputQuery = true;
 		}
+		
+	#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
+		if(exists_argument(argc,argv,"-ilist"))
+		{
+			inputFileList = true;
+		}
+	#endif		
 
 		if(exists_argument(argc,argv,"-ocff"))
 		{
@@ -597,7 +610,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1p3a 18-September-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1p4a 19-September-2012" << endl;
 			exit(1);
 		}
 
@@ -819,15 +832,10 @@ int main(int argc,char **argv)
 	cout << "rasterImageWidth = " << rasterImageWidth << endl;
 	cout << "rasterImageHeight = " << rasterImageHeight << endl;
 	*/
-
+	
 #ifdef GIA_USE_LRP
 	if(useLRP)
 	{
-		setCurrentGIALRPtagTextCorrespondenceInfo(false);	//required for local variable access
-		if(!parseTextFileAndReduceLanguage(inputTextPlainTXTFileName, outputLRPTextPlainTXTFileName, outputLRPTextForNLPonlyPlainTXTFileName))
-		{
-			result = false;
-		}
 		if(useInputQuery)
 		{
 			setCurrentGIALRPtagTextCorrespondenceInfo(true);	//required for local variable access
@@ -836,148 +844,247 @@ int main(int argc,char **argv)
 				result = false;
 			}
 		}
-		inputTextPlainTXTFileName = outputLRPTextForNLPonlyPlainTXTFileName;	//now perform NLP using NLP specific (dummy) version of LRP output
 		inputQueryPlainTXTFileName = outputQueryLRPTextForNLPonlyPlainTXTFileName;	//now perform NLP using NLP specific (dummy) version of LRP output
 	}
 #endif
 
-#ifdef USE_CE
-	bool useCodeextensionsHeirachy = false;
-	CECodeextension * firstCodeextensionInHeirachy = NULL;
-	vector<CECodeextension*> * codeextensionsList;
-	if(useInputTextCodeextensionsTXTFileName)
+	
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS
+	int numberOfInputFilesInList = 1;
+	string * inputTextPlainTXTFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
+	#ifdef USE_CE
+	string * inputTextCodeextensionsTXTFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
+	#endif
+	string * inputTextNLPrelationXMLFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
+	string * inputTextNLPfeatureXMLFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
+	string * inputTextXMLFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
+	string outputTextCFFFileNameBase = outputTextCFFFileName;
+	string outputLRPTextPlainTXTFileNameBase = outputLRPTextPlainTXTFileName;
+	string outputLRPTextForNLPonlyPlainTXTFileNameBase = outputLRPTextForNLPonlyPlainTXTFileName;
+	if(inputFileList)
 	{
-		#ifdef GIA_WITH_CE_USE_CODEEXTENSION_HEIRACHY
-		useCodeextensionsHeirachy = true;
-		#else
-		useCodeextensionsHeirachy = false;		//have GIA parse claims list like any ordinary file (do not execute GIA for each claim dependency hierarchical combination)
-		#endif
-		
-		//generate codeextensions heirachy
-		//NB codeextensionLayoutFileName = inputTextPlainTXTFileName;
-		//NB codeextensionEnumeratedFileName = inputTextCodeextensionsTXTFileName;
-		#ifdef GIA_WITH_CE_DERIVE_SCODEEXTENSION_PREPEND
-		bool deriveSubcodeextensionPrepend = true;
-		#else
-		bool deriveSubcodeextensionPrepend = false;
-		#endif
-
-		bool generateCodeextensionClassHeirachy = true;		//NB this is required for external applications needing to extract codeextensions layout information using CE
-		firstCodeextensionInHeirachy = new CECodeextension();
-		codeextensionsList = new vector<CECodeextension*>;
-
-		if(!deriveScodeextensionPrependAndCreateCodeextensionsLayout(inputTextCodeextensionsTXTFileName, inputTextPlainTXTFileName, deriveSubcodeextensionPrepend, generateCodeextensionClassHeirachy, firstCodeextensionInHeirachy, codeextensionsList))
-		{
-			result = false;
-		}
-
-		/*//need to explicitly state whether to use a plain text file, else will use NLP xml file
-		if(!useInputTextNLPrelationXMLFile)
-		{//if NLP parsed codeextensions not available, then execute NLP parser on generated codeextensions summary (inputTextPlainTXTFileName)
-			useInputTextPlainTXTFile = true;
-		}
-		*/
-
-		if(useInputTextNLPrelationXMLFile && !(fileExists(&inputTextNLPrelationXMLFileName)))
-		{
-			useInputTextPlainTXTFile = true;
-		}
-	}
-#endif
-
-	if(useInputTextPlainTXTFile)
-	{
-		//cout << "DEBUGA" << endl;
-		/*
-		if(useInputTextNLPrelationXMLFile)
-		{
-			cout << "error: useInputTextPlainTXTFile && useInputTextNLPrelationXMLFile" << endl;
-			exit(0);
-		}
-		else
-		*/
-		if(useInputTextXMLFile)
-		{
-			cout << "error: useInputTextPlainTXTFile && useInputTextXMLFile" << endl;
-			exit(0);
-		}
-		else
-		{
-			executeNLPparser(inputTextPlainTXTFileName, inputTextNLPrelationXMLFileName, NLPdependencyRelationsParser, NLPexeFolderArray);
-			if(inputTextNLPfeatureXMLFileName != inputTextNLPrelationXMLFileName)
-			{
-				executeNLPparser(inputTextPlainTXTFileName, inputTextNLPfeatureXMLFileName, NLPfeatureParser, NLPexeFolderArray);
-			}
-			useInputTextNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
-
-			/*
-			#ifdef GIA_USE_LRP
-			convertRevertNLPtagNamesToOfficialLRPOutput(NLPdependencyRelationsParser, NLPfeatureParser, LRPTextForNLPonlyPlainTXTFileName, LRPTextPlainTXTFileName, inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName);
-			#endif
-			*/
-		}
-	}
-
-	if(useInputTextNLPrelationXMLFile)
-	{
-		//cout << "DEBUGB" << endl;
-		//cout << "inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
-		//cout << "inputTextNLPfeatureXMLFileName = " << inputTextNLPfeatureXMLFileName << endl;
-		//cout << "outputTextCFFFileName = " << outputTextCFFFileName << endl;
-
-		if(useInputTextXMLFile)
-		{
-			cout << "error: useInputTextXMLFile && useInputTextNLPrelationXMLFile" << endl;
-			exit(0);
-		}
-		else
-		{
-			char tempCurrentFolder[EXE_FOLDER_PATH_MAX_LENGTH];
-			#ifdef LINUX
-			getcwd(tempCurrentFolder, EXE_FOLDER_PATH_MAX_LENGTH);
-			#else
-			::GetCurrentDirectory(EXE_FOLDER_PATH_MAX_LENGTH, tempCurrentFolder);
-			#endif
-			//cout << "tempCurrentFolder = " << tempCurrentFolder << endl;
-				
-			//cout << "as" << endl;
-			#ifdef USE_CE
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, firstCodeextensionInHeirachy, codeextensionsList, useCodeextensionsHeirachy))
-			#else
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations))
-			#endif
-			{
-				result = false;
-			}
-
-			//cout << "as2" << endl;
-		}
-	}
-
-	if(useInputTextXMLFile)
-	{
-		//cout << "DEBUGC" << endl;
 		if(useInputTextPlainTXTFile)
 		{
-			cout << "error: useInputTextXMLFile && useInputTextPlainTXTFile" << endl;
-			exit(0);
+			numberOfInputFilesInList = getFilesFromFileList(inputTextPlainTXTFileName, inputTextPlainTXTFileNameArray);
 		}
+	#ifdef USE_CE
+		if(useInputTextCodeextensionsTXTFileName)
+		{
+			numberOfInputFilesInList = getFilesFromFileList(inputTextCodeextensionsTXTFileName, inputTextCodeextensionsTXTFileNameArray);
+		}
+	#endif
 		if(useInputTextNLPrelationXMLFile)
 		{
-			cout << "error: useInputTextXMLFile && useInputTextNLPrelationXMLFile" << endl;
-			exit(0);
+			numberOfInputFilesInList = getFilesFromFileList(inputTextNLPrelationXMLFileName, inputTextNLPrelationXMLFileNameArray);
 		}
-		else
+		if(useInputTextNLPfeatureXMLFile)
 		{
-			if(!readSemanticNetXMLFileOptimised(inputTextXMLFileName, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
+			numberOfInputFilesInList = getFilesFromFileList(inputTextNLPfeatureXMLFileName, inputTextNLPfeatureXMLFileNameArray);
+		}
+
+		if(useInputTextXMLFile)
+		{
+			numberOfInputFilesInList = getFilesFromFileList(inputTextXMLFileName, inputTextXMLFileNameArray);	
+		}			
+	}
+
+	for(int inputFileNameIndex=0; inputFileNameIndex<numberOfInputFilesInList; inputFileNameIndex++)	//CHECKTHIS: change back to 0
+	{
+		#ifdef LINUX
+		chdir(workingFolderCharStar);
+		#else
+		::SetCurrentDirectory(workingFolderCharStar);
+		#endif	
+			
+		if(inputFileList)
+		{
+			if(useInputTextPlainTXTFile)
+			{
+				inputTextPlainTXTFileName = inputTextPlainTXTFileNameArray[inputFileNameIndex];
+			}
+		#ifdef USE_CE
+			if(useInputTextCodeextensionsTXTFileName)
+			{
+				inputTextCodeextensionsTXTFileName = inputTextCodeextensionsTXTFileNameArray[inputFileNameIndex];
+			}
+		#endif
+			if(useInputTextNLPrelationXMLFile)
+			{
+				inputTextNLPrelationXMLFileName = inputTextNLPrelationXMLFileNameArray[inputFileNameIndex];
+			}
+			if(useInputTextNLPfeatureXMLFile)
+			{
+				inputTextNLPfeatureXMLFileName = inputTextNLPfeatureXMLFileNameArray[inputFileNameIndex];
+			}
+
+			if(useInputTextXMLFile)
+			{
+				inputTextXMLFileName = inputTextXMLFileNameArray[inputFileNameIndex];	
+			}	
+			
+			char inputFileNameIndexStringCharStar[10];
+			sprintf(inputFileNameIndexStringCharStar, "%d", inputFileNameIndex);
+			outputTextCFFFileName = outputTextCFFFileNameBase + "." + inputFileNameIndexStringCharStar;	
+			outputLRPTextPlainTXTFileName = outputLRPTextPlainTXTFileNameBase + "." + inputFileNameIndexStringCharStar;
+			outputLRPTextForNLPonlyPlainTXTFileName = outputLRPTextForNLPonlyPlainTXTFileNameBase + "." + inputFileNameIndexStringCharStar;
+		}
+	#endif	
+		
+	#ifdef GIA_USE_LRP
+		if(useLRP)
+		{
+			setCurrentGIALRPtagTextCorrespondenceInfo(false);	//required for local variable access
+			if(!parseTextFileAndReduceLanguage(inputTextPlainTXTFileName, outputLRPTextPlainTXTFileName, outputLRPTextForNLPonlyPlainTXTFileName))
 			{
 				result = false;
 			}
-			#ifdef GIA_TRANSLATOR_DEBUG
-			cout << "record concept nodes as permanent if they are disabled (prepare for use in GIA)" << endl;
-			#endif
-			recordConceptNodesAsNonPermanentIfTheyAreDisabled(entityNodesActiveListConcepts);	//prepare for use in GIA
+			inputTextPlainTXTFileName = outputLRPTextForNLPonlyPlainTXTFileName;	//now perform NLP using NLP specific (dummy) version of LRP output
+		}
+	#endif
 
+	#ifdef USE_CE
+		bool useCodeextensionsHeirachy = false;
+		CECodeextension * firstCodeextensionInHeirachy = NULL;
+		vector<CECodeextension*> * codeextensionsList;
+		if(useInputTextCodeextensionsTXTFileName)
+		{
+			#ifdef GIA_WITH_CE_USE_CODEEXTENSION_HEIRACHY
+			useCodeextensionsHeirachy = true;
+			#else
+			useCodeextensionsHeirachy = false;		//have GIA parse claims list like any ordinary file (do not execute GIA for each claim dependency hierarchical combination)
+			#endif
+
+			//generate codeextensions heirachy
+			//NB codeextensionLayoutFileName = inputTextPlainTXTFileName;
+			//NB codeextensionEnumeratedFileName = inputTextCodeextensionsTXTFileName;
+			#ifdef GIA_WITH_CE_DERIVE_SCODEEXTENSION_PREPEND
+			bool deriveSubcodeextensionPrepend = true;
+			#else
+			bool deriveSubcodeextensionPrepend = false;
+			#endif
+
+			bool generateCodeextensionClassHeirachy = true;		//NB this is required for external applications needing to extract codeextensions layout information using CE
+			firstCodeextensionInHeirachy = new CECodeextension();
+			codeextensionsList = new vector<CECodeextension*>;
+
+			if(!deriveScodeextensionPrependAndCreateCodeextensionsLayout(inputTextCodeextensionsTXTFileName, inputTextPlainTXTFileName, deriveSubcodeextensionPrepend, generateCodeextensionClassHeirachy, firstCodeextensionInHeirachy, codeextensionsList))
+			{
+				result = false;
+			}
+
+			/*//need to explicitly state whether to use a plain text file, else will use NLP xml file
+			if(!useInputTextNLPrelationXMLFile)
+			{//if NLP parsed codeextensions not available, then execute NLP parser on generated codeextensions summary (inputTextPlainTXTFileName)
+				useInputTextPlainTXTFile = true;
+			}
+			*/
+
+			if(useInputTextNLPrelationXMLFile && !(fileExists(&inputTextNLPrelationXMLFileName)))
+			{
+				useInputTextPlainTXTFile = true;
+			}
+		}
+	#endif
+
+		cout << "inputTextPlainTXTFileName = " << inputTextPlainTXTFileName << endl;
+		cout << "inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
+		cout << "inputTextNLPfeatureXMLFileName = " << inputTextNLPfeatureXMLFileName << endl;
+
+
+		if(useInputTextPlainTXTFile)
+		{
+			//cout << "DEBUGA" << endl;
+			/*
+			if(useInputTextNLPrelationXMLFile)
+			{
+				cout << "error: useInputTextPlainTXTFile && useInputTextNLPrelationXMLFile" << endl;
+				exit(0);
+			}
+			else
+			*/
+			if(useInputTextXMLFile)
+			{
+				cout << "error: useInputTextPlainTXTFile && useInputTextXMLFile" << endl;
+				exit(0);
+			}
+			else
+			{
+				executeNLPparser(inputTextPlainTXTFileName, inputTextNLPrelationXMLFileName, NLPdependencyRelationsParser, NLPexeFolderArray);
+				if(inputTextNLPfeatureXMLFileName != inputTextNLPrelationXMLFileName)
+				{
+					executeNLPparser(inputTextPlainTXTFileName, inputTextNLPfeatureXMLFileName, NLPfeatureParser, NLPexeFolderArray);
+				}
+				useInputTextNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
+
+				/*
+				#ifdef GIA_USE_LRP
+				convertRevertNLPtagNamesToOfficialLRPOutput(NLPdependencyRelationsParser, NLPfeatureParser, LRPTextForNLPonlyPlainTXTFileName, LRPTextPlainTXTFileName, inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName);
+				#endif
+				*/
+			}
+		}
+
+		if(useInputTextNLPrelationXMLFile)
+		{
+			//cout << "DEBUGB" << endl;
+			//cout << "inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
+			//cout << "inputTextNLPfeatureXMLFileName = " << inputTextNLPfeatureXMLFileName << endl;
+			//cout << "outputTextCFFFileName = " << outputTextCFFFileName << endl;
+
+			if(useInputTextXMLFile)
+			{
+				cout << "error: useInputTextXMLFile && useInputTextNLPrelationXMLFile" << endl;
+				exit(0);
+			}
+			else
+			{
+				char tempCurrentFolder[EXE_FOLDER_PATH_MAX_LENGTH];
+				#ifdef LINUX
+				getcwd(tempCurrentFolder, EXE_FOLDER_PATH_MAX_LENGTH);
+				#else
+				::GetCurrentDirectory(EXE_FOLDER_PATH_MAX_LENGTH, tempCurrentFolder);
+				#endif
+				//cout << "tempCurrentFolder = " << tempCurrentFolder << endl;
+
+				//cout << "as" << endl;
+				#ifdef USE_CE
+				if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, firstCodeextensionInHeirachy, codeextensionsList, useCodeextensionsHeirachy))
+				#else
+				if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations))
+				#endif
+				{
+					result = false;
+				}
+
+				//cout << "as2" << endl;
+			}
+		}
+
+		if(useInputTextXMLFile)
+		{
+			//cout << "DEBUGC" << endl;
+			if(useInputTextPlainTXTFile)
+			{
+				cout << "error: useInputTextXMLFile && useInputTextPlainTXTFile" << endl;
+				exit(0);
+			}
+			if(useInputTextNLPrelationXMLFile)
+			{
+				cout << "error: useInputTextXMLFile && useInputTextNLPrelationXMLFile" << endl;
+				exit(0);
+			}
+			else
+			{
+				if(!readSemanticNetXMLFileOptimised(inputTextXMLFileName, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
+				{
+					result = false;
+				}
+				#ifdef GIA_TRANSLATOR_DEBUG
+				cout << "record concept nodes as permanent if they are disabled (prepare for use in GIA)" << endl;
+				#endif
+				recordConceptNodesAsNonPermanentIfTheyAreDisabled(entityNodesActiveListConcepts);	//prepare for use in GIA
+
+			}
 		}
 	}
 
@@ -1012,7 +1119,9 @@ int main(int argc,char **argv)
 			#endif
 			*/
 		}
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
 	}
+#endif
 
 	if(useInputQueryNLPrelationXMLFile)
 	{
@@ -1496,5 +1605,46 @@ bool fileExists(string * fileName)
 	}
 	return result;
 }
+
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS
+int getFilesFromFileList(string inputListFileName, string * inputFileNameArray)	
+{
+	bool result = true;
+	int numberOfInputFilesInList = 0;
+	ifstream parseFileObject(inputListFileName.c_str());
+	if(!parseFileObject.rdbuf( )->is_open( ))
+	{
+		//txt file does not exist in current directory.
+		cout << "Error: input list file does not exist in current directory: " << inputListFileName << endl;
+		result = false;
+	}
+	else
+	{
+		char currentToken;
+		int fileNameIndex = 0;
+		int charCount = 0;
+		string currentFileName = "";
+		while(parseFileObject.get(currentToken))
+		{
+			if(currentToken == CHAR_NEWLINE)
+			{
+				inputFileNameArray[fileNameIndex] = currentFileName;
+				//cout << "currentFileName = " << currentFileName << endl;
+				currentFileName = "";
+				fileNameIndex++;
+			}
+			else
+			{
+				currentFileName = currentFileName + currentToken;
+			}
+			charCount++;
+		}
+		numberOfInputFilesInList = fileNameIndex;
+	}	
+	//cout << "numberOfInputFilesInList = " << numberOfInputFilesInList << endl;
+	return numberOfInputFilesInList;
+}
+#endif
+
 
 

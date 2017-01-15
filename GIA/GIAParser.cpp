@@ -23,7 +23,7 @@
  * File Name: GIAParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p3a 18-September-2012
+ * Project Version: 1p4a 19-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -237,27 +237,53 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 		}
 		else if((c == CHAR_COMMA) || (c == CHAR_CLOSE_BRACKET))
 		{
-			if(currentRelationPart == 1)
-			{
-				relationGovernorIndex = int(atof(currentItemString));
-			}
-			else if(currentRelationPart == 2)
-			{
-				relationDependentIndex = int(atof(currentItemString));
-			}
-
-			if(currentRelation->relationDependentIndex > *maxNumberOfWordsInSentence)
-			{
-				*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;
-			}
-
-			currentItemString[0] = '\0';
-			currentRelationPart++;
-
+			bool foundEndOfEntry = false;
 			if(c == CHAR_COMMA)
 			{
 				characterIndex++;	//skip space after ,
+				c = (*relationsText)[characterIndex];
+				if(c == CHAR_SPACE)
+				{
+					foundEndOfEntry = true;
+				}
+				else
+				{	
+					//eg 50,000 in quantmod(50,000-8, than-7)
+					char characterString[2];
+					characterString[0] = CHAR_COMMA;
+					characterString[1] = '\0';
+					strcat(currentItemString, characterString);
+
+					characterString[0] = c;
+					characterString[1] = '\0';
+					strcat(currentItemString, characterString);					
+				}
 			}
+			else
+			{
+				foundEndOfEntry = true;
+			}
+			
+			if(foundEndOfEntry)
+			{			
+				if(currentRelationPart == 1)
+				{
+					relationGovernorIndex = int(atof(currentItemString));
+				}
+				else if(currentRelationPart == 2)
+				{
+					relationDependentIndex = int(atof(currentItemString));
+				}
+
+				if(currentRelation->relationDependentIndex > *maxNumberOfWordsInSentence)
+				{
+					*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;
+				}
+
+				currentItemString[0] = '\0';
+				currentRelationPart++;
+			}
+
 		}
 		else
 		{

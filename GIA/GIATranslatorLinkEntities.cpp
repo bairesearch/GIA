@@ -23,7 +23,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p3a 18-September-2012
+ * Project Version: 1p4a 19-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -253,23 +253,32 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				#endif
 				if(treatDefinitionAsEquality)
 				{
-					if(treatDefinitionAsEqualityReversePrimary)
+					if(definitionEntity->idActiveList == thingEntity->idActiveList)
 					{
 						#ifdef GIA_ALIASES_DEBUG
-						cout << "treatDefinitionAsEquality: treatDefinitionAsEqualityReversePrimary" << endl;
-						#endif
-						//eg max = the brown dog
-						mergeEntityNodesAddAlias(definitionEntity, thingEntity);		//less nodes to merge (more efficient)
-						GIAEntityNodeArray[thingIndex] = GIAEntityNodeArray[definitionIndex];
+						cout << "treatDefinitionAsEquality: already merged" << endl;
+						#endif					
 					}
 					else
 					{
-						#ifdef GIA_ALIASES_DEBUG
-						cout << "treatDefinitionAsEquality: !treatDefinitionAsEqualityReversePrimary" << endl;
-						#endif
-						//if no proper noun (or query) detected, each node is equal, eg the brown dog == the happy wolf]
-						mergeEntityNodesAddAlias(thingEntity, definitionEntity);
-						GIAEntityNodeArray[definitionIndex] = GIAEntityNodeArray[thingIndex];
+						if(treatDefinitionAsEqualityReversePrimary)
+						{
+							#ifdef GIA_ALIASES_DEBUG
+							cout << "treatDefinitionAsEquality: treatDefinitionAsEqualityReversePrimary" << endl;
+							#endif
+							//eg max = the brown dog
+							mergeEntityNodesAddAlias(definitionEntity, thingEntity);		//less nodes to merge (more efficient)
+							GIAEntityNodeArray[thingIndex] = GIAEntityNodeArray[definitionIndex];
+						}
+						else
+						{
+							#ifdef GIA_ALIASES_DEBUG
+							cout << "treatDefinitionAsEquality: !treatDefinitionAsEqualityReversePrimary" << endl;
+							#endif
+							//if no proper noun (or query) detected, each node is equal, eg the brown dog == the happy wolf]
+							mergeEntityNodesAddAlias(thingEntity, definitionEntity);
+							GIAEntityNodeArray[definitionIndex] = GIAEntityNodeArray[thingIndex];
+						}
 					}
 				}
 				else

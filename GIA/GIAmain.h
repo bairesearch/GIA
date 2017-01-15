@@ -23,7 +23,7 @@
  * File Name: GIAmain.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p3a 18-September-2012
+ * Project Version: 1p4a 19-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -50,7 +50,7 @@ using namespace std;
 	#include "CECodeextensionClass.h"
 #endif
 
-
+#define GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST (1000000)
 //#define GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
 
 
@@ -69,5 +69,9 @@ bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 	#endif
 
 bool fileExists(string * fileName);
+
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS
+int getFilesFromFileList(string inputListFileName, string * inputFileNameArray);	
+#endif
 
 #endif
