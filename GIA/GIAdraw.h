@@ -26,7 +26,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1d 12-September-2016
+ * Project Version: 2n1e 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -138,7 +138,7 @@
 				//this was cyan(?) in the original spec
 
 #define GIA_DRAW_CONCEPT_NODE_COLOUR (GIA_DRAW_NETWORK_INDEX_NODE_COLOUR)
-#define GIA_DRAW_ACTION_NETWORK_INDEX_NODE_COLOUR (GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR)
+#define GIA_DRAW_ACTION_CONCEPT_NODE_COLOUR (GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR)
 
 #ifdef GIA_DRAW_USE_UNIQUE_COLOURS_FOR_ENTITY_DEFINITION_NODES
 	#define GIA_DRAW_SUBSTANCE_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_MAGENTA)

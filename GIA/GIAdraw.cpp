@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1d 12-September-2016
+ * Project Version: 2n1e 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -466,53 +466,12 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 					entityColour = GIA_DRAW_QUERY_ANSWER_CONTEXT_NODE_COLOUR;
 				}
 				#endif
-				/*
-				else if(entityNode->hasAssociatedInstanceIsAction)
-				{
-					#ifdef GIA_DRAW_DEBUG
-					//if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
-					//{
-					//	cout << "(entityNode->hasAssociatedInstanceIsAction) && (entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)" << endl;
-					//}
-					#endif
-					if(entityNode->hasMeasure)
-					{
-						entityColour = GIA_DRAW_SUBSTANCE_MEASURE_NODE_COLOUR;
-					}
-					else
-					{
-						entityColour = GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
-					}
-				}
-				else if(entityNode->hasAssociatedInstanceIsCondition)
-				{
-					entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
-				}
-				*/
-				else if(entityNode->isActionConcept)
-				{
-					entityColour = GIA_DRAW_ACTION_NETWORK_INDEX_NODE_COLOUR;
-				}
 				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
 				{
 					if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
 					{
 						boxThickness = GIA_DRAW_THICKNESS_THICK;
 					}
-
-					if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
-					{
-						entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
-					}
-					else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
-					{
-						entityColour = GIA_DRAW_SUBSTANCE_QUALITY_NODE_COLOUR;
-					}
-					else
-					{
-						entityColour = GIA_DRAW_SUBSTANCE_NODE_COLOUR;
-					}
-
 					if(entityNode->hasMeasure)
 					{
 						entityColour = GIA_DRAW_SUBSTANCE_MEASURE_NODE_COLOUR;
@@ -521,7 +480,26 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 					{
 						entityColour = GIA_DRAW_SUBSTANCE_QUANTITY_NODE_COLOUR;
 					}
+					else
+					{
+						entityColour = GIA_DRAW_SUBSTANCE_NODE_COLOUR;
+					}
 
+				}
+				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
+				{
+					if(entityNode->isActionConcept)
+					{
+						entityColour = GIA_DRAW_ACTION_CONCEPT_NODE_COLOUR;
+					}
+					else
+					{
+						entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
+					}
+				}
+				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
+				{
+					entityColour = GIA_DRAW_SUBSTANCE_QUALITY_NODE_COLOUR;
 				}
 				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 				{
@@ -537,17 +515,45 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 				{
 					entityColour = GIA_DRAW_CONDITION_NODE_COLOUR;	//clear identify a time node
 				}
-				else if(entityNode->hasAssociatedInstance)
-				{//the original spec seemed to imply that entities that have associated substances (ie, that define substances) are special but they don't appear to be
-					if(!(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE))
+				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX)
+				{
+					/*
+					if(entityNode->hasAssociatedInstanceIsAction)
 					{
+						#ifdef GIA_DRAW_DEBUG
+						//if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
+						//{
+						//	cout << "(entityNode->hasAssociatedInstanceIsAction) && (entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)" << endl;
+						//}
+						#endif
+						if(entityNode->hasMeasure)
+						{
+							entityColour = GIA_DRAW_SUBSTANCE_MEASURE_NODE_COLOUR;
+						}
+						else
+						{
+							entityColour = GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
+						}
+					}
+					else if(entityNode->hasAssociatedInstanceIsCondition)
+					{
+						entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
+					}
+					*/
+					if(entityNode->hasAssociatedInstance)
+					{//the original spec seemed to imply that entities that have associated substances (ie, that define substances) are special but they don't appear to be
 						//added 2 May 11a (highlight entities which define substance nodes)
 						entityColour = GIA_DRAW_SUBSTANCE_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_NETWORK_INDEX_NODE_COLOUR;
+					}
+					else
+					{
+						entityColour = GIA_DRAW_NETWORK_INDEX_NODE_COLOUR;
 					}
 				}
 				else
 				{
-					entityColour = GIA_DRAW_NETWORK_INDEX_NODE_COLOUR;
+					cout << "initialiseEntityNodeForPrinting{} error: illegal entityNode->entityType: " << entityNode->entityType << endl;
+					exit(0);
 				}
 
 				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS

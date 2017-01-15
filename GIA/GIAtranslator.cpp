@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1d 12-September-2016
+ * Project Version: 2n1e 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1452,14 +1452,18 @@ void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassNetworkI
 			cout << "linkSubclassEntitiesWithParentClassEntities{}: entity->convertToSubClass - creating connection between subclass entity and parent" << endl;
 			#endif
 			bool sameReferenceSet = false;	//this is required for dreamModeLinkSpecificConceptsAndActions
+			#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 			if(linkAsAlias)
 			{
 				addDefinitionToEntityMarkConnectionAsAlias(subclassNonspecificConcept, parentClassNonspecificConcept, sameReferenceSet);
 			}
 			else
 			{
+			#endif
 				addDefinitionToEntity(subclassNonspecificConcept, parentClassNonspecificConcept, sameReferenceSet);
+			#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 			}
+			#endif
 		}
 	}		
 	#else
@@ -1481,14 +1485,18 @@ void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassNetworkI
 		#ifdef GIA_DEBUG
 		cout << "linkSubclassEntitiesWithParentClassEntities{}: entity->convertToSubClass - creating connection between subclass entity and parent" << endl;
 		#endif
+		#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 		if(linkAsAlias)
 		{
 			addDefinitionToEntityMarkConnectionAsAlias(subclassNetworkIndexEntity, parentClassNetworkIndexEntity, true);
 		}
 		else
 		{
+		#endif
 			addDefinitionToEntity(subclassNetworkIndexEntity, parentClassNetworkIndexEntity, true);
+		#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 		}
+		#endif
 	}
 	#endif							
 
