@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m5a 08-September-2016
+ * Project Version: 2m6a 09-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -501,7 +501,7 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 	#endif
 	
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
-	newSubstance->isSubClass = entity->isSubClass;
+	newSubstance->convertToSubClass = entity->convertToSubClass;
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
 	newSubstance->addSubClass = entity->addSubClass;
 	#endif
@@ -2340,83 +2340,91 @@ void setFirstNLCsentenceInList(NLCsentence* firstNLCsentenceInListNew)
 {
 	firstNLCsentenceInListLocal = firstNLCsentenceInListNew;
 }
-#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
-bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNode* indefiniteEntity, GIAentityNode* definiteEntity)
+bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNode* indefiniteEntity, GIAentityNode* definiteEntity, int* indentationDifferenceFound)
 {
 	bool foundIndefiniteEntity = false;
-
+	
 	//assume plurality tests already performed;
 	//if(((indefiniteEntity->grammaticalNumber == GRAMMATICAL_NUMBER_SINGULAR) && (definiteEntity->grammaticalNumber == GRAMMATICAL_NUMBER_SINGULAR)) || (indefiniteEntity->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL))
 	//{
 	if(indefiniteEntity->sentenceIndexTemp < definiteEntity->sentenceIndexTemp)
 	{
-		 NLCsentence* currentNLCsentenceInList = firstNLCsentenceInListLocal;
-		 bool foundIndefiniteEntitySentence = false;
-		 while((currentNLCsentenceInList->next != NULL) && !foundIndefiniteEntitySentence)
-		 {
+		NLCsentence* currentNLCsentenceInList = firstNLCsentenceInListLocal;
+		bool foundIndefiniteEntitySentence = false;
+		while((currentNLCsentenceInList->next != NULL) && !foundIndefiniteEntitySentence)
+		{
 			if(currentNLCsentenceInList->sentenceIndex == indefiniteEntity->sentenceIndexTemp)
 			{
-				foundIndefiniteEntitySentence = true;
+			       foundIndefiniteEntitySentence = true;
 			}
 			else
 			{
-				currentNLCsentenceInList = currentNLCsentenceInList->next;
+			       currentNLCsentenceInList = currentNLCsentenceInList->next;
 			}
-		 }
-		 NLCsentence* indefiniteEntityNLCsentenceInList = currentNLCsentenceInList;
+		}
+		NLCsentence* indefiniteEntityNLCsentenceInList = currentNLCsentenceInList;
+		
+		if(foundIndefiniteEntitySentence)
+		{
+			bool foundDefiniteEntitySentence = false;
+			int minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence = currentNLCsentenceInList->indentation;
+			while((currentNLCsentenceInList->next != NULL) && !foundDefiniteEntitySentence)
+			{
+				if(currentNLCsentenceInList->indentation < minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence)
+				{
+				       minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence = currentNLCsentenceInList->indentation;
+				}
 
-		 bool foundDefiniteEntitySentence = false;
-		 int minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence = currentNLCsentenceInList->indentation;
-		 while((currentNLCsentenceInList->next != NULL) && !foundDefiniteEntitySentence)
-		 {
-			if(currentNLCsentenceInList->indentation < minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence)
-			{
-				minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence = currentNLCsentenceInList->indentation;
+				if(currentNLCsentenceInList->sentenceIndex == definiteEntity->sentenceIndexTemp)
+				{
+				       foundDefiniteEntitySentence = true;
+				}
+				else
+				{
+				       currentNLCsentenceInList = currentNLCsentenceInList->next;
+				}
 			}
+			NLCsentence* definiteEntityNLCsentenceInList = currentNLCsentenceInList;
 
-			if(currentNLCsentenceInList->sentenceIndex == definiteEntity->sentenceIndexTemp)
-			{
-				foundDefiniteEntitySentence = true;
-			}
-			else
-			{
-				currentNLCsentenceInList = currentNLCsentenceInList->next;
-			}
-		 }
-		 NLCsentence* definiteEntityNLCsentenceInList = currentNLCsentenceInList;
-
-		#ifdef GIA_DEBUG
-		 //cout << "definiteEntity = " << definiteEntity->entityName << endl;
-		 //cout << "indefiniteEntity = " << indefiniteEntity->entityName << endl;
-		 #endif
-		 if(foundDefiniteEntitySentence)
-		 {
-			if(minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence < indefiniteEntityNLCsentenceInList->indentation)
-			{
-				#ifdef GIA_DEBUG
-				//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{}: no reference found" << endl;
-				#endif
-			}
-			else
-			{
-				#ifdef GIA_DEBUG
-				//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{}: entity declared in this function" << endl;
-				#endif
-				foundIndefiniteEntity = true;
-			}
-		 }
-		 else
-		 {
-		 	#ifdef GIA_DEBUG
-			//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{} error: !foundDefiniteEntitySentence" << endl;
+			#ifdef GIA_DEBUG
+			//cout << "definiteEntity = " << definiteEntity->entityName << endl;
+			//cout << "indefiniteEntity = " << indefiniteEntity->entityName << endl;
 			#endif
-		 }
+			if(foundDefiniteEntitySentence)
+			{
+				if(minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence < indefiniteEntityNLCsentenceInList->indentation)
+				{
+				       #ifdef GIA_DEBUG
+				       //cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{}: no reference found" << endl;
+				       #endif
+				}
+				else
+				{
+				       #ifdef GIA_DEBUG
+				       //cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{}: entity declared in this function" << endl;
+				       #endif
+				       foundIndefiniteEntity = true;
+				       *indentationDifferenceFound = definiteEntityNLCsentenceInList->indentation - indefiniteEntityNLCsentenceInList->indentation;
+				}
+			}
+			else
+			{
+			       #ifdef GIA_DEBUG
+			       //cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{} error: !foundDefiniteEntitySentence" << endl;
+			       #endif
+			}
+		}
+		else
+		{
+			#ifdef GIA_DEBUG
+			//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{} error: !foundIndefiniteEntitySentence" << endl;
+			#endif
+		}
 	}
 	//}
 
 	return foundIndefiniteEntity;
 }
-#endif
 #ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
 bool checkIfSentenceIsMathTextParsablePhrase(GIAsentence* currentSentenceInList)
 {
@@ -2437,3 +2445,89 @@ bool checkIfSentenceIsMathTextParsablePhrase(GIAsentence* currentSentenceInList)
 }
 #endif
 #endif
+
+
+#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+#ifdef GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
+
+GIAentityNode* createNewNonspecificSubstanceConcept(GIAentityNode* conceptEntity)
+{
+	GIAentityNode* nonspecificSubstanceConcept = addSubstanceToSubstanceDefinition(conceptEntity);		//or addSubstance{}
+	nonspecificSubstanceConcept->isSubstanceConcept = true;
+	#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
+	//this enables GIA drawing of substance concept
+	nonspecificSubstanceConcept->entityIndexTemp = GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ARTIFICAL_ENTITY_INDEX;	//there is no entity index associated with the artifically added substance concept
+	nonspecificSubstanceConcept->sentenceIndexTemp = conceptEntity->sentenceIndexTemp;
+	#endif
+	return nonspecificSubstanceConcept;
+}
+					
+GIAentityNode* getNonspecificSubstanceConceptEntityFromConcept(GIAentityNode* conceptEntity)
+{
+	GIAentityNode* nonspecificSubstanceConceptEntity = NULL;
+	for(vector<GIAentityConnection*>::iterator iter = conceptEntity->associatedInstanceNodeList->begin(); iter < conceptEntity->associatedInstanceNodeList->end(); iter++)
+	{
+		GIAentityNode* substanceConceptEntity = (*iter)->entity;
+		if(isNonspecificSubstanceConceptEntity(substanceConceptEntity))
+		{
+			nonspecificSubstanceConceptEntity = substanceConceptEntity;
+		}
+	}	
+	
+	return nonspecificSubstanceConceptEntity;
+}
+
+//preconditions: dream mode has already been excuted (all instances have been connected to their non-specific substance concept entity)
+GIAentityNode* getNonspecificSubstanceConceptEntityFromInstance(GIAentityNode* instanceEntity)
+{
+	GIAentityNode* nonspecificSubstanceConceptEntity = NULL;
+	for(vector<GIAentityConnection*>::iterator iter = instanceEntity->entityNodeDefinitionList->begin(); iter < instanceEntity->entityNodeDefinitionList->end(); iter++)
+	{
+		GIAentityNode* substanceConceptEntity = (*iter)->entity;
+		if(isNonspecificSubstanceConceptEntity(substanceConceptEntity))
+		{
+			nonspecificSubstanceConceptEntity = substanceConceptEntity;
+		}
+	}
+	
+	return nonspecificSubstanceConceptEntity;
+}
+
+bool isNonspecificSubstanceConceptEntity(GIAentityNode* entity)
+{
+	bool nonspecificConcept = false;
+	if(entity->isSubstanceConcept)
+	{
+		//cout << "substanceConcept found" << endl;
+
+		//now verify that the substanceConcept is a specific concept; ie, it has no sameReferenceSet properties/conditions
+		//eg accept: Dogs are fat. Dogs are happy.
+		//eg reject: Blue Dogs are fat. Blue Dogs are happy.
+		nonspecificConcept = true;
+		for(vector<GIAentityConnection*>::iterator propertyNodeListIterator = entity->propertyNodeList->begin(); propertyNodeListIterator < entity->propertyNodeList->end(); propertyNodeListIterator++)
+		{
+			GIAentityConnection* propertyConnection = (*propertyNodeListIterator);
+			if(propertyConnection->sameReferenceSet)
+			{
+				nonspecificConcept = false;
+			}
+		}
+		for(vector<GIAentityConnection*>::iterator conditionNodeListIterator = entity->conditionNodeList->begin(); conditionNodeListIterator < entity->conditionNodeList->end(); conditionNodeListIterator++)
+		{
+			GIAentityConnection* conditionConnection = (*conditionNodeListIterator);
+			if(conditionConnection->sameReferenceSet)
+			{
+				nonspecificConcept = false;
+			}
+		}
+		if(nonspecificConcept)
+		{
+			//cout << "nonspecificConcept found" << endl;
+		}
+	}
+	return nonspecificConcept;
+}	
+
+#endif
+#endif
+

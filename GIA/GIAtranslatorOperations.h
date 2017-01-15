@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m5a 08-September-2016
+ * Project Version: 2m6a 09-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -201,13 +201,19 @@ GIAentityNode* getPrimaryConceptNodeDefiningInstance(GIAentityNode* instanceEnti
 #ifdef GIA_SUPPORT_NLC_INTEGRATION
 NLCsentence* getFirstNLCsentenceInList();
 void setFirstNLCsentenceInList(NLCsentence* firstNLCsentenceInListNew);
-#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
-bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNode* indefiniteEntity, GIAentityNode* definiteEntity);
-#endif
+bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNode* indefiniteEntity, GIAentityNode* definiteEntity, int* indentationDifferenceFound);
 #ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
 bool checkIfSentenceIsMathTextParsablePhrase(GIAsentence* currentSentenceInList);
 #endif
-
 #endif
 
+#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+#ifdef GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
+GIAentityNode* createNewNonspecificSubstanceConcept(GIAentityNode* conceptEntity);
+GIAentityNode* getNonspecificSubstanceConceptEntityFromConcept(GIAentityNode* conceptEntity);
+GIAentityNode* getNonspecificSubstanceConceptEntityFromInstance(GIAentityNode* instanceEntity);
+	bool isNonspecificSubstanceConceptEntity(GIAentityNode* entity);
+#endif
+#endif
+							
 #endif

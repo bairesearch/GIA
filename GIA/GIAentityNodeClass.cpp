@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m5a 08-September-2016
+ * Project Version: 2m6a 09-September-2016
  *
  *******************************************************************************/
 
@@ -240,7 +240,10 @@ GIAentityNode::GIAentityNode(void)
 	mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation = false;
 	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
 	isSubClass = false;
+	#endif
+	convertToSubClass = false;
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
 	addSubClass = false;
 	#endif
@@ -475,7 +478,10 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation = false;
 	#endif	
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
 	isSubClass = false;
+	#endif
+	convertToSubClass = false;
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
 	addSubClass = false;
 	#endif
@@ -998,7 +1004,7 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 	testEntityCharacteristicIterationbool(entity->mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation, entityCharacteristic, "mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation", &foundMatch);
 	#endif	
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
-	testEntityCharacteristicIterationbool(entity->isSubClass, entityCharacteristic, "isSubClass", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->convertToSubClass, entityCharacteristic, "convertToSubClass", &foundMatch);
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
 	testEntityCharacteristicIterationbool(entity->addSubClass, entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
@@ -1180,7 +1186,7 @@ bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	setEntityCharacteristicIterationbool(&(entity->mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation), entityCharacteristic, "mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation", &foundMatch);
 	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
-	setEntityCharacteristicIterationbool(&(entity->isSubClass), entityCharacteristic, "isSubClass", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->convertToSubClass), entityCharacteristic, "convertToSubClass", &foundMatch);
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
 	setEntityCharacteristicIterationbool(&(entity->addSubClass), entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
@@ -1329,7 +1335,7 @@ bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	getEntityCharacteristicIterationbool(entity->mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation, entityCharacteristic, "mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation", &foundMatch);
 	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
-	getEntityCharacteristicIterationbool(entity->isSubClass, entityCharacteristic, "isSubClass", &foundMatch);
+	getEntityCharacteristicIterationbool(entity->convertToSubClass, entityCharacteristic, "convertToSubClass", &foundMatch);
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
 	getEntityCharacteristicIterationbool(entity->addSubClass, entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
@@ -1449,12 +1455,33 @@ string getParentClassEntityNameFromSubClassEntityName(string subClassEntityName)
 {
 	string parentEntityName = "";
 	int index = subClassEntityName.find(GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER);
-	if(index < subClassEntityName.length()-1)
+	if(index == CPP_STRING_FIND_RESULT_FAIL_VALUE)
+	{
+		cout << "getParentClassEntityNameFromSubClassEntityName{} error: failed to find GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER" << endl;
+	}
+	else if(index < subClassEntityName.length()-1)
 	{
 		parentEntityName = subClassEntityName.substr(index+1);
 	}
 	return parentEntityName;
 }
+
+/*
+string getChildClassEntityNameFromSubClassEntityName(string subClassEntityName)
+{
+	string childEntityName = "";
+	int index = subClassEntityName.find(GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER);
+	if(index == CPP_STRING_FIND_RESULT_FAIL_VALUE)
+	{
+		cout << "getChildClassEntityNameFromSubClassEntityName{} error: failed to find GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER" << endl;
+	}
+	else
+	{
+		childEntityName = subClassEntityName.substr(index);
+	}
+	return childEntityName;
+}
+*/
 
 string createSubClassEntityName(string childEntityName, string parentEntityName)
 {

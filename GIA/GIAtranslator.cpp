@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m5a 08-September-2016
+ * Project Version: 2m6a 09-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1006,8 +1006,13 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	linkEntities(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType, linkPreestablishedReferencesGIA);
 	#endif
 
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
 	createAdditionalSubclassEntities(GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, sentenceConceptEntityNodesList, currentSentenceInList->sentenceIndex);
+	#endif
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
+	detectUserDeclaredSubclassEntities(GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#endif
 	#endif
 	
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -1293,8 +1298,12 @@ void createParentsOfSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentityN
 		if(GIAentityNodeArrayFilled[w])
 		{
 			GIAentityNode* subclassConceptEntity = GIAconceptNodeArray[w];
-			if(subclassConceptEntity->isSubClass)
+			if(subclassConceptEntity->convertToSubClass)
 			{
+				#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
+				subclassConceptEntity->isSubClass = true;
+				#endif
+		
 				string parentClassName = getParentClassEntityNameFromSubClassEntityName(subclassConceptEntity->entityName);
 				
 				#ifdef GIA_DEBUG
@@ -1323,6 +1332,8 @@ void createParentsOfSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentityN
 #ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
 void createAdditionalSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* sentenceConceptEntityNodesList, int sentenceIndex)
 {
+	//eg The red bat is a xenomorph. -> create xenomorph_bat, and link red bat to xenomorph_bat substance concept
+
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
 		if(GIAentityNodeArrayFilled[w])
@@ -1340,11 +1351,13 @@ void createAdditionalSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentity
 						if(definitionEntityTemp->isSubstanceConcept)	//assume true
 						{
 							#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
-							if((*definitionNodeListIterator)->sentenceIndex = sentenceIndex)
-							{//in the case that a substance has been assignment multiple definitions in the text, eg "The animal is an dog. The animal is an alsatian"
+							if((*definitionNodeListIterator)->sentenceIndexTemp = sentenceIndex)
+							{//in the case that a substance has been assigned multiple definitions in the text, eg "The animal is a dog. The animal is an alsatian", in which case "The animal" entity node will be connected to both dog and alsation (due to GIA advanced referencing).
+							#else
+							//NB dream mode has not yet been executed so all substance concepts connected to this entity will have been defined in the same sentence
 							#endif
 								foundDefinitionEntity = true;
-								definitionEntity = definitionEntityTemp;	
+								definitionEntity = definitionEntityTemp;	//eg xenomorph
 							#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 							}
 							#endif
@@ -1353,12 +1366,16 @@ void createAdditionalSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentity
 					
 					if(foundDefinitionEntity)
 					{
-						string subClassEntityName = createSubClassEntityName(definitionEntity->entityName, entity->entityName);	//eg apple_fruit
+						string subClassEntityName = createSubClassEntityName(definitionEntity->entityName, entity->entityName);	//eg apple_fruit / xenomorph_bat
 						//cout << "subClassEntityName = " << subClassEntityName << endl;
 						bool subClassConceptEntityAlreadyExistant = false;
 						GIAentityNode* subClassConceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&subClassEntityName, &subClassConceptEntityAlreadyExistant, entityNodesActiveListConcepts);
 						if(!subClassConceptEntityAlreadyExistant)
 						{
+							#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
+							subClassConceptEntity->isSubClass = true;
+							#endif
+		
 							//cout << "creating subClassConceptEntity: " << subClassEntityName << endl;
 							sentenceConceptEntityNodesList->push_back(subClassConceptEntity);
 
@@ -1368,13 +1385,17 @@ void createAdditionalSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentity
 							#endif	
 
 							GIAentityNode* definitionConceptEntity = getPrimaryConceptNodeDefiningInstance(definitionEntity);
-							linkSubclassEntitiesWithParentClassEntities(subClassConceptEntity, definitionConceptEntity);
+							linkSubclassEntitiesWithParentClassEntities(subClassConceptEntity, definitionConceptEntity);	//links xenomorph_bat substance concept with xenomorph substance concept
 
-							#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-							//now create a definition link between the entity and the subClass substance concept (since this will not be created by GIA dream mode)
-							GIAentityNode* subclassNonspecificSubstanceConcept = getNonspecificSubstanceConceptEntity(subClassConceptEntity);
 							bool sameReferenceSet = false;	//this is required for dreamModeLinkSpecificConceptsAndActions
-							addDefinitionToEntity(entity, subclassNonspecificSubstanceConcept, sameReferenceSet);
+							#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+							#ifdef GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
+							//now create a definition link between the entity and the subClass substance concept (since this will not be created by GIA dream mode)
+							GIAentityNode* subclassNonspecificSubstanceConcept = getNonspecificSubstanceConceptEntityFromConcept(subClassConceptEntity);
+							addDefinitionToEntity(entity, subclassNonspecificSubstanceConcept, sameReferenceSet);	//links red bat to xenomorph_bat substance concept
+							#else
+							addDefinitionToEntity(entity, subClassConceptEntity, sameReferenceSet);	//links red bat to xenomorph_bat concept							
+							#endif
 							#endif
 						}
 					}
@@ -1392,7 +1413,7 @@ void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassConceptE
 				
 	#ifdef GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
 	bool subclassToParentEntityConnectionAlreadyMade = false;
-	GIAentityNode* subclassNonspecificSubstanceConcept = getNonspecificSubstanceConceptEntity(subclassConceptEntity);
+	GIAentityNode* subclassNonspecificSubstanceConcept = getNonspecificSubstanceConceptEntityFromConcept(subclassConceptEntity);
 	if(subclassNonspecificSubstanceConcept != NULL)
 	{
 		//cout << "subclassNonspecificSubstanceConcept found" << endl;
@@ -1411,20 +1432,23 @@ void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassConceptE
 	else
 	{
 		subclassNonspecificSubstanceConcept = createNewNonspecificSubstanceConcept(subclassConceptEntity);
+		#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
+		subclassNonspecificSubstanceConcept->isSubClass = true;
+		#endif
 	}
 
 	if(!subclassToParentEntityConnectionAlreadyMade)
 	{
 		//should a new subclassNonspecificSubstanceConcept be defined here regardless; ie GIAentityNode* subclassNonspecificSubstanceConcept = createNewNonspecificSubstanceConcept(subclassConceptEntity)? (because new substance concepts are created every sentence, even for non-specific substance concepts; eg "Pies are apples. Pies are berries.")
 		
-		GIAentityNode* parentClassNonspecificSubstanceConcept = getNonspecificSubstanceConceptEntity(parentClassConceptEntity);
+		GIAentityNode* parentClassNonspecificSubstanceConcept = getNonspecificSubstanceConceptEntityFromConcept(parentClassConceptEntity);
 		if(parentClassNonspecificSubstanceConcept == NULL)
 		{
 			parentClassNonspecificSubstanceConcept = createNewNonspecificSubstanceConcept(parentClassConceptEntity);
 		}
 
 		#ifdef GIA_DEBUG
-		cout << "linkSubclassEntitiesWithParentClassEntities{}: entity->isSubClass - creating connection between subclass entity and parent" << endl;
+		cout << "linkSubclassEntitiesWithParentClassEntities{}: entity->convertToSubClass - creating connection between subclass entity and parent" << endl;
 		#endif
 		bool sameReferenceSet = false;	//this is required for dreamModeLinkSpecificConceptsAndActions
 		addDefinitionToEntity(subclassNonspecificSubstanceConcept, parentClassNonspecificSubstanceConcept, sameReferenceSet);
@@ -1446,7 +1470,7 @@ void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassConceptE
 	if(!subclassToParentEntityConnectionAlreadyMade)
 	{
 		#ifdef GIA_DEBUG
-		cout << "linkSubclassEntitiesWithParentClassEntities{}: entity->isSubClass - creating connection between subclass entity and parent" << endl;
+		cout << "linkSubclassEntitiesWithParentClassEntities{}: entity->convertToSubClass - creating connection between subclass entity and parent" << endl;
 		#endif
 		addDefinitionToEntity(subclassConceptEntity, parentClassConceptEntity, true);
 	}
@@ -1454,61 +1478,26 @@ void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassConceptE
 
 }
 
-#ifdef GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
-
-GIAentityNode* createNewNonspecificSubstanceConcept(GIAentityNode* conceptEntity)
+#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
+void detectUserDeclaredSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
-	GIAentityNode* nonspecificSubstanceConcept = addSubstanceToSubstanceDefinition(conceptEntity);		//or addSubstance{}
-	nonspecificSubstanceConcept->isSubstanceConcept = true;
-	#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
-	//this enables GIA drawing of substance concept
-	nonspecificSubstanceConcept->entityIndexTemp = GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ARTIFICAL_ENTITY_INDEX;	//there is no entity index associated with the artifically added substance concept
-	nonspecificSubstanceConcept->sentenceIndexTemp = conceptEntity->sentenceIndexTemp;
-	#endif
-	return nonspecificSubstanceConcept;
-}
-					
-GIAentityNode* getNonspecificSubstanceConceptEntity(GIAentityNode* conceptEntity)
-{
-	GIAentityNode* nonspecificSubstanceConceptEntity = NULL;
-	for(vector<GIAentityConnection*>::iterator iter = conceptEntity->associatedInstanceNodeList->begin(); iter < conceptEntity->associatedInstanceNodeList->end(); iter++)
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
-		GIAentityNode* substanceConceptEntity = (*iter)->entity;
-		if(substanceConceptEntity->isSubstanceConcept)
+		if(GIAentityNodeArrayFilled[w])
 		{
-			//cout << "substanceConcept found" << endl;
-			
-			//now verify that the substanceConcept is a specific concept; ie, it has no sameReferenceSet properties/conditions
-			//eg accept: Dogs are fat. Dogs are happy.
-			//eg reject: Blue Dogs are fat. Blue Dogs are happy.
-			bool nonspecificConcept = true;
-			for(vector<GIAentityConnection*>::iterator propertyNodeListIterator = substanceConceptEntity->propertyNodeList->begin(); propertyNodeListIterator < substanceConceptEntity->propertyNodeList->end(); propertyNodeListIterator++)
+			GIAentityNode* entity = GIAentityNodeArray[w];
+			if(entity->isSubstance)	//ie !isAction && !isCondition (prevent multiword prepositions [and actions, in case multiword actions are implemented in the future])
 			{
-				GIAentityConnection* propertyConnection = (*propertyNodeListIterator);
-				if(propertyConnection->sameReferenceSet)
+				if((entity->entityName).find(GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 				{
-					nonspecificConcept = false;
+					entity->isSubClass = true;	
 				}
-			}
-			for(vector<GIAentityConnection*>::iterator conditionNodeListIterator = substanceConceptEntity->conditionNodeList->begin(); conditionNodeListIterator < substanceConceptEntity->conditionNodeList->end(); conditionNodeListIterator++)
-			{
-				GIAentityConnection* conditionConnection = (*conditionNodeListIterator);
-				if(conditionConnection->sameReferenceSet)
-				{
-					nonspecificConcept = false;
-				}
-			}
-			if(nonspecificConcept)
-			{
-				//cout << "nonspecificConcept found" << endl;
-				nonspecificSubstanceConceptEntity = substanceConceptEntity;
 			}
 		}
-	}	
-	
-	return nonspecificSubstanceConceptEntity;
+	}		
 }
 #endif
+
 #endif
 
 #ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
