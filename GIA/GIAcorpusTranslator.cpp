@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c4a 15-January-2014
+ * Project Version: 2c4b 16-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -623,7 +623,7 @@ void identifyComparisonVariableBasedOnSemanticRelations(Sentence * currentSenten
 				//cout << "entityNode = " << entityNode->entityName << endl;
 				if(corpusSpecialRelationIsQuery[i] == GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME)
 				{
-					//cout << GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME << endl;
+					cout << GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME << endl;
 					entityNode->isQuery = true;
 					setComparisonVariableNode(entityNode);
 					setFoundComparisonVariable(true);
@@ -633,7 +633,7 @@ void identifyComparisonVariableBasedOnSemanticRelations(Sentence * currentSenten
 				}
 				else if(corpusSpecialRelationIsQuery[i] == GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME)
 				{
-					//cout << GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME << endl;
+					cout << GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME << endl;
 					entityNode->isQuery = true;
 					entityNode->isNameQuery = true;
 					setComparisonVariableNode(entityNode);
@@ -644,7 +644,7 @@ void identifyComparisonVariableBasedOnSemanticRelations(Sentence * currentSenten
 				}
 				else if(corpusSpecialRelationIsQuery[i] == GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME)
 				{
-					//cout << GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME << endl;
+					cout << GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME << endl;
 					entityNode->isQuery = true;
 					entityNode->isWhichOrEquivalentWhatQuery = true;
 					setComparisonVariableNode(entityNode);
