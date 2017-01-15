@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q6c 28-October-2012
+ * Project Version: 1q6d 28-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -628,7 +628,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1q6c 28-October-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1q6d 28-October-2012" << endl;
 			exit(1);
 		}
 
@@ -1408,7 +1408,6 @@ int main(int argc,char **argv)
 			int irrelevant;
 			string printEntityNodeString = "";
 			bool traceInstantiations = false;
-			/*
 			traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
 			if(firstNLGsentence->NLGInputViewText == "")
 			{
@@ -1423,7 +1422,6 @@ int main(int argc,char **argv)
 				NLGSentence * currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 3);
 				traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
 			}
-			*/
 
 			currentNLGsentence = firstNLGsentence;
 			while(currentNLGsentence->next != NULL)
