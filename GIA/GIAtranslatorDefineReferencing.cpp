@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i18a 31-January-2015
+ * Project Version: 2i19a 31-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1936,16 +1936,55 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 										if(numberOfMatchedNodesTemp == maxNumberOfMatchedNodesPossible)
 										{
 										#endif
-											//found instance in network matching substance concept...
 											#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 											bool sameReferenceSet = false;
 											#else
 											bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 											#endif
-
-											addDefinitionToEntity(entityNode, currentSpecificConcept, sameReferenceSet);
-											#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
-											cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(): addDefinitionToEntity" << endl;
+											
+											#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS_ADVANCED
+											if(entityNode->isSubstanceConcept || entityNode->isActionConcept)
+											{
+												//eg3 Blue birds are tall. The happy eagle is a blue bird.
+												
+												/*
+												//this method may not be appropriate for GIA_USE_ADVANCED_REFERENCING; if substance concepts advanced reference each other in the future:
+												if(!(entityNode->entityNodeDefinitionReverseList->empty())
+												{
+													GIAentityNode* instanceEntity = (entityNode->entityNodeDefinitionReverseList->begin())->entity;	//take the first entity, and ensure its sentenceID is identical to that of its substance; indicated it was the original definition declared in the sentence
+													
+												}
+												*/
+												GIAentityNode* instanceEntity = NULL;;
+												for(vector<GIAentityConnection*>::iterator definitionNodeReverseListIterator = entityNode->entityNodeDefinitionReverseList->begin(); definitionNodeReverseListIterator < entityNode->entityNodeDefinitionReverseList->end(); definitionNodeReverseListIterator++)
+												{
+													if((*definitionNodeReverseListIterator)->entity->sentenceIndexTemp == entityNode->sentenceIndexTemp)
+													{
+														instanceEntity = (*definitionNodeReverseListIterator)->entity;
+														cout << "instanceEntity = " << instanceEntity->entityName << endl;
+													}
+												}
+												if(instanceEntity != NULL)
+												{
+													addDefinitionToEntity(instanceEntity, currentSpecificConcept, sameReferenceSet);
+													#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
+													cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(): addDefinitionToEntity" << endl;
+													#endif	
+												}
+											}
+											else
+											{
+											#endif
+												//eg1 Blue pies have bikes. The blue pie is happy.
+												//eg2 The yellow banana is a fruit. The yellow fruit is tasty. 
+												
+												//found instance in network matching substance concept...
+												addDefinitionToEntity(entityNode, currentSpecificConcept, sameReferenceSet);
+												#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
+												cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(): addDefinitionToEntity" << endl;
+												#endif
+											#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS_ADVANCED
+											}
 											#endif
 										#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
 										}
