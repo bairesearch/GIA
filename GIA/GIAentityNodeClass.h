@@ -429,6 +429,7 @@ public:
 
 	#ifdef USE_NLPI
 	bool parsedForNLPIcodeBlocks;
+	//bool parsedForNLPIcodeBlocksActionRound;
 	//bool parsedForNLPIclassHeirarchy;
 	bool NLPIisSingularArgument;
 	#endif

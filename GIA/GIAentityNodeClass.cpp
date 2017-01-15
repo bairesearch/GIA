@@ -244,6 +244,7 @@ GIAentityNode::GIAentityNode(void)
 
 	#ifdef USE_NLPI
 	parsedForNLPIcodeBlocks = false;
+	//parsedForNLPIcodeBlocksActionRound = false;
 	//parsedForNLPIclassHeirarchy = false;
 	NLPIisSingularArgument = false;
 	#endif
