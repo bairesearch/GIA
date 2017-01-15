@@ -23,7 +23,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t5a 28-July-2013
+ * Project Version: 1t5b 02-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -227,7 +227,7 @@ public:
 	bool grammaticalIsProperNoun;
 	int grammaticalGender;
 	bool grammaticalIsPronoun;
-	int grammaticalWordType;
+	int grammaticalWordType;	//wordNetPOS
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	int grammaticalIsDefiniteIndexOfDeterminer;
 	#endif

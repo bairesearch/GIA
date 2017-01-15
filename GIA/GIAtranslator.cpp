@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t5a 28-July-2013
+ * Project Version: 1t5b 02-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1118,6 +1118,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	defineSubstancesActions(currentSentenceInList, GIAentityNodeArray);
 	#endif
 
+	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "0r pass; define substances action concepts, eg 'swim' in 'To swim to the beach requires strength.'" << endl;
+	#endif
+	defineSubstancesActionConcepts(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
+	#endif
+	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "After substance declarations: " << endl;
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
