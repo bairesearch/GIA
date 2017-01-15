@@ -23,7 +23,7 @@
  * File Name: GIAcorpusDatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d1a 20-January-2014
+ * Project Version: 2d1b 21-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -51,6 +51,7 @@
 void initialiseCorpusDatabase(string newCorpusDatabaseFolderName);
 string createNewCorpusFileAndOpenItForWriting(Feature * firstFeatureInSentence);
 void closeCorpusFile();
+void saveTextLineToCurrentCorpusFile(string sentenceText);
 void saveTextToCurrentCorpusFile(string sentenceText);
 	void writeStringToFileObject2(string s, ofstream * writeFileObject);
 bool loadCorpusFileSemanticDependencyRelations(Sentence * currentSentenceInList);

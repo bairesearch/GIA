@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d1a 20-January-2014
+ * Project Version: 2d1b 21-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -670,7 +670,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		corpusFileName = createNewCorpusFileAndOpenItForWriting(currentSentenceInList->firstFeatureInList);
 		string sentenceText = regenerateSentenceText(currentSentenceInList->firstFeatureInList, true, NLPfeatureParser);
 		sentenceText = sentenceText + STRING_NEW_LINE;	//required to add new line at end of parsingWordsAndTags as per Stanford Parser specification (see parseStanfordParserFile)
-		saveTextToCurrentCorpusFile(sentenceText);
+		saveTextLineToCurrentCorpusFile(sentenceText);
 		cout << sentenceText << endl;
 	}
 	#endif
@@ -1187,7 +1187,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	if(!linkPreestablishedReferencesGIA)
 	{
 		string sentenceText = "";	//required to add new line at end of parsingTypedDependencies as per Stanford Parser specification (see parseStanfordParserFile)
-		saveTextToCurrentCorpusFile(sentenceText);
+		saveTextLineToCurrentCorpusFile(sentenceText);
 		closeCorpusFile();
 		#ifdef GIA2_CONNECTIONIST_NETWORK
 		if(!generateAllPermutationsFromSemanticRelationsFile(corpusFileName, NLPfeatureParser))

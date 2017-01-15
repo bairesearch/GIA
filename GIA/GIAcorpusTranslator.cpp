@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d1a 20-January-2014
+ * Project Version: 2d1b 21-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -932,12 +932,11 @@ bool generateAllPermutationsFromSemanticRelationsFile(string corpusFileName, int
 
 				//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes():
 
-					//determineGIAconnectionistNetworkPOStypeNames(firstFeatureInSentenceSubset, NLPfeatureParser);
-				corpusFileName = createNewCorpusFileAndOpenItForWriting(firstFeatureInSentenceSubset);
 				string sentenceText = regenerateSentenceText(firstFeatureInSentenceSubset, true, NLPfeatureParser);
 				sentenceText = sentenceText + STRING_NEW_LINE;	//required to add new line at end of parsingWordsAndTags as per Stanford Parser specification (see parseStanfordParserFile)
-				saveTextToCurrentCorpusFile(sentenceText);
+				sentenceText = sentenceText + STRING_NEW_LINE;
 				
+				bool foundAtLeastOneRelation = false;
 				Relation * currentRelationInList = sentence->firstRelationInList;
 				while(currentRelationInList->next != NULL)
 				{
@@ -946,15 +945,21 @@ bool generateAllPermutationsFromSemanticRelationsFile(string corpusFileName, int
 					{
 						//regenerate semantic relation based on parsed Relation object
 						string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationSimple(currentRelationInList->relationGovernor, currentRelationInList->relationDependent, currentRelationInList->relationType, currentRelationInList->relationGovernorIndex, currentRelationInList->relationDependentIndex, currentRelationInList->sameReferenceSet);
-						saveTextToCurrentCorpusFile(GIA2semanticDependencyRelation);
+						GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + STRING_NEW_LINE;
+						sentenceText = sentenceText + GIA2semanticDependencyRelation;
+						foundAtLeastOneRelation = true;
 					}
 					currentRelationInList = currentRelationInList->next;
 				}
+				sentenceText = sentenceText + STRING_NEW_LINE;	//required to add new line at end of parsingTypedDependencies as per Stanford Parser specification (see parseStanfordParserFile)
 
-				sentenceText = "";	//required to add new line at end of parsingTypedDependencies as per Stanford Parser specification (see parseStanfordParserFile)
-				saveTextToCurrentCorpusFile(sentenceText);
-				closeCorpusFile();
-
+				if(foundAtLeastOneRelation)
+				{
+					string corpusSubsetFileName = createNewCorpusFileAndOpenItForWriting(firstFeatureInSentenceSubset);
+					saveTextToCurrentCorpusFile(sentenceText);
+					closeCorpusFile();
+				}
+				
 				firstFeatureInSentenceSubset = firstFeatureInSentenceSubset->next;
 			}
 			centralFeatureInSentence->next = recordOfFeatureAfterCentralFeatureInSentence;	//restore temporarily disconnected node at end of sentence subset

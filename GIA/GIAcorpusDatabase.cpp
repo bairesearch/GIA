@@ -23,7 +23,7 @@
  * File Name: GIAcorpusDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d1a 20-January-2014
+ * Project Version: 2d1b 21-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -76,10 +76,15 @@ void closeCorpusFile()
 	corpusWriteFileObjectStream.close();
 }
 	
+void saveTextLineToCurrentCorpusFile(string sentenceText)
+{
+	writeStringToFileObject2(sentenceText, &corpusWriteFileObjectStream);
+	writeStringToFileObject2(STRING_NEW_LINE, &corpusWriteFileObjectStream);
+}
+
 void saveTextToCurrentCorpusFile(string sentenceText)
 {
 	writeStringToFileObject2(sentenceText, &corpusWriteFileObjectStream);
-	writeStringToFileObject2("\n", &corpusWriteFileObjectStream);
 }
 
 //from XMLparserClass.cpp
