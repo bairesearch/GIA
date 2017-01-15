@@ -3,7 +3,7 @@
  * File Name: GIAmain.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j1a 2-Apr-2012
+ * Project Version: 1i4a 3-Apr-2012
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -12,7 +12,12 @@
 #ifndef HEADER_GIA_MAIN
 #define HEADER_GIA_MAIN
 
+#include "GIAglobalDefs.h"
 #include "GIAEntityNodeClass.h"
+#ifdef USE_CE
+	#include "CEClaimClass.h"
+#endif
+
 
 #define GIA_DEBUG_PRINT_QUERY_SEMANTIC_NETWORK
 
@@ -38,7 +43,11 @@
 //OLD: #define GIA_RELEX_EXECUTABLE_RELATIVE_PATH_NAME "/relex-1.3.0/"	//gets added to executable path name
 
 int main(int argc,char **argv);
-bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery);
+#ifdef USE_CE	
+bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList);
+#else
+bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery);
+#endif
 void executeRelex(string inputPlainTXTFileName, string inputRelexXMLFileName);
 
 

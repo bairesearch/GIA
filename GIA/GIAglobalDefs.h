@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j1a 2-Apr-2012
+ * Project Version: 1i4a 3-Apr-2012
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
  * Description: GIA specific version of shared globals (replace if compiling other projects)
  *
