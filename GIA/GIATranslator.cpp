@@ -169,7 +169,7 @@ void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode 
 	newLocationCondition->sharedCondition->conditionName = locationConditionEntity->entityName;
 	newLocationCondition->sharedCondition->conditionEntity = locationConditionEntity;
 	newLocationCondition->sharedCondition->parentProperty = propertyNode;
-	newLocationCondition->sharedCondition->parentIsAction = true;
+	newLocationCondition->sharedCondition->parentIsAction = false;
 	newLocationCondition->sharedCondition->conditionIsAction = false;
 	propertyNode->firstLocationConditionNodeInList.push_back(newLocationCondition);
 	locationConditionEntity->firstLocationConditionNodeInReverseList.push_back(newLocationCondition);

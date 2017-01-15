@@ -69,7 +69,7 @@ public:
 		//NB this property, condition, would generally be associated with the entity performing the action [or the entity upon which the action is applied?], but not necessarily [requires more thought] - it may depend upon how selfish the entity is
 	*/
 	
-	bool parentIsAction;
+	bool parentIsAction;		//or parent is property
 	GIAActionNode * parentAction;		//ie, this condition is a condition for the parent action
 	GIAEntityNode * parentProperty;		//ie, this condition is a condition for the parent property
 };
