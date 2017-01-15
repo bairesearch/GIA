@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
  * File Name: GIATranslator.h
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1g6c 12-Feb-2012
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
@@ -139,6 +139,8 @@ using namespace std;
 //properties (possessive relationships)
 #define RELATION_TYPE_POSSESSIVE "_poss"	//eg his bike	[bike him]		/its bike
 #define RELATION_TYPE_PRENOMIAL_MODIFIER "_nn"
+
+#define RELATION_TYPE_PARATAXIS "_parataxis"	//eg "The guy, Akari said, left..." //added 13 February 2011
 
 //entities (concepts);					
 #define RELATION_FUNCTION_DEFINITION_1 "be"	//eg x is y
@@ -330,7 +332,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	void extractMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList);
 	void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList);
 	void extractQualities(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList);
-
+	void linkPropertiesParataxis(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[]);
+	
 bool isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(Relation * currentRelationInList, GIAEntityNode * GIAEntityNodeArray[], int relationFunctionIndex);
 
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity);

@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
  * File Name: GIATranslator.h
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1g6c 12-Feb-2012
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
@@ -946,7 +946,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		cout << "4g pass; extract qualities" << endl;
 		#endif
 		extractQualities(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList);
-				
+
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "4h pass; link properties (parataxis); eg the guy, Akari said, left..." << endl;
+		#endif
+		linkPropertiesParataxis(currentSentenceInList, GIAEntityNodeArray);
+						
 		
 		
 		//cout << "5a pass; parse questions" << endl;	
@@ -3916,7 +3921,30 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode
 	}
 }
 
+void linkPropertiesParataxis(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+{
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+ 	while(currentRelationInList->next != NULL)
+	{
+		if(currentRelationInList->relationType == RELATION_TYPE_PARATAXIS)
+		{
+			//cout << "RELATION_TYPE_PARATAXIS" << endl;
 
+			string propertyName = currentRelationInList->relationFunction; 
+			string actionName = currentRelationInList->relationArgument; 
+			int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
+			int relationArgumentIndex = currentRelationInList->relationArgumentIndex;				
+
+			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationFunctionIndex];
+			GIAEntityNode * actionEntity = GIAEntityNodeArray[relationArgumentIndex];
+			//cout << "propertyName = " << propertyEntity->entityName << endl;
+			//cout << "actionName = " << actionEntity->entityName << endl;
+
+			addOrConnectPropertyToEntity(actionEntity, propertyEntity);
+		}			
+		currentRelationInList = currentRelationInList->next;
+	}	
+}
 
 
 				
