@@ -57,24 +57,34 @@ using namespace std;
 #define GIA_DRAW_PROPERTY_NODE_HEIGHT (5)
 #define GIA_DRAW_PROPERTY_NODE_WIDTH (20)
 
-
-#define DRAW_Y_SPACE_BETWEEN_ENTITIES (50)			//should really be 1 for initialiseForPrint
-#define DRAW_X_SPACE_BETWEEN_ENTITIES (100)
-
-#define DRAW_Y_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE (15)
-#define DRAW_X_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE (50)		//should not be used during initialiseForPrint
-
-#define DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (15)	//should not be used during initialiseForPrint
-#define DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (50)	//should not be used during initialiseForPrint
-
-#define DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITIONS_OF_SAME_NODE (15)	//should not be used during initialiseForPrint
-#define DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITIONS_OF_SAME_NODE (50)	//should not be used during initialiseForPrint
-
-#define DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITIONS_OF_SAME_NODE (30)	//should not be used during initialiseForPrint
-#define DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITIONS_OF_SAME_NODE (25)	//should not be used during initialiseForPrint
-
 #define DRAW_X_INITIAL_OFFSET (100)
 #define DRAW_Y_INITIAL_OFFSET (0)
+
+#define DRAW_Y_SPACE_BETWEEN_ENTITIES (0)				//OLD: should really be 1 for initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_ENTITIES (100)
+#define DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE (50)			//OLD: should really be 1 for initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE (0)
+
+#define DRAW_Y_SPACE_BETWEEN_ACTION_NODES (0)
+#define DRAW_X_SPACE_BETWEEN_ACTION_NODES (50)		//should not be used during initialiseForPrint
+#define DRAW_Y_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE (15)
+#define DRAW_X_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE (0)		//should not be used during initialiseForPrint
+#define DRAW_Y_SPACE_BETWEEN_ACTION_DEFINITION_NODES (50)	//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_ACTION_DEFINITION_NODES (0)	//should not be used during initialiseForPrint
+
+#define DRAW_Y_SPACE_BETWEEN_CONDITION_NODES (0)		//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_CONDITION_NODES (50)		//should not be used during initialiseForPrint
+#define DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (15)	//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (0)	//should not be used during initialiseForPrint
+#define DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES (15)	//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES (50)	//should not be used during initialiseForPrint
+
+#define DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES (50)			//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_PROPERTY_NODES (0)	
+#define DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE (15)	//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE (0)	//should not be used during initialiseForPrint
+#define DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES (30)	//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES (-25)	//should not be used during initialiseForPrint
 
 #define SVG_SCALE_FACTOR (1)
 #define SVG_TEXT_SCALE_FACTOR (5)

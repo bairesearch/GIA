@@ -124,8 +124,8 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		//cout << "a1" << endl;
 				
 		//action connections;
-		q = 0;
-		r = -DRAW_X_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE;		
+		q = -DRAW_Y_SPACE_BETWEEN_ACTION_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_ACTION_NODES;		
 		vector<GIAActionNode*>::iterator actionIter;
 		for(actionIter = entityNode->firstIncomingActionNodeInList.begin(); actionIter != entityNode->firstIncomingActionNodeInList.end(); actionIter++) 
 		{
@@ -134,8 +134,8 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			//cout << "AA" << endl;
 			q = q + DRAW_Y_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE;
 		}
-		q = 0;
-		r = DRAW_X_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE;				
+		q = DRAW_Y_SPACE_BETWEEN_ACTION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_ACTION_NODES;				
 		for(actionIter = entityNode->firstActionNodeInList.begin(); actionIter != entityNode->firstActionNodeInList.end(); actionIter++) 
 		{
 			//cout << "AAA" << endl;	
@@ -147,32 +147,32 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		//cout << "a2" << endl;
 		
 		//conditions connections
-		q = DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		r = DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
 		vector<GIATimeConditionNode*>::iterator timeConditionIter;
 		for(timeConditionIter = entityNode->firstTimeConditionNodeInList.begin(); timeConditionIter != entityNode->firstTimeConditionNodeInList.end(); timeConditionIter++) 
 		{	
 			currentReferenceInPrintList = initialiseConditionNodeForPrinting((*timeConditionIter)->sharedCondition, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		}
-		q = DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		r = DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;	
+		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;	
 		vector<GIALocationConditionNode*>::iterator locationConditionIter;
 		for(locationConditionIter = entityNode->firstLocationConditionNodeInList.begin(); locationConditionIter != entityNode->firstLocationConditionNodeInList.end(); locationConditionIter++) 
 		{	
 			currentReferenceInPrintList = initialiseConditionNodeForPrinting((*locationConditionIter)->sharedCondition, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		}
-		q = DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		r = DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
 		vector<GIAPropertyConditionNode*>::iterator propertyConditionIter;
 		for(propertyConditionIter = entityNode->firstPropertyConditionNodeInList.begin(); propertyConditionIter != entityNode->firstPropertyConditionNodeInList.end(); propertyConditionIter++) 
 		{	
 			currentReferenceInPrintList = initialiseConditionNodeForPrinting((*propertyConditionIter)->sharedCondition, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		}
-		q = DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		r = DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
 		vector<GIAActionConditionNode*>::iterator actionConditionIter;
 		for(actionConditionIter = entityNode->firstActionConditionNodeInList.begin(); actionConditionIter != entityNode->firstActionConditionNodeInList.end(); actionConditionIter++) 
 		{
@@ -180,29 +180,29 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		}
 		//go reverse also...
-		q = -DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		r = -DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+		q = -DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
 		for(timeConditionIter = entityNode->firstTimeConditionNodeInReverseList.begin(); timeConditionIter != entityNode->firstTimeConditionNodeInReverseList.end(); timeConditionIter++) 
 		{	
 			currentReferenceInPrintList = initialiseConditionNodeForPrinting((*timeConditionIter)->sharedCondition, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		}
-		q = -DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		r = -DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;	
+		q = -DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;	
 		for(locationConditionIter = entityNode->firstLocationConditionNodeInReverseList.begin(); locationConditionIter != entityNode->firstLocationConditionNodeInReverseList.end(); locationConditionIter++) 
 		{	
 			currentReferenceInPrintList = initialiseConditionNodeForPrinting((*locationConditionIter)->sharedCondition, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		}
-		q = -DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		r = -DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+		q = -DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
 		for(propertyConditionIter = entityNode->firstPropertyConditionNodeInReverseList.begin(); propertyConditionIter != entityNode->firstPropertyConditionNodeInReverseList.end(); propertyConditionIter++) 
 		{	
 			currentReferenceInPrintList = initialiseConditionNodeForPrinting((*propertyConditionIter)->sharedCondition, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		}
-		q = -DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		r = -DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+		q = -DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
 		for(actionConditionIter = entityNode->firstActionConditionNodeInReverseList.begin(); actionConditionIter != entityNode->firstActionConditionNodeInReverseList.end(); actionConditionIter++) 
 		{
 			currentReferenceInPrintList = initialiseConditionNodeForPrinting((*actionConditionIter)->sharedCondition, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
@@ -214,26 +214,26 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		
 		//property connections	
 		vector<GIAEntityNode*>::iterator entityIter;
-		q = DRAW_Y_SPACE_BETWEEN_ENTITIES;
-		r = 0;		
+		q = DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES;
+		r = DRAW_X_SPACE_BETWEEN_PROPERTY_NODES;		
 		for(entityIter = entityNode->firstPropertyNodeInList.begin(); entityIter != entityNode->firstPropertyNodeInList.end(); entityIter++) 
 		{//DRAW SHOULD NOT BE REQUIRED	
 			//cout << "a31" << endl;
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES;
+			q = q+DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE;
 		}
 		//go reverse also...
-		q = -DRAW_Y_SPACE_BETWEEN_ENTITIES;
-		r = 0;			
+		q = -DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_PROPERTY_NODES;			
 		for(entityIter = entityNode->firstPropertyNodeInReverseList.begin(); entityIter != entityNode->firstPropertyNodeInReverseList.end(); entityIter++) 
 		{//DRAW SHOULD NOT BE REQUIRED
 			//cout << "a32" << endl;	
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			q = q-DRAW_Y_SPACE_BETWEEN_ENTITIES;
+			q = q+DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE;			//this was - not +
 		}		
 		//go upwards also...
-		q = -DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITIONS_OF_SAME_NODE;
-		r = DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITIONS_OF_SAME_NODE;		
+		q = -DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;		
 		if(entityNode->entityNodeDefiningThisProperty != NULL)
 		{
 			//cout << "a33" << endl;
@@ -249,8 +249,8 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			}
 				
 		}
-		q = -DRAW_Y_SPACE_BETWEEN_ENTITIES;
-		r = 0;			
+		q = DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;		//this used to be - not +
+		r = DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;			
 		if(entityNode->entityNodeContainingThisProperty != NULL)
 		{
 			//cout << "a34" << endl;
@@ -272,11 +272,11 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		
 		//cout << "a5" << endl;
 		
-		q = DRAW_Y_SPACE_BETWEEN_ENTITIES;
-		r = 0;				
+		q = -DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;
+		r = -DRAW_X_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;				
 		for(entityIter = entityNode->firstEntityNodeInDefinitionList.begin(); entityIter != entityNode->firstEntityNodeInDefinitionList.end(); entityIter++) 
 		{
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y-q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			if(initialiseOrPrint == DRAW_PRINT)
 			{	
 				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
@@ -285,39 +285,39 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				pos4.z = DRAW_CONNECTION_Z;
 				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_BASICENTITY_CONNECTION_COLOUR, writeFileObject);
 			}
-			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES;
+			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;
 
 		}
 		//go reverse also...
-		q = DRAW_Y_SPACE_BETWEEN_ENTITIES;
-		r = 0;			
+		q = DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;
+		r = DRAW_X_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;			
 		for(entityIter = entityNode->firstEntityNodeInDefinitionReverseList.begin(); entityIter != entityNode->firstEntityNodeInDefinitionReverseList.end(); entityIter++) 
 		{//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES;
+			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;
 		}
 		//cout << "a6" << endl;
 		
 				
 		//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
 		//associated actions and properties [ie does this entity also define an action/verb or a property/adjective? [ie, it is not just a thing/noun]]
-		q = DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITIONS_OF_SAME_NODE;
-		r = -DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITIONS_OF_SAME_NODE;			
+		q = DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;	//this used to be - not +		
 		for(entityIter = entityNode->firstAssociatedPropertyNodeInList.begin(); entityIter != entityNode->firstAssociatedPropertyNodeInList.end(); entityIter++) 
 		{
 			//cout << "as0" << endl;
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			//cout << "as1" << endl;
-			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES;
+			q = q+DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE;
 		}	
-		q = DRAW_Y_SPACE_BETWEEN_ENTITIES;
-		r = 0;			
+		q = DRAW_Y_SPACE_BETWEEN_ACTION_DEFINITION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_ACTION_DEFINITION_NODES;			
 		for(actionIter = entityNode->firstAssociatedActionNodeInList.begin(); actionIter != entityNode->firstAssociatedActionNodeInList.end(); actionIter++) 
 		{
 			//cout << "as2" << endl;
 			currentReferenceInPrintList = initialiseActionNodeForPrinting((*actionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			//cout << "as3" << endl;
-			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES;
+			q = q+DRAW_Y_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE;
 		}
 		
 		//cout << "a7" << endl;
@@ -432,32 +432,32 @@ Reference * initialiseActionNodeForPrinting(GIAActionNode * actionNode, int y, i
 		int q, r;
 		
 		//conditions connections
-		q = DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		r = DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
 		vector<GIATimeConditionNode*>::iterator timeConditionIter;
 		for(timeConditionIter = actionNode->firstTimeConditionNodeInList.begin(); timeConditionIter != actionNode->firstTimeConditionNodeInList.end(); timeConditionIter++) 
 		{	
 			currentReferenceInPrintList = initialiseConditionNodeForPrinting((*timeConditionIter)->sharedCondition, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		}
-		q = DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		r = DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;	
+		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;	
 		vector<GIALocationConditionNode*>::iterator locationConditionIter;
 		for(locationConditionIter = actionNode->firstLocationConditionNodeInList.begin(); locationConditionIter != actionNode->firstLocationConditionNodeInList.end(); locationConditionIter++) 
 		{	
 			currentReferenceInPrintList = initialiseConditionNodeForPrinting((*locationConditionIter)->sharedCondition, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		}
-		q = DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		r = DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
 		vector<GIAPropertyConditionNode*>::iterator propertyConditionIter;
 		for(propertyConditionIter = actionNode->firstPropertyConditionNodeInList.begin(); propertyConditionIter != actionNode->firstPropertyConditionNodeInList.end(); propertyConditionIter++) 
 		{	
 			currentReferenceInPrintList = initialiseConditionNodeForPrinting((*propertyConditionIter)->sharedCondition, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		}
-		q = DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		r = DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
 		vector<GIAActionConditionNode*>::iterator actionConditionIter;
 		for(actionConditionIter = actionNode->firstActionConditionNodeInList.begin(); actionConditionIter != actionNode->firstActionConditionNodeInList.end(); actionConditionIter++) 
 		{
@@ -465,15 +465,15 @@ Reference * initialiseActionNodeForPrinting(GIAActionNode * actionNode, int y, i
 			q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		}
 		//go reverse also...
-		q = -DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		r = -DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+		q = -DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
 		for(propertyConditionIter = actionNode->firstPropertyConditionNodeInReverseList.begin(); propertyConditionIter != actionNode->firstPropertyConditionNodeInReverseList.end(); propertyConditionIter++) 
 		{	
 			currentReferenceInPrintList = initialiseConditionNodeForPrinting((*propertyConditionIter)->sharedCondition, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		}
-		q = -DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		r = -DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+		q = -DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
 		for(actionConditionIter = actionNode->firstActionConditionNodeInReverseList.begin(); actionConditionIter != actionNode->firstActionConditionNodeInReverseList.end(); actionConditionIter++) 
 		{
 			currentReferenceInPrintList = initialiseConditionNodeForPrinting((*actionConditionIter)->sharedCondition, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
@@ -492,8 +492,8 @@ Reference * initialiseActionNodeForPrinting(GIAActionNode * actionNode, int y, i
 		
 				
 		//go upwards (action definitions) and sideways also (incoming/outgoing actions...)
-		q = -DRAW_Y_SPACE_BETWEEN_ENTITIES;
-		r = 0;		
+		q = -DRAW_Y_SPACE_BETWEEN_ACTION_DEFINITION_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_ACTION_DEFINITION_NODES;		
 		if(actionNode->entityNodeDefiningThisAction != NULL)
 		{
 			//cout << "b3" << endl;
@@ -508,8 +508,8 @@ Reference * initialiseActionNodeForPrinting(GIAActionNode * actionNode, int y, i
 				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR, writeFileObject);
 			}		
 		}
-		q = 0;
-		r = -DRAW_X_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE;			
+		q = -DRAW_Y_SPACE_BETWEEN_ACTION_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_ACTION_NODES;			
 		if(actionNode->actionSubjectEntity != NULL)
 		{		
 			//cout << "b5" << endl;
@@ -527,8 +527,8 @@ Reference * initialiseActionNodeForPrinting(GIAActionNode * actionNode, int y, i
 				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos3, GIA_DRAW_ACTION_CONNECTION_COLOUR, writeFileObject);
 			}		
 		}
-		q = 0;
-		r = DRAW_X_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE;				
+		q = DRAW_Y_SPACE_BETWEEN_ACTION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_ACTION_NODES;				
 		if(actionNode->actionObjectEntity != NULL)
 		{		
 			//cout << "b7" << endl;
@@ -584,13 +584,17 @@ Reference * initialiseConditionNodeForPrinting(GIASharedConditionNode * sharedCo
 		pos1.x = sharedConditionNode->printX;
 		pos1.y = sharedConditionNode->printY;	
 		pos1.z = DRAW_CONNECTION_Z;
+		
+		int q, r;
 			
+		q = -DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_CONDITION_NODES;				
 		if(sharedConditionNode->parentIsAction)
 		{	
 			//cout << "HERE1" << endl;
 			if(sharedConditionNode->parentAction != NULL)
 			{
-				currentReferenceInPrintList = initialiseActionNodeForPrinting(sharedConditionNode->parentAction, y-DRAW_Y_SPACE_BETWEEN_ENTITIES, x, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+				currentReferenceInPrintList = initialiseActionNodeForPrinting(sharedConditionNode->parentAction, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 
 				pos2.x = sharedConditionNode->parentAction->printX;
 				pos2.y = sharedConditionNode->parentAction->printY;
@@ -605,7 +609,7 @@ Reference * initialiseConditionNodeForPrinting(GIASharedConditionNode * sharedCo
 			
 			if(sharedConditionNode->parentProperty != NULL)
 			{
-				currentReferenceInPrintList = initialiseEntityNodeForPrinting(sharedConditionNode->parentProperty, y-DRAW_Y_SPACE_BETWEEN_ENTITIES, x, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+				currentReferenceInPrintList = initialiseEntityNodeForPrinting(sharedConditionNode->parentProperty, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 
 				pos2.x = sharedConditionNode->parentProperty->printX;
 				pos2.y = sharedConditionNode->parentProperty->printY;
@@ -614,13 +618,16 @@ Reference * initialiseConditionNodeForPrinting(GIASharedConditionNode * sharedCo
 				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject);
 			}
 		}
+		
+		q = DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;		
 		if(sharedConditionNode->conditionIsAction)
 		{
 			//cout << "HERE3" << endl;
 			
 			if(sharedConditionNode->conditionAction != NULL)
 			{
-				currentReferenceInPrintList = initialiseActionNodeForPrinting(sharedConditionNode->conditionAction, y, x+DRAW_X_SPACE_BETWEEN_ENTITIES, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+				currentReferenceInPrintList = initialiseActionNodeForPrinting(sharedConditionNode->conditionAction, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 
 				pos3.x = sharedConditionNode->conditionAction->printX;
 				pos3.y = sharedConditionNode->conditionAction->printY;
@@ -637,7 +644,7 @@ Reference * initialiseConditionNodeForPrinting(GIASharedConditionNode * sharedCo
 			{
 				//cout << "sharedConditionNode->conditionEntity->entityName = " << sharedConditionNode->conditionEntity->entityName << endl;
 				
-				currentReferenceInPrintList = initialiseEntityNodeForPrinting(sharedConditionNode->conditionEntity, y, x+DRAW_X_SPACE_BETWEEN_ENTITIES, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+				currentReferenceInPrintList = initialiseEntityNodeForPrinting(sharedConditionNode->conditionEntity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 
 				pos3.x = sharedConditionNode->conditionEntity->printX;
 				pos3.y = sharedConditionNode->conditionEntity->printY;		
