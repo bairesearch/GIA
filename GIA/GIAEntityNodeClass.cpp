@@ -73,6 +73,7 @@ GIAEntityNode::GIAEntityNode(void)
 	grammaticalPersonTemp = GRAMMATICAL_PERSON_UNDEFINED;		
 	grammaticalGenderTemp = GRAMMATICAL_GENDER_UNDEFINED;
 	//grammaticalCountTemp = GRAMMATICAL_COUNT_UNDEFINED;
+	grammaticalPronounTemp = GRAMMATICAL_PRONOUN_UNDEFINED;
 	isSubjectTemp = false;
 	isObjectTemp = false;
 	hasPropertyTemp = false;

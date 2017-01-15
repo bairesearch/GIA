@@ -38,21 +38,6 @@ string relationTypeMeasureNameArray[RELATION_TYPE_MEASURE_NUMBER_OF_TYPES] = {RE
 string timeMonthStringArray[TIME_MONTH_NUMBER_OF_TYPES] = {TIME_MONTH_JANUARY, TIME_MONTH_FEBRUARY, TIME_MONTH_MARCH, TIME_MONTH_APRIL, TIME_MONTH_MAY, TIME_MONTH_JUNE, TIME_MONTH_JULY, TIME_MONTH_AUGUST, TIME_MONTH_SEPTEMBER, TIME_MONTH_OCTOBER, TIME_MONTH_NOVEMBER, TIME_MONTH_DECEMBER};
 	
 
-
-/* ORIGINAL v1a;
-string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_TO};
-//int relationTypeObjectNameLengthsArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {4, 2, 6, 6};
-string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT};
-//int relationTypeSubjectNameLengthsArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {5, 5};
-string relationTypeAdjectiveNameArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_1, RELATION_TYPE_ADJECTIVE_2, RELATION_TYPE_ADJECTIVE_3};
-//int relationTypeAdjectiveNameLengthsArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] = {5, 8, 7};
-string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_POSSESSIVE};
-//int relationTypePossessiveNameLengthsArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {5, 3};
-string relationFunctionCompositionNameArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_COMPOSITION_1, RELATION_FUNCTION_COMPOSITION_2, RELATION_FUNCTION_COMPOSITION_3};
-//int relationFunctionCompositionNameLengthsArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {8, 9, 3};
-*/
-
-
 string referenceTypePossessiveNameArray[REFERENCE_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {"undefined", "his", "her", "them", "its"};
 //int referenceTypePossessiveNameLengthsArray[REFERENCE_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {9, 3, 3, 4, 3};
 string referenceTypePersonNameArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {"undefined", "he", "she", "they", "it"};
@@ -205,6 +190,11 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense
 
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity)
 {
+	if(thingEntity->hasAssociatedPropertyTemp)
+	{
+		thingEntity = thingEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
+	}
+	
 	if(definitionEntity->hasAssociatedPropertyTemp)
 	{
 		definitionEntity = definitionEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
@@ -293,6 +283,11 @@ void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEnt
 	GIAEntityNode * newOrExistingAction;
 	newOrExistingAction = addAction(actionEntity);
 
+	if(subjectEntity->hasAssociatedPropertyTemp)
+	{
+		subjectEntity = subjectEntity->AssociatedPropertyNodeList.back();
+	}
+	
 	//configure subject entity node
 	subjectEntity->ActionNodeList.push_back(newOrExistingAction);
 	
@@ -308,6 +303,11 @@ void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntit
 	GIAEntityNode * newOrExistingAction;
 	newOrExistingAction = addAction(actionEntity);
 	
+	if(objectEntity->hasAssociatedPropertyTemp)
+	{
+		objectEntity = objectEntity->AssociatedPropertyNodeList.back();
+	}
+		
 	//configure object entity node
 	objectEntity->IncomingActionNodeList.push_back(newOrExistingAction);
 	
@@ -422,6 +422,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		bool GIAEntityNodeGrammaticalIsPersonArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 		int GIAEntityNodeGrammaticalGenderArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 		//bool GIAEntityNodeGrammaticalHasCountArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
+		bool GIAEntityNodeGrammaticalIsPronounArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 		
 		bool GIAEntityNodeArrayFilled[MAX_NUMBER_OF_WORDS_PER_SENTENCE];		//NB could also use currentSentence->maxNumberOfWordsInSentence
 		GIAEntityNode * GIAEntityNodeArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
@@ -439,6 +440,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			GIAEntityNodeGrammaticalIsPersonArray[w] = false;
 			GIAEntityNodeGrammaticalGenderArray[w] = GRAMMATICAL_NUMBER_UNDEFINED;
 			//GIAEntityNodeGrammaticalHasCountArray[w] = GRAMMATICAL_NUMBER_UNDEFINED;
+			GIAEntityNodeGrammaticalIsPronounArray[w] = GRAMMATICAL_PRONOUN_UNDEFINED;
 			
 			GIAEntityNodeArrayFilled[w] = false;
 
@@ -509,7 +511,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				GIAEntityNodeGrammaticalHasCountArray[currentFeatureInList->entityIndex] = true;
 				//cout << "hasCount currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 			}	
-			*/		
+			*/
+			
+			if((currentFeatureInList->grammar).find(GRAMMATICAL_PRONOUN_NAME) != -1)
+			{
+				GIAEntityNodeGrammaticalIsPronounArray[currentFeatureInList->entityIndex] = GRAMMATICAL_PRONOUN;
+				//cout << "isDefinite currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;	
+			}					
 												 
 			currentFeatureInList = currentFeatureInList->next;
 		}
@@ -550,6 +558,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				GIAEntityNodeArray[relationFunctionIndex]->grammaticalDefiniteTemp = GIAEntityNodeGrammaticalIsDefiniteArray[relationFunctionIndex];
 				GIAEntityNodeArray[relationFunctionIndex]->grammaticalPersonTemp = GIAEntityNodeGrammaticalIsPersonArray[relationFunctionIndex];
 				GIAEntityNodeArray[relationFunctionIndex]->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[relationFunctionIndex];
+				GIAEntityNodeArray[relationFunctionIndex]->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[relationFunctionIndex];
+				
 				 
 				GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedPropertyTemp = false;
 				GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedActionTemp = false;
@@ -569,6 +579,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				GIAEntityNodeArray[relationArgumentIndex]->grammaticalDefiniteTemp = GIAEntityNodeGrammaticalIsDefiniteArray[relationArgumentIndex];
 				GIAEntityNodeArray[relationArgumentIndex]->grammaticalPersonTemp = GIAEntityNodeGrammaticalIsPersonArray[relationArgumentIndex];
 				GIAEntityNodeArray[relationArgumentIndex]->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[relationArgumentIndex];
+				GIAEntityNodeArray[relationArgumentIndex]->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[relationArgumentIndex];
 								
 				GIAEntityNodeArray[relationArgumentIndex]->hasAssociatedPropertyTemp = false;	
 				GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedActionTemp = false;		
@@ -833,6 +844,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 											{
 												entityPassesGrammaticalTestsForReference = false;
 											}
+											
+											/*
+											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPronounTemp != referenceTypePersonCrossReferencePronounArray[i])
+											{
+												entityPassesGrammaticalTestsForReference = false;
+											}
+											*/
+																						
 										//}
 										if(entityPassesGrammaticalTestsForReference)
 										{	
@@ -1002,6 +1021,38 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}				
 		
+		//cout << "0e pass; define properties (expletives eg "there" in "there is a place");" << endl;
+		currentRelationInList = currentSentenceInList->firstRelationInList;
+ 		while(currentRelationInList->next != NULL)
+		{			
+			bool passed = false;
+			if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT_EXPLETIVE)
+			{
+				//create property definition
+				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+				
+				addPropertyToPropertyDefinition(propertyEntity);					
+			}			
+			currentRelationInList = currentRelationInList->next;
+		}
+
+		if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_PRONOUNS == 1)
+		{
+			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+			{
+				if(GIAEntityNodeArrayFilled[i])
+				{
+					if(GIAEntityNodeGrammaticalIsPronounArray[i] == GRAMMATICAL_PRONOUN)
+					{
+						//cout << "asd" << endl;
+						//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
+						addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
+					}
+				}
+			}
+		}
+						
 					
 										
 		//cout << "1 pass; link properties (possessive relationships); eg joe's bike" << endl;
@@ -1279,7 +1330,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 
 					if(!foundPartner)
 					{//add independent action if appropriate
-						if(currentRelationInList->relationFunction == RELATION_FUNCTION_DEFINITION_1) 
+						if(passdefinition)
+						//if(currentRelationInList->relationFunction == RELATION_FUNCTION_DEFINITION_1) 
 						{
 						}
 						//else if((currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_1) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_2) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_3))

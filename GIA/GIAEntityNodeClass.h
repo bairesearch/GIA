@@ -48,6 +48,10 @@ using namespace std;
 #define GRAMMATICAL_GENDER_FEMININE 3
 #define GRAMMATICAL_GENDER_NUMBER_OF_TYPES (4)
 #define GRAMMATICAL_CATEGORY_UNDEFINED (0)
+#define GRAMMATICAL_PRONOUN_UNDEFINED false
+#define GRAMMATICAL_PRONOUN true
+#define GRAMMATICAL_PRONOUN_NAME "pronoun"
+
 //#define GRAMMATICAL_COUNT_UNDEFINED 0
 
 
@@ -181,6 +185,7 @@ public:
 	bool grammaticalPersonTemp;	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed		
 	int grammaticalGenderTemp; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	//bool grammaticalCountTemp;	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed		
+	bool grammaticalPronounTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	bool isSubjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool isObjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool hasPropertyTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
