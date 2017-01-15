@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o5a 21-August-2012
+ * Project Version: 1o5b 22-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -543,7 +543,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1o5a 21-August-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1o5b 22-August-2012" << endl;
 			exit(1);
 		}
 
@@ -1220,6 +1220,14 @@ bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * 
 {
 	bool result = true;
 
+	#ifdef GIA_USE_DATABASE
+	int useDatabaseOriginal = getUseDatabase();
+	if(isQuery)
+	{
+		setUseDatabase(GIA_USE_DATABASE_FALSE);
+	}
+	#endif
+	
 	int NLPdependencyRelationsType = dependencyRelationsTypes[NLPdependencyRelationsParser];
 
 	Paragraph * currentParagraph = firstParagraphInList;
@@ -1252,6 +1260,13 @@ bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * 
 	#endif
 	recordConceptNodesAsDisabledIfTheyAreNotPermanent(entityNodesActiveListConcepts);
 
+	#ifdef GIA_USE_DATABASE
+	if(isQuery)
+	{
+		setUseDatabase(useDatabaseOriginal);
+	}
+	#endif
+	
 	return result;
 }
 

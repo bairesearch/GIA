@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o5a 21-August-2012
+ * Project Version: 1o5b 22-August-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -1346,8 +1346,10 @@ void DBwriteVectorConnectionsReferences(string * entityName, long idInstance, in
 
 void DBmodifyVectorConnectionsReference(string * entityName, long idInstance, int connectionType, string *entityVectorConnectionsName, long entityVectorConnectionsID, long referenceIndex)
 {
+	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBmodifyVectorConnectionsReference(): entityName = " << *entityName << endl;
-
+	#endif
+	
 	/*
 	Format:
 	entityName,idInstance
@@ -1387,8 +1389,10 @@ void DBmodifyVectorConnectionsReference(string * entityName, long idInstance, in
 
 void DBappendVectorConnectionsReference(string * entityName, long idInstance, int connectionType, string *entityVectorConnectionsName, long entityVectorConnectionsID)
 {
+	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBappendVectorConnectionsReference(): entityName = " << *entityName << endl;
-
+	#endif
+	
 	/*
 	Format:
 	entityName,idInstance
@@ -1575,7 +1579,7 @@ GIAEntityNode * findEntityInActiveConceptList(string * entityName, long idInstan
 	if(conceptEntityNodesListIterator != entityNodesActiveListConcepts->end())
 	{//concept entity found
 		#ifdef GIA_DATABASE_DEBUG
-		cout << "\tfindEntityInActiveConceptList() concept node found; " << *entityNodeName << endl;
+		cout << "\tfindEntityInActiveConceptList() concept node found; " << *entityName << endl;
 		#endif
 		GIAEntityNode * entityNode = conceptEntityNodesListIterator->second;
 		if(idInstance == GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE)

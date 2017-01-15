@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o5a 21-August-2012
+ * Project Version: 1o5b 22-August-2012
  *
  *******************************************************************************/
 
@@ -398,7 +398,9 @@ void convertAliasesToAliasesString(GIAEntityNode * entityNode, string * aliasesS
 	for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter != entityNode->aliasList.end(); aliasIter++)
 	{
 		*aliasesString = *aliasesString + *aliasIter + GIA_ALIASES_CONVERT_TO_STRING_DELIMITER;
-		//cout << "*aliasesString = " << *aliasesString << endl;
+		#ifdef GIA_ALIASES_DEBUG
+		cout << "*aliasesString = " << *aliasesString << endl;
+		#endif
 	}
 }
 
@@ -418,7 +420,9 @@ vector<string> explode(const string& str, const char& ch)
 			if(next.length() > 0) 
 			{
 				// Add them to the result vector
+				#ifdef GIA_ALIASES_DEBUG
 				cout << "found alias: " << next << endl;
+				#endif
 				result.push_back(next);
 				next = "";
 			}
