@@ -112,6 +112,8 @@ GIAEntityNode::GIAEntityNode(void)
 	queryEntityTraced = false;
 	
 	disabled = false;
+
+	CXLdummyNode = false;	
 }
 GIAEntityNode::~GIAEntityNode(void)
 {
