@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7a 29-June-2013
+ * Project Version: 1s7b 29-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -513,6 +513,8 @@
 
 #include "SHAREDglobalDefs.h"
 
+#define GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER	//disable this if using previously tested version of Stanford CoreNLP (stanford-corenlp-2012-04-03)
+
 //variables currently being tested (1r1a+)
 
 #define GIA_USE_BOT
@@ -649,7 +651,6 @@
 #define GIA_ID_INSTANCE_ALLOW_INSTANCE_DELETIONS
 #define GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILLARY_AND_SET_DIFFERENT_REFERENCE_SET
 
-#define GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
 #ifndef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
 	#define GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_LEMMA_CASE_ASSIGNMENT_BUG_GENERATE_STRANGE_LEMMA
 	#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_LEMMA_CASE_ASSIGNMENT_BUG_GENERATE_STRANGE_LEMMA
@@ -665,7 +666,7 @@
 //#define GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
 
 //Debug [Disable these for official build];
-#define GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+//#define GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
 //#define GIA_LRP_DEBUG
 //#define GIA_NLG_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET

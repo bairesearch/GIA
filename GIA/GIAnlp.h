@@ -23,7 +23,7 @@
  * File Name: GIAnlp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7a 29-June-2013
+ * Project Version: 1s7b 29-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -71,9 +71,19 @@
 						#define StanfordCoreNLP_XML_TAG_NormalizedNER ((string)"NormalizedNER")
 						#define StanfordCoreNLP_XML_TAG_Timex ((string)"Timex")
 				#define StanfordCoreNLP_XML_TAG_parse ((string)"parse")
-				#define StanfordCoreNLP_XML_TAG_basicdependencies ((string)"basic-dependencies")
-				#define StanfordCoreNLP_XML_TAG_collapseddependencies ((string)"collapsed-dependencies")
-				#define StanfordCoreNLP_XML_TAG_collapsedccprocesseddependencies ((string)"collapsed-ccprocessed-dependencies")
+				#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
+					#define StanfordCoreNLP_XML_TAG_dependencies ((string)"dependencies")
+					#define StanfordCoreNLP_XML_TAG_basicdependencies (StanfordCoreNLP_XML_TAG_dependencies)
+					#define StanfordCoreNLP_XML_TAG_collapseddependencies (StanfordCoreNLP_XML_TAG_dependencies)
+					#define StanfordCoreNLP_XML_TAG_collapsedccprocesseddependencies (StanfordCoreNLP_XML_TAG_dependencies)					
+					#define StanfordCoreNLP_XML_ATTRIBUTE_basicdependencies ((string)"basic-dependencies")					//not used
+					#define StanfordCoreNLP_XML_ATTRIBUTE_collapseddependencies ((string)"collapsed-dependencies")				//not used
+					#define StanfordCoreNLP_XML_ATTRIBUTE_collapsedccprocesseddependencies ((string)"collapsed-ccprocessed-dependencies")	//not used				
+				#else
+					#define StanfordCoreNLP_XML_TAG_basicdependencies ((string)"basic-dependencies")
+					#define StanfordCoreNLP_XML_TAG_collapseddependencies ((string)"collapsed-dependencies")
+					#define StanfordCoreNLP_XML_TAG_collapsedccprocesseddependencies ((string)"collapsed-ccprocessed-dependencies")
+				#endif
 					#define StanfordCoreNLP_XML_TAG_dep ((string)"dep")
 					#define StanfordCoreNLP_XML_ATTRIBUTE_idx ((string)"idx")
 						#define StanfordCoreNLP_XML_TAG_governor ((string)"governor")
@@ -95,8 +105,12 @@
 
 #define StanfordCoreNLPdefaultOutputFileExtensionAppend ".xml"
 
-static string StanfordCoreNLP_relationSetNameArray[StanfordCoreNLP_numberOfDependencySetsPerSentence] = {StanfordCoreNLP_XML_TAG_basicdependencies, StanfordCoreNLP_XML_TAG_collapseddependencies, StanfordCoreNLP_XML_TAG_collapsedccprocesseddependencies};
 
+#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
+//not used;
+static string StanfordCoreNLP_relationSetAttributesNameArray[StanfordCoreNLP_numberOfDependencySetsPerSentence] = {StanfordCoreNLP_XML_ATTRIBUTE_basicdependencies, StanfordCoreNLP_XML_ATTRIBUTE_collapseddependencies, StanfordCoreNLP_XML_ATTRIBUTE_collapsedccprocesseddependencies};
+#endif
+static string StanfordCoreNLP_relationSetNameArray[StanfordCoreNLP_numberOfDependencySetsPerSentence] = {StanfordCoreNLP_XML_TAG_basicdependencies, StanfordCoreNLP_XML_TAG_collapseddependencies, StanfordCoreNLP_XML_TAG_collapsedccprocesseddependencies};
 
 void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfileName, int NLPParser, string NLPexeFolderArray[], bool parseRelationsOrFeatures);
 
