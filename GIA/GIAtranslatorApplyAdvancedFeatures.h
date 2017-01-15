@@ -70,6 +70,7 @@ void extractQuantities(Sentence * currentSentenceInList, bool GIAentityNodeArray
 	void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts);		//Stanford Specific	[requires NERTemp info to be set]
 	#endif
 
+#ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 void extractMeasures(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts);			//Stanford Incompatible [measures not supported]
 void defineToBeAndToDoPropertiesAndConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts);	//Stanford Compatible
 void extractQualities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType);			//Stanford Compatible
@@ -81,8 +82,11 @@ void defineClausalComplementProperties(Sentence * currentSentenceInList, bool GI
 #endif
 #endif
 void defineTenseOnlyTimeConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
+#endif
+
 #ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS	
 void defineActionConcepts(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
 #endif
+
 
 #endif

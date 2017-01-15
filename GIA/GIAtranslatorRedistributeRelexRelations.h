@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t6a 02-August-2013
+ * Project Version: 1t6a 04-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -59,6 +59,7 @@ void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllContinuous
 	
 #endif
 
+#ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[]);
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
@@ -86,5 +87,6 @@ void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(Senten
 #endif
 #endif
 void switchArgumentsAndFunctionsWhereNecessaryRelex(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
+#endif
 
 #endif

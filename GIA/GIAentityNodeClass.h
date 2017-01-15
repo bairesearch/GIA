@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t6a 02-August-2013
+ * Project Version: 1t6a 04-August-2013
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -93,6 +93,10 @@ using namespace std;
 #define GRAMMATICAL_NUMBER_SINGULAR 2
 #define GRAMMATICAL_NUMBER_PLURAL 3
 #define GRAMMATICAL_NUMBER_NUMBER_OF_TYPES (4)
+#define GRAMMATICAL_NUMBER_UNDEFINED_STRING "0"
+#define GRAMMATICAL_NUMBER_UNCOUNTABLE_STRING "1"
+#define GRAMMATICAL_NUMBER_SINGULAR_STRING "2"
+#define GRAMMATICAL_NUMBER_PLURAL_STRING "3"
 
 #define GRAMMATICAL_DEFINITE_UNDEFINED false
 #define GRAMMATICAL_DEFINITE true
@@ -146,6 +150,16 @@ using namespace std;
 #define FEATURE_NER_DURATION (9)
 #define FEATURE_NER_NUMBER_TYPES (10)
 #define FEATURE_NER_EXPLICIT_NUMBER_TYPES (9)
+#define FEATURE_NER_UNDEFINED_STRING "0"
+#define FEATURE_NER_DATE_STRING "1"
+#define FEATURE_NER_TIME_STRING "2"
+#define FEATURE_NER_MONEY_STRING "3"
+#define FEATURE_NER_NUMBER_STRING "4"
+#define FEATURE_NER_PERSON_STRING "5"
+#define FEATURE_NER_LOCATION_STRING "6"
+#define FEATURE_NER_ORGANIZATION_STRING "7"
+#define FEATURE_NER_MISC_STRING "8"
+#define FEATURE_NER_DURATION_STRING "9"
 
 static string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES] = {"undefined", "present", "past", "future"};
 	//OPENCOG RECOMMENDED; "future", "future_progressive", "imperative", "infinitive", "past", "past_infinitive", "past_progressive", "perfect", "present", "present_progressive", "progressive"
@@ -330,7 +344,7 @@ public:
 	bool grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	int grammaticalTenseTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	bool grammaticalDefiniteTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	bool grammaticalRelexPersonOrStanfordProperNounTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+	bool grammaticalProperNounTemp;	//Used to be called "grammaticalRelexPersonOrStanfordProperNounTemp" //temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	int grammaticalGenderTemp; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool grammaticalPronounTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	#ifdef GIA_USE_ADVANCED_REFERENCING
@@ -395,6 +409,11 @@ public:
 	bool wasReference;
 	#endif	
 	#endif
+	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	bool alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
+	bool mustSetIsSubstanceConceptBasedOnApposRelation;
+	bool isPronounReference;
+	#endif	
 		//databasing:
 	#ifdef GIA_USE_DATABASE
 	bool added;	//implies database Update is Required
@@ -464,7 +483,11 @@ void setEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristi
 		void setEntityCharacteristicIterationbool(bool * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch);
 		void setEntityCharacteristicIterationint(int * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch);
 		void setEntityCharacteristicIterationstring(string * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch);
-
+	#define ENTITY_CHARACTERISTIC_MAX_VALUE_SIZE (100)
+	bool getEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic);	//fills in entityCharacteristic->value based on entityCharacteristic->name
+		void getEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic * entityCharacteristicGet, string iterationVariable, bool *foundMatch);
+		void getEntityCharacteristicIterationint(int entityVal, EntityCharacteristic * entityCharacteristicGet, string iterationVariable, bool *foundMatch);
+		void getEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic * entityCharacteristicGet, string iterationVariable, bool *foundMatch);
 
 
 #endif

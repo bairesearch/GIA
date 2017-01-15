@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t6a 02-August-2013
+ * Project Version: 1t6a 04-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -245,6 +245,8 @@ bool determineVerbCase(string * word)
 
 #endif
 
+
+#ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 
 void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
@@ -648,6 +650,16 @@ void redistributeRelexRelationsDetectNameQueries(Sentence * currentSentenceInLis
 	#endif
 	if(firstWordOfSentenceIsWho)
 	{
+	#ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
+		GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
+		param.useEntityTest = true; param.entityTest = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+		EntityCharacteristic entityCharacteristicsSet("isNameQuery", "true");		
+		param.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSet);	
+		if(genericEntityInterpretation(&param))
+		{
+			cout << "found who query variable" << endl;
+		}
+	#else		
 		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 		{
 			if(GIAentityNodeArrayFilled[i])
@@ -659,6 +671,7 @@ void redistributeRelexRelationsDetectNameQueries(Sentence * currentSentenceInLis
 				}
 			}
 		}
+	#endif	
 	}
 }
 #endif
@@ -1093,3 +1106,5 @@ void redistributeRelexRelationsInterpretNameOfAsDefinition(Sentence * currentSen
 #endif
 
 /* **************************************************** END SCENARIOS NOT YET IMPLEMENTED FOR RELEX ****************************************************/
+
+#endif

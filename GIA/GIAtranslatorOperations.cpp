@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t6a 02-August-2013
+ * Project Version: 1t6a 04-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -276,7 +276,7 @@ GIAentityNode * addSubstanceToSubstanceDefinition(GIAentityNode * substanceEntit
 				The blue chicken is late.
 				*/
 				#ifdef GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
-				if(checkEntityHasSubstanceThatWasDeclaredInContext(substanceEntity) && (substanceEntity->grammaticalDefiniteTemp || substanceEntity->grammaticalRelexPersonOrStanfordProperNounTemp))	//NB the grammaticalRelexPersonOrStanfordProperNounTemp condition should only be required here if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS is set to true
+				if(checkEntityHasSubstanceThatWasDeclaredInContext(substanceEntity) && (substanceEntity->grammaticalDefiniteTemp || substanceEntity->grammaticalProperNounTemp))	//NB the grammaticalProperNounTemp condition should only be required here if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS is set to true
 				#else
 				if(checkEntityHasSubstanceThatWasDeclaredInContext(substanceEntity))
 				#endif
@@ -321,24 +321,12 @@ GIAentityNode * addSubstanceToSubstanceDefinition(GIAentityNode * substanceEntit
 }
 
 void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubstance)
-{	
-	if(entity->hasAssociatedTime)
-	{
-		newSubstance->hasAssociatedTime = true;
-	}
-	newSubstance->NormalizedNERtemp = entity->NormalizedNERtemp;	//always required (not just for time info / time condition related)
-	newSubstance->NERTemp = entity->NERTemp;
-
-	for(int i=0; i<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; i++)
-	{
-		newSubstance->grammaticalTenseModifierArrayTemp[i] = entity->grammaticalTenseModifierArrayTemp[i];	//including GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE eg "substance has progressive (eg lying/sitting/being happy)"
-	}
-
-	if(entity->foundPossibleInfinitiveVerbTemp)	//added 28 July 2013 to help support action concepts
-	{
-		newSubstance->foundPossibleInfinitiveVerbTemp = true;
-	}	
+{
+	newSubstance->hasAssociatedTime = entity->hasAssociatedTime;
 	
+	newSubstance->grammaticalNumber = entity->grammaticalNumber;
+	newSubstance->grammaticalWordTypeTemp = entity->grammaticalWordTypeTemp;
+
 	/*//execution of addTenseOnlyTimeConditionToSubstance has been shifted from forwardInfoToNewSubstance to a separate function - 26 July 2013 
 	//cout << "entity = " << entity->entityName << endl;
 	//cout << "entity->grammaticalTenseTemp = " << entity->grammaticalTenseTemp << endl;	
@@ -347,8 +335,26 @@ void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubsta
 		addTenseOnlyTimeConditionToSubstance(newSubstance, entity->grammaticalTenseTemp, entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE]);
 	}
 	*/
+	for(int i=0; i<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; i++)
+	{
+		newSubstance->grammaticalTenseModifierArrayTemp[i] = entity->grammaticalTenseModifierArrayTemp[i];	//including GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE eg "substance has progressive (eg lying/sitting/being happy)"
+	}
 	newSubstance->grammaticalTenseTemp = entity->grammaticalTenseTemp;
-
+	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES	// or GIA_USE_GENERIC_ENTITY_INTERPRETATION
+	newSubstance->grammaticalDefiniteTemp = entity->grammaticalDefiniteTemp;	//must forward grammatical info for GIAtranslatorDefineSubstances.cpp post substance declaration modifications (ie defineSubstanceConcepts)
+	newSubstance->grammaticalProperNounTemp = entity->grammaticalProperNounTemp;	//must forward grammatical info for GIAtranslatorDefineSubstances.cpp post substance declaration modifications (ie defineSubstanceConcepts)
+	newSubstance->grammaticalGenderTemp = entity->grammaticalGenderTemp;		//not currently used		
+	newSubstance->grammaticalPronounTemp = entity->grammaticalPronounTemp;		//must forward grammatical info for GIAtranslatorDefineSubstances.cpp post substance declaration modifications (ie defineSubstanceConcepts)
+	#endif
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	newSubstance->grammaticalDefiniteIndexOfDeterminerTemp = entity->grammaticalDefiniteIndexOfDeterminerTemp;	
+	#endif	
+	newSubstance->foundPossibleInfinitiveVerbTemp = true;	//added 28 July 2013 to help support action concepts		
+	#ifdef GIA_USE_STANFORD_CORENLP
+	newSubstance->NormalizedNERtemp = entity->NormalizedNERtemp;	//always required (not just for time info / time condition related)
+	#endif
+	newSubstance->NERTemp = entity->NERTemp;
+		
 	#ifdef GIA_SUPPORT_ALIASES
 	if(entity->isName)
 	{
@@ -415,8 +421,6 @@ GIAentityNode * addSubstance(GIAentityNode * entity)
 	
 	entity->hasAssociatedInstance = true;
 	entity->hasAssociatedInstanceTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	newSubstance->grammaticalWordTypeTemp = entity->grammaticalWordTypeTemp;
-	newSubstance->grammaticalNumber = entity->grammaticalNumber;
 	#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 	newSubstance->isSubstanceConcept = entity->isSubstanceConcept;
 	#endif
@@ -495,7 +499,7 @@ GIAentityNode * addActionToActionDefinitionDefineSubstances(GIAentityNode * acti
 		{
 			#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 				#ifdef GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
-				if(checkEntityHasSubstanceThatWasDeclaredInContext(actionEntity) && (actionEntity->grammaticalDefiniteTemp || actionEntity->grammaticalRelexPersonOrStanfordProperNounTemp))	//NB the grammaticalRelexPersonOrStanfordProperNounTemp condition should only be required here if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS is set to true
+				if(checkEntityHasSubstanceThatWasDeclaredInContext(actionEntity) && (actionEntity->grammaticalDefiniteTemp || actionEntity->grammaticalProperNounTemp))	//NB the grammaticalProperNounTemp condition should only be required here if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS is set to true
 				#else
 				if(checkEntityHasSubstanceThatWasDeclaredInContext(actionEntity))
 				#endif
@@ -597,7 +601,6 @@ GIAentityNode * addAction(GIAentityNode * actionEntity)
 	actionEntity->hasAssociatedInstance = true;
 	actionEntity->hasAssociatedInstanceIsAction = true;
 	actionEntity->hasAssociatedInstanceTemp = true;
-	newAction->grammaticalWordTypeTemp = actionEntity->grammaticalWordTypeTemp;
 	//WHY WOULD THIS EVER BE REQURIED?; newAction->entityNodeContainingThisSubstance = NULL;
 
 	forwardInfoToNewSubstance(actionEntity, newAction);
@@ -1786,218 +1789,226 @@ void addInstanceEntityNodeToActiveLists(GIAentityNode * entity)
 #ifdef GIA_SUPPORT_ALIASES
 void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entityNodeToMerge)
 {
-	entityNode->aliasList.push_back(entityNodeToMerge->entityName);
-
-	#ifdef GIA_ALIASES_DEBUG
-	cout << "\n" << endl;
-	cout << "entityNode->entityName = " << entityNode->entityName << endl;
-	cout << "entityNodeToMerge->entityName = " << entityNodeToMerge->entityName << endl;
-	#endif
-
-	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+	if(entityNode->idActiveList == entityNodeToMerge->idActiveList)
 	{
-		for(vector<GIAentityConnection*>::iterator connectionIter = entityNodeToMerge->entityVectorConnectionsArray[i].begin(); connectionIter != entityNodeToMerge->entityVectorConnectionsArray[i].end(); )
+		#ifdef GIA_ALIASES_DEBUG
+		cout << "treatDefinitionAsEquality: already merged" << endl;
+		#endif					
+	}
+	else
+	{
+		entityNode->aliasList.push_back(entityNodeToMerge->entityName);
+
+		#ifdef GIA_ALIASES_DEBUG
+		cout << "\n" << endl;
+		cout << "entityNode->entityName = " << entityNode->entityName << endl;
+		cout << "entityNodeToMerge->entityName = " << entityNodeToMerge->entityName << endl;
+		#endif
+
+		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 		{
-			bool connectionIterErased = false;
-			//connect entityNodeToMerge ambient node to entityNode
-			GIAentityNode * entityConnectedToEntityToMerge = (*connectionIter)->entity;
-
-			#ifdef GIA_ALIASES_DEBUG
-			if(entityConnectedToEntityToMerge->isConcept)
+			for(vector<GIAentityConnection*>::iterator connectionIter = entityNodeToMerge->entityVectorConnectionsArray[i].begin(); connectionIter != entityNodeToMerge->entityVectorConnectionsArray[i].end(); )
 			{
-				cout << "entityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityToMerge->entityName << " (concept)" << endl;
-			}
-			else
-			{
-				cout << "entityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityToMerge->entityName << endl;
-			}
-			#endif
+				bool connectionIterErased = false;
+				//connect entityNodeToMerge ambient node to entityNode
+				GIAentityNode * entityConnectedToEntityToMerge = (*connectionIter)->entity;
 
-			if(entityNode != entityConnectedToEntityToMerge)
-			{//added 29 November 2012
-				
-				//disconnect reference sources from each other, as their connection between each other will be redeclared in current context
-				int iInverted = inverseVectorConnectionsArray[i];
-				for(vector<GIAentityConnection*>::iterator connectionIter2 = entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].begin(); connectionIter2 != entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].end(); )
+				#ifdef GIA_ALIASES_DEBUG
+				if(entityConnectedToEntityToMerge->isConcept)
 				{
-					bool connectionIter2Erased = false;
-					GIAentityNode * entityConnectedToEntityConnectedToEntityToMerge = (*connectionIter2)->entity;
+					cout << "entityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityToMerge->entityName << " (concept)" << endl;
+				}
+				else
+				{
+					cout << "entityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityToMerge->entityName << endl;
+				}
+				#endif
 
-					#ifdef GIA_ALIASES_DEBUG
-					if(entityConnectedToEntityConnectedToEntityToMerge->isConcept)
-					{
-						cout << "entityConnectedToEntityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityConnectedToEntityToMerge->entityName << " (concept)" << endl;
-					}
-					else
-					{
-						cout << "entityConnectedToEntityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityConnectedToEntityToMerge->entityName << endl;
-					}
-					#endif				
+				if(entityNode != entityConnectedToEntityToMerge)
+				{//added 29 November 2012
 
-					if(entityNodeToMerge == entityConnectedToEntityConnectedToEntityToMerge)	//OR (entityNodeToMerge == entityConnectedToEntityConnectedToEntityToMerge)?
+					//disconnect reference sources from each other, as their connection between each other will be redeclared in current context
+					int iInverted = inverseVectorConnectionsArray[i];
+					for(vector<GIAentityConnection*>::iterator connectionIter2 = entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].begin(); connectionIter2 != entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].end(); )
 					{
-						#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
-						//the commenting out of the below case is required for advanced referencing (eg concept Tom has associated instance Dog) [NB this means that instances can appear to have more than one entityNodeDefiningThisInstance]
-						if((entityConnectedToEntityToMerge->isConcept) && (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE))
-						{//restored 29 November 2012, and condition (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE) added
-							//disconnect entityConnectedToEntityConnectedToEntityToMerge from entityConnectedToEntityToMerge (concept) (z2)
-							#ifdef GIA_ALIASES_DEBUG
-							cout << "disconnect entityConnectedToEntityConnectedToEntityToMerge (" << entityConnectedToEntityConnectedToEntityToMerge->entityName << ") from entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (concept) (z2)" << endl;
-							#endif
-							//delete *connectionIter2;	//delete connection
-							connectionIter2 = entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].erase(connectionIter2);		//(*connectionIter2)->entity = NULL;	//need a better delete routine
-							connectionIter2Erased = true;
-							#ifdef GIA_USE_DATABASE
-							//(*connectionIter2)->modified = true;
-							entityConnectedToEntityToMerge->entityVectorConnectionsRemovedArray[iInverted] = true;	//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
-							#endif
+						bool connectionIter2Erased = false;
+						GIAentityNode * entityConnectedToEntityConnectedToEntityToMerge = (*connectionIter2)->entity;
+
+						#ifdef GIA_ALIASES_DEBUG
+						if(entityConnectedToEntityConnectedToEntityToMerge->isConcept)
+						{
+							cout << "entityConnectedToEntityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityConnectedToEntityToMerge->entityName << " (concept)" << endl;
 						}
 						else
 						{
-						#endif
-							//connect entityConnectedToEntityConnectedToEntityToMerge back to entityNode (z)
-							#ifdef GIA_ALIASES_DEBUG
-							cout << "change entityConnectedToEntityConnectedToEntityToMerge (" << entityConnectedToEntityConnectedToEntityToMerge->entityName << ") to entityNode (" << entityNode->entityName << ") (z)" << endl;
-							#endif
-
-							(*connectionIter2)->entity = entityNode;
-							#ifdef GIA_USE_DATABASE
-							(*connectionIter2)->entityName = entityNode->entityName;	//added 29 November 2012
-							(*connectionIter2)->idInstance = entityNode->idInstance;	//added 29 November 2012							
-							(*connectionIter2)->modified = true;
-							#endif
-						#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+							cout << "entityConnectedToEntityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityConnectedToEntityToMerge->entityName << endl;
 						}
-						#endif
+						#endif				
+
+						if(entityNodeToMerge == entityConnectedToEntityConnectedToEntityToMerge)	//OR (entityNodeToMerge == entityConnectedToEntityConnectedToEntityToMerge)?
+						{
+							#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+							//the commenting out of the below case is required for advanced referencing (eg concept Tom has associated instance Dog) [NB this means that instances can appear to have more than one entityNodeDefiningThisInstance]
+							if((entityConnectedToEntityToMerge->isConcept) && (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE))
+							{//restored 29 November 2012, and condition (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE) added
+								//disconnect entityConnectedToEntityConnectedToEntityToMerge from entityConnectedToEntityToMerge (concept) (z2)
+								#ifdef GIA_ALIASES_DEBUG
+								cout << "disconnect entityConnectedToEntityConnectedToEntityToMerge (" << entityConnectedToEntityConnectedToEntityToMerge->entityName << ") from entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (concept) (z2)" << endl;
+								#endif
+								//delete *connectionIter2;	//delete connection
+								connectionIter2 = entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].erase(connectionIter2);		//(*connectionIter2)->entity = NULL;	//need a better delete routine
+								connectionIter2Erased = true;
+								#ifdef GIA_USE_DATABASE
+								//(*connectionIter2)->modified = true;
+								entityConnectedToEntityToMerge->entityVectorConnectionsRemovedArray[iInverted] = true;	//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
+								#endif
+							}
+							else
+							{
+							#endif
+								//connect entityConnectedToEntityConnectedToEntityToMerge back to entityNode (z)
+								#ifdef GIA_ALIASES_DEBUG
+								cout << "change entityConnectedToEntityConnectedToEntityToMerge (" << entityConnectedToEntityConnectedToEntityToMerge->entityName << ") to entityNode (" << entityNode->entityName << ") (z)" << endl;
+								#endif
+
+								(*connectionIter2)->entity = entityNode;
+								#ifdef GIA_USE_DATABASE
+								(*connectionIter2)->entityName = entityNode->entityName;	//added 29 November 2012
+								(*connectionIter2)->idInstance = entityNode->idInstance;	//added 29 November 2012							
+								(*connectionIter2)->modified = true;
+								#endif
+							#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+							}
+							#endif
+						}
+
+						if(!connectionIter2Erased)
+						{
+							connectionIter2++;
+						}
 					}
 
-					if(!connectionIter2Erased)
+					//connect entityNode to entityConnectedToEntityToMerge (x)
+
+					#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+					//the commenting out of the below case is required for advanced referencing (eg concept Tom has associated instance Dog) [NB this means that instances can appear to have more than one entityNodeDefiningThisInstance]
+					if(!((entityConnectedToEntityToMerge->isConcept) && (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)))
 					{
-						connectionIter2++;
+					#endif
+						#ifdef GIA_ALIASES_DEBUG
+						cout << "connect entityNode (" << entityNode->entityName << ") to entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (x)" << endl;
+						#endif
+						#ifdef GIA_USE_ADVANCED_REFERENCING
+						bool sameReferenceSet = (*connectionIter)->sameReferenceSet;
+						#else
+						bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+						#endif
+						writeVectorConnection(entityNode, entityConnectedToEntityToMerge, i, sameReferenceSet);
+					#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 					}
+					#endif
 				}
 
-				//connect entityNode to entityConnectedToEntityToMerge (x)
-				
-				#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
-				//the commenting out of the below case is required for advanced referencing (eg concept Tom has associated instance Dog) [NB this means that instances can appear to have more than one entityNodeDefiningThisInstance]
-				if(!((entityConnectedToEntityToMerge->isConcept) && (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)))
-				{
-				#endif
-					#ifdef GIA_ALIASES_DEBUG
-					cout << "connect entityNode (" << entityNode->entityName << ") to entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (x)" << endl;
-					#endif
-					#ifdef GIA_USE_ADVANCED_REFERENCING
-					bool sameReferenceSet = (*connectionIter)->sameReferenceSet;
-					#else
-					bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-					#endif
-					writeVectorConnection(entityNode, entityConnectedToEntityToMerge, i, sameReferenceSet);
-				#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
-				}
-				#endif
-			}
-
-			//disconnect entityConnectedToEntityToMerge from entityNodeToMerge
-			#ifdef GIA_ALIASES_DEBUG
-			if(entityConnectedToEntityToMerge->isConcept)
-			{
-				cout << "disconnect entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (concept) from entityNodeToMerge (" << entityNodeToMerge->entityName << ") (x2)" << endl;
-			}
-			else
-			{
-				cout << "disconnect entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") from entityNodeToMerge (" << entityNodeToMerge->entityName << ") (x2)" << endl;
-			}
-			#endif
-			//delete *connectionIter;	//delete connection
-			connectionIter = entityNodeToMerge->entityVectorConnectionsArray[i].erase(connectionIter);		//(*connectionIter)->entity = NULL;	//need a better delete routine
-			connectionIterErased = true;
-			#ifdef GIA_USE_DATABASE
-			//(*connectionIter)->modified = true;
-			entityNodeToMerge->entityVectorConnectionsRemovedArray[i] = true;	//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
-			#endif
-
-			if(!connectionIterErased)
-			{
-				connectionIter++;
-			}
-		}
-	}
-
-	//disconnect entityNodeToMerge from entityNode
-	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-	{
-		for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); )
-		{
-			bool connectionIterErased = false;
-			GIAentityNode * entityConnectedToEntity = (*connectionIter)->entity;
-			#ifdef GIA_ALIASES_DEBUG
-			cout << "entityConnectedToEntity->entityName = " << entityConnectedToEntity->entityName << endl;
-			cout << "entityNodeToMerge->entityName = " << entityNodeToMerge->entityName << endl;
-			#endif			
-			if(entityConnectedToEntity == entityNodeToMerge)
-			{
-				//disconnect entityNodeToMerge from entityNode (y)
+				//disconnect entityConnectedToEntityToMerge from entityNodeToMerge
 				#ifdef GIA_ALIASES_DEBUG
-				cout << "disconnect entityNodeToMerge (" << entityNodeToMerge->entityName << ") from entityNode (" << entityNode->entityName << ") (y)" << endl;
+				if(entityConnectedToEntityToMerge->isConcept)
+				{
+					cout << "disconnect entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (concept) from entityNodeToMerge (" << entityNodeToMerge->entityName << ") (x2)" << endl;
+				}
+				else
+				{
+					cout << "disconnect entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") from entityNodeToMerge (" << entityNodeToMerge->entityName << ") (x2)" << endl;
+				}
 				#endif
-				connectionIter = entityNode->entityVectorConnectionsArray[i].erase(connectionIter);		//(*connectionIter)->entity = NULL;	//need a better delete routine
+				//delete *connectionIter;	//delete connection
+				connectionIter = entityNodeToMerge->entityVectorConnectionsArray[i].erase(connectionIter);		//(*connectionIter)->entity = NULL;	//need a better delete routine
 				connectionIterErased = true;
 				#ifdef GIA_USE_DATABASE
 				//(*connectionIter)->modified = true;
-				entityNode->entityVectorConnectionsRemovedArray[i] = true;	//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
+				entityNodeToMerge->entityVectorConnectionsRemovedArray[i] = true;	//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
 				#endif
-			}
-			if(!connectionIterErased)
-			{
-				connectionIter++;
+
+				if(!connectionIterErased)
+				{
+					connectionIter++;
+				}
 			}
 		}
-	}
 
-	//copy secondary node properties
-	if(entityNodeToMerge->conditionType == CONDITION_NODE_TYPE_TIME)
-	{
-		entityNode->conditionType = entityNodeToMerge->conditionType;
-		entityNode->timeConditionNode = entityNodeToMerge->timeConditionNode;
-	}
-	if(entityNodeToMerge->hasQuantity)
-	{
-		entityNode->hasQuantity = entityNodeToMerge->hasQuantity;
-		entityNode->quantityNumber = entityNodeToMerge->quantityNumber;
-		entityNode->hasQuantity = entityNodeToMerge->hasQuantity;
-		entityNode->quantityModifier = entityNodeToMerge->quantityModifier;
-		entityNode->quantityModifierString = entityNodeToMerge->quantityModifierString;
-		entityNode->hasQuantityMultiplier = entityNodeToMerge->hasQuantityMultiplier;
-	}
-	if(entityNodeToMerge->hasMeasure)
-	{
-		entityNode->hasMeasure = entityNodeToMerge->hasMeasure;
-		entityNode->measureType = entityNodeToMerge->measureType;
-	}
-	if(entityNodeToMerge->isQuery)
-	{
-		entityNode->isQuery = entityNodeToMerge->isQuery;
-		entityNode->isWhichOrEquivalentWhatQuery = entityNodeToMerge->isWhichOrEquivalentWhatQuery;
+		//disconnect entityNodeToMerge from entityNode
+		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+		{
+			for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); )
+			{
+				bool connectionIterErased = false;
+				GIAentityNode * entityConnectedToEntity = (*connectionIter)->entity;
+				#ifdef GIA_ALIASES_DEBUG
+				cout << "entityConnectedToEntity->entityName = " << entityConnectedToEntity->entityName << endl;
+				cout << "entityNodeToMerge->entityName = " << entityNodeToMerge->entityName << endl;
+				#endif			
+				if(entityConnectedToEntity == entityNodeToMerge)
+				{
+					//disconnect entityNodeToMerge from entityNode (y)
+					#ifdef GIA_ALIASES_DEBUG
+					cout << "disconnect entityNodeToMerge (" << entityNodeToMerge->entityName << ") from entityNode (" << entityNode->entityName << ") (y)" << endl;
+					#endif
+					connectionIter = entityNode->entityVectorConnectionsArray[i].erase(connectionIter);		//(*connectionIter)->entity = NULL;	//need a better delete routine
+					connectionIterErased = true;
+					#ifdef GIA_USE_DATABASE
+					//(*connectionIter)->modified = true;
+					entityNode->entityVectorConnectionsRemovedArray[i] = true;	//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
+					#endif
+				}
+				if(!connectionIterErased)
+				{
+					connectionIter++;
+				}
+			}
+		}
+
+		//copy secondary node properties
+		if(entityNodeToMerge->conditionType == CONDITION_NODE_TYPE_TIME)
+		{
+			entityNode->conditionType = entityNodeToMerge->conditionType;
+			entityNode->timeConditionNode = entityNodeToMerge->timeConditionNode;
+		}
+		if(entityNodeToMerge->hasQuantity)
+		{
+			entityNode->hasQuantity = entityNodeToMerge->hasQuantity;
+			entityNode->quantityNumber = entityNodeToMerge->quantityNumber;
+			entityNode->hasQuantity = entityNodeToMerge->hasQuantity;
+			entityNode->quantityModifier = entityNodeToMerge->quantityModifier;
+			entityNode->quantityModifierString = entityNodeToMerge->quantityModifierString;
+			entityNode->hasQuantityMultiplier = entityNodeToMerge->hasQuantityMultiplier;
+		}
+		if(entityNodeToMerge->hasMeasure)
+		{
+			entityNode->hasMeasure = entityNodeToMerge->hasMeasure;
+			entityNode->measureType = entityNodeToMerge->measureType;
+		}
+		if(entityNodeToMerge->isQuery)
+		{
+			entityNode->isQuery = entityNodeToMerge->isQuery;
+			entityNode->isWhichOrEquivalentWhatQuery = entityNodeToMerge->isWhichOrEquivalentWhatQuery;
+			#ifdef GIA_SUPPORT_ALIASES
+			entityNode->isNameQuery = entityNodeToMerge->isNameQuery;
+			#endif
+		}
 		#ifdef GIA_SUPPORT_ALIASES
-		entityNode->isNameQuery = entityNodeToMerge->isNameQuery;
+		entityNode->isName = entityNodeToMerge->isName;
+		#endif
+
+		if(entityNodeToMerge->isToBeComplimentOfActionTemp)
+		{
+			entityNode->isToBeComplimentOfActionTemp = true;	//should not be required
+		}
+
+		disableEntity(entityNodeToMerge);
+
+		#ifdef GIA_ALIASES_DEBUG
+		cout << "finished: mergeEntityNodesAddAlias" << endl;
 		#endif
 	}
-	#ifdef GIA_SUPPORT_ALIASES
-	entityNode->isName = entityNodeToMerge->isName;
-	#endif
-	
-	if(entityNodeToMerge->isToBeComplimentOfActionTemp)
-	{
-		entityNode->isToBeComplimentOfActionTemp = true;	//should not be required
-	}
-	
-	disableEntity(entityNodeToMerge);
-	
-	#ifdef GIA_ALIASES_DEBUG
-	cout << "finished: mergeEntityNodesAddAlias" << endl;
-	#endif
-
 }
 #endif
 
@@ -2050,7 +2061,11 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	relationIndexTestEntityID = {{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}};
 		//NB for relationType tests use relationType as indicies are not available
 	relationIndexTestIsNegative = {{false, false, false}, {false, false}, {false, false, false}, {false, false, false}};		
-				
+		//special cases
+	useSpecialCaseCharacteristicsRelationIndexTest = {{false, false, false}, {false, false}, {false, false, false}, {false, false, false}};	//not used often
+	specialCaseCharacteristicsRelationIndexTestRelationID = {{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}};		//not used often
+	specialCaseCharacteristicsRelationIndexTestEntityID = {{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}};		//not used often
+	
 		//for redistribution
 	useRedistributeRelationEntityIndexReassignment = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}}; 			//for relation1, relation2, relation3, and relation4; for entity1, entity2, and entity3 - for reassigning relation entities 
 	redistributeRelationEntityIndexReassignmentRelationID = {{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}};						//for relation1, relation2, relation3, and relation4; for entity1, entity2, and entity3 - relation1, relation2, relation3, or relation4 - for reassigning relation entities 
@@ -2064,6 +2079,8 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID = {{{-1, -1} , {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}};	    
 	redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID = {{{-1, -1} , {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}};
 	useRedistributeSpecialCaseDisableInstanceAndConcept = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
+	useSpecialCaseCharacteristicsRelationEntityIndexReassignment = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}}; 	//not used often
+	specialCaseCharacteristicsRelationEntityIndexReassignmentRelationID = {{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}};						//not used often
 	
 		//for execution
 	#ifdef GIA_USE_ADVANCED_REFERENCING
@@ -2141,7 +2158,15 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 				if(!testEntityCharacteristics(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]], &(param->specialCaseCharacteristicsTestOrVector[currentRelationID][relationEntityID]), false))				
 				{
 					passedRelation = false;	
-				}						
+				}
+				if(!testEntityCharacteristics(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]], &(param->specialCaseCharacteristicsTestOr2Vector[currentRelationID][relationEntityID]), false))				
+				{
+					passedRelation = false;	
+				}	
+				if(!testEntityCharacteristics(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]], &(param->specialCaseCharacteristicsTestOr3Vector[currentRelationID][relationEntityID]), false))				
+				{
+					passedRelation = false;	
+				}														
 				if(param->useRelationTest[currentRelationID][relationEntityID])
 				{
 					if(passedRelation)
@@ -2275,6 +2300,19 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									}
 								}
 							}
+							if(param->useSpecialCaseCharacteristicsRelationIndexTest[relationID][relationEntityID])
+							{//not used often
+								//cout << "useSpecialCaseCharacteristicsRelationIndexTest" << endl;
+								passedEntityMatchTests = false;
+								GIAentityNode * currentEntity = param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]];
+								GIAentityNode * targetEntity = param->GIAentityNodeArray[param->relationEntityIndex[param->specialCaseCharacteristicsRelationIndexTestRelationID[relationID][relationEntityID]][param->specialCaseCharacteristicsRelationIndexTestEntityID[relationID][relationEntityID]]];
+								EntityCharacteristic * entityCharacteristic = &(param->specialCaseCharacteristicsRelationIndexTest[relationID][relationEntityID]);
+								getEntityCharacteristic(currentEntity, entityCharacteristic);
+								if(testEntityCharacteristic(targetEntity, entityCharacteristic))
+								{
+									passedEntityMatchTests = true;
+								}
+							}						
 						}
 					}
 					if(passedEntityMatchTests)
@@ -2447,7 +2485,19 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntity)
 								{
 									addDefinitionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
-								}																												
+								}
+								#ifdef GIA_SUPPORT_ALIASES
+								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias)
+								{
+									mergeEntityNodesAddAlias(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2]);
+									param->GIAentityNodeArray[functionEntityIndex2] = param->GIAentityNodeArray[functionEntityIndex1];
+								}
+								#endif								
+								else
+								{
+									cout << "illegal functionToExecuteUponFind: " << param->functionToExecuteUponFind << endl;
+									exit(0);
+								}																											
 							}
 							else
 							{//reassign entities
@@ -2490,7 +2540,15 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 												param->relation[relationID]->relationType = newPrepositionName;
 												//cout << "param->relation[relationID]->relationType = " << param->relation[relationID]->relationType << endl;
 											}																			
-										}									
+										}
+										if(param->useSpecialCaseCharacteristicsRelationEntityIndexReassignment[relationID][relationEntityID])
+										{//not used often
+											GIAentityNode * currentEntity = param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]];
+											GIAentityNode * targetEntity = param->GIAentityNodeArray[param->relationEntityIndex[param->specialCaseCharacteristicsRelationEntityIndexReassignmentRelationID[relationID][relationEntityID]][param->specialCaseCharacteristicsRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID]]];
+											EntityCharacteristic * entityCharacteristic = &(param->specialCaseCharacteristicsRelationEntityIndexReassignment[relationID][relationEntityID]);
+											getEntityCharacteristic(targetEntity, entityCharacteristic);
+											setEntityCharacteristic(currentEntity, entityCharacteristic);
+										}																
 									}			
 								}									
 								for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
@@ -2631,8 +2689,147 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 	}
 	//cout << "END genericDependecyRelationInterpretation: " << currentRelationID << endl;	
 	return result;
-}				
-				
+}
+
+#endif
+
+#ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION				
+
+GIAgenericEntityInterpretationParameters::GIAgenericEntityInterpretationParameters(Sentence * newcurrentSentenceInList, bool newGIAentityNodeArrayFilled[], GIAentityNode * newGIAentityNodeArray[], bool newexecuteOrReassign)
+{
+	currentSentenceInList = newcurrentSentenceInList;
+	GIAentityNodeArrayFilled = newGIAentityNodeArrayFilled;
+	GIAentityNodeArray = newGIAentityNodeArray;
+	
+	executeOrReassign = newexecuteOrReassign;
+
+		//relations to parse
+	parseDisabledEntity = false;
+
+		//predefined values tests
+	useEntityTest = false;
+	entityTest = "";
+	entityTestIsNegative = false;
+	useEntityArrayTest = false;
+	entityArrayTest = NULL;
+	entityArrayTestSize = -1;
+	entityArrayTestIsNegative = false;
+	
+		//for redistribution
+
+		//for execution
+	functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_undefined;
+		
+	disableEntity = false;
+}
+GIAgenericEntityInterpretationParameters::~GIAgenericEntityInterpretationParameters(void)
+{
+}
+
+bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * param)
+{
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(param->GIAentityNodeArrayFilled[i])
+		{
+			if(param->parseDisabledEntity || !(param->GIAentityNodeArray[i]->disabled))
+			{
+				bool passedEntity = true;
+				if(!testEntityCharacteristics(param->GIAentityNodeArray[i], &(param->specialCaseCharacteristicsTestAndVector), true))				
+				{
+					passedEntity = false;	
+				}	
+				if(!testEntityCharacteristics(param->GIAentityNodeArray[i], &(param->specialCaseCharacteristicsTestOrVector), false))				
+				{
+					passedEntity = false;	
+				}
+				if(param->useEntityTest)
+				{
+					if(passedEntity)
+					{
+						passedEntity = false;					
+						if(param->entityTestIsNegative)
+						{//negative
+							if(param->GIAentityNodeArray[i]->entityName != param->entityTest)
+							{
+								passedEntity = true;
+							}						
+						}
+						else
+						{//normal
+							if(param->GIAentityNodeArray[i]->entityName == param->entityTest)
+							{
+								passedEntity = true;
+							}
+						}
+					}
+				}
+				if(param->useEntityArrayTest)
+				{
+					if(passedEntity)
+					{				
+						passedEntity = false;
+						bool foundAnArrayPass = false;
+						//int entityArrayTestSize = sizeof((param->entityArrayTest))/sizeof((param->entityArrayTest)[0]);
+						//cout << "entityArrayTestSize = " << entityArrayTestSize << endl;
+						for(int j=0; j<param->entityArrayTestSize; j++)
+						{
+							if(param->GIAentityNodeArray[i]->entityName == (param->entityArrayTest)[j])
+							{
+								passedEntity = true;
+								foundAnArrayPass = true;
+							}
+						}
+						if(param->entityArrayTestIsNegative)
+						{
+							if(!foundAnArrayPass)
+							{
+								passedEntity = true;
+							}
+							else
+							{
+								passedEntity = false;
+							}
+						}
+					}				
+				}
+
+				if(passedEntity)
+				{
+					if(param->executeOrReassign)
+					{
+						#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+						cout << "genericEntityArrayInterpretation: " << param->GIAentityNodeArray[i]->entityName << endl;
+						#endif
+
+						if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition)
+						{
+							param->GIAentityNodeArray[i] = addSubstanceToSubstanceDefinition(param->GIAentityNodeArray[i]);
+						}
+						else
+						{
+							cout << "illegal functionToExecuteUponFind: " << param->functionToExecuteUponFind << endl;
+						}
+					}
+					/*
+					else
+					{
+						setEntityCharacteristics(param->GIAentityNodeArray[i], &(param->specialCaseCharacteristicsAssignmentVector));
+					}	
+					*/
+					setEntityCharacteristics(param->GIAentityNodeArray[i], &(param->specialCaseCharacteristicsAssignmentVector));	//this has been moved out in the case reassignment is required along with execution							
+				}
+
+				//for cleanup
+				if(param->disableEntity)
+				{
+					disableEntity(param->GIAentityNodeArray[i]);
+				}	
+			}	
+		}
+	}
+}
+			
 #endif
 
 bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, string * prepositionName, int * indexOfPreposition)

@@ -23,7 +23,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t6a 02-August-2013
+ * Project Version: 1t6a 04-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -206,14 +206,14 @@ Feature::Feature(void)
 	#endif
 	foundPossibleInfinitiveVerb = false;
 
+	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;		//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
-
+	mustSetIsSubstanceConceptBasedOnApposRelation = false;
 	isPronounReference = false;
-
+	#endif
+	
 	entityDisabled = false;
 
-	mustSetIsSubstanceConceptBasedOnApposRelation = false;
-	
 	next = NULL;
 	previous = NULL;
 }

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t6a 02-August-2013
+ * Project Version: 1t6a 04-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -38,7 +38,7 @@
 
 
 
-
+#ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 
 void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {	
@@ -275,6 +275,67 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 	/*
 	The fish, a carp, swam deeply.	_appo(fish[2], carp[5])
 	*/
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	if(linkPreestablishedReferencesGIA)
+	{
+		GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, true);	
+		paramA.numberOfRelations = 1;
+		paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+		EntityCharacteristic entityCharacteristicsTest1("isSubstance", "true");
+		EntityCharacteristic entityCharacteristicsTest2("isNameQuery", "true");
+		paramA.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1);
+		paramA.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest2);
+		paramA.specialCaseCharacteristicsTestOr2Vector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest1);
+		paramA.specialCaseCharacteristicsTestOr2Vector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest2);
+		#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
+		EntityCharacteristic entityCharacteristicsTest3("isSubstanceConcept", "false");
+		paramA.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest3);
+		paramA.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest3);
+		#endif
+		EntityCharacteristic entityCharacteristicsTest4("hasAssociatedTime", "false");
+		paramA.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest4);
+		EntityCharacteristic entityCharacteristicsTest5("grammaticalProperNounTemp", "true");
+		EntityCharacteristic entityCharacteristicsTest6("isNameQuery", "true");
+		paramA.specialCaseCharacteristicsTestOr3Vector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest5);
+		paramA.specialCaseCharacteristicsTestOr3Vector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest6);	
+		paramA.disableRelationDuringLink[REL1] = true;
+		paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias;
+		paramA.functionEntityRelationID[FUNC_ENT1] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
+		paramA.functionEntityRelationID[FUNC_ENT2] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;	
+		genericDependecyRelationInterpretation(&paramA, REL1);
+
+		GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, NULL, GIAentityNodeArray, true);	
+		paramB.numberOfRelations = 1;
+		paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+		//EntityCharacteristic entityCharacteristicsTest1("isSubstance", "true");
+		//EntityCharacteristic entityCharacteristicsTest2("isNameQuery", "true");
+		paramB.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1);
+		paramB.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest2);
+		paramB.specialCaseCharacteristicsTestOr2Vector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest1);
+		paramB.specialCaseCharacteristicsTestOr2Vector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest2);
+		#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
+		//EntityCharacteristic entityCharacteristicsTest3("isSubstanceConcept", "false");
+		paramB.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest3);
+		paramB.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest3);
+		#endif
+		//EntityCharacteristic entityCharacteristicsTest4("hasAssociatedTime", "false");
+		paramB.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest4);
+		paramB.disableRelationDuringLink[REL1] = true;
+		paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias;
+		paramB.functionEntityRelationID[FUNC_ENT1] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
+		paramB.functionEntityRelationID[FUNC_ENT2] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;	
+		genericDependecyRelationInterpretation(&paramB, REL1);	
+	}
+	
+	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, NULL, GIAentityNodeArray, true);	
+	paramC.numberOfRelations = 1;
+	paramC.useRelationTest[REL1][REL_ENT3] = true; paramC.relationTest[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+	paramC.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntity;
+	paramC.functionEntityRelationID[FUNC_ENT1] = REL1; paramC.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
+	paramC.functionEntityRelationID[FUNC_ENT2] = REL1; paramC.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;	
+	genericDependecyRelationInterpretation(&paramC, REL1);
+		
+#else	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
@@ -336,14 +397,14 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 							if(!(definitionEntity->hasAssociatedTime))
 							{
 								treatDefinitionAsEquality = true;
-								if(definitionEntity->grammaticalRelexPersonOrStanfordProperNounTemp || definitionEntity->isNameQuery)
+								if(definitionEntity->grammaticalProperNounTemp || definitionEntity->isNameQuery)
 								{
 									#ifdef GIA_ALIASES_DEBUG
 									cout << "linkEntityDefinitionsAppositiveOfNouns1" << endl;
 									#endif
 									//eg max = the brown dog
 								}
-								else if(thingEntity->grammaticalRelexPersonOrStanfordProperNounTemp || thingEntity->isNameQuery)
+								else if(thingEntity->grammaticalProperNounTemp || thingEntity->isNameQuery)
 								{
 									treatDefinitionAsEqualityReversePrimary = true;
 									#ifdef GIA_ALIASES_DEBUG
@@ -420,6 +481,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
+#endif	
 }
 
 
@@ -2667,5 +2729,7 @@ void linkDependentActionsType2(Sentence * currentSentenceInList, bool GIAentityN
 		currentRelationInList = currentRelationInList->next;
 	}
 #endif	
-}	
+}
+
+#endif	
 	

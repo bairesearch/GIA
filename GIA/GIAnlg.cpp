@@ -23,7 +23,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t6a 02-August-2013
+ * Project Version: 1t6a 04-August-2013
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -956,7 +956,7 @@ void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode * entityNod
 	{
 		//stanford/relex compatible
 		//NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford()	[see GIAtranslatorDefineGrammar.cpp]
-		if(entityNode->grammaticalRelexPersonOrStanfordProperNounTemp)
+		if(entityNode->grammaticalProperNounTemp)
 		{
 			isPerson = true;
 		}
@@ -1081,7 +1081,7 @@ string calcDeterminate(GIAentityNode * entityNode)
 	{
 		//stanford/relex compatible
 		//NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford()	[see GIAtranslatorDefineGrammar.cpp]
-		if(entityNode->grammaticalRelexPersonOrStanfordProperNounTemp)
+		if(entityNode->grammaticalProperNounTemp)
 		{
 			isPerson = true;
 		}

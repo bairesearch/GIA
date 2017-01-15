@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t6a 02-August-2013
+ * Project Version: 1t6a 04-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -51,6 +51,7 @@ using namespace std;
 #include "GIAconditionNodeClass.h"
 #include "GIAtranslatorOperations.h"
 
+#ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 //Pass B
 //0
 void defineSubstancesObjectsAndSubjectsWithSubstances(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], GIAentityNode * GIAfeatureTempEntityNodeArray[]);							//~Stanford Compatible [requires isObjectTemp, hasSubstanceTemp, isSubjectTemp to be filled]
@@ -72,7 +73,7 @@ void defineSubstancesNonExplicitPronouns(Sentence * currentSentenceInList, bool 
 #endif
 void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[]);
 #ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
-void defineSubstanceConcepts(bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[]);
+void defineSubstanceConcepts(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[]);
 #endif
 void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[]);
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
@@ -81,6 +82,7 @@ void defineSubstancesActions(Sentence * currentSentenceInList, GIAentityNode * G
 #endif
 #ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
 void defineSubstancesActionConcepts(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[]);
+#endif
 #endif
 
 #endif

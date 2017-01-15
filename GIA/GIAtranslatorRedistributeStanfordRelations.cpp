@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t6a 02-August-2013
+ * Project Version: 1t6a 04-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -51,7 +51,85 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
             <dependent idx="1">Ms.</dependent>
           </dep>
 	*/
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	param.numberOfRelations = 1;
+	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeConjugationNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES; param.relationArrayTestIsNegative[REL1][REL_ENT3] = true;
+
+	GIAgenericDepRelInterpretationParameters paramA1 = param;
+	EntityCharacteristic entityCharacteristicsTestA("NERTemp", FEATURE_NER_UNDEFINED_STRING, true);
+	paramA1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTestA);
+	paramA1.useSpecialCaseCharacteristicsRelationIndexTest[REL1][REL_ENT1] = true; paramA1.specialCaseCharacteristicsRelationIndexTestRelationID[REL1][REL_ENT1] = REL1; paramA1.specialCaseCharacteristicsRelationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT2; paramA1.specialCaseCharacteristicsRelationIndexTest[REL1][REL_ENT1].name = "NERTemp";		
+	EntityCharacteristic entityCharacteristicsTest1i1("NERTemp", FEATURE_NER_PERSON_STRING);
+	EntityCharacteristic entityCharacteristicsTest1i2("NERTemp", FEATURE_NER_LOCATION_STRING);
+	EntityCharacteristic entityCharacteristicsTest1i3("NERTemp", FEATURE_NER_ORGANIZATION_STRING);
+	EntityCharacteristic entityCharacteristicsTest1i4("NERTemp", FEATURE_NER_MISC_STRING);
+	paramA1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i1);
+	paramA1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i2);
+	paramA1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i3);
+	paramA1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i4);
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5C_FEATURES_STANFORD_NER_INDICATES_NAME_CONCATENATION_REQUIRES_POS_NNP
+	EntityCharacteristic entityCharacteristicsTest1ii1("stanfordPOStemp", FEATURE_POS_TAG_NNP);
+	paramA1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest1ii1);
+	paramA1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1ii1);
+	#endif
+	paramA1.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT1] = true; 
+		paramA1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][0] = REL1; paramA1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][0] = REL_ENT2;
+		paramA1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][1] = REL1; paramA1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][1] = REL_ENT1;
+	paramA1.disableRelation[REL1] = true;	
+	paramA1.disableEntity[REL1][REL_ENT2] = true;
+	if(genericDependecyRelationInterpretation(&paramA1, REL1))
+	{
+		//cout << "A1" << endl;
+	}
 	
+	#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
+	GIAgenericDepRelInterpretationParameters paramB = param;
+
+	
+	GIAgenericDepRelInterpretationParameters paramB1 = param;
+	EntityCharacteristic entityCharacteristicsTestB("NERTemp", FEATURE_NER_PERSON_STRING);
+	paramB1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTestB);	
+	paramB1.useRelationTest[REL1][REL_ENT3] = true; paramB1.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PRENOMIAL_MODIFIER;		
+	paramB1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i1);
+	paramB1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i2);
+	paramB1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i3);
+	paramB1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i4);
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5C_FEATURES_STANFORD_NER_INDICATES_NAME_CONCATENATION_REQUIRES_POS_NNP
+	paramB1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest1ii1);
+	paramB1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1ii1);
+	#endif
+	paramB1.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT1] = true; 
+		paramB1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][0] = REL1; paramB1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][0] = REL_ENT2;
+		paramB1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][1] = REL1; paramB1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][1] = REL_ENT1;
+	paramB1.disableRelation[REL1] = true;	
+	paramB1.disableEntity[REL1][REL_ENT2] = true;
+	if(genericDependecyRelationInterpretation(&paramB1, REL1))
+	{
+		//cout << "B1" << endl;
+	}	
+	#endif
+	
+	GIAgenericDepRelInterpretationParameters paramA2 = param;
+	paramA2.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTestA);
+	paramA2.useSpecialCaseCharacteristicsRelationIndexTest[REL1][REL_ENT1] = true; paramA2.specialCaseCharacteristicsRelationIndexTestRelationID[REL1][REL_ENT1] = REL1; paramA2.specialCaseCharacteristicsRelationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT2; paramA2.specialCaseCharacteristicsRelationIndexTest[REL1][REL_ENT1].name = "NERTemp";	
+	paramA2.disableEntity[REL1][REL_ENT2] = true;
+	if(genericDependecyRelationInterpretation(&paramA2, REL1))
+	{
+		//cout << "A2" << endl;
+	}	
+	
+	#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
+	GIAgenericDepRelInterpretationParameters paramB2 = param;
+	paramB2.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTestB);	
+	paramB2.useRelationTest[REL1][REL_ENT3] = true; paramB2.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PRENOMIAL_MODIFIER;	
+	paramB2.disableEntity[REL1][REL_ENT2] = true;
+	if(genericDependecyRelationInterpretation(&paramB2, REL1))
+	{
+		//cout << "B2" << endl;
+	}	
+	#endif	
+#else	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -167,9 +245,11 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 
 		currentRelationInList = currentRelationInList->next;
 	}
+#endif	
 }
 #endif
 
+#ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 void disableRedundantNodesStanfordParser(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 	/*
@@ -857,8 +937,8 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	paramC.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramC.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION;
 	paramC.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramC.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION;
 	paramC.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL2][REL_ENT1] = true; 
-		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL2][REL_ENT1][0] = REL2; ; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL2][REL_ENT1][0] = REL_ENT1;
-		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL2][REL_ENT1][1] = REL2; ; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL2][REL_ENT1][1] = REL_ENT3;
+		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL2][REL_ENT1][0] = REL2; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL2][REL_ENT1][0] = REL_ENT1;
+		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL2][REL_ENT1][1] = REL2; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL2][REL_ENT1][1] = REL_ENT3;
 	#else							
 	paramC.useRelationTest[REL1][REL_ENT1] = true; paramC.relationTest[REL1][REL_ENT1] = RELATION_ENTITY_BE;
 	paramC.useRelationTest[REL2][REL_ENT1] = true; paramC.relationTest[REL2][REL_ENT1] = RELATION_ENTITY_BE;
@@ -1282,8 +1362,8 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	paramOptMultA.useRelationIndexTest[REL4][REL_ENT1] = true; paramOptMultA.relationIndexTestRelationID[REL4][REL_ENT1] = REL3; paramOptMultA.relationIndexTestEntityID[REL4][REL_ENT1] = REL_ENT2;
 	#endif	
 	paramOptMultA.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT3] = true; 
-		paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][0] = REL2; ; paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][0] = REL_ENT1;
-		paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][1] = REL1; ; paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][1] = REL_ENT3;			
+		paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][0] = REL2; paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][0] = REL_ENT1;
+		paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][1] = REL1; paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][1] = REL_ENT3;		      
 	genericDependecyRelationInterpretation(&paramOptMultA, REL1);
 		
 	//optMultB
@@ -1302,8 +1382,8 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	paramOptMultB.disableRelation[REL2] = true;
 	paramOptMultB.disableEntity[REL2][REL_ENT2] = true;
 	paramOptMultB.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT3] = true; 
-		paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][0] = REL2; ; paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][0] = REL_ENT2;
-		paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][1] = REL1; ; paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][1] = REL_ENT3;
+		paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][0] = REL2; paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][0] = REL_ENT2;
+		paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][1] = REL1; paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][1] = REL_ENT3;
 	genericDependecyRelationInterpretation(&paramOptMultB, REL1);
 
 	//optMultD
@@ -1323,8 +1403,8 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	paramOptMultD.disableEntity[REL2][REL_ENT2] = true;
 	paramOptMultD.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramOptMultD.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL3; paramOptMultD.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT1;	
 	paramOptMultD.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT3] = true; 
-		paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][0] = REL2; ; paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][0] = REL_ENT2;
-		paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][1] = REL1; ; paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][1] = REL_ENT3;
+		paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][0] = REL2; paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][0] = REL_ENT2;
+		paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][1] = REL1; paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][1] = REL_ENT3;
 	if(genericDependecyRelationInterpretation(&paramOptMultD, REL1))
 	{
 		paramOptMultD.relationFinalResult[REL2]->disabled =  true;	//see above 
@@ -2979,8 +3059,8 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 	paramC.disableEntity[REL1][REL_ENT2] = true;
 	paramC.disableRelation[REL1] = true;	//added 11 July 2013 - check this
 	paramC.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT1] = true; 
-		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][0] = REL1; ; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][0] = REL_ENT1;
-		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][1] = REL1; ; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][1] = REL_ENT2;
+		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][0] = REL1; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][0] = REL_ENT1;
+		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][1] = REL1; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][1] = REL_ENT2;
 	genericDependecyRelationInterpretation(&paramC, REL1);
 	#endif
 #else
@@ -4203,6 +4283,7 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 #endif	
 }
 
+#endif
 
 #endif
 
