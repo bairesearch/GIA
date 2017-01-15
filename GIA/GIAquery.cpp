@@ -1639,6 +1639,7 @@ bool compareEntitySynonyms(GIAEntityNode * queryEntityNode, GIAEntityNode * enti
 	}
 	else
 	{
+		cout << "WN compare: queryEntityNode = " << queryEntityNode->entityName << ", with " << entityNode->entityName << endl;
 		if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(entityNode->entityName), &(queryEntityNode->entityName), entityNode->wordNetPOS))
 		{
 			entityNamesAreSynonymous = true;
@@ -1670,6 +1671,11 @@ bool compareEntitySynonyms(GIAEntityNode * queryEntityNode, GIAEntityNode * enti
 			}
 		}
 		#endif
+		cout << "WN finish compare: queryEntityNode = " << queryEntityNode->entityName << ", with " << entityNode->entityName << endl;		
+		if(entityNamesAreSynonymous)
+		{
+			cout << "entityNamesAreSynonymous" << endl;
+		}
 	}
 	
 	/*

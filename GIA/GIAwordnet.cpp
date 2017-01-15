@@ -328,6 +328,13 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 					#endif
 					if(currentSenseInList->ptrtyp[pointerIndex] == wordnetDataEntryPointersIndicatingRelatedSynsetsArray[similarityTypeIndex])
 					{	
+						#ifdef GIA_FREE_MEMORY3
+						if(passedNewSynsetMustFree)
+						{//free currentRelatedSense [NB must modify code such that overwrite can not occur..]
+							free_synset(currentRelatedSense);	//Free a synset	
+						}
+						#endif
+											
 						#ifdef GIA_WORDNET_DEBUG
 						//cout << "passed" << endl;
 						//cout << "currentSenseInList->ptrtyp[pointerIndex] = " << currentSenseInList->ptrtyp[pointerIndex] << endl;
@@ -394,10 +401,12 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 					cout << " " << endl;
 					#endif
 					
+					
 					#ifdef GIA_FREE_MEMORY3
 					free_index(idxOfFirstWordInWords);	//Free an index structure	
 					#endif
-
+					
+					
 					if(tagCount > *maximumNumberOfTags)
 					{
 						*maximumNumberOfTags = tagCount;

@@ -234,7 +234,7 @@ GIAEntityNode::~GIAEntityNode(void)
 		for(vector<GIAEntityConnection*>::iterator connectionIter = entityVectorConnectionsArray[i].begin(); connectionIter != entityVectorConnectionsArray[i].end(); connectionIter++)
 		{
 			#ifdef GIA_FREE_MEMORY_DEBUG
-			cout << "deleting: vector connection: " << (*connectionIter)->entityName << endl;
+			//cout << "deleting: vector connection: " << (*connectionIter)->entityName << endl;
 			#endif
 			delete *connectionIter;
 		}
