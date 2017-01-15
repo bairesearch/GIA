@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j6f 01-May-2012
+ * Project Version: 1j6g 03-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -295,11 +295,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		#endif
 		redistributeStanfordRelationsPrtAndTmod(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);	
 
-		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "pass 1z10; redistribute Stanford Relations - Create Query Vars (eg interpret 'who is that' / 'what is the time.'  attr(is-2, Who-1) / attr(is-2, What-1) | interpret 'how much'/'how many' | interpret 'which' det(house-2, Which-1) | interpret how/when/where/why advmod(happen-5, How-1) / advmod(leave-4, When-1) / advmod(is-2, Where-1) / advmod(fall-5, Why-1)	 )" << endl;
-		#endif		
-		redistributeStanfordRelationsCreateQueryVars(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
-		
+		if(currentSentenceInList->isQuestion)
+		{
+			#ifdef GIA_TRANSLATOR_DEBUG
+			cout << "pass 1z10; redistribute Stanford Relations - Create Query Vars (eg interpret 'who is that' / 'what is the time.'  attr(is-2, Who-1) / attr(is-2, What-1) | interpret 'how much'/'how many' | interpret 'which' det(house-2, Which-1) | interpret how/when/where/why advmod(happen-5, How-1) / advmod(leave-4, When-1) / advmod(is-2, Where-1) / advmod(fall-5, Why-1)	 )" << endl;
+			#endif		
+			redistributeStanfordRelationsCreateQueryVars(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+		}
 	}
 	#endif
 

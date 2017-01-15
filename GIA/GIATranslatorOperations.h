@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j6f 01-May-2012
+ * Project Version: 1j6g 03-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -46,6 +46,7 @@ using namespace std;
 
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION	//added in addition to this; the pre-process of "two word prepositions" eg from http://en.wikipedia.org/wiki/List_of_English_prepositions, or post process (currently implemented)
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION_OLD
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP
 
 #ifndef GIA_DISABLE_REFERENCING
 	#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS	//default: enabled
@@ -299,12 +300,12 @@ used
 #define STANFORD_RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER "rcmod"
 #define STANFORD_RELATION_TYPE_ABBREVIATION_MODIFIER "abbrev"
 #define STANFORD_RELATION_TYPE_POSSESSIVE "possessive"
-#define STANFORD_RELATION_TYPE_PREPOSITION_MODIFIER "prep"
 #define STANFORD_RELATION_TYPE_PREPOSITION_MODIFIER2 "pmod"
 #define STANFORD_RELATION_TYPE_SEMANTIC_DEPENDENT "sdep"
 #define STANFORD_RELATION_TYPE_XSUBJ "xsubj"
 */
-
+#define STANFORD_RELATION_TYPE_PREPOSITION_MODIFIER "prep"
+#define RELATION_TYPE_PREPOSITION_MODIFIER "_prep"
 
 
 
@@ -647,7 +648,8 @@ static string featureQueryWordHowWhenWhereWhyCrossReferenceQueryVariableNameArra
 static string featureQueryWordHowWhenWhereWhySpecialCaseNameArray[FEATURE_QUERY_WORD_HOW_WHEN_WHERE_WHY_SPECIAL_CASE_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_WHERE};
 static string featureQueryWordHowWhenWhereWhySpecialCaseCrossReferenceQueryVariableNameArray[FEATURE_QUERY_WORD_HOW_WHEN_WHERE_WHY_SPECIAL_CASE_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE};
 */
-
+#define FEATURE_QUERY_WORD_WHAT_NUMBER_OF_TYPES (1)
+static string featureQueryWordWhatNameArray[FEATURE_QUERY_WORD_WHAT_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_WHAT};
 #define RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES (4)
 static string relationTypeQVariableNameArray[RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW};	//had to add REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW here - need to check execution with relex parser is not affected
 
