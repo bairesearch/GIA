@@ -1012,8 +1012,10 @@ bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *en
 	setTranslatorPropertyEntityNodesList(propertyEntityNodesList);
 	setTranslatorActionEntityNodesList(actionEntityNodesList);
 	setTranslatorConditionEntityNodesList(conditionEntityNodesList);
+	
+	initialiseGIATranslatorForTexualContext();
 	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-	convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstParagraphInList);
+	convertParagraphSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstParagraphInList);
 	#else
 	convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList);	
 	#endif
