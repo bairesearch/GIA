@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p1c 08-December-2016
+ * Project Version: 2p2a 12-December-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -678,7 +678,7 @@ GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeatu
 	{
 		firstFeatureInOptimisedSentenceSubset = new GIAfeature(*firstFeatureInSentenceSubset);	//copy feature
 		GIAfeature* currentFeatureInOptimisedSentenceSubset = firstFeatureInOptimisedSentenceSubset;
-		GIAfeature* currentFeatureInSentenceSubset = currentFeatureInSentenceSubset;
+		GIAfeature* currentFeatureInSentenceSubset = firstFeatureInSentenceSubset;
 		int featureIndex = GIA_NLP_START_ENTITY_INDEX;	//1
 		bool filteredSubphrase = false;
 		bool currentlyFilteringSubphrase = false;
