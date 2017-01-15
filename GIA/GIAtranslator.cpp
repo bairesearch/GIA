@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j5f 08-June-2015
+ * Project Version: 2j5g 08-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1335,6 +1335,17 @@ void invertOrDuplicateConditionsIfRequired(GIAsentence* currentSentenceInList, b
 							cout << "invertOrDuplicateConditionsIfRequired{}: inverseConditionRequired: conditionName = " << conditionName  << endl;
 							#endif
 							createNewInverseConditionEntity(currentRelationInList, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, inverseConditionName, featureArrayTemp);
+						
+							//added 2j5g (fix bug);
+							currentRelationInList->inverseRelationSingle = true;
+							string relationGovernorTemp = currentRelationInList->relationGovernor;
+							string relationDependentTemp = currentRelationInList->relationDependent;
+							int relationGovernorIndexTemp = currentRelationInList->relationGovernorIndex;
+							int relationDependentIndexTemp = currentRelationInList->relationDependentIndex;							
+							currentRelationInList->relationGovernor = relationDependentTemp;
+							currentRelationInList->relationDependent = relationGovernorTemp;
+							currentRelationInList->relationGovernorIndex = relationDependentIndexTemp;
+							currentRelationInList->relationDependentIndex = relationGovernorIndexTemp;
 						}
 						#endif
 						#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
@@ -1381,9 +1392,13 @@ void createNewInverseConditionEntity(GIArelation* currentRelationInList, GIAsent
 	inverseConditionEntity->entityName = inverseConditionName; 
 	inverseConditionEntity->wordOrig = inverseConditionName;	//is this necessary?
 	//why not set inverseConditionEntity->entityIndexTemp and inverseConditionEntity->sentenceIndexTemp?
+	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+	currentRelationInList->relationTypeNonInversed = currentRelationInList->relationType;
+	currentRelationInList->relationTypeIndexNonInversed = currentRelationInList->relationTypeIndex;
+	#endif
 	currentRelationInList->relationType = string(STANFORD_PARSER_PREPOSITION_PREPEND) + inverseConditionName;
 	currentRelationInList->relationTypeIndex = inverseConditionEntityIndex;
-	currentRelationInList->inverseRelation = true;	//not required
+	currentRelationInList->inverseRelation = true;
 	GIAentityNodeArray[inverseConditionEntityIndex] = inverseConditionEntity;
 	featureArrayTemp[inverseConditionEntityIndex] = new GIAfeature(); 
 	featureArrayTemp[inverseConditionEntityIndex]->word = inverseConditionName;

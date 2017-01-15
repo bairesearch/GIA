@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j5f 08-June-2015
+ * Project Version: 2j5g 08-June-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -853,16 +853,11 @@ void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInLis
 							currentRelationInList2->disabled = true;
 							foundMatchingObject = true;
 							
-							#ifdef GIA2_CORRECT_POSTAGS_FIX3
 							#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 							invertOrDuplicateConditionsIfRequiredSemantic(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp, entity1, entity2relation2, entity3, sameReferenceSet);
 							#else
 							GIAentityNodeArray[entity3Index] = addOrConnectConditionToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
 							#endif
-							#else
-							GIAentityNodeArray[entity3Index] = addOrConnectConditionToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
-							#endif
-
 						}
 					}
 					currentRelationInList2 = currentRelationInList2->next;

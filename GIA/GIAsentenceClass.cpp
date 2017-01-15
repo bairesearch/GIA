@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j5f 08-June-2015
+ * Project Version: 2j5g 08-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -139,6 +139,11 @@ GIArelation::GIArelation(void)
 	relationGovernor = "";
 	relationGovernorIndex = INT_DEFAULT_VALUE;
 
+	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+	relationTypeNonInversed = "";
+	relationTypeIndexNonInversed = INT_DEFAULT_VALUE;
+	#endif
+	
 	disabled = false;
 	//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	disabledDuringLink = false;
@@ -166,8 +171,9 @@ GIArelation::GIArelation(void)
 	#endif
 	
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
 	inverseRelation = false;
+	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+	inverseRelationSingle = false;
 	#endif
 	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
 	relationTwoWay = false;
