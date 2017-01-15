@@ -40,73 +40,6 @@ void initialiseWordNet()
 	*/
 }
 
-/*
-bool recordUntilCharacterOrEscapeCharacter(int charIndex, char * output, int * newCharIndex, char * lineString, char characterToRecordUntil, char escapeCharacter, int numberOfConsecutiveEscapeCharacters)
-{
-	bool result = true;
-	int i = 0;
-	int numConsecutiveEscapeCharactersDetected = 0;
-	
-	char c = CHAR_IRRELEVANT;
-	while((c != characterToRecordUntil) && result)
-	{	
-		c = output[i+charIndex];
-		
-		if(c == escapeCharacter)
-		{
-			numConsecutiveEscapeCharactersDetected++;
-			if(numConsecutiveEscapeCharactersDetected == numberOfConsecutiveEscapeCharacters)
-			{
-				result = false;
-			}
-		}
-		else
-		{
-			numConsecutiveEscapeCharactersDetected = 0;
-		}
-		lineString[i] = c;
-		i++;
-	}
-	
-	lineString[i] = '\0';
-	
-	*newCharIndex = i+charIndex;
-	
-	return result;
-}
-*/
-
-
-bool recordUntilCharacterOrEscapeCharacter(int charIndex, char * output, int * newCharIndex, char * lineString, char characterToRecordUntil, char escapeCharacter)
-{
-	bool result = true;
-	int i = 0;
-	
-	char c = CHAR_IRRELEVANT;
-	while((c != characterToRecordUntil) && result)
-	{	
-		if(c == escapeCharacter)
-		{
-			result = false;
-		}
-		else
-		{
-			c = output[i+charIndex];
-
-			lineString[i] = c;
-			i++;
-		}
-	}
-	
-	*newCharIndex = i+charIndex;
-	
-	i--;
-	lineString[i] = '\0';
-	
-	return result;
-}
-
-
 
 /*
 http://wordnet.princeton.edu/man/wnsearch.3WN.html
@@ -162,6 +95,52 @@ int similarityType =
 */
 
 
+//assumes word and queryWord have the same wordType
+bool checkIfQueryWordIsContainedWithinAnotherWordsSynsets(string word, string queryWord, int wordType)
+{
+	bool wordIsFound = false;
+	bool entityNamesAreSynonymous = false;
+	SynsetPtr firstSenseInList = findSynsets(word, &wordIsFound, wordType);
+	if(wordIsFound)
+	{
+		//now search the synsets for equivalent words
+		int senseIndex = 0;
+		bool stillSensesToGo = true;
+		SynsetPtr currentSenseInList = firstSenseInList;
+		while(stillSensesToGo)
+		{
+			for(int w=0; w<currentSenseInList->wcount; w++)
+			{
+				//cout << "word = " << currentSenseInList->words[w] << endl;
+				if(currentSenseInList->words[w] == queryWord)
+				{
+					#ifdef GIA_WORDNET_DEBUG
+					cout << "match found - entityNamesAreSynonymous:" << endl;
+					cout << "currentSenseInList->words[w] = " << currentSenseInList->words[w] << endl;
+					cout << "queryWord = " << queryWord << endl;
+					#endif
+				}
+			}
+			
+			if(currentSenseInList->nextss == NULL)
+			{
+				stillSensesToGo = false;
+			}
+			else
+			{
+				currentSenseInList = currentSenseInList->nextss;
+			}
+
+			senseIndex++;
+
+		}
+
+		//entityNamesAreSynonymous = true;
+	}
+	
+	return entityNamesAreSynonymous;
+}
+	
 SynsetPtr findMostPopularSynset(string word, bool * wordIsFound, int wordType)
 {
 	SynsetPtr firstSenseInList = findSynsets(word, wordIsFound, wordType);
@@ -230,6 +209,7 @@ SynsetPtr findMostPopularSynset(SynsetPtr firstSenseInList, int wordType)
 		cout << "idxOfFirstWordInWords->off_cnt " << idxOfFirstWordInWords->off_cnt << endl;  //total number of senses of first word in words[] (see index.wordType (eg index.noun) - the total number of pointers listed)
 		cout << "senseNumber = " << senseNumber << endl;      //sense number of the first word in words[] (corresponding to the sense of word/searchStr) - second last column of sense.wordType (eg sense.noun)
 		cout << "tagCount = " << tagCount << endl;	      //popularity of sense (number of times the sense passed has been tagged according to the cntlist file) - last column of sense.wordType (eg sense.noun)
+		cout << " " << endl;
 		#endif
 		
 		if(tagCount > maximumNumberOfTags)
@@ -237,15 +217,13 @@ SynsetPtr findMostPopularSynset(SynsetPtr firstSenseInList, int wordType)
 			senseOutputWithHighestTags = currentSenseInList;
 		}
 		
+		#ifdef GIA_WORDNET_DEBUG
 		/*
 		for(int q=1; q<= idxOfFirstWordInWords->off_cnt; q++)
 		{
 			cout << "tagcount = " << GetTagcnt(idxOfFirstWordInWords, q) << endl;
 		}
-		*/
-		
-		#ifdef GIA_WORDNET_DEBUG
-		/*
+				
 		cout << "hereiam = " << currentSenseInList->hereiam << endl;		//index [first column] from data.wordType (eg data.noun) for the sense/usage of word/searchStr
 		cout << "sstype = " << currentSenseInList->sstype << endl; 
 		cout << "fnum = " << currentSenseInList->fnum << endl;
@@ -267,7 +245,6 @@ SynsetPtr findMostPopularSynset(SynsetPtr firstSenseInList, int wordType)
 		cout << "defn = " << currentSenseInList->defn << endl;
 		cout << "key = " << currentSenseInList->key << endl;
 		cout << "searchtype = " << currentSenseInList->searchtype << endl;
-		
 		cout << " " << endl;
 		*/
 		#endif
@@ -288,6 +265,8 @@ SynsetPtr findMostPopularSynset(SynsetPtr firstSenseInList, int wordType)
 	return senseOutputWithHighestTags;
 }
 
+		
+			
 void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], int wordType)
 {
 	bool result = true;
@@ -305,7 +284,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 	int charIndex = 0;
 	int lineIndex = 0;
 	
-	if(!recordUntilCharacterOrEscapeCharacter(charIndex, output, &charIndex, numberOfSensesString, CHAR_SPACE, CHAR_END_OF_STRING))	//wait till end of header
+	if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, numberOfSensesString, CHAR_SPACE, CHAR_END_OF_STRING))	//wait till end of header
 	{
 		cout << "findSynonyms error: number of senses string not found" << endl;
 		cout << "charIndex = " << charIndex << endl;
@@ -320,7 +299,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 	cout << "numberSenses = " << numberSenses << endl;
 	#endif
 	
-	if(!recordUntilCharacterOrEscapeCharacter(charIndex, output, &charIndex, lineString, CHAR_NEW_LINE, CHAR_END_OF_STRING))	//wait till end of header
+	if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, lineString, CHAR_NEW_LINE, CHAR_END_OF_STRING))	//wait till end of header
 	{
 		cout << "findSynonyms error: new line not found" << endl;
 		cout << "charIndex = " << charIndex << endl;
@@ -344,7 +323,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 		charIndex++;
 		lineIndex++;
 		
-		if(!recordUntilCharacterOrEscapeCharacter(charIndex, output, &charIndex, lineString, CHAR_NEW_LINE, CHAR_END_OF_STRING))	//wait till end of header
+		if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, lineString, CHAR_NEW_LINE, CHAR_END_OF_STRING))	//wait till end of header
 		{
 			cout << "findSynonyms error: new line not found" << endl;
 			cout << "charIndex = " << charIndex << endl;
@@ -374,7 +353,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 		{//CHECK THIS; only take the meaning/sense from the most popular/likely sense [Future: need to search context for most relevant sense]
 
 			int synonymnIndex = 0;
-			while(recordUntilCharacterOrEscapeCharacter(charIndex, output, &charIndex, synonymString, CHAR_COMMA, CHAR_SPACE))
+			while(recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, synonymString, CHAR_COMMA, CHAR_SPACE))
 			{
 				listOfSynonyms[synonymnIndex] = synonymString;
 				synonymnIndex++;
@@ -396,7 +375,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 			numberOfSynonyms = synonymnIndex;
 		}		
 
-		if(!recordUntilCharacterOrEscapeCharacter(charIndex, output, &charIndex, lineString, CHAR_NEW_LINE, CHAR_END_OF_STRING))	//wait till end of line
+		if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, lineString, CHAR_NEW_LINE, CHAR_END_OF_STRING))	//wait till end of line
 		{
 			cout << "findSynonyms error: new line not found" << endl;
 			cout << "charIndex = " << charIndex << endl;
@@ -421,6 +400,35 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 	{
 		*wordIsFound = false;
 	}
+}
+
+bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char * output, int * newCharIndex, char * lineString, char characterToRecordUntil, char escapeCharacter)
+{
+	bool result = true;
+	int i = 0;
+	
+	char c = CHAR_IRRELEVANT;
+	while((c != characterToRecordUntil) && result)
+	{	
+		if(c == escapeCharacter)
+		{
+			result = false;
+		}
+		else
+		{
+			c = output[i+charIndex];
+
+			lineString[i] = c;
+			i++;
+		}
+	}
+	
+	*newCharIndex = i+charIndex;
+	
+	i--;
+	lineString[i] = '\0';
+	
+	return result;
 }
 
 

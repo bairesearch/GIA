@@ -16,16 +16,13 @@
 
 //variables currently under attention for testing purposes
 //#define GIA_DISABLE_REFERENCING		//default: off	{this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}
-//#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		{//this should only be enabled with Relex??} 	//this was (effectively) disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
+#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		{//this should only be enabled with Relex??} 	//this was (effectively) disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
 #define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 #define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-
+//#define GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
 
 //Debug;
 #define GIA_WORDNET_DEBUG
-#ifdef GIA_WORDNET_DEBUG
-	#define GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
-#endif
 //#define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG2
 //#define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 //#define GIA_TRANSLATOR_DEBUG
@@ -35,6 +32,12 @@
 //#define GIA_QUERY_DEBUG
 //#define GIA_SEMANTIC_NET_XML_DEBUG
 
+
+//Wordnet
+#define USE_WORDNET	(takes into account synonymns) 
+#ifdef USE_WORDNET
+	#define GIA_USE_SYNONYMN_DETECTION
+#endif
 
 //~External NLP Parser
 #define GIA_USE_RELEX

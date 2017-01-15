@@ -30,7 +30,14 @@
 #include <utility> // make_pair	//required for GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
 using namespace std;
 
-
+//extracted from wn.h (WordNet 3.0 library header)
+#define GRAMMATICAL_WORD_TYPE_UNDEFINED (0)
+#define GRAMMATICAL_WORD_TYPE_NOUN (1)
+#define GRAMMATICAL_WORD_TYPE_VERB (2)
+#define GRAMMATICAL_WORD_TYPE_ADJ (3)
+#define GRAMMATICAL_WORD_TYPE_ADV (4)
+#define GRAMMATICAL_WORD_TYPE_SATELLITE (5)	/* not really a part of speech */
+#define GRAMMATICAL_WORD_TYPE_ADJSAT (SATELLITE)
 
 
 #define GRAMMATICAL_TENSE_UNDEFINED 0
@@ -90,6 +97,8 @@ using namespace std;
 #define MEASURE_DEPENDENCY_UNKNOWN (5)
 #define MEASURE_TYPE_UNDEFINED (-1)
 
+
+
 extern string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
 extern string grammaticalTenseModifierNameArray[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];
 extern string grammaticalNumberNameArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES];
@@ -119,13 +128,7 @@ public:
 	bool hasAssociatedTime;
 	bool hasProgressiveTemp;	//PRECISE ORIGINALNAME: isActionOrPropertyState		//eg The cat is lying on the bed. / Mark is being happy.
 	bool hasQuality;		//PRECISE ORIGINAL NAME: isPropertyQualityOrAffection	//eg 'the locked door..' / 'Jim runs quickly' / 'Mr. Smith is late' 	[Not: Tom has an arm'/'Tom's bike']
-		
-	/*
-	enum
-	{
-		definesAThingNoun, definesAPropertyAdjective, definesAnActionVerb, undefinedEntityType
-	}type;	//is the following entity known to be an instance?		
-	*/
+	
 	
 	/*instances are now arbitrary, every entity is an instance of its parent(s) in some form or another...
 	enum
@@ -265,6 +268,14 @@ public:
 	bool CXLdummyNode;
 	
 	//bool firstSentenceToAppearInNetwork;
+	
+	int wordType;			//added 26 April 2012 (used for compatibility with wordnet)	
+	/*
+	enum
+	{
+		definesAThingNoun, definesAPropertyAdjective, definesAnActionVerb, undefinedEntityType
+	}type;	//is the following entity known to be an instance?		
+	*/	
 };
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode);

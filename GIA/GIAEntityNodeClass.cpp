@@ -130,6 +130,8 @@ GIAEntityNode::GIAEntityNode(void)
 	CXLdummyNode = false;	
 	
 	//firstSentenceToAppearInNetwork = true;
+	
+	wordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;	
 }
 GIAEntityNode::~GIAEntityNode(void)
 {

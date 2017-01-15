@@ -389,7 +389,7 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList,
 			#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
 				//identify is sentence is a question
 				//cout << "currentFeature->type = " << currentFeature->type << endl;
-				if(currentFeature->type == FEATURE_TYPE_PUNCTUATION)
+				if(currentFeature->type == FEATURE_RELEX_POS_TYPE_PUNCTUATION_NAME)
 				{
 					if(currentFeature->word == FEATURE_WORD_QUESTIONMARK)
 					{
@@ -473,6 +473,8 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList,
 	}
 
 }
+
+
 
 
 

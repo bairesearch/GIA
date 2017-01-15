@@ -1108,3 +1108,51 @@ void recordConceptNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIA
 		}		
 	}	
 }
+
+void convertRelexPOSTypeToWordnetWordType(string * relexPOStype, int * wordType)
+{
+	*wordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
+	for(int i=0; i<FEATURE_RELEX_POS_NUMBER_OF_TYPES; i++)
+	{
+		if(featureRelexPOSTypeArray[i] == *relexPOStype)
+		{
+			*wordType = featureRelexPOSTypeCrossReferenceWordnetWordTypeArray[i];
+		}
+	}
+	
+	/*
+	#ifdef GIA_WORDNET_DEBUG
+	cout << "convertRelexPOSTypeToWordnetWordType(): " << endl;
+	cout << "relexPOStype = " << *relexPOStype << endl;
+	cout << "wordType = " << *wordType << endl;	
+	#endif
+	*/
+}
+
+void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, string * relexPOStype, int * wordType)
+{	
+	*relexPOStype = FEATURE_RELEX_POS_TYPE_WORD;
+	for(int i=0; i<FEATURE_POS_TAG_NUMBER_OF_TYPES_MINIMAL; i++)
+	{
+		if(featurePOSTagMinimalArray[i] == *POStag)
+		{
+			*relexPOStype = featurePOSTagCrossReferenceRelexPOSTypeArray[i];
+		}
+	}
+	
+	convertRelexPOSTypeToWordnetWordType(relexPOStype, wordType);
+
+	/*
+	#ifdef GIA_WORDNET_DEBUG
+	cout << "convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(): " << endl;
+	cout << "POStag = " << *POStag << endl;
+	cout << "relexPOStype = " << *relexPOStype << endl;
+	cout << "wordType = " << *wordType << endl;
+	#endif
+	*/
+}
+
+
+
+
+

@@ -12,7 +12,10 @@
 
 #include "GIAquery.h"
 #include "GIAdatabase.h"
-
+#ifdef USE_WORDNET
+	#include "GIAwordnet.h"
+	#include "wn.h"
+#endif
 
 GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesListQuery, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, double * confidence, GIAEntityNode** queryAnswerPreviousNode, string * queryAnswerContext)
 {
@@ -236,6 +239,43 @@ bool verifyThatAnswerEntityIsDefinedByComparisonVariableNode(GIAEntityNode * ent
 
 
 
+bool compareEntityNames(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode)
+{
+	bool entityNamesAreSynonymous = false;
+	
+	#ifndef USE_WORDNET
+	cout << "compareEntityNames() error: requires USE_WORDNET" << endl;
+	exit(0);
+	#endif
+		
+	if(queryEntityNode->entityName == entityNode->entityName)
+	{
+		entityNamesAreSynonymous = true;
+	}	
+	else
+	{
+		if(queryEntityNode->wordType != entityNode->wordType)	//error checking
+		{
+			#ifdef GIA_WORDNET_DEBUG
+			cout << "compareEntityNames() warning: (queryEntityNode->wordType != entityNode->wordType)" << endl;
+			cout << "queryEntityNode->wordType = " << queryEntityNode->wordType << endl;
+			cout << "entityNode->wordType = " << entityNode->wordType << endl;
+			#endif
+		}
+		else
+		{		
+			if(checkIfQueryWordIsContainedWithinAnotherWordsSynsets(entityNode->entityName, queryEntityNode->entityName, entityNode->wordType))
+			{
+				entityNamesAreSynonymous = true;
+			}
+		}
+	}
+	
+	return entityNamesAreSynonymous;
+}
+
+
+
 
 GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode * comparisonVariableNode,  bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters, bool isSuitableNodeTypeForInexactAnswer, bool isCondition, GIAEntityNode** queryAnswerPreviousNode, GIAEntityNode* sourceEntityNode, bool sourceIsConditionAndHasComparisonVariableAttached, string * queryAnswerContext, string sourceContext, bool thisIsInstanceAndPreviousNodeWasDefinition, bool nonMatchingSourceConditions)
 {
@@ -306,7 +346,11 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 		#endif
 			//cout << "IE-1b" << endl;
 
+			#ifdef GIA_USE_SYNONYMN_DETECTION
+			if(compareEntityNames(queryEntityNode, entityNode))
+			#else
 			if(queryEntityNode->entityName == entityNode->entityName)	//allow non-equal conditions to be matched during network comparison
+			#endif
 			{
 				//cout << "IE0" << endl;
 
@@ -365,7 +409,11 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 			else if(detectComparisonVariable)
 			{
 				//cout << "IE0b" << endl;
+				#ifdef GIA_USE_SYNONYMN_DETECTION
+				if(compareEntityNames(queryEntityNode, comparisonVariableNode))
+				#else				
 				if(queryEntityNode->entityName == comparisonVariableNode->entityName)	//implied: (queryEntityNode->isQuery)
+				#endif
 				{//exact match found
 					foundMatch = true;
 					#ifdef GIA_QUERY_DEBUG
@@ -449,16 +497,26 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 		}
 
 		#ifdef GIA_QUERY_DO_NOT_TRACE_NON_IDENTICAL_CONDITION_TYPES
+			bool entityNamesEqual = false;
+			#ifdef GIA_USE_SYNONYMN_DETECTION
+			if(compareEntityNames(queryEntityNode, entityNode))
+			#else		
+			if(queryEntityNode->entityName == entityNode->entityName)	
+			#endif
+			{
+				entityNamesEqual = true;
+			}
+							
 			#ifndef GIA_QUERY_TRACE_PAST_ANSWER
-			if(((queryEntityNode->entityName == entityNode->entityName) || nonMatchingConditions) && !(*foundAnswer) && (!nonMatchingSourceConditions))	//do not continue trace if non-matching source conditions	//only trace if matching entity names [or if it is a condition; allows for non-matching conditions to be compared], and do not trace past the answer
+			if(((entityNamesEqual) || nonMatchingConditions) && !(*foundAnswer) && (!nonMatchingSourceConditions))	//do not continue trace if non-matching source conditions	//only trace if matching entity names [or if it is a condition; allows for non-matching conditions to be compared], and do not trace past the answer
 			#else
-			if(((queryEntityNode->entityName == entityNode->entityName) || nonMatchingConditions) && !nonMatchingSourceConditions)	//do not continue trace if non-matching source conditions	//allow trace past the answer		
+			if(((entityNamesEqual) || nonMatchingConditions) && !nonMatchingSourceConditions)	//do not continue trace if non-matching source conditions	//allow trace past the answer		
 			#endif
 		#else	
 			#ifndef GIA_QUERY_TRACE_PAST_ANSWER
-			if(((queryEntityNode->entityName == entityNode->entityName) || nonMatchingConditions) && !(*foundAnswer))	//only trace if matching entity names [or if it is a condition; allows for non-matching conditions to be compared], and do not trace past the answer
+			if(((entityNamesEqual) || nonMatchingConditions) && !(*foundAnswer))	//only trace if matching entity names [or if it is a condition; allows for non-matching conditions to be compared], and do not trace past the answer
 			#else
-			if(((queryEntityNode->entityName == entityNode->entityName) || nonMatchingConditions))	//allow trace past the answer		
+			if(((entityNamesEqual) || nonMatchingConditions))	//allow trace past the answer		
 			#endif
 		#endif
 		{

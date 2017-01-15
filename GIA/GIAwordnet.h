@@ -32,11 +32,14 @@ using namespace std;
 #define WORDNET_FINDTHEINFO_OUTPUT_MAX_NUMBER_SYNONYMS (100)
 
 void initialiseWordNet();
-bool recordUntilCharacterOrEscapeCharacter(int charIndex, char * output, int * newCharIndex, char * lineString, char characterToRecordUntil, char escapeCharacter);
 
+bool checkIfQueryWordIsContainedWithinAnotherWordsSynsets(string word, string queryWord, int wordType);
 SynsetPtr findMostPopularSynset(string word, bool * wordIsFound, int wordType);
-SynsetPtr findSynsets(string word, bool * wordIsFound, int wordType);
-SynsetPtr findMostPopularSynset(SynsetPtr firstSenseInList, int wordType);
-	void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], int wordType);
+	SynsetPtr findSynsets(string word, bool * wordIsFound, int wordType);
+	SynsetPtr findMostPopularSynset(SynsetPtr firstSenseInList, int wordType);	
+
+	
+void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], int wordType);
+bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char * output, int * newCharIndex, char * lineString, char characterToRecordUntil, char escapeCharacter);
 
 #endif
