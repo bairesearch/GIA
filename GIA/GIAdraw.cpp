@@ -257,16 +257,16 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		//go upwards also...
 		q = -DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;
 		r = -DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;		
-		if(entityNode->entityNodeDefiningThisProperty != NULL)
+		if(entityNode->entityNodeDefiningThisPropertyOrAction != NULL)
 		{
 			//cout << "a33" << endl;
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->entityNodeDefiningThisProperty, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->entityNodeDefiningThisPropertyOrAction, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			
 			if(initialiseOrPrint == DRAW_PRINT)
 			{	
 				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				pos2.x = entityNode->entityNodeDefiningThisProperty->printX;
-				pos2.y = entityNode->entityNodeDefiningThisProperty->printY;	
+				pos2.x = entityNode->entityNodeDefiningThisPropertyOrAction->printX;
+				pos2.y = entityNode->entityNodeDefiningThisPropertyOrAction->printY;	
 				pos2.z = DRAW_CONNECTION_Z;							
 				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR, writeFileObject);
 			}

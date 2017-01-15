@@ -121,7 +121,7 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 		newProperty->entityName = propertyEntity->entityName;
 		newProperty->isProperty = true;
 		newProperty->entityNodeContainingThisProperty = thingEntity;
-		newProperty->entityNodeDefiningThisProperty = propertyEntity;
+		newProperty->entityNodeDefiningThisPropertyOrAction = propertyEntity;
 		propertyEntity->hasAssociatedProperty = true;
 		propertyEntity->hasAssociatedPropertyTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 		
@@ -171,7 +171,7 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 		newProperty->entityName = propertyEntity->entityName;
 		newProperty->isProperty = true;
 		newProperty->entityNodeContainingThisProperty = NULL;
-		newProperty->entityNodeDefiningThisProperty = propertyEntity;
+		newProperty->entityNodeDefiningThisPropertyOrAction = propertyEntity;
 		propertyEntity->hasAssociatedProperty = true;
 		propertyEntity->hasAssociatedPropertyTemp = true;
 
@@ -221,23 +221,6 @@ void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definiti
 void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity)
 {
 	GIAEntityNode * newOrExistingAction;
-	
-	if(!(actionEntity->hasAssociatedActionTemp))
-	{
-		newOrExistingAction = addAction(actionEntity);
-	}
-	else
-	{
-		if(GIA_ASSIGN_UNIQUE_ACTION_NODE_TO_EACH_ACTION_INSTANCE_OF_A_GIVEN_ACTION_NAME == 1)
-		{
-			//cout << "GIA_ASSIGN_UNIQUE_ACTION_NODE_TO_EACH_ACTION_INSTANCE_OF_A_GIVEN_ACTION_NAME == 1" << endl;
-			newOrExistingAction = addAction(actionEntity);
-		}
-		else
-		{
-			newOrExistingAction = actionEntity->AssociatedPropertyNodeList.back();
-		}
-	}
 
 	addActionToSubject(subjectEntity, actionEntity);
 
@@ -248,47 +231,69 @@ void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEnti
 	//conditions required to be added [eg when, where, how, why]
 GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 {		
-	//configure action node
-	GIAEntityNode * newAction = new GIAEntityNode();
-	entityNodesCompleteList.push_back(newAction);
-	newAction->id = currentEntityNodeIDInCompleteList++;
-	newAction->entityName = actionEntity->entityName;
-	newAction->entityNodeDefiningThisProperty = actionEntity;
-	actionEntity->AssociatedActionNodeList.push_back(newAction);
-	actionEntity->hasAssociatedAction = true;
-	actionEntity->hasAssociatedActionTemp = true;
-	newAction->isAction = true;
+	bool newAction = false;
 	
-	//cout << "actionEntity->grammaticalTenseTemp = " << actionEntity->grammaticalTenseTemp << endl;
-	//cout << "actionEntity->entityName = " << actionEntity->entityName << endl;
-
-	if(actionEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
-	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
-		//cout << "hello" << endl;
-		//exit(0);
-		addTenseOnlyTimeConditionToProperty(newAction, actionEntity->grammaticalTenseTemp);
+	//configure action node	
+	GIAEntityNode * newOrExistingAction;
+	if(actionEntity->hasAssociatedActionTemp)
+	{
+		newOrExistingAction = actionEntity->AssociatedActionNodeList.back();	
+	}
+	else if(actionEntity->hasAssociatedPropertyTemp)
+	{
+		newAction = true;
+		
+		//convert property to action
+		newOrExistingAction = actionEntity->AssociatedPropertyNodeList.back();
+		
+		
+		newOrExistingAction->isProperty = false;
+		actionEntity->hasAssociatedPropertyTemp = false;
+		actionEntity->AssociatedPropertyNodeList.pop_back();
+		if(actionEntity->AssociatedPropertyNodeList.size() < 1)
+		{
+			actionEntity->hasAssociatedProperty = false;
+		}
+		
+	}
+	else
+	{
+		newAction = true;
+		
+		newOrExistingAction = new GIAEntityNode();
+		newOrExistingAction->id = currentEntityNodeIDInCompleteList++;
+		newOrExistingAction->entityName = actionEntity->entityName;		
+		newOrExistingAction->entityNodeDefiningThisPropertyOrAction = actionEntity;
 	}
 	
-	return newAction;
+	if(newAction)
+	{
+		entityNodesCompleteList.push_back(newOrExistingAction);
+
+		actionEntity->AssociatedActionNodeList.push_back(newOrExistingAction);
+		actionEntity->hasAssociatedAction = true;
+		actionEntity->hasAssociatedActionTemp = true;
+		newOrExistingAction->isAction = true;
+
+		//cout << "actionEntity->grammaticalTenseTemp = " << actionEntity->grammaticalTenseTemp << endl;
+		//cout << "actionEntity->entityName = " << actionEntity->entityName << endl;
+
+		if(actionEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
+		{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
+			//cout << "hello" << endl;
+			//exit(0);
+			addTenseOnlyTimeConditionToProperty(newOrExistingAction, actionEntity->grammaticalTenseTemp);
+		}
+	}	
+
+	return newOrExistingAction;
 }
 
 void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity)
 {	
 	GIAEntityNode * newOrExistingAction;
-	if(!(actionEntity->hasAssociatedActionTemp))
-	{
-		newOrExistingAction = addAction(actionEntity);
-	}
-	else
-	{
-		newOrExistingAction = actionEntity->AssociatedActionNodeList.back();
-	}
+	newOrExistingAction = addAction(actionEntity);
 
-	if(subjectEntity->hasAssociatedPropertyTemp)
-	{
-		subjectEntity = subjectEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
-	}
-		
 	//configure subject entity node
 	subjectEntity->ActionNodeList.push_back(newOrExistingAction);
 	
@@ -302,20 +307,8 @@ void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEnt
 void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity)
 {		
 	GIAEntityNode * newOrExistingAction;
-	if(!(actionEntity->hasAssociatedActionTemp))
-	{
-		newOrExistingAction = addAction(actionEntity);
-	}
-	else
-	{
-		newOrExistingAction = actionEntity->AssociatedActionNodeList.back();
-	}
-
-	if(objectEntity->hasAssociatedPropertyTemp)
-	{
-		objectEntity = objectEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
-	}
-		
+	newOrExistingAction = addAction(actionEntity);
+	
 	//configure object entity node
 	objectEntity->IncomingActionNodeList.push_back(newOrExistingAction);
 	

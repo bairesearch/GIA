@@ -47,7 +47,7 @@ GIAEntityNode::GIAEntityNode(void)
 	timeConditionNode = NULL;
 	
 	entityNodeContainingThisProperty = NULL;				//if property only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
-	entityNodeDefiningThisProperty = NULL; 		
+	entityNodeDefiningThisPropertyOrAction = NULL; 		
 
 	grammaticalNumber = GRAMMATICAL_NUMBER_UNDEFINED;
 	

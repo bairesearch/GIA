@@ -315,7 +315,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			if(currentAttribute->value != GIA_SEMANTIC_NET_XML_NULL_NODE_ID)
 			{		
 				long attributeValue = atol(currentAttribute->value.c_str());	
-				entityNode->entityNodeDefiningThisProperty = findEntityNodeByID(attributeValue, entityNodesCompleteList);
+				entityNode->entityNodeDefiningThisPropertyOrAction = findEntityNodeByID(attributeValue, entityNodesCompleteList);
 				entityNodeDefiningThisPropertyFound = true;
 			}
 		}	
@@ -1064,10 +1064,10 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		#endif
 
 
-		if(currentEntity->entityNodeDefiningThisProperty != NULL)
+		if(currentEntity->entityNodeDefiningThisPropertyOrAction != NULL)
 		{
 			currentAttribute->name = NET_XML_ATTRIBUTE_entityNodeDefiningThisProperty;
-			sprintf(tempString, "%ld", (currentEntity->entityNodeDefiningThisProperty->id));
+			sprintf(tempString, "%ld", (currentEntity->entityNodeDefiningThisPropertyOrAction->id));
 			currentAttribute->value = tempString;
 			
 			XMLParserAttribute * newAttribute22 = new XMLParserAttribute();

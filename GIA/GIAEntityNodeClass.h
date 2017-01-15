@@ -130,7 +130,7 @@ public:
 	GIAEntityNode * entityNodeContainingThisProperty;				//if property/action only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
 	
 		//actions and properties only
-	GIAEntityNode * entityNodeDefiningThisProperty;					//if property/action only:					//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
+	GIAEntityNode * entityNodeDefiningThisPropertyOrAction;					//if property/action only:					//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
 	
 		//pure entites only (not properties/"instances" of entities)
 	//entity connections;										
