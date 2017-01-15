@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7c 29-June-2013
+ * Project Version: 1s7d 29-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -630,6 +630,7 @@
 
 #define GIA_USE_ADVANCED_REFERENCING	//requires further testing
 #ifdef GIA_USE_ADVANCED_REFERENCING
+	#define GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES	//added 29 June 2013
 	#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	//#define GIA_ADVANCED_REFERENCING_UPDATE_NOT_NECESSARY_OR_TESTED
 	#define GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
@@ -667,6 +668,7 @@
 
 //Debug [Disable these for official build];
 //#define GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+//#define GIA_ADVANCED_REFERENCING_DEBUG_DISABLE_LINKING
 //#define GIA_LRP_DEBUG
 //#define GIA_NLG_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET

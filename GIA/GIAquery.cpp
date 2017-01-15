@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7c 29-June-2013
+ * Project Version: 1s7d 29-June-2013
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -663,6 +663,14 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode * queryEntityNode, G
 							passIntrasentenceReferenceRequirements = false;
 							if(entityNode->entityIndexTemp < queryEntityNode->minimumEntityIndexOfReferenceSet)
 							{
+								/*
+								if((queryEntityNode->wordOrig == "file") && (entityNode->wordOrig == "files"))
+								{
+									cout << "WARNING:" << endl;
+									cout << "queryEntityNode->minimumEntityIndexOfReferenceSet = " << queryEntityNode->minimumEntityIndexOfReferenceSet << endl;
+									cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
+								}
+								*/
 								passIntrasentenceReferenceRequirements = true;
 							}
 						}
@@ -694,27 +702,34 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode * queryEntityNode, G
 								|| ((entityNode->isSubstanceConcept) && (queryEntityNode->isSubstance) && !(queryEntityNode->aliasList.empty())))
 								{
 								#endif
+									#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
+									if(queryEntityNode->grammaticalNumber == entityNode->grammaticalNumber)
+									{
+									#endif
 									//cout << "passed isSubstanceConcept tests" << endl;
 									
-									if(testEntityNodeForQueryOrReferenceSet(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
-									{
-										result = EXACT_MATCH_PASS;
-
-										#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-										/*
-										#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-										if(referenceTraceParameters->intrasentenceReference)
+										if(testEntityNodeForQueryOrReferenceSet(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
 										{
-											cout << "EXACT_MATCH_PASS" << endl;
+											result = EXACT_MATCH_PASS;
+
+											#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+											/*
+											#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+											if(referenceTraceParameters->intrasentenceReference)
+											{
+												cout << "EXACT_MATCH_PASS" << endl;
+											}
+											#endif
+											*/
+											#endif
 										}
-										#endif
-										*/
-										#endif
+										else
+										{
+											result = EXACT_MATCH_FAIL;
+										}
+									#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
 									}
-									else
-									{
-										result = EXACT_MATCH_FAIL;
-									}
+									#endif										
 								#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 								}
 								#endif
