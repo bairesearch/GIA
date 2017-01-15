@@ -429,7 +429,7 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 	#ifdef GIA_SUPPORT_PREDETERMINERS
 	newSubstance->grammaticalPredeterminerTemp = entity->grammaticalPredeterminerTemp;
 	#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
-	newSubstance->grammaticalPredeterminerTempSentenceArray.insert(make_pair<int,int>(sentenceIndexTemp, entity->grammaticalPredeterminerTemp));
+	newSubstance->grammaticalPredeterminerTempSentenceArray.insert(make_pair(entity->sentenceIndexTemp, entity->grammaticalPredeterminerTemp));
 	#endif
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP

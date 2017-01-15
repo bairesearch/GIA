@@ -1831,7 +1831,7 @@ void linkAdvancedReferencesGIA(GIAsentence* currentSentenceInList, bool GIAentit
 								referenceSource->grammaticalPredeterminerTemp = featureArrayTemp[referenceEntityIndex]->grammaticalPredeterminer;	//only update the default (sentence independent) predeterminer of reference if no predeterminer found previously - NB the default (sentence independent) predeterminer is used by GIAxmlConversion only at present and shouldnt be used at all by !GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 							}
 							#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
-							referenceSource->grammaticalPredeterminerTempSentenceArray.insert(make_pair<int,int>(currentSentenceInList->sentenceIndex, featureArrayTemp[referenceEntityIndex]->grammaticalPredeterminer));	//added 2i34a
+							referenceSource->grammaticalPredeterminerTempSentenceArray.insert(make_pair(currentSentenceInList->sentenceIndex, featureArrayTemp[referenceEntityIndex]->grammaticalPredeterminer));	//added 2i34a
 							#endif
 							#endif
 

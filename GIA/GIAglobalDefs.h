@@ -617,7 +617,7 @@
 #ifndef GIA_DISABLE_2g_CODE_FOR_DEBUG
 	#define GIA_SUPPORT_NUMBER_OF	//added 2g9a/24-September-2014
 	#ifdef USE_NLC
-		#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
+		//#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 		#define GIA_SUPPORT_NLC_INTEGRATION	//GIA uses NLCsentence code
 		#ifdef GIA_SUPPORT_NLC_INTEGRATION
 			#define GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS 	//added 2i24a
