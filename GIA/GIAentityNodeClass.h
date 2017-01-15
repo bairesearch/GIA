@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o2b 12-October-2016
+ * Project Version: 2o3a 20-October-2016
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -52,6 +52,9 @@
 #include <unordered_map>		//required for GIA_USE_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR
 #include <utility> // make_pair	//required for GIA_USE_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR
 using namespace std;
+
+#define GIA_ENTITY_ID_INSTANCE_NETWORK_INDEX_ENTITY (0)
+#define GIA_ENTITY_ID_INSTANCE_FIRST_INSTANCE_ENTITY (1)
 
 //entity types added 2n1c
 #define GIA_ENTITY_TYPE_TYPE_UNDEFINED (-1)

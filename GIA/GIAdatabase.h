@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o2b 12-October-2016
+ * Project Version: 2o3a 20-October-2016
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -42,7 +42,7 @@
 #include "GIAglobalDefs.h"
 
 
-#define GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE (0)
+#define GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE (GIA_ENTITY_ID_INSTANCE_NETWORK_INDEX_ENTITY)
 
 #ifdef GIA_USE_DATABASE
 

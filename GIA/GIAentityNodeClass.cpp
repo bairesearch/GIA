@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o2b 12-October-2016
+ * Project Version: 2o3a 20-October-2016
  *
  *******************************************************************************/
 
@@ -63,7 +63,7 @@ GIAentityNode::GIAentityNode(void)
 	/*GIA Internal Entity Referencing*/
 	idActiveList = 0;
 	idActiveListReorderdIDforXMLsave = 0;
-	idInstance = 0;		//set as networkIndex by default (GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE)
+	idInstance = GIA_ENTITY_ID_INSTANCE_NETWORK_INDEX_ENTITY;		//set as networkIndex by default (GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE)
 
 
 	/*GIA Entity Name*/
