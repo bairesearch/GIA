@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1e 14-November-2014
+ * Project Version: 2h1f 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -631,7 +631,11 @@
 		#define GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
 		#define GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
 		#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
-			#define GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED	//checkthis
+			#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
+				#define GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_DISABLED	//only create twoway condition links in derivatives (eg NLC)
+			#else
+				#define GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED	//required for GIA advanced referencing
+			#endif
 		#endif
 		#define GIA_LRP_DETECT_PREPOSITION_TYPE		//added 2h1a/14-November-2014 - required for NLC 1m1a+
 		#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW	//added 2h1c/14-November-2014 - required for NLC 1m1a+

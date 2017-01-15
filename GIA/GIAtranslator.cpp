@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1e 14-November-2014
+ * Project Version: 2h1f 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1265,50 +1265,55 @@ void invertOrDuplicateConditionsIfRequired(Sentence * currentSentenceInList, boo
 	{
 		if(!(currentRelationInList->disabled))
 		{
-			bool prepositionFound = false;
-			string conditionName = convertPrepositionToRelex(&(currentRelationInList->relationType), &prepositionFound);
-			if(prepositionFound)
+			bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS, currentRelationInList);
+			if(!sameReferenceSet)	//added 2h1f
 			{
-				if(!(currentRelationInList->inverseRelation))
+				bool prepositionFound = false;
+				string conditionName = convertPrepositionToRelex(&(currentRelationInList->relationType), &prepositionFound);
+				if(prepositionFound)
 				{
-					bool inverseConditionRequired = false;
-					bool twoWayConditionRequired = false;
-					string inverseConditionName = "";
-					detectIfInverseOrTwoWayConditionRequired(conditionName, &inverseConditionRequired, &twoWayConditionRequired, &inverseConditionName);
+					if(!(currentRelationInList->inverseRelation))
+					{
+						bool inverseConditionRequired = false;
+						bool twoWayConditionRequired = false;
+						string inverseConditionName = "";
+						detectIfInverseOrTwoWayConditionRequired(conditionName, &inverseConditionRequired, &twoWayConditionRequired, &inverseConditionName);
 
-					#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
-					if(inverseConditionRequired)
-					{
-						#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
-						cout << "invertOrDuplicateConditionsIfRequired(): inverseConditionRequired: conditionName = " << conditionName  << endl;
-						#endif
-						createNewInverseConditionEntity(currentRelationInList, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, inverseConditionName, featureArrayTemp);
-					}
-					#endif
-					#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
-					if(twoWayConditionRequired)
-					{
-						#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
-						cout << "invertOrDuplicateConditionsIfRequired(): twoWayConditionRequired: conditionName = " << conditionName << endl;
-						#endif
-						#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
-						Relation * lastRelationInList = currentSentenceInList->firstRelationInList;
-						while(lastRelationInList->next != NULL)
-						{	
-							lastRelationInList = lastRelationInList->next;
+						#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+						if(inverseConditionRequired)
+						{
+							#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
+							cout << "invertOrDuplicateConditionsIfRequired(): inverseConditionRequired: conditionName = " << conditionName  << endl;
+							#endif
+							createNewInverseConditionEntity(currentRelationInList, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, inverseConditionName, featureArrayTemp);
 						}
-						createNewInverseConditionEntity(lastRelationInList, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, conditionName, featureArrayTemp);
-						lastRelationInList->relationGovernor = currentRelationInList->relationDependent;
-						lastRelationInList->relationDependent = currentRelationInList->relationGovernor;
-						lastRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
-						lastRelationInList->relationDependentIndex = currentRelationInList->relationGovernorIndex;
-						lastRelationInList->inverseRelationTwoWay = true;
-						lastRelationInList->next = new Relation();
-						#else 
-						currentRelationInList->inverseRelationTwoWay = true;
+						#endif
+						#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+						if(twoWayConditionRequired)
+						{
+							#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
+							cout << "invertOrDuplicateConditionsIfRequired(): twoWayConditionRequired: conditionName = " << conditionName << endl;
+							#endif
+							#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+							Relation * lastRelationInList = currentSentenceInList->firstRelationInList;
+							while(lastRelationInList->next != NULL)
+							{	
+								lastRelationInList = lastRelationInList->next;
+							}
+							createNewInverseConditionEntity(lastRelationInList, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, conditionName, featureArrayTemp);
+							lastRelationInList->relationGovernor = currentRelationInList->relationDependent;
+							lastRelationInList->relationDependent = currentRelationInList->relationGovernor;
+							lastRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
+							lastRelationInList->relationDependentIndex = currentRelationInList->relationGovernorIndex;
+							lastRelationInList->inverseRelationTwoWay = true;
+							lastRelationInList->next = new Relation();
+							#else 
+							currentRelationInList->inverseRelationTwoWay = true;
+							//cout << "inverseRelationTwoWay" << endl;
+							#endif
+						}
 						#endif
 					}
-					#endif
 				}
 			}
 		}
