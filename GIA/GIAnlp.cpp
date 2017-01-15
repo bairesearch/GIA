@@ -23,7 +23,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p4a 19-September-2012
+ * Project Version: 1p5a 21-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -148,13 +148,13 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 
 	bool createNewSentences = true;
 
-	
+	#ifdef GIA_NLP_DEBUG
 	cout << "inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
 	cout << "inputTextNLPfeatureXMLFileName = " << inputTextNLPfeatureXMLFileName << endl;
 	cout << "NLPfeatureParser = " << NLPfeatureParser << endl;
 	cout << "NLPdependencyRelationsParser = " << NLPdependencyRelationsParser << endl;
 	cout << "NLPrelexCompatibilityMode = " << NLPrelexCompatibilityMode << endl;
-	
+	#endif
 
 	//Parse Features
 	#ifdef GIA_USE_RELEX
@@ -167,7 +167,9 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 		}
 	}
 	#endif
+	#ifdef GIA_NLP_DEBUG
 	cout << "NLP1" << endl;
+	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
@@ -178,7 +180,9 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 		}
 	}
 	#endif
+	#ifdef GIA_NLP_DEBUG
 	cout << "NLP2" << endl;
+	#endif
 	#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 	#ifdef GIA_USE_STANFORD_PARSER
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER)
@@ -191,9 +195,10 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 	}
 	#endif
 	#endif
-
+	#ifdef GIA_NLP_DEBUG
 	cout << "NLP3" << endl;
-
+	#endif
+	
 	//Parse Relations
 	if(result)
 	{
@@ -206,7 +211,9 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 			}
 		}
 		#endif
+		#ifdef GIA_NLP_DEBUG
 		cout << "NLP4" << endl;
+		#endif
 		#ifdef GIA_USE_STANFORD_CORENLP
 		if(NLPdependencyRelationsParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 		{
@@ -216,7 +223,9 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 			}
 		}
 		#endif
+		#ifdef GIA_NLP_DEBUG
 		cout << "NLP5, inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
+		#endif
 		#ifdef GIA_USE_STANFORD_PARSER
 		if(NLPdependencyRelationsParser == GIA_NLP_PARSER_STANFORD_PARSER)
 		{
@@ -226,7 +235,9 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 			}
 		}
 		#endif
+		#ifdef GIA_NLP_DEBUG
 		cout << "NLP6" << endl;
+		#endif
 	}
 	
 	return result;
@@ -368,6 +379,10 @@ bool parseRelexFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragr
 		#endif
 	}
 	
+	#ifdef GIA_FREE_MEMORY
+	delete firstTagInXMLFile;
+	#endif
+		
 	return result;
 }
 #endif
@@ -777,6 +792,10 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 		#endif
 	}
 
+	#ifdef GIA_FREE_MEMORY
+	delete firstTagInXMLFile;
+	#endif
+	
 	return result;
 }
 

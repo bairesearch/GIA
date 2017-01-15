@@ -23,7 +23,7 @@
  * File Name: GIASentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p4a 19-September-2012
+ * Project Version: 1p5a 21-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -56,7 +56,6 @@ StanfordCoreNLPMention::~StanfordCoreNLPMention(void)
 		delete next;
 	}
 }
-
 
 StanfordCoreNLPCoreference::StanfordCoreNLPCoreference(void)
 {
@@ -255,6 +254,15 @@ Sentence::~Sentence(void)
 		delete firstFeatureInList;
 	}
 
+	#ifdef GIA_FREE_MEMORY
+	#ifdef GIA_USE_STANFORD_CORENLP	
+	if(firstCoreferenceInList != NULL)	//added 21 Sept 2012 
+	{
+		delete firstCoreferenceInList;
+	}
+	#endif
+	#endif
+	
 	if(next != NULL)
 	{
 		delete next;
@@ -297,7 +305,8 @@ void copySentences(Sentence * sentenceToCopy, Sentence * newSentence)
 	#endif
 
 	#ifdef GIA_USE_STANFORD_CORENLP
-	newSentence->firstCoreferenceInList = sentenceToCopy->firstCoreferenceInList;
+	copyStanfordCoreferences(sentenceToCopy->firstCoreferenceInList, newSentence->firstCoreferenceInList);	//changed 21 Sept 2012 
+	//newSentence->firstCoreferenceInList = sentenceToCopy->firstCoreferenceInList;
 	#endif
 
 	newSentence->maxNumberOfWordsInSentence = sentenceToCopy->maxNumberOfWordsInSentence;
@@ -305,8 +314,8 @@ void copySentences(Sentence * sentenceToCopy, Sentence * newSentence)
 	copyRelations(sentenceToCopy->firstRelationInList, newSentence->firstRelationInList);
 	copyFeatures(sentenceToCopy->firstFeatureInList, newSentence->firstFeatureInList);
 
-	newSentence->next = sentenceToCopy->next;
-	newSentence->previous = sentenceToCopy->previous;
+	newSentence->next = NULL;
+	newSentence->previous = NULL;
 
 	newSentence->isQuestion = sentenceToCopy->isQuestion;
 }
@@ -373,6 +382,54 @@ void copyFeatures(Feature * firstFeatureInListToCopy, Feature * firstFeatureInLi
 		currentFeature = currentFeature->next;
 	}
 }
+
+
+#ifdef GIA_USE_STANFORD_CORENLP
+void copyStanfordCoreferences(StanfordCoreNLPCoreference * firstCoreferenceInListToCopy, StanfordCoreNLPCoreference * firstCoreferenceInList)
+{
+	StanfordCoreNLPCoreference * currentCoreferenceInListToCopy = firstCoreferenceInListToCopy;
+	StanfordCoreNLPCoreference * currentCoreferenceInList = firstCoreferenceInList;
+	while(currentCoreferenceInListToCopy->next != NULL)
+	{
+		currentCoreferenceInList->firstMentionInList = new StanfordCoreNLPMention();
+		copyStanfordMention(currentCoreferenceInListToCopy->firstMentionInList, currentCoreferenceInList->firstMentionInList);
+
+		//cout << "copy Stanford coreference:" << endl;
+		//cout << currentCoreferenceInList->head << endl;
+
+		StanfordCoreNLPCoreference * newCoreference = new StanfordCoreNLPCoreference();
+		currentCoreferenceInList->next = newCoreference;
+
+		currentCoreferenceInListToCopy = currentCoreferenceInListToCopy->next;
+		currentCoreferenceInList = currentCoreferenceInList->next;
+	}
+}
+
+void copyStanfordMention(StanfordCoreNLPMention * firstMentionInListToCopy, StanfordCoreNLPMention * firstMentionInList)
+{
+	StanfordCoreNLPMention * currentMentionInListToCopy = firstMentionInListToCopy;
+	StanfordCoreNLPMention * currentMentionInList = firstMentionInList;
+	while(currentMentionInListToCopy->next != NULL)
+	{
+		currentMentionInList->representative = currentMentionInListToCopy->representative;
+		currentMentionInList->sentence = currentMentionInListToCopy->sentence;
+		currentMentionInList->start = currentMentionInListToCopy->start;
+		currentMentionInList->end = currentMentionInListToCopy->end;
+		currentMentionInList->head = currentMentionInListToCopy->head;
+
+		//cout << "copy Stanford Mention:" << endl;
+		//cout << currentMentionInList->head << endl;
+
+		StanfordCoreNLPMention * newMention = new StanfordCoreNLPMention();
+		currentMentionInList->next = newMention;
+
+		currentMentionInListToCopy = currentMentionInListToCopy->next;
+		currentMentionInList = currentMentionInList->next;
+	}
+}
+
+#endif
+
 
 
 

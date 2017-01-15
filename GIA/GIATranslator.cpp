@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p4a 19-September-2012
+ * Project Version: 1p5a 21-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -294,13 +294,14 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	vector<GIAEntityNode*> sentenceConceptEntityNodesListTempNotUsed;
 	convertSentenceRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, true, firstGIACoreferenceInList);
 
-	/*
+	#ifdef GIA_FREE_MEMORY
 	//Clear temporary variables;
+	delete firstGIACoreferenceInList;	
 	delete currentSentenceInListTemp;
 	delete sentenceConceptEntityNodesList;
 	delete sentenceTimeConditionNodesList;
-	delete sentenceConceptEntityNodesListTempNotUsed1;
-	*/
+	//delete sentenceConceptEntityNodesListTempNotUsed1; - this is a local variable; no deletion required
+	#endif
 
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
 	cout << "\n\nfor colours only..." << endl;
@@ -313,7 +314,9 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 				sentenceConceptEntityNodesListTempNotUsedMap.insert(pair<string, GIAEntityNode*>(entityNodeNameTemp, conceptEntityNodeTemp));
 			}
 			int numberReferenceSetsTemp = identifyReferenceSets(&sentenceConceptEntityNodesListTempNotUsedMap, NLPdependencyRelationsType);
-
+			#ifdef GIA_FREE_MEMORY
+			delete sentenceConceptEntityNodesListTempNotUsedMap;
+			#endif
 		#else
 			//only works with single sentence input (ie inputText.txt contains a single sentence)
 			int numberReferenceSetsTemp = identifyReferenceSets(entityNodesActiveListConcepts, NLPdependencyRelationsType);

@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p4a 19-September-2012
+ * Project Version: 1p5a 21-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -610,7 +610,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1p4a 19-September-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1p5a 21-September-2012" << endl;
 			exit(1);
 		}
 
@@ -1515,6 +1515,10 @@ bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 	outputInternalRelationsInRelexFormat(&outputCFFFileName, &originalInputFileName, firstParagraphInList, NLPdependencyRelationsParser, NLPfeatureParser, NLPexeFolderArray);
 	#endif
 
+	#ifdef GIA_FREE_MEMORY
+	delete firstParagraphInList;
+	#endif
+	
 	return result;
 }
 

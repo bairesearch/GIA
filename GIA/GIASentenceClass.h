@@ -23,7 +23,7 @@
  * File Name: GIASentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p4a 19-September-2012
+ * Project Version: 1p5a 21-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -278,6 +278,9 @@ public:
 void copySentences(Sentence * sentenceToCopy, Sentence * newSentence);
 void copyRelations(Relation * firstRelationInListToCopy, Relation * firstRelationInList);
 void copyFeatures(Feature * firstFeatureInListToCopy, Feature * firstFeatureInList);
-
+#ifdef GIA_USE_STANFORD_CORENLP
+void copyStanfordCoreferences(StanfordCoreNLPCoreference * firstCoreferenceInListToCopy, StanfordCoreNLPCoreference * firstCoreferenceInList);
+void copyStanfordMention(StanfordCoreNLPMention * firstMentionInListToCopy, StanfordCoreNLPMention * firstMentionInList);
+#endif
 
 #endif
