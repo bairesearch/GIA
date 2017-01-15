@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j1f 26-Apr-2012
+ * Project Version: 1j4a 28-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -118,7 +118,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	cout << "\t" << currentSentenceInList->sentenceText << endl;
 	#endif
 	*/
-	bool GIAEntityNodeIsDateOrStanfordTime[MAX_NUMBER_OF_WORDS_PER_SENTENCE];	//not properly implemented yet
+	bool GIAEntityNodeIsDateOrTime[MAX_NUMBER_OF_WORDS_PER_SENTENCE];	//not properly implemented yet
 	int GIAEntityNodeGrammaticalTenseArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 	bool GIAEntityNodeGrammaticalTenseModifierArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE*GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];
 	int GIAEntityNodeGrammaticalNumberArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
@@ -144,7 +144,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{					
-		GIAEntityNodeIsDateOrStanfordTime[w] = false;
+		GIAEntityNodeIsDateOrTime[w] = false;
 		GIAEntityNodeGrammaticalTenseArray[w] = GRAMMATICAL_TENSE_UNDEFINED;
 		GIAEntityNodeGrammaticalNumberArray[w] = GRAMMATICAL_NUMBER_UNDEFINED;
 		GIAEntityNodeGrammaticalIsDefiniteArray[w] = false;
@@ -189,13 +189,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_USE_RELEX
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
-		fillGrammaticalArraysRelex(currentSentenceInList, GIAEntityNodeIsDateOrStanfordTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeNERArray, GIAEntityNodeWordTypeArray);
+		fillGrammaticalArraysRelex(currentSentenceInList, GIAEntityNodeIsDateOrTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeNERArray, GIAEntityNodeWordTypeArray);
 	}
 	#endif
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
-		fillGrammaticalArraysStanford(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAEntityNodeIsDateOrStanfordTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeNERArray, GIAEntityNodeNormalizedNERArray, GIAEntityNodeTimexArray, GIAEntityNodePOSArray, GIAEntityNodeWordTypeArray, NLPfeatureParser);
+		fillGrammaticalArraysStanford(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAEntityNodeIsDateOrTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeNERArray, GIAEntityNodeNormalizedNERArray, GIAEntityNodeTimexArray, GIAEntityNodePOSArray, GIAEntityNodeWordTypeArray, NLPfeatureParser);
 	}
 	#endif
 	
@@ -203,7 +203,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1a; applyGrammaticalInfoToAllConceptEntities" << endl;
 	#endif
- 	applyGrammaticalInfoToAllConceptEntities(GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAEntityNodeIsDateOrStanfordTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeNERArray, GIAEntityNodeNormalizedNERArray, GIAEntityNodeTimexArray, GIAEntityNodePOSArray, GIAEntityNodeWordTypeArray);
+ 	applyGrammaticalInfoToAllConceptEntities(GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAEntityNodeIsDateOrTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeNERArray, GIAEntityNodeNormalizedNERArray, GIAEntityNodeTimexArray, GIAEntityNodePOSArray, GIAEntityNodeWordTypeArray);
 
 	
 	
@@ -281,7 +281,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	}
 	#endif
 
-		#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG2
+		/*
+		#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT	
+		cout << "dependency relations: " << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{
@@ -291,14 +293,44 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 				GIAEntityNode * relationGoverner = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];				
 				GIAEntityNode * relationDependent = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
 
+				
 				cout << "relationType = " << currentRelationInList->relationType << endl;	      
 				cout << "relationGoverner = " << relationGoverner->entityName << endl;
 				cout << "relationDependent = " << relationDependent->entityName << endl;		
+				
 			}
 			currentRelationInList = currentRelationInList->next;		
 		}
-		//exit(0);
+		cout << "features (tags): " << endl;
+		for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+		{	
+			if(GIAEntityNodeArrayFilled[w])
+			{	
+				if(!(GIAEntityNodeArray[w]->disabled))
+				{	
+					cout << "Sentence Word Index = " << w << endl;					
+					cout << "Is Date or Time = " << convertBoolToString(GIAEntityNodeIsDateOrTime[w]);
+					cout << "Tense = " << grammaticalTenseNameArray[GIAEntityNodeGrammaticalTenseArray[w]];
+					for(int q=0; q<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES;q++)
+					{
+						cout << "Tense Modifier (" << grammaticalTenseModifierNameArray[q] << ") = " << convertBoolToString(GIAEntityNodeGrammaticalTenseModifierArray[w*GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES + q]);
+					}					
+					cout << "Plurality = " << grammaticalNumberNameArray[GIAEntityNodeGrammaticalNumberArray[w]];
+					cout << "Is Definite = " << convertBoolToString(GIAEntityNodeGrammaticalIsDefiniteArray[w]);
+					cout << "Is Proper Noun = " << convertBoolToString(GIAEntityNodeGrammaticalIsProperNounArray[w]);
+					cout << "Gender = " << grammaticalGenderNameArray[GIAEntityNodeGrammaticalGenderArray[w]];
+					cout << "Is Pronoun = " << convertBoolToString(GIAEntityNodeGrammaticalIsPronounArray[w]);
+					cout << "Wordtype = " << grammaticalWordTypeNameArray[GIAEntityNodeWordTypeArray[w]];
+
+					cout << "NER = " << featureNERTypeArray[GIAEntityNodeNERArray[w]];
+					cout << "NormalizedNER = " << GIAEntityNodeNormalizedNERArray[w];
+					cout << "Timex = " << GIAEntityNodeTimexArray[w];
+					cout << "POS = " << GIAEntityNodePOSArray[w];
+				}
+			}
+		}
 		#endif
+		*/
 		
 				
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -325,7 +357,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 3; link references (eg his/her with joe/emily)" << endl;
 		#endif
-		linkReferences(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, GIAEntityNodeIsDateOrStanfordTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeIsAReference);
+		linkReferences(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, GIAEntityNodeIsDateOrTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeIsAReference);
 	#ifndef GIA_STANFORD_CORE_NLP_DO_NOT_USE_CODEPENDENCIES	
 	}
 	#ifdef GIA_USE_STANFORD_CORENLP
@@ -356,12 +388,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0a pass; define properties (definite nouns); eg the house" << endl;
 	#endif
-	definePropertiesDefiniteNouns(GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeIsDateOrStanfordTime, GIAEntityNodeIsAReference);
+	definePropertiesDefiniteNouns(GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeIsDateOrTime, GIAEntityNodeIsAReference);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0b pass; define properties (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore properties]" << endl;
 	#endif
-	definePropertiesNounsWithDeterminates(GIAEntityNodeArrayFilled, GIAEntityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeIsDateOrStanfordTime, GIAEntityNodeIsAReference);
+	definePropertiesNounsWithDeterminates(GIAEntityNodeArrayFilled, GIAEntityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeIsDateOrTime, GIAEntityNodeIsAReference);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0c pass; define properties (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
@@ -552,6 +584,17 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 }
 
 
+string convertBoolToString(bool boolean)
+{
+	if(boolean)
+	{
+		return "true";
+	}
+	else
+	{
+		return "false";
+	}
+}
 	
 
 

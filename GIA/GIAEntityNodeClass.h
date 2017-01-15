@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j1f 26-Apr-2012
+ * Project Version: 1j4a 28-Apr-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -38,7 +38,7 @@ using namespace std;
 #define GRAMMATICAL_WORD_TYPE_ADV (4)
 #define GRAMMATICAL_WORD_TYPE_SATELLITE (5)	/* not really a part of speech */
 #define GRAMMATICAL_WORD_TYPE_ADJSAT (SATELLITE)
-
+#define GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES (6)
 
 #define GRAMMATICAL_TENSE_UNDEFINED 0
 #define GRAMMATICAL_TENSE_PRESENT 1
@@ -110,10 +110,15 @@ using namespace std;
 #define FEATURE_NER_NUMBER_TYPES (10)
 #define FEATURE_NER_EXPLICIT_NUMBER_TYPES (9)
 
-extern string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
-extern string grammaticalTenseModifierNameArray[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];
-extern string grammaticalNumberNameArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES];
-extern string grammaticalGenderNameArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES];
+static string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES] = {"undefined", "present", "past", "future"};
+	//OPENCOG RECOMMENDED; "future", "future_progressive", "imperative", "infinitive", "past", "past_infinitive", "past_progressive", "perfect", "present", "present_progressive", "progressive"
+	//MINIMAL; "undefined", "future", "progressive", "imperative", "infinitive", "past", "perfect", "present"
+	//ABSTRACTED; "present", "present_perfect", "present_passive", "present_infinitive", "present_progressive", "present_progressive_passive", "past", "past_passive", "past_infinitive", "past_progressive", "future", "future_progressive", "imperative", "progressive"
+static string grammaticalTenseModifierNameArray[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES] = {"progressive", "perfect", "passive", "infinitive", "imperative"};
+static string grammaticalNumberNameArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {"undefined", "uncountable", "singular", "plural"};
+static string grammaticalGenderNameArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES] = {"undefined", "person", "masculine", "feminine"};
+
+static string grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES] = {"undefined", "noun", "verb", "adj", "adv", "satellite"};	//must be same as FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME
 
 
 class GIAEntityNode
