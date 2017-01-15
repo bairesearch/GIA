@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s8c 03-July-2013
+ * Project Version: 1s8e 03-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -3210,6 +3210,7 @@ void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSenten
 
 #endif
 
+#ifdef GIA_SUPPORT_ALIASES_RELEX_COMPATIBILITY
 //required for aliasing to work
 void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
 {
@@ -3333,5 +3334,29 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 		currentRelationInList = currentRelationInList->next;
 	}
 }
+#endif
+#ifdef GIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS
+//required for aliasing to work
+void redistributeRelexRelationsDetectNameQueries(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
+{
+	bool firstWordOfSentenceIsWho = false;
+	
+	if(featureArrayTemp[1]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
+	{
+		//cout << "found who" << endl;
+		firstWordOfSentenceIsWho = true;
+	}
 
-
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAentityNodeArrayFilled[i])
+		{
+			if(GIAentityNodeArray[i]->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+			{
+				//cout << "found who query variable" << endl;			
+				GIAentityNodeArray[i]->isNameQuery = true;
+			}
+		}
+	}
+}
+#endif

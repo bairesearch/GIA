@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s8c 03-July-2013
+ * Project Version: 1s8e 03-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -707,6 +707,16 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		cout << "The time is 06:45.	_obj(be[3], 06:45[4]) + _subj(be[3], time[2]) -> appos(time-2, 06:45-4)	" << endl;
 		#endif
 		redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPfeatureParser);
+	
+	
+		#ifdef GIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1c2Alternate; redistribute Relex Relations - Detect Name Queries" << endl;		
+		#endif
+		//required for aliasing to work
+		redistributeRelexRelationsDetectNameQueries(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, featureArrayTemp);
+		#endif
+	
 	}
 	#endif
 	
@@ -927,7 +937,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	cout << "0e pass; define substances (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
 	#endif
 	defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(currentSentenceInList, GIAentityNodeArray, NLPdependencyRelationsType);
-
+	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0f pass; define substances (quantities [not quantity mods/multipiers, not measure pers] and measures);" << endl;
 	#endif

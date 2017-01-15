@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s8c 03-July-2013
+ * Project Version: 1s8e 03-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -897,8 +897,8 @@ void defineSubstanceConcepts(bool GIAentityNodeArrayFilled[], GIAentityNode * GI
 				if(!(thingEntity->wasReference))
 				{
 				#endif
-					cout << "thingEntity->entityName = " << thingEntity->entityName << endl;
-					cout << "thingIndex = " << thingIndex << endl;
+					//cout << "thingEntity->entityName = " << thingEntity->entityName << endl;
+					//cout << "thingIndex = " << thingIndex << endl;
 					
 					#ifdef GIA_TRANSLATOR_DEBUG				
 					//cout << "defineSubstancesBasedOnDeterminatesOfDefinitionEntities(): RELATION_TYPE_APPOSITIVE_OF_NOUN" << endl;
