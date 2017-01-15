@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r10d 28-November-2012
+ * Project Version: 1r10e 28-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -254,8 +254,9 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				#endif
 					if((thingEntity->isSubstance || thingEntity->isNameQuery) && (definitionEntity->isSubstance || definitionEntity->isNameQuery))
 					{//equality link found - add alias instead
+						//cout << "((thingEntity->isSubstance || thingEntity->isNameQuery) && (definitionEntity->isSubstance || definitionEntity->isNameQuery))" << endl;
 						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-						if(!(thingEntity->isSubstanceConcept) && !(definitionEntity->isSubstanceConcept))
+						if(!(thingEntity->isSubstanceConcept) && (!(definitionEntity->isSubstanceConcept) || (definitionEntity->isName)))
 						{
 						#endif
 							#ifdef GIA_TRANSLATOR_DEBUG
@@ -353,6 +354,15 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				else
 				{
 				#endif
+					/*
+					#ifdef GIA_TRANSLATOR_DEBUG
+					cout << "adding definition:" << endl;
+					cout << "thingName = " << thingEntity->entityName << endl;
+					cout << "definitionEntity = " << definitionEntity->entityName << endl;						
+					cout << "thingEntity->isSubstance = " << thingEntity->isSubstance << endl;
+					cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;					
+					#endif
+					*/
 					addDefinitionToEntity(thingEntity, definitionEntity, sameReferenceSet);
 				#ifdef GIA_SUPPORT_ALIASES
 				}
