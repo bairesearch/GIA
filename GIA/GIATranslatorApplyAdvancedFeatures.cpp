@@ -3,7 +3,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i11a 13-Apr-2012
+ * Project Version: 1i12a 15-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -953,7 +953,7 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode
 				{
 					#ifndef GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_PROPERTY_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE 
 					#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
-					if(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->entityName != RELATION_GOVERNOR_BE)
+					if(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->entityName != RELATION_ENTITY_BE)
 					{//this condition is required to support GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK			
 					#endif
 					#endif

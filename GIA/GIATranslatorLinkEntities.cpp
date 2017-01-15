@@ -3,7 +3,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i11a 13-Apr-2012
+ * Project Version: 1i12a 15-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -214,7 +214,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 					//cout << "subjectObjectName = " << subjectObjectName << endl;
 
 					if(passdefinition)
-					//if(currentRelationInList->relationGovernor == RELATION_GOVERNOR_BE) 
+					//if(currentRelationInList->relationGovernor == RELATION_ENTITY_BE) 
 					{
 					}
 					//else if((currentRelationInList->relationGovernor == RELATION_GOVERNOR_COMPOSITION_1) || (currentRelationInList->relationGovernor == RELATION_GOVERNOR_COMPOSITION_2) || (currentRelationInList->relationGovernor == RELATION_GOVERNOR_COMPOSITION_3))
@@ -653,7 +653,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 												#endif								
 													#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
 													//cout << "qsd0" << endl;
-													if(currentRelationInList3->relationGovernor == RELATION_GOVERNOR_BE)
+													if(currentRelationInList3->relationGovernor == RELATION_ENTITY_BE)
 													{//subject is connected to an _advmod
 
 														//cout << "qsd1" << endl;
@@ -727,7 +727,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 										}
 										#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_DEFINITION_BASIC
-										//if(currentRelationInList->relationGovernor == RELATION_GOVERNOR_BE) 
+										//if(currentRelationInList->relationGovernor == RELATION_ENTITY_BE) 
 										else if(passdefinition)
 										{//expected subject-object relationship is a definition "is"
 
@@ -913,7 +913,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 										if(!foundPartner)
 										{//do not overwrite usage of subj/obj if a direct link [ie action] has been found (this condition probably/mau not be required)
 
-											if(subjectObjectFunctionEntityArray[SUBJECT_INDEX]->entityName == RELATION_GOVERNOR_BE)
+											if(subjectObjectFunctionEntityArray[SUBJECT_INDEX]->entityName == RELATION_ENTITY_BE)
 											{
 												//cout << "a" << endl;
 												Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
@@ -923,7 +923,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 													if(!(currentRelationInList3->disabled))
 													{			
 													#endif													
-														if(currentRelationInList3->relationGovernor == RELATION_GOVERNOR_BE)
+														if(currentRelationInList3->relationGovernor == RELATION_ENTITY_BE)
 														{																						
 															//cout << "a2" << endl;
 															if((currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))	//OR if (currentRelationInList3->relationType == subjectObjectFunctionEntityArray[OBJECT_INDEX]->entityName)
@@ -943,7 +943,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 																	_subj(be[2], claim[5])													
 																	*/
 
-																	//create a condition link between the object and subject, based upon RELATION_GOVERNOR_BE
+																	//create a condition link between the object and subject, based upon RELATION_ENTITY_BE
 
 																	GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;
 																	GIAEntityNode * specialConditionNode = objectEntityTemp;

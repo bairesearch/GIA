@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i11a 13-Apr-2012
+ * Project Version: 1i12a 15-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -34,7 +34,8 @@ using namespace std;
 #define GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES	//test only
 
 
-//#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION	//NO; pre-process "two word prepositions" eg from http://en.wikipedia.org/wiki/List_of_English_prepositions, or post process (currently implemented)
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION	//added in addition to this; the pre-process of "two word prepositions" eg from http://en.wikipedia.org/wiki/List_of_English_prepositions, or post process (currently implemented)
+//#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION_OLD
 
 #ifndef GIA_DISABLE_REFERENCING
 	#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS	//default: enabled
@@ -194,7 +195,7 @@ using namespace std;
 #define RELATION_TYPE_PARATAXIS "_parataxis"	//eg "The guy, Akari said, left..." //added 13 February 2011
 
 //concepts:					
-#define RELATION_GOVERNOR_BE "be"	//eg x is y
+#define RELATION_ENTITY_BE "be"	//eg x is y
 #define RELATION_GOVERNOR_DEFINITION_NUMBER_OF_TYPES (1)
 #define RELATION_TYPE_APPOSITIVE_OF_NOUN "_appo"
 #define STANFORD_RELATION_TYPE_APPOSITIVE_OF_NOUN "appos"
@@ -470,8 +471,8 @@ static string featureNERindicatesNormalisedNERavailableTypeArray[FEATURE_NER_IND
 #define STANFORD_PARSER_PREPOSITION_DELIMITER "_"
 
 
-#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA (3)
-static string redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeA[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA] = {RELATION_TYPE_MODAL_AUX, RELATION_TYPE_PASSIVE_AUX, RELATION_TYPE_COPULA};
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA (2)	//OLD: 3
+static string redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeA[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA] = {RELATION_TYPE_MODAL_AUX, RELATION_TYPE_COPULA};	//OLD: RELATION_TYPE_PASSIVE_AUX
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEB (3)
 static string redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeB[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEB] = {RELATION_TYPE_COMPLIMENT_TO_BE, RELATION_TYPE_PARTICIPIAL_MODIFIER, RELATION_TYPE_PHRASAL_VERB_PARTICLE};
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_SUBJOBJ_RELATIONS (2)
@@ -518,7 +519,7 @@ static string relationTypeAdjectiveNameArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_T
 static string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_POSSESSIVE, RELATION_TYPE_PRENOMIAL_MODIFIER};
 
 static string relationGovernorCompositionNameArray[RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_GOVERNOR_COMPOSITION_1, RELATION_GOVERNOR_COMPOSITION_2, RELATION_GOVERNOR_COMPOSITION_3, RELATION_GOVERNOR_COMPOSITION_4};
-static string relationGovernorDefinitionNameArray[RELATION_GOVERNOR_DEFINITION_NUMBER_OF_TYPES] = {RELATION_GOVERNOR_BE};
+static string relationGovernorDefinitionNameArray[RELATION_GOVERNOR_DEFINITION_NUMBER_OF_TYPES] = {RELATION_ENTITY_BE};
 
 static string relationTypeObjectSpecialConditionMeasureDistanceOrStanfordUnknownNameArray[RELATION_TYPE_OBJECT_SPECIAL_CONDITION_MEASURE_DISTANCE_OR_STANFORD_UNKNOWN_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_UNKNOWN};
 static string relationTypeObjectSpecialConditionToDoPropertyNameArray[RELATION_TYPE_OBJECT_SPECIAL_TO_DO_PROPERTY_NUMBER_OF_TYPES] = {RELATION_TYPE_COMPLIMENT_TO_DO};

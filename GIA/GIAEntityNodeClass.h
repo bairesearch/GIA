@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i11a 13-Apr-2012
+ * Project Version: 1i12a 15-Apr-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/

@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammarAndReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i11a 13-Apr-2012
+ * Project Version: 1i12a 15-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1145,9 +1145,34 @@ void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 
 void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
 {
-	
+		
 #ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION
-	//look for nsubj/prep combination, eg nsubj(next-4, garage-2) / prep_to(next-4, house-7)	=> prep_subj(next_to, house) / prep_subj(next_to, garage) 
+
+	/* 
+	need to consider this case for the following example text; 
+	The patent claims are on the cart frame, the wheels and the golf bag connection mechanism.
+
+	det(claims-3, The-1)
+	nn(claims-3, patent-2)
+	nsubj(are-4, claims-3)
+	root(ROOT-0, are-4)
+	det(frame-8, the-6)
+	nn(frame-8, cart-7)
+	prep_on(are-4, frame-8)
+	det(wheels-11, the-10)
+	prep_on(are-4, wheels-11)
+	conj_and(frame-8, wheels-11)
+	det(mechanism-17, the-13)
+	nn(mechanism-17, golf-14)
+	nn(mechanism-17, bag-15)
+	nn(mechanism-17, connection-16)
+	prep_on(are-4, mechanism-17)
+	conj_and(frame-8, mechanism-17)
+
+	*/
+
+	//look for nsubj/prep combination, eg nsubj(are-4, claims-3) / prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)
+	//OLD: look for nsubj/prep combination, eg nsubj(next-4, garage-2) / prep_to(next-4, house-7)	=> prep_subj(next_to, house) / prep_subj(next_to, garage) 
 	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1158,44 +1183,56 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		#endif	
 			//cout << "here1" << endl;
 			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-
+			
 			if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT)
-			{					
+			{	
 				//now find the associated object..
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
-				#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-				if(!(currentRelationInList2->disabled))
-				{			
-				#endif	
-					bool stanfordPrepositionFound = false;
-					string relexPreposition = convertStanfordPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+				
+				while(currentRelationInList2->next != NULL)
+				{					
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					if(!(currentRelationInList2->disabled))
+					{			
+					#endif	
+						bool stanfordPrepositionFound = false;
+						string relexPreposition = convertStanfordPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
 
-					if(stanfordPrepositionFound)
-					{		
-						if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
-						{//found a matching preposition of object-subject relationship
+						if(stanfordPrepositionFound)
+						{		
+							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
+							{//found a matching preposition of object-subject relationship
 
-							if(!(currentRelationInList2->prepositionCombinationAlreadyCreatedTemp))
-							{																	
-								string newPrepositionName = "";
-								newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
+								#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION_OLD
+								if(!(currentRelationInList2->prepositionCombinationAlreadyCreatedTemp))
+								{																	
+									string newPrepositionName = "";
+									newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
 
-								//cout << "newPrepositionName = " << newPrepositionName << endl;
+									//cout << "newPrepositionName = " << newPrepositionName << endl;
 
-								Relation * subjectOfPrepositionRelation = currentRelationInList;
-								Relation * objectOfPrepositionRelation = currentRelationInList2;
-								subjectOfPrepositionRelation->relationType = RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION;
-								objectOfPrepositionRelation->relationType = RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION;
-								GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName = newPrepositionName;
-								currentRelationInList2->prepositionCombinationAlreadyCreatedTemp = true;
+									Relation * subjectOfPrepositionRelation = currentRelationInList;
+									Relation * objectOfPrepositionRelation = currentRelationInList2;
+									subjectOfPrepositionRelation->relationType = RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION;
+									objectOfPrepositionRelation->relationType = RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION;
+									GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName = newPrepositionName;
+									currentRelationInList2->prepositionCombinationAlreadyCreatedTemp = true;
+								}
+								#else
+
+									currentRelationInList->disabled = true;
+									currentRelationInList2->relationGovernorIndex = currentRelationInList->relationDependentIndex;
+									currentRelationInList2->relationGovernor = currentRelationInList->relationDependent;
+
+									disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]);
+								#endif
 							}
 						}
-					}
-
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					}			
+					#endif
 					currentRelationInList2 = currentRelationInList2->next;
-				#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-				}			
-				#endif
+				}
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}		
@@ -1203,7 +1240,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 			//cout << "here2" << endl;
 		currentRelationInList = currentRelationInList->next;
 	}
-#else
+#endif
 
 	/*
 	//stanford parser prepositition reduction check (based upon http://en.wikipedia.org/wiki/List_of_English_prepositions);
@@ -1259,7 +1296,12 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	nsubjpass(left-4, house-2)
 	auxpass(left-4, is-3)
 	prep_of(left-4, bank-7)
-
+	
+		[DONE required to be removed based upon the following; In addition to fast assembly, time is saved by not having to connect and disconnect the golf cart and bag at the beginning and end of a game.]
+		nsubjpass(saved-9, time-7)
+		auxpass(saved-9, is-8)	
+		prep_in_addition_to(saved-9, assembly-5)
+		
 	nsubj(near-4, carriage-2)
 	cop(near-4, is-3)
 	prep_to(near-4, horse-7)
@@ -1292,10 +1334,17 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	prep_to(Thanks-1, results-4)
 	nsubj(watch-8, he-6)
 
-	nsubj(doing-6, that-2)
+	nsubj(doing-6, that-2)		
 	aux(doing-6, is-1)
 	prep_of(that-2, Tom-4)
-
+		
+		[Not required to be removed based upon the following; Space is saved by not having a bulky cart to store at home and in the car. , because "to-10" is not "be-10"]
+		nsubj(store-11, cart-9)
+		aux(store-11, to-10)		
+		prep_at(store-11, home-13)
+		prep_in(store-11', car-17)
+		
+	
 	nsubj(reached-2, He-1)
 	prt(reached-2, up-3)
 	prep_to(reached-2, sky-6)
@@ -1310,7 +1359,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	1. prep_z_c(a, c)
 	*/	
 		
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -1341,7 +1390,10 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 						{
 							if(currentRelationInList2->relationType == redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeA[i])
 							{
-								multiwordPrepositionIntermediaryRelationTypeAFound = true;
+								if(currentRelationInList2->relationDependent == RELATION_ENTITY_BE)
+								{
+									multiwordPrepositionIntermediaryRelationTypeAFound = true;
+								}
 							}
 						}
 
@@ -1451,7 +1503,6 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	}
 	
 		
-#endif
 	//cout << "asd" << endl;
 }
 
@@ -1484,7 +1535,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 					#endif				
 						if(currentRelationInList2->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD)
 						{	
-							if((currentRelationInList->relationGovernor == RELATION_GOVERNOR_BE) && (currentRelationInList2->relationGovernor == RELATION_GOVERNOR_BE))
+							if((currentRelationInList->relationGovernor == RELATION_ENTITY_BE) && (currentRelationInList2->relationGovernor == RELATION_ENTITY_BE))
 							{
 								if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)	//redundant test
 								{//found a matching object-subject relationship
@@ -1533,7 +1584,12 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 	}
 	
 #ifdef GIA_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE_TO_PREDADJ_NOT_SUBJ
+	////eg Kane is late 	nsubj(late-3, Kane-1) / cop(late-3, is-2) -> _predadj(kane-1, late-3) 
+	
+	//TODO; need to distinguish between;
 	//eg Kane is late 	nsubj(late-3, Kane-1) / cop(late-3, is-2) -> _predadj(kane-1, late-3) 
+	//and;
+	//eg She is the one 	nsubj(one-4, She-1)	/cop(one-4, is-2) -> appos(fish-2, carp-5)
 
 	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1559,7 +1615,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 					
 						if(currentRelationInList2->relationType == RELATION_TYPE_COPULA) 	
 						{	
-							if(currentRelationInList2->relationDependent == RELATION_GOVERNOR_BE)
+							if(currentRelationInList2->relationDependent == RELATION_ENTITY_BE)
 							{
 								if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)	//redundant test
 								{//found a matching object-subject relationship
