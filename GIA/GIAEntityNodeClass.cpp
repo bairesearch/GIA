@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k5a 14-May-2012
+ * Project Version: 1l1a 15-May-2012
  *
  *******************************************************************************/
 
@@ -50,7 +50,7 @@ GIAEntityNode::GIAEntityNode(void)
 	conditionType = CONDITION_NODE_TYPE_UNDEFINED;
 	timeConditionNode = NULL;
 	
-	//entityNodeContainingThisProperty = NULL;				//if property only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
+	//entityNodeContainingThisProperty = NULL;				//if property only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a Basic
 	entityNodeDefiningThisInstance = NULL; 		
 
 	grammaticalNumber = GRAMMATICAL_NUMBER_UNDEFINED;
@@ -93,6 +93,45 @@ GIAEntityNode::GIAEntityNode(void)
 	entityIndexTemp = 0;
 	sentenceIndexTemp = 0;
 	
+	//to minimise query/referencing code
+	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS] = ActionNodeList;
+	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS] = IncomingActionNodeList;
+	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS] = ConditionNodeList;
+	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS] = IncomingConditionNodeList;
+	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES] = PropertyNodeList;
+	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES] = PropertyNodeReverseList;
+	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS] = EntityNodeDefinitionList;
+	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS] = EntityNodeDefinitionReverseList;
+	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES] = AssociatedInstanceNodeList;
+	entityBasicConnectionsArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_SUBJECT] = actionSubjectEntity;
+	entityBasicConnectionsArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_OBJECT] = actionObjectEntity;
+	entityBasicConnectionsArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_SUBJECT] = conditionSubjectEntity;
+	entityBasicConnectionsArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_OBJECT] = conditionObjectEntity;
+	entityBasicConnectionsArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE] = entityNodeDefiningThisInstance;
+
+	/*
+	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_DEFINITIONS] = EntityNodeDefinitionList;
+	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_PROPERTIES] = PropertyNodeList;
+	*/
+	
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	entityVectorConnectionsParametersArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS] = ActionNodeListParameters;
+	entityVectorConnectionsParametersArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS] = IncomingActionNodeListParameters;
+	entityVectorConnectionsParametersArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS] = ConditionNodeListParameters;
+	entityVectorConnectionsParametersArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS] = IncomingConditionNodeListParameters;
+	entityVectorConnectionsParametersArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES] = PropertyNodeListParameters;
+	entityVectorConnectionsParametersArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES] = PropertyNodeReverseListParameters;
+	entityVectorConnectionsParametersArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS] = EntityNodeDefinitionListParameters;
+	entityVectorConnectionsParametersArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS] = EntityNodeDefinitionReverseListParameters;
+	entityVectorConnectionsParametersArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES] = AssociatedInstanceNodeListParameters;
+	entityBasicConnectionsParametersArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_SUBJECT] = actionSubjectEntityParameters;
+	entityBasicConnectionsParametersArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_OBJECT] = actionObjectEntityParameters;
+	entityBasicConnectionsParametersArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_SUBJECT] = conditionSubjectEntityParameters;
+	entityBasicConnectionsParametersArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_OBJECT] = conditionObjectEntityParameters;
+	entityBasicConnectionsParametersArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE] = entityNodeDefiningThisInstanceParameters;	
+	#endif
+	
+	
 	#ifdef GIA_USE_STANFORD_CORENLP
 	/*
 	CharacterOffsetBeginTemp = -1;
@@ -112,10 +151,8 @@ GIAEntityNode::GIAEntityNode(void)
 	isQuery = false;
 	isWhichQuery = false;
 	isAnswerToQuery = false;
-	#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES	
-	isAnswerContextToQuery = false;
-	#endif
 	testedForQueryComparison = false;
+	testedForQueryComparisonTemp = false;
 
 	negative = false;
 	
@@ -131,6 +168,10 @@ GIAEntityNode::GIAEntityNode(void)
 	//firstSentenceToAppearInNetwork = true;
 	
 	wordNetPOS = GRAMMATICAL_WORD_TYPE_UNDEFINED;	
+	
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	referenceSetID = -1;
+	#endif	
 }
 GIAEntityNode::~GIAEntityNode(void)
 {

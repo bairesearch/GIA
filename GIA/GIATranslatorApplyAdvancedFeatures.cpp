@@ -3,7 +3,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k5a 14-May-2012
+ * Project Version: 1l1a 15-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -357,18 +357,12 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, GIAEntit
 									//GIAEntityNode * conditionTypeConceptEntity = quantityProperty->quantityModifierString;
 
 									string conditionTypeName = "quantityModifier";	//quantityProperty->quantityModifierString //CHECKTHIS; 
-									long entityIndex = -1;
-									bool entityAlreadyExistant = false;
-									vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
-									long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-									long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();
-									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
-									if(entityAlreadyExistant)
-									{
-										applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
-									}
 
-									addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);
+									bool entityAlreadyExistant = false;
+									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, conceptEntityNodesList);
+
+									bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
+									addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity, sameReferenceSet);
 
 								}
 
@@ -499,18 +493,12 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, GIAEntityNode * GI
 								//GIAEntityNode * conditionTypeConceptEntity = quantityProperty->quantityModifierString;
 
 								string conditionTypeName = "quantityModifier";	//quantityProperty->quantityModifierString //CHECKTHIS; 
-								long entityIndex = -1;
+								
 								bool entityAlreadyExistant = false;
-								vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
-								long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-								long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();
-								GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
-								if(entityAlreadyExistant)
-								{
-									applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
-								}
-
-								addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);
+								GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, conceptEntityNodesList);
+								
+								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
+								addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity, sameReferenceSet);
 
 							}
 
@@ -577,22 +565,33 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, GIAEntityNode * GI
 						measureProperty->measureType = MEASURE_TYPE_PER;						
 
 						GIAEntityNode * newQuantityTimesEntity = new GIAEntityNode();
-						long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-						long * currentEntityNodeIDInPropertyEntityNodesList = getCurrentEntityNodeIDInPropertyEntityNodesList();
-						newQuantityTimesEntity->id = *currentEntityNodeIDInCompleteList;
-						newQuantityTimesEntity->idSecondary = *currentEntityNodeIDInPropertyEntityNodesList;
+						
+						if(getSaveNetwork())
+						{
+							long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+							long * currentEntityNodeIDInPropertyEntityNodesList = getCurrentEntityNodeIDInPropertyEntityNodesList();
+							newQuantityTimesEntity->id = *currentEntityNodeIDInCompleteList;
+							newQuantityTimesEntity->idSecondary = *currentEntityNodeIDInPropertyEntityNodesList;
 
-						vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
-						entityNodesCompleteList->push_back(newQuantityTimesEntity);
-						(*currentEntityNodeIDInCompleteList)++;
-						vector<GIAEntityNode*> * propertyEntityNodesList = getTranslatorPropertyEntityNodesList();
-						propertyEntityNodesList->push_back(newQuantityTimesEntity);
-						(*currentEntityNodeIDInPropertyEntityNodesList)++;
-
+							vector<GIAEntityNode*> *entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+							entityNodesCompleteList->push_back(newQuantityTimesEntity);
+							(*currentEntityNodeIDInCompleteList)++;
+							vector<GIAEntityNode*> * propertyEntityNodesList = getTranslatorPropertyEntityNodesList();
+							propertyEntityNodesList->push_back(newQuantityTimesEntity);
+							(*currentEntityNodeIDInPropertyEntityNodesList)++;
+						}
+						else
+						{
+							long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInSentenceCompleteList();
+							newQuantityTimesEntity->id = *currentEntityNodeIDInCompleteList;
+							(*currentEntityNodeIDInCompleteList)++;
+						}
+						
 						newQuantityTimesEntity->entityName = "times";
 
 						//reconnect refreshed quantity (times) node;
-						addOrConnectPropertyToEntity(entityToConnectMeasurePerEntity, newQuantityTimesEntity);
+						bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
+						addOrConnectPropertyToEntity(entityToConnectMeasurePerEntity, newQuantityTimesEntity, sameReferenceSet);	
 
 						if(newQuantityTimesEntity->hasAssociatedInstanceTemp)
 						{//assumed true since its property was just explicitly created
@@ -603,17 +602,13 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, GIAEntityNode * GI
 						newQuantityTimesEntity->quantityNumberString = "1";
 
 						string conditionTypeName = RELATION_TYPE_MEASURE_PER;
-						long entityIndex = -1;
+						
 						bool entityAlreadyExistant = false;
-						long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();						
-						GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
-						if(entityAlreadyExistant)
-						{
-							applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
-						}
-
+						GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, conceptEntityNodesList);
+						
 						//now add measure_per condition node
-						addOrConnectPropertyConditionToEntity(newQuantityTimesEntity, measureProperty, conditionTypeConceptEntity);
+						sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
+						addOrConnectPropertyConditionToEntity(newQuantityTimesEntity, measureProperty, conditionTypeConceptEntity, sameReferenceSet);
 
 					}
 				}								
@@ -684,25 +679,17 @@ void extractMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntity
 				#endif
 
 				string conditionTypeName = relationTypeMeasureNameArray[measureTypeIndex];
-				long entityIndex = -1;
 				bool entityAlreadyExistant = false;
-				vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
-				long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-				long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();				
-				GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
-				if(entityAlreadyExistant)
-				{
-					applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
-				}
+				GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, conceptEntityNodesList);
 
+				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 				if(measureDependencyFound)
 				{
-					addOrConnectPropertyConditionToEntity(quantityEntity, measurePropertyEntity, conditionTypeConceptEntity);
+					addOrConnectPropertyConditionToEntity(quantityEntity, measurePropertyEntity, conditionTypeConceptEntity, sameReferenceSet);
 				}
 				else
 				{
-					addOrConnectPropertyConditionToEntity(measurePropertyEntity, quantityEntity, conditionTypeConceptEntity);
-
+					addOrConnectPropertyConditionToEntity(measurePropertyEntity, quantityEntity, conditionTypeConceptEntity, sameReferenceSet);
 				}								
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -784,7 +771,8 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode
 					GIAEntityNode * entityNode = GIAEntityNodeArray[entityIndex];
 					GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 
-					GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(entityNode, propertyEntity);				
+					bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES; 	//eg Linas likes to row / The chicken ate the pie that likes to row.
+					GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(entityNode, propertyEntity, sameReferenceSet);				
 				}
 				else if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO)
 				{
@@ -799,18 +787,12 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode
 						GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
 						GIAEntityNode * conditionTypeEntityNode;
 						string conditionTypeEntityNodeName = currentRelationInList->relationType;
-						long EntityIndex = -1;
-						bool EntityAlreadyExistant = false;	
-						vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
-						long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-						long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();						
-						conditionTypeEntityNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeEntityNodeName, &EntityAlreadyExistant, &EntityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
-						if(EntityAlreadyExistant)
-						{
-							applyEntityAlreadyExistsFunction(conditionTypeEntityNode);
-						}
+						
+						bool entityAlreadyExistant = false;
+						conditionTypeEntityNode = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeEntityNodeName, &entityAlreadyExistant, conceptEntityNodesList);
 
-						addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntityNode);				
+						bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;
+						addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntityNode, sameReferenceSet);				
 
 					#ifndef GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_PROPERTY_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
 					#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
@@ -849,7 +831,8 @@ void linkPropertiesParataxis(Sentence * currentSentenceInList, GIAEntityNode * G
 				//cout << "propertyName = " << propertyEntity->entityName << endl;
 				//cout << "actionName = " << actionEntity->entityName << endl;
 
-				GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(actionEntity, propertyEntity);
+				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PARATAXIS; 		//eg The guy, John said, left early in the morning.	[NB The guy, that John said was blue, left early in the morning. / He says that you like to swim.  does not generate parataxis, so these cases needn't be considered here...] 
+				GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(actionEntity, propertyEntity, sameReferenceSet);
 			}	
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
@@ -891,19 +874,11 @@ void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode
 			if(passed)
 			{
 				//cout << "as3" << endl;
-
+				
 				string conditionTypeName = relationType;
-				long entityIndex = -1;
+				
 				bool entityAlreadyExistant = false;
-				//cout << "relationType = " << relationType << endl;
-				vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
-				long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-				long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();				
-				GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);	
-				if(entityAlreadyExistant)
-				{
-					applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
-				}
+				GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, conceptEntityNodesList);
 
 				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
@@ -911,7 +886,8 @@ void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode
 				cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl; 			
 				#endif
 
-				addConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);				
+				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE, currentRelationInList);	//eg "and that has a house" versus "and has a house" ??? [untested]
+				addConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);				
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
@@ -947,7 +923,8 @@ void defineClausalComplementProperties(Sentence * currentSentenceInList, bool GI
 				//cout << "actionName = " << actionEntity->entityName << endl;
 				//cout << "propertyName = " << propertyEntity->entityName << endl;
 
-				GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(actionEntity, propertyEntity);
+				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CCCOMP; 	//eg The guy, that John said was blue, left early in the morning. / He says that you like to swim.
+				GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(actionEntity, propertyEntity, sameReferenceSet);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			

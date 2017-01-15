@@ -3,7 +3,7 @@
  * File Name: GIASentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k5a 14-May-2012
+ * Project Version: 1l1a 15-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -37,6 +37,7 @@ StanfordCoreNLPMention::~StanfordCoreNLPMention(void)
 	}
 }
 
+
 StanfordCoreNLPCoreference::StanfordCoreNLPCoreference(void)
 {	
 	firstMentionInList = new StanfordCoreNLPMention();
@@ -56,8 +57,49 @@ StanfordCoreNLPCoreference::~StanfordCoreNLPCoreference(void)
 		delete next;
 	}
 }
+#endif
+
+#ifdef GIA_USE_ADVANCED_REFERENCING
+GIAMention::GIAMention(void)
+{	
+	representative = false;
+	id = -1;
+	entityIndex = -1;	//ie, "head"
+	entityName = "";
+		
+	next = NULL;
+}
+
+GIAMention::~GIAMention(void)
+{	
+	if(next != NULL)
+	{
+		delete next;
+	}
+}
+
+GIACoreference::GIACoreference(void)
+{	
+	firstMentionInList = new GIAMention();
+	
+	next = NULL;
+}
+
+GIACoreference::~GIACoreference(void)
+{
+	if(firstMentionInList != NULL)
+	{
+		delete firstMentionInList;
+	}
+	
+	if(next != NULL)
+	{
+		delete next;
+	}
+}
 
 #endif
+
 
 
 
@@ -79,7 +121,12 @@ Relation::Relation(void)
 	#ifdef GIA_USE_STANFORD_CORENLP
 	prepositionCombinationAlreadyCreatedTemp = false;
 	#endif
-		
+
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	auxillaryIndicatesDifferentReferenceSet = false;
+	rcmodIndicatesSameReferenceSet = false;
+	#endif
+			
 	next = NULL;
 }
 

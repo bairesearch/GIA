@@ -3,7 +3,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k5a 14-May-2012
+ * Project Version: 1l1a 15-May-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -13,7 +13,7 @@
 
 #ifdef GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
 //uses fast search algorithm
-GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList)
+GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList, bool saveNetwork)
 {
 	GIAEntityNode * entityNodeFound = NULL;
 	
@@ -43,7 +43,10 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 			entityNodeFound->id = *currentEntityNodeIDInCompleteList;
 			entityNodeFound->idSecondary = *currentEntityNodeIDInConceptEntityNodesList;
 
-			entityNodesCompleteList->push_back(entityNodeFound);
+			if(saveNetwork)
+			{
+				entityNodesCompleteList->push_back(entityNodeFound);
+			}
 			(*currentEntityNodeIDInCompleteList) = (*currentEntityNodeIDInCompleteList) + 1;
 
 			//conceptEntityNodesList[entityNodeName] = entityNodeFound;

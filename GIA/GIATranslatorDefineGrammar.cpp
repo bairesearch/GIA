@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k5a 14-May-2012
+ * Project Version: 1l1a 15-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -60,13 +60,7 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 		//cout << "relationIndex[1]  = " << relationIndex[1] << endl;
 		//cout << "name[0]  = " << name[0] << endl;
 		//cout << "name[1]  = " << name[1] << endl;
-		long entityIndex[2];
-		entityIndex[0] = -1;
-		entityIndex[1] = -1;
-		bool entityAlreadyExistant[2];
-		entityAlreadyExistant[0] = false;
-		entityAlreadyExistant[1] = false;
-
+		
 		bool argumentIsQuery = false;
 		#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 		if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)		
@@ -92,14 +86,9 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 		{
 			if(!GIAEntityNodeArrayFilled[relationIndex[i]])
 			{
-				vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
-				long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-				long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();				
-				GIAEntityNode * entity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &(name[i]), &(entityAlreadyExistant[i]), &(entityIndex[i]), true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
-				if(entityAlreadyExistant[i])
-				{
-					applyEntityAlreadyExistsFunction(entity);					
-				}
+				bool entityAlreadyExistant = false;
+				GIAEntityNode * entity = findOrAddEntityNodeByNameSimpleWrapper(&(name[i]), &entityAlreadyExistant, conceptEntityNodesList);
+				
 				GIAEntityNodeArrayFilled[relationIndex[i]] = true;
 				GIAEntityNodeArray[relationIndex[i]] = entity;
 
@@ -458,7 +447,53 @@ void extractPastTense(Feature * featureWithEntityIndex, int entityIndexContainin
 #endif
 
 
-	
+
+#ifdef GIA_USE_ADVANCED_REFERENCING	
+void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * currentSentenceInList, GIAEntityNode * subjectObjectEntityWithAuxillary)	
+{
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{	
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{	
+		#endif
+			bool passed = false;
+			for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypeSubjectNameArray[i])
+				{
+					passed = true;
+				}
+			}
+
+			passed = false;
+			for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypeObjectNameArray[i])
+				{
+					passed = true;
+				}
+			}			
+						
+			if(subjectObjectEntityWithAuxillary->entityIndexTemp = currentRelationInList->relationDependentIndex)
+			{
+				if(subjectObjectEntityWithAuxillary->entityName == currentRelationInList->relationDependent)
+				{//this check is redundant
+					currentRelationInList->auxillaryIndicatesDifferentReferenceSet = true;
+				}				
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS	
+		}
+		#endif
+		
+		currentRelationInList = currentRelationInList->next;
+	}	
+}
+#endif
+				
+				
+					
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 //NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford() 
 void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[])
@@ -488,8 +523,13 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 				int entityIndexOfAuxillary = currentRelationInList->relationDependentIndex;
 				int entityIndexOfVerb = currentRelationInList->relationGovernorIndex;	
 				featureArrayTemp[entityIndexOfVerb]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PERFECT] = true;		
-				GIAEntityNodeArray[entityIndexOfAuxillary]->disabled = true;		
-
+				GIAEntityNodeArray[entityIndexOfAuxillary]->disabled = true;
+				/*//this shouldnt be required, as verbs are automatically assumed not to be part of same reference set [see DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS]
+				#ifdef GIA_USE_ADVANCED_REFERENCING	
+				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, GIAEntityNodeArray[entityIndexOfVerb]);	
+				#endif
+				*/
+				
 				//cout << "ABC0a" << endl;
 				#ifdef GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILLARY_TO_SET_TENSE_OF_VERB
 				extractPastTense(featureArrayTemp[entityIndexOfVerb], entityIndexOfAuxillary, currentSentenceInList->firstFeatureInList, NLPfeatureParser);		
@@ -508,8 +548,13 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 				int entityIndexOfAuxillary = currentRelationInList->relationDependentIndex;
 				int entityIndexOfVerb = currentRelationInList->relationGovernorIndex;
 				featureArrayTemp[entityIndexOfVerb]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PASSIVE] = true;		
-				GIAEntityNodeArray[entityIndexOfAuxillary]->disabled = true;				
-
+				GIAEntityNodeArray[entityIndexOfAuxillary]->disabled = true;	
+				/*//this shouldnt be required, as verbs are automatically assumed not to be part of same reference set [see DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS]		
+				#ifdef GIA_USE_ADVANCED_REFERENCING	
+				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, GIAEntityNodeArray[entityIndexOfVerb]);		
+				#endif
+				*/
+				
 				//cout << "ABC0b" << endl;
 				#ifdef GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILLARY_TO_SET_TENSE_OF_VERB
 				extractPastTense(featureArrayTemp[entityIndexOfVerb], entityIndexOfAuxillary, currentSentenceInList->firstFeatureInList, GIAEntityNodeGrammaticalTenseArray, NLPfeatureParser);		
@@ -530,8 +575,11 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 
 				int entityIndexOfCopula = currentRelationInList->relationDependentIndex;
 				int entityIndexOfNoun = currentRelationInList->relationGovernorIndex;
-				GIAEntityNodeArray[entityIndexOfCopula]->disabled = true;	
-
+				GIAEntityNodeArray[entityIndexOfCopula]->disabled = true;
+				#ifdef GIA_USE_ADVANCED_REFERENCING
+				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, GIAEntityNodeArray[entityIndexOfNoun]);
+				#endif
+				
 				//cout << "ABC0c" << endl;
 				//cout << "entityIndexOfNoun = " << entityIndexOfNoun << endl;
 				//cout << "entityIndexOfCopula = " << entityIndexOfCopula << endl;

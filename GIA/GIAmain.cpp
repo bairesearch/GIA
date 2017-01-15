@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k5a 14-May-2012
+ * Project Version: 1l1a 15-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
@@ -608,7 +608,7 @@ int main(int argc,char **argv)
 								
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe - Project Version: 1k5a 14-May-2012" << endl;
+			cout << "GIA.exe - Project Version: 1l1a 15-May-2012" << endl;
 			exit(1);
 		}
 
@@ -1011,10 +1011,9 @@ int main(int argc,char **argv)
 		double confidence = 0.0;
 		
 		GIAEntityNode* queryAnswerNode;
-		GIAEntityNode* queryAnswerPreviousNode;
 		string queryAnswerContext = "";
 		//cout << "a" << endl;
-		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(conceptEntityNodesList, conceptEntityNodesListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerPreviousNode, &queryAnswerContext);
+		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(conceptEntityNodesList, conceptEntityNodesListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerContext);
 		//cout << "b" << endl;
 		
 		double maxConfidence = determineMaxConfidenceOfQuerySemanticNetwork(conceptEntityNodesListQuery);		//OLD [simple]: entityNodesCompleteListQuery->size();
@@ -1100,7 +1099,12 @@ int main(int argc,char **argv)
 			#ifdef GIA_COMPILE_PRINT_INEXACT_ANSWER_AMBIENT_CONTEXT
 			int irrelevant;
 			string printEntityNodeString = "";
-			traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_PRINT, &irrelevant, &printEntityNodeString);	
+			#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
+			bool traceInstantiations = true;
+			#else
+			bool traceInstantiations = false;
+			#endif			
+			traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_PRINT, &irrelevant, &printEntityNodeString, NULL, traceInstantiations);	
 			answerString = answerString + printEntityNodeString;	
 			#else
 			string printEntityNodeQualitiesString = "";

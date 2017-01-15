@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k5a 14-May-2012
+ * Project Version: 1l1a 15-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific version of shared globals (replace if compiling other projects)
  *
@@ -15,14 +15,12 @@
 #include "SHAREDglobalDefs.h"
 
 //variables currently under attention for testing purposes
-//#define GIA_DISABLE_REFERENCING		//default: off	{this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}
-//#define GIA_STANFORD_CORE_NLP_DO_NOT_USE_CODEPENDENCIES	//default: off
-#ifndef GIA_STANFORD_CORE_NLP_DO_NOT_USE_CODEPENDENCIES
-	#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL	//need to test enabling this
-#endif
+#define GIA_USE_ADVANCED_REFERENCING
+#define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING			//default: on	//this enables pronoun detection	//OLD: {this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}
 #define WORDNET_SEARCH_RELATED_SYNSETS
 #define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		//{//this should only be enabled with Relex??} 	//this was (effectively) disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
 #define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
+//#define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE2
 
 //variables passed testing:
 #define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
@@ -30,6 +28,7 @@
 //#define GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
 
 //Debug;
+#define GIA_ADVANCED_REFERENCING_DEBUG
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 //#define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG
@@ -115,7 +114,6 @@
 #define GIA_QUERY_RELAX_CONFIDENCE_REQUIREMENTS_FOR_YES
 #define GIA_QUERY_DOUBLE_ERROR (0.0001)
 #define GIA_QUERY_CONFIDENCE_MULTIPLIER (10)
-//#define GIA_QUERY_SUPPORT_NON_EXACT_QUERIES	//default: disabled (NB non-exact queries are not required for the text/query 'the dog is red' / 'is the dog red?'). non-exact queries used to be required for which questions, but not anymore [with GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES]	
 	//these preprocessor have been moved to GIAglobalsDefs.h as they are used in both GIAtranslator.cpp and GIAquery.cpp
 #define GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
 #ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES

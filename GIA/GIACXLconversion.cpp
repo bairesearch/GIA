@@ -3,7 +3,7 @@
  * File Name: GIACXLconversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k5a 14-May-2012
+ * Project Version: 1l1a 15-May-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function overwrites entity id values upon read/write to speed up linking process
  *
@@ -707,19 +707,19 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 			//cout << "cxl3" << endl;
 			if(currentEntity->PropertyNodeReverseList.begin() != currentEntity->PropertyNodeReverseList.end())
 			{
-				for(currentEntity->PropertyNodeReverseListIterator = currentEntity->PropertyNodeReverseList.begin(); currentEntity->PropertyNodeReverseListIterator < currentEntity->PropertyNodeReverseList.end(); currentEntity->PropertyNodeReverseListIterator++)
+				for(vector<GIAEntityNode*>::iterator entityIter = currentEntity->PropertyNodeReverseList.begin(); entityIter < currentEntity->PropertyNodeReverseList.end(); entityIter++)
 				{	
 					string connectionTypeName = "property";
-					currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, *(currentEntity->PropertyNodeReverseListIterator), connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);							
+					currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, *(entityIter), connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);							
 				} 
 			}
 
 			if(currentEntity->EntityNodeDefinitionList.begin() != currentEntity->EntityNodeDefinitionList.end())
 			{
-				for(currentEntity->EntityNodeDefinitionListIterator = currentEntity->EntityNodeDefinitionList.begin(); currentEntity->EntityNodeDefinitionListIterator < currentEntity->EntityNodeDefinitionList.end(); currentEntity->EntityNodeDefinitionListIterator++)
+				for(vector<GIAEntityNode*>::iterator entityIter = currentEntity->EntityNodeDefinitionList.begin(); entityIter < currentEntity->EntityNodeDefinitionList.end(); entityIter++)
 				{
 					string connectionTypeName = "definition";
-					currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, *(currentEntity->EntityNodeDefinitionListIterator), connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);
+					currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, *(entityIter), connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);
 				} 
 			}
 			//cout << "cxl4" << endl;

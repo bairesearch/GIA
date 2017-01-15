@@ -3,7 +3,7 @@
  * File Name: GIAXMLconversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k5a 14-May-2012
+ * Project Version: 1l1a 15-May-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function overwrites entity id values upon read/write to speed up linking process
  *
@@ -485,12 +485,13 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 	bool isPropertyFound = false;
 	bool isActionFound = false;
 	bool isConditionFound = false;
-	
-	bool actionSubjectEntityFound = false;
-	bool actionObjectEntityFound = false;
-	
-	bool conditionSubjectEntityFound = false;
-	bool conditionObjectEntityFound = false;	
+
+	bool entityBasicConnectionNodeFoundArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];
+	for(int i=0; i<GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES; i++)
+	{
+		entityBasicConnectionNodeFoundArray[i] = false;
+	}
+			
 	bool conditionTypeFound = false;
 	
 	bool hasAssociatedPropertyFound = false;
@@ -516,22 +517,12 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 	bool printTextXFound = false;
 	bool printTextYFound = false;
 	
-		
-	bool ActionNodeListFound = false;
-	bool IncomingActionNodeListFound = false;
-	
-	bool PropertyNodeListFound = false;
-	bool PropertyNodeReverseListFound = false;
-	//bool entityNodeContainingThisPropertyFound = false;
-	bool entityNodeDefiningThisPropertyFound = false;
-	
-	bool EntityNodeDefinitionListFound = false;
-	bool EntityNodeDefinitionReverseListFound = false;
-	bool AssociatedPropertyNodeListFound = false;
-	
-	bool ConditionNodeListFound = false;
-	bool IncomingConditionNodeListFound = false;
-	
+	bool entityVectorConnectionNodeFoundArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
+	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+	{
+		entityVectorConnectionNodeFoundArray[i] = false;
+	}
+
 	bool timeConditionNodeFound = false;
 	
 	//incase network is never trained, but output for visualisation purposes, set these values to dummy values
@@ -607,77 +598,14 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			bool attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->disabled = attributeValue;
 			disabledFound = true;
-		}
-				
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_actionSubjectEntity)
-		{
-			if(currentAttribute->value != GIA_SEMANTIC_NET_XML_NULL_NODE_ID)
-			{
-				long attributeValue = atol(currentAttribute->value.c_str());
-				entityNode->actionSubjectEntity = findEntityNodeByID(attributeValue, entityNodesCompleteList);
-				actionSubjectEntityFound = true;
-			}
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_actionObjectEntity)
-		{
-			if(currentAttribute->value != GIA_SEMANTIC_NET_XML_NULL_NODE_ID)
-			{
-				long attributeValue = atol(currentAttribute->value.c_str());
-				entityNode->actionObjectEntity = findEntityNodeByID(attributeValue, entityNodesCompleteList);
-				actionObjectEntityFound = true;
-			}
-		}
-		
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionSubjectEntity)
-		{
-			if(currentAttribute->value != GIA_SEMANTIC_NET_XML_NULL_NODE_ID)
-			{
-				long attributeValue = atol(currentAttribute->value.c_str());
-				entityNode->conditionSubjectEntity = findEntityNodeByID(attributeValue, entityNodesCompleteList);
-				conditionSubjectEntityFound = true;
-			}
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionObjectEntity)
-		{
-			if(currentAttribute->value != GIA_SEMANTIC_NET_XML_NULL_NODE_ID)
-			{
-				long attributeValue = atol(currentAttribute->value.c_str());
-				entityNode->conditionObjectEntity = findEntityNodeByID(attributeValue, entityNodesCompleteList);
-				conditionObjectEntityFound = true;
-			}
-		}
-				
+		}					
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionType)
 		{
 			int attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->conditionType = attributeValue;
 			conditionTypeFound = true;
 		}
-		/*//removed 8 Dec 2011		
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityNodeContainingThisProperty)
-		{
-			//cout << "df1a" << endl;
-			if(currentAttribute->value != GIA_SEMANTIC_NET_XML_NULL_NODE_ID)
-			{
-				long attributeValue = atol(currentAttribute->value.c_str());
-				//cout << "df1a2 attributeValue = " << attributeValue << endl;
-			
-				entityNode->entityNodeContainingThisProperty = findEntityNodeByID(attributeValue, entityNodesCompleteList);
-				entityNodeContainingThisPropertyFound = true;
-			}
-			//cout << "df1b" << endl;
-		}
-		*/
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityNodeDefiningThisProperty)
-		{
-			
-			if(currentAttribute->value != GIA_SEMANTIC_NET_XML_NULL_NODE_ID)
-			{		
-				long attributeValue = atol(currentAttribute->value.c_str());	
-				entityNode->entityNodeDefiningThisInstance = findEntityNodeByID(attributeValue, entityNodesCompleteList);
-				entityNodeDefiningThisPropertyFound = true;
-			}
-		}	
+		
 		
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalNumber)
 		{
@@ -770,7 +698,21 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			int attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->printTextY = attributeValue;
 			printTextYFound = true;
-		}			
+		}
+				
+		for(int i=0; i<GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES; i++)
+		{
+			if(currentAttribute->name == entityBasicConnectionXMLAttributeNameArray[i])
+			{
+				if(currentAttribute->value != GIA_SEMANTIC_NET_XML_NULL_NODE_ID)
+				{		
+					long attributeValue = atol(currentAttribute->value.c_str());	
+					entityNode->entityNodeDefiningThisInstance = findEntityNodeByID(attributeValue, entityNodesCompleteList);
+					entityBasicConnectionNodeFoundArray[i] = true;
+				}
+			}
+		}
+					
 		
 		//cout << "df3" << endl;
 		
@@ -782,90 +724,17 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 	XMLParserTag * currentTagUpdatedL3 = firstTagInEntityNode->firstLowerLevelTag;
 	while(currentTagUpdatedL3->nextTag != NULL)
 	{
-		if(currentTagUpdatedL3->name == NET_XML_TAG_ActionNodeList)
+		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 		{
-			//cout << "ActionNodeList: " << endl;
-			if(!parseActionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList))
+			if(currentTagUpdatedL3->name == entityVectorConnectionXMLTagNameArray[i])
 			{
-				result = false;
+				if(!parseEntityVectorConnectionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList, i))
+				{
+					result = false;
+				}
+				entityVectorConnectionNodeFoundArray[i] = true;	
 			}
-			ActionNodeListFound = true;					
-		}
-		if(currentTagUpdatedL3->name == NET_XML_TAG_IncomingActionNodeList)
-		{
-			//cout << "IncomingActionNodeList: " << endl;
-			if(!parseIncomingActionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList))
-			{
-				result = false;
-			}	
-			IncomingActionNodeListFound = true;				
-		}
-		
-		if(currentTagUpdatedL3->name == NET_XML_TAG_PropertyNodeList)
-		{
-			//cout << "PropertyNodeList: " << endl;
-			if(!parsePropertyNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList))
-			{
-				result = false;
-			}				
-			PropertyNodeListFound = true;	
-		}
-		if(currentTagUpdatedL3->name == NET_XML_TAG_PropertyNodeReverseList)
-		{
-			//cout << "PropertyNodeReverseList: " << endl;
-			if(!parsePropertyNodeReverseListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList))
-			{
-				result = false;
-			}				
-			PropertyNodeReverseListFound = true;	
-		}		
-		
-		if(currentTagUpdatedL3->name == NET_XML_TAG_EntityNodeDefinitionList)
-		{
-			//cout << "EntityNodeDefinitionList: " << endl;
-			if(!parseEntityNodeDefinitionListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList))
-			{
-				result = false;
-			}				
-			EntityNodeDefinitionListFound = true;	
-		}
-		if(currentTagUpdatedL3->name == NET_XML_TAG_EntityNodeDefinitionReverseList)
-		{
-			//cout << "EntityNodeDefinitionReverseList: " << endl;
-			if(!parseEntityNodeDefinitionReverseListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList))
-			{
-				result = false;
-			}				
-			EntityNodeDefinitionReverseListFound = true;	
-		}
-		if(currentTagUpdatedL3->name == NET_XML_TAG_AssociatedPropertyNodeList)
-		{
-			//cout << "AssociatedInstanceNodeList: " << endl;
-			if(!parseAssociatedPropertyNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList))
-			{
-				result = false;
-			}
-			AssociatedPropertyNodeListFound = true;						
-		}
-		
-		if(currentTagUpdatedL3->name == NET_XML_TAG_ConditionNodeList)
-		{
-			//cout << "ConditionNodeList: " << endl;
-			if(!parseConditionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList))
-			{
-				result = false;
-			}	
-			ConditionNodeListFound = true;				
-		}
-		if(currentTagUpdatedL3->name == NET_XML_TAG_IncomingConditionNodeList)
-		{
-			//cout << "IncomingConditionNodeList: " << endl;
-			if(!parseIncomingConditionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList))
-			{
-				result = false;
-			}
-			IncomingConditionNodeListFound = true;					
-		}																				
+		}																			
 		
 		if(currentTagUpdatedL3->name == NET_XML_TAG_timeConditionNode)
 		{
@@ -892,7 +761,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			result = false;
 		}
 		*/
-		if(!entityNodeDefiningThisPropertyFound)
+		if(!entityBasicConnectionNodeFoundArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE])
 		{
 			cout << "parseEntityNodeTag error: isPropertyFound && entityNode->isProperty && !entityNodeDefiningThisPropertyFound" << endl;
 			result = false;
@@ -914,190 +783,27 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 }
 
 
-
-bool parseActionNodeListTag(XMLParserTag * firstTagInActionNodeList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
+bool parseEntityVectorConnectionNodeListTag(XMLParserTag * firstTagInEntityVectorConnectionNodeList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList, int entityVectorConnectionIndex)
 {
-	XMLParserTag * currentTagUpdatedL1 = firstTagInActionNodeList;
+	XMLParserTag * currentTagUpdatedL1 = firstTagInEntityVectorConnectionNodeList;
 	while(currentTagUpdatedL1->nextTag != NULL)
 	{
-		if(currentTagUpdatedL1->name == NET_XML_TAG_actionNodeReference)
+		if(currentTagUpdatedL1->name == entityVectorConnectionXMLTagNameCrossReferenceNodeTypeArray[entityVectorConnectionIndex])
 		{
-			//cout << "actionNodeReference: " << endl;
+			//cout <<  entityVectorConnectionXMLTagNameCrossReferenceNodeTypeArray[entityVectorConnectionIndex] << " nodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
 			long attributeValue = atol(currentAttribute->value.c_str());
-			entityNode->ActionNodeList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
+			entityNode->entityVectorConnectionsArray[entityVectorConnectionIndex].push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
 			//cout << "attributeValue = " << attributeValue << endl;
 			//cout << "refID = " << findEntityNodeByID(attributeValue, entityNodesCompleteList)->id << endl;
 		}
 		else
 		{
-			cout << "parseActionNodeListTag error: actionNodeReference tag not found" << endl;
+			cout << "parse " << entityVectorConnectionXMLTagNameCrossReferenceNodeTypeArray[entityVectorConnectionIndex] << " error: tag not found" << endl;
 		}	
 		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
 	}	
 }
-
-bool parseIncomingActionNodeListTag(XMLParserTag * firstTagInIncomingActionNodeList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
-{
-	XMLParserTag * currentTagUpdatedL1 = firstTagInIncomingActionNodeList;
-	while(currentTagUpdatedL1->nextTag != NULL)
-	{
-		if(currentTagUpdatedL1->name == NET_XML_TAG_actionNodeReference)
-		{
-			//cout << "actionNodeReference: " << endl;
-			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
-			long attributeValue = atol(currentAttribute->value.c_str());
-			entityNode->IncomingActionNodeList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
-		}
-		else
-		{
-			cout << "parseIncomingActionNodeListTag error: actionNodeReference tag not found" << endl;
-		}	
-		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
-	}
-}
-
-bool parsePropertyNodeListTag(XMLParserTag * firstTagInPropertyNodeList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
-{
-	XMLParserTag * currentTagUpdatedL1 = firstTagInPropertyNodeList;
-	while(currentTagUpdatedL1->nextTag != NULL)
-	{
-		if(currentTagUpdatedL1->name == NET_XML_TAG_entityNodeReference)
-		{
-			//cout << "entityNodeReference: " << endl;
-			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
-			long attributeValue = atol(currentAttribute->value.c_str());
-			entityNode->PropertyNodeList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
-		}
-		else
-		{
-			cout << "parsePropertyNodeListTag error: entityNodeReference tag not found" << endl;
-		}	
-		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
-	}
-}
-
-bool parsePropertyNodeReverseListTag(XMLParserTag * firstTagInPropertyNodeReverseList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
-{
-	XMLParserTag * currentTagUpdatedL1 = firstTagInPropertyNodeReverseList;
-	while(currentTagUpdatedL1->nextTag != NULL)
-	{
-		if(currentTagUpdatedL1->name == NET_XML_TAG_entityNodeReference)
-		{
-			//cout << "entityNodeReference: " << endl;
-			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
-			long attributeValue = atol(currentAttribute->value.c_str());
-			entityNode->PropertyNodeReverseList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
-		}
-		else
-		{
-			cout << "parsePropertyNodeReverseListTag error: entityNodeReference tag not found" << endl;
-		}	
-		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
-	}
-}
-
-
-bool parseEntityNodeDefinitionListTag(XMLParserTag * firstTagInEntityNodeDefinitionList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
-{
-	XMLParserTag * currentTagUpdatedL1 = firstTagInEntityNodeDefinitionList;
-	while(currentTagUpdatedL1->nextTag != NULL)
-	{
-		if(currentTagUpdatedL1->name == NET_XML_TAG_entityNodeReference)
-		{
-			//cout << "entityNodeReference: " << endl;
-			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
-			long attributeValue = atol(currentAttribute->value.c_str());
-			entityNode->EntityNodeDefinitionList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
-		}
-		else
-		{
-			cout << "parseEntityNodeDefinitionListTag error: entityNodeReference tag not found" << endl;
-		}	
-		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
-	}
-}
-
-bool parseEntityNodeDefinitionReverseListTag(XMLParserTag * firstTagInEntityNodeDefinitionReverseList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
-{
-	XMLParserTag * currentTagUpdatedL1 = firstTagInEntityNodeDefinitionReverseList;
-	while(currentTagUpdatedL1->nextTag != NULL)
-	{
-		if(currentTagUpdatedL1->name == NET_XML_TAG_entityNodeReference)
-		{
-			//cout << "entityNodeReference: " << endl;
-			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
-			long attributeValue = atol(currentAttribute->value.c_str());
-			entityNode->EntityNodeDefinitionReverseList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
-		}
-		else
-		{
-			cout << "parseEntityNodeDefinitionReverseListTag error: entityNodeReference tag not found" << endl;
-		}	
-		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
-	}
-}
-
-bool parseAssociatedPropertyNodeListTag(XMLParserTag * firstTagInAssociatedPropertyNodeList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
-{
-	XMLParserTag * currentTagUpdatedL1 = firstTagInAssociatedPropertyNodeList;
-	while(currentTagUpdatedL1->nextTag != NULL)
-	{
-		if(currentTagUpdatedL1->name == NET_XML_TAG_entityNodeReference)
-		{
-			//cout << "entityNodeReference: " << endl;
-			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
-			long attributeValue = atol(currentAttribute->value.c_str());
-			entityNode->AssociatedInstanceNodeList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
-		}
-		else
-		{
-			cout << "parseAssociatedPropertyNodeListTag error: entityNodeReference tag not found" << endl;
-		}	
-		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
-	}
-}
-
-bool parseConditionNodeListTag(XMLParserTag * firstTagInEntityNodeDefinitionList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
-{
-	XMLParserTag * currentTagUpdatedL1 = firstTagInEntityNodeDefinitionList;
-	while(currentTagUpdatedL1->nextTag != NULL)
-	{
-		if(currentTagUpdatedL1->name == NET_XML_TAG_entityNodeReference)
-		{
-			//cout << "entityNodeReference: " << endl;
-			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
-			long attributeValue = atol(currentAttribute->value.c_str());
-			entityNode->ConditionNodeList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
-		}
-		else
-		{
-			cout << "parseConditionNodeListTag error: entityNodeReference tag not found" << endl;
-		}	
-		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
-	}
-}
-
-bool parseIncomingConditionNodeListTag(XMLParserTag * firstTagInEntityNodeDefinitionReverseList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
-{
-	XMLParserTag * currentTagUpdatedL1 = firstTagInEntityNodeDefinitionReverseList;
-	while(currentTagUpdatedL1->nextTag != NULL)
-	{
-		if(currentTagUpdatedL1->name == NET_XML_TAG_entityNodeReference)
-		{
-			//cout << "entityNodeReference: " << endl;
-			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
-			long attributeValue = atol(currentAttribute->value.c_str());
-			entityNode->IncomingConditionNodeList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
-		}
-		else
-		{
-			cout << "parseIncomingConditionNodeListTag error: entityNodeReference tag not found" << endl;
-		}	
-		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
-	}
-}
-
 
 bool parseTimeConditionNodeTag(XMLParserTag * firstTagInTimeConditionNode, GIATimeConditionNode * timeConditionNode)
 {
@@ -1473,96 +1179,31 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
 
-	if(currentEntity->actionSubjectEntity != NULL)
+	for(int i=0; i<GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES; i++)
 	{
-		currentAttribute->name = NET_XML_ATTRIBUTE_actionSubjectEntity;
-		sprintf(tempString, "%ld", (currentEntity->actionSubjectEntity->id));
-		currentAttribute->value = tempString;
+		if(currentEntity->entityBasicConnectionsArray[i] != NULL)
+		{
+			currentAttribute->name = entityBasicConnectionXMLAttributeNameArray[i];
+			sprintf(tempString, "%ld", (currentEntity->entityBasicConnectionsArray[i]->id));
+			currentAttribute->value = tempString;
 
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;			
+			newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;			
+		}
+		#ifndef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
+		else
+		{
+			currentAttribute->name = entityBasicConnectionXMLAttributeNameArray[i];
+			currentAttribute->value = GIA_SEMANTIC_NET_XML_NULL_NODE_ID;
+
+			newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;	
+		}
+		#endif		
 	}
-	#ifndef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
-	else
-	{
-		currentAttribute->name = NET_XML_ATTRIBUTE_actionSubjectEntity;
-		currentAttribute->value = GIA_SEMANTIC_NET_XML_NULL_NODE_ID;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;	
-	}
-	#endif		
-
-	if(currentEntity->actionObjectEntity != NULL)
-	{
-		currentAttribute->name = NET_XML_ATTRIBUTE_actionObjectEntity;
-		sprintf(tempString, "%ld", (currentEntity->actionObjectEntity->id));
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;			
-	}
-	#ifndef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
-	else
-	{
-		currentAttribute->name = NET_XML_ATTRIBUTE_actionObjectEntity;
-		currentAttribute->value = GIA_SEMANTIC_NET_XML_NULL_NODE_ID;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;				
-	}
-	#endif		
-
-
-	if(currentEntity->conditionSubjectEntity != NULL)
-	{
-		currentAttribute->name = NET_XML_ATTRIBUTE_conditionSubjectEntity;
-		sprintf(tempString, "%ld", (currentEntity->conditionSubjectEntity->id));
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;			
-	}
-	#ifndef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
-	else
-	{
-		currentAttribute->name = NET_XML_ATTRIBUTE_conditionSubjectEntity;
-		currentAttribute->value = GIA_SEMANTIC_NET_XML_NULL_NODE_ID;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;	
-	}
-	#endif		
-
-	if(currentEntity->conditionObjectEntity != NULL)
-	{
-		currentAttribute->name = NET_XML_ATTRIBUTE_conditionObjectEntity;
-		sprintf(tempString, "%ld", (currentEntity->conditionObjectEntity->id));
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;			
-	}
-	#ifndef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
-	else
-	{
-		currentAttribute->name = NET_XML_ATTRIBUTE_conditionObjectEntity;
-		currentAttribute->value = GIA_SEMANTIC_NET_XML_NULL_NODE_ID;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;				
-	}
-	#endif	
-	
-
+		
 	currentAttribute->name = NET_XML_ATTRIBUTE_conditionType;
 	sprintf(tempString, "%d", currentEntity->conditionType);
 	currentAttribute->value = tempString;
@@ -1571,51 +1212,7 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
 
-	/*//removed 8 Dec 2011
-	if(currentEntity->entityNodeContainingThisProperty != NULL)
-	{
-		currentAttribute->name = NET_XML_ATTRIBUTE_entityNodeContainingThisProperty;
-		sprintf(tempString, "%ld", (currentEntity->entityNodeContainingThisProperty->id));
-		currentAttribute->value = tempString;
 
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;			
-	}
-	#ifndef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
-	else
-	{
-		currentAttribute->name = NET_XML_ATTRIBUTE_entityNodeContainingThisProperty;
-		currentAttribute->value = GIA_SEMANTIC_NET_XML_NULL_NODE_ID;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;			
-	}
-	#endif
-	*/
-
-	if(currentEntity->entityNodeDefiningThisInstance != NULL)
-	{
-		currentAttribute->name = NET_XML_ATTRIBUTE_entityNodeDefiningThisProperty;
-		sprintf(tempString, "%ld", (currentEntity->entityNodeDefiningThisInstance->id));
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;			
-	}
-	#ifndef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
-	else
-	{
-		currentAttribute->name = NET_XML_ATTRIBUTE_entityNodeDefiningThisProperty;
-		currentAttribute->value = GIA_SEMANTIC_NET_XML_NULL_NODE_ID;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;			
-	}
-	#endif
 
 	//cout << "h5a" << endl;
 
@@ -1772,311 +1369,47 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	XMLParserTag * currentTagL3;
 	XMLParserTag * newTag2;
 
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	if(currentEntity->ActionNodeList.begin() != currentEntity->ActionNodeList.end())
+	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 	{
-	#endif
-		currentTagL2->name = NET_XML_TAG_ActionNodeList;
-		firstTagL3 = new XMLParserTag();
-		currentTagL2->firstLowerLevelTag = firstTagL3;
-		currentTagL3 = currentTagL2->firstLowerLevelTag;
+		#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
+		if(currentEntity->entityVectorConnectionsArray[i].begin() != currentEntity->entityVectorConnectionsArray[i].end())
+		{
+		#endif
+			currentTagL2->name = entityVectorConnectionXMLTagNameArray[i];
+			firstTagL3 = new XMLParserTag();
+			currentTagL2->firstLowerLevelTag = firstTagL3;
+			currentTagL3 = currentTagL2->firstLowerLevelTag;
 
-		for(currentEntity->ActionNodeListIterator = currentEntity->ActionNodeList.begin(); currentEntity->ActionNodeListIterator < currentEntity->ActionNodeList.end(); currentEntity->ActionNodeListIterator++)
-		{	
-			currentTagL3->name = NET_XML_TAG_actionNodeReference;
+			for(vector<GIAEntityNode*>::iterator entityIter = currentEntity->entityVectorConnectionsArray[i].begin(); entityIter < currentEntity->entityVectorConnectionsArray[i].end(); entityIter++)
+			{	
+				currentTagL3->name = entityVectorConnectionXMLTagNameCrossReferenceNodeTypeArray[i];
 
-			currentAttribute = currentTagL3->firstAttribute;
+				currentAttribute = currentTagL3->firstAttribute;
 
-			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", (*(currentEntity->ActionNodeListIterator))->id);
-			currentAttribute->value = tempString;
+				currentAttribute->name = NET_XML_ATTRIBUTE_id;
+				sprintf(tempString, "%ld", (*(entityIter))->id);
+				currentAttribute->value = tempString;
 
-			XMLParserAttribute * newAttribute = new XMLParserAttribute();
-			currentAttribute->nextAttribute = newAttribute;
-			currentAttribute = currentAttribute->nextAttribute;
+				XMLParserAttribute * newAttribute = new XMLParserAttribute();
+				currentAttribute->nextAttribute = newAttribute;
+				currentAttribute = currentAttribute->nextAttribute;
 
-			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
-			currentTagL3->nextTag = newTag3;			
-			currentTagL3 = currentTagL3->nextTag;
+				XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
+				currentTagL3->nextTag = newTag3;			
+				currentTagL3 = currentTagL3->nextTag;
 
-		} 
-		newTag2 = new XMLParserTag();	//had to add a null tag
-		currentTagL2->nextTag = newTag2;
-		currentTagL2 = currentTagL2->nextTag;		
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
+			} 
+			newTag2 = new XMLParserTag();	//had to add a null tag
+			currentTagL2->nextTag = newTag2;
+			currentTagL2 = currentTagL2->nextTag;		
+		#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
+		}
+		#endif
+		
 	}
-	#endif
-
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	if(currentEntity->IncomingActionNodeList.begin() != currentEntity->IncomingActionNodeList.end())
-	{
-	#endif
-		currentTagL2->name = NET_XML_TAG_IncomingActionNodeList;
-		firstTagL3 = new XMLParserTag();
-		currentTagL2->firstLowerLevelTag = firstTagL3;
-		currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->IncomingActionNodeListIterator = currentEntity->IncomingActionNodeList.begin(); currentEntity->IncomingActionNodeListIterator < currentEntity->IncomingActionNodeList.end(); currentEntity->IncomingActionNodeListIterator++)
-		{	
-			currentTagL3->name = NET_XML_TAG_actionNodeReference;
-
-			currentAttribute = currentTagL3->firstAttribute;
-
-			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", (*(currentEntity->IncomingActionNodeListIterator))->id);
-			currentAttribute->value = tempString;
-
-			XMLParserAttribute * newAttribute = new XMLParserAttribute();
-			currentAttribute->nextAttribute = newAttribute;
-			currentAttribute = currentAttribute->nextAttribute;
-
-			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
-			currentTagL3->nextTag = newTag3;			
-			currentTagL3 = currentTagL3->nextTag;
-
-		} 
-		newTag2 = new XMLParserTag();	//had to add a null tag
-		currentTagL2->nextTag = newTag2;
-		currentTagL2 = currentTagL2->nextTag;	
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	}
-	#endif		
-
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	if(currentEntity->PropertyNodeList.begin() != currentEntity->PropertyNodeList.end())
-	{
-	#endif		
-		currentTagL2->name = NET_XML_TAG_PropertyNodeList;
-		firstTagL3 = new XMLParserTag();
-		currentTagL2->firstLowerLevelTag = firstTagL3;
-		currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->PropertyNodeListIterator = currentEntity->PropertyNodeList.begin(); currentEntity->PropertyNodeListIterator < currentEntity->PropertyNodeList.end(); currentEntity->PropertyNodeListIterator++)
-		{	
-			currentTagL3->name = NET_XML_TAG_entityNodeReference;
-
-			currentAttribute = currentTagL3->firstAttribute;
-
-			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", (*(currentEntity->PropertyNodeListIterator))->id);
-			currentAttribute->value = tempString;
-
-			XMLParserAttribute * newAttribute = new XMLParserAttribute();
-			currentAttribute->nextAttribute = newAttribute;
-			currentAttribute = currentAttribute->nextAttribute;
-
-			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
-			currentTagL3->nextTag = newTag3;			
-			currentTagL3 = currentTagL3->nextTag;
-
-		} 
-		newTag2 = new XMLParserTag();	//had to add a null tag
-		currentTagL2->nextTag = newTag2;
-		currentTagL2 = currentTagL2->nextTag;		
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	}
-	#endif	
-	
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	if(currentEntity->PropertyNodeReverseList.begin() != currentEntity->PropertyNodeReverseList.end())
-	{
-	#endif		
-		currentTagL2->name = NET_XML_TAG_PropertyNodeReverseList;
-		firstTagL3 = new XMLParserTag();
-		currentTagL2->firstLowerLevelTag = firstTagL3;
-		currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->PropertyNodeReverseListIterator = currentEntity->PropertyNodeReverseList.begin(); currentEntity->PropertyNodeReverseListIterator < currentEntity->PropertyNodeReverseList.end(); currentEntity->PropertyNodeReverseListIterator++)
-		{	
-			currentTagL3->name = NET_XML_TAG_entityNodeReference;
-
-			currentAttribute = currentTagL3->firstAttribute;
-
-			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", (*(currentEntity->PropertyNodeReverseListIterator))->id);
-			currentAttribute->value = tempString;
-
-			XMLParserAttribute * newAttribute = new XMLParserAttribute();
-			currentAttribute->nextAttribute = newAttribute;
-			currentAttribute = currentAttribute->nextAttribute;
-
-			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
-			currentTagL3->nextTag = newTag3;			
-			currentTagL3 = currentTagL3->nextTag;
-
-		} 
-		newTag2 = new XMLParserTag();	//had to add a null tag
-		currentTagL2->nextTag = newTag2;
-		currentTagL2 = currentTagL2->nextTag;		
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	}
-	#endif		
-
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	if(currentEntity->EntityNodeDefinitionList.begin() != currentEntity->EntityNodeDefinitionList.end())
-	{
-	#endif			
-		currentTagL2->name = NET_XML_TAG_EntityNodeDefinitionList;
-		firstTagL3 = new XMLParserTag();
-		currentTagL2->firstLowerLevelTag = firstTagL3;
-		currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->EntityNodeDefinitionListIterator = currentEntity->EntityNodeDefinitionList.begin(); currentEntity->EntityNodeDefinitionListIterator < currentEntity->EntityNodeDefinitionList.end(); currentEntity->EntityNodeDefinitionListIterator++)
-		{	
-			currentTagL3->name = NET_XML_TAG_entityNodeReference;
-
-			currentAttribute = currentTagL3->firstAttribute;
-
-			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", (*(currentEntity->EntityNodeDefinitionListIterator))->id);
-			currentAttribute->value = tempString;
-
-			XMLParserAttribute * newAttribute = new XMLParserAttribute();
-			currentAttribute->nextAttribute = newAttribute;
-			currentAttribute = currentAttribute->nextAttribute;
-
-			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
-			currentTagL3->nextTag = newTag3;			
-			currentTagL3 = currentTagL3->nextTag;
-
-		} 
-		newTag2 = new XMLParserTag();	//had to add a null tag
-		currentTagL2->nextTag = newTag2;
-		currentTagL2 = currentTagL2->nextTag;
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	}
-	#endif			
-
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	if(currentEntity->EntityNodeDefinitionReverseList.begin() != currentEntity->EntityNodeDefinitionReverseList.end())
-	{
-	#endif		
-		currentTagL2->name = NET_XML_TAG_EntityNodeDefinitionReverseList;
-		firstTagL3 = new XMLParserTag();
-		currentTagL2->firstLowerLevelTag = firstTagL3;
-		currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->EntityNodeDefinitionReverseListIterator = currentEntity->EntityNodeDefinitionReverseList.begin(); currentEntity->EntityNodeDefinitionReverseListIterator < currentEntity->EntityNodeDefinitionReverseList.end(); currentEntity->EntityNodeDefinitionReverseListIterator++)
-		{	
-			currentTagL3->name = NET_XML_TAG_entityNodeReference;
-
-			currentAttribute = currentTagL3->firstAttribute;
-
-			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", (*(currentEntity->EntityNodeDefinitionReverseListIterator))->id);
-			currentAttribute->value = tempString;
-
-			XMLParserAttribute * newAttribute = new XMLParserAttribute();
-			currentAttribute->nextAttribute = newAttribute;
-			currentAttribute = currentAttribute->nextAttribute;
-
-			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
-			currentTagL3->nextTag = newTag3;			
-			currentTagL3 = currentTagL3->nextTag;
-
-		} 
-		newTag2 = new XMLParserTag();	//had to add a null tag
-		currentTagL2->nextTag = newTag2;
-		currentTagL2 = currentTagL2->nextTag;
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	}
-	#endif											
-
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	if(currentEntity->AssociatedInstanceNodeList.begin() != currentEntity->AssociatedInstanceNodeList.end())
-	{
-	#endif
-		currentTagL2->name = NET_XML_TAG_AssociatedPropertyNodeList;
-		firstTagL3 = new XMLParserTag();
-		currentTagL2->firstLowerLevelTag = firstTagL3;
-		currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->AssociatedInstanceNodeListIterator = currentEntity->AssociatedInstanceNodeList.begin(); currentEntity->AssociatedInstanceNodeListIterator < currentEntity->AssociatedInstanceNodeList.end(); currentEntity->AssociatedInstanceNodeListIterator++)
-		{	
-			currentTagL3->name = NET_XML_TAG_entityNodeReference;
-
-			currentAttribute = currentTagL3->firstAttribute;
-
-			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", (*(currentEntity->AssociatedInstanceNodeListIterator))->id);
-			currentAttribute->value = tempString;
-
-			XMLParserAttribute * newAttribute = new XMLParserAttribute();
-			currentAttribute->nextAttribute = newAttribute;
-			currentAttribute = currentAttribute->nextAttribute;
-
-			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
-			currentTagL3->nextTag = newTag3;			
-			currentTagL3 = currentTagL3->nextTag;
-
-		} 
-		newTag2 = new XMLParserTag();	//had to add a null tag
-		currentTagL2->nextTag = newTag2;
-		currentTagL2 = currentTagL2->nextTag;
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	}
-	#endif		
-
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	if(currentEntity->ConditionNodeList.begin() != currentEntity->ConditionNodeList.end())
-	{
-	#endif
-		currentTagL2->name = NET_XML_TAG_ConditionNodeList;
-		firstTagL3 = new XMLParserTag();
-		currentTagL2->firstLowerLevelTag = firstTagL3;
-		currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->ConditionNodeListIterator = currentEntity->ConditionNodeList.begin(); currentEntity->ConditionNodeListIterator < currentEntity->ConditionNodeList.end(); currentEntity->ConditionNodeListIterator++)
-		{	
-			currentTagL3->name = NET_XML_TAG_entityNodeReference;
-
-			currentAttribute = currentTagL3->firstAttribute;
-
-			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", (*(currentEntity->ConditionNodeListIterator))->id);
-			currentAttribute->value = tempString;
-
-			XMLParserAttribute * newAttribute = new XMLParserAttribute();
-			currentAttribute->nextAttribute = newAttribute;
-			currentAttribute = currentAttribute->nextAttribute;				
-
-			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
-			currentTagL3->nextTag = newTag3;			
-			currentTagL3 = currentTagL3->nextTag;
-
-		} 
-		newTag2 = new XMLParserTag();	//had to add a null tag
-		currentTagL2->nextTag = newTag2;
-		currentTagL2 = currentTagL2->nextTag;
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	}
-	#endif		
-
-	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
-	if(currentEntity->IncomingConditionNodeList.begin() != currentEntity->IncomingConditionNodeList.end())
-	{
-	#endif
-		currentTagL2->name = NET_XML_TAG_IncomingConditionNodeList;
-		firstTagL3 = new XMLParserTag();
-		currentTagL2->firstLowerLevelTag = firstTagL3;
-		currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->IncomingConditionNodeListIterator = currentEntity->IncomingConditionNodeList.begin(); currentEntity->IncomingConditionNodeListIterator < currentEntity->IncomingConditionNodeList.end(); currentEntity->IncomingConditionNodeListIterator++)
-		{	
-			currentTagL3->name = NET_XML_TAG_entityNodeReference;
-
-			currentAttribute = currentTagL3->firstAttribute;
-
-			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", (*(currentEntity->IncomingConditionNodeListIterator))->id);
-			currentAttribute->value = tempString;
-
-			XMLParserAttribute * newAttribute = new XMLParserAttribute();
-			currentAttribute->nextAttribute = newAttribute;
-			currentAttribute = currentAttribute->nextAttribute;				
-
-			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
-			currentTagL3->nextTag = newTag3;			
-			currentTagL3 = currentTagL3->nextTag;
-		} 
-		newTag2 = new XMLParserTag();	//had to add a null tag
-		currentTagL2->nextTag = newTag2;
-		currentTagL2 = currentTagL2->nextTag;
-	}				
+					
 	//cout << "h5e" << endl;
-
+	
 	if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
 	{
 		currentTagL2->name = NET_XML_TAG_timeConditionNode;
@@ -2202,42 +1535,3 @@ bool generateXMLConditionTimeNodeTagList(XMLParserTag * firstTagInConditionTimeN
 		
 	return result;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-XMLParserTag * parseTagDownALevel(XMLParserTag * currentTag, string sectionTagName, bool * result)
-{
-	*result = true;
-
-	XMLParserTag * updatedCurrentTag;
-
-	if(currentTag->name != sectionTagName)
-	{
-		*result = false;
-		cout << "parse error; lower level sectionTagName expected = " <<  sectionTagName << ". section tag name found currentTag->name = " << currentTag->name << endl;
-		updatedCurrentTag = currentTag;
-	}
-	else
-	{
-		updatedCurrentTag = currentTag->firstLowerLevelTag;
-	}
-
-	return updatedCurrentTag;
-
-}
-*/
-

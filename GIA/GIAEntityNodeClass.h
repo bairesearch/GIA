@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k5a 14-May-2012
+ * Project Version: 1l1a 15-May-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -123,6 +123,38 @@ static string grammaticalGenderNameArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES] = {
 static string grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES] = {"undefined", "noun", "verb", "adj", "adv", "satellite"};	//must be same as FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME
 
 
+#define GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES (9)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS (0)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS (1)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS (2)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS (3)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES (4)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES (5)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS (6)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS (7)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES (8)
+static string entityVectorConnectionSourceContextArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"is ", "", "", "", "has ", "possessed by ", "is ", "defines ", ""};
+static string entityVectorConnectionContextArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"outgoingAction(s)", "incomingAction(s)", "conditionNode(s)", "incomingConditionNode(s)", "propertyNode(s)", "propertyNode(s)", "entityNodeDefinition(s)", "incomingEntityNodeDefinition(s)", "associatedInstanceNodes(s)"};
+static bool entityVectorConnectionThisIsInstanceAndPreviousNodeWasDefinitionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, false, false, false, false, true};
+static bool entityVectorConnectionIsConditionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, true, true, false, false, false, false, false};
+
+/*
+#define GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPES (2)
+*/
+
+
+#define GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES (5)
+#define GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_SUBJECT (0)
+#define GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_OBJECT (1)
+#define GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_SUBJECT (2)
+#define GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_OBJECT (3)
+#define GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE (4)
+static string entityBasicConnectionSourceContextArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES] = {"is done by ", "", "", "", ""};
+static string entityBasicConnectionContextArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES] = {"actionSubjectEntity", "actionObjectEntity", "conditionSubjectEntity", "conditionObjectEntity", "entityNodeDefiningThisInstance"};
+static bool entityBasicConnectionThisIsInstanceAndPreviousNodeWasDefinitionArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES] = {false, false, false, false, false};
+static bool entityBasicConnectionIsConditionArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES] = {false, false, true, true, false};
+
+
 class GIAEntityNode
 {
 public:
@@ -148,7 +180,6 @@ public:
 	bool hasProgressiveTemp;	//PRECISE ORIGINALNAME: isActionOrPropertyState		//eg The cat is lying on the bed. / Mark is being happy.
 	bool hasQuality;		//PRECISE ORIGINAL NAME: isPropertyQualityOrAffection	//eg 'the locked door..' / 'Jim runs quickly' / 'Mr. Smith is late' 	[Not: Tom has an arm'/'Tom's bike']
 	
-	
 	/*instances are now arbitrary, every entity is an instance of its parent(s) in some form or another...
 	enum
 	{
@@ -156,61 +187,97 @@ public:
 	}instance;	//is the following entity known to be an instance?		
 	*/
 
-		//non-actions only;
+	vector<GIAEntityNode*> entityVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
+	GIAEntityNode* entityBasicConnectionsArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	vector<int> entityVectorConnectionsParametersArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
+	int entityBasicConnectionsParametersArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];
+	GIAEntityNode* entityCorrespondingBestMatch;	//not possible in case of multiple diversions [assumes single matches only] //best match entity node corresponding to this assumed query entity node		
+	/*
+	#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS_NOT_YET_CODED
+		#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS_ADVANCED_DIVERGENCE_NOT_YET_CODED
+			vector<GIAEntityNode*> entityVectorConnectionsCorrespondingBestMatchArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
+			vector<GIAEntityNode*> entityVectorConnectionsCorrespondingBestnumberOfMatchedNodesRequiredSynonymnDetectionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
+			GIAEntityNode* entityBasicConnectionsCorrespondingBestMatchArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];	
+			GIAEntityNode* entityBasicConnectionsCorrespondingBestnumberOfMatchedNodesRequiredSynonymnDetectionArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];	
+		#else
+			vector<GIAEntityNode*> entityCorrespondingBestMatches;
+			vector<bool> entityCorrespondingBestMatchesRequiredSynonymnDetection;
+		#endif
+	#else
+	*/
+	#endif
+	/*
+	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPES];
+	*/
+	
 	//action connections;
-	//where this entity is the subject of the action
-	vector<GIAEntityNode*> ActionNodeList;
-	vector<GIAEntityNode*>::iterator ActionNodeListIterator;
-	//where this entity is the object of the action
-	vector<GIAEntityNode*> IncomingActionNodeList;
-	vector<GIAEntityNode*>::iterator IncomingActionNodeListIterator;
-
+		//non-actions only;
+	vector<GIAEntityNode*> ActionNodeList;	//where this entity is the subject of the action
+	vector<GIAEntityNode*> IncomingActionNodeList;	//where this entity is the object of the action
+	#ifdef GIA_USE_ADVANCED_REFERENCING	
+	vector<int> ActionNodeListParameters;
+	vector<int> IncomingActionNodeListParameters;
+	#endif
+	
 		//actions only;
-	//NB actions can be performed by and on entities, and by and on properties
-	//record of entity that is the subject of this action instance
-	GIAEntityNode * actionSubjectEntity;
-	//record of which entity that is the object of this action instance
-	GIAEntityNode * actionObjectEntity;
-
-		//conditions only;
+	//NB actions can be performed by and on concepts, and by and on properties?
+	GIAEntityNode * actionSubjectEntity;	//record of entity that is the subject of this action instance
+	GIAEntityNode * actionObjectEntity;	//record of which entity that is the object of this action instance
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	int actionSubjectEntityParameters;
+	int actionObjectEntityParameters;
+	#endif
+	
+	//condition connections;
+		//non-conditions only (?);
 	//conditions connections: conditions and reverse conditions (reason) lookups [condition and reason respectively]
 	vector<GIAEntityNode*> ConditionNodeList;		//this property requires the following...
-	vector<GIAEntityNode*>::iterator ConditionNodeListIterator;		
 	vector<GIAEntityNode*> IncomingConditionNodeList;	//this property is required by the following... //aka reason	[NB these may only be property, location, {and time action condtions}, not action conditions]
-	vector<GIAEntityNode*>::iterator IncomingConditionNodeListIterator;		
-		
-	//NB actions can be performed by and on entities, and by and on properties
-	//record of entity that is the subject of this action instance
-	GIAEntityNode * conditionSubjectEntity;
-	//record of which entity that is the object of this action instance
-	GIAEntityNode * conditionObjectEntity;	
+	#ifdef GIA_USE_ADVANCED_REFERENCING   	
+	vector<int> ConditionNodeListParameters;		
+	vector<int> IncomingConditionNodeListParameters;	
+	#endif
+		//conditions only;
+	//NB conditions can be performed by and on concepts, and by and on properties?
+	GIAEntityNode * conditionSubjectEntity;	//record of entity that is the subject of this action instance
+	GIAEntityNode * conditionObjectEntity;		//record of which entity that is the object of this action instance
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	int conditionSubjectEntityParameters;
+	int conditionObjectEntityParameters;
+	#endif
+	//time condition connections;
 	int conditionType;	//added 25 Sept 11	
 	GIATimeConditionNode * timeConditionNode;		//if conditionType == CONDITION_NODE_TYPE_TIME
 
 	//property connections;
 	//record list of all properties for this entity
 	vector<GIAEntityNode*> PropertyNodeList;
-	vector<GIAEntityNode*>::iterator PropertyNodeListIterator;
-	
 		//properties only [is this possible for actions also? - may require upgrade in future]
 	//GIAEntityNode * entityNodeContainingThisProperty;		//removed 8 Dec 2011			//OLD: if property/action only:	//OLD: eg, Tom; OR;  Tom's Assets	//OLD: NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
 	vector<GIAEntityNode*> PropertyNodeReverseList;			//if property/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given property [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for concept entities [property entities may possibly only be contained by {ie, be a property of} a single entity]
-	vector<GIAEntityNode*>::iterator PropertyNodeReverseListIterator;	
+	#ifdef GIA_USE_ADVANCED_REFERENCING     
+	vector<int> PropertyNodeListParameters;
+	vector<int> PropertyNodeReverseListParameters;		
+	#endif
+		//actions, properties, and conditions only
+	GIAEntityNode * entityNodeDefiningThisInstance;					//if property/action/condition only:					//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
+	#ifdef GIA_USE_ADVANCED_REFERENCING  
+	int entityNodeDefiningThisInstanceParameters;
+	#endif
 	
-		//actions and properties only
-	GIAEntityNode * entityNodeDefiningThisInstance;					//if property/action only:					//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
-	
-		//pure entites only (not properties/"instances" of entities)
+		//concepts only (not properties/"instances" of entities);
 	//entity connections;										
 	//record parent and child entity definition nodes
-	vector<GIAEntityNode*> EntityNodeDefinitionList;				//if not property only: 	//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
-	vector<GIAEntityNode*>::iterator EntityNodeDefinitionListIterator;	//if not property only: 
+	vector<GIAEntityNode*> EntityNodeDefinitionList;			//if not property only: 	//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
 	vector<GIAEntityNode*> EntityNodeDefinitionReverseList;			//if not property only: 	//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
-	vector<GIAEntityNode*>::iterator EntityNodeDefinitionReverseListIterator;	//if not property only: 
 	//associated actions and properties [ie does this entity also define an action/verb or a property/adjective? [ie, it is not just a thing/noun]]
 	vector<GIAEntityNode*> AssociatedInstanceNodeList;			//if not property only: if type == definesAPropertyAdjective (ie, if this entity is not a property/instance but defines one or more properties/instances)
-	vector<GIAEntityNode*>::iterator AssociatedInstanceNodeListIterator;	//if not property only: if type == definesAPropertyAdjective (ie, if this entity is not a property/instance but defines one or more properties/instances)
-	
+	#ifdef GIA_USE_ADVANCED_REFERENCING  	
+	vector<int> EntityNodeDefinitionListParameters;	
+	vector<int> EntityNodeDefinitionReverseListParameters;	
+	vector<int> AssociatedInstanceNodeListParameters;	
+	#endif
 	
 	//CHECKTHIS; what is the difference between EntityNodeDefinitionList and entityNodeDefiningThisInstance? - it appears to achieve a similar purpose; ANSWER - one is direct definition [definition of instance] the other is not
 	//CHECKTHIS; what is the difference between EntityNodeDefinitionReverseList and AssociatedInstanceNodeList? - it appears to achieve a similar purpose; ANSWER - one is direct definition [definition of instance] the other is not
@@ -274,17 +341,15 @@ public:
 	bool isQuery;
 	bool isWhichQuery;
 	bool isAnswerToQuery;				
-	#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES				
-	bool isAnswerContextToQuery;
-	#endif
 	bool testedForQueryComparison;
+	bool testedForQueryComparisonTemp; //added 17 May 2012 - support better trace routine
 	
 	
 	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for properties and actions; but relex does not appear to output this information]
 	
 	bool disableParsingAsAPrepositionRelationTemp;
 	
-	bool queryEntityTraced;	//temporary for determining max confifence
+	bool queryEntityTraced;	//temporary for determining max confidence
 	
 	bool disabled;	//temporary for concept entities: used for GIA translator reference paser only - overwritten every time a new sentence is parsed 
 	bool permanentConcept;	//concept entity is to be drawn/saved to XML (if false, this entity has been deemed redundant in semantic network generation)
@@ -299,7 +364,13 @@ public:
 	{
 		definesAThingNoun, definesAPropertyAdjective, definesAnActionVerb, undefinedEntityType
 	}type;	//is the following entity known to be an instance?		
-	*/	
+	*/
+
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	int referenceSetID;
+	#endif
+
+
 };
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode);

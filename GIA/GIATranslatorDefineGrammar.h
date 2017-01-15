@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammar.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k5a 14-May-2012
+ * Project Version: 1l1a 15-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -54,6 +54,8 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 		
 void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], Feature * firstFeatureInSentence);
 
-							
+#ifdef GIA_USE_ADVANCED_REFERENCING	
+void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * currentSentenceInList, GIAEntityNode * subjectObjectEntityWithAuxillary);	
+#endif							
 			
 #endif

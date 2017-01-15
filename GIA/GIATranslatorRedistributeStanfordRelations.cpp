@@ -3,7 +3,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k5a 14-May-2012
+ * Project Version: 1l1a 15-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -348,6 +348,8 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	*/
 
 	//look for nsubj/prep combination, eg nsubj(are-4, claims-3) / prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)
+	//case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; The claims that are on the frame are blue. , nsubj(are-4, claims-2) / prep_on(are-4, frame-7) / rcmod(claims-2, are-4)
+	
 	//OLD: look for nsubj/prep combination, eg nsubj(next-4, garage-2) / prep_to(next-4, house-7)	=> prep_subj(next_to, house) / prep_subj(next_to, garage) 
 	
 	currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -398,6 +400,23 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 									{
 										//cout << "hello2" << endl;
 										
+										#ifdef GIA_USE_ADVANCED_REFERENCING
+										bool auxillaryIndicatesDifferentReferenceSet = true;
+										Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+										while(currentRelationInList3->next != NULL)
+										{
+											if(currentRelationInList3->relationType == RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER)
+											{
+												if((currentRelationInList3->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList3->relationGovernor == RELATION_ENTITY_BE))
+												{
+													auxillaryIndicatesDifferentReferenceSet = false;	
+												}
+											}																			
+											currentRelationInList3 = currentRelationInList3->next;
+										}
+										currentRelationInList2->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;
+										#endif
+																								
 										currentRelationInList->disabled = true;
 										currentRelationInList2->relationGovernorIndex = currentRelationInList->relationDependentIndex;
 										currentRelationInList2->relationGovernor = currentRelationInList->relationDependent;
@@ -485,6 +504,13 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	cop(near-4, is-3)
 	prep_to(near-4, horse-7)
 
+		[case added 15 May 2012]
+		He rode the carriage that is near to the horse.
+		nsubj(near-7, carriage-4)
+		cop(near-7, is-6)
+		rcmod(carriage-4, near-7)
+		prep_to(near-7, horse-10)
+
 	nsubj(next-4, farmer-2)
 	cop(next-4, is-3)
 	prep_to(next-4, plank-7
@@ -537,8 +563,27 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	->
 	3. obj/subj
 	1. prep_z_c(a, c)
+	
+	....
+	additional tests added 15 May 2012;
+	
+	Y she hits the ball, close to the house.
+	N she hits the ball, left of the house.
+	Y she hits the ball, near to the house.
+	Y she hits the ball, outside of the house.
+	N she hits the ball, right of the house.	
+
+	nsubj(hits-2, she-1)
+	root(ROOT-0, hits-2)
+	det(ball-4, the-3)
+	dobj(hits-2, ball-4)
+	appos(ball-4, right-6)
+	det(house-9, the-8)
+	prep_of(right-6, house-9)
+
 	*/	
-		
+	
+	
 	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -624,6 +669,30 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 												{		
 													if(multiwordPrepositionIntermediaryRelationTypeAFound)
 													{
+														#ifdef GIA_USE_ADVANCED_REFERENCING
+														/*											
+														[case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING]
+														nsubj(near-7, carriage-4)
+														cop(near-7, is-6)
+														rcmod(carriage-4, near-7)
+														prep_to(near-7, horse-10)
+														*/
+														bool auxillaryIndicatesDifferentReferenceSet = true;
+														Relation * currentRelationInList4 = currentSentenceInList->firstRelationInList;
+														while(currentRelationInList4->next != NULL)
+														{
+															if(currentRelationInList4->relationType == RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER)
+															{
+																if((currentRelationInList4->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList->relationDependentIndex))
+																{
+																	auxillaryIndicatesDifferentReferenceSet = false;	
+																}
+															}																			
+															currentRelationInList4 = currentRelationInList4->next;
+														}
+														currentRelationInList->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;	
+														#endif
+														
 														GIAEntityNode * entityContainingFirstWordOfMultiwordPreposition = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex];
 
 														string newPrepositionName = "";
@@ -700,7 +769,8 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 {
 	//eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - > _predadj(rabbit-2, away-6) 
 	//OLD: nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - > nsubj(away-6, rabbit-2) )
-
+		//case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; nsubj(is-4, rabbit-2) / advmod(is-4, away-7) / rcmod(rabbit-2, is-4) -> _predadj(rabbit-2, away-7) 
+		
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{	
@@ -734,7 +804,26 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 
 									#ifdef GIA_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE_TO_PREDADJ_NOT_SUBJ
 										#ifdef GIA_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE_TO_PREDADJ_NOT_SUBJ_OLD
-										//CASE CURRENTLY NOT DISABLED
+										//CASE CURRENTLY ENABLED
+										
+										#ifdef GIA_USE_ADVANCED_REFERENCING
+										//case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; nsubj(is-4, rabbit-2) / advmod(is-4, away-7) / rcmod(rabbit-2, is-4) -> _predadj(rabbit-2, away-7) 
+										bool auxillaryIndicatesDifferentReferenceSet = true;
+										currentRelationInList3 = currentSentenceInList->firstRelationInList;
+										while(currentRelationInList3->next != NULL)
+										{
+											if(currentRelationInList3->relationType == RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER)
+											{
+												if((currentRelationInList3->relationGovernorIndex == currentRelationInList->relationDependentIndex) && (currentRelationInList3->relationDependent == RELATION_ENTITY_BE))
+												{
+													auxillaryIndicatesDifferentReferenceSet = false;	
+												}
+											}																			
+											currentRelationInList3 = currentRelationInList3->next;
+										}
+										currentRelationInList->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;	
+										#endif
+																								
 										currentRelationInList2->relationType = RELATION_TYPE_ADJECTIVE_PREDADJ;
 										currentRelationInList2->relationGovernorIndex = currentRelationInList->relationDependentIndex;
 										currentRelationInList2->relationGovernor = GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
@@ -821,8 +910,13 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 								if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)	//redundant test
 								{//found a matching object-subject relationship
 
+									#ifdef GIA_USE_ADVANCED_REFERENCING
+									currentRelationInList->auxillaryIndicatesDifferentReferenceSet = true;
+									#endif																								
+
+
 									#ifndef GIA_OPTIMISE_PERFORMANCE_FOR_RELEX_PATENT_QUERIES_REPLICATION_RATHER_THAN_RELEX_PATENT_SYNTACTIC_PROTOTYPE_OUTPUT_REPLICATION
-										#ifndef GIA_COLLAPSE_COP_RELATION_DEPENDENT_BE_TO_APPOS_NOT_PREDADJ_OLD`
+										#ifndef GIA_COLLAPSE_COP_RELATION_DEPENDENT_BE_TO_APPOS_NOT_PREDADJ_OLD
 										if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 										{
 											GIAEntityNode * subjectGovernorEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
@@ -839,7 +933,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 													subjectGovernorAdjectiveOrAdvebFound = true;
 												}
 											}											
-											
+															
 											if(subjectGovernorAdjectiveOrAdvebFound)
 											{
 												currentRelationInList->relationType = RELATION_TYPE_ADJECTIVE_PREDADJ;
@@ -1773,14 +1867,14 @@ void redistributeStanfordRelationsPartmod(Sentence * currentSentenceInList, bool
 {									
 	//eg Truffles picked during the spring are tasty.   partmod(truffle, pick) -> obj(pick, truffle) 
 	/*
-		during(pick, spring)
-		_predadj(truffle, tasty)
-		_obj(pick, truffle)
-			->
 		prep_during(pick, spring)
 		nsubj(tasty, truffle)
 		partmod(truffle, pick)
 		cop(tasty, be)	
+		->		
+		during(pick, spring)
+		_predadj(truffle, tasty)
+		_obj(pick, truffle)
 	*/
 			
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;

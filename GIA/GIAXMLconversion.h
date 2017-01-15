@@ -3,7 +3,7 @@
  * File Name: GIAXMLconversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k5a 14-May-2012
+ * Project Version: 1l1a 15-May-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -38,6 +38,7 @@ using namespace std;
 #define GIA_SEMANTIC_NET_XML_FILE_NAME1 "semanticNet1.xml"
 
 #define GIA_SEMANTIC_NET_XML_NULL_NODE_ID "-1"
+
 
 
 //#define GIA_ENABLE_XML_READ_DEBUG
@@ -138,7 +139,6 @@ using namespace std;
 //
 #define NET_XML_TAG_EntityNodeDefinitionList ((string)"EntityNodeDefinitionList")
 #define NET_XML_TAG_EntityNodeDefinitionReverseList ((string)"EntityNodeDefinitionReverseList")
-#define NET_XML_TAG_AssociatedActionNodeList ((string)"AssociatedActionNodeList")
 #define NET_XML_TAG_AssociatedPropertyNodeList ((string)"AssociatedInstanceNodeList")
 //
 #define NET_XML_TAG_ConditionNodeList ((string)"ConditionNodeList")
@@ -164,6 +164,12 @@ using namespace std;
 #define NET_XML_ATTRIBUTE_printTextX ((string)"printTextX")
 #define NET_XML_ATTRIBUTE_printTextY ((string)"printTextY")
 //
+
+static string entityVectorConnectionXMLTagNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {NET_XML_TAG_ActionNodeList, NET_XML_TAG_IncomingActionNodeList, NET_XML_TAG_ConditionNodeList, NET_XML_TAG_IncomingConditionNodeList, NET_XML_TAG_PropertyNodeList, NET_XML_TAG_PropertyNodeReverseList, NET_XML_TAG_EntityNodeDefinitionList, NET_XML_TAG_EntityNodeDefinitionReverseList, NET_XML_TAG_AssociatedPropertyNodeList};
+static string entityBasicConnectionXMLAttributeNameArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES] = {NET_XML_ATTRIBUTE_actionSubjectEntity, NET_XML_ATTRIBUTE_actionObjectEntity, NET_XML_TAG_ConditionNodeList, NET_XML_TAG_IncomingConditionNodeList, NET_XML_ATTRIBUTE_entityNodeDefiningThisProperty};
+
+static string entityVectorConnectionXMLTagNameCrossReferenceNodeTypeArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {NET_XML_TAG_actionNodeReference, NET_XML_TAG_actionNodeReference, NET_XML_TAG_conditionNodeReference, NET_XML_TAG_conditionNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference};
+
 
 
 /*time condition node*/
@@ -200,6 +206,11 @@ bool readSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAEntityNode*> 
 	bool readSemanticNetXMLFile(string xmlFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList);
 		bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, bool linkConnections);
 			bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList);
+				bool parseEntityVectorConnectionNodeListTag(XMLParserTag * firstTagInEntityVectorConnectionNodeList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList, int entityVectorConnectionIndex);
+				bool parseTimeConditionNodeTag(XMLParserTag * firstTagInTimeConditionNode, GIATimeConditionNode * timeConditionNode);
+								
+
+				/*
 				bool parseActionNodeListTag(XMLParserTag * firstTagInActionNodeList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList);
 				bool parseIncomingActionNodeListTag(XMLParserTag * firstTagInIncomingActionNodeList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList);
 				bool parsePropertyNodeListTag(XMLParserTag * firstTagInPropertyNodeList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList);
@@ -209,9 +220,8 @@ bool readSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAEntityNode*> 
 				bool parseAssociatedPropertyNodeListTag(XMLParserTag * firstTagInAssociatedPropertyNodeList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList);
 				bool parseConditionNodeListTag(XMLParserTag * firstTagInEntityNodeDefinitionList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList);
 				bool parseIncomingConditionNodeListTag(XMLParserTag * firstTagInEntityNodeDefinitionReverseList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList);
-				bool parseTimeConditionNodeTag(XMLParserTag * firstTagInTimeConditionNode, GIATimeConditionNode * timeConditionNode);
-								
-
+				*/
+				
 /*
 	bool linkEntityNodeConnections(NeuronContainer * firstNeuronContainerInLayer, NeuronContainer * firstInputNeuronInNetwork, bool hasBackLayer, NeuronContainer * firstNeuronContainerInBackLayer);
 		NeuronContainer * findNeuronContainer(NeuronContainer * firstNeuronContainerInLayer, long neuronIDToFind, bool * result);
