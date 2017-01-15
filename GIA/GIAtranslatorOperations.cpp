@@ -2316,23 +2316,23 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 		 NLCsentence * definiteEntityNLCsentenceInList = currentNLCsentenceInList;
 
 
-		 cout << "definiteEntity = " << definiteEntity->entityName << endl;
-		 cout << "indefiniteEntity = " << indefiniteEntity->entityName << endl;
+		 //cout << "definiteEntity = " << definiteEntity->entityName << endl;
+		 //cout << "indefiniteEntity = " << indefiniteEntity->entityName << endl;
 		 if(foundDefiniteEntitySentence)
 		 {
 			if(minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence < indefiniteEntityNLCsentenceInList->indentation)
 			{
-				cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(): no reference found" << endl;
+				//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(): no reference found" << endl;
 			}
 			else
 			{
-				cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(): entity declared in this function" << endl;
+				//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(): entity declared in this function" << endl;
 				foundIndefiniteEntity = true;
 			}
 		 }
 		 else
 		 {
-			cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext() error: !foundDefiniteEntitySentence" << endl;
+			//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext() error: !foundDefiniteEntitySentence" << endl;
 		 }
 	}
 	//}

@@ -611,7 +611,7 @@
 #define GIA_SUPPORT_NUMBER_OF	//added 2g9a/24-September-2014
 
 #ifdef USE_NLC
-	//#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
+	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 	#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 		#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_USE_ADVANCED_REFERENCING 2g5a/05 September 2014	//added 2g5a - required for advanced referencing, dream mode (identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts():identifyReferenceSetDetermineNextCourseOfAction():identifyReferenceSet()), and NLC 1j2b+
 		//#define GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES	//untested and unused
