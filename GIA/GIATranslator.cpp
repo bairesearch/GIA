@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n9b 07-August-2012
+ * Project Version: 1n10a 08-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -421,18 +421,35 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		#endif
 		redistributeStanfordRelationsPhrasalVerbParticle(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray);
 
+
+		#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1c10a; redistribute Relations - prep_of (eg The ball of the red dog is green..   nsubj(green-8, ball-2) / prep_of(ball-2, dog-6) ->  nsubj(green-7, ball-5) / poss(ball-5, dog-3)" << endl;
+		#endif
+		redistributeRelationsInterpretOfAsPossessive(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray);
+		#endif
+		
 		if(currentSentenceInList->isQuestion)
 		{
 			#ifdef GIA_TRANSLATOR_DEBUG
-			cout << "pass 1c10; redistribute Stanford Relations - Create Query Vars (eg interpret 'who is that' / 'what is the time.'  attr(is-2, Who-1) / attr(is-2, What-1) | interpret 'how much'/'how many' | interpret 'which' det(house-2, Which-1) | interpret how/when/where/why advmod(happen-5, How-1) / advmod(leave-4, When-1) / advmod(is-2, Where-1) / advmod(fall-5, Why-1)	 )" << endl;
+			cout << "pass 1c10b; redistribute Stanford Relations - Create Query Vars (eg interpret 'who is that' / 'what is the time.'  attr(is-2, Who-1) / attr(is-2, What-1) | interpret 'how much'/'how many' | interpret 'which' det(house-2, Which-1) | interpret how/when/where/why advmod(happen-5, How-1) / advmod(leave-4, When-1) / advmod(is-2, Where-1) / advmod(fall-5, Why-1)	 )" << endl;
 			#endif
 			redistributeStanfordRelationsCreateQueryVars(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray);
 		}
+		
+		#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_SUPPORT_NAME_OF
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1c10c; redistribute Relations - intepret name of as definition (eg interpret 'The red dog's name is Max.' / 'The name of the red dog is Max.'	nsubj(Max-7, name-5) / poss/prep_of(name-5, dog-3) -> appos(dog-3, Max-7)" << endl;
+		
+		#endif
+		redistributeRelationsInterpretNameOfAsDefinition(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray);		
+		#endif
 
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1c11; redistribute Stanford Relations - partmod (eg Truffles picked during the spring are tasty.   partmod(truffle, pick) -> obj(pick, truffle) )" << endl;
 		#endif
 		redistributeStanfordRelationsPartmod(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray);
+					
 	}
 	#endif
 

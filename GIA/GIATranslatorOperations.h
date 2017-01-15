@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n9b 07-August-2012
+ * Project Version: 1n10a 08-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -49,6 +49,19 @@ using namespace std;
 #include "GIAEntityNodeClass.h"
 #include "GIAEntityConnectionClass.h"
 #include "GIAConditionNodeClass.h"
+
+
+#define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE	//added 8 August 2012
+
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_SUPPORT_NAME_OF
+#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_SUPPORT_NAME_OF
+	#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_SUPPORT_WHAT_IS_THE_NAME_NUMBER_OF_QUERIES	//added 8 August 2012
+	#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_SUPPORT_WHAT_IS_THE_NAME_NUMBER_OF_QUERIES
+		#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_SUPPORT_WHAT_IS_THE_NAME_NUMBER_OF_QUERIES_PREPOSITION_OF "of"
+		#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_SUPPORT_WHAT_IS_THE_NAME_NUMBER_OF_QUERIES_SUBJECT_DEPENDENT_NAME "name"
+		#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_SUPPORT_WHAT_IS_THE_NAME_NUMBER_OF_QUERIES_SUBJECT_DEPENDENT_NUMBER "number
+	#endif
+#endif
 
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_PARTMOD_DEAL_WITH_PROGRESSIVE_ANOMALY
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP		//working on this now (1j6h)
