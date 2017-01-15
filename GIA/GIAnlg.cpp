@@ -3,7 +3,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4e 25-July-2012
+ * Project Version: 1n4f 25-July-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -190,6 +190,7 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 	entityNodeAvailableArray[0] = true;
 	entityNodeAvailableArray[1] = false;
 	entityNodeAvailableArray[2] = false;
+	string determinateArray[3];
 	if(!(entityNode0->entityVectorConnectionsArray[connectionType1]).empty())
 	{
 		entityNode1 = (entityNode0->entityVectorConnectionsArray[connectionType1]).back()->entity;
@@ -201,6 +202,20 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 		entityNode2 = (entityNode0->entityVectorConnectionsArray[connectionType2]).back()->entity;
 		entityNodeAvailableArray[2] = true;
 	}
+	
+	if(entityNodeAvailableArray[0])
+	{	
+		determinateArray[0] = calcDeterminate(entityNode0);	
+	}
+	if(entityNodeAvailableArray[1])
+	{
+		determinateArray[1] = calcDeterminate(entityNode1);
+	}
+	if(entityNodeAvailableArray[2])
+	{	
+		determinateArray[2] = calcDeterminate(entityNode2);	
+	}
+		
 	//cout << "af3" << endl;
 	
 #ifdef GIA_USE_NLG2
@@ -361,18 +376,12 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 	cout << "entityTextExpandedArray[2] = " << entityTextExpandedArray[2] << endl;
 	#endif
 	
-	addDeterminate(entityNode0, &(entityTextExpandedArray[0]));
-	if(entityNodeAvailableArray[1])
+	entityTextExpandedArray[0] = determinateArray[0] + entityTextExpandedArray[0];
+	if(supportAdditionalLinks)
 	{
-		if(supportAdditionalLinks)
-		{
-			addDeterminate(entityNode1, &(entityTextExpandedArray[1]));
-		}
+		entityTextExpandedArray[1] = determinateArray[1] + entityTextExpandedArray[1];
 	}
-	if(entityNodeAvailableArray[2])
-	{	
-		addDeterminate(entityNode2, &(entityTextExpandedArray[2]));	
-	}
+	entityTextExpandedArray[2] = determinateArray[2] + entityTextExpandedArray[2];
 	
 	if(supportAdditionalLinks)
 	{//is a condition link; add copular- eg the dog is near the park.
@@ -399,20 +408,20 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 	//if(supportAdditionalLinks)
 	//{
 		
-		cout << "generateThreeEntitySentenceFromEntityNode:" << endl;
+		//cout << "generateThreeEntitySentenceFromEntityNode:" << endl;
 		if(entityNodeAvailableArray[0])
 		{
-			cout << "entityNode0->definiteSourceAddedInLanguageGeneration: " << entityNode0->entityName << endl;		
+			//cout << "entityNode0->definiteSourceAddedInLanguageGeneration: " << entityNode0->entityName << endl;		
 			entityNode0->definiteSourceAddedInLanguageGeneration = true;
 		}		
 		if(entityNodeAvailableArray[1])
 		{
-			cout << "entityNode1->definiteSourceAddedInLanguageGeneration: " << entityNode1->entityName << endl;
+			//cout << "entityNode1->definiteSourceAddedInLanguageGeneration: " << entityNode1->entityName << endl;
 			entityNode1->definiteSourceAddedInLanguageGeneration = true;
 		}
 		if(entityNodeAvailableArray[2])
 		{
-			cout << "entityNode2->definiteSourceAddedInLanguageGeneration: " << entityNode2->entityName << endl;		
+			//cout << "entityNode2->definiteSourceAddedInLanguageGeneration: " << entityNode2->entityName << endl;		
 			entityNode2->definiteSourceAddedInLanguageGeneration = true;
 		}		
 	//}
@@ -639,9 +648,9 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 
 	//if(!additionalLink)
 	//{
-		cout << "generateTwoEntitySentenceFromEntityNode:" << endl;
-		cout << "entityNode1->definiteSourceAddedInLanguageGeneration: " << entityNode1->entityName << endl;
-		cout << "entityNode2->definiteSourceAddedInLanguageGeneration: " << entityNode2->entityName << endl;
+		//cout << "generateTwoEntitySentenceFromEntityNode:" << endl;
+		//cout << "entityNode1->definiteSourceAddedInLanguageGeneration: " << entityNode1->entityName << endl;
+		//cout << "entityNode2->definiteSourceAddedInLanguageGeneration: " << entityNode2->entityName << endl;
 		entityNode1->definiteSourceAddedInLanguageGeneration = true;
 		entityNode2->definiteSourceAddedInLanguageGeneration = true;
 	//}
@@ -880,7 +889,14 @@ string NLG2generateNLGInputViewLine(string type, string governor, string depende
 
 #else
 
+
 void addDeterminate(GIAEntityNode * entityNode, string * entityTextExpanded)
+{
+	string determinate = calcDeterminate(entityNode);
+	*entityTextExpanded = determinate + *entityTextExpanded;
+}
+
+string calcDeterminate(GIAEntityNode * entityNode)
 {
 	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
 	//gender
@@ -948,19 +964,21 @@ void addDeterminate(GIAEntityNode * entityNode, string * entityTextExpanded)
 
 	}
 	
+	string determinateFinal = "";
 	if(addDeterminate)
 	{
 		#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
 		if(!isPerson)
 		{
 		#endif		
-			*entityTextExpanded = determinate + NLG_TEXT_SPACE + *entityTextExpanded;
+			determinateFinal = determinate + NLG_TEXT_SPACE;
 		#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
 		}
 		#endif
-	}
-
+	}	
+	return determinateFinal;
 }
+
 
 #endif
 

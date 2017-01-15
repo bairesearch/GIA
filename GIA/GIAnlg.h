@@ -3,7 +3,7 @@
  * File Name: GIAnlg.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4e 25-July-2012
+ * Project Version: 1n4f 25-July-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -102,6 +102,7 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 			string NLG2generateNLGInputViewLine(string type, string governor, string dependent);
 		#else
 		void addDeterminate(GIAEntityNode * entityNode, string * entityTextExpanded);
+			string calcDeterminate(GIAEntityNode * entityNode);
 		#endif
 		
 string getWordOrig(GIAEntityNode * entityNode);
