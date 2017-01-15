@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o6a 22-October-2016
+ * Project Version: 2o6b 22-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -189,8 +189,13 @@ GIAentityNode* addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAentityNod
 	}
 }
 
-//this has been created based upon addOrConnectPropertyToEntity
 GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet)
+{
+	return connectPropertyToEntity(thingEntity, propertyEntity, sameReferenceSet, NULL);
+}
+
+//this has been created based upon addOrConnectPropertyToEntity
+GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet, GIAentityNode* auxHaveEntity)
 {
 	/*//disabled 2o6a due to *
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
@@ -213,9 +218,20 @@ GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode
 		thingEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
 		//configure entity node containing this substance
-		writeVectorConnection(thingEntity, propertyEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
-		writeVectorConnection(propertyEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
-
+		GIAentityConnection* connection1 = writeVectorConnection(thingEntity, propertyEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+		GIAentityConnection* connection2 = writeVectorConnection(propertyEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
+		#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO	
+		if(auxHaveEntity != NULL)
+		{
+			connection1->negative = auxHaveEntity->negative;
+			connection2->negative = auxHaveEntity->negative;
+			copy(auxHaveEntity->grammaticalTenseModifierArrayTemp, auxHaveEntity->grammaticalTenseModifierArrayTemp+GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES, connection1->grammaticalTenseModifierArrayTemp);
+			copy(auxHaveEntity->grammaticalTenseModifierArrayTemp, auxHaveEntity->grammaticalTenseModifierArrayTemp+GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES, connection1->grammaticalTenseModifierArrayTemp);
+			connection1->grammaticalTenseTemp = auxHaveEntity->grammaticalTenseTemp;
+			connection2->grammaticalTenseTemp = auxHaveEntity->grammaticalTenseTemp;
+		}
+		#endif
+		
 		#ifdef GIA_PREVENT_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_CONCEPTS
 		if(propertyEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
 		{
@@ -235,8 +251,13 @@ GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode
 	return propertyEntity;	//just return original propertyEntity (for compatibility)
 }
 
-//changed some instances of addOrConnectPropertyToEntity to addPropertyToEntity
 GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet)
+{
+	return addOrConnectPropertyToEntity(thingEntity, propertyEntity, sameReferenceSet, NULL);
+}
+
+//changed some instances of addOrConnectPropertyToEntity to addPropertyToEntity
+GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet, GIAentityNode* auxHaveEntity)
 {
 	/*//disabled 2o6a due to *
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
@@ -266,8 +287,23 @@ GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentit
 			propertyEntitySubstance = addInstance(propertyEntity, GIA_ENTITY_TYPE_TYPE_SUBSTANCE);
 		}
 
-		writeVectorConnection(thingEntity, propertyEntitySubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
-		writeVectorConnection(propertyEntitySubstance, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
+		GIAentityConnection* connection1 = writeVectorConnection(thingEntity, propertyEntitySubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+		GIAentityConnection* connection2 = writeVectorConnection(propertyEntitySubstance, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
+		#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO		
+		if(auxHaveEntity != NULL)
+		{
+			if(auxHaveEntity->negative)
+			{
+			connection1->negative = auxHaveEntity->negative;
+			connection2->negative = auxHaveEntity->negative;
+			copy(auxHaveEntity->grammaticalTenseModifierArrayTemp, auxHaveEntity->grammaticalTenseModifierArrayTemp+GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES, connection1->grammaticalTenseModifierArrayTemp);
+			copy(auxHaveEntity->grammaticalTenseModifierArrayTemp, auxHaveEntity->grammaticalTenseModifierArrayTemp+GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES, connection1->grammaticalTenseModifierArrayTemp);
+			connection1->grammaticalTenseTemp = auxHaveEntity->grammaticalTenseTemp;
+			connection2->grammaticalTenseTemp = auxHaveEntity->grammaticalTenseTemp;
+			}		
+		}
+		#endif
+		
 		thingEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
 		#ifdef GIA_PREVENT_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_CONCEPTS

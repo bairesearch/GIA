@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o6a 22-October-2016
+ * Project Version: 2o6b 22-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -740,6 +740,10 @@
 //#define GIA_DISABLE_2n_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2o_CODE_FOR_DEBUG
 #ifndef GIA_DISABLE_2o_CODE_FOR_DEBUG
+	#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC	//disabled 2c1a, reenabled 2o6a	//required for !GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//NB if modified, need to update GIArules.xml accordingly
+	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC			
+		#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO	//2o6a
+	#endif
 	#define GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES	//2m2a
 	#ifdef USE_NLC
 		//#define GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ACCEPT_PROPERNOUNS_ISOLATE	//2m5b, disabled 2m5c
@@ -817,9 +821,7 @@
 	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
 		//#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//note this preprocessor check is not enforced: use the new implementation regardless of whether GIA advanced referencing is set or not set
 			//#define GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION	//added 2k3a, removed 2k3c //record possessionAuxiliaryHaveArtificial info	//required by GIA advanced referencing
-			#ifdef GIA_DISABLE_2o_CODE_FOR_DEBUG
-				#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC	//disabled 2c1a, reenabled and upgraded 2o6a	//required for !GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//NB if modified, need to update GIArules.xml accordingly
-			#else
+			#ifndef GIA_DISABLE_2o_CODE_FOR_DEBUG
 				#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_HYBRID	//added 2k3c	//NB if modified, need to update GIArules.xml accordingly
 			#endif
 		//#endif
