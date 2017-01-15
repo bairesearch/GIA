@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntitiesDynamic.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j13a 06-July-2015
+ * Project Version: 2j13b 06-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -287,6 +287,7 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(GIArelation* currentRe
 #endif
 
 #ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS
+//preconditions: requires redistributeStanfordRelationsConnectToAndFromConditions{} and redistributeStanfordRelationsConnectPrepositionsToActionRatherThanActionObject{} to have been executed
 void linkEntitiesDynamicFromConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences)
 {
 	/*
@@ -327,36 +328,44 @@ void linkEntitiesDynamicFromConditions(GIAsentence* currentSentenceInList, bool 
 						//now see if from condition subject is an action (if so, perform the relinking to the action object instead of the from condition subject)
 						if(fromConditionSubject->isAction)
 						{
-							/*
-							NB not parsed this way by Stanford:
-							eg move -> chicken
-								\
-								from
-								  \
-								   pie
-							*/
-							//cout << "fromConditionSubject->isAction" << endl;
-							
-							if(!(fromConditionSubject->actionObjectEntity->empty()))
+							#ifndef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_GENERALISE_ACTION_TYPES
+							if(textInTextArray(fromConditionSubject->entityName, dynamicallyLinkFromConditionsActionTypesArray, GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_ACTION_TYPES_NUMBER_OF_TYPES))
 							{
-								GIAentityNode* fromConditionSubjectActionObject = (fromConditionSubject->actionObjectEntity->back())->entity;
-								fromConditionParent = fromConditionSubjectActionObject;
-								foundFromConditionParent = true;
-							}
-						}
-						else
-						{
-							/*
-							NB not parsed this way by Stanford:
-							eg move -> chicken
+							#endif
+								/*
+								NB not parsed this way by Stanford (but has been changed to this using redistributeStanfordRelationsConnectPrepositionsToActionRatherThanActionObject) :
+								eg move -> chicken
 									\
 									from
 									  \
 									   pie
-							*/
+								*/
+								//cout << "fromConditionSubject->isAction" << endl;
+
+								if(!(fromConditionSubject->actionObjectEntity->empty()))
+								{
+									GIAentityNode* fromConditionSubjectActionObject = (fromConditionSubject->actionObjectEntity->back())->entity;
+									fromConditionParent = fromConditionSubjectActionObject;
+									foundFromConditionParent = true;
+								}
+							#ifndef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_GENERALISE_ACTION_TYPES
+							}
+							#endif
+						}
+						/*no longer supported with redistributeStanfordRelationsConnectPrepositionsToActionRatherThanActionObject;
+						else
+						{
+							
+							//NB parsed this way by Stanford:
+							//eg move -> chicken
+							//		\
+							//		from
+							//		  \
+							//		   pie
 							fromConditionParent = fromConditionSubject;
 							foundFromConditionParent = true;	
 						}
+						*/
 
 						if(foundFromConditionParent)
 						{
