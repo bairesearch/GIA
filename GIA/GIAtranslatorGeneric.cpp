@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m3a 06-September-2016
+ * Project Version: 2m4a 06-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1063,8 +1063,20 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 											string concatonatedEntityNamePart1 = param->relationEntity[param->redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[relationID][relationEntityID][0]][param->redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[relationID][relationEntityID][0]];
 											string concatonatedEntityNamePart2 = param->relationEntity[param->redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[relationID][relationEntityID][1]][param->redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[relationID][relationEntityID][1]];
 											#ifdef GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES
-											string concatonatedTypeDelimiter = concatenationTypesArray[param->redistributeSpecialCaseRelationEntityReassignmentConcatonateType[relationID][relationEntityID]];
-											string concatonatedEntityName = concatonatedEntityNamePart1 + concatonatedTypeDelimiter + concatonatedEntityNamePart2;
+											string concatonatedEntityName = "";
+											/*//OPTIONAL (equivalent code):
+											if(param->redistributeSpecialCaseRelationEntityReassignmentConcatonateType[relationID][relationEntityID]] == GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS)
+											{
+												concatonatedEntityName = createSubClassEntityName(concatonatedEntityNamePart1, concatonatedEntityNamePart2);
+											}
+											else
+											{
+											*/
+												string concatonatedTypeDelimiter = concatenationTypesArray[param->redistributeSpecialCaseRelationEntityReassignmentConcatonateType[relationID][relationEntityID]];
+												concatonatedEntityName = concatonatedEntityNamePart1 + concatonatedTypeDelimiter + concatonatedEntityNamePart2;
+											/*
+											}
+											*/
 											#ifdef GIA_DEBUG
 											//cout << "concatonatedTypeDelimiter = " << concatonatedTypeDelimiter << endl;
 											#endif

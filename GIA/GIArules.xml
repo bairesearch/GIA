@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m3a 06-September-2016
+ * Project Version: 2m4a 06-September-2016
  *
  *******************************************************************************/
 -->
@@ -2998,7 +2998,8 @@
 				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="1" REL_ENT="3" />
 				<!-- #endif -->
-				</paramDepRel>	
+				</paramDepRel>
+	
 			</function>
 			<!-- #endif -->
 		</file>
@@ -3470,12 +3471,37 @@
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="mustSetIsSubstanceConceptBasedOnApposRelation" value="true" REL="1" REL_ENT="2" />
 				</paramDepRel>
 				
-				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_NEW -->
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT -->
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_nn" />
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation" value="true" REL="1" REL_ENT="2" />
 				</paramDepRel>				
+				<!-- #endif -->
+				
+				
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING -->
+				<example>
+				<!-- 
+				The fruit is an apple. _appo(fruit[2], apple[5]) 
+				[The apple fruit is happy.]
+				/
+				The game is chess.	_appo(game, chess) 
+				/	
+				The game is Monopoly.	_appo(game, Monopoly) 
+				-->
+				</example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_appo" relationArrayTestSize="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="2" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="true" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" REL="1" REL_ENT="2" />
+				<!-- <specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" REL="1" REL_ENT="2" /> -->
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="addSubClass" value="true" REL="1" REL_ENT="1" />
+				</paramDepRel>			
 				<!-- #endif -->
 				
 			</function>
@@ -3506,7 +3532,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" />
-				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_NEW -->
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation" value="false" />			
 				<!-- #endif -->				
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	<!-- added 2i22a -->
