@@ -23,7 +23,7 @@
  * File Name: GIAParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p1a 08-September-2012
+ * Project Version: 1p1b 08-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -80,12 +80,15 @@ void convertStanfordRelationToRelex(Relation * currentRelationInList, Sentence *
 		string officialLRPentityName = tempFeature->word;
 		if(stanfordPrepositionFound)
 		{
+			//cout << "stanfordPrepositionFound" << endl;
 			relationTypeRelexStandard = "";
 			relationTypeRelexStandard = relationTypeRelexStandard + STANFORD_PARSER_PREPOSITION_PREPEND + officialLRPentityName;
+			//cout << "relationTypeRelexStandard = " << relationTypeRelexStandard << endl;
 			
 		}
 		else
 		{
+			cout << "!stanfordPrepositionFound" << endl;
 			relationTypeRelexStandard = officialLRPentityName;
 		}
 		#ifdef GIA_LRP_DEBUG
@@ -96,7 +99,7 @@ void convertStanfordRelationToRelex(Relation * currentRelationInList, Sentence *
 	//}	
 	#endif
 	//cout << "relationTypeRelexStandard = " << relationTypeRelexStandard << endl;
-	currentRelationInList->relationType =  relationTypeRelexStandard;
+	currentRelationInList->relationType = relationTypeRelexStandard;
 	//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 	 
 }
@@ -148,7 +151,18 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			currentRelation->relationGovernorIndex = relationGovernorIndex;
 			currentRelation->relationDependentIndex = relationDependentIndex;
 
+			/*
+			Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
+			while(currentFeatureInList->next != NULL)
+			{
+				cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
+				currentFeatureInList = currentFeatureInList->next;
+			}
+			*/
+					
 			//cout << "convertStanfordRelationToRelex: START" << endl;
+			currentRelation->relationGovernor = relationGovernor;
+			currentRelation->relationDependent = relationDependent;			
 			convertStanfordRelationToRelex(currentRelation, currentSentenceInList);
 			//cout << "convertStanfordRelationToRelex: END" << endl;
 			if(!featuresNotPreviouslyFilled)
@@ -170,11 +184,6 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 					currentFeatureInList = currentFeatureInList->next;
 				}
 				currentRelation->relationGovernor = currentFeatureInList->lemma;
-			}
-			else
-			{
-				currentRelation->relationGovernor = relationGovernor;
-				currentRelation->relationDependent = relationDependent;
 			}
 			
 

@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p1a 08-September-2012
+ * Project Version: 1p1b 08-September-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -798,6 +798,7 @@ bool loadMultiWordPrepositionData(string multiwordPrepositionListFileName, GIALR
 				{
 					currentTagInMultiwordPrepositionList->nextSentence = new GIALRPtag();
 					currentTagInMultiwordPrepositionList = currentTagInMultiwordPrepositionList->nextSentence;
+					currentTagInMultiwordPreposition = currentTagInMultiwordPrepositionList;
 					currentMultiwordPreposition = "";
 				}
 				else if(currentToken == CHAR_SPACE)
@@ -1197,6 +1198,9 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 			//cout << "u23" << endl;
 			if(foundAtLeastOnePhrasalVerbInSentenceAndCollapsed)
 			{
+				#ifdef GIA_LRP_DEBUG
+				cout << "foundAtLeastOnePhrasalVerbInSentenceAndCollapsed" << endl;
+				#endif			
 				//cout << "u23b" << endl;
 				//renumberEntityIndiciesInSentence();
 				GIALRPtag * currentTagInPlainTextSentenceTemp2 = firstTagInPlainTextSentence;
@@ -1207,10 +1211,14 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 					if(currentTagInPlainTextSentenceTemp2->collapsedPhrasalVerbExactDefinedSection)
 					{//create a new correspondenceInfo
 						//cout << "u23d" << endl;
+						string tagNameLemma = currentTagInPlainTextSentenceTemp2->tagNameLemma;
+						string tagName = currentTagInPlainTextSentenceTemp2->tagName;
+						string tagNameLemmaWithLastLetterDropped = tagNameLemma.substr(0, tagNameLemma.length()-1);
+						string tagNameWithLastLetterDropped = tagName.substr(0, tagName.length()-1);
 						currentCorrespondenceInfo->sentenceIndex = currentTagInPlainText->sentenceIndex;
 						currentCorrespondenceInfo->entityIndex = newEntityIndex;
-						currentCorrespondenceInfo->lemmaWithLRP = currentTagInPlainTextSentenceTemp2->tagNameLemma;
-						currentCorrespondenceInfo->wordWithLRP = currentTagInPlainTextSentenceTemp2->tagName;
+						currentCorrespondenceInfo->lemmaWithLRP = tagNameLemmaWithLastLetterDropped;
+						currentCorrespondenceInfo->wordWithLRP = tagNameWithLastLetterDropped;
 						currentCorrespondenceInfo->wordWithLRPforNLPonly = lrpDummyCollapsedPhrasalVerbNameForNLPgrammaticalTenseFormsArray[currentTagInPlainTextSentenceTemp2->grammaticalTenseFormDetected];
 						#ifdef GIA_LRP_DEBUG
 						cout << "currentTagInPlainTextSentenceTemp2->grammaticalTenseFormDetected = " << currentTagInPlainTextSentenceTemp2->grammaticalTenseFormDetected << endl;						
@@ -1240,26 +1248,36 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 			bool foundAtLeastOneMultiwordPrepositionInSentenceAndCollapsed = false;
 			while(currentTagInMultiwordPrepositionList->nextSentence != NULL)
 			{
+				//cout << "u24a" << endl;
 				bool stillFoundPrepositionMatch = true;
 				bool foundAtLeastOneMatch = false;
 				GIALRPtag * currentTagInPlainTextSentenceTemp = currentTagInPlainTextSentence;
 				GIALRPtag * firstTagInCollapsedMultiwordPreposition = new GIALRPtag();
 				GIALRPtag * currentTagInCollapsedMultiwordPreposition = firstTagInCollapsedMultiwordPreposition;
-				while((currentTagInMultiwordPrepositionList->nextTag != NULL) && (currentTagInPlainTextSentenceTemp->nextTag != NULL) && (stillFoundPrepositionMatch))
+				GIALRPtag * firstTagInMultiwordPreposition = currentTagInMultiwordPrepositionList;
+				GIALRPtag * currentTagInMultiwordPreposition = firstTagInMultiwordPreposition;
+				while((currentTagInMultiwordPreposition->nextTag != NULL) && (currentTagInPlainTextSentenceTemp->nextTag != NULL) && (stillFoundPrepositionMatch))
 				{
-					if(currentTagInMultiwordPrepositionList->tagName != currentTagInPlainTextSentenceTemp->tagName)
+					//cout << "u24b" << endl;
+					if(currentTagInMultiwordPreposition->tagName != currentTagInPlainTextSentenceTemp->tagName)
 					{
+						//cout << "u24c" << endl;
 						stillFoundPrepositionMatch = false;
 					}
 					else
 					{
-						currentTagInCollapsedMultiwordPreposition->tagName = currentTagInCollapsedMultiwordPreposition->tagName + currentTagInPlainTextSentenceTemp->tagName;
+						//cout << "u24b" << endl;
+						currentTagInCollapsedMultiwordPreposition->collapsedMultiwordPreposition = true;
+						currentTagInCollapsedMultiwordPreposition->tagName = currentTagInCollapsedMultiwordPreposition->tagName + currentTagInPlainTextSentenceTemp->tagName + "_";
 						foundAtLeastOneMatch = true;
 					}
+					currentTagInMultiwordPreposition = currentTagInMultiwordPreposition->nextTag;
+					currentTagInPlainTextSentenceTemp = currentTagInPlainTextSentenceTemp->nextTag;						
 				}
 
 				if(stillFoundPrepositionMatch && foundAtLeastOneMatch)
 				{
+					//cout << "u24c" << endl;
 					//reduce all entities
 					firstTagInCollapsedMultiwordPreposition->nextTag = currentTagInPlainTextSentenceTemp;
 					previousTagInPlainTextSentence->nextTag = firstTagInCollapsedMultiwordPreposition;
@@ -1269,19 +1287,25 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 
 				currentTagInMultiwordPrepositionList = currentTagInMultiwordPrepositionList->nextSentence;
 			}
+			//cout << "u25a" << endl;
 			if(foundAtLeastOneMultiwordPrepositionInSentenceAndCollapsed)
 			{
 				//renumberEntityIndiciesInSentence();
 				GIALRPtag * currentTagInPlainTextSentenceTemp2 = firstTagInPlainTextSentence;
-				int newEntityIndex = 0;
+				int newEntityIndex = GIA_NLP_START_ENTITY_INDEX;
 				//int collapsedMultiwordPrepositionIndex = 0;
+				#ifdef GIA_LRP_DEBUG
+				cout << "foundAtLeastOneMultiwordPrepositionInSentenceAndCollapsed" << endl;
+				#endif
 				while(currentTagInPlainTextSentenceTemp2->nextTag != NULL)
 				{
 					if(currentTagInPlainTextSentenceTemp2->collapsedMultiwordPreposition)
 					{//create a new correspondenceInfo
+						string tagName = currentTagInPlainTextSentenceTemp2->tagName;
+						string tagNameWithLastLetterDropped = tagName.substr(0, tagName.length()-1);					
 						currentCorrespondenceInfo->sentenceIndex = currentTagInPlainText->sentenceIndex;
 						currentCorrespondenceInfo->entityIndex = newEntityIndex;	//this is not currently used for LRP collapsed multiword prepositions						
-						currentCorrespondenceInfo->wordWithLRP = currentTagInPlainTextSentenceTemp2->tagName;
+						currentCorrespondenceInfo->wordWithLRP = tagNameWithLastLetterDropped;
 						currentCorrespondenceInfo->wordWithLRPforNLPonly = GIA_LRP_DUMMY_COLLAPSED_MULTIWORD_PREPOSITION_NAME_FOR_NLP; //lrpDummyCollapsedMultiwordPrepositionLemmaNameForNLPArray[collapsedMultiwordPrepositionIndex];
 						//collapsedMultiwordPrepositionIndex++;
 						#ifdef GIA_LRP_DEBUG
@@ -1377,11 +1401,11 @@ bool writeTagListToFile(GIALRPtag * firstTagInPlainText, string plainTextLRPOutp
 	return result;
 }				
 				
-
-void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentSentenceInList, Relation * currentRelationInListForPrepositionsOnly, bool isPreposition, bool foundOfficialLRPreplacementString)
+void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentSentenceInList, Relation * currentRelationInListForPrepositionsOnly, bool isPreposition, bool * foundOfficialLRPreplacementString)
 {
 	int entityIndexForNonPrepositionsOnly = feature->entityIndex;
 	string word = feature->word;
+	//string lemma = feature->lemma;	//only used for prepositions (dependency relation) calculations, where lemma has already been calculated via revertNLPtagNameToOfficialLRPtagName()
 	
 	GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo = getCurrentGIALRPtagTextCorrespondenceInfo();
 	
@@ -1406,7 +1430,9 @@ void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentS
 					
 			if(word == currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly)
 			{	
-							
+				//cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP << endl;
+				//cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly << endl;
+				
 				if(isPreposition) 
 				{
 					//cout << "isPreposition" << endl;
@@ -1422,26 +1448,38 @@ void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentS
 					int indexOfLastInstanceOfGovernor = ENTITY_INDEX_UNDEFINED;
 					int indexOfLastInstanceOfDependent = ENTITY_INDEX_UNDEFINED;
 					bool foundPrepositionGovernorAndDependentInFeatureList = false;
+					//cout << "relationGovernor = " << relationGovernor << endl;
+					//cout << "relationDependent = " << relationDependent << endl;
+					//cout << "word = " << word << endl;
+					
 					while(currentFeatureInList->next != NULL)
 					{
+						//cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
 						if(currentFeatureInList->word == relationGovernor)
 						{
+							//cout << "(currentFeatureInList->word == relationGovernor)" << endl;
 							indexOfLastInstanceOfGovernor = currentFeatureInList->entityIndex;
 						}					
-						if(currentFeatureInList->word == word)	//or currentFeatureInList->word ; as preposition lemmas are the same as their words
+						if(currentFeatureInList->word == currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP)	//NB currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP has already been assigned to feature lemma via previous non-preposition execution of revertNLPtagNameToOfficialLRPtagName
 						{
+							//cout << "(currentFeatureInList->word == word)" << endl;
 							indexOfLastInstanceOfPreposition = currentFeatureInList->entityIndex;
 						}
 						if(currentFeatureInList->word == relationDependent)
 						{
+							//cout << "(currentFeatureInList->word == relationDependent)" << endl;
+							
 							indexOfLastInstanceOfDependent = currentFeatureInList->entityIndex;
 							if((indexOfLastInstanceOfPreposition != ENTITY_INDEX_UNDEFINED) && (indexOfLastInstanceOfGovernor != ENTITY_INDEX_UNDEFINED))
 							{
+								//cout << "(indexOfLastInstanceOfPreposition != ENTITY_INDEX_UNDEFINED) && (indexOfLastInstanceOfGovernor != ENTITY_INDEX_UNDEFINED)" << endl;
+								
 								int proximityOfPrepositionToGovernor = indexOfLastInstanceOfPreposition - indexOfLastInstanceOfGovernor;
 								int proximityOfPrepositionToDependent = indexOfLastInstanceOfDependent - indexOfLastInstanceOfPreposition;
 								int totalProximityOfPrepositionToGovernorAndDependent = proximityOfPrepositionToGovernor + proximityOfPrepositionToDependent;
 								if(totalProximityOfPrepositionToGovernorAndDependent < minimumProximityOfGovernorDependentWords)
 								{
+									//cout << "minimumProximityOfGovernorDependentWords = " << minimumProximityOfGovernorDependentWords << endl;
 									minimumProximityOfGovernorDependentWords = totalProximityOfPrepositionToGovernorAndDependent;
 									indexOfPrepositionWithMinimumProximityOfGovernorDependentWords = indexOfLastInstanceOfPreposition;
 									foundPrepositionGovernorAndDependentInFeatureList = true;
@@ -1500,6 +1538,10 @@ void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentS
 	if(!foundCorrespondingLRPtag)
 	{
 		//cout << "revertNLPtagNameToOfficialLRPtagName() warning: !foundCorrespondingLRPtag; " << lemma << endl;
+	}
+	else
+	{
+		*foundOfficialLRPreplacementString = true;
 	}
 	//cout << "q27" << endl;
 }
