@@ -297,7 +297,14 @@ void definePropertiesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 					//property already assigned to thing  [assumes definePropertiesDefiniteNouns() executed]
 					//property will be assigned to definition [only if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS]
 					featureArrayTemp[definitionIndex]->alreadyAssignedPropertiesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;	
-				}												
+				}
+				else if((thingFeatureHasDeterminate && !thingIsDefinite && thingFeatureIsProperNoun) && (definitionFeatureHasDeterminate && definitionIsDefinite && !definitionFeatureIsProperNoun))
+				{
+					//cout << "GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_6_GOVERNOR_NAME_DEPENDENT_DEFINITE" << endl;	
+					//property will be assigned to thing [only if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS]
+					featureArrayTemp[thingIndex]->alreadyAssignedPropertiesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;	
+					//property already assigned to definition [assumes definePropertiesDefiniteNouns() executed]	
+				}																
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
