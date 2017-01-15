@@ -1110,9 +1110,58 @@ void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 
 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
+
+void redistributeStanfordRelationsCollapseAdvmodRelationFunctionBe(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+{
+	//eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - > nsubj(away-6, rabbit-2) )
+
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{	
+		//cout << "here1" << endl;
+		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+
+		if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT)
+		{					
+			//now find the associated object..
+ 			Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+			while(currentRelationInList2->next != NULL)
+			{	
+				bool partnerTypeRequiredFound = false;					
+				if(currentRelationInList2->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD)
+				{
+					partnerTypeRequiredFound = true;
+				}
+
+				if(partnerTypeRequiredFound)
+				{		
+					if(currentRelationInList2->relationFunctionIndex == currentRelationInList->relationFunctionIndex)
+					{//found a matching object-subject relationship
+						
+						GIAEntityNode * oldRedundantBeEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
+						
+						currentRelationInList->relationFunctionIndex = currentRelationInList2->relationArgumentIndex;
+						currentRelationInList->relationFunction = GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex]->entityName;
+						
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+						currentRelationInList2->disabled = true;
+						oldRedundantBeEntity->disabled = true;
+						#endif
+					}
+				}
+
+				currentRelationInList2 = currentRelationInList2->next;
+			}
+		}
+		//cout << "here2" << endl;
+		currentRelationInList = currentRelationInList->next;
+	}	
+}
+
+
 void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
-	//eg	The accident happened as the night was falling. 	advcl(happen, fall) / mark(fall, as)
+	//eg	The accident happened as the night was falling. 	advcl(happen, fall) / mark(fall, as) -> prep_as (happen, fall)
 	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1137,8 +1186,20 @@ void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence *
 					if(currentRelationInList2->relationFunctionIndex == currentRelationInList->relationArgumentIndex)
 					{//found a matching object-subject relationship
 						
+						GIAEntityNode * oldPrepositionEntity = GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex];
+						
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 						currentRelationInList2->disabled = true;
-						currentRelationInList->relationType = (GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex])->entityName;
+						oldPrepositionEntity->disabled = true;
+						#endif
+						
+						string newRelationType = "";
+						newRelationType = newRelationType + STANFORD_PARSER_PREPOSITION_PREPEND + oldPrepositionEntity->entityName;
+						#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
+						cout << "DEBUG: redistributeStanfordRelationsAdverbalClauseModifierAndComplement();" << endl;
+						cout << "newRelationType = " << newRelationType << endl;
+						#endif
+						currentRelationInList->relationType = newRelationType;
 					}
 				}
 
@@ -1148,7 +1209,8 @@ void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence *
 		//cout << "here2" << endl;
 		currentRelationInList = currentRelationInList->next;
 	}
-}				
+}	
+			
 
 void redistributeStanfordRelationsClausalSubject(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
@@ -1202,11 +1264,13 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 			//eg They shut down the station. 	prt(shut, down) 			
 
 			GIAEntityNode * governerEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
-			GIAEntityNode * dependencyEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
-			governerEntity->entityName = governerEntity->entityName + "_" + dependencyEntity->entityName;
+			GIAEntityNode * dependentEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+			governerEntity->entityName = governerEntity->entityName + "_" + dependentEntity->entityName;
 			//cout << "governerEntity->entityName = " <<governerEntity->entityName << endl;
 
-			dependencyEntity->disabled = true;
+			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+			dependentEntity->disabled = true;
+			#endif
 		}			
 		currentRelationInList = currentRelationInList->next;
 	}
@@ -1293,7 +1357,8 @@ void redistributeStanfordRelationsConjunctionAndCoordinate(Sentence * currentSen
 					{//found a matching object-subject relationship
 						
 						string newRelationType = "";
-						string coordinationDependent = GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex]->entityName;
+						GIAEntityNode * coordinationDependentEntity = GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex];
+						string coordinationDependent = coordinationDependentEntity->entityName;
 						if(coordinationDependent == RELATION_COORDINATION_DEPENDENT_AND)
 						{
 							newRelationType = RELATION_TYPE_CONJUGATION_AND;
@@ -1307,7 +1372,10 @@ void redistributeStanfordRelationsConjunctionAndCoordinate(Sentence * currentSen
 							cout << "error redistributeStanfordRelationsConjunctionAndCoordinate(): unknown coordination dependent - " << coordinationDependent << endl;
 						}
 						currentRelationInList2->relationType = newRelationType;
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 						currentRelationInList->disabled = true;
+						coordinationDependentEntity->disabled = true;
+						#endif
 					}
 				}
 
@@ -1322,7 +1390,7 @@ void redistributeStanfordRelationsConjunctionAndCoordinate(Sentence * currentSen
 void redistributeStanfordRelationsGenerateUnparsedQuantityModifers(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {	
 	//eg	 The punter won almost $1000. 	advmod(won-3, almost-4) / pobj(almost-4, $-5)	[Relex: _obj(win[3], $[5])   / _quantity_mod($[5], almost[4])]
-	//	convert to; _obj(win[3], $[5])  _quantity_mod($[5], almost[4])
+	//	convert to; _obj(win[3], $[5]) /  _quantity_mod($[5], almost[4])
 			
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1370,28 +1438,41 @@ void redistributeStanfordRelationsGenerateUnparsedQuantityModifers(Sentence * cu
 	}
 }
 
-/*
+
 void redistributeStanfordRelationsGenerateMeasures(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
+	//eg1	years old - npadvmod(old, years) / _measure_time(old[7], years[6])		   {IRRELEVANT years: <NER>NUMBER</NER>} + old: <NER>DURATION</NER>
+	//eg2	meters away - _measure_distance(away[6], meter[5]) / npadvmod(away-6, meters-5) 
+	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		if(currentRelationInList->relationType == RELATION_TYPE_PHRASAL_VERB_PARTICLE)
+		if(currentRelationInList->relationType == RELATION_TYPE_NOUNPHRASEASADVERBIALMODIFIER)
 		{
-			//cout << "RELATION_TYPE_PHRASAL_VERB_PARTICLE" << endl;
-			//eg They shut down the station. 	prt(shut, down) 			
+			//cout << "RELATION_TYPE_NOUNPHRASEASADVERBIALMODIFIER" << endl;
 
 			GIAEntityNode * governerEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
-			GIAEntityNode * dependencyEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
-			governerEntity->entityName = governerEntity->entityName + "_" + dependencyEntity->entityName;
-			//cout << "governerEntity->entityName = " <<governerEntity->entityName << endl;
-
-			dependencyEntity->disabled = true;
-		}			
+			GIAEntityNode * dependentEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+			
+			if(governerEntity->NERTemp == FEATURE_NER_DURATION)
+			{
+				#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES_AND_COLLAPSE_ADVMOD_RELATION_FUNCTION_BE
+				currentRelationInList->relationType = RELATION_TYPE_MEASURE_UNKNOWN;
+				#else
+				currentRelationInList->relationType = RELATION_TYPE_MEASURE_TIME;
+				#endif
+			}
+			else
+			{
+				currentRelationInList->relationType = RELATION_TYPE_MEASURE_UNKNOWN;
+			}
+		}
+					
 		currentRelationInList = currentRelationInList->next;
 	}
 }
-*/
+
+
 
 	
 	

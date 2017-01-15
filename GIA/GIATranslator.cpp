@@ -205,6 +205,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
+		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES_AND_COLLAPSE_ADVMOD_RELATION_FUNCTION_BE
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1z0; redistribute Stanford Relations -Collapse Advmod Relation Function Be (eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - > nsubj(away-6, rabbit-2) )" << endl;
+		#endif
+		redistributeStanfordRelationsCollapseAdvmodRelationFunctionBe(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);		
+		#endif
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1z1; redistribute Stanford Relations - Adverbal Clause Modifier And Complement (eg The accident happened as the night was falling. 	advcl(happen, fall) / mark(fall, as))" << endl;
 		#endif
@@ -230,7 +236,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1z6; redistribute Stanford Relations - Generate Unparsed Quantity Modifers (eg The punter won almost $1000. 	advmod(won-3, almost-4)  pobj(almost-4, $-5))" << endl;
 		#endif
-		redistributeStanfordRelationsGenerateUnparsedQuantityModifers(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);				
+		redistributeStanfordRelationsGenerateUnparsedQuantityModifers(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);	
+		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES_AND_COLLAPSE_ADVMOD_RELATION_FUNCTION_BE
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1z7; redistribute Stanford Relations - Generate Measures (eg years old - npadvmod(old, years) / _measure_time(old[7], years[6]))" << endl;
+		#endif
+		redistributeStanfordRelationsGenerateMeasures(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);						
+		#endif
 	}
 	#endif
 

@@ -192,7 +192,10 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 		}
 		
 		if(passed)
-		{					
+		{	
+		
+			//cout << "subjectObjectName = " << subjectObjectName << endl;
+			
 			if(!(currentRelationInList->subjObjRelationAlreadyAdded))
 			{//add independent action if appropriate
 				//cout << "subjectObjectName = " << subjectObjectName << endl;
@@ -387,7 +390,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 				subjectObjectFunctionEntityArray[OBJECT_INDEX] = GIAEntityNodeArray[relationFunctionIndex2]; 	
 									
 				bool passed2 = false;
-				bool partnerTypeObjectSpecialConditionMeasureDistanceFound = false;
+				bool partnerTypeObjectSpecialConditionMeasureDistanceOrStanfordFound = false;
 				bool partnerTypeObjectSpecialConditionToDoPropertyFound = false;
 				bool partnerTypeObjectSpecialConditionToBePropertyFound = false;
 
@@ -398,12 +401,19 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 						passed2 = true;
 					}
 				}		
-				for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_CONDITION_MEASURE_DISTANCE_NUMBER_OF_TYPES; i++)
+				for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_CONDITION_MEASURE_DISTANCE_OR_STANFORD_UNKNOWN_NUMBER_OF_TYPES; i++)
 				{
-					if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionMeasureDistanceNameArray[i])
+					if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionMeasureDistanceOrStanfordUnknownNameArray[i])
 					{
 						passed2 = true;
-						partnerTypeObjectSpecialConditionMeasureDistanceFound = true;
+						partnerTypeObjectSpecialConditionMeasureDistanceOrStanfordFound = true;
+						/*
+						cout << "partnerTypeObjectSpecialConditionMeasureDistanceOrStanfordFound" << endl;
+						cout << "currentRelationInList->relationArgument = " << currentRelationInList->relationArgument << endl;
+						cout << "currentRelationInList2->relationArgument = " << currentRelationInList2->relationArgument << endl;
+						cout << "currentRelationInList->relationFunction = " << currentRelationInList->relationFunction << endl;
+						cout << "currentRelationInList2->relationFunction = " << currentRelationInList2->relationFunction << endl;						
+						*/
 					}
 				}		
 
@@ -513,7 +523,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 											}
 											#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_CONDITION_DEFINITION									
-											else if(passdefinition || partnerTypeObjectSpecialConditionMeasureDistanceFound)
+											else if(passdefinition || partnerTypeObjectSpecialConditionMeasureDistanceOrStanfordFound)
 											{
 												bool negative = subjectObjectFunctionEntityArray[SUBJECT_INDEX]->negative;
 												subjectIsConnectedToAnAdvMod = true;
@@ -728,12 +738,8 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									#endif
 								}
 								#endif
-								else if(partnerTypeObjectSpecialConditionMeasureDistanceFound)
-								{
-									#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-									if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
-									{
-									#endif									
+								else if(partnerTypeObjectSpecialConditionMeasureDistanceOrStanfordFound)
+								{								
 									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO
 										//eg The rabbit is 20 meters away.	[away is a property of rabbit, not a condition of rabbit]
 										GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;	//aka subjectObjectEntityArray[SUBJECT_INDEX];
@@ -759,29 +765,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 										addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity);
 
-									#endif
-									#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-									}
-									else
-									{
-										//eg The rabbit is 20 meters away.	[away is a condition of rabbit, not a property of rabbit]
-									
-										GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;
-										GIAEntityNode * specialConditionNode = GIAEntityNodeArray[relationFunctionIndex2];
-										//cout << "subjectEntityOrProperty->entityName = " << subjectEntityOrProperty->entityName << endl;
-										//cout << "specialConditionNode->entityName = " << specialConditionNode->entityName << endl;	
-
-										string conditionTypeName = "specialCondition";
-										long entityIndex = -1;
-										bool entityAlreadyExistant = false;			
-										vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();		
-										long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-										long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();														
-										GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
-
-										addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity);								
-									}
-									#endif									
+									#endif								
 								}
 								#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
 								else if(partnerTypeObjectSpecialConditionToDoPropertyFound)

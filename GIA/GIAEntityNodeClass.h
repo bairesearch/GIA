@@ -86,6 +86,7 @@ using namespace std;
 #define MEASURE_TYPE_SIZE (1)
 #define MEASURE_TYPE_TIME (2)
 #define MEASURE_TYPE_PER (3)
+#define MEASURE_TYPE_UNKNOWN (4)
 #define MEASURE_TYPE_UNDEFINED (-1)
 
 extern string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
