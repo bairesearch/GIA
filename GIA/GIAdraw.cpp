@@ -68,7 +68,23 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesC
 	}
 }
 
-
+Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAEntityNode * entityNodeToConnect, Reference * currentReferenceInPrintList, int initialiseOrPrint, string connectionName, int entityDefinitionConnectionColour, ofstream * writeFileObject)
+{
+	if(initialiseOrPrint == DRAW_PRINT)
+	{
+		if(!(entityNodeToConnect->disabled))
+		{
+			//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
+			vec pos2;
+			pos2.x = entityNodeToConnect->printX;
+			pos2.y = entityNodeToConnect->printY;	
+			pos2.z = DRAW_CONNECTION_Z;
+			currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, pos1, &pos2, GIA_DRAW_ACTION_SUBJECT_CONNECTION_COLOUR, writeFileObject, connectionName);
+		}
+	}
+	
+	return currentReferenceInPrintList;
+}
 
 Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, int initialiseOrPrint, Reference * currentReferenceInPrintList, ofstream * writeFileObject)
 {
@@ -167,16 +183,8 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			//cout << "entityNode->actionSubjectEntity->entityName = " << entityNode->actionSubjectEntity->entityName << endl;
 			//cout << "entityNode->actionObjectEntity->entityName = " << entityNode->actionObjectEntity->entityName << endl;
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->actionSubjectEntity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			//cout << "b6" << endl;
-			if(initialiseOrPrint == DRAW_PRINT)
-			{	
-				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				vec pos2;
-				pos2.x = entityNode->actionSubjectEntity->printX;
-				pos2.y = entityNode->actionSubjectEntity->printY;	
-				pos2.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_ACTION_SUBJECT_CONNECTION_COLOUR, writeFileObject, "subject");
-			}		
+			//cout << "b6" << endl;	
+			currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, entityNode->actionSubjectEntity, currentReferenceInPrintList, initialiseOrPrint, "subject", GIA_DRAW_ACTION_SUBJECT_CONNECTION_COLOUR, writeFileObject);		
 		}
 		q = DRAW_Y_SPACE_BETWEEN_ACTION_NODES;
 		r = DRAW_X_SPACE_BETWEEN_ACTION_NODES;				
@@ -184,17 +192,8 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		{		
 			//cout << "b7" << endl;
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->actionObjectEntity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);	
-			//cout << "b8" << endl;
-			if(initialiseOrPrint == DRAW_PRINT)
-			{	
-				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				
-				vec pos2;
-				pos2.x = entityNode->actionObjectEntity->printX;
-				pos2.y = entityNode->actionObjectEntity->printY;	
-				pos2.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR, writeFileObject, "object");
-			}		
+			//cout << "b8" << endl;	
+			currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, entityNode->actionObjectEntity, currentReferenceInPrintList, initialiseOrPrint, "object", GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR, writeFileObject);		
 		}
 					
 		
@@ -248,15 +247,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			//cout << "entityNode->conditionObjectEntity->entityName = " << entityNode->conditionObjectEntity->entityName << endl;
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->conditionSubjectEntity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			//cout << "b6" << endl;
-			if(initialiseOrPrint == DRAW_PRINT)
-			{	
-				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				vec pos2;
-				pos2.x = entityNode->conditionSubjectEntity->printX;
-				pos2.y = entityNode->conditionSubjectEntity->printY;	
-				pos2.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_SUBJECT_CONNECTION_COLOUR, writeFileObject, "subject");
-			}		
+			currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, entityNode->conditionSubjectEntity, currentReferenceInPrintList, initialiseOrPrint, "subject", GIA_DRAW_CONDITION_SUBJECT_CONNECTION_COLOUR, writeFileObject);		
 		}
 		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
 		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;				
@@ -265,16 +256,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			//cout << "b7" << endl;
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->conditionObjectEntity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);	
 			//cout << "b8" << endl;
-			if(initialiseOrPrint == DRAW_PRINT)
-			{	
-				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				
-				vec pos2;
-				pos2.x = entityNode->conditionObjectEntity->printX;
-				pos2.y = entityNode->conditionObjectEntity->printY;	
-				pos2.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_OBJECT_CONNECTION_COLOUR, writeFileObject, "object");
-			}		
+			currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, entityNode->conditionObjectEntity, currentReferenceInPrintList, initialiseOrPrint, "object", GIA_DRAW_CONDITION_OBJECT_CONNECTION_COLOUR, writeFileObject);				
 		}
 						
 					
@@ -302,15 +284,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE;			//this was - not +
 			
-			if(initialiseOrPrint == DRAW_PRINT)
-			{					
-				//?may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				vec pos2;
-				pos2.x = (*entityIter)->printX;
-				pos2.y = (*entityIter)->printY;	
-				pos2.z = DRAW_CONNECTION_Z;								
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_PROPERTY_CONNECTION_COLOUR, writeFileObject, "property");			
-			}
+			currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, (*entityIter), currentReferenceInPrintList, initialiseOrPrint, "property", GIA_DRAW_PROPERTY_CONNECTION_COLOUR, writeFileObject);				
 		}
 			
 		//cout << "a3b" << endl;
@@ -346,9 +320,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				else
 				{
 					entityDefinitionConnectionColour = GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR;
-				}		
-									
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, entityDefinitionConnectionColour, writeFileObject, "instance");
+				}
+				
+				currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, entityNode->entityNodeDefiningThisInstance, currentReferenceInPrintList, initialiseOrPrint, "instance", entityDefinitionConnectionColour, writeFileObject);						
 			}
 				
 		}
@@ -384,15 +358,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		for(entityIter = entityNode->EntityNodeDefinitionList.begin(); entityIter != entityNode->EntityNodeDefinitionList.end(); entityIter++) 
 		{
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			if(initialiseOrPrint == DRAW_PRINT)
-			{	
-				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				vec pos2;
-				pos2.x = (*entityIter)->printX;
-				pos2.y = (*entityIter)->printY;	
-				pos2.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONCEPT_CONNECTION_COLOUR, writeFileObject, "definition");
-			}
+
+			currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, (*entityIter), currentReferenceInPrintList, initialiseOrPrint, "definition", GIA_DRAW_CONCEPT_CONNECTION_COLOUR, writeFileObject);						
+
 			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;
 
 		}
