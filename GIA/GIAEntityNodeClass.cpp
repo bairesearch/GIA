@@ -92,6 +92,8 @@ GIAEntityNode::GIAEntityNode(void)
 	testedForQueryComparison = false;
 	queryIsCondition = false;
 	queryConditionType = "";
+
+	negative = false;
 }
 GIAEntityNode::~GIAEntityNode(void)
 {

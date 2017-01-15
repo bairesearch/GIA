@@ -32,7 +32,8 @@ using namespace std;
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
-#define GIA_TRANSLATOR_DEBUG
+//#define GIA_TRANSLATOR_DEBUG
+
 
 //#define GIA_TRANSLATOR_USE_NEW_ACTION_SUBJECT_RELATION_FUNCTION_DEFINITION_IMPLEMENTATION	//if undefined then "tom is being an idiot"= an instance of tom is an idoit. if defined then tom has (a property) of idiocy [NOT YET IMPLEMENTED]
 
@@ -92,6 +93,8 @@ using namespace std;
 #define RELATION_TYPE_SUBJECT "_subj"	//eg x eats 	[? be x]
 #define RELATION_TYPE_SUBJECT_EXPLETIVE "_expl"		//eg goes there	//NB "there" is currently interpreted as a subject of an action
 
+#define RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES (1)
+#define RELATION_TYPE_NEGATIVE_CONTEXT_1 "not"
 
 //
 #define RELATION_TYPE_COMPLIMENT_TO_BE "_to-be"		//eg grows tired / The rose smelled sweet / _to-be(smell, sweet) - CHECK THIS
@@ -239,11 +242,12 @@ void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEnti
 	void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
 		GIAEntityNode * addAction(GIAEntityNode * actionEntity);
 		
-void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, string conditionName);
-	void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, string conditionName);
-	void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity, string conditionName);
-	void addReasonConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * reasonConditionEntity, string conditionName);
-	void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, string conditionName);
+void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, string conditionName, bool negative);
+	void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, string conditionName, bool negative);
+	void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity, string conditionName, bool negative);
+	void addReasonConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * reasonConditionEntity, string conditionName, bool negative);
+	void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, string conditionName, bool negative);
+		void addConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, string conditionName, bool negative);
 
 	//property to property relationship - these they in actual fact represent different levels of detail in information to property to action / action to action nodes - direct property to property relationships are missing the action/connectivity information
 
@@ -255,7 +259,7 @@ void setTranslatorEntityNodesCompleteList(vector<GIAEntityNode*> * newEntityNode
 void setTranslatorPropertyEntityNodesList(vector<GIAEntityNode*> * newPropertyEntityNodesList);
 void setTranslatorActionEntityNodesList(vector<GIAEntityNode*> * newActionEntityNodesList);
 
-void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity, GIAEntityNode * actionOrPropertyConditionEntity, string relationType);
+void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity, GIAEntityNode * actionOrPropertyConditionEntity, string relationType, bool negative);
 
 bool getFoundComparisonVariable();
 GIAEntityNode* getComparisonVariableNode();

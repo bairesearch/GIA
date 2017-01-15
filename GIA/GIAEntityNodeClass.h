@@ -216,6 +216,8 @@ public:
 	bool queryIsCondition;
 	string queryConditionType;
 	
+	bool negative;	//for prepositional entities which will be collapsed into conditions only
+	
 };
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode);
