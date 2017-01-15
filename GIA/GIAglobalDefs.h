@@ -45,13 +45,8 @@
 #define GIA_NLP_PARSER_RELEX (1)
 #define GIA_NLP_PARSER_STANFORD_CORENLP (2)
 #define GIA_NLP_PARSER_STANFORD_PARSER (3)
-#ifdef GIA_USE_RELEX
-	#define GIA_DEFAULT_NLP_PARSER (GIA_NLP_PARSER_RELEX)
-#elif defined GIA_USE_STANFORD_CORENLP
-	#define GIA_DEFAULT_NLP_PARSER (GIA_NLP_PARSER_STANFORD_CORENLP)
-#elif defined GIA_USE_STANFORD_PARSER
-	#define GIA_DEFAULT_NLP_PARSER (GIA_NLP_PARSER_STANFORD_PARSER)
-#endif
+#define GIA_DEFAULT_NLP_PARSER (GIA_NLP_PARSER_RELEX)		//NB GIA_NLP_PARSER_STANFORD_CORENLP will be default in future, once it has been implemented and debugged.
+
 
 //~GIATranslator
 #define GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR	//this is required (the current set of code has had the alternative case removed - see GIATranslator.cpp.copyWithDataStructureOptions for an example set of code that supports disabling this feature)
