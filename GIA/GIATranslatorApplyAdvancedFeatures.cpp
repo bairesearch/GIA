@@ -53,6 +53,56 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntit
 		currentRelationInList = currentRelationInList->next;
 	}
 	
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAEntityNodeArrayFilled[i])
+		{
+			GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
+			if(currentEntity->hasAssociatedTime)
+			{
+				GIAEntityNode * timeEntity = currentEntity;
+				if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was created in the current context (eg sentence)
+				//if(timeEntity->AssociatedInstanceNodeList.size() >= 1)
+				{
+					timeEntity = timeEntity->AssociatedInstanceNodeList.back();
+				}
+				else
+				{
+					#ifdef GIA_TRANSLATOR_DEBUG
+					cout << "error: isolated date concept node found (ie has no instance)" << endl;
+					#else
+					cout << "error: [confidential 0]" << endl;	
+					#endif
+				}	
+				
+				if(timeEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
+				{
+					if(timeEntity->timeConditionNode != NULL)
+					{
+						timeEntity->timeConditionNode->conditionName = currentEntity->NormalizedNERTemp;
+					}
+					else
+					{
+						#ifdef GIA_TRANSLATOR_DEBUG
+						cout << "error: isolated date node found (not declared as a time condition)" << endl;
+						#else
+						cout << "error: [confidential 1]" << endl;	
+						#endif
+						exit(0);	//remove this later
+					}
+				}
+				else
+				{
+					#ifdef GIA_TRANSLATOR_DEBUG
+					cout << "error: isolated date node found (not declared as a time condition)" << endl;
+					#else
+					cout << "error: [confidential 2]" << endl;
+					#endif
+					exit(0);	//remove this later						
+				}			
+			}
+		}
+	}	
 	
 	//add time condition node to isolated entities with NERTemp == FEATURE_NER_DATE		{or have they already been added?}
 }

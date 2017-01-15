@@ -13,6 +13,15 @@
 #ifndef HEADER_GIA_TRANSLATOR_DEFINE_GRAMMAR_AND_REFERENCING
 #define HEADER_GIA_TRANSLATOR_DEFINE_GRAMMAR_AND_REFERENCING
 
+#include <iostream>
+#include <fstream>
+#include <ctime>
+#include <cstring>
+#include <cstdlib>	//for random number generation
+#include <cmath>
+#include <string>
+#include <vector>
+using namespace std;
 
 #define GRAMMATICAL_DETERMINER_DEFINITE "the"
 #define GRAMMATICAL_DETERMINER_INDEFINITE "a"
@@ -26,25 +35,26 @@
 #define GIA_STANFORD_CORE_NLP_POS_TAG_VBN "VBN"
 #define GIA_STANFORD_CORE_NLP_POS_TAG_VBP "VBP"
 #define GIA_STANFORD_CORE_NLP_POS_TAG_VBZ "VBZ"
-static string posTagVerbPastArray = {GIA_STANFORD_CORE_NLP_POS_TAG_VBD, GIA_STANFORD_CORE_NLP_POS_TAG_VBN};
-static string posTagVerbPresentArray = {GIA_STANFORD_CORE_NLP_POS_TAG_VBP, GIA_STANFORD_CORE_NLP_POS_TAG_VBZ};
 #define GIA_STANFORD_CORE_NLP_POS_TAG_VERB_PAST_NUMBER_OF_TYPES (2)
 #define GIA_STANFORD_CORE_NLP_POS_TAG_VERB_PRESENT_NUMBER_OF_TYPES (2)
-static string posTagVerbProgressiveArray = {GIA_STANFORD_CORE_NLP_POS_TAG_VBG}
+static string posTagVerbPastArray[GIA_STANFORD_CORE_NLP_POS_TAG_VERB_PAST_NUMBER_OF_TYPES] = {GIA_STANFORD_CORE_NLP_POS_TAG_VBD, GIA_STANFORD_CORE_NLP_POS_TAG_VBN};
+static string posTagVerbPresentArray[GIA_STANFORD_CORE_NLP_POS_TAG_VERB_PRESENT_NUMBER_OF_TYPES] = {GIA_STANFORD_CORE_NLP_POS_TAG_VBP, GIA_STANFORD_CORE_NLP_POS_TAG_VBZ};
 #define GIA_STANFORD_CORE_NLP_POS_TAG_VERB_PROGRESSIVE_NUMBER_OF_TYPES (1)
+static string posTagVerbProgressiveArray[GIA_STANFORD_CORE_NLP_POS_TAG_VERB_PROGRESSIVE_NUMBER_OF_TYPES] = {GIA_STANFORD_CORE_NLP_POS_TAG_VBG};
 
 #define GIA_STANFORD_CORE_NLP_POS_TAG_NN "NN"
 #define GIA_STANFORD_CORE_NLP_POS_TAG_NNS "NNS"
 #define GIA_STANFORD_CORE_NLP_POS_TAG_NNP "NNP"
 #define GIA_STANFORD_CORE_NLP_POS_TAG_NNPS "NNPS"
-static string posTagProperNounArray = {GIA_STANFORD_CORE_NLP_POS_TAG_NNP, GIA_STANFORD_CORE_NLP_POS_TAG_NNPS};
-static string posTagCommonNounArray = {GIA_STANFORD_CORE_NLP_POS_TAG_NN, GIA_STANFORD_CORE_NLP_POS_TAG_NNS};
-static string posTagSingularNounArray = {GIA_STANFORD_CORE_NLP_POS_TAG_NN, GIA_STANFORD_CORE_NLP_POS_TAG_NNP};
-static string posTagPluralNounArray = {GIA_STANFORD_CORE_NLP_POS_TAG_NNS, GIA_STANFORD_CORE_NLP_POS_TAG_NNPS};
 #define GIA_STANFORD_CORE_NLP_POS_TAG_PROPER_NOUN_NUMBER_OF_TYPES (2)
 #define GIA_STANFORD_CORE_NLP_POS_TAG_COMMON_NOUN_NUMBER_OF_TYPES (2)
 #define GIA_STANFORD_CORE_NLP_POS_TAG_SINGULAR_NOUN_NUMBER_OF_TYPES (2)
 #define GIA_STANFORD_CORE_NLP_POS_TAG_PLURAL_NOUN_NUMBER_OF_TYPES (2)
+static string posTagProperNounArray[GIA_STANFORD_CORE_NLP_POS_TAG_PROPER_NOUN_NUMBER_OF_TYPES] = {GIA_STANFORD_CORE_NLP_POS_TAG_NNP, GIA_STANFORD_CORE_NLP_POS_TAG_NNPS};
+static string posTagCommonNounArray[GIA_STANFORD_CORE_NLP_POS_TAG_COMMON_NOUN_NUMBER_OF_TYPES] = {GIA_STANFORD_CORE_NLP_POS_TAG_NN, GIA_STANFORD_CORE_NLP_POS_TAG_NNS};
+static string posTagSingularNounArray[GIA_STANFORD_CORE_NLP_POS_TAG_SINGULAR_NOUN_NUMBER_OF_TYPES] = {GIA_STANFORD_CORE_NLP_POS_TAG_NN, GIA_STANFORD_CORE_NLP_POS_TAG_NNP};
+static string posTagPluralNounArray[GIA_STANFORD_CORE_NLP_POS_TAG_PLURAL_NOUN_NUMBER_OF_TYPES] = {GIA_STANFORD_CORE_NLP_POS_TAG_NNS, GIA_STANFORD_CORE_NLP_POS_TAG_NNPS};
+
 
 #define RELATION_TYPE_AUXILLARY_GOVERNER_INDICATES_FUTURE_TENSE_NUMBER_OF_TYPES (1)
 static string relationAuxillaryGovernerIndicatesFutureTenseArray[RELATION_TYPE_AUXILLARY_GOVERNER_INDICATES_FUTURE_TENSE_NUMBER_OF_TYPES] = {"will"};
@@ -108,27 +118,22 @@ using namespace std;
 //Pass A
 void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType);
 
-void fillGrammaticalArrays(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDate[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsPersonArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], int NLPparserType, int NLPdependencyRelationsType);	//Stanford Compatible
+void fillGrammaticalArrays(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], int NLPparserType, int NLPdependencyRelationsType);	//Stanford Compatible
 	#ifdef GIA_USE_RELEX
-	void fillGrammaticalArraysRelex(Sentence * currentSentenceInList, bool GIAEntityNodeIsDate[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsPersonArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[]);
+	void fillGrammaticalArraysRelex(Sentence * currentSentenceInList, bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[]);
 	#endif
 	//uses dependency relations to derive grammar [uses POS/NER information to derive grammar, if NLPparserType == Stanford Core NLP]
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
-	void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDate[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsPersonArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], int NLPparserType);	//Stanford Specific [CHECK THIS: NOT YET CODED]
+	void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], string GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[], int NLPparserType);
 	#endif
 		#ifdef GIA_NLP_PARSER_STANFORD_CORENLP
 		void extractPastTenseFromPOStag(string * POStag, int entityIndex, int GIAEntityNodeGrammaticalTenseArray[]);
-		void extractGrammaticalInformationFromPOStag(string * POStag, int entityIndex, bool GIAEntityNodeIsDate[], int GIAEntityNodeGrammaticalTenseArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsPersonArray[]);
-		void extractGrammaticalInformation(Feature * firstFeatureInList, bool GIAEntityNodeIsDate[], int GIAEntityNodeGrammaticalTenseArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsPersonArray[], int NLPparserType)
+		void extractGrammaticalInformationFromPOStag(string * POStag, int entityIndex, int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[]);
+		void extractGrammaticalInformation(Feature * firstFeatureInList, bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], string GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[], int NLPparserType);
 		void extractPastTense(int entityIndex, int entityIndexContainingTenseIndication, Feature * firstFeatureInList, int GIAEntityNodeGrammaticalTenseArray[], int NLPparserType);
 		#endif
-		/*
-		#ifdef GIA_NLP_PARSER_STANFORD_CORENLP
-		void fillGrammaticalArraysStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDate[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsPersonArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[]);	
-		#endif				
-		*/
 		
-void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDate[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsPersonArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[]);
+void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[]);
 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[]);	//Stanford Specific
@@ -146,7 +151,7 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList, int NLPdependencyRelationsType);
 void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], int NLPdependencyRelationsType);						//Stanford Compatible	
 
-void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, bool GIAEntityNodeIsDate[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsPersonArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], bool GIAEntityNodeIsAReference[]);	//theoretically stanford Compatible - [would require a lot of parameters to be manually derived, where they are automatically derived by Relex, and it would take time to get this to work properly]. Dont use this, use references instead Stanford codependency references instead
+void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], bool GIAEntityNodeIsAReference[]);	//theoretically stanford Compatible - [would require a lot of parameters to be manually derived, where they are automatically derived by Relex, and it would take time to get this to work properly]. Dont use this, use references instead Stanford codependency references instead
 #ifdef GIA_USE_STANFORD_CORENLP
 void linkReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, StanfordCoreNLPCoreference * firstCoreferenceInList, bool GIAEntityNodeIsAReference[]);	//Stanford Compatible
 #endif

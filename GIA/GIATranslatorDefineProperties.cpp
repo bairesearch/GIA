@@ -131,7 +131,7 @@ void definePropertiesObjectsAndSubjectsWithProperties(bool GIAEntityNodeArrayFil
 	}
 }	
 
-void definePropertiesDefiniteNouns(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsPersonArray[], bool GIAEntityNodeIsDate[], bool GIAEntityNodeIsAReference[])
+void definePropertiesDefiniteNouns(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], bool GIAEntityNodeIsDateOrStanfordTime[], bool GIAEntityNodeIsAReference[])
 {
 	if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS == 1)
 	{
@@ -141,7 +141,7 @@ void definePropertiesDefiniteNouns(bool GIAEntityNodeArrayFilled[], GIAEntityNod
 			{ //condition required as GIAEntityNodeArrayFilled is not always true. With GRAMMATICAL_DEFINITE, eg "Mr" of "Mr Smith" will still be interpreted as a definite
 				if(!GIAEntityNodeIsAReference[i])
 				{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
-					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS_OR_DATES || (!GIAEntityNodeGrammaticalIsPersonArray[i] & !GIAEntityNodeIsDate[i]))
+					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS || !GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[i])	//&& !GIAEntityNodeIsDateOrStanfordTime[i]
 					{
 						if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
 						{
@@ -156,7 +156,7 @@ void definePropertiesDefiniteNouns(bool GIAEntityNodeArrayFilled[], GIAEntityNod
 	}
 }
 
-void definePropertiesNounsWithDeterminates(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], bool GIAEntityNodeGrammaticalIsPersonArray[], bool GIAEntityNodeIsDate[], bool GIAEntityNodeIsAReference[])
+void definePropertiesNounsWithDeterminates(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], bool GIAEntityNodeIsDateOrStanfordTime[], bool GIAEntityNodeIsAReference[])
 {	
 	if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_NOUNS_WITH_DETERMINATES == 1)
 	{
@@ -166,7 +166,7 @@ void definePropertiesNounsWithDeterminates(bool GIAEntityNodeArrayFilled[], GIAE
 			{
 				if(!GIAEntityNodeIsAReference[i])
 				{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
-					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS_OR_DATES || (!GIAEntityNodeGrammaticalIsPersonArray[i] && !GIAEntityNodeIsDate[i]))
+					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS || !GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[i])	//&& !GIAEntityNodeIsDateOrStanfordTime[i]
 					{
 						bool passed = false;
 						for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)

@@ -24,6 +24,8 @@
 #define GIA_NLP_DEBUG
 #define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 
+//#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		//this was {effectively} disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
+
 //~External NLP Parser
 #define GIA_USE_RELEX
 #define GIA_USE_STANFORD_CORENLP

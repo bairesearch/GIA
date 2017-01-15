@@ -215,7 +215,7 @@ public:
 	int grammaticalTenseTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	int grammaticalNumberTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	bool grammaticalDefiniteTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	bool grammaticalPersonTemp;	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed		
+	bool grammaticalRelexPersonOrStanfordProperNounTemp;	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed		
 	int grammaticalGenderTemp; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	//bool grammaticalCountTemp;	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed		
 	bool grammaticalPronounTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
@@ -224,6 +224,16 @@ public:
 	bool hasPropertyTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	//bool hasQualityTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool isObject;			//used for generating non exact answers during queries
+	
+	#ifdef GIA_USE_STANFORD_CORENLP
+	int CharacterOffsetBeginTemp;
+	int CharacterOffsetEndTemp;
+	string POSTemp;
+	string NERTemp;
+	string NormalizedNERTemp;
+	string TimexTemp;
+	#endif
+	
 	
 	//bool isReferenceEntityInThisSentence;	//temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
 	bool entityAlreadyDeclaredInThisContext;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
@@ -237,10 +247,6 @@ public:
 	bool isAnswerContextToQuery;
 	#endif
 	bool testedForQueryComparison;
-	
-	#ifdef GIA_USE_STANFORD_CORENLP
-	string NERTemp;
-	#endif
 	
 	
 	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for properties and actions; but relex does not appear to output this information]

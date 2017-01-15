@@ -85,7 +85,7 @@ GIAEntityNode::GIAEntityNode(void)
 	grammaticalTenseTemp = GRAMMATICAL_TENSE_UNDEFINED;
 	grammaticalNumberTemp = GRAMMATICAL_NUMBER_UNDEFINED;
 	grammaticalDefiniteTemp = GRAMMATICAL_DEFINITE_UNDEFINED;
-	grammaticalPersonTemp = GRAMMATICAL_PERSON_UNDEFINED;		
+	grammaticalRelexPersonOrStanfordProperNounTemp = GRAMMATICAL_PERSON_UNDEFINED;		
 	grammaticalGenderTemp = GRAMMATICAL_GENDER_UNDEFINED;
 	//grammaticalCountTemp = GRAMMATICAL_COUNT_UNDEFINED;
 	grammaticalPronounTemp = GRAMMATICAL_PRONOUN_UNDEFINED;
@@ -94,6 +94,16 @@ GIAEntityNode::GIAEntityNode(void)
 	hasPropertyTemp = false;
 	//hasQualityTemp = false;
 	
+	#ifdef GIA_USE_STANFORD_CORENLP
+	CharacterOffsetBeginTemp = -1;
+	CharacterOffsetEndTemp = -1;
+	POSTemp = "";
+	NERTemp = "";
+	NormalizedNERTemp = "";
+	TimexTemp = "";
+	#endif
+	
+		
 	entityAlreadyDeclaredInThisContext = false;
 	
 	hasAssociatedInstanceTemp = false;
