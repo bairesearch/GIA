@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j2a 18-May-2015
+ * Project Version: 2j2b 18-May-2015
  *
  *******************************************************************************/
 -->
@@ -1846,7 +1846,26 @@
 				</paramDepRel>
 			</function>
 
+			<!-- XML only function (not hard coded) --> 
+			<!-- updates -->
 			<function name="redistributeStanfordRelationsGenerateUnparsedQuantityModifers">
+				<!-- #ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER -->
+				<example><!--
+				eg The punter won almost $1000. advmod(won-3, almost-4) + nmod:npmod/npadvmod(almost-4, $-5) + num($-5, 1000-6) [Relex: _obj(win[3], $[5]) + _quantity_mod($[5], almost[4])] -> _obj(win[3], $[5]) + _quantity_mod($[5], almost[4])
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="3" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_advmod" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_npadvmod" />
+				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_quantity" />
+				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="2" />
+				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityReassignment="_obj" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_quantity_mod" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" /> <!-- required to swap variables via redistributeRelationEntityIndexReassignmentUseOriginalValues; -->
+				</paramDepRel>
+				<!-- #else -->
 				<example><!--
 				eg The punter won almost $1000. advmod(won-3, almost-4) + pobj(almost-4, $-5) + num($-5, 1000-6) [Relex: _obj(win[3], $[5]) + _quantity_mod($[5], almost[4])] -> _obj(win[3], $[5]) + _quantity_mod($[5], almost[4])
 				--></example>
@@ -1862,6 +1881,7 @@
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" /> <!-- required to swap variables via redistributeRelationEntityIndexReassignmentUseOriginalValues; -->
 				</paramDepRel>
+				<!-- #endif -->
 			</function>
 
 			<function name="redistributeStanfordRelationsGenerateMeasures">
