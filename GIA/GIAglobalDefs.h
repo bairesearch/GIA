@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k6d 27-July-2015
+ * Project Version: 2k7a 21-August-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -742,7 +742,9 @@
 	#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 		#define GIA_DISABLE_ALIAS_ENTITY_MERGING	//added 2g11a/21-October-2014 - required for NLC 1k14a+	//IMPORTANT: when activating/deactivating from compilation, ensure GIArules.xml is updated accordingly (search for "GIA_DISABLE_ALIAS_ENTITY_MERGING") 
 		//#define GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES	//untested and unused
-		#define GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS	//added 2i31a
+		#ifdef GIA_SUPPORT_NLC_INTEGRATION
+			//#define GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS	//added 2i31a, disabled 2k7a
+		#endif
 	#else
 		#ifdef GIA_SUPPORT_NLC_INTEGRATION
 			#define GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION	//added 2g10a/17-October-2014	//requires NLC preprocessor to be executed to extract text indentation, NLCpreprocessorSentenceClass.h, and setNLCsentence() to be called before executing GIA
