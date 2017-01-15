@@ -14,6 +14,8 @@
 #include "GIATranslator.h"
 #include "GIAdatabase.h"
 
+string featureQueryWordAcceptedByAlternateMethodNameArray[FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES] = {"which"};
+
 string relationTypePropositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {"in", "at", "on", "after", "ago", "before", "between", "by", "during", "for", "to", "till", "until", "past", "since", "up_to", "within", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
 	//http://www.englisch-hilfen.de/en/grammar/preposition_time.htm + is [time is] etc
 string relationTypePropositionLocationNameArray[RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES] = {"in", "on", "at", "by", "near", "nearby", "above", "below", "over", "under", "around", "through", "inside", "inside_of", "outside", "between", "beside", "beyond", "in_front_of", "in_front", "in_back_of", "behind", "next_to", "on_top_of", "within", "beneath", "underneath", "among", "along", "against", "before", "after", "behind", "to", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE};		
@@ -1264,53 +1266,95 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 }
 
 
-void identifyComparisonVariable(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+void identifyComparisonVariable(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])	//vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList
 {	
 	bool expectToFindComparisonVariable = false;
 	if(currentSentenceInList->isQuestion)
 	{
 		expectToFindComparisonVariable = true;
-		cout << "expectToFindComparisonVariable" << endl;
+		//cout << "expectToFindComparisonVariable" << endl;
 	}
 	
-	bool foundComparisonVariableTemp = false;
-	
-	cout << "here1" << endl;
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
-	{
-		if(GIAEntityNodeArrayFilled[i])
-		{
-			GIAEntityNode * entityNode = GIAEntityNodeArray[i];
-			if(entityNode->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
-			{
-				cout << "foundComparisonVariable" << endl;
-				entityNode->isQuery = true;
-				foundComparisonVariableTemp = true;
-				comparisonVariableNode = entityNode;					
-			}
-		}			
-	}
-
 	if(expectToFindComparisonVariable)
 	{
-		if(!foundComparisonVariableTemp)
+		foundComparisonVariable = false;
+		
+		//cout << "here1" << endl;
+		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+		{
+			if(GIAEntityNodeArrayFilled[i])
+			{
+				GIAEntityNode * entityNode = GIAEntityNodeArray[i];
+				if(entityNode->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+				{
+					//cout << "foundComparisonVariable" << endl;
+					entityNode->isQuery = true;
+					foundComparisonVariable = true;
+					comparisonVariableNode = entityNode;	
+					cout << "foundComparisonVariable" << endl;				
+				}
+			}			
+		}
+
+		if(!foundComparisonVariable)
 		{//define comparison variable; define required answer entity as the next noun after the question word/lemma eg "house/person" 
 			
 			bool foundComparisonVariableAlternateMethod = false;
-			if(foundComparisonVariableAlternateMethod)
+			
+			bool foundQueryWordAcceptedByAlternateMethod = false;
+			bool foundFirstNounAfterQueryWordAcceptedByAlternateMethod = false;
+			Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
+			while(currentFeatureInList->next != NULL)
 			{
-				foundComparisonVariable = true;
+				bool passed = false;
+				for(int i=0; i<FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES; i++)
+				{
+					/*
+					cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
+					cout << "currentFeatureInList->lemma = " << currentFeatureInList->lemma << endl;
+					cout << "currentFeatureInList->type = " << currentFeatureInList->type << endl;
+					cout << "currentFeatureInList->grammar = " << currentFeatureInList->grammar << endl;
+					*/
+					if((currentFeatureInList->word == featureQueryWordAcceptedByAlternateMethodNameArray[i]) && (currentFeatureInList->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i]) && (currentFeatureInList->type == FEATURE_TYPE_ADJECTIVE) && (currentFeatureInList->grammar == featureQueryWordAcceptedByAlternateMethodNameArray[i]))
+					{//eg 1	which	which	adj	which
+						//cout << "foundQueryWordAcceptedByAlternateMethod" << endl;
+						foundQueryWordAcceptedByAlternateMethod = true;
+					}
+				}
+				if(foundQueryWordAcceptedByAlternateMethod)
+				{
+					if((currentFeatureInList->type == FEATURE_TYPE_NOUN) && !foundComparisonVariableAlternateMethod)
+					{
+						foundComparisonVariableAlternateMethod = true;
+						//cout << "foundQueryWordAcceptedByAlternateMethod" << endl;
+						
+						/*
+						string queryComparisonVariableName = currentFeatureInList->word; 
+						long queryComparisonVariableEntityIndex = -1;
+						bool queryComparisonVariableEntityAlreadyExistant = false;						
+						GIAEntityNode * queryComparisonVariableEntityNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &queryComparisonVariableName, &queryComparisonVariableEntityAlreadyExistant, &queryComparisonVariableEntityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+						*/
+						if(GIAEntityNodeArrayFilled[currentFeatureInList->entityIndex])
+						{
+							GIAEntityNode * queryComparisonVariableEntityNode = GIAEntityNodeArray[currentFeatureInList->entityIndex];
+							queryComparisonVariableEntityNode->isQuery = true;
+							foundComparisonVariable = true;								
+							comparisonVariableNode = queryComparisonVariableEntityNode;
+							cout << "foundComparisonVariable" << endl;
+							cout << "queryComparisonVariableEntityNode->entityName = " << queryComparisonVariableEntityNode->entityName << endl;
+						}
+						else
+						{
+							cout << "error: !GIAEntityNodeArrayFilled[indexOfAlternateComparisonVariableEntityNode]" << endl;
+						}						
+					}
+				}
+				
+				currentFeatureInList = currentFeatureInList->next;
 			}
-			else
-			{
-				foundComparisonVariable = false;
-			}
-		}
-		else
-		{
-			foundComparisonVariable = true;
 		}
 	}
+	/*
 	else
 	{
 		if(foundComparisonVariableTemp)
@@ -1319,6 +1363,7 @@ void identifyComparisonVariable(Sentence * currentSentenceInList, bool GIAEntity
 			exit(0);
 		}
 	}
+	*/
 }
 
 
