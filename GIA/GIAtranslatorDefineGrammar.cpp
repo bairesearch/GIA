@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i20a 01-February-2015
+ * Project Version: 2i21a 02-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -506,10 +506,8 @@ void fillGrammaticalArraysStanford(GIAsentence* currentSentenceInList,  bool GIA
 		if(currentRelationInList->relationType == RELATION_TYPE_DETERMINER)
 		{
 			string determiner = currentRelationInList->relationDependent;
-			bool determinerPotentiallySingularDetected = false;
 			if(textInTextArray(determiner, relationDeterminerPotentiallySingularArray, GRAMMATICAL_DETERMINER_POTENTIALLY_SINGULAR_ARRAY_NUMBER_OF_TYPES))
 			{
-				determinerPotentiallySingularDetected = true;
 				int entityIndexOfNoun = currentRelationInList->relationGovernorIndex;
 				featureArrayTemp[entityIndexOfNoun]->determinerPotentiallySingularDetected = true;
 			}
@@ -859,6 +857,12 @@ void extractGrammaticalInformationFromPOStag(string* POStag, GIAfeature* feature
 			{			
 				singularDetected = true;
 			}
+			#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER_OR_QUOTATIONS
+			if((feature->word).find(GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+			{
+				singularDetected = true;
+			}
+			#endif
 		}
 		else
 		{

@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i20a 01-February-2015
+ * Project Version: 2i21a 02-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -719,6 +719,9 @@
 #define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS	//GIA 2b4a
 #ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
 	#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER "_"	//this filler does not appear compatible with Relex (Stanford only); try another filler character (NB "-" doesn't work with Relex either)
+	#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
+		#define GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER_OR_QUOTATIONS	//2i21a
+	#endif
 #endif
 
 //#define GIA_USE_CORPUS_DATABASE	//disabled for OpenGIA
