@@ -577,8 +577,8 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode * queryEntityNode,
 			*/
 			#endif
 			#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
-			cout << "referenceTraceParameters->doNotParseQuerySubnetsWithSubstanceConcepts = " << referenceTraceParameters->doNotParseQuerySubnetsWithSubstanceConcepts << endl;
-			cout << "queryEntityNode->isSubstanceConcept = " << queryEntityNode->isSubstanceConcept << endl;
+			//cout << "referenceTraceParameters->doNotParseQuerySubnetsWithSubstanceConcepts = " << referenceTraceParameters->doNotParseQuerySubnetsWithSubstanceConcepts << endl;
+			//cout << "queryEntityNode->isSubstanceConcept = " << queryEntityNode->isSubstanceConcept << endl;
 			if(!(referenceTraceParameters->doNotParseQuerySubnetsWithSubstanceConcepts) || !(queryEntityNode->isSubstanceConcept))
 			{
 			#endif
