@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o5d 22-August-2012
+ * Project Version: 1o6a 23-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -124,6 +124,22 @@ using namespace std;
 		#endif
 		#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 			#define GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN		/*to prevent the ambiguous blue chicken(s) being linked; eg A blue chicken is small. / A red chicken is fat. / The green chicken ate the pie. / A blue chicken is late.*/
+		#endif
+	#endif
+#endif
+
+#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
+	#ifdef USE_CE
+		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
+			#define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING_ONLY_ACCEPT_INTRASENTENCE_STANFORD_COREFERENCES		//this is required, as CE will construct temporary codeextension heirachies not containing every sentence; thereby nullifying stanford coreNLP codependencies out of these temporary heirachies
+		#endif
+	#endif
+#endif
+
+#ifdef USE_CE
+	#ifdef GIA_WITH_CE_USE_ALL_CODEEXTENSION_COMBINATIONS
+		#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
+			#define GIA_WITH_CE_OLD
 		#endif
 	#endif
 #endif

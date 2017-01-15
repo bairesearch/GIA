@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o5d 22-August-2012
+ * Project Version: 1o6a 23-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -85,6 +85,55 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		#endif
 		currentParagraphInList = currentParagraphInList->next;
 	}
+}
+#endif
+
+#ifdef USE_CE
+void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirachy(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, CECodeextension * firstCodeextensionInHeirachy, vector<CECodeextension*> * codeextensionsList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations)
+{
+	//link GIAsentences with each generated CEcodeextension
+	Sentence * currentSentenceInList = firstSentenceInList;
+	vector<CECodeextension*>::iterator codeextensionIter;
+	for(codeextensionIter = codeextensionsList->begin(); codeextensionIter != codeextensionsList->end(); codeextensionIter++)
+	{
+		CECodeextension * currentCodeextensionInHeirachy = *codeextensionIter;
+		currentCodeextensionInHeirachy->sentence = currentSentenceInList;
+		currentSentenceInList = currentSentenceInList->next;
+	}
+
+	#ifdef GIA_WITH_CE_USE_ALL_CODEEXTENSION_COMBINATIONS
+	for(codeextensionIter = codeextensionsList->begin(); codeextensionIter != codeextensionsList->end(); codeextensionIter++)
+	{
+	#else
+		codeextensionIter = codeextensionsList->begin();
+	#endif
+		CECodeextension * currentCodeextensionInHeirachy = *codeextensionIter;
+		currentSentenceInList = currentCodeextensionInHeirachy->sentence;
+
+		Sentence * firstSentenceInArtificialList = currentSentenceInList;
+		generateArtificialSentenceListBasedUponParentCodeextensions(currentCodeextensionInHeirachy, firstSentenceInArtificialList);
+
+		/*
+		cout << "currentCodeextensionInHeirachy->codeextensionTextRaw = " << currentCodeextensionInHeirachy->codeextensionTextRaw << endl;
+		Relation * currentRelationInList = firstSentenceInArtificialList->firstRelationInList;
+		while(currentRelationInList->next != NULL)
+		{
+			cout << "1: " << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
+			currentRelationInList = currentRelationInList->next;
+		}
+		*/
+
+		#ifdef GIA_WITH_CE_OLD
+		vector<GIAEntityNode*> *sentenceConceptEntityNodesList = &(currentCodeextensionInHeirachy->relevantConceptEntityNodeList);
+		setAllCodeextensionEntitiesInHeirachyToUndeclaredInThisContext(firstCodeextensionInHeirachy);
+		setParentCodeextensionEntitiesAsAlreadyDeclaredInThisContext(currentCodeextensionInHeirachy);
+		convertSentenceRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInArtificialList, currentSentenceInList, sentenceConceptEntityNodesList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);		//used to be firstSentenceInList, not firstSentenceInArtificialList
+		#else
+		convertSentenceRelationsIntoGIAnetworkNodesWrapper(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInArtificialList, currentSentenceInList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);		//used to be firstSentenceInList, not firstSentenceInArtificialList
+		#endif
+	#ifdef GIA_WITH_CE_USE_ALL_CODEEXTENSION_COMBINATIONS
+	}
+	#endif
 }
 #endif
 
