@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f19e 24-July-2014
+ * Project Version: 2f17b 18-July-2014
  *
  *******************************************************************************/
 -->
@@ -1119,71 +1119,6 @@
 			</function>
 			<!-- #endif -->
 
-			<!-- NLC Only -->
-			<!-- added 2f18a 22-July-2014 -->
-			<function name="redistributeStanfordRelationsTheNumberOf">
-				<example><!--interpret
-				5 is the number of red dogs.
-				nsubj(number-4, 5-1) + cop(number-4, is-2) + prep_of(number-4, dogs-7) [+ IGNORE: det(number-2, The-1)] -> _quantity(dog[5], 5[7])
-				--></example>
-				<paramDepRel mode="redistribute">
-				<option numberOfRelations="3" />
-				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_subj" />
-				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_cop" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="number|amount" relationArrayTestSize="2" />
-				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
-				<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="be" />
-				<option useRelationArrayTest="true" REL="3" REL_ENT="3" relationArrayTest="of|_poss" relationArrayTestSize="2" />	<!-- NB _poss test is an artefact and is no longer required -->
-				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-				<option disableRelation="true" REL="1" />
-				<option disableRelation="true" REL="3" />
-				<option disableEntity="true" REL="1" REL_ENT="1" disableEntityUseOriginalValues="true" />
-				<option disableEntity="true" REL="2" REL_ENT="2" disableEntityUseOriginalValues="true" />
-				<option disableEntity="true" REL="3" REL_ENT="3" />
-				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_quantity" />
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
-				</paramDepRel>
-
-				<example><!--interpret
-				The number of red dogs is 5.
-				nsubj(5-7, number-2) + cop(5-7, is-6) + prep_of(number-2, dogs-5) [+ IGNORE: det(number-4, the-3)]  -> _quantity(dog[5], 5[7])
-				--></example>
-				<paramDepRel mode="redistribute">
-				<option numberOfRelations="3" />
-				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_subj" />
-				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_cop" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="2" relationArrayTest="number|amount" relationArrayTestSize="2" />
-				<option useRelationIndexTest="true" REL="1" REL_ENT="2" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
-				<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="be" />
-				<option useRelationArrayTest="true" REL="3" REL_ENT="3" relationArrayTest="of|_poss" relationArrayTestSize="2" />	<!-- NB _poss test is an artefact and is no longer required -->
-				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
-				<option disableRelation="true" REL="1" />
-				<option disableRelation="true" REL="3" />
-				<option disableEntity="true" REL="1" REL_ENT="2" disableEntityUseOriginalValues="true" />
-				<option disableEntity="true" REL="2" REL_ENT="2" disableEntityUseOriginalValues="true" />
-				<option disableEntity="true" REL="3" REL_ENT="3" />
-				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_quantity" />
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
-				</paramDepRel>
-				
-				<example><!--interpret
-				Number of red dogs.
-				prep_of(number-4, dogs-7) -> _quantity(dog[8], _$qVar[1])
-				--></example>
-				<paramDepRel mode="redistribute">
-				<option numberOfRelations="1" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="number|amount" relationArrayTestSize="2" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of|_poss" relationArrayTestSize="2" />	<!-- NB _poss test is an artefact and is no longer required -->
-				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityReassignment="_quantity" />
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
-				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_$qVar" /> <!-- convert "number" to _$qVar -->
-				<option disableEntity="true" REL="1" REL_ENT="3" />
-				</paramDepRel>
-			</function>
-			
 			<!-- #ifdefGIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF -->
 			<function name="redistributeStanfordRelationsInterpretNameOfAsDefinition">
 				<example><!--
@@ -2169,7 +2104,6 @@
 				</paramDepRel>
 			</function>
 			<!-- #endif -->
-		
 		</file>
 		<file name="GIAtranslatorRedistributeRelexRelations">
 					
