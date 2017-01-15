@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f16a 16-July-2014
+ * Project Version: 2f17a 18-July-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -1902,15 +1902,6 @@ void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentS
 	}
 }
 
-string convertStringToLowerCase(string * arbitraryCaseString)
-{
-	string lowerCaseString = *arbitraryCaseString;
-	for(int i=0; i<arbitraryCaseString->length(); i++)
-	{
-		lowerCaseString[i] = tolower((*arbitraryCaseString)[i]);
-	}
-	return lowerCaseString;
-}
 
 
 

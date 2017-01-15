@@ -26,7 +26,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f16a 16-July-2014
+ * Project Version: 2f17a 18-July-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -206,8 +206,6 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 
 void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentSentenceInList, Relation * currentRelationInListForPrepositionsOnly, bool isPreposition, bool * foundOfficialLRPreplacementString);
 
-
-string convertStringToLowerCase(string * arbitraryCaseString);
 
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
