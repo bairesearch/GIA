@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l4d 02-June-2012
+ * Project Version: 1l4e 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -862,7 +862,7 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 #ifdef GIA_USE_ADVANCED_REFERENCING
 
 void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
-{
+{	
 	//eg the chicken which ate a pie rowed the boat. rcmod(chicken-2, ate-4) / nsubj(ate-4, chicken-2)		 [OLD: + the blue chicken... amod(chicken-3, blue-2)]
 	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -871,10 +871,9 @@ void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList, bool GIA
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		if(!(currentRelationInList->disabled))
 		{			
-		#endif	
-		
+		#endif			 
 			if(currentRelationInList->relationType == RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER)
-			{		
+			{								
 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
  				while(currentRelationInList2->next != NULL)
 				{		
@@ -885,6 +884,101 @@ void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList, bool GIA
 						if((currentRelationInList->relationDependentIndex == currentRelationInList2->relationGovernorIndex) && (currentRelationInList->relationGovernorIndex == currentRelationInList2->relationDependentIndex))
 						{//found matching rcmod
 							currentRelationInList2->rcmodIndicatesSameReferenceSet = true;
+							
+							#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+							cout << "fillExplicitReferenceSameSetTags:" << endl;
+							cout << "currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
+							cout << "currentRelationInList2->relationGovernor = " << currentRelationInList2->relationGovernor << endl;
+							cout << "currentRelationInList2->relationDependent = " << currentRelationInList2->relationDependent << endl;
+							#endif
+							
+							//link subject and object into same reference set if required							
+							bool passedSubject = false;
+							bool passedObject = false;
+							/*
+							if(currentRelationInList2->relationType == RELATION_TYPE_SUBJECT)
+							{
+								passedSubject = true;
+							}
+							else if(currentRelationInList2->relationType == RELATION_TYPE_OBJECT)
+							{
+								passedObject = true;
+							}
+							*/
+							for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
+							{
+								if(currentRelationInList2->relationType == relationTypeSubjectNameArray[i])
+								{
+									passedSubject = true;
+								}
+							}	
+							for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
+							{
+								if(currentRelationInList2->relationType == relationTypeObjectNameArray[i])
+								{
+									passedObject = true;
+								}
+							}
+							
+							Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+ 							while(currentRelationInList3->next != NULL)
+							{
+								if(currentRelationInList3->relationGovernorIndex == currentRelationInList2->relationGovernorIndex)	
+								{
+									bool passedActionPartner = false;
+									/*
+									if(passedSubject)
+									{
+										if(currentRelationInList3->relationType == RELATION_TYPE_OBJECT)
+										{
+											passedActionPartner = true;
+										}
+									}
+									else if(passedObject)
+									{
+										if(currentRelationInList3->relationType == RELATION_TYPE_SUBJECT)
+										{
+											passedActionPartner = true;
+										}
+									}
+									*/
+									if(passedSubject)
+									{
+										for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
+										{
+											if(currentRelationInList3->relationType == relationTypeObjectNameArray[i])
+											{
+												passedActionPartner = true;
+											}
+										}
+									}
+									else if(passedObject)
+									{
+										for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
+										{
+											if(currentRelationInList3->relationType == relationTypeSubjectNameArray[i])
+											{
+												passedActionPartner = true;
+											}
+										}
+									}									
+									
+									if(passedActionPartner)
+									{
+										//found action subject pair
+										currentRelationInList3->rcmodIndicatesSameReferenceSet = true;
+										
+										#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+										cout << "fillExplicitReferenceSameSetTags:" << endl;
+										cout << "currentRelationInList3->relationType = " << currentRelationInList3->relationType << endl;
+										cout << "currentRelationInList3->relationGovernor = " << currentRelationInList3->relationGovernor << endl;
+										cout << "currentRelationInList3->relationDependent = " << currentRelationInList3->relationDependent << endl;
+										#endif										
+									}
+								}
+									
+								currentRelationInList3 = currentRelationInList3->next;							
+							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 					}			
@@ -1160,10 +1254,16 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 													
 				}
 			}
+			/*
+			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+			cout << "premature exit" << endl;
+			exit(0);
+			#endif
+			*/
 		}
 		
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-		cout << "finished reference trace round 1" << endl;
+		cout << "\nfinished reference trace round 1" << endl;
 		#endif		
 		
 		//now perform the final optimised trace		
@@ -1203,7 +1303,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		}
 		
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-		cout << "finished reference trace round 2" << endl;
+		cout << "\nfinished reference trace round 2" << endl;
 		#endif			
 	}	
 }

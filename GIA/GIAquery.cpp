@@ -3,7 +3,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l4d 02-June-2012
+ * Project Version: 1l4e 03-June-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes 
@@ -642,11 +642,11 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 		{
 			*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-			for(int level=0; level<queryTraceParameters->level+1; level++)
+			for(int level=0; level<currentLevel; level++)
 			{
 				cout << "\t";
 			}					
-			cout << "numberOfMatchedNodes = " << *numberOfMatchedNodes << endl;
+			cout << "numberOfMatchedNodes = " << *numberOfMatchedNodes << ", entityNode->entityName = " << entityNode->entityName << endl;
 			#endif
 		}
 		
@@ -813,7 +813,15 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 							cout << "\t";
 						}  										
 						cout << "A2. SDGG connectionIter = " << (*connectionIter)->entity->entityName << endl;
-						#endif	
+						#endif
+						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+						cout << "" << endl;
+						for(int level=0; level<currentLevel; level++)
+						{
+							cout << "\t";
+						}  							
+						cout << "tracing: (*connectionIterQuery) = " << (*connectionIterQuery)->entity->entityName << ", (*connectionIter) = " << (*connectionIter)->entity->entityName << ", i = " << i <<  endl;
+						#endif							
 										
 						//cout << "connectionIter = " << (*connectionIter)->entity->entityName << endl;
 						//cout << "connectionIterQuery = " << (*connectionIterQuery)->entity->entityName << endl;
@@ -829,23 +837,41 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 						{
 							foundExactMatchPass = true;
 						}
-						else if((exactMatchTemp == EXACT_MATCH_FAIL) || (exactMatchTemp == MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS))
+						else if(exactMatchTemp == EXACT_MATCH_FAIL)
 						{
 							foundExactMatchFail = true;
 						}
 						//cout << "fin0" << endl;
 
+						/*
 						if(exactMatchTemp != MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS)
 						{
+						*/
 							//cout << "fin1" << endl;
 							
 							bool bestAnswerCandidate = determineIfBestAnswerCandidate(traceModeIsQuery, queryTraceParametersTemp.foundAnswer, alreadyFoundAnAnswer, numberOfMatchedNodesTemp, numberOfMatchedNodesTempMax, numberOfMatchedNodesRequiredSynonymnDetectionTemp, numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax, referenceTraceParameters->traceMode, exactMatchTemp);
 							if(bestAnswerCandidate)
 							{	
-								//cout << "bestAnswerCandidate" << endl;		
+								#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+								for(int level=0; level<currentLevel; level++)
+								{
+									cout << "\t";
+								}  							
+								cout << "bestAnswerCandidate: (*connectionIter)->entity->entityName = " << (*connectionIter)->entity->entityName << endl;
+								#endif
 								queryEntityCorrespondingBestMatch = (*connectionIter)->entity;
 								numberOfMatchedNodesTempMax = numberOfMatchedNodesTemp;
 								numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax = numberOfMatchedNodesRequiredSynonymnDetectionTemp;
+							}
+							else
+							{
+								#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+								for(int level=0; level<currentLevel; level++)
+								{
+									cout << "\t";
+								}  							
+								cout << "nobestAnswerCandidate: (*connectionIter) = " << (*connectionIter)->entity->entityName << ", exactMatchTemp = " << exactMatchTemp << ", numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
+								#endif	
 							}
 							//cout << "fin2" << endl;
 							
@@ -986,11 +1012,17 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 							bool traceInstantiations = true;		//clear all (why is this still required if GIA_QUERY_TRACE_INSTANTIATIONS is off? - it is based on testing, but unknown as to why)			
 							traceEntityNode((*connectionIter)->entity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
 							traceEntityNode((*connectionIterQuery)->entity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
-						}
 						/*
+						}
 						else
 						{
-							cout << "MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS" << endl;
+							#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+							for(int level=0; level<currentLevel; level++)
+							{
+								cout << "\t";
+							}  							
+							cout << "MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS: (*connectionIter)->entity->entityName = " << (*connectionIter)->entity->entityName << endl;
+							#endif						
 						}
 						*/
 						
@@ -1018,7 +1050,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 					if(matchFound)
 					{
 						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-						for(int level=0; level<queryTraceParameters->level+1; level++)
+						for(int level=0; level<currentLevel; level++)
 						{
 							cout << "\t";
 						}					
@@ -1043,13 +1075,30 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 						int numberOfMatchedNodesRequiredSynonymnDetectionTemp = *numberOfMatchedNodesRequiredSynonymnDetection;
 								
 						int exactMatchTemp = testReferencedEntityNodeForExactNameMatch((*connectionIterQuery)->entity, queryEntityCorrespondingBestMatch, &numberOfMatchedNodesTemp, knownBestMatch, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, queryTraceParameters, referenceTraceParameters);			//numberOfMatchedNodesTemp, numberOfMatchedNodesRequiredSynonymnDetectionTemp			
-						
+											
 						*numberOfMatchedNodes = numberOfMatchedNodesTemp;
 						*numberOfMatchedNodesRequiredSynonymnDetection = numberOfMatchedNodesRequiredSynonymnDetectionTemp;						
 						
 						/*
 						cout << "matchFoundEND" << endl;	
 						*/
+						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+						for(int level=0; level<currentLevel; level++)
+						{
+							cout << "\t";
+						}					
+						cout << "numberOfMatchedNodes = " << *numberOfMatchedNodes << endl;
+						#endif							
+					}
+					else
+					{
+						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+						for(int level=0; level<currentLevel; level++)
+						{
+							cout << "\t";
+						}					
+						cout << "nomatchFound" << endl;
+						#endif					
 					}
 					
 					//cout << "fin6" << endl;
@@ -1118,55 +1167,58 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 		
 }
 
-bool determineIfBestAnswerCandidate(bool traceModeIsQuery, bool queryTraceParametersTempFoundAnswer, bool alreadyFoundAnAnswer, int numberOfMatchedNodesTemp, int numberOfMatchedNodesTempMax, int numberOfMatchedNodesRequiredSynonymnDetectionTemp, int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax, int referenceTraceParametersTraceMode, bool exactMatchTemp)
+bool determineIfBestAnswerCandidate(bool traceModeIsQuery, bool queryTraceParametersTempFoundAnswer, bool alreadyFoundAnAnswer, int numberOfMatchedNodesTemp, int numberOfMatchedNodesTempMax, int numberOfMatchedNodesRequiredSynonymnDetectionTemp, int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax, int referenceTraceParametersTraceMode, int exactMatchTemp)
 {
 	bool bestAnswerCandidate = false;
 
-	if(traceModeIsQuery)
+	if(exactMatchTemp != MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS)
 	{
-		//cout << "determineIfBestAnswerCandidate: numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
-		//cout << "determineIfBestAnswerCandidate: numberOfMatchedNodesTempMax = " << numberOfMatchedNodesTempMax << endl;
-		
-		if(numberOfMatchedNodesTemp > numberOfMatchedNodesTempMax)
-		{//first traces (ie traces of newest instances/properties) take priority
-			bestAnswerCandidate = true;
-		}
-		else if(traceModeIsQuery && !alreadyFoundAnAnswer && queryTraceParametersTempFoundAnswer && (numberOfMatchedNodesTemp == numberOfMatchedNodesTempMax))
-		{//answer found, where not previously found
-			//traces with answers take priority (if equal number of matched nodes)
-			bestAnswerCandidate = true;
-		}
-		else if((numberOfMatchedNodesRequiredSynonymnDetectionTemp < numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax) && (numberOfMatchedNodesTemp == numberOfMatchedNodesTempMax))
+		if(traceModeIsQuery)
 		{
-			//traces with least degree of synonymn detection required take priority (if equal number of matched nodes)
-			bestAnswerCandidate = true;
-		}
-	}
-	else
-	{
-		bool passExactMatchRequirements = false;
-		if(referenceTraceParametersTraceMode == TRACE_MODE_ONLY_RECORD_EXACT_MATCH)
-		{
-			if(exactMatchTemp)
-			{
-				passExactMatchRequirements = true;
-			}
-		}
-		else if(referenceTraceParametersTraceMode != TRACE_MODE_ONLY_RECORD_EXACT_MATCH)
-		{
-			passExactMatchRequirements = true;			
-		}
-		if(passExactMatchRequirements)
-		{
+			//cout << "determineIfBestAnswerCandidate: numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
+			//cout << "determineIfBestAnswerCandidate: numberOfMatchedNodesTempMax = " << numberOfMatchedNodesTempMax << endl;
+
 			if(numberOfMatchedNodesTemp > numberOfMatchedNodesTempMax)
 			{//first traces (ie traces of newest instances/properties) take priority
+				bestAnswerCandidate = true;
+			}
+			else if(traceModeIsQuery && !alreadyFoundAnAnswer && queryTraceParametersTempFoundAnswer && (numberOfMatchedNodesTemp == numberOfMatchedNodesTempMax))
+			{//answer found, where not previously found
+				//traces with answers take priority (if equal number of matched nodes)
 				bestAnswerCandidate = true;
 			}
 			else if((numberOfMatchedNodesRequiredSynonymnDetectionTemp < numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax) && (numberOfMatchedNodesTemp == numberOfMatchedNodesTempMax))
 			{
 				//traces with least degree of synonymn detection required take priority (if equal number of matched nodes)
 				bestAnswerCandidate = true;
-			}		
+			}
+		}
+		else
+		{
+			bool passExactMatchRequirements = false;
+			if(referenceTraceParametersTraceMode == TRACE_MODE_ONLY_RECORD_EXACT_MATCH)
+			{
+				if(exactMatchTemp == EXACT_MATCH_PASS)
+				{
+					passExactMatchRequirements = true;
+				}
+			}
+			else if(referenceTraceParametersTraceMode != TRACE_MODE_ONLY_RECORD_EXACT_MATCH)
+			{
+				passExactMatchRequirements = true;			
+			}
+			if(passExactMatchRequirements)
+			{
+				if(numberOfMatchedNodesTemp > numberOfMatchedNodesTempMax)
+				{//first traces (ie traces of newest instances/properties) take priority
+					bestAnswerCandidate = true;
+				}
+				else if((numberOfMatchedNodesRequiredSynonymnDetectionTemp < numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax) && (numberOfMatchedNodesTemp == numberOfMatchedNodesTempMax))
+				{
+					//traces with least degree of synonymn detection required take priority (if equal number of matched nodes)
+					bestAnswerCandidate = true;
+				}		
+			}
 		}
 	}
 					
