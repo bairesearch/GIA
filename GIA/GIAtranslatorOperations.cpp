@@ -227,7 +227,7 @@ GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode
 		{
 			if(!(thingEntity->isSubstanceConcept))
 			{
-				cout << "addOrConnectPropertyToEntity() warning: property was declared substance concept while parent was not declared substance concept" << endl;
+				//cout << "addOrConnectPropertyToEntity() warning: property was declared substance concept while parent was not declared substance concept" << endl;
 				propertyEntity->isSubstanceConcept = false;
 			}
 		}
@@ -279,7 +279,7 @@ GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentit
 		{
 			if(!(thingEntity->isSubstanceConcept))
 			{
-				cout << "addOrConnectPropertyToEntity() warning: property was declared substance concept while parent was not declared substance concept" << endl;
+				//cout << "addOrConnectPropertyToEntity() warning: property was declared substance concept while parent was not declared substance concept" << endl;
 				propertyEntitySubstance->isSubstanceConcept = false;
 			}
 		}
@@ -977,7 +977,7 @@ GIAentityNode* addOrConnectConditionToEntity(GIAentityNode* conditionSubjectEnti
 		{
 			if(!(conditionSubjectEntity->isSubstanceConcept))
 			{
-				cout << "addOrConnectConditionToEntity() warning: condition object was declared substance concept while condition subject was not declared substance concept" << endl;
+				//cout << "addOrConnectConditionToEntity() warning: condition object was declared substance concept while condition subject was not declared substance concept" << endl;
 				conditionObjectEntity->isSubstanceConcept = false;
 			}
 		}
