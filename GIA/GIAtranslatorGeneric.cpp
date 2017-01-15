@@ -523,11 +523,11 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										#ifdef GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES
 										int conjunctionType = INT_DEFAULT_VALUE;	//not used
 										string conditionEntityNameOrig = param->relationEntity[param->functionEntityRelationID[FUNC_ENT3]][param->functionEntityRelationEntityID[FUNC_ENT3]];
-										cout << "conditionEntityNameOrig = " << conditionEntityNameOrig << endl;
+										//cout << "conditionEntityNameOrig = " << conditionEntityNameOrig << endl;
 										bool conjunctionConditionFound = textInTextArray(currentRelationInList->relationType, relationTypeConjugationNameArray, ENTITY_COORDINATINGCONJUNCTION_ARRAY_NUMBER_OF_TYPES, &conjunctionType);
 										if(conjunctionConditionFound)
 										{
-											cout << "conjunctionRelationIndex = " << conjunctionRelationIndex << endl;
+											//cout << "conjunctionRelationIndex = " << conjunctionRelationIndex << endl;
 											int conjunctionFeatureIndex = FEATURE_INDEX_OF_CONJUNCTION_1-conjunctionRelationIndex;
 											functionEntityIndex3 = conjunctionFeatureIndex;
 											mustLookupOrGenerateConditionConceptEntity = true;
