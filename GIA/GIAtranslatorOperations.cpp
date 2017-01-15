@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t8a 31-August-2013
+ * Project Version: 1t8c 31-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -2086,7 +2086,7 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 		//for execution
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	defaultSameSetRelationID = -1; 
-	defaultSameSetReferenceValue = -1;
+	defaultSameSetReferenceValue = false;
 	#endif		
 	functionEntityRelationID = {REL1, REL1, REL1, REL1};				//these dummy values have to be set always to prevent crash //for entity1, entity2, and entity3 - relation1, relation2, relation3, or relation4
 	functionEntityRelationEntityID = {FUNC_ENT1, FUNC_ENT1, FUNC_ENT1, FUNC_ENT1};	//these dummy values have to be set always to prevent crash //for entity1, entity2, and entity3 - relationType, relationGovernorIndex, or relationDependentIndex	
@@ -2352,6 +2352,8 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								}
 								else
 								{
+									cout << "param->defaultSameSetReferenceValue = " << param->defaultSameSetReferenceValue << endl;
+									cout << "sameReferenceSet = " << sameReferenceSet << endl;
 									sameReferenceSet = determineSameReferenceSetValue(param->defaultSameSetReferenceValue, param->relation[param->defaultSameSetRelationID]);
 								}
 								#else
