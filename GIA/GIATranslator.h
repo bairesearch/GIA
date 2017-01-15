@@ -37,6 +37,7 @@ using namespace std;
 
 //#define GIA_TRANSLATOR_USE_NEW_ACTION_SUBJECT_RELATION_FUNCTION_DEFINITION_IMPLEMENTATION	//if undefined then "tom is being an idiot"= an instance of tom is an idoit. if defined then tom has (a property) of idiocy [NOT YET IMPLEMENTED]
 
+//#define GIA_TRANSLATOR_DO_NOT_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY
 
 #define GIA_TRANSLATOR_ACTION_DEFINITION_CODE_SIMPLIFICATION
 

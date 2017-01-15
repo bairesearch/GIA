@@ -660,99 +660,153 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 			//GIAActionNodeArrayFilled[w] = false;
 		}
 		
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "fillGrammaticalArrays" << endl;
+		#endif
 		fillGrammaticalArrays(currentSentenceInList, GIAEntityNodeIsDate, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray);
 		
 		
+	
 		
-		//cout << "pass A;" << endl;
-		
-		//cout << "pass 1; locate/add all entities" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass A;" << endl;
+		cout << "pass 1; locate/add all entities" << endl;
+		#endif
 		locateAndAddAllConceptEntities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, conceptEntityNamesList, GIAEntityNodeIsDate, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray);
 			
-		//cout << "pass 1b; switch argument/functions where necessary" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG	
+		cout << "pass 1b; switch argument/functions where necessary" << endl;
+		#endif
 		switchArgumentsAndFunctionsWhereNecessary(currentSentenceInList);
-				
-		//cout << "pass 2; identify entity types [define entities as objects, subjects, and being possessive of properties];" << endl;
+		
+		#ifdef GIA_TRANSLATOR_DEBUG		
+		cout << "pass 2; identify entity types [define entities as objects, subjects, and being possessive of properties];" << endl;
+		#endif
 		identifyEntityTypes(currentSentenceInList, GIAEntityNodeArray);
 		
 		#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS
-		//cout << "pass 3; link references (eg his/her with joe/emily)" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 3; link references (eg his/her with joe/emily)" << endl;
+		#endif
 		linkReferences(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, conceptEntityNamesList, GIAEntityNodeIsDate, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeIsAReference);
 		#endif
 		
-				
-		//cout << "pass B;" << endl;
-
-		//cout << "0z2 pass; collapseRedundantRelationAndMakeNegative (eg "Space is saved by not having a bulky cart."); _subj(not[5], by[4]), _subj(have[6], not[5])" << endl;
+			
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass B;" << endl;
+		cout << "0z2 pass; collapseRedundantRelationAndMakeNegative (eg 'Space is saved by not having a bulky cart.'); _subj(not[5], by[4]), _subj(have[6], not[5])" << endl;
+		#endif
 		collapseRedundantRelationAndMakeNegative(currentSentenceInList, GIAEntityNodeArray);
 	
-		//cout << "0z pass; define properties (objects/subjects with properties; eg "Truffles which are picked are tasty." - Truffle must be an instance/property in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "0z pass; define properties (objects/subjects with properties; eg 'Truffles which are picked are tasty.' - Truffle must be an instance/property in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
+		#endif
 		definePropertiesObjectsAndSubjectsWithProperties(GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 		
-		//cout << "0a pass; define properties (definite nouns); eg the house" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "0a pass; define properties (definite nouns); eg the house" << endl;
+		#endif
 		definePropertiesDefiniteNouns(GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeIsDate, GIAEntityNodeIsAReference);
 
-		//cout << "0b pass; define properties (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore properties]" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "0b pass; define properties (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore properties]" << endl;
+		#endif
 		definePropertiesNounsWithDeterminates(GIAEntityNodeArrayFilled, GIAEntityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeIsDate, GIAEntityNodeIsAReference);
 	
-		//cout << "0c pass; define properties (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "0c pass; define properties (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
+		#endif
 		definePropertiesNounsWithAdjectives(currentSentenceInList, GIAEntityNodeArray);
 				
-		//cout << "0d pass; define properties (quantities [not quantity mods/multipiers, not measure pers] and measures);" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "0d pass; define properties (quantities [not quantity mods/multipiers, not measure pers] and measures);" << endl;
+		#endif
 		definePropertiesQuantitiesAndMeasures(currentSentenceInList, GIAEntityNodeArray);
 		
-		//cout << "0e pass; define properties (quantity mods);" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "0e pass; define properties (quantity mods);" << endl;
+		#endif
 		definePropertiesQuantityModifiers(currentSentenceInList, GIAEntityNodeArray);
 								
-		//cout << "0f pass; define properties (expletives eg "there" in "there is a place");" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "0f pass; define properties (expletives eg 'there' in 'there is a place');" << endl;
+		#endif
 		definePropertiesExpletives(currentSentenceInList, GIAEntityNodeArray);
 
-		//cout << "0g pass; define properties (pronouns eg "we"/"I");" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "0g pass; define properties (pronouns eg 'we'/'I');" << endl;
+		#endif
 		definePropertiesPronouns(GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeIsAReference);
 
-		//cout << "0h pass; define properties (to_be);" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "0h pass; define properties (to_be);" << endl;
+		#endif
 		definePropertiesToBe(currentSentenceInList, GIAEntityNodeArray);
 		
-		//cout << "0i pass; define properties (to_do);" << endl;		
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "0i pass; define properties (to_do);" << endl;
+		#endif		
 		definePropertiesToDo(currentSentenceInList, GIAEntityNodeArray);
 		
 					
 		
 										
-		//cout << "1 pass; link properties (possessive relationships); eg joe's bike" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "1 pass; link properties (possessive relationships); eg joe's bike" << endl;
+		#endif
 		linkPropertiesPossessiveRelationships(currentSentenceInList, GIAEntityNodeArray);
 		
-		//cout << "2 pass; link properties (descriptive relationships); eg joe is happy" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "2 pass; link properties (descriptive relationships); eg joe is happy" << endl;
+		#endif
 		linkPropertiesDescriptiveRelationships(currentSentenceInList, GIAEntityNodeArray);
 		
-		//cout << "2b pass; link entity definitions (appositive of nouns only)" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "2b pass; link entity definitions (appositive of nouns only)" << endl;
+		#endif
 		linkEntityDefinitionsAppositiveOfNouns(currentSentenceInList, GIAEntityNodeArray);
 		
- 		//cout <<"3 pass; define dependent subject-object definition/composition/action relationships and independent subject/object action relationships" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+ 		cout <<"3 pass; define dependent subject-object definition/composition/action relationships and independent subject/object action relationships" << endl;
+		#endif
 		defineSubjectObjectRelationships(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList, conceptEntityNamesList);
 				
-		//cout << "3b pass; define indirect objects" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "3b pass; define indirect objects" << endl;
+		#endif
 		defineIndirectObjects(currentSentenceInList, GIAEntityNodeArray);
 		
-		//cout << "3c pass; define object/subject of preposition" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "3c pass; define object/subject of preposition" << endl;
+		#endif
 		defineObjectSubjectOfPreposition(currentSentenceInList, GIAEntityNodeArray);
 		
 		
 		
 		
-		//cout << "4a pass; define action/property conditions" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "4a pass; define action/property conditions" << endl;
+		#endif
 		defineActionPropertyConditions(currentSentenceInList, GIAEntityNodeArray);
 		
-		//cout <<"4b pass; extract dates" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout <<"4b pass; extract dates" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
+		#endif
 		extractDates(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 
-		//cout << "4c pass; extract quantities" << endl;	
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "4c pass; extract quantities" << endl;
+		#endif
 		extractQuantities(currentSentenceInList, GIAEntityNodeArray);
 		
-		//cout << "4d pass; extract measures" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "4d pass; extract measures" << endl;
+		#endif
 		extractMeasures(currentSentenceInList, GIAEntityNodeArray);
 		
-		//cout << "4e/4f pass; define to_be/to_do conditions" << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "4e/4f pass; define to_be/to_do conditions" << endl;
+		#endif
 		defineToBeAndToDoConditions(currentSentenceInList, GIAEntityNodeArray);
 		
 		
@@ -1785,7 +1839,7 @@ bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, 
 				if(currentRelationInList->relationArgumentIndex == currentRelationInList3->relationArgumentIndex)
 				{//do not add property, if _advmod argument (eg 'by') is connected to a subject/object
 					passed2 = false;
-					cout << "ASFS" << endl;
+					//cout << "ASFS" << endl;
 				}
 			}
 			currentRelationInList3 = currentRelationInList3->next;							
@@ -2078,7 +2132,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 							//cout << "subjectEntityTemp->entityName = " << subjectEntityTemp->entityName << endl;	
 							//cout << "objectEntityTemp->entityName = " << objectEntityTemp->entityName << endl;
-
+							
 							//find out if the subject is connected to an _advmod, if so create a dummy entity as the subject, and assign the subject as a condition [instead of forming default subject-action-object relationship]
 							bool subjectIsConnectedToAnAdvMod = false;
 							Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
@@ -2113,8 +2167,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 										GIAEntityNode * arbitrarySubjectSpecialConceptEntityNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &arbitrarySubjectSpecialConceptEntityNodeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
 										subjectEntityTemp = arbitrarySubjectSpecialConceptEntityNode;
 										#endif
-
-
+										
 										//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 										if(passdefinition || partnerTypeObjectSpecialConditionFound)
 										{
@@ -2130,7 +2183,6 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											//cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
 											addActionToActionDefinition(actionOrPropertyConditionEntity);	//not required is done later?
 										}
-
 
 										addOrConnectPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType, relationNegative);	
 
