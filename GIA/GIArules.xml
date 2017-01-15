@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c2e 14-January-2014
+ * Project Version: 2c2f 14-January-2014
  *
  *******************************************************************************/
 -->
@@ -465,6 +465,7 @@
 				conj_and(frame-8, mechanism-17)
 				--></example>
 				
+				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<example><!--
 				eg [case added GIA 2c1c] 
 				The chicken is not near the house.
@@ -484,6 +485,7 @@
 				<option useRelationTest="true" REL="2" REL_ENT="0" relationTest="be" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 				</paramDepRel>
+				<!-- #endif -->
 				
 				<example><!--
 				eg1 look for nsubj/prep combination, eg nsubj(are-4, claims-3) + prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)

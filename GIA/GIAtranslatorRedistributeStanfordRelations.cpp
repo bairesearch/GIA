@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c2e 14-January-2014
+ * Project Version: 2c2f 14-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1108,6 +1108,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	*/
 #ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 	/*eg [case added GIA 2c1c] 
 	The chicken is not near the house.
 	nsubj(is-3, chicken-2) + prep_near(is-3, house-7) + neg(is-3, not-4) -> neg(near-5, not-4)
@@ -1126,7 +1127,8 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	paramC2.useRelationTest[REL3][REL_ENT1] = true; paramC2.relationTest[REL3][REL_ENT1] = RELATION_ENTITY_BE;
 	paramC2.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT1] = true; paramC2.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT1] = REL2; paramC2.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT1] = REL_ENT3;
 	genericDependecyRelationInterpretation(&paramC2, REL1);
-
+	#endif
+	
 	//eg1 look for nsubj/prep combination, eg nsubj(are-4, claims-3) + prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)
 	//eg2 case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; The claims that are on the frame are blue. , nsubj(are-4, claims-2) + prep_on(are-4, frame-7) + rcmod(claims-2, are-4)
 		//OLD: look for nsubj/prep combination, eg nsubj(next-4, garage-2) + prep_to(next-4, house-7)	=> prep_subj(next_to, house) + prep_subj(next_to, garage)	
