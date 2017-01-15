@@ -3,7 +3,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m2a 30-June-2012
+ * Project Version: 1n1a 15-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -18,7 +18,7 @@
 
 
 
-	
+
 
 void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
 {
@@ -27,8 +27,8 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		if(!(currentRelationInList->disabled))
-		{			
-		#endif		
+		{
+		#endif
 			bool passed = false;
 			for(int i=0; i<RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES; i++)
 			{
@@ -36,22 +36,22 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 				{
 					passed = true;
 				}
-			}	
+			}
 			//if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
 			if(passed)
 			{
 				//cout << "RELATION_TYPE_POSSESSIVE" << endl;
 
-				string propertyName = currentRelationInList->relationGovernor; 
-				string ownerName = currentRelationInList->relationDependent; 
+				string propertyName = currentRelationInList->relationGovernor;
+				string ownerName = currentRelationInList->relationDependent;
 				int propertyIndex = currentRelationInList->relationGovernorIndex;
-				int ownerIndex = currentRelationInList->relationDependentIndex;				
+				int ownerIndex = currentRelationInList->relationDependentIndex;
 
 				GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 				GIAEntityNode * ownerEntity = GIAEntityNodeArray[ownerIndex];
 				//cout << "propertyName = " << propertyEntity->entityName << endl;
 				//cout << "ownerName = " << ownerEntity->entityName << endl;
-				
+
 				#ifdef GIA_USE_ADVANCED_REFERENCING
 				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES, currentRelationInList);
 				#else
@@ -60,8 +60,8 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 				GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(ownerEntity, propertyEntity, sameReferenceSet);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		}			
-		#endif				
+		}
+		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
 }
@@ -74,8 +74,8 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		if(!(currentRelationInList->disabled))
-		{			
-		#endif				
+		{
+		#endif
 			bool passed = false;
 			for(int i=0; i<RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES; i++)
 			{
@@ -83,31 +83,31 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 				{
 					passed = true;
 				}
-			}						
+			}
 			//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_AMOD) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_PREDADJ) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))
 			if(passed)
-			{		
-				
+			{
+
 				bool passed2 = true;
 				bool passed3 = true;
-				
+
 				#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
 				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 				{
-				#endif						
+				#endif
 					passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList, NLPdependencyRelationsType);
 					passed3 = isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(currentRelationInList, GIAEntityNodeArray, currentRelationInList->relationGovernorIndex, NLPdependencyRelationsType);
 				#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
 				}
 				#endif
-				
+
 				if(passed2 && passed3)
 				{
 					//create a new property for the entity and assign a property definition entity if not already created
 					string thingName = currentRelationInList->relationGovernor;
-					string propertyName = currentRelationInList->relationDependent; 
+					string propertyName = currentRelationInList->relationDependent;
 					int thingIndex = currentRelationInList->relationGovernorIndex;
-					int propertyIndex = currentRelationInList->relationDependentIndex;				
+					int propertyIndex = currentRelationInList->relationDependentIndex;
 					GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
 					GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 
@@ -126,21 +126,21 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 						}
 					}
 					*/
-					
+
 					#ifdef GIA_USE_ADVANCED_REFERENCING
 					bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES, currentRelationInList);
 					#else
 					bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 					#endif
-					GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(thingEntity, propertyEntity, sameReferenceSet);		
-				}			
+					GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(thingEntity, propertyEntity, sameReferenceSet);
+				}
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		}			
-		#endif				
+		}
+		#endif
 		currentRelationInList = currentRelationInList->next;
-	}		
-}			
+	}
+}
 
 void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
 {
@@ -149,14 +149,14 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		if(!(currentRelationInList->disabled))
-		{			
-		#endif		
+		{
+		#endif
 			if(currentRelationInList->relationType == RELATION_TYPE_APPOSITIVE_OF_NOUN)
 			{
-				string propertyName = currentRelationInList->relationGovernor; 
-				string entityName = currentRelationInList->relationDependent; 
+				string propertyName = currentRelationInList->relationGovernor;
+				string entityName = currentRelationInList->relationDependent;
 				int propertyIndex = currentRelationInList->relationGovernorIndex;
-				int definitionIndex = currentRelationInList->relationDependentIndex;				
+				int definitionIndex = currentRelationInList->relationDependentIndex;
 
 				GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 				GIAEntityNode * definitionEntity = GIAEntityNodeArray[definitionIndex];
@@ -165,17 +165,17 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				cout << "propertyName = " << propertyEntity->entityName << endl;
 				cout << "definitionEntity = " << definitionEntity->entityName << endl;
 				#endif
-				
+
 				#ifdef GIA_USE_ADVANCED_REFERENCING
 				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_APPOS, currentRelationInList);
 				#else
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 				#endif
-				addDefinitionToEntity(propertyEntity, definitionEntity, sameReferenceSet);									
+				addDefinitionToEntity(propertyEntity, definitionEntity, sameReferenceSet);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		}			
-		#endif				
+		}
+		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
 }
@@ -188,20 +188,20 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 	string subjectObjectName;
 	GIAEntityNode * subjectObjectEntity;
 	GIAEntityNode * subjectObjectFunctionEntity;
-	
+
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		if(!(currentRelationInList->disabled))
-		{			
-		#endif		
+		{
+		#endif
 			int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
 			int relationDependentIndex = currentRelationInList->relationDependentIndex;
 			subjectObjectName = currentRelationInList->relationDependent;
 			int subjectObjectEntityIndex = relationDependentIndex;
-			int subjectObjectFunctionEntityIndex = relationGovernorIndex;			
+			int subjectObjectFunctionEntityIndex = relationGovernorIndex;
 			subjectObjectEntity = GIAEntityNodeArray[subjectObjectEntityIndex];
-			subjectObjectFunctionEntity = GIAEntityNodeArray[subjectObjectFunctionEntityIndex]; 
+			subjectObjectFunctionEntity = GIAEntityNodeArray[subjectObjectFunctionEntityIndex];
 
 			bool passed = false;
 			bool passsubject = false;
@@ -243,7 +243,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 			}
 
 			if(passed)
-			{	
+			{
 
 				//cout << "subjectObjectName = " << subjectObjectName << endl;
 
@@ -252,7 +252,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 					//cout << "subjectObjectName = " << subjectObjectName << endl;
 
 					if(passdefinition)
-					//if(currentRelationInList->relationGovernor == RELATION_ENTITY_BE) 
+					//if(currentRelationInList->relationGovernor == RELATION_ENTITY_BE)
 					{
 					}
 					//else if((currentRelationInList->relationGovernor == RELATION_GOVERNOR_COMPOSITION_1) || (currentRelationInList->relationGovernor == RELATION_GOVERNOR_COMPOSITION_2) || (currentRelationInList->relationGovernor == RELATION_GOVERNOR_COMPOSITION_3))
@@ -272,7 +272,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 						if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 						{
-						#endif					
+						#endif
 							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_RELATION_AS_ACTION_CONDITION
 							//find out if the subject is connected to an _advmod, if so assign it as an action condition instead of a subject+action
 							Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
@@ -280,8 +280,8 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 							{
 								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 								if(!(currentRelationInList2->disabled))
-								{			
-								#endif								
+								{
+								#endif
 									if(currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD)
 									{
 										//cout << "ASD" << endl;
@@ -294,7 +294,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 											_obj(save[3], space[1])	[IRRELEVANT]
 											_advmod(save[3], by[4])
 											_advmod(run[5], fast[6]) [IRRELEVANT]
-											_subj(run[5], by[4])											
+											_subj(run[5], by[4])
 											*/
 											actionOrPropertyConditionEntity = subjectObjectFunctionEntity;
 											actionIndex = subjectObjectFunctionEntityIndex;
@@ -307,7 +307,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 											for(design[5], _$qVar[1]) [IRRELEVANT]
 											_obj(design[5], Co[4]) [IRRELEVANT]
 											_advmod(design[5], for[6])
-											_obj(for[6], _$qVar[1])									
+											_obj(for[6], _$qVar[1])
 											*/
 											actionOrPropertyConditionEntity = subjectObjectEntity;
 											actionIndex = subjectObjectEntityIndex;
@@ -330,10 +330,10 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 											#endif
 
 											//cout << "actionOrPropertyConditionEntity= " << actionOrPropertyConditionEntity->entityName << endl;
-											
+
 											GIAEntityNodeArray[actionIndex] = addActionToActionDefinition(actionOrPropertyConditionEntity);
 											actionOrPropertyConditionEntity = GIAEntityNodeArray[actionIndex];
-											
+
 											//cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
 											//cout << "actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;
 											//cout << "conditionTypeConceptEntity = " << conditionTypeConceptEntity->entityName << endl;
@@ -342,49 +342,49 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 										}
 									}
 								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-								}			
-								#endif	
+								}
+								#endif
 								currentRelationInList3 = currentRelationInList3->next;
 							}
 							#endif
 						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 						}
-						#endif						
+						#endif
 
 						if(!subjectOrObjectIsConnectedToAnAdvMod)
 						{
 							/*
-							cout << "relationGovernorIndex = " << relationGovernorIndex << endl;	
+							cout << "relationGovernorIndex = " << relationGovernorIndex << endl;
 							cout << "relationDependentIndex = " << relationDependentIndex << endl;
 							cout << "subjectObjectName = " << subjectObjectName << endl;
 							cout << "subjectObjectEntity->entityName = " << subjectObjectEntity->entityName << endl;
 							cout << "subjectObjectFunctionEntity->entityName = " << subjectObjectFunctionEntity->entityName << endl;
 							*/
-							
+
 							if(passsubject)
 							{//fired by joe..???? [is there a possible example of this?]
-								
+
 								#ifdef GIA_USE_ADVANCED_REFERENCING
 								bool sameReferenceSetSubject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
 								#else
 								bool sameReferenceSetSubject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 								#endif
-								
+
 								//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 								GIAEntityNode * subjectEntityTemp = subjectObjectEntity;
 								//cout << "vf1" << endl;
-								GIAEntityNodeArray[actionIndex] = addActionToSubject(subjectObjectEntity, actionEntity, sameReferenceSetSubject);	
+								GIAEntityNodeArray[actionIndex] = addActionToSubject(subjectObjectEntity, actionEntity, sameReferenceSetSubject);
 								//cout << "vf2" << endl;
 							}
 							else if(passobject)
 							{//eg the bow was fired
-								
+
 								#ifdef GIA_USE_ADVANCED_REFERENCING
 								bool sameReferenceSetSubject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
 								#else
 								bool sameReferenceSetSubject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 								#endif
-								
+
 								//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 								GIAEntityNode * objectEntityTemp = subjectObjectEntity;
 
@@ -398,8 +398,8 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 				}
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		}			
-		#endif	
+		}
+		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
 }
@@ -407,8 +407,8 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType)
 {
  	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
-	
-	#ifdef USE_OLD_SUBJ_OBJ_ONLY_ONE_PAIR_RESTRICTION_METHOD	
+
+	#ifdef USE_OLD_SUBJ_OBJ_ONLY_ONE_PAIR_RESTRICTION_METHOD
 	bool subjectObjectRelationshipAlreadyAdded[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE;i++)
 	{
@@ -421,13 +421,13 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 	GIAEntityNode * subjectObjectFunctionEntityArray[2];
 	int subjectObjectEntityIndexArray[2];
 	int subjectObjectFunctionEntityIndexArray[2];
-						
+
 	while(currentRelationInList->next != NULL)
-	{	
+	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		if(!(currentRelationInList->disabled))
-		{			
-		#endif		
+		{
+		#endif
 			//cout << "here1" << endl;
 			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 
@@ -435,10 +435,10 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 			int relationDependentIndex = currentRelationInList->relationDependentIndex;
 			subjectObjectName[SUBJECT_INDEX] = currentRelationInList->relationDependent;
 			subjectObjectEntityArray[SUBJECT_INDEX] = GIAEntityNodeArray[relationDependentIndex];
-			subjectObjectFunctionEntityArray[SUBJECT_INDEX] = GIAEntityNodeArray[relationGovernorIndex]; 	
+			subjectObjectFunctionEntityArray[SUBJECT_INDEX] = GIAEntityNodeArray[relationGovernorIndex];
 			subjectObjectEntityIndexArray[SUBJECT_INDEX] = relationDependentIndex;
-			subjectObjectFunctionEntityIndexArray[SUBJECT_INDEX] = relationGovernorIndex; 
-			
+			subjectObjectFunctionEntityIndexArray[SUBJECT_INDEX] = relationGovernorIndex;
+
 			bool passed = false;
 			for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
 			{
@@ -472,7 +472,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 			if(passed)
 			{
-				bool foundPartner = false;	
+				bool foundPartner = false;
 
 				//now find the associated object..
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
@@ -480,16 +480,16 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 				{
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 					if(!(currentRelationInList2->disabled))
-					{			
-					#endif					
+					{
+					#endif
 						int relationGovernorIndex2 = currentRelationInList2->relationGovernorIndex;
 						int relationDependentIndex2 = currentRelationInList2->relationDependentIndex;
 						subjectObjectName[OBJECT_INDEX] = currentRelationInList2->relationDependent;
 						subjectObjectEntityArray[OBJECT_INDEX] = GIAEntityNodeArray[relationDependentIndex2];
-						subjectObjectFunctionEntityArray[OBJECT_INDEX] = GIAEntityNodeArray[relationGovernorIndex2]; 	
+						subjectObjectFunctionEntityArray[OBJECT_INDEX] = GIAEntityNodeArray[relationGovernorIndex2];
 						subjectObjectEntityIndexArray[OBJECT_INDEX] = relationDependentIndex2;
-						subjectObjectFunctionEntityIndexArray[OBJECT_INDEX] = relationGovernorIndex2; 	
-						
+						subjectObjectFunctionEntityIndexArray[OBJECT_INDEX] = relationGovernorIndex2;
+
 						bool passed2 = false;
 						bool partnerTypeObjectSpecialConditionMeasureDistanceOrStanfordFound = false;
 						bool partnerTypeObjectSpecialConditionToDoPropertyFound = false;
@@ -505,7 +505,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE2
 						if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 						{
-						#endif									
+						#endif
 							for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_CONDITION_MEASURE_DISTANCE_OR_STANFORD_UNKNOWN_NUMBER_OF_TYPES; i++)
 							{
 								if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionMeasureDistanceOrStanfordUnknownNameArray[i])
@@ -517,18 +517,18 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									cout << "currentRelationInList->relationDependent = " << currentRelationInList->relationDependent << endl;
 									cout << "currentRelationInList2->relationDependent = " << currentRelationInList2->relationDependent << endl;
 									cout << "currentRelationInList->relationGovernor = " << currentRelationInList->relationGovernor << endl;
-									cout << "currentRelationInList2->relationGovernor = " << currentRelationInList2->relationGovernor << endl;						
+									cout << "currentRelationInList2->relationGovernor = " << currentRelationInList2->relationGovernor << endl;
 									*/
 								}
-							}		
+							}
 						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE2
 						}
-						#endif	
-						
+						#endif
+
 						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 						if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 						{
-						#endif	
+						#endif
 							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
 							for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_TO_DO_PROPERTY_NUMBER_OF_TYPES; i++)
 							{
@@ -541,7 +541,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 							#endif
 						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 						}
-						#endif					
+						#endif
 
 
 						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
@@ -549,7 +549,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 						{
 						#endif
 							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TOBE_AND_SUBJECT_RELATION_AS_PROPERTY_LINK_AND_ACTION_DEFINITION
-							for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_TO_BE_PROPERTY_NUMBER_OF_TYPES; i++)						
+							for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_TO_BE_PROPERTY_NUMBER_OF_TYPES; i++)
 							{
 								if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionToBePropertyNameArray[i])
 								{
@@ -560,7 +560,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 							#endif
 						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 						}
-						#endif	
+						#endif
 
 						if(currentRelationInList2->disabled)
 						{//required for relations disabled for negative collapse purposes
@@ -570,18 +570,18 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 						if(passed2)
 						{
 							bool foundPartner = false;
-							#ifdef USE_OLD_SUBJ_OBJ_ONLY_ONE_PAIR_RESTRICTION_METHOD	
+							#ifdef USE_OLD_SUBJ_OBJ_ONLY_ONE_PAIR_RESTRICTION_METHOD
 							if(subjectObjectRelationshipAlreadyAdded[relationGovernorIndex] != true)
 							{
 								subjectObjectRelationshipAlreadyAdded[relationGovernorIndex] = true;
 							#else
 							if(!((currentRelationInList->subjObjRelationAlreadyAdded) && (currentRelationInList2->subjObjRelationAlreadyAdded)))
-							{//do not use a subj-obj pair if the same subj or obj has already been used in the generation of another pair		
+							{//do not use a subj-obj pair if the same subj or obj has already been used in the generation of another pair
 							#endif
 								//cout << "currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
-								
+
 								int objectEntityIndexTemp = subjectObjectEntityIndexArray[OBJECT_INDEX];
-								int subjectEntityIndexTemp = subjectObjectEntityIndexArray[SUBJECT_INDEX];								
+								int subjectEntityIndexTemp = subjectObjectEntityIndexArray[SUBJECT_INDEX];
 								GIAEntityNode * objectEntityTemp = subjectObjectEntityArray[OBJECT_INDEX];
 								GIAEntityNode * subjectEntityTemp = subjectObjectEntityArray[SUBJECT_INDEX];
 
@@ -589,9 +589,9 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								{//found a matching object-subject relationship
 
 									//cout << "\n\n relationGovernorIndex2 == relationGovernorIndex2 " << endl;
-									//cout << "subjectObjectEntityArray[secondIndex]->entityName = " << subjectObjectEntityArray[secondIndex]->entityName << endl;	
+									//cout << "subjectObjectEntityArray[secondIndex]->entityName = " << subjectObjectEntityArray[secondIndex]->entityName << endl;
 
-									//cout << "subjectEntityTemp->entityName = " << subjectEntityTemp->entityName << endl;	
+									//cout << "subjectEntityTemp->entityName = " << subjectEntityTemp->entityName << endl;
 									//cout << "objectEntityTemp->entityName = " << objectEntityTemp->entityName << endl;
 
 									bool subjectIsConnectedToAnAdvMod = false;
@@ -600,24 +600,24 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									{
 									#endif
 										//find out if the subject is connected to an _advmod, if so create a dummy entity as the subject, and assign the subject as a condition [instead of forming default subject-action-object relationship]
-										
+
 										Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
 										while(currentRelationInList3->next != NULL)
 										{
 											#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 											if(!(currentRelationInList3->disabled))
-											{			
-											#endif										
+											{
+											#endif
 												if(currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD)
 												{
-									
+
 													#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
 													if(subjectEntityTemp->entityName == currentRelationInList3->relationDependent)
 													{//subject is connected to an _advmod
 
 														GIAEntityNode * actionOrPropertyConditionEntity;
 														GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[currentRelationInList3->relationGovernorIndex];
-														GIAEntityNode * conditionTypeConceptEntity = subjectEntityTemp;										
+														GIAEntityNode * conditionTypeConceptEntity = subjectEntityTemp;
 
 														subjectIsConnectedToAnAdvMod = true;
 
@@ -636,7 +636,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 														{
 
 														}
-														#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_CONDITION_DEFINITION									
+														#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_CONDITION_DEFINITION
 														else if(passdefinition || partnerTypeObjectSpecialConditionMeasureDistanceOrStanfordFound)
 														{
 															bool negative = subjectObjectFunctionEntityArray[SUBJECT_INDEX]->negative;
@@ -665,8 +665,8 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 															addOrConnectConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 
 															GIAEntityNode * actionEntity = actionOrPropertyConditionEntity;
-															GIAEntityNodeArray[actionIndex] = addActionToObject(objectEntityTemp, actionEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);																			
-														}									
+															GIAEntityNodeArray[actionIndex] = addActionToObject(objectEntityTemp, actionEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
+														}
 
 													#else
 
@@ -713,11 +713,11 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 														#endif
 
 														addOrConnectConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
-													#endif	
+													#endif
 
 													}
 													#endif
-								
+
 													#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
 													//cout << "qsd0" << endl;
 													if(currentRelationInList3->relationGovernor == RELATION_ENTITY_BE)
@@ -745,12 +745,12 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 																int propertyIndex = currentRelationInList3->relationDependentIndex;
 																GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 
-																GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(baseEntity, propertyEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);			
+																GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(baseEntity, propertyEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 																GIAEntityNodeArray[objectEntityIndexTemp] = addOrConnectPropertyToEntity(propertyEntity, objectEntityTemp, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 
 																#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 																#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES_ADVANCED
-																disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList3->relationGovernorIndex]);
+																disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList3->relationGovernorIndex]);
 																#endif
 																#endif
 
@@ -760,26 +760,26 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 																GIAEntityNode * baseEntity = subjectEntityTemp;
 																GIAEntityNode * definitionEntity = GIAEntityNodeArray[currentRelationInList3->relationDependentIndex];
-																
+
 																int propertyIndex = objectEntityIndexTemp;
 																GIAEntityNode * propertyEntity = objectEntityTemp;
 
 																addDefinitionToEntity(baseEntity, definitionEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 
-																GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(definitionEntity, propertyEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);	
+																GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(definitionEntity, propertyEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 
-															#endif											
+															#endif
 
 														}
 													}
 													#endif
-												}								
+												}
 
 											#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-											}			
-											#endif	
+											}
+											#endif
 											currentRelationInList3 = currentRelationInList3->next;
-										}										
+										}
 									#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 									}
 									#endif
@@ -796,7 +796,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 										}
 										#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_DEFINITION_BASIC
-										//if(currentRelationInList->relationGovernor == RELATION_ENTITY_BE) 
+										//if(currentRelationInList->relationGovernor == RELATION_ENTITY_BE)
 										else if(passdefinition)
 										{//expected subject-object relationship is a definition "is"
 
@@ -806,26 +806,26 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 												//NB definitions are only assigned to entities, not properties (instances of entities)
 
-											
+
 											#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
 											if(currentSentenceInList->isQuestion == true)
 											#else
 											if(subjectEntityTemp->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 											#endif
 											{//this section of code is only used for RelEx: NB Stanford CoreNLP ouputs "what is"/"who is" queries in appos format (not in obj/subj format)
-											#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY									
+											#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
 												//switch object/subject variables [transform question into answer form]
 												bool sameReferenceSet = false;
 												addDefinitionToEntity(objectEntityTemp, subjectEntityTemp, sameReferenceSet);
 											#else
 
 												//added 20 October 2011 [what is the time?]
-												GIAEntityNode * actionOrPropertyEntity = objectEntityTemp;				
+												GIAEntityNode * actionOrPropertyEntity = objectEntityTemp;
 												GIAEntityNode * actionOrPropertyConditionEntity = subjectEntityTemp;
 												GIAEntityNode * conditionTypeConceptEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
 
 												addOrConnectConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
-											#endif	
+											#endif
 											}
 											else
 											{
@@ -834,7 +834,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 												addDefinitionToEntity(subjectEntityTemp, objectEntityTemp, sameReferenceSet);
 											}
 
-											disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]);	//remove lone 'be' artefacts (blue entity nodes). NB these occur because of the nature of the 'is' -> entity definitional substitution procedure	
+											disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]);	//remove lone 'be' artefacts (blue entity nodes). NB these occur because of the nature of the 'is' -> entity definitional substitution procedure
 										}
 										#endif
 										#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
@@ -847,12 +847,12 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 												//check can use properties for composition/comprises ; ie, does "tom is happy" = "tom comprises happiness" ?
 											//cout << "a" << endl;
 
-											disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]);	//remove lone 'be' artefacts (blue entity nodes). NB these occur because of the nature of the 'is' -> entity definitional substitution procedure
+											disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]);	//remove lone 'be' artefacts (blue entity nodes). NB these occur because of the nature of the 'is' -> entity definitional substitution procedure
 										}
 										#endif
 										else if(partnerTypeObjectSpecialConditionMeasureDistanceOrStanfordFound)
-										{//this was removed from Stanford execution 15 May 2012		
-															
+										{//this was removed from Stanford execution 15 May 2012
+
 											#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO
 												//eg The rabbit is 20 meters away.	[away is a property of rabbit, not a condition of rabbit]
 												GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;	//aka subjectObjectEntityArray[SUBJECT_INDEX];
@@ -868,7 +868,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 												GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;
 												GIAEntityNode * specialConditionNode = GIAEntityNodeArray[relationGovernorIndex2];
 												//cout << "subjectEntityOrProperty->entityName = " << subjectEntityOrProperty->entityName << endl;
-												//cout << "specialConditionNode->entityName = " << specialConditionNode->entityName << endl;	
+												//cout << "specialConditionNode->entityName = " << specialConditionNode->entityName << endl;
 
 												string conditionTypeName = "specialCondition";
 
@@ -877,7 +877,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 												addOrConnectConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 
-											#endif								
+											#endif
 										}
 										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
 										else if(partnerTypeObjectSpecialConditionToDoPropertyFound)
@@ -890,17 +890,17 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 										{
 
 											//cout << "c" << endl;
-											/* 
-											Eg;	 The pastry tasted awesome.							
+											/*
+											Eg;	 The pastry tasted awesome.
 											_to-be(taste[3], awesome[4])
-											_subj(taste[3], pastry[2])											
+											_subj(taste[3], pastry[2])
 											*/
 
 											//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 											GIAEntityNode * objectEntityTempUpdated = subjectObjectEntityArray[SUBJECT_INDEX];
 											GIAEntityNode * actionEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
 											int actionIndex = subjectObjectFunctionEntityIndexArray[SUBJECT_INDEX];
-											
+
 											#ifdef GIA_USE_ADVANCED_REFERENCING
 											bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);	//subject relation
 											#else
@@ -914,7 +914,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											GIAEntityNode * ownerEntity = actionEntity;
 											//cout << "propertyName = " << propertyEntity->entityName << endl;
 											//cout << "ownerName = " << ownerEntity->entityName << endl;
-											
+
 											#ifdef GIA_USE_ADVANCED_REFERENCING
 											sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES, currentRelationInList);	//subject relation
 											#else
@@ -922,8 +922,8 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											#endif
 											GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(ownerEntity, propertyEntity, sameReferenceSet);
 
-										}	
-										#endif								
+										}
+										#endif
 										else
 										{//assume that the subject-object relationships is an action
 											string actionName = currentRelationInList->relationGovernor;
@@ -935,21 +935,21 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 											/*
 											cout << "SUBJECT_INDEX = " << SUBJECT_INDEX << endl;
-											cout << "OBJECT_INDEX = " << OBJECT_INDEX << endl;									
+											cout << "OBJECT_INDEX = " << OBJECT_INDEX << endl;
 											cout << "subjectObjectName[SUBJECT_INDEX] = " << subjectObjectName[SUBJECT_INDEX] << endl;
 											cout << "subjectObjectName[OBJECT_INDEX] = " << subjectObjectName[OBJECT_INDEX] << endl;
-											cout << "subjectEntityTemp->entityName = " << subjectEntityTemp->entityName << endl;																	
+											cout << "subjectEntityTemp->entityName = " << subjectEntityTemp->entityName << endl;
 											cout << "objectEntityTemp->entityName = " << objectEntityTemp->entityName << endl;
 											cout << "relationDependentIndex = " << relationDependentIndex << endl;
 											cout << "relationDependentIndex2 = " << relationDependentIndex2 << endl;
 											*/
-											
+
 											#ifdef GIA_USE_ADVANCED_REFERENCING
 											bool sameReferenceSetSubject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
 											bool sameReferenceSetObject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList2);
 											#else
 											bool sameReferenceSetSubject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-											bool sameReferenceSetObject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;											
+											bool sameReferenceSetObject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 											#endif
 											GIAEntityNodeArray[actionIndex] = addActionToEntity(subjectEntityTemp, objectEntityTemp, actionEntity, sameReferenceSetSubject, sameReferenceSetObject);
 										}
@@ -958,7 +958,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 									if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 									{
-									#endif						
+									#endif
 									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
 										#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
 										if(!partnerTypeObjectSpecialConditionToDoPropertyFound || subjectIsConnectedToAnAdvMod)
@@ -966,18 +966,18 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											foundPartner = true;
 											currentRelationInList->subjObjRelationAlreadyAdded = true;
 											currentRelationInList2->subjObjRelationAlreadyAdded = true;
-											//cout << "a" << endl;								
+											//cout << "a" << endl;
 										}
 										#else
 										foundPartner = true;
 										currentRelationInList->subjObjRelationAlreadyAdded = true;
-										currentRelationInList2->subjObjRelationAlreadyAdded = true;								
+										currentRelationInList2->subjObjRelationAlreadyAdded = true;
 										//cout << "b" << endl;
-										#endif							
+										#endif
 									#else
 										foundPartner = true;
 										currentRelationInList->subjObjRelationAlreadyAdded = true;
-										currentRelationInList2->subjObjRelationAlreadyAdded = true;								
+										currentRelationInList2->subjObjRelationAlreadyAdded = true;
 										//cout << "c" << endl;
 									#endif
 									#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
@@ -986,19 +986,19 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									{
 										foundPartner = true;
 										currentRelationInList->subjObjRelationAlreadyAdded = true;
-										currentRelationInList2->subjObjRelationAlreadyAdded = true;								
+										currentRelationInList2->subjObjRelationAlreadyAdded = true;
 									}
-									#endif	
+									#endif
 								}
 								else
-								{//do not find matching object-subject relationship 
+								{//do not find matching object-subject relationship
 
 									#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 									if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 									{
 									#endif
 										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A_RELATIONS_DISREGARD_REDUNDANT_DEFINITION_RELATIONS
-										//[search for intermediary {ie redundant} relations, and if so create a condition link between subject and object] 
+										//[search for intermediary {ie redundant} relations, and if so create a condition link between subject and object]
 										if(!foundPartner)
 										{//do not overwrite usage of subj/obj if a direct link [ie action] has been found (this condition probably/mau not be required)
 
@@ -1010,26 +1010,26 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 												{
 													#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 													if(!(currentRelationInList3->disabled))
-													{			
-													#endif													
+													{
+													#endif
 														if(currentRelationInList3->relationGovernor == RELATION_ENTITY_BE)
-														{																						
+														{
 															//cout << "a2" << endl;
 															if((currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))	//OR if (currentRelationInList3->relationType == subjectObjectFunctionEntityArray[OBJECT_INDEX]->entityName)
 															{
 																//cout << "b" << endl;
 																if(currentRelationInList3->relationDependent == subjectObjectFunctionEntityArray[OBJECT_INDEX]->entityName)
-																{	
+																{
 																	//cout << "c" << endl;
-																	/* 
-																	Eg;	What are the patent claims on?								
+																	/*
+																	Eg;	What are the patent claims on?
 																	_obj(on[6], _$qVar[1])
 																	_advmod(be[2], on[6])
 																	_subj(be[2], claim[5])
 																	and/or;
 																	_obj(on[6], _$qVar[1])
 																	on(be[2], on[6])
-																	_subj(be[2], claim[5])													
+																	_subj(be[2], claim[5])
 																	*/
 
 																	//create a condition link between the object and subject, based upon RELATION_ENTITY_BE
@@ -1052,27 +1052,27 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 																	cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl;
 																	*/
 
-																	addOrConnectConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);														
+																	addOrConnectConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 
 																	foundPartner = true;
 																	currentRelationInList->subjObjRelationAlreadyAdded = true;
 																	currentRelationInList2->subjObjRelationAlreadyAdded = true;
-																	//cout << "d" << endl;														
+																	//cout << "d" << endl;
 																}
 															}
 														}
 													#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-													}		
-													#endif		
+													}
+													#endif
 
 													//cout << "currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
-													currentRelationInList3 = currentRelationInList3->next;											
+													currentRelationInList3 = currentRelationInList3->next;
 												}
 											}
 										}
 										#endif
 										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
-										//[search for special relation _to-do AND _subj, and if so create a property link between subject and object] 
+										//[search for special relation _to-do AND _subj, and if so create a property link between subject and object]
 										if(!foundPartner)
 										{//do not overwrite usage of subj/obj if a direct link [ie action] has been found (this condition probably/may not be required)
 
@@ -1082,10 +1082,10 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 												if(subjectObjectFunctionEntityArray[SUBJECT_INDEX]->entityName == subjectObjectEntityArray[OBJECT_INDEX]->entityName)
 												{
 													//cout << "c" << endl;
-													/* 
-													Eg;	Luke is slow.							
+													/*
+													Eg;	Luke is slow.
 													_to-do(be[2], slow[3])
-													_subj(slow[3], Luke[1])												
+													_subj(slow[3], Luke[1])
 													*/
 
 													//create a property link between the object and subject
@@ -1101,26 +1101,26 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 													currentRelationInList->subjObjRelationAlreadyAdded = true;
 													currentRelationInList2->subjObjRelationAlreadyAdded = true;
 													//cout << "e" << endl;
-												}	
+												}
 											}
 										}
 										#endif
-									#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE	
+									#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 									}
 									#endif
 								}
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-					}			
-					#endif		
+					}
+					#endif
 					currentRelationInList2 = currentRelationInList2->next;
 				}
 			}
 
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		}			
-		#endif		
+		}
+		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
 }
@@ -1131,23 +1131,23 @@ void defineIndirectObjects(Sentence * currentSentenceInList, GIAEntityNode * GIA
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
-	{	
+	{
 		//cout << "here1" << endl;
 		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		if(!(currentRelationInList->disabled))
-		{			
-		#endif	
+		{
+		#endif
 			if(currentRelationInList->relationType == RELATION_TYPE_INDIRECT_OBJECT)
-			{							
+			{
 				//now find the associated object..
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
-				{	
+				{
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 					if(!(currentRelationInList2->disabled))
-					{			
-					#endif				
+					{
+					#endif
 						bool partnerTypeRequiredFound = false;
 						for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
 						{
@@ -1155,7 +1155,7 @@ void defineIndirectObjects(Sentence * currentSentenceInList, GIAEntityNode * GIA
 							{
 								partnerTypeRequiredFound = true;
 							}
-						}	
+						}
 						if(partnerTypeRequiredFound)
 						{
 
@@ -1173,17 +1173,17 @@ void defineIndirectObjects(Sentence * currentSentenceInList, GIAEntityNode * GIA
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-					}		
+					}
 					#endif
 
 					currentRelationInList2 = currentRelationInList2->next;
 				}
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		}			
+		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
-	}			
+	}
 }
 
 
@@ -1196,126 +1196,126 @@ void defineHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * curre
 			Space is saved by being a chicken.
 				nsubjpass(saved-3, Space-1) / prepc_through(saved-3, having-5) / dobj(having-5, chicken-7)	[auxpass(saved-3, is-2)]
 				nsubjpass(saved-3, Space-1) / agent(saved-3, having-5) / dobj(having-5, chicken-7)
-				nsubjpass(saved-3, Space-1) / agent(saved-3, chicken-7) / cop(chicken-7, being-5) [auxpass(saved-3, is-2)]	
+				nsubjpass(saved-3, Space-1) / agent(saved-3, chicken-7) / cop(chicken-7, being-5) [auxpass(saved-3, is-2)]
 
 	*/
-	
+
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
-	{	
+	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		if(!(currentRelationInList->disabled))
-		{			
+		{
 		#endif
-		
+
 			bool stanfordPrepositionFound = false;
 			string prepositionName = convertStanfordPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
-	
+
 			//cout << "here1" << endl;
 			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-			
+
 			if(stanfordPrepositionFound)
-			{		
+			{
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
-				
+
 				while(currentRelationInList2->next != NULL)
-				{					
+				{
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 					if(!(currentRelationInList2->disabled))
-					{			
-					#endif	
+					{
+					#endif
 						//cout << "AS1" << endl;
-				
+
 						#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_CONDITION_PROPERTY
 						if(currentRelationInList2->relationType == RELATION_TYPE_OBJECT)
 						{
-							//cout << "AS2" << endl;	
+							//cout << "AS2" << endl;
 							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationDependentIndex)
-							{//found a matching relationship	
+							{//found a matching relationship
 								//cout << "AS3" << endl;
 								if(currentRelationInList->relationDependent == RELATION_ENTITY_HAVE)
 								{
 									//cout << "AS4" << endl;
-									currentRelationInList->disabled = true;	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition 
-									
+									currentRelationInList->disabled = true;	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
+
 									string conditionTypeName = prepositionName;
 									bool entityAlreadyExistant = false;
-								
+
 									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, FEATURE_INDEX_OF_HAVING_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
-									
+
 									GIAEntityNode * haveEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
 									bool negative = haveEntity->negative;
 									GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
 									GIAEntityNode * conditionPropertyNode = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
-									
+
 									#ifdef GIA_USE_ADVANCED_REFERENCING
 									bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_PROPERTY_CONDITIONS, currentRelationInList2);	//defineHavingPropertyConditionsAndBeingDefinitionConditions check relation to use here... [the chicken saved through having a chicken is.... therefore default same set]
 									//sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_PROPERTY_CONDITIONS;	//more precisely
 									#else
 									bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 									#endif
-									
+
 									#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
-									GIAEntityNodeArray[FEATURE_INDEX_OF_HAVING_UNKNOWN] = addOrConnectHavingPropertyConditionToEntity(entityNode, conditionPropertyNode, conditionTypeConceptEntity, negative, sameReferenceSet);										
+									GIAEntityNodeArray[FEATURE_INDEX_OF_HAVING_UNKNOWN] = addOrConnectHavingPropertyConditionToEntity(entityNode, conditionPropertyNode, conditionTypeConceptEntity, negative, sameReferenceSet);
 									#else
-									addOrConnectHavingPropertyConditionToEntity(entityNode, conditionPropertyNode, conditionTypeConceptEntity, negative, sameReferenceSet);	
+									addOrConnectHavingPropertyConditionToEntity(entityNode, conditionPropertyNode, conditionTypeConceptEntity, negative, sameReferenceSet);
 									#endif
-									
-									disableEntityBasedUponFirstSentenceToAppearInNetwork(haveEntity);								
+
+									disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(haveEntity);
 								}
 							}
 						}
 						#endif
 						#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_CONDITION_DEFINITION
 						else if(currentRelationInList2->relationType == RELATION_TYPE_COPULA)
-						{	
+						{
 							//cout << "AS2" << endl;
 							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationDependentIndex)
-							{//found a matching relationship	
+							{//found a matching relationship
 								//cout << "AS3" << endl;
 								if(currentRelationInList2->relationDependent == RELATION_ENTITY_BE)
 								{
 									//cout << "AS4" << endl;
 									currentRelationInList->disabled = true;	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
-									
+
 									string conditionTypeName = prepositionName;
 									bool entityAlreadyExistant = false;
-																											
+
 									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, FEATURE_INDEX_OF_BEING_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
-																										
+
 									GIAEntityNode * beEntity = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
 									bool negative = beEntity->negative;
 									GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
 									GIAEntityNode * conditionDefinitionNode = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
-									
+
 									#ifdef GIA_USE_ADVANCED_REFERENCING
-									bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS, currentRelationInList2);	//defineHavingPropertyConditionsAndBeingDefinitionConditions check relation to use here... [the chicken saved through being a chicken is.... therefore default same set]								
+									bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS, currentRelationInList2);	//defineHavingPropertyConditionsAndBeingDefinitionConditions check relation to use here... [the chicken saved through being a chicken is.... therefore default same set]
 									//sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS;	//more precisely
 									#else
 									bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 									#endif
-									
-									#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
-									GIAEntityNodeArray[FEATURE_INDEX_OF_BEING_UNKNOWN] = addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative, sameReferenceSet);																
-									#else
-									addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative, sameReferenceSet);																									
-									#endif
-									
-									disableEntityBasedUponFirstSentenceToAppearInNetwork(beEntity);
 
-								}	
+									#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
+									GIAEntityNodeArray[FEATURE_INDEX_OF_BEING_UNKNOWN] = addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative, sameReferenceSet);
+									#else
+									addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative, sameReferenceSet);
+									#endif
+
+									disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(beEntity);
+
+								}
 							}
 						}
-						#endif														
-						
+						#endif
+
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-					}			
+					}
 					#endif
 					currentRelationInList2 = currentRelationInList2->next;
 				}
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		}		
+		}
 		#endif
 			//cout << "here2" << endl;
 		currentRelationInList = currentRelationInList->next;
@@ -1328,25 +1328,25 @@ void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIA
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
-	{	
+	{
 		//cout << "here1" << endl;
 		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		if(!(currentRelationInList->disabled))
-		{			
+		{
 		#endif
 			if(currentRelationInList->relationType == RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION)
-			{					
+			{
 				//now find the associated object..
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 					if(!(currentRelationInList2->disabled))
-					{			
-					#endif			
+					{
+					#endif
 						if(currentRelationInList2->relationType == RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION)
-						{		
+						{
 							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
 							{//found a matching preposition of object-subject relationship
 								/*
@@ -1357,7 +1357,7 @@ void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIA
 								*/
 
 								GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
-								GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];						
+								GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
 								GIAEntityNode * conditionTypeConceptEntity = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex];
 
 								/*
@@ -1373,15 +1373,15 @@ void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIA
 								createConditionBasedUponPreposition(entityNode, conditionEntityNode, conditionTypeConceptEntity->entityName, false, currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType, sameReferenceSet);
 
 								/*
-								bool passedPropositionTime = false;	
+								bool passedPropositionTime = false;
 								if(conditionEntityNode->hasAssociatedTime)	//added 10 April 2012 to make stanford compatible
 								{
 									passedPropositionTime = true;
-								}	
+								}
 								if(entityNode->hasAssociatedInstanceTemp)
 								{
-									entityNode = entityNode->AssociatedInstanceNodeList.back();	
-								}				
+									entityNode = entityNode->AssociatedInstanceNodeList.back();
+								}
 								if(conditionEntityNode->hasAssociatedInstanceTemp)
 								{
 									conditionEntityNode = conditionEntityNode->AssociatedInstanceNodeList.back();
@@ -1390,26 +1390,26 @@ void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIA
 
 								if(passedPropositionTime)
 								{
-									addTimeConditionToProperty(entityNode, conditionEntityNode, conditionTypeConceptEntity);				
+									addTimeConditionToProperty(entityNode, conditionEntityNode, conditionTypeConceptEntity);
 
 								}
 								else
 								{
-									addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);							
+									addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);
 								}
 								*/
 
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-					}			
+					}
 					#endif
-					
+
 					currentRelationInList2 = currentRelationInList2->next;
 				}
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		}			
+		}
 		#endif
 		//cout << "here2" << endl;
 		currentRelationInList = currentRelationInList->next;
@@ -1421,18 +1421,18 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
-	{						
+	{
 		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		if(!(currentRelationInList->disabled))	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition		
-		{			
+		if(!(currentRelationInList->disabled))	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
+		{
 		//#endif
 			int actionOrPropertyIndex = currentRelationInList->relationGovernorIndex;
 			int actionOrPropertyConditionIndex = currentRelationInList->relationDependentIndex;
 			string relationType = currentRelationInList->relationType;
-			GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[actionOrPropertyIndex];				
+			GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[actionOrPropertyIndex];
 			GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[actionOrPropertyConditionIndex];
 
-			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;	      
+			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 			//cout << "defineActionPropertyConditions actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;
 			//cout << "defineActionPropertyConditions actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
 
@@ -1441,7 +1441,7 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 			if(GIAEntityNodeArray[actionOrPropertyConditionIndex]->entityName == relationType)
 			{//to prevent meaningless relex relations; eg "on(be[2], on[6])"
 				passed = false;
-			}	
+			}
 			#endif
 			#ifdef GIA_IGNORE_DUPLICATE_COMPARISON_VARIABLES_IN_QUERY
 			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -1451,19 +1451,19 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 					if(GIAEntityNodeArray[i]->entityName == relationType)
 					{
 						if(GIAEntityNodeArray[i]->disableParsingAsAPrepositionRelationTemp)
-						{//to prevent duplicate relex relations; 
+						{//to prevent duplicate relex relations;
 							/*eg; "for"
-							for(design[5], _$qVar[1]) 
+							for(design[5], _$qVar[1])
 							_obj(design[5], Co[4]) [IRRELEVANT]
 							_advmod(design[5], for[6]) [IRRELEVANT]
-							_obj(for[6], _$qVar[1])							
+							_obj(for[6], _$qVar[1])
 							*/
 							passed = false;
 						}
-					}	
+					}
 				}
-			}	
-			#endif		
+			}
+			#endif
 
 			#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 			if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
@@ -1481,7 +1481,7 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 				#endif
 			#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 			}
-			#endif			
+			#endif
 
 			#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
 			if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
@@ -1500,7 +1500,7 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 					if(actionOrPropertyEntity->isAction)
 					{
 						/*
-						NB not in this case "She grew tired of the pie." 
+						NB not in this case "She grew tired of the pie."
 						of(tired[3], pie[6])
 						_to-be(grow[2], tired[3])
 						_subj(grow[2], she[1])
@@ -1509,13 +1509,13 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 						//cout << "c" << endl;
 						passed = true;
 					}
-							
+
 					/*full list parse not necessarily, as only concerned about how the node has been defined within the given context/sentence
-					vector<GIAEntityNode*>::iterator entityIter;				
-					for(entityIter = entityNode->PropertyNodeReverseList.begin(); entityIter != entityNode->PropertyNodeReverseList.end(); entityIter++) 
+					vector<GIAEntityNode*>::iterator entityIter;
+					for(entityIter = entityNode->PropertyNodeReverseList.begin(); entityIter != entityNode->PropertyNodeReverseList.end(); entityIter++)
 					{
 						...
-						//cout << "a32" << endl;	
+						//cout << "a32" << endl;
 						currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 
 					}
@@ -1528,15 +1528,15 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 						NB this case "The house of Kriton is blue." should create 2 property connections (not just 1)
 						of(house[2], Kriton[4])
 						_predadj(house[2], blue[6])
-						*/	
+						*/
 						#ifdef GIA_USE_ADVANCED_REFERENCING
-						bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS, currentRelationInList);			
+						bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS, currentRelationInList);
 						#else
 						bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 						#endif
-						GIAEntityNodeArray[actionOrPropertyIndex] = addOrConnectPropertyToEntity(actionOrPropertyConditionEntity, actionOrPropertyEntity, sameReferenceSet);			
-					}			
-				}		
+						GIAEntityNodeArray[actionOrPropertyIndex] = addOrConnectPropertyToEntity(actionOrPropertyConditionEntity, actionOrPropertyEntity, sameReferenceSet);
+					}
+				}
 				#endif
 			#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
 			}
@@ -1552,9 +1552,9 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 				createConditionBasedUponPreposition(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType, false, currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType, sameReferenceSet);
 			}
 		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		}			
+		}
 		//#endif
-		
+
 		currentRelationInList = currentRelationInList->next;
 	}
 }
@@ -1578,8 +1578,8 @@ bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, string
 				exit(0);
 			}
 		}
-		
-		/*OLD: find first occurance; not possible as the first word in multiword prepositions has often already been assigned an entity array index, eg He rode the carriage that is near to the horse. nsubj(near-7, carriage-4) / prep_to(near-7, horse-10) -> prep_near_to(carriage-4, horse-10) 
+
+		/*OLD: find first occurance; not possible as the first word in multiword prepositions has often already been assigned an entity array index, eg He rode the carriage that is near to the horse. nsubj(near-7, carriage-4) / prep_to(near-7, horse-10) -> prep_near_to(carriage-4, horse-10)
 		string singleWordPreposition = *prepositionName;
 		int indexOfPrepositionDelimiter = prepositionName->find(STANFORD_PARSER_PREPOSITION_DELIMITER);
 		if(indexOfPrepositionDelimiter != string::npos)
@@ -1593,36 +1593,36 @@ bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, string
 				exit(0);
 			}
 		}
-		*/		
-		
+		*/
+
 		if(currentFeatureInList->lemma == singleWordPreposition)
 		{
 			prepositionFeatureFound = true;
 			*indexOfPreposition = currentFeatureInList->entityIndex;
 		}
 		currentFeatureInList = currentFeatureInList->next;
-	}	
+	}
 	return prepositionFeatureFound;
-} 
+}
 
 void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity, GIAEntityNode * actionOrPropertyConditionEntity, string relationType, bool negative, Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType, bool sameReferenceSet)
-{	
-	/* does not cover all grounds	
+{
+	/* does not cover all grounds
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
 	relationType = performPrepositionReduction(relationType);
 	#endif
 	*/
-	
+
 	bool stanfordPrepositionFound = false;
 	string prepositionName = convertStanfordPrepositionToRelex(&relationType, NLPdependencyRelationsType, &stanfordPrepositionFound);
-	
+
 	//cout << "prepositionName = " << prepositionName << endl;
-	
-	bool passedPropositionTime = false;	
+
+	bool passedPropositionTime = false;
 	bool passedPropositionLocation = false;
 	bool passedPropositionReasonOrCircumstances = false;
 	bool passedPreposition = false;
-		
+
 	//parse specific relex questions: not required, as these have been added to the relationTypePreposition_NameArrays
 	/*
 	if(currentRelationInList->relationType == REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN)
@@ -1662,15 +1662,15 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 	else if(prepositionName == REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN)
 	{//NB time query entities obviously do not have associated times (time grammar flags generated by relex)
 		passedPropositionTime = true;
-		passedPreposition = true;				
-	}	
+		passedPreposition = true;
+	}
 	#endif
-				
+
 	for(int i=0; i<RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES; i++)
 	{
 		if(prepositionName == relationTypePropositionLocationNameArray[i])
 		{
-			if(!actionOrPropertyConditionEntity->hasAssociatedTime)	
+			if(!actionOrPropertyConditionEntity->hasAssociatedTime)
 			{//NB "at" and "on" are shared for location and time prepositions
 				passedPropositionLocation = true;
 			}
@@ -1680,19 +1680,19 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 	{
 		if(prepositionName == relationTypePropositionReasonOrCircumstanceNameArray[i])
 		{
-			if(!actionOrPropertyConditionEntity->hasAssociatedTime)	
-			{//NB in case "_" and "_" are shared for reason and time prepositions				
+			if(!actionOrPropertyConditionEntity->hasAssociatedTime)
+			{//NB in case "_" and "_" are shared for reason and time prepositions
 				passedPropositionReasonOrCircumstances = true;
 			}
 		}
 	}
-	
+
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
 		if(prepositionName[0] != RELATION_TYPE_PREPOSITION_FIRST_CHARACTER)
 		{//not valid for REFERENCE_TYPE_QUESTION_QUERY_VARIABLEs... [but this is not a problem because passedPropositionUnknown is processed last in the if/else switch below]
 			//passedPropositionUnknown = true;		//removed 17 April 2012
-			passedPreposition = true;		
+			passedPreposition = true;
 		}
 	}
 	else if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
@@ -1700,33 +1700,33 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 		if(stanfordPrepositionFound)
 		{
 			//passedPropositionUnknown = true;		//removed 17 April 2012
-			passedPreposition = true;		
-		}	
+			passedPreposition = true;
+		}
 	}
 	for(int i=0; i<RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES; i++)	//this code should only be required for 'how' qvar, because the other qvars should be detected within one of the above loops
 	{
 		if(prepositionName == relationTypeQVariableNameArray[i])
 		{
-			passedPreposition = true;	
+			passedPreposition = true;
 		}
-	}	
+	}
 	//cout << "prepositionName = " << prepositionName << endl;
 
-		
+
 	if(passedPreposition)
 	{
 
 		//cout << "3prepositionName = " << prepositionName << endl;
-		
+
 		//added 3 June 2012 for advanced referencing of prepositions
 		GIAEntityNode * conditionTypeConceptEntity;
 		int featureIndexOfPreposition = -1;
 		bool prepositionFeatureFound = determineFeatureIndexOfPreposition(currentSentenceInList, &prepositionName, &featureIndexOfPreposition);
 		if(!prepositionFeatureFound)
-		{	
+		{
 			featureIndexOfPreposition = FEATURE_INDEX_OF_PREPOSITION_UNKNOWN;
 		}
-		
+
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		cout << "prepositionFeatureFound = " << prepositionFeatureFound << endl;
 		cout << "prepositionName = " << prepositionName << endl;
@@ -1734,15 +1734,15 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 		#endif
 		bool entityAlreadyExistant = false;
 		string conditionTypeName = prepositionName;
-		conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureIndexOfPreposition, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);				
-			
-													
-		//cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl; 
-	
+		conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureIndexOfPreposition, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+
+
+		//cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl;
+
 		//cout << "createConditionBasedUponPreposition passedPreposition actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;
 		//cout << "createConditionBasedUponPreposition passedPreposition actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
 		//cout << "createConditionBasedUponPreposition passedPreposition conditionTypeConceptEntity = " << conditionTypeConceptEntity->entityName << endl;
-			
+
 		if(passedPropositionTime)
 		{
 			#ifdef GIA_TRANSLATOR_DEBUG
@@ -1751,7 +1751,7 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			#endif
 
 			#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
-			GIAEntityNodeArray[featureIndexOfPreposition] = addTimeConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);				
+			GIAEntityNodeArray[featureIndexOfPreposition] = addTimeConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 			#else
 			addTimeConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 			#endif
@@ -1762,13 +1762,13 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
 			cout << "locationConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
 			#endif
-			
+
 			#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
-			GIAEntityNodeArray[featureIndexOfPreposition] = addLocationConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);	
+			GIAEntityNodeArray[featureIndexOfPreposition] = addLocationConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 			#else
-			addLocationConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);				
+			addLocationConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 			#endif
-		}		
+		}
 		else if(passedPropositionReasonOrCircumstances)
 		{
 			#ifdef GIA_TRANSLATOR_DEBUG
@@ -1777,9 +1777,9 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			#endif
 
 			#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
-			GIAEntityNodeArray[featureIndexOfPreposition] = addReasonConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);		
+			GIAEntityNodeArray[featureIndexOfPreposition] = addReasonConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 			#else
-			addReasonConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);		
+			addReasonConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 			#endif
 		}
 		//else if(passedPropositionUnknown)		//removed 17 April 2012
@@ -1791,20 +1791,20 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			#endif
 
 			#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
-			GIAEntityNodeArray[featureIndexOfPreposition] = addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);				
+			GIAEntityNodeArray[featureIndexOfPreposition] = addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 			#else
-			addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);				
+			addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 			#endif
 			//currentRelationInList->relationType.substr(1, currentRelationInList->relationType.length()-1)
 		}
-		
-		//cout << "GIAEntityNodeArray[featureIndexOfPreposition]->entityName = " << GIAEntityNodeArray[featureIndexOfPreposition]->entityName << endl;	
+
+		//cout << "GIAEntityNodeArray[featureIndexOfPreposition]->entityName = " << GIAEntityNodeArray[featureIndexOfPreposition]->entityName << endl;
 
 	}
 	else if(passedPropositionTime)
-	{//required for extractDatesStanfordCoreNLP 
-			
-		addTimeToProperty(actionOrPropertyConditionEntity);	
+	{//required for extractDatesStanfordCoreNLP
+
+		addTimeToProperty(actionOrPropertyConditionEntity);
 	}
 }
 
@@ -1813,14 +1813,14 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 string performPrepositionReduction(string relationType)
 {
 	string relationTypeModified = relationType;
-	
+
 	//perform preposition reduction based upon frenchEnglishPrepositions.ods;
 	for(int i=0; i<RELATION_TYPE_PREPOSITION_REDUCTION_NUMBER_OF_TYPES; i++)
 	{
 		int prepositionTypeNumberOfVariations = relationTypePropositionReductionNumberVariationsArray[i];
 		//cout << "prepositionTypeNumberOfVariations = " << prepositionTypeNumberOfVariations << endl;
 		for(int j=0; j<prepositionTypeNumberOfVariations; j++)
-		{	
+		{
 			if(relationType == relationTypePropositionReductionNameArray[i][j])
 			{
 				//cout << "matched preposition; " << relationType << endl;
@@ -1828,24 +1828,24 @@ string performPrepositionReduction(string relationType)
 			}
 		}
 	}
-	
+
 	return relationTypeModified;
 }
 #endif
-	
+
 
 
 
 
 void addTimeToProperty(GIAEntityNode * timeConditionEntity)
-{	
+{
 	//cout << "addTimeToProperty timeConditionEntity->entityName = " << timeConditionEntity->entityName << endl;
 	timeConditionEntity->conditionType = CONDITION_NODE_TYPE_TIME;
-	
+
 	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
-	
-	timeConditionEntity->timeConditionNode = newTimeCondition;	
-	
+
+	timeConditionEntity->timeConditionNode = newTimeCondition;
+
 }
 
 
@@ -1858,39 +1858,39 @@ void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * ti
 #endif
 */
 GIAEntityNode * addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, GIAEntityNode * conditionTypeConceptEntity, bool sameReferenceSet)
-{	
+{
 	//cout << "addTimeConditionToProperty propertyNode->entityName = " << propertyNode->entityName << endl;
 	timeConditionEntity->conditionType = CONDITION_NODE_TYPE_TIME;
-	
+
 	/*
 	#ifdef GIA_USE_TIME_NODE_INDEXING
 	int timeConditionEntityIndex = -1;
 	bool argumentEntityAlreadyExistant = false;
 	long timeConditionTotalTimeInSeconds = calculateTotalTimeInSeconds(timeConditionEntity->entityName);
 	GIATimeConditionNode * newTimeCondition = findOrAddTimeNodeByNumber(timeConditionNodesActiveList, conceptEntityNamesList, timeConditionAbsoluteTimeValue, &argumentEntityAlreadyExistant, &timeConditionEntityIndex, true);
-	#else	
+	#else
 	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
 	#endif
 	*/
-	
+
 	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
-	
-	timeConditionEntity->timeConditionNode = newTimeCondition;	
-	
+
+	timeConditionEntity->timeConditionNode = newTimeCondition;
+
 	return addOrConnectConditionToEntity(propertyNode, timeConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 }
 
 GIAEntityNode * addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity, GIAEntityNode * conditionTypeConceptEntity, bool sameReferenceSet)
-{	
+{
 	locationConditionEntity->conditionType = CONDITION_NODE_TYPE_LOCATION;
-	
+
 	return addOrConnectConditionToEntity(propertyNode, locationConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 }
 
 GIAEntityNode * addReasonConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * reasonConditionEntity, GIAEntityNode * conditionTypeConceptEntity, bool sameReferenceSet)
-{	
+{
 	reasonConditionEntity->conditionType = CONDITION_NODE_TYPE_REASON;
-	
+
 	return addOrConnectConditionToEntity(propertyNode, reasonConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 }
 
@@ -1898,7 +1898,7 @@ GIAEntityNode * addReasonConditionToProperty(GIAEntityNode * propertyNode, GIAEn
 GIAEntityNode * addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, GIAEntityNode * conditionTypeConceptEntity, bool sameReferenceSet)
 {
 	//timeConditionEntity->conditionType = CONDITION_NODE_TYPE_UNDEFINED;
-	
+
 	return addOrConnectConditionToEntity(propertyNode, propertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 }
 

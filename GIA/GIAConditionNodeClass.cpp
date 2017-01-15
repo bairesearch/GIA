@@ -3,7 +3,7 @@
  * File Name: GIAConditionNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m2a 30-June-2012
+ * Project Version: 1n1a 15-July-2012
  *
  *******************************************************************************/
 
@@ -16,7 +16,7 @@
 
 //~? [eg past, wednesday, etc]
 GIATimeConditionNode::GIATimeConditionNode(void)
-{	
+{
 	conditionName = "";
 	tenseOnlyTimeCondition = false;
 	tense = GRAMMATICAL_TENSE_UNDEFINED;
@@ -30,9 +30,9 @@ GIATimeConditionNode::GIATimeConditionNode(void)
 	year = TIME_YEAR_UNDEFINED;
 	period = -1;
 	totalTimeInSeconds = 0;
-	
+
 	isProgressive = false;
-	
+
 	idActiveListReorderdIDforXMLsave = 0;
 	printX = 0;
 	printY = 0;
@@ -45,17 +45,17 @@ GIATimeConditionNode::~GIATimeConditionNode(void)
 string generateDateTimeConditionName(int dayOfMonth, int month, long year)
 {
 	//cout << "as3" << endl;
-	
+
 	char dayOfMonthStringcharstar[20] = "";
 	char monthStringcharstar[20] = "";
 	char yearStringcharstar[20] = "";
-	
+
 	/*
 	cout << "dayOfMonth = " << dayOfMonth << endl;
 	cout << "month = " << month << endl;
 	cout << "year = " << year << endl;
 	*/
-	
+
 	if(dayOfMonth != TIME_DAY_OF_MONTH_UNDEFINED)
 	{
 		sprintf(dayOfMonthStringcharstar, "%d", dayOfMonth);
@@ -69,7 +69,7 @@ string generateDateTimeConditionName(int dayOfMonth, int month, long year)
 		sprintf(yearStringcharstar, "%d", year);
 	}
 	string dateTimeConditionName = "";
-	
+
 	if(TIME_DATE_DISPLAY_FORMAT == TIME_DATE_DISPLAY_FORMAT_AMERICAN)
 	{
 		dateTimeConditionName = dateTimeConditionName + monthStringcharstar + "/" + dayOfMonthStringcharstar + "/" + yearStringcharstar;
@@ -88,7 +88,7 @@ string generateDateTimeConditionName(int dayOfMonth, int month, long year)
 
 long calculateTotalTimeInSeconds(int dayOfMonth, int month, long year)
 {
-
+	return 0;
 }
 
 

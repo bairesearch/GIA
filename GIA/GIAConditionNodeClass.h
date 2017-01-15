@@ -3,7 +3,7 @@
  * File Name: GIAConditionNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m2a 30-June-2012
+ * Project Version: 1n1a 15-July-2012
  *
  *******************************************************************************/
 
@@ -70,10 +70,10 @@ public:
 
 	GIATimeConditionNode(void);
 	~GIATimeConditionNode(void);
-	
+
 	string conditionName;
-		
-	//temporal coordinate system here - this needs to be replaced with a system time (or added to) 
+
+	//temporal coordinate system here - this needs to be replaced with a system time (or added to)
 	int tense;
 	/*
 	enum tense {tenseundefined=GRAMMATICAL_TENSE_UNDEFINED, present=GRAMMATICAL_TENSE_PRESENT, past=GRAMMATICAL_TENSE_PAST, future=GRAMMATICAL_TENSE_FUTURE};
@@ -81,9 +81,9 @@ public:
 	/*
 	enum
 	{
-		tenseundefined, present, past, future 
+		tenseundefined, present, past, future
 	}tense;
-	*/	
+	*/
 	double second;
 	int hour;
 	int dayOfWeek;
@@ -104,10 +104,10 @@ public:
 	long year;	//in years < 0AD is negative
 	double period;	//in seconds
 	long totalTimeInSeconds;
-	
-	bool tenseOnlyTimeCondition;	
+
+	bool tenseOnlyTimeCondition;
 	bool isProgressive;
-	
+
 	long idActiveListReorderdIDforXMLsave;	//for CXL output only
 	int printX;			//for CXL output only
 	int printY;			//for CXL output only

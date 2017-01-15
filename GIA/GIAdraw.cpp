@@ -3,7 +3,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m2a 30-June-2012
+ * Project Version: 1n1a 15-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -38,32 +38,32 @@ void initiateMaxXAtAParticularY()
 void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, ofstream * writeFileObject)
 {
 	vector<GIAEntityNode*>::iterator entityIter;
-	
+
 	Reference * currentReferenceInPrintList = firstReferenceInPrintList;
-		
+
 	initiateMaxXAtAParticularY();
 	int xInitial = DRAW_X_INITIAL_OFFSET;
 	int yInitial = DRAW_Y_INITIAL_OFFSET;
 	maxXAtAParticularY[yInitial] = xInitial;
 	//first pass; determine maxXAtAParticularY	[and use these to centre each row {at a given y} respectively]
-		
-	for (entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++) 
-	{		
+
+	for (entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
+	{
 		if(!((*entityIter)->initialisedForPrinting))
 		{
 			#ifdef GIA_DRAW_DEBUG
 			cout << "\ttracing..." << (*entityIter)->entityName << endl;
 			#endif
-			
+
 			//initiateMaxXAtAParticularY();
 			xInitial = maxXAtAParticularY[yInitial];
-								
+
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			//cout << "h2" << endl;
-		}	
+		}
         	else
 		{//NB if already initalised for printing, disregard
-	
+
 		}
 	}
 }
@@ -75,37 +75,37 @@ Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAEntityNode * en
 		//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
 		vec pos2;
 		pos2.x = entityNodeToConnect->printX;
-		pos2.y = entityNodeToConnect->printY;	
+		pos2.y = entityNodeToConnect->printY;
 		pos2.z = DRAW_CONNECTION_Z;
 		currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, pos1, &pos2, entityDefinitionConnectionColour, writeFileObject, connectionName, initialiseOrPrint);
 	}
-	
+
 	return currentReferenceInPrintList;
 }
 
 
 Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, ofstream * writeFileObject)
 {
-	
+
 	//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
 	if(!(entityNode->initialisedForPrinting) && !(entityNode->disabled))
-	{		
+	{
 		#ifdef GIA_DRAW_DEBUG
 		if(entityNode->isProperty)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (is property)" << endl;		
+			cout << "entityNode = " << entityNode->entityName << " (is property)" << endl;
 		}
 		else if(entityNode->isAction)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (is action)" << endl;		
+			cout << "entityNode = " << entityNode->entityName << " (is action)" << endl;
 		}
 		else if(entityNode->isCondition)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (is condition)" << endl;		
-		}				
+			cout << "entityNode = " << entityNode->entityName << " (is condition)" << endl;
+		}
 		else if(entityNode->hasAssociatedInstance)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated instance)" << endl;	
+			cout << "entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
 		}
 		else if(entityNode->hasAssociatedInstanceIsAction)
 		{
@@ -114,10 +114,10 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		else if(entityNode->hasAssociatedInstanceIsCondition)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (has associated property is condition)" << endl;
-		}		 
+		}
 		else if(entityNode->hasAssociatedTime)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated time)" << endl;	
+			cout << "entityNode = " << entityNode->entityName << " (has associated time)" << endl;
 		}
 		else
 		{
@@ -125,30 +125,30 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		}
 		#endif
 
-		
-		
+
+
 		//cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
 		//cout << "\tentityNode->isProperty = " << entityNode->isProperty << endl;
 		//cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
 		//cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;
-		
-		
+
+
 		entityNode->initialisedForPrinting = true;
-		
+
 		maxXAtAParticularY[y] = maxXAtAParticularY[y] + DRAW_X_SPACE_BETWEEN_ENTITIES;	//only used, for indepdendent network visualisation (eg, when rendering next sentence)
-		
+
 		entityNode->printX = x;
 		entityNode->printY = y;
-		
-		
+
+
 		int q, r;
-	
+
 		vec pos1;
 
 		pos1.x = entityNode->printX;
-		pos1.y = entityNode->printY;	
+		pos1.y = entityNode->printY;
 		pos1.z = DRAW_CONNECTION_Z;
-		
+
 		//cout << "a1" << endl;
 
 		int entityDefinitionConnectionColour;
@@ -169,15 +169,15 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		{
 			entityDefinitionConnectionColour = GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR;
 		}
-		
+
 		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 		{
 			int q = entityVectorConnectionDrawPosYinitialArray[i];
-			int r = entityVectorConnectionDrawPosXinitialArray[i];			
-			for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++) 
-			{	
+			int r = entityVectorConnectionDrawPosXinitialArray[i];
+			for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
+			{
 				currentReferenceInPrintList = initialiseEntityNodeForPrinting((*connectionIter)->entity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-				
+
 				bool pass = true;
 				int entityConnectionColour = entityVectorConnectionDrawColourNameArray[i];
 				if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
@@ -191,9 +191,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 						pass = false;
 					}
 				}
-				
+
 				if(pass)
-				{				
+				{
 					if(entityVectorConnectionDrawConnectionArray[i])
 					{
 						#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
@@ -203,18 +203,18 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 						}
 						else
 						{
-							entityConnectionColour = DAT_FILE_COLOUR_RED;					
+							entityConnectionColour = DAT_FILE_COLOUR_RED;
 						}
 						#endif
-						currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, (*connectionIter)->entity, currentReferenceInPrintList, initialiseOrPrint, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, writeFileObject);				
+						currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, (*connectionIter)->entity, currentReferenceInPrintList, initialiseOrPrint, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, writeFileObject);
 					}
 				}
-				q = q + entityVectorConnectionDrawPosYspacingArray[i];			
+				q = q + entityVectorConnectionDrawPosYspacingArray[i];
 			}
-		}		
-		
+		}
+
 		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
-		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;				
+		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
 		if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
 		{
 			//cout << "b7" << endl;
@@ -225,30 +225,30 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 
 			//cout << "b8" << endl;
-			
+
 			//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
 			vec pos2;
 			pos2.x = timeConditionNodePrintX;
-			pos2.y = timeConditionNodePrintY;	
+			pos2.y = timeConditionNodePrintY;
 			pos2.z = DRAW_CONNECTION_Z;
 			currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_TIME_CONNECTION_COLOUR, writeFileObject, "time", initialiseOrPrint);
-			
+
 		}
 
-				
+
 		//cout << "a7" << endl;
-		
+
 		if(initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] == true)
-		{	
+		{
 			//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-			
+
 			int boxThickness = GIA_DRAW_THICKNESS_NORMAL;
-			
+
 			int entityColour;
 			if(entityNode->isQuery)
 			{
 				entityColour = GIA_DRAW_QUERY_QUESTION_NODE_COLOUR;
-			}			
+			}
 			else if(entityNode->isAnswerToQuery)
 			{
 				entityColour = GIA_DRAW_QUERY_ANSWER_NODE_COLOUR;
@@ -277,14 +277,14 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			else if(entityNode->hasAssociatedInstanceIsCondition)
 			{
 				entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
-			}						
+			}
 			else if(entityNode->isProperty)
 			{
 				if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
 				{
 					boxThickness = GIA_DRAW_THICKNESS_THICK;
 				}
-				
+
 				if(entityNode->hasQuality)
 				{
 					entityColour = GIA_DRAW_PROPERTY_QUALITY_NODE_COLOUR;
@@ -292,8 +292,8 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				else
 				{
 					entityColour = GIA_DRAW_PROPERTY_NODE_COLOUR;
-				}				
-								
+				}
+
 				if(entityNode->hasMeasure)
 				{
 					entityColour = GIA_DRAW_PROPERTY_MEASURE_NODE_COLOUR;
@@ -306,9 +306,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			}
 			else if(entityNode->isAction)
 			{
-				entityColour = GIA_DRAW_ACTION_NODE_COLOUR;	
+				entityColour = GIA_DRAW_ACTION_NODE_COLOUR;
 			}
-			/*			
+			/*
 			else if(entityNode->hasAssociatedTime)
 			{
 				entityColour = GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR;	//clear identify a time node
@@ -316,21 +316,32 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			*/
 			else if(entityNode->isCondition)
 			{
-				entityColour = GIA_DRAW_CONDITION_NODE_COLOUR;	//clear identify a time node				
-			}		
+				entityColour = GIA_DRAW_CONDITION_NODE_COLOUR;	//clear identify a time node
+			}
 			else if(entityNode->hasAssociatedInstance)
 			{//the original spec seemed to imply that entities that have associated properties (ie, that define properties) are special but they don't appear to be
 				if(!(entityNode->isProperty))
-				{		
+				{
 					//added 2 May 11a (highlight entities which define property nodes)
 					entityColour = GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_CONCEPT_NODE_COLOUR;
 				}
-			}					
+			}
 			else
-			{	
+			{
 				entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
 			}
-										
+			
+			#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
+			if(entityNode->referenceSetID == GIA_REFERENCE_SET_ID_UNDEFINED)
+			{
+				entityColour = DAT_FILE_COLOUR_RED;
+			}
+			else
+			{
+				entityColour = DAT_FILE_COLOUR_GREEN;
+			}
+			#endif
+
 			//first, print this action node.
 			string nameOfBox = "";
 			if(entityNode->hasQuantity)
@@ -345,13 +356,13 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 					quantityNumberStringTemp = printQuantityNumberString(entityNode);
 				}
 				nameOfBox = nameOfBox + quantityNumberStringTemp + " " + entityNode->entityName;
-				
+
 			}
 			else if(entityNode->negative)
 			{
 				nameOfBox = nameOfBox + "!" + entityNode->entityName;
 			}
-			
+
 			else
 			{
 				nameOfBox = entityNode->entityName;
@@ -359,49 +370,49 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, writeFileObject, boxThickness, initialiseOrPrint);
 
 		}
-		
-		//cout << "a8" << endl;	
-		
+
+		//cout << "a8" << endl;
+
 		#ifdef GIA_DRAW_DEBUG
 		if(entityNode->isProperty)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (is property)" << endl;		
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (is property)" << endl;
 		}
 		else if(entityNode->isAction)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (is action)" << endl;		
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (is action)" << endl;
 		}
 		else if(entityNode->isCondition)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (is condition)" << endl;		
-		}					
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (is condition)" << endl;
+		}
 		else if(entityNode->hasAssociatedInstance)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property)" << endl;	
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property)" << endl;
 		}
 		else if(entityNode->hasAssociatedInstanceIsAction)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property is action)" << endl;
-		} 
+		}
 		else if(entityNode->hasAssociatedInstanceIsCondition)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property is condition)" << endl;
-		}		
+		}
 		else if(entityNode->hasAssociatedTime)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated time)" << endl;	
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated time)" << endl;
 		}
 		else
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << endl;
 		}
 		#endif
-							
+
 	}
 	//cout << "a0c" << endl;
-	
+
 	return currentReferenceInPrintList;	//does this need to be newCurrentReferenceInPrintList?
-		
+
 }
 
 
@@ -413,24 +424,24 @@ Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeCo
 	int timeConditionNodePrintY = y;
 	timeConditionNode->printX = timeConditionNodePrintX;
 	timeConditionNode->printY = timeConditionNodePrintY;
-	
+
 	vec pos1;
 	vec pos2;
 	vec pos3;
 
 	pos1.x = timeConditionNodePrintX;
-	pos1.y = timeConditionNodePrintY;	
+	pos1.y = timeConditionNodePrintY;
 	pos1.z = DRAW_CONNECTION_Z;
-	
+
 	//may accidentially overwrite adjacent nodes/connections that have already been printed here; be careful...
 
-	
+
 	int boxThickness = GIA_DRAW_THICKNESS_NORMAL;
 	if(timeConditionNode->isProgressive)
 	{
 		//cout << "box thickness is high" << endl;
 		boxThickness = GIA_DRAW_THICKNESS_THICK;
-	}				
+	}
 	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_TIME_NODE_COLOUR, &(timeConditionNode->conditionName), writeFileObject, boxThickness, initialiseOrPrint);
 
 	/*
@@ -441,11 +452,11 @@ Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeCo
 	}
 	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, timeConditionNodeColour, &(timeConditionNode->conditionName), writeFileObject, GIA_DRAW_THICKNESS_NORMAL, initialiseOrPrint);
 	*/
-	
+
 	#ifdef GIA_DRAW_DEBUG
 	cout << "Exiting: timeConditionNode = " << timeConditionNode->conditionName << endl;
 	#endif
-	
+
 	return currentReferenceInPrintList;	//does this need to be newCurrentReferenceInPrintList?
 }
 
@@ -473,7 +484,7 @@ Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrin
 			newCurrentReferenceInPrintList = LDaddBasicTextualSpriteStringToReferenceList(&connectionTypeName, newCurrentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
 		}
 		if(initialiseOrPrint[DRAW_CREATE_SVG_REFERENCES] == true)
-		{		
+		{
 			vec positionSVG;
 			positionSVG.x = vect.x - GIA_DRAW_BASICENTITY_NODE_WIDTH/3;
 			positionSVG.y = vect.y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
@@ -481,7 +492,7 @@ Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrin
 			writeSVGText(writeFileObject, connectionTypeName, &positionSVG, SVG_SCALE_FACTOR*SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
 		}
 	}
-	
+
 	return newCurrentReferenceInPrintList;
 }
 
@@ -524,14 +535,14 @@ Reference * createReferenceConnection(Reference * currentReferenceInPrintList, v
 		newCurrentReferenceInPrintList->next = newDispayReference;
 		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
 	}
-	
+
 	if(initialiseOrPrint[DRAW_CREATE_SVG_REFERENCES] == true)
-	{	
+	{
 		pos1->z = GIA_OUTPUT_Z_POSITION_CONNECTIONS;
 		pos2->z = GIA_OUTPUT_Z_POSITION_CONNECTIONS;
 		writeSVGLine(writeFileObject, pos1, pos2, colour);
 	}
-	
+
 	return newCurrentReferenceInPrintList;
 }
 
@@ -545,7 +556,7 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 
 	if(initialiseOrPrint[DRAW_CREATE_LDR_REFERENCES] == true)
 	{
-		
+
 		newCurrentReferenceInPrintList->type = REFERENCE_TYPE_QUAD;
 		newCurrentReferenceInPrintList->colour = colour;
 
@@ -658,12 +669,12 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 		positionLDR.z = vect->z  -GIA_OUTPUT_Z_POSITION_NODES;
 		newCurrentReferenceInPrintList = LDaddBasicTextualSpriteStringToReferenceList(text, newCurrentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
 	}
-	
+
 	if(initialiseOrPrint[DRAW_CREATE_SVG_REFERENCES] == true)
-	{	
+	{
 		vec positionSVG;
 		positionSVG.x = vect->x + GIA_DRAW_BASICENTITY_NODE_WIDTH/2;
-		positionSVG.y = vect->y;	
+		positionSVG.y = vect->y;
 		positionSVG.z = GIA_OUTPUT_Z_POSITION_NODES;
 		writeSVGBox(writeFileObject, &positionSVG, width, height, colour, GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG*thickness, GIA_USE_SVG_ELLIPTICAL_BOXES);
 		positionSVG.x = vect->x - GIA_DRAW_BASICENTITY_NODE_WIDTH/3;
@@ -671,7 +682,7 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 		positionSVG.z = GIA_OUTPUT_Z_POSITION_TEXT;
 		writeSVGText(writeFileObject, *text, &positionSVG, SVG_SCALE_FACTOR*SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
 	}
-	
+
 	return newCurrentReferenceInPrintList;
 }
 
@@ -681,7 +692,7 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 
 void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile, bool useOutputSVGFile)
 {//most of this is copied from CSexecFlow.cpp
-	
+
 	char * outputFileNameLDRcharstar = const_cast<char*>(outputFileNameLDR.c_str());
 	char * displayFileNamePPMcharstar = const_cast<char*>(outputFileNamePPM.c_str());
 	char * outputFileNameSVGcharstar = const_cast<char*>(outputFileNameSVG.c_str());
@@ -692,7 +703,7 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 		writeFileObject = new ofstream(outputFileNameSVGcharstar);
 		writeSVGHeader(writeFileObject);
 	}
-	
+
 	bool initialiseOrPrint[3];
 	initialiseOrPrint[DRAW_CREATE_LDR_REFERENCES] = false;
 	initialiseOrPrint[DRAW_CREATE_SVG_REFERENCES] = false;
@@ -707,7 +718,7 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 		initialiseOrPrint[DRAW_CREATE_SVG_REFERENCES] = true;
 		initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = true;
 	}
-	
+
 	Reference * firstReferenceInPrintList = new Reference();
 	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, initialiseOrPrint, firstReferenceInPrintList, writeFileObject);
 	/*
@@ -715,7 +726,7 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 	initialiseOrPrint = DRAW_PRINT;
 	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, initialiseOrPrint, firstReferenceInPrintList, writeFileObject);
 	*/
-		
+
 
 
 	//cout << "h2" << endl;
@@ -726,18 +737,18 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 		writeFileObject->close();
 		delete writeFileObject;
 	}
-	
+
 	//cout << "h3" <<endl;
-	
+
 
 	if(initialiseOrPrint[DRAW_CREATE_LDR_REFERENCES] == true)
 	{
 		writeReferencesToFile(outputFileNameLDRcharstar, firstReferenceInPrintList);
 	}
-	
+
 	if(display)
 	{
-	
+
 		//re-parse, then re-write to create a collapsed referencelist file...
 		//method1:
 		char * topLevelSceneFileName = outputFileNameLDRcharstar;
@@ -780,7 +791,7 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 		{
 			generatePixmapFromRGBMap(displayFileNamePPMcharstar, width, height, rgbMap);
 		}
-		
+
 		delete rgbMap;
 
 	}

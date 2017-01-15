@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammar.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m2a 30-June-2012
+ * Project Version: 1n1a 15-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -24,7 +24,7 @@
 using namespace std;
 
 
-#include "GIAglobalDefs.h"					
+#include "GIAglobalDefs.h"
 #include "GIASentenceClass.h"
 #include "GIAEntityNodeClass.h"
 #include "GIAEntityConnectionClass.h"
@@ -37,14 +37,15 @@ using namespace std;
 
 
 //Pass A
-void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType, int NLPfeatureParser);
+void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAFeatureTempEntityNodeArray[], int NLPdependencyRelationsType, int NLPfeatureParser);
+void locateAndAddAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType, int NLPfeatureParser, GIAEntityNode * GIAFeatureTempEntityNodeArray[]);
 
 #ifdef GIA_USE_RELEX
 void fillGrammaticalArraysRelex(Sentence * currentSentenceInList);
 #endif
 //uses dependency relations to derive grammar [uses stanfordPOS/NER information to derive grammar, if NLPfeatureParser == Stanford Core NLP]
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
-void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[]);
+void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAFeatureTempEntityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[]);
 #endif
 	#ifdef GIA_NLP_PARSER_STANFORD_CORENLP
 	void extractPastTenseFromPOStag(string * POStag, Feature * feature);
@@ -52,11 +53,11 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 	void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLPfeatureParser);
 	void extractPastTense(Feature * featureWithEntityIndex, int entityIndexContainingTenseIndication, Feature * firstFeatureInList, int NLPfeatureParser);
 	#endif
-		
-void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], Feature * firstFeatureInSentence);
 
-#ifdef GIA_USE_ADVANCED_REFERENCING	
-void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * currentSentenceInList, GIAEntityNode * subjectObjectEntityWithAuxillary);	
-#endif							
-			
+void applyGrammaticalInfoToAllEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], Feature * firstFeatureInSentence);
+
+#ifdef GIA_USE_ADVANCED_REFERENCING
+void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * currentSentenceInList, int subjectObjectEntityWithAuxillaryEntityIndex, string * subjectObjectEntityWithAuxillaryEntityName);
+#endif
+
 #endif

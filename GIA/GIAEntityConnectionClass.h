@@ -3,7 +3,7 @@
  * File Name: GIAEntityConnectionClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m2a 30-June-2012
+ * Project Version: 1n1a 15-July-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -38,16 +38,16 @@ public:
 	GIAEntityConnection(void);
 	~GIAEntityConnection(void);
 	GIAEntityConnection(string * entityName, long idInstance);
-	
+
 	GIAEntityNode * entity;
-	
+
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	bool sameReferenceSet;
 	#endif
-		
+
 	#ifdef GIA_USE_DATABASE
 	bool referenceLoaded;
-	string entityName;	//records the vector connection target entity name (to enable loading from db) [of target] 
+	string entityName;	//records the vector connection target entity name (to enable loading from db) [of target]
 	long idInstance;	//records the vector connection target instance id (to enable loading from db) [of target]
 	bool loaded;		//signifies whether the vector connection target node has been loaded and is in RAM (eg from the db)
 	bool modified;		//signifies whether the database needs to be updated upon exit with modified reference

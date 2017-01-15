@@ -3,7 +3,7 @@
  * File Name: GIASentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m2a 30-June-2012
+ * Project Version: 1n1a 15-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -72,7 +72,7 @@ public:
 	int start;
 	int end;
 	int head;
-	
+
 	StanfordCoreNLPMention * next;
 };
 
@@ -84,7 +84,7 @@ public:
 	~StanfordCoreNLPCoreference(void);
 
 	StanfordCoreNLPMention * firstMentionInList;
-	
+
 	StanfordCoreNLPCoreference * next;
 };
 
@@ -103,7 +103,7 @@ public:
 	long idActiveList;
 	int entityIndex;	//ie "head"
 	string entityName;
-	
+
 	GIAMention * next;
 };
 
@@ -115,7 +115,7 @@ public:
 	~GIACoreference(void);
 
 	GIAMention * firstMentionInList;
-	
+
 	GIACoreference * next;
 };
 
@@ -136,22 +136,22 @@ public:
 	int relationDependentIndex;
 	string relationGovernor;
 	int relationGovernorIndex;
-	
+
 	bool disabled;
 
 	#ifdef GIA_USE_RELEX
 	bool subjObjRelationAlreadyAdded;	//Relex Only
 	#endif
-	
+
 	#ifdef GIA_USE_STANFORD_CORENLP
 	bool prepositionCombinationAlreadyCreatedTemp;
-	#endif	
-	
+	#endif
+
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	bool auxillaryIndicatesDifferentReferenceSet;
 	bool rcmodIndicatesSameReferenceSet;
 	#endif
-	
+
 	Relation * next;
 };
 
@@ -166,12 +166,12 @@ public:
 	int entityIndex;
 	string word;
 	string lemma;
-	
+
 	#ifdef GIA_USE_RELEX
 	string type;
 	string grammar;
 	#endif
-	
+
 	int NER;
 	#ifdef GIA_USE_STANFORD_CORENLP
 	int CharacterOffsetBegin;
@@ -180,20 +180,25 @@ public:
 	string NormalizedNER;
 	string Timex;
 	#endif
-	
-	//derived variables:	
-	bool grammaticalIsDateOrTime; 
+
+	//derived variables:
+	bool grammaticalIsDateOrTime;
 	int grammaticalTense;
-	bool grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES]; 
+	bool grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];
 	int grammaticalNumber;
 	bool grammaticalIsDefinite;
 	bool grammaticalIsProperNoun;
 	int grammaticalGender;
 	bool grammaticalIsPronoun;
 	int grammaticalWordType;
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	int grammaticalIsDefiniteIndexOfDeterminer;
+	#endif
 	
 	bool isPronounReference;
-		
+
+	bool entityDisabled;	//added 14 July 2012b
+	
 	Feature * next;
 	Feature * previous;	//used for reference lookup
 };
@@ -206,9 +211,9 @@ public:
 
 	Sentence(void);
 	~Sentence(void);
-	
+
 	int sentenceIndex;
-	
+
 	#ifdef GIA_USE_RELEX
 	string sentenceText;		//not required - delete in future
 	string constituentsText;	//not required - delete in future
@@ -220,12 +225,12 @@ public:
 	#ifdef GIA_USE_STANFORD_CORENLP
 	StanfordCoreNLPCoreference * firstCoreferenceInList;
 	#endif
-		
+
 	int maxNumberOfWordsInSentence;
-		
+
 	Relation * firstRelationInList;
 	Feature * firstFeatureInList;
-	
+
 	Sentence * next;
 	Sentence * previous;	//used for reference lookup
 

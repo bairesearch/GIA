@@ -3,7 +3,7 @@
  * File Name: GIAnlp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m2a 30-June-2012
+ * Project Version: 1n1a 15-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -40,7 +40,7 @@
 	#define StanfordCoreNLP_XML_TAG_document ((string)"document")
 		#define StanfordCoreNLP_XML_TAG_sentences ((string)"sentences")
 			#define StanfordCoreNLP_XML_TAG_sentence ((string)"sentence")
-			#define StanfordCoreNLP_XML_ATTRIBUTE_id ((string)"id")	
+			#define StanfordCoreNLP_XML_ATTRIBUTE_id ((string)"id")
 				#define StanfordCoreNLP_XML_TAG_tokens ((string)"tokens")
 					#define StanfordCoreNLP_XML_TAG_token ((string)"token")
 						#define StanfordCoreNLP_XML_TAG_word ((string)"word")
@@ -56,13 +56,13 @@
 				#define StanfordCoreNLP_XML_TAG_collapseddependencies ((string)"collapsed-dependencies")
 				#define StanfordCoreNLP_XML_TAG_collapsedccprocesseddependencies ((string)"collapsed-ccprocessed-dependencies")
 					#define StanfordCoreNLP_XML_TAG_dep ((string)"dep")
-					#define StanfordCoreNLP_XML_ATTRIBUTE_idx ((string)"idx")			
+					#define StanfordCoreNLP_XML_ATTRIBUTE_idx ((string)"idx")
 						#define StanfordCoreNLP_XML_TAG_governor ((string)"governor")
-						#define StanfordCoreNLP_XML_TAG_dependent ((string)"dependent")				
+						#define StanfordCoreNLP_XML_TAG_dependent ((string)"dependent")
 		#define StanfordCoreNLP_XML_TAG_coreferences ((string)"coreference")			//NB this apppears to be a bug in the StanfordCoreNLP code (NB it should be called "coreferences"
 			#define StanfordCoreNLP_XML_TAG_coreference ((string)"coreference")
 				#define StanfordCoreNLP_XML_TAG_mention ((string)"mention")
-				#define StanfordCoreNLP_XML_ATTRIBUTE_representative ((string)"representative")			
+				#define StanfordCoreNLP_XML_ATTRIBUTE_representative ((string)"representative")
 					#define StanfordCoreNLP_XML_TAG_sentence ((string)"sentence")
 					#define StanfordCoreNLP_XML_TAG_start ((string)"start")		//this may not be important
 					#define StanfordCoreNLP_XML_TAG_end ((string)"end")		//this may not be important
@@ -78,7 +78,7 @@
 
 static string StanfordCoreNLP_relationSetNameArray[StanfordCoreNLP_numberOfDependencySetsPerSentence] = {StanfordCoreNLP_XML_TAG_basicdependencies, StanfordCoreNLP_XML_TAG_collapseddependencies, StanfordCoreNLP_XML_TAG_collapsedccprocesseddependencies};
 
-				
+
 void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelationXMLFileName, int NLPParser, string NLPexeFolderArray[]);
 
 bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputTextNLPfeatureXMLFileName, bool isQuery, Paragraph * firstParagraphInList, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode);

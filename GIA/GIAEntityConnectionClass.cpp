@@ -3,7 +3,7 @@
  * File Name: GIAEntityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m2a 30-June-2012
+ * Project Version: 1n1a 15-July-2012
  *
  *******************************************************************************/
 
@@ -24,7 +24,7 @@ GIAEntityConnection::GIAEntityConnection(void)
 	loaded = false;
 	modified = false;
 	added = false;
-	#endif	
+	#endif
 }
 GIAEntityConnection::~GIAEntityConnection(void)
 {
@@ -42,6 +42,6 @@ GIAEntityConnection::GIAEntityConnection(string * startEntityName, long startIdI
 	loaded = false;
 	modified = false;
 	added = false;
-	#endif	
+	#endif
 }
 

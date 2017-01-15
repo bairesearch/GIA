@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m2a 30-June-2012
+ * Project Version: 1n1a 15-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -24,7 +24,7 @@
 using namespace std;
 
 
-#include "GIAglobalDefs.h"					
+#include "GIAglobalDefs.h"
 #include "GIASentenceClass.h"
 #include "GIAEntityNodeClass.h"
 #include "GIAEntityConnectionClass.h"
@@ -37,6 +37,7 @@ using namespace std;
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION_OLD
 
 
+
 //#ifdef GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS	//this condition has been removed for debugging output replication purposes (although this condition is not necessary in practice?)
 	#define GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PRONOUN_LEMMA_CASE_ASSIGNMENT_BUG_MAKE_ALL_LEMMAS_LOWER_CASE	//used to resolve the issue where 'time'/'freedom' and 'Time'/'Freedom' are not matched etc
 //#endif
@@ -44,38 +45,47 @@ using namespace std;
 	#define FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION 	//added 26 April 2012 [UNTESTED]
 //#endif
 
-#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE	//differentiate between explicit subjects/objects [NLP/temp2] and derived subjects and objects [GIA/temp]
-
 #ifdef GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 		#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY	//this is required considering reference look up of non definite sets is never desired
 		#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
 			#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY
-			#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY
-				#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-					#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_EXPLICIT_SUBJECT_OR_OBJECT_ONLY	//requires differentiation between explicit subjects/objects [NLP/temp2] and derived subjects and objects [GIA/temp]
-				#endif
-			#endif
 		#endif
 		#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
 		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
 			#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION		//if using advanced referencing, only use the pronominal coreferences from Stanford (it, she, he, etc)
 		#endif
 	#else
-		#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES	//default: on	
+		#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES	//default: on
 		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
-			//#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL	//Not fully tested, but appears to work at least in simple scenarios		
+			//#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL	//Not fully tested, but appears to work at least in simple scenarios
 			#ifndef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL
-				#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION	
+				#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
 				#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
 					#define GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-				#endif				
+				#endif
 			#endif
 		#else
 			#define GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 		#endif
 		#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-			#define GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN		/*to prevent the ambiguous blue chicken(s) being linked; eg A blue chicken is small. / A red chicken is fat. / The green chicken ate the pie. / A blue chicken is late.*/	
+			#define GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN		/*to prevent the ambiguous blue chicken(s) being linked; eg A blue chicken is small. / A red chicken is fat. / The green chicken ate the pie. / A blue chicken is late.*/
+		#endif
+	#endif
+#endif
+
+#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
+	#ifdef USE_CE
+		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
+			#define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING_ONLY_ACCEPT_INTRASENTENCE_STANFORD_COREFERENCES		//this is required, as CE will construct temporary claim heirachies not containing every sentence; thereby nullifying stanford coreNLP codependencies out of these temporary heirachies
+		#endif
+	#endif
+#endif
+
+#ifdef USE_CE
+	#ifdef GIA_WITH_CE_USE_ALL_CLAIM_COMBINATIONS
+		#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
+			#define GIA_WITH_CE_OLD
 		#endif
 	#endif
 #endif
@@ -130,7 +140,7 @@ using namespace std;
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_PROPERTY
 //#define GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
-//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES					
+//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO	//NB this relates to GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_4A_RELATIONS_DEFINE_PROPERTIES_BASED_UPON_INDIRECT_OBJECTS	//added 27 April 2012 - required because of the case; "What did the officer give transportation to?" where transportation is not singular, and therefore will not be defined as a property until indirectObjects are defined (after the action 'give' has already been linked to its concept entity). NB "What did the officer give a ride to?" does not face the same problem as 'ride' is tagged as singular by relex and therefore will be assigned as a property before the action 'give' is linked to it
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5A_RELATIONS_ASSIGN_TIME_NODES_IN_RELEX_THE_SAME_AS_STANFORD	//Case 5= stanford specific
@@ -140,9 +150,9 @@ using namespace std;
 #ifdef GIA_USE_RELEX
 
 	//GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE:
-	
+
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3A_PREPOSITIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_PROPERTY_LINK_DEPENDING_UPON_ACTION_OR_PROPERTY
-	
+
 	//GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE:
 
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_RELATION_AS_ACTION_CONDITION
@@ -176,7 +186,7 @@ using namespace std;
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES
-		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE 
+		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE
 		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE
 			#define GIA_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE_TO_PREDADJ_NOT_SUBJ
 			//#define GIA_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE_TO_PREDADJ_NOT_SUBJ_OLD
@@ -223,7 +233,7 @@ using namespace std;
 
 #define MAX_NUMBER_OF_RELATIONS_PER_SENTENCE (1000)
 #define MAX_NUMBER_OF_WORDS_PER_SENTENCE (1000)
-		
+
 #define SECONDS_IN_YEAR (365*24*60*60)
 
 #define FEATURE_INDEX_OF_PREPOSITION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-2)
@@ -240,16 +250,16 @@ using namespace std;
 //?? NB all of these cases/types need to be replaced with more complex grammar requirements (eg "on" can also mean "rides his bike on the road" [location], not just "rides his bike on tuesday" [time])
 
 //Properties:	[NB properties are attached to either another property or a straight entity);]
-//properties (derived from obj/subj relationships);					
+//properties (derived from obj/subj relationships);
 #define RELATION_GOVERNOR_COMPOSITION_1 "contains"	//eg x contains y
 #define RELATION_GOVERNOR_COMPOSITION_2 "comprise"
-#define RELATION_GOVERNOR_COMPOSITION_3 "has"	
+#define RELATION_GOVERNOR_COMPOSITION_3 "has"
 #define RELATION_GOVERNOR_COMPOSITION_4 "have"
 #define RELATION_ENTITY_HAVE "have"
-#define RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES (4)						
+#define RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES (4)
 //properties (descriptive relationships)
 #define RELATION_TYPE_ADJECTIVE_AMOD "_amod"	  //eg x is happy
-#define RELATION_TYPE_ADJECTIVE_PREDADJ "_predadj"						  
+#define RELATION_TYPE_ADJECTIVE_PREDADJ "_predadj"
 #define RELATION_TYPE_ADJECTIVE_ADVMOD "_advmod"
 #define RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES (3)
 #define RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES (2)
@@ -257,14 +267,14 @@ using namespace std;
 #define RELATION_TYPE_POSSESSIVE "_poss"	//eg his bike	[bike him]		/its bike
 #define RELATION_TYPE_PRENOMIAL_MODIFIER "_nn"
 #define RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES (2)
-#define STANFORD_RELATION_TYPE_GENETIVE_MODIFIER_OF_NOUN "gen"				//gen(cookie, Alice)	Alice's cookie						[THIS APPEARS INCORRECT: stanford currently gives; poss(cookie, Alice)] 	Relex: Identical to RelEx output _poss. 
+#define STANFORD_RELATION_TYPE_GENETIVE_MODIFIER_OF_NOUN "gen"				//gen(cookie, Alice)	Alice's cookie						[THIS APPEARS INCORRECT: stanford currently gives; poss(cookie, Alice)] 	Relex: Identical to RelEx output _poss.
 #define STANFORD_RELATION_TYPE_POSS2 (STANFORD_RELATION_TYPE_GENETIVE_MODIFIER_OF_NOUN)
 
 
 #define RELATION_TYPE_INDIRECT_OBJECT "_iobj"
 #define RELATION_TYPE_PARATAXIS "_parataxis"	//eg "The guy, Akari said, left..." //added 13 February 2011
 
-//concepts:					
+//concepts:
 #define RELATION_ENTITY_BE "be"	//eg x is y
 #define RELATION_GOVERNOR_DEFINITION_NUMBER_OF_TYPES (1)
 #define RELATION_TYPE_APPOSITIVE_OF_NOUN "_appo"
@@ -277,8 +287,8 @@ using namespace std;
 #define RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES (1)
 #define STANFORD_RELATION_TYPE_OBJECT "dobj"
 #define STANFORD_RELATION_TYPE_INFINITIVAL_MODIFIER "infmod"				//Relex usually generates a plain _obj
-#define STANFORD_RELATION_TYPE_PASSIVE_NOMINAL_SUBJECT "nsubjpass" 			//nsubjpass(thrown, rocks) 	rocks were thrown 				Relex: RelEx identifies these as _obj, and marks verb with passive feature. 
-#define STANFORD_RELATION_TYPE_PARTICIPIAL_MODIFIER "partmod" 				//RelEx usually generates a plain _obj. [however GIA keeps it as a separate relation, as it uses it elsewhere for multiword preposition collapse purposes] 
+#define STANFORD_RELATION_TYPE_PASSIVE_NOMINAL_SUBJECT "nsubjpass" 			//nsubjpass(thrown, rocks) 	rocks were thrown 				Relex: RelEx identifies these as _obj, and marks verb with passive feature.
+#define STANFORD_RELATION_TYPE_PARTICIPIAL_MODIFIER "partmod" 				//RelEx usually generates a plain _obj. [however GIA keeps it as a separate relation, as it uses it elsewhere for multiword preposition collapse purposes]
 #define RELATION_TYPE_PARTICIPIAL_MODIFIER "_partmod"
 
 #define RELATION_TYPE_SUBJECT "_subj"	//eg x eats 	[? be x]
@@ -294,24 +304,24 @@ using namespace std;
 
 
 //stanford specific (non Relex) relations implemented in redistributeStanfordRelationsAdverbalClauseModifierAndComplement()/redistributeStanfordRelationsClausalSubject()/redistributeStanfordRelationsPhrasalVerbParticle()/redistributeStanfordRelationsMultiwordPreposition():
-#define STANFORD_RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER "advcl" 			//advcl(happen, fall)	The accident happened as the night was falling. 	Relex: as(happen, fall) 
-#define STANFORD_RELATION_TYPE_COMPLEMENT_OF_ADVERBAL_CLAUSE_MODIFIER "mark"		//mark(fall, as)  	The accident happened as the night was falling. 	Relex: as(happen, fall) 
+#define STANFORD_RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER "advcl" 			//advcl(happen, fall)	The accident happened as the night was falling. 	Relex: as(happen, fall)
+#define STANFORD_RELATION_TYPE_COMPLEMENT_OF_ADVERBAL_CLAUSE_MODIFIER "mark"		//mark(fall, as)  	The accident happened as the night was falling. 	Relex: as(happen, fall)
 #define STANFORD_RELATION_TYPE_CLAUSAL_COMPLEMENT "ccomp" 				//ccomp(say, like)	He says that you like to swim				Relex: that(say, like) 		GIA: implement this as an action property
 //#define STANFORD_RELATION_TYPE_COMPLEMENTIZER "complm" 				//complm(like, that)	He says that you like to swim				Relex: that(say, like) 		GIA: implement this as an action property???
 #define STANFORD_RELATION_TYPE_CLAUSAL_SUBJECT "csubj" 					//csubj (make, say)	What she said makes sense. [dobj ( said-3 , What-1 )]	Relex:  Generated by Stanford; Relex uses plain _subj. 			GIA applies it to the object; ie subj (make, What)
-#define STANFORD_RELATION_TYPE_NEGATIVE "neg" 						//neg(have, n't) 	haven't 						Relex usually generates NEGATIVE-FLAG(have, T) 	
+#define STANFORD_RELATION_TYPE_NEGATIVE "neg" 						//neg(have, n't) 	haven't 						Relex usually generates NEGATIVE-FLAG(have, T)
 //#define STANFORD_RELATION_TYPE_COMPLEMENT_OF_PREPOSITION "pcomp" 			//pcomp(garden, in)	It happened in the garden 				Relex: RelEx uses the general prepositional relations instead, e.g. in(happen, garden)  {OR pobj (go, store)/ pcomp (go, to) => to(go, store)} 	//only used by Stanford uncollapsed dependencies:
 #define STANFORD_RELATION_TYPE_PHRASAL_VERB_PARTICLE "prt" 				//prt(shut, down) 	They shut down the station. 				RelEx always contracts the particle to create a polyword: 	e.g. _subj(shut_down, they)_obj(shut_down, station)	GIA: change the entity name 'shut' to 'shut_down'
-//#define STANFORD_RELATION_TYPE_SMALL_CLAUSE_COMPLEMENT_OF_VERB "sc" 			//sc(stop, to) 		Alice forced him to stop.				[THIS APPEARS INCORRECT: stanford currently gives; xcomp ( forced-2 , stop-5 )]		Relex:RelEx uses the general prepositional relations instead, e.g. to(force,stop) 
-#define RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER "_advcl"         
+//#define STANFORD_RELATION_TYPE_SMALL_CLAUSE_COMPLEMENT_OF_VERB "sc" 			//sc(stop, to) 		Alice forced him to stop.				[THIS APPEARS INCORRECT: stanford currently gives; xcomp ( forced-2 , stop-5 )]		Relex:RelEx uses the general prepositional relations instead, e.g. to(force,stop)
+#define RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER "_advcl"
 #define RELATION_TYPE_COMPLEMENT_OF_ADVERBAL_CLAUSE_MODIFIER "_mark"
-#define RELATION_TYPE_CLAUSAL_COMPLEMENT "_ccomp"	       
-//#define RELATION_TYPE_COMPLEMENTIZER "_complm"		       
-#define RELATION_TYPE_CLAUSAL_SUBJECT "_csubj"		       
-#define RELATION_TYPE_NEGATIVE "_neg"			       
-//#define RELATION_TYPE_COMPLEMENT_OF_PREPOSITION "_pcomp"      
-#define RELATION_TYPE_PHRASAL_VERB_PARTICLE "_prt"	       
-//#define RELATION_TYPE_SMALL_CLAUSE_COMPLEMENT_OF_VERB "_sc"  
+#define RELATION_TYPE_CLAUSAL_COMPLEMENT "_ccomp"
+//#define RELATION_TYPE_COMPLEMENTIZER "_complm"
+#define RELATION_TYPE_CLAUSAL_SUBJECT "_csubj"
+#define RELATION_TYPE_NEGATIVE "_neg"
+//#define RELATION_TYPE_COMPLEMENT_OF_PREPOSITION "_pcomp"
+#define RELATION_TYPE_PHRASAL_VERB_PARTICLE "_prt"
+//#define RELATION_TYPE_SMALL_CLAUSE_COMPLEMENT_OF_VERB "_sc"
 
 //stanford specific (non Relex) relations implemented in redistributeStanfordRelationsCreateQueryVars
 #define STANFORD_RELATION_TYPE_ATTRIBUTIVE "attr"	//eg attr(is-2, Who-1) / attr(is-2, What-1)
@@ -319,18 +329,18 @@ using namespace std;
 
 //stanford specific (non Relex) relations implemented in fillGrammaticalArraysStanford() (grammar related):
 #define STANFORD_RELATION_TYPE_MODAL_AUX "aux" 						//aux (died, has) 	Reagan has died.					Relex: indicates the tense feature: tense(die, present_perfect) 		[addtogrammar: perfect?]
-#define STANFORD_RELATION_TYPE_PASSIVE_AUX "auxpass" 					//auxpass(killed, been) Kennedy has been killed. 				Relex indicates the tense feature: tense(kill, present_perfect_passive) 	[addtogrammar: passive]				
-#define STANFORD_RELATION_TYPE_COPULA "cop" 						//cop(smelled, sweet) 	The rose smelled sweet. 				[THIS APPEARS INCORRECT: stanford currently gives; acomp ( smelled-3 , sweet-4 )]	    Relex: Generated by MiniPar, identical to RelEx output _to-be 	
-//											//cop(black-5, was-4) 	Alice's cookie was black.				Relex: indicates the tense feature: tense(black, past) 				stanfordPOS Tag of 'was' = VBD  [addtogrammar: tense - past/present/future]	
+#define STANFORD_RELATION_TYPE_PASSIVE_AUX "auxpass" 					//auxpass(killed, been) Kennedy has been killed. 				Relex indicates the tense feature: tense(kill, present_perfect_passive) 	[addtogrammar: passive]
+#define STANFORD_RELATION_TYPE_COPULA "cop" 						//cop(smelled, sweet) 	The rose smelled sweet. 				[THIS APPEARS INCORRECT: stanford currently gives; acomp ( smelled-3 , sweet-4 )]	    Relex: Generated by MiniPar, identical to RelEx output _to-be
+//											//cop(black-5, was-4) 	Alice's cookie was black.				Relex: indicates the tense feature: tense(black, past) 				stanfordPOS Tag of 'was' = VBD  [addtogrammar: tense - past/present/future]
 #define STANFORD_RELATION_TYPE_DETERMINER "det" 					//det(cookie, the) 	the cookie. 						Relex: RelEx uses the DEFINITE-FLAG feature instead. 			[addtogrammar: definite]
-#define RELATION_TYPE_MODAL_AUX "_aux"			       
-#define RELATION_TYPE_PASSIVE_AUX "_auxpass"		       
-#define RELATION_TYPE_COPULA "_cop"												       
-#define RELATION_TYPE_DETERMINER "_det"  
+#define RELATION_TYPE_MODAL_AUX "_aux"
+#define RELATION_TYPE_PASSIVE_AUX "_auxpass"
+#define RELATION_TYPE_COPULA "_cop"
+#define RELATION_TYPE_DETERMINER "_det"
 
 
-#define STANFORD_RELATION_TYPE_ROOT "root"  	
-#define RELATION_TYPE_ROOT "_root"  	
+#define STANFORD_RELATION_TYPE_ROOT "root"
+#define RELATION_TYPE_ROOT "_root"
 #define GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
 
 #define STANFORD_RELATION_TYPE_TEMPORAL_MODIFIER "tmod"
@@ -352,7 +362,7 @@ used
 #define STANFORD_RELATION_TYPE_PREPOSITION_MODIFIER2 "pmod"
 #define STANFORD_RELATION_TYPE_SEMANTIC_DEPENDENT "sdep"
 #define STANFORD_RELATION_TYPE_XSUBJ "xsubj"			//?? imperative?
-#define RELATION_TYPE_XSUBJ "xsubj"	
+#define RELATION_TYPE_XSUBJ "xsubj"
 */
 
 //stanford relation redistribution (redistributeStanfordRelationsMultiwordPreposition);
@@ -361,14 +371,14 @@ used
 
 //advanced referencing; "the chicken that ate a pie rowed the boat." / "the chicken that ate a pie has measles."	[that ate a pie / rcmod(chicken-2, ate-4)]
 #define STANFORD_RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER "rcmod"
-#define RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER "_rcmod"	
+#define RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER "_rcmod"
 
 //negations;
 #define RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES (1)
 #define RELATION_TYPE_NEGATIVE_CONTEXT_1 "not"
 
 //conjugations;
-#ifdef GIA_USE_RELEX_1.4.0
+#ifdef GIA_USE_RELEX_1_4_0
 	#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1
 	#ifdef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1
 		#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1_REPLACEMENT_INDEX (MAX_NUMBER_OF_WORDS_PER_SENTENCE-2)
@@ -379,9 +389,9 @@ used
 #define RELATION_TYPE_CONJUGATION_AND "conj_and"
 #define RELATION_TYPE_CONJUGATION_OR "conj_or"
 #define STANFORD_RELATION_TYPE_CONJUNCT "conj"
-#define STANFORD_RELATION_TYPE_COORDINATION "cc"		
+#define STANFORD_RELATION_TYPE_COORDINATION "cc"
 #define RELATION_TYPE_CONJUNCT "_conj"
-#define RELATION_TYPE_COORDINATION "_cc" 
+#define RELATION_TYPE_COORDINATION "_cc"
 #define RELATION_COORDINATION_DEPENDENT_AND "and"
 #define RELATION_COORDINATION_DEPENDENT_OR "or"
 #define RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES (2)
@@ -392,7 +402,7 @@ used
 	#define RELATION_TYPE_CONJUGATION_BASIC_NUMBER_OF_TYPES (RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES)
 #endif
 
-		
+
 //tobe/todo (properties/conditions);
 #define RELATION_TYPE_COMPLIMENT_TO_BE "_to-be"		//eg grows tired / The rose smelled sweet / _to-be(smell, sweet) - CHECK THIS
 #define RELATION_TYPE_COMPLIMENT_TO_DO "_to-do"		//eg Linas likes to row / _to-do(like, row) - CHECK THIS
@@ -403,7 +413,7 @@ used
 #define RELATION_TYPE_COMPLEMENTS_NUMBER_OF_TYPES (2)
 #define RELATION_TYPE_OBJECT_SPECIAL_TO_DO_PROPERTY_NUMBER_OF_TYPES (1)
 #define RELATION_TYPE_OBJECT_SPECIAL_TO_BE_PROPERTY_NUMBER_OF_TYPES (1)
-#define RELATION_DEPENDENT_DO "do"	
+#define RELATION_DEPENDENT_DO "do"
 
 //dates, measures, and quantities;
 #define RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES (5)
@@ -424,7 +434,7 @@ used
 
 #define RELATION_TYPE_MEASURE_PER "_measure_per"		//Relex only
 #define RELATION_TYPE_MEASURE_DEPENDENCY_UNKNOWN "_measure_dependency"	//Stanford Only
-#define STANFORD_RELATION_TYPE_DEPENDENT "dep"	//high level relation - not 
+#define STANFORD_RELATION_TYPE_DEPENDENT "dep"	//high level relation - not
 #define RELATION_TYPE_DEPENDENT "_dep"
 
 #define RELATION_TYPE_MEASURE_NUMBER_OF_TYPES (6)
@@ -464,7 +474,7 @@ used
 /*
 #define RELATION_TYPE_PREPOSITION_ON "on"		//eg rides on tuesday		[ride tuesday]		//this forms the action condition; "when"
 #define RELATION_TYPE_PREPOSITION_AT "at"		//eg rides at the palace	[ride palace]	//this forms the action condition; "where"
-#define RELATION_TYPE_PREPOSITION_TO "to"		//eg rides to the shops 			//this forms the action condition; "where"	
+#define RELATION_TYPE_PREPOSITION_TO "to"		//eg rides to the shops 			//this forms the action condition; "where"
 */
 /*
 #define RELATION_TYPE_PREPOSITION_WHEN "when"	//eg joe fires his bow when john drives fast.	[fire drive]	//this forms the action condition; "when" [not time, but in association with another action]
@@ -479,7 +489,7 @@ used
 #define RELATION_TYPE_PREPOSITION_SO "so"
 #define RELATION_TYPE_PREPOSITION_REASON_NUMBER_OF_TYPES (2)
 	//because?
-	
+
 
 #define GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES (1)
 
@@ -504,11 +514,11 @@ used
 #define REFERENCE_TYPE_UNDEFINED 0
 
 /* is this required?
-#define REFERENCE_TYPE_POSSESSIVE_THEIR_OR_THEM "them"	
+#define REFERENCE_TYPE_POSSESSIVE_THEIR_OR_THEM "them"
 #define REFERENCE_TYPE_POSSESSIVE_HIS "his"
 #define REFERENCE_TYPE_POSSESSIVE_HER "her"
 #define REFERENCE_TYPE_POSSESSIVE_OR_QUANTITY_ITS "its"
-#define REFERENCE_TYPE_PERSON_PLURAL_THEY "they"	
+#define REFERENCE_TYPE_PERSON_PLURAL_THEY "they"
 #define REFERENCE_TYPE_PERSON_PLURAL_THEY "he"
 #define REFERENCE_TYPE_PERSON_PLURAL_THEY "she"
 #define REFERENCE_TYPE_PERSON_PLURAL_THEY "it"
@@ -556,8 +566,8 @@ used
 #define FEATURE_POS_TAG_NNP "NNP"
 #define FEATURE_POS_TAG_NNPS "NNPS"
 #define FEATURE_POS_TAG_ADJECTIVE "JJ"
-#define FEATURE_POS_TAG_ADJECTIVE_COMPARATIVE "JJR" 
-#define FEATURE_POS_TAG_ADJECTIVE_SUPERLATIVE "JJS" 
+#define FEATURE_POS_TAG_ADJECTIVE_COMPARATIVE "JJR"
+#define FEATURE_POS_TAG_ADJECTIVE_SUPERLATIVE "JJS"
 #define FEATURE_POS_TAG_ADVERB "RB"
 #define FEATURE_POS_TAG_ADVERB_COMPARATIVE "RBR"
 #define FEATURE_POS_TAG_ADVERB_SUPERLATIVE "RBS"
@@ -588,13 +598,13 @@ according to these tags.
 
 stanford pos tagger specification
 	http://bulba.sdsu.edu/jeanette/thesis/PennTags.html
-	
-http://nlp.stanford.edu/software/tagger.shtml	
+
+http://nlp.stanford.edu/software/tagger.shtml
 	Part-of-speech name abbreviations: The English taggers use the Penn Treebank tag set.
 
 J93-2004.pdf;
 VB Verb, base form
-VBD Verb, past tense	
+VBD Verb, past tense
 VBG Verb, gerund/present participle
 VBN Verb, past participle
 VBP Verb, non-3rd ps. sing. present
@@ -627,8 +637,8 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 	http://nlp.stanford.edu/software/corenlp.shtml
 */
 #define FEATURE_NER_UNDEFINED_NAME "O"
-#define FEATURE_NER_DATE_NAME "DATE" 
-#define FEATURE_NER_TIME_NAME "TIME" 
+#define FEATURE_NER_DATE_NAME "DATE"
+#define FEATURE_NER_TIME_NAME "TIME"
 #define FEATURE_NER_MONEY_NAME "MONEY"
 #define FEATURE_NER_NUMBER_NAME "NUMBER"
 #define FEATURE_NER_PERSON_NAME "PERSON"
@@ -638,8 +648,8 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 #define FEATURE_NER_DURATION_NAME "DURATION"
 #define FEATURE_RELEX_FLAG_NUMBER_TYPES (FEATURE_NER_NUMBER_TYPES)
 #define FEATURE_RELEX_FLAG_UNDEFINED_NAME "undefined"
-#define FEATURE_RELEX_FLAG_DATE_NAME "date" 
-#define FEATURE_RELEX_FLAG_TIME_NAME "time" 
+#define FEATURE_RELEX_FLAG_DATE_NAME "date"
+#define FEATURE_RELEX_FLAG_TIME_NAME "time"
 #define FEATURE_RELEX_FLAG_MONEY_NAME "money"
 #define FEATURE_RELEX_FLAG_NUMBER_NAME "number"
 #define FEATURE_RELEX_FLAG_PERSON_NAME "person"
@@ -657,7 +667,7 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 #define FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_TYPES (5)
 
 #define FEATURE_POS_TAG_PERSONAL_PRONOUN "PRP"
-#define FEATURE_POS_TAG_POSSESSIVE_PRONOUN "PP$" 
+#define FEATURE_POS_TAG_POSSESSIVE_PRONOUN "PP$"
 #define FEATURE_POS_TAG_INDICATES_PRONOUN_NUMBER_TYPES (2)
 
 /*************************************************************************************/
@@ -718,11 +728,11 @@ static string relationTypeQVariableNameArray[RELATION_TYPE_QVARIABLE_NUMBER_OF_T
 
 static string relationTypePropositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {"in", "on", "after", "ago", "before", "between", "by", "during", "for", "to", "till", "until", "past", "since", "up_to", "within", "over", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
 	//http://www.englisch-hilfen.de/en/grammar/preposition_time.htm + is [time is] etc
-static string relationTypePropositionLocationNameArray[RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES] = {"in", "on", "at", "by", "near", "nearby", "above", "below", "over", "under", "around", "through", "inside", "inside_of", "outside", "between", "beside", "beyond", "in_front_of", "in_front", "in_back_of", "behind", "next_to", "on_top_of", "within", "beneath", "underneath", "among", "along", "against", "before", "after", "behind", "to", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE};		
+static string relationTypePropositionLocationNameArray[RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES] = {"in", "on", "at", "by", "near", "nearby", "above", "below", "over", "under", "around", "through", "inside", "inside_of", "outside", "between", "beside", "beyond", "in_front_of", "in_front", "in_back_of", "behind", "next_to", "on_top_of", "within", "beneath", "underneath", "among", "along", "against", "before", "after", "behind", "to", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE};
 	//http://www.eslgold.com/grammar/prepositions_location.html + before, after, behind, to, etc
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
 //static string relationTypePropositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_REDUCTION_POSITION_REPLACEMENT_STRING, RELATION_TYPE_PREPOSITION_REDUCTION_RELATION_REPLACEMENT_STRING, "after", "ago", "before", "between", "during", "for", "till", "until", "past", "since", "up_to", "within", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
-//static string relationTypePropositionLocationNameArray[RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_REDUCTION_POSITION_REPLACEMENT_STRING, RELATION_TYPE_PREPOSITION_REDUCTION_RELATION_REPLACEMENT_STRING, "near", "nearby", "above", "below", "over", "under", "around", "through", "inside", "inside_of", "outside", "between", "beside", "beyond", "in_front_of", "in_front", "in_back_of", "behind", "next_to", "on_top_of", "within", "beneath", "underneath", "among", "along", "against", "before", "after", "behind", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE};		
+//static string relationTypePropositionLocationNameArray[RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_REDUCTION_POSITION_REPLACEMENT_STRING, RELATION_TYPE_PREPOSITION_REDUCTION_RELATION_REPLACEMENT_STRING, "near", "nearby", "above", "below", "over", "under", "around", "through", "inside", "inside_of", "outside", "between", "beside", "beyond", "in_front_of", "in_front", "in_back_of", "behind", "next_to", "on_top_of", "within", "beneath", "underneath", "among", "along", "against", "before", "after", "behind", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE};
 
 static string relationTypePropositionReductionNameArray[RELATION_TYPE_PREPOSITION_REDUCTION_NUMBER_OF_TYPES][RELATION_TYPE_PREPOSITION_REDUCTION_MAX_NUMBER_VARIATIONS] = {{"at", "in", "to", "on"}, {"from", "of", "by", "", }, {"for", "since", "", ""}};
 static int relationTypePropositionReductionNumberVariationsArray[RELATION_TYPE_PREPOSITION_REDUCTION_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_REDUCTION_POSITION_NUMBER_OF_TYPES, RELATION_TYPE_PREPOSITION_REDUCTION_RELATION_NUMBER_OF_TYPES, RELATION_TYPE_PREPOSITION_REDUCTION_UNDEFINED_NUMBER_OF_TYPES};
@@ -741,7 +751,7 @@ static string relationTypeConjugationNameArray[RELATION_TYPE_CONJUGATION_NUMBER_
 #ifdef GIA_TRANSLATOR_USE_BASIC_CONJUNCTION_CONDITION_TYPE_NAMES
 static string relationTypeConjugationBasicNameArray[RELATION_TYPE_CONJUGATION_BASIC_NUMBER_OF_TYPES] = {RELATION_TYPE_CONJUGATION_AND_BASIC, RELATION_TYPE_CONJUGATION_OR_BASIC};
 #endif
-	
+
 static string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_THAT};	//removed RELATION_TYPE_PARTICIPIAL_MODIFIER 9 May 2012 (this is now dealt with in GIATranslatorRedistributeStanfordRelations.cpp)
 #ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
 static string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_SUBJECT_EXPLETIVE};
@@ -776,7 +786,7 @@ static string relationTypeQuantityArgumentImplyMeasurePerNameArray[RELATION_TYPE
 
 //static int timeMonthIntArray[TIME_MONTH_NUMBER_OF_TYPES] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 static string timeMonthStringArray[TIME_MONTH_NUMBER_OF_TYPES] = {TIME_MONTH_JANUARY, TIME_MONTH_FEBRUARY, TIME_MONTH_MARCH, TIME_MONTH_APRIL, TIME_MONTH_MAY, TIME_MONTH_JUNE, TIME_MONTH_JULY, TIME_MONTH_AUGUST, TIME_MONTH_SEPTEMBER, TIME_MONTH_OCTOBER, TIME_MONTH_NOVEMBER, TIME_MONTH_DECEMBER};
-	
+
 
 static string referenceTypePossessiveNameArray[REFERENCE_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {"undefined", "his", "her", "them", "its"};
 //static int referenceTypePossessiveNameLengthsArray[REFERENCE_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {9, 3, 3, 4, 3};
@@ -803,17 +813,17 @@ static string referenceTypeStanfordParserPrepositionPrependNameArray[REFERENCE_T
 
 /*
 #define RELATION_TYPE_IMPLIES_SAME_SET_NUMBER_OF_TYPES (3)
-static string relationTypeImpliesSameSetNameArray[RELATION_TYPE_IMPLIES_SAME_SET_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_ADVMOD, RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER};	
+static string relationTypeImpliesSameSetNameArray[RELATION_TYPE_IMPLIES_SAME_SET_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_ADVMOD, RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER};
 */
 /*
 #define RELATION_TYPE_ADJECTIVE_IMPLIES_SAME_SET_NUMBER_OF_TYPES (2)
-static string relationTypeAdjectiveImpliesSameSetNameArray[RELATION_TYPE_ADJECTIVE_IMPLIES_SAME_SET_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_ADVMOD};	
+static string relationTypeAdjectiveImpliesSameSetNameArray[RELATION_TYPE_ADJECTIVE_IMPLIES_SAME_SET_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_ADVMOD};
 */
 
 //#define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES (true)	//there is no default case; it depends upon what kind of property
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS (false)	//an action is considered by default not to be part of the same reference set as its subject/object (eg "the man fires the bow"). An rcmod /"that" is explicitly required for an action to be considered part of the same reference set as its subject/object (eg "the man that fires the bow...")
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS (true)	//a condition is considered by default to be part of the same reference set as its subject/object (eg "the cat near the park..." == "the cat that is near the park..."). A copular "is" is explicitly required for a condition to be considered not part of the same reference set as its subject/object (eg "the cat is near the park")
-#define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS (true)	
+#define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS (true)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_PROPERTY_CONDITIONS (true)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES (true)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_APPOS (true)
@@ -876,7 +886,7 @@ bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, 
 GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet);
 GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
 	GIAEntityNode * addProperty(GIAEntityNode * propertyEntity);
-	
+
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, bool isProgressive);
 
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity, bool sameReferenceSet);
@@ -885,12 +895,12 @@ GIAEntityNode * addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode *
 GIAEntityNode * addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet);
 GIAEntityNode * addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet);
 	void addActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet);
-	void addActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet);	
+	void addActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet);
 GIAEntityNode * addActionToActionDefinitionDefineProperties(GIAEntityNode * actionEntity);
 GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity);
 	void upgradePropertyToAction(GIAEntityNode * property);
-	GIAEntityNode * addAction(GIAEntityNode * actionEntity);			
-		
+	GIAEntityNode * addAction(GIAEntityNode * actionEntity);
+
 GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, GIAEntityNode * conditionTypeEntity, bool sameReferenceSet);
 GIAEntityNode * addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionDefinitionNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
 GIAEntityNode * addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionPropertyNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
@@ -929,9 +939,11 @@ long * getCurrentEntityNodeIDInConditionEntityNodesList();
 long * getCurrentEntityNodeIDInSentenceCompleteList();
 long * getCurrentEntityNodeIDInSentenceConceptEntityNodesList();
 
-void applyEntityAlreadyExistsFunction(GIAEntityNode * entity);
-void disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity);
-void disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity);
+void applyConceptEntityAlreadyExistsFunction(GIAEntityNode * entity, bool entityAlreadyExistant);
+void disableConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity);
+void disableEntity(GIAEntityNode * entity);
+void disableConceptEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity);	//not used
+void disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity);	//not used
 
 void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[]);
 void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap);
@@ -939,14 +951,15 @@ void recordConceptNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string, GIA
 void recordConceptNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap);
 
 void convertRelexPOSTypeToWordnetWordType(string * relexPOStype, int * wordNetPOS);
-void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, string * relexPOStype, int * wordNetPOS);		
+void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, string * relexPOStype, int * wordNetPOS);
 
 void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArrayTemp[]);	//used for intrafunction memory allocation purposes only
 
+#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 //bool checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(GIAEntityNode * entityNode, int entityIndexTemp, int sentenceIndexTemp);		//NOT REQUIRED: redundant: this unique check is redundant considering if a concept entity has a property that was declared in the immediate context, ie sentence, then the entity node being queried will be the property itself (and not its concept)	//added 1j8a 10 May 2012
-
 bool checkEntityHasPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7d 9 May 2012
 GIAEntityNode * getEntityPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7g 9 May 2012
+#endif
 
 void forwardTimeInfoToNewProperty(GIAEntityNode * entity, GIAEntityNode * newProperty);
 

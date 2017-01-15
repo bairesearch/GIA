@@ -3,7 +3,7 @@
  * File Name: GIAParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m2a 30-June-2012
+ * Project Version: 1n1a 15-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of CFF File
  *
@@ -22,19 +22,19 @@ string convertStanfordRelationToRelex(string * stanfordRelation)
 	//prepend '_'
 	string relationTypeRelexStandard = "";
 	relationTypeRelexStandard = relationTypeRelexStandard + RELEX_DEPENDENCY_RELATION_PREPENDITION + *stanfordRelation;
-	
+
 	//now deal with anamolies between dependency relation definitions;
 	for(int i=0; i<GIA_NUMBER_OF_RELEX_VERSUS_STANFORD_DEPENDENCY_RELATION_DISCREPANCIES; i++)
 	{
 		//cout << "relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i] = " << relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i] << endl;
 		//cout << "relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i] = " << relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i] << endl;
-		
+
 		if(*stanfordRelation == relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i])
 		{
 			relationTypeRelexStandard = relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i];
 		}
 	}
-	
+
 	bool stanfordPrepositionFound = false;
 	string tempString = convertStanfordPrepositionToRelex(stanfordRelation, GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
 	if(stanfordPrepositionFound)
@@ -49,11 +49,11 @@ string convertStanfordRelationToRelex(string * stanfordRelation)
 void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode)
 {
 	*maxNumberOfWordsInSentence = 0;
-	
+
 	int numberOfCharactersInRelationsText = relationsText->length();
-	
+
 	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
-	currentItemString[0] = '\0';	
+	currentItemString[0] = '\0';
 
 	/* Data file layout example
 
@@ -62,20 +62,20 @@ void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelati
 	*/
 
 	Relation * currentRelation = firstRelationInList;
-	
+
 	int relationIndex = 0;
 	int characterIndex = 0;
-	
+
 	characterIndex++;	//skip first new line in .cff file
-	
-	int currentRelationPart = 0; 
+
+	int currentRelationPart = 0;
 	//cout << "h1" << endl;
 
 	while (characterIndex < numberOfCharactersInRelationsText)
 	{
 		char c = (*relationsText)[characterIndex];
 		//cout << "c = " << c << endl;
-		
+
 		switch(c)
 		{
 			case CHAR_NEWLINE:
@@ -88,16 +88,16 @@ void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelati
 				cout << "currentRelation->relationGovernorIndex = " << currentRelation->relationGovernorIndex << endl;
 				cout << "currentRelation->relationDependentIndex = " << currentRelation->relationDependentIndex << endl;
 				*/
-					
+
 				Relation * newRelation = new Relation();
 				currentRelation->next = newRelation;
 				currentRelation = currentRelation->next;
-				
+
 				currentRelationPart = 0;
 				currentItemString[0] = '\0';
 
 				relationIndex++;
-				
+
 				break;
 			}
 			case CHAR_OPEN_BRACKET:
@@ -110,9 +110,9 @@ void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelati
 				currentRelation->relationType = relationType;
 				currentItemString[0] = '\0';
 				currentRelationPart++;
-				
+
 				break;
-			}			
+			}
 			case CHAR_CLOSE_BRACKET:
 			{
 				break;
@@ -120,7 +120,7 @@ void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelati
 			case CHAR_OPEN_SQUARE_BRACKET:
 			{
 				if(currentRelationPart == 1)
-				{	
+				{
 					currentRelation->relationGovernor = currentItemString;
 				}
 				else if(currentRelationPart == 2)
@@ -128,34 +128,34 @@ void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelati
 					currentRelation->relationDependent = currentItemString;
 				}
 				currentItemString[0] = '\0';
-							
+
 				break;
 			}
 			case CHAR_CLOSE_SQUARE_BRACKET:
 			{
 				if(currentRelationPart == 1)
-				{	
+				{
 					currentRelation->relationGovernorIndex = int(atof(currentItemString));
 				}
 				else if(currentRelationPart == 2)
 				{
 					currentRelation->relationDependentIndex = int(atof(currentItemString));
 				}
-				
+
 				if(currentRelation->relationDependentIndex > *maxNumberOfWordsInSentence)
 				{
 					*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;
 				}
-						
+
 				currentItemString[0] = '\0';
-				currentRelationPart++; 
-				
+				currentRelationPart++;
+
 				break;
-			}									
+			}
 			case CHAR_COMMA:
-			{								
+			{
 				characterIndex++;	//skip space in .cff file directly after comma
-				
+
 				break;
 			}
 			default:
@@ -167,7 +167,7 @@ void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelati
 				break;
 			}
 		}
-		
+
 		characterIndex++;
 	}
 
@@ -187,11 +187,11 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 	int relationDependentIndex;
 
 	*maxNumberOfWordsInSentence = 0;
-	
+
 	int numberOfCharactersInRelationsText = relationsText->length();
-	
+
 	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
-	currentItemString[0] = '\0';	
+	currentItemString[0] = '\0';
 
 	/* Data file layout example
 
@@ -200,31 +200,31 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 	*/
 
 	Relation * currentRelation = firstRelationInList;
-	
+
 	int relationIndex = 0;
 	int characterIndex = 0;
-		
-	int currentRelationPart = 0; 
+
+	int currentRelationPart = 0;
 	//cout << "h1" << endl;
 
 	while(characterIndex < numberOfCharactersInRelationsText)
 	{
 		char c = (*relationsText)[characterIndex];
 		//cout << "c = " << c << endl;
-		
+
 		if(c == CHAR_NEWLINE)
 		{
 			currentRelation->relationType = relationType;
 			currentRelation->relationGovernorIndex = relationGovernorIndex;
-			currentRelation->relationDependentIndex = relationDependentIndex;		
-			
+			currentRelation->relationDependentIndex = relationDependentIndex;
+
 			if(!featuresNotPreviouslyFilled)
 			{
 				/*
 				//don't use these, use lemmas instead (as per Stanford Core NLP/Relex dependency relation definitions)
 				currentRelation->relationGovernor = relationGovernor;
-				currentRelation->relationDependent = relationDependent;						
-				*/				
+				currentRelation->relationDependent = relationDependent;
+				*/
 				Feature * currentFeatureInList = firstFeatureInList;
 				for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationDependentIndex; f++)
 				{
@@ -235,16 +235,16 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 				for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationGovernorIndex; f++)
 				{
 					currentFeatureInList = currentFeatureInList->next;
-				} 				
-				currentRelation->relationGovernor = currentFeatureInList->lemma;						
+				}
+				currentRelation->relationGovernor = currentFeatureInList->lemma;
 			}
 			else
 			{
 				currentRelation->relationGovernor = relationGovernor;
-				currentRelation->relationDependent = relationDependent;			
+				currentRelation->relationDependent = relationDependent;
 			}
-			
-			
+
+
 			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 			cout << "relation added;" << endl;
 			cout << "currentRelation->relationType = " << currentRelation->relationType << endl;
@@ -253,22 +253,22 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			cout << "currentRelation->relationGovernorIndex = " << currentRelation->relationGovernorIndex << endl;
 			cout << "currentRelation->relationDependentIndex = " << currentRelation->relationDependentIndex << endl;
 			#endif
-			//cout << currentRelation->relationType << "(" << currentRelation->relationGovernor << ", " << currentRelation->relationDependent << ")" << endl;	
+			//cout << currentRelation->relationType << "(" << currentRelation->relationGovernor << ", " << currentRelation->relationDependent << ")" << endl;
 
-			
+
 			#ifdef GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
 			if(currentRelation->relationType != RELATION_TYPE_ROOT)
 			{
 				Relation * newRelation = new Relation();
 				currentRelation->next = newRelation;
-				currentRelation = currentRelation->next;			
+				currentRelation = currentRelation->next;
 			}
 			#else
 			Relation * newRelation = new Relation();
 			currentRelation->next = newRelation;
 			currentRelation = currentRelation->next;
 			#endif
-			
+
 			currentRelationPart = 0;
 			currentItemString[0] = '\0';
 
@@ -281,11 +281,11 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 
 			currentItemString[0] = '\0';
 			currentRelationPart++;
-		}	
+		}
 		else if(c == CHAR_DASH)
 		{
 			if(currentRelationPart == 1)
-			{	
+			{
 				relationGovernor = currentItemString;
 			}
 			else if(currentRelationPart == 2)
@@ -297,7 +297,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 		else if((c == CHAR_COMMA) || (c == CHAR_CLOSE_BRACKET))
 		{
 			if(currentRelationPart == 1)
-			{	
+			{
 				relationGovernorIndex = int(atof(currentItemString));
 			}
 			else if(currentRelationPart == 2)
@@ -311,8 +311,8 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			}
 
 			currentItemString[0] = '\0';
-			currentRelationPart++; 
-			
+			currentRelationPart++;
+
 			if(c == CHAR_COMMA)
 			{
 				characterIndex++;	//skip space after ,
@@ -325,7 +325,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			characterString[1] = '\0';
 			strcat(currentItemString, characterString);
 		}
-		
+
 		characterIndex++;
 	}
 }
@@ -334,38 +334,38 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 
 
 void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList, bool * isQuestion)
-{	
+{
 	int numberOfCharactersInRelationsText = featuresText->length();
-	
+
 	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
-	currentItemString[0] = '\0';	
+	currentItemString[0] = '\0';
 
 	/* Data file layout example
 
 		1	joe	joe	noun	uncountable|.n
 		2	went	go	verb	past|.v-d
 		3	sailing	sail	verb	progressive|.v
-		4	on	on	prep	
+		4	on	on	prep
 		5	dateID1	12 December 2010.	noun	date
 		6	.	.	punctuation
 
 	*/
 
 	Feature * currentFeature = firstFeatureInList;
-	
+
 	int featureIndex = 1;
 	int characterIndex = 0;
-	
+
 	characterIndex++;	//skip first new line in .cff file
-	
-	int currentFeaturePart = 0; 
+
+	int currentFeaturePart = 0;
 	//cout << "h1" << endl;
 
 	while (characterIndex < numberOfCharactersInRelationsText)
 	{
 		char c = (*featuresText)[characterIndex];
 		//cout << c;
-		
+
 		switch(c)
 		{
 			case CHAR_NEWLINE:
@@ -375,10 +375,10 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList,
 					case 4:
 					{
 						currentFeature->grammar = currentItemString;
-						break;	
-					}					
+						break;
+					}
 				}
-				
+
 			#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
 				//identify is sentence is a question
 				//cout << "currentFeature->type = " << currentFeature->type << endl;
@@ -388,7 +388,7 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList,
 					{
 						//cout << "isQuestion == true" << endl;
 						*isQuestion = true;
-					}				
+					}
 				}
 			#endif
 
@@ -400,21 +400,21 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList,
 				cout << "currentFeature->type = " << currentFeature->type << endl;
 				cout << "currentFeature->grammar = " << currentFeature->grammar << endl;
 				*/
-											
+
 				Feature * newFeature = new Feature();
 				newFeature->previous = currentFeature;
 				currentFeature->next = newFeature;
 				currentFeature = currentFeature->next;
-				
+
 				currentFeaturePart = 0;
 				currentItemString[0] = '\0';
 
 				featureIndex++;
-				
+
 				break;
 			}
 			case CHAR_TAB:
-			{	
+			{
 				switch(currentFeaturePart)
 				{
 					case 0:
@@ -424,34 +424,34 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList,
 						{
 							cout << "features parse error: (currentFeature->entityIndex != featureIndex)" << endl;
 						}
-						break;	
+						break;
 					}
 					case 1:
 					{
 						currentFeature->word = currentItemString;
-						break;	
+						break;
 					}
 					case 2:
 					{
 						currentFeature->lemma = currentItemString;
-						break;	
+						break;
 					}
 					case 3:
 					{
 						currentFeature->type = currentItemString;
-						break;	
+						break;
 					}
 					case 4:
 					{
 						currentFeature->grammar = currentItemString;
-						break;	
-					}					
+						break;
+					}
 				}
 				currentItemString[0] = '\0';
 				currentFeaturePart++;
-				
+
 				break;
-			}			
+			}
 			default:
 			{
 				char characterString[2];
@@ -461,7 +461,7 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList,
 				break;
 			}
 		}
-		
+
 		characterIndex++;
 	}
 
@@ -475,23 +475,23 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList,
 string generateRelexCFFFeatureTagContent(Feature * firstFeatureInList)
 {
 	string relexCFFFeatureTagContent = "";
-	
+
 	Feature * currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
 		//if(!(currentFeatureInList->disabled))
 		//{
-			relexCFFFeatureTagContent = relexCFFFeatureTagContent + "\n\t\t\t\t";		
-		
+			relexCFFFeatureTagContent = relexCFFFeatureTagContent + "\n\t\t\t\t";
+
 			char entityIndexString[10];
-			sprintf(entityIndexString, "%d", currentFeatureInList->entityIndex);		
+			sprintf(entityIndexString, "%d", currentFeatureInList->entityIndex);
 			relexCFFFeatureTagContent = relexCFFFeatureTagContent + entityIndexString + CHAR_TAB + currentFeatureInList->word + CHAR_TAB + currentFeatureInList->lemma + CHAR_TAB + grammaticalWordTypeNameArray[currentFeatureInList->grammaticalWordType] + CHAR_TAB;
 			relexCFFFeatureTagContent = relexCFFFeatureTagContent + featureRelexFlagTypeArray[currentFeatureInList->NER] + CHAR_VERTICAL_BAR;
 			if(currentFeatureInList->grammaticalIsDateOrTime)
 			{
-				relexCFFFeatureTagContent = relexCFFFeatureTagContent + "isDateOrTime"; 
-			}	
-			relexCFFFeatureTagContent = relexCFFFeatureTagContent + CHAR_VERTICAL_BAR;		
+				relexCFFFeatureTagContent = relexCFFFeatureTagContent + "isDateOrTime";
+			}
+			relexCFFFeatureTagContent = relexCFFFeatureTagContent + CHAR_VERTICAL_BAR;
 			relexCFFFeatureTagContent = relexCFFFeatureTagContent + grammaticalTenseNameArray[currentFeatureInList->grammaticalTense];
 			for(int q=0; q<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES;q++)
 			{
@@ -499,7 +499,7 @@ string generateRelexCFFFeatureTagContent(Feature * firstFeatureInList)
 				{
 					relexCFFFeatureTagContent = relexCFFFeatureTagContent + CHAR_UNDERSCORE + grammaticalTenseModifierNameArray[q];
 				}
-			}	
+			}
 			relexCFFFeatureTagContent = relexCFFFeatureTagContent + CHAR_VERTICAL_BAR;
 			relexCFFFeatureTagContent = relexCFFFeatureTagContent + grammaticalNumberNameArray[currentFeatureInList->grammaticalNumber] + CHAR_VERTICAL_BAR;
 			if(currentFeatureInList->grammaticalIsDefinite)
@@ -509,22 +509,22 @@ string generateRelexCFFFeatureTagContent(Feature * firstFeatureInList)
 			if(currentFeatureInList->grammaticalIsProperNoun)
 			{
 				relexCFFFeatureTagContent = relexCFFFeatureTagContent + GRAMMATICAL_PROPERNOUN_NAME + CHAR_VERTICAL_BAR;
-			}			
+			}
 			relexCFFFeatureTagContent = relexCFFFeatureTagContent + grammaticalGenderNameArray[currentFeatureInList->grammaticalGender] + CHAR_VERTICAL_BAR;
 			if(currentFeatureInList->grammaticalIsPronoun)
 			{
 				relexCFFFeatureTagContent = relexCFFFeatureTagContent + GRAMMATICAL_PRONOUN_NAME + CHAR_VERTICAL_BAR;
 			}
-									
-			
+
+
 			/*
-			cout << "Sentence Word Index = " << w << endl;					
+			cout << "Sentence Word Index = " << w << endl;
 			cout << "Is Date or Time = " << convertBoolToString(GIAEntityNodeIsDateOrTime[w]);
 			cout << "Tense = " << grammaticalTenseNameArray[GIAEntityNodeGrammaticalTenseArray[w]];
 			for(int q=0; q<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES;q++)
 			{
 				cout << "Tense Modifier (" << grammaticalTenseModifierNameArray[q] << ") = " << convertBoolToString(GIAEntityNodeGrammaticalTenseModifierArray[w*GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES + q]);
-			}					
+			}
 			cout << "Plurality = " << grammaticalNumberNameArray[GIAEntityNodeGrammaticalNumberArray[w]];
 			cout << "Is Definite = " << convertBoolToString(GIAEntityNodeGrammaticalIsDefiniteArray[w]);
 			cout << "Is Proper Noun = " << convertBoolToString(GIAEntityNodeGrammaticalIsProperNounArray[w]);
@@ -536,12 +536,12 @@ string generateRelexCFFFeatureTagContent(Feature * firstFeatureInList)
 			cout << "NormalizedNER = " << GIAEntityNodeNormalizedNERArray[w];
 			cout << "Timex = " << GIAEntityNodeTimexArray[w];
 			cout << "POS = " << GIAEntityNodePOSArray[w];
-			*/			
-					
+			*/
+
 		//}
 		currentFeatureInList = currentFeatureInList->next;
 	}
-			
+
 	return relexCFFFeatureTagContent;
 
 }
@@ -555,30 +555,30 @@ string generateRelexCFFRelationTagContent(Relation * firstRelationInList)
 	{
 		if(!(currentRelationInList->disabled))
 		{
-			relexCFFRelationTagContent = relexCFFRelationTagContent + "\n\t\t\t\t";	
-			
+			relexCFFRelationTagContent = relexCFFRelationTagContent + "\n\t\t\t\t";
+
 			string relationType = currentRelationInList->relationType;
 			string relationGoverner = currentRelationInList->relationGovernor;
 			string relationDependent = currentRelationInList->relationDependent;
-			char relationGovernorIndexString[10]; 
+			char relationGovernorIndexString[10];
 			char relationDependentIndexString[10];
-			sprintf(relationGovernorIndexString, "%d", currentRelationInList->relationGovernorIndex);	
-			sprintf(relationDependentIndexString, "%d", currentRelationInList->relationDependentIndex);	
-			//GIAEntityNode * relationGoverner = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];				
+			sprintf(relationGovernorIndexString, "%d", currentRelationInList->relationGovernorIndex);
+			sprintf(relationDependentIndexString, "%d", currentRelationInList->relationDependentIndex);
+			//GIAEntityNode * relationGoverner = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
 			//GIAEntityNode * relationDependent = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
 
 			relexCFFRelationTagContent = relexCFFRelationTagContent + relationType + CHAR_OPEN_BRACKET + relationGoverner + CHAR_OPEN_SQUARE_BRACKET + relationGovernorIndexString + CHAR_CLOSE_SQUARE_BRACKET + CHAR_COMMA + CHAR_SPACE + relationDependent + CHAR_OPEN_SQUARE_BRACKET + relationDependentIndexString + CHAR_CLOSE_SQUARE_BRACKET + CHAR_CLOSE_BRACKET;
-			
+
 
 			/*
-			cout << "relationType = " << currentRelationInList->relationType << endl;	      
+			cout << "relationType = " << currentRelationInList->relationType << endl;
 			cout << "relationGoverner = " << relationGoverner->entityName << endl;
-			cout << "relationDependent = " << relationDependent->entityName << endl;		
+			cout << "relationDependent = " << relationDependent->entityName << endl;
 			*/
 		}
-		currentRelationInList = currentRelationInList->next;		
+		currentRelationInList = currentRelationInList->next;
 	}
-		
+
 	return relexCFFRelationTagContent;
 }
 

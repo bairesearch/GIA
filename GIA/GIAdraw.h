@@ -3,7 +3,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m2a 30-June-2012
+ * Project Version: 1n1a 15-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -54,43 +54,43 @@ using namespace std;
 
 
 /*
-#define GIA_DRAW_CONDITION_NODE_COLOUR (DAT_FILE_COLOUR_RED)				//this was red in the original spec	
+#define GIA_DRAW_CONDITION_NODE_COLOUR (DAT_FILE_COLOUR_RED)				//this was red in the original spec
 #define GIA_DRAW_CONDITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was red in the original spec
-#define GIA_DRAW_CONDITION_CONNECTION_DEFINITION_COLOUR (DAT_FILE_COLOUR_ORANGE)	//colour not defined in original GIA spec	
+#define GIA_DRAW_CONDITION_CONNECTION_DEFINITION_COLOUR (DAT_FILE_COLOUR_ORANGE)	//colour not defined in original GIA spec
 //#define GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//Not used	//this was red in the original GIA spec		[uses whatever colour the definition is already, eg cyan for entity property]
-#define GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//this was red in the original spec			
+#define GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//this was red in the original spec
 */
 
 #ifdef GIA_DRAW_USE_SUPPORT_PRINT_OF_DOCUMENT_TO_GRAY_SCALE
-	#define GIA_DRAW_CONCEPT_CONNECTION_COLOUR (DAT_FILE_COLOUR_BLUE)	//this could be black			
-	#define GIA_DRAW_CONCEPT_NODE_COLOUR (DAT_FILE_COLOUR_WHITE)					
+	#define GIA_DRAW_CONCEPT_CONNECTION_COLOUR (DAT_FILE_COLOUR_BLUE)	//this could be black
+	#define GIA_DRAW_CONCEPT_NODE_COLOUR (DAT_FILE_COLOUR_WHITE)
 #else
 	#define GIA_DRAW_CONCEPT_CONNECTION_COLOUR (DAT_FILE_COLOUR_BLUE)			//this was black in the original spec
-	#define GIA_DRAW_CONCEPT_NODE_COLOUR (DAT_FILE_COLOUR_BLUE)				//this was blue in the original spec	
+	#define GIA_DRAW_CONCEPT_NODE_COLOUR (DAT_FILE_COLOUR_BLUE)				//this was blue in the original spec
 #endif
 
-#define GIA_DRAW_ACTION_NODE_COLOUR (DAT_FILE_COLOUR_GREEN)				//this was green in the original spec	
-#define GIA_DRAW_ACTION_SUBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_GREEN)			//this was black in the original spec	
+#define GIA_DRAW_ACTION_NODE_COLOUR (DAT_FILE_COLOUR_GREEN)				//this was green in the original spec
+#define GIA_DRAW_ACTION_SUBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_GREEN)			//this was black in the original spec
 #ifdef GIA_DRAW_USE_CONNECTION_TYPE_NAME_TEXT == (true)
-	#define GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_GREEN)			//this was black in the original spec	
+	#define GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_GREEN)			//this was black in the original spec
 #else
 	#define GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_YELLOW)
 #endif
 #ifdef GIA_DRAW_USE_UNIQUE_COLOURS_FOR_ENTITY_DEFINITION_NODES
 	#define GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_BROWN)			//this was dark green to original GIA specA)
-#else 
+#else
 	#define GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR (GIA_DRAW_CONCEPT_NODE_COLOUR)
 #endif
 #ifdef GIA_DRAW_USE_UNIQUE_COLOURS_FOR_ENTITY_DEFINITION_CONNECTIONS
 	#define GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_BROWN)		//colour not defined in original GIA spec
 #else
 	#define GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_MAGENTA)
-#endif		
+#endif
 
-#define GIA_DRAW_CONDITION_NODE_COLOUR (DAT_FILE_COLOUR_RED)				//this was green in the original spec	
-#define GIA_DRAW_CONDITION_SUBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was black in the original spec	
+#define GIA_DRAW_CONDITION_NODE_COLOUR (DAT_FILE_COLOUR_RED)				//this was green in the original spec
+#define GIA_DRAW_CONDITION_SUBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was black in the original spec
 #ifdef GIA_DRAW_USE_CONNECTION_TYPE_NAME_TEXT == (true)
-	#define GIA_DRAW_CONDITION_OBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was black in the original spec	
+	#define GIA_DRAW_CONDITION_OBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was black in the original spec
 #else
 	#define GIA_DRAW_CONDITION_OBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_YELLOW)
 #endif
@@ -107,25 +107,25 @@ using namespace std;
 
 #define GIA_DRAW_CONDITION_TIME_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)	//colour not defined in original GIA spec
 #define GIA_DRAW_CONDITION_TIME_NODE_COLOUR (DAT_FILE_COLOUR_RED)		//this was red in the original spec
-//#define GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//colour not defined in original GIA spec			
+//#define GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//colour not defined in original GIA spec
 
 //#define GIA_DRAW_CONDITION_TIME_STATE_NODE_COLOUR (DAT_FILE_COLOUR_DARKRED)
 #define GIA_DRAW_PROPERTY_QUALITY_NODE_COLOUR (DAT_FILE_COLOUR_AQUA)
 
-#define GIA_DRAW_PROPERTY_CONNECTION_COLOUR (DAT_FILE_COLOUR_CYAN)			//this was magenta/purple in the original spec	
+#define GIA_DRAW_PROPERTY_CONNECTION_COLOUR (DAT_FILE_COLOUR_CYAN)			//this was magenta/purple in the original spec
 #define GIA_DRAW_PROPERTY_NODE_COLOUR (DAT_FILE_COLOUR_CYAN)
-				//this was cyan(?) in the original spec	
+				//this was cyan(?) in the original spec
 
 #ifdef GIA_DRAW_USE_UNIQUE_COLOURS_FOR_ENTITY_DEFINITION_NODES
 	#define GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_MAGENTA)
 #else
 	#define GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR (GIA_DRAW_CONCEPT_NODE_COLOUR)
-#endif	
+#endif
 #ifdef GIA_DRAW_USE_UNIQUE_COLOURS_FOR_ENTITY_DEFINITION_CONNECTIONS
-	#define GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_MAGENTA)	//colour not defined in original GIA spec	
+	#define GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_MAGENTA)	//colour not defined in original GIA spec
 #else
 	#define GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_MAGENTA)
-#endif		
+#endif
 
 #define GIA_DRAW_PROPERTY_QUANTITY_NODE_COLOUR (DAT_FILE_COLOUR_PURPLE)
 #define GIA_DRAW_PROPERTY_MEASURE_NODE_COLOUR (DAT_FILE_COLOUR_LIGHTGREY)
@@ -167,7 +167,7 @@ using namespace std;
 #define DRAW_Y_SPACE_BETWEEN_BASICCONNECTION_OF_SAME_NODE_IRRELEVANT (0)
 
 #define DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES (50)			//should not be used during initialiseForPrint
-#define DRAW_X_SPACE_BETWEEN_PROPERTY_NODES (30)	
+#define DRAW_X_SPACE_BETWEEN_PROPERTY_NODES (30)
 #define DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE (15)	//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE (0)	//should not be used during initialiseForPrint
 //#define DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES (30)	//should not be used during initialiseForPrint
@@ -178,7 +178,7 @@ using namespace std;
 
 #define SVG_SCALE_FACTOR (1)
 #define SVG_TEXT_SCALE_FACTOR (5)
-	
+
 #define DRAW_CONNECTION_Z (0.0)
 #define GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG (1.0)
 

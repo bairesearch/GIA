@@ -3,11 +3,11 @@
  * File Name: GIAXMLconversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m2a 30-June-2012
+ * Project Version: 1n1a 15-July-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
- 
+
 
 #ifndef HEADER_GIA_XML_CONVERSION
 #define HEADER_GIA_XML_CONVERSION
@@ -65,7 +65,7 @@ using namespace std;
 	/*
 	#define NET_XML_TAG_entityNodeContainer ((string)"entityNodeContainer")
 		#define NET_XML_TAG_entityNode ((string)"entityNode")
-	*/	
+	*/
 	/*
 	#define NET_XML_TAG_entityNodeContainer ((string)"entityNodeContainer")
 		#define NET_XML_TAG_entityNode ((string)"entityNode")
@@ -74,7 +74,7 @@ using namespace std;
 	#define NET_XML_TAG_conditionNodeContainer ((string)"conditionNodeContainer")
 		#define NET_XML_TAG_conditionNode ((string)"conditionNode")
 	*/
-			
+
 
 #define NET_XML_TAG_actionNodeReference ((string)"actionNodeReference")
 #define NET_XML_ATTRIBUTE_actionNodeID ((string)"actionNodeID")
@@ -199,7 +199,7 @@ bool writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAEntityNode*>
 				bool generateXMLConditionTimeNodeTagList(XMLParserTag * firstTagInConditionTimeNode, GIATimeConditionNode * conditionTimeNode);
 		#ifdef GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
 		void resetIDsForNodeList(vector<GIAEntityNode*> *entityNodesList, long * currentEntityNodeIDInEntityNodesActiveCompleteList);
-		//void resetIDsForNodeMap(unordered_map<string, GIAEntityNode*> *entityNodesMap, long * currentEntityNodeIDInEntityNodesActiveCompleteList);	
+		//void resetIDsForNodeMap(unordered_map<string, GIAEntityNode*> *entityNodesMap, long * currentEntityNodeIDInEntityNodesActiveCompleteList);
 		#endif
 
 bool readSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap, vector<GIAEntityNode*> *entityNodesActiveListProperties, vector<GIAEntityNode*> *entityNodesActiveListActions, vector<GIAEntityNode*> *entityNodesActiveListConditions);
@@ -208,7 +208,7 @@ bool readSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAEntityNode*> 
 			bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesActiveListComplete);
 				bool parseEntityVectorConnectionNodeListTag(XMLParserTag * firstTagInEntityVectorConnectionNodeList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesActiveListComplete, int entityVectorConnectionIndex);
 				bool parseTimeConditionNodeTag(XMLParserTag * firstTagInTimeConditionNode, GIATimeConditionNode * timeConditionNode);
-								
+
 
 				/*
 				bool parseActionNodeListTag(XMLParserTag * firstTagInActionNodeList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesActiveListComplete);
@@ -221,7 +221,7 @@ bool readSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAEntityNode*> 
 				bool parseConditionNodeListTag(XMLParserTag * firstTagInEntityNodeDefinitionList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesActiveListComplete);
 				bool parseIncomingConditionNodeListTag(XMLParserTag * firstTagInEntityNodeDefinitionReverseList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesActiveListComplete);
 				*/
-				
+
 /*
 	bool linkEntityNodeConnections(NeuronContainer * firstNeuronContainerInLayer, NeuronContainer * firstInputNeuronInNetwork, bool hasBackLayer, NeuronContainer * firstNeuronContainerInBackLayer);
 		NeuronContainer * findNeuronContainer(NeuronContainer * firstNeuronContainerInLayer, long neuronIDToFind, bool * result);
