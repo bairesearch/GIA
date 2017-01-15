@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q7b 02-November-2012
+ * Project Version: 1q8a 07-November-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -1796,12 +1796,31 @@ bool determineIfWordIsIrregularVerbContinuousCaseWrapper(string word, string * b
 bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * firstTagInIrregularVerbList, string * baseNameFound)
 {
 	bool foundIrregularVerbContinuousCase = false;
-
+	
 	bool irregularVerbFound = false;
 	GIALRPtag * currentTagInIrregularVerbList = firstTagInIrregularVerbList;
 	while(currentTagInIrregularVerbList->nextSentence != NULL)
 	{
-		//cout << "currentTagInIrregularVerbList->tagName = " << currentTagInIrregularVerbList->tagName << endl;
+		int irregularVerbTagIndex = 0;
+		GIALRPtag * currentTagInIrregularVerb = currentTagInIrregularVerbList;
+		while(currentTagInIrregularVerb->nextTag != NULL)
+		{
+			if(irregularVerbTagIndex == 3)
+			{
+				if(word == currentTagInIrregularVerb->tagName)
+				{
+					//cout << "foundIrregularVerbContinuousCase" << endl;
+					//cout << "irregularVerbBaseForm = " << currentTagInIrregularVerbList->tagName << endl;
+					foundIrregularVerbContinuousCase = true;
+					*baseNameFound = currentTagInIrregularVerbList->tagName;					
+				}
+			}
+			currentTagInIrregularVerb = currentTagInIrregularVerb->nextTag;
+			irregularVerbTagIndex++;
+		}
+		
+		/*OLD (before RBB addition of continuous cases to wikipedia english irregular verb list - ie final/4th column of WikipediaIrregularVerbs.txt):
+		cout << "currentTagInIrregularVerbList->tagName = " << currentTagInIrregularVerbList->tagName << endl;
 		
 		string irregularVerbBaseForm = currentTagInIrregularVerbList->tagName;
 		int irregularVerbBaseFormLength = irregularVerbBaseForm.length();
@@ -1816,11 +1835,12 @@ bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * first
 
 		if((word == irregularVerbContinuousForm1) || (word == irregularVerbContinuousForm2))
 		{
-			//cout << "foundIrregularVerbContinuousCase" << endl;
-			//cout << "irregularVerbBaseForm = " << irregularVerbBaseForm << endl;
+			cout << "foundIrregularVerbContinuousCase" << endl;
+			cout << "irregularVerbBaseForm = " << irregularVerbBaseForm << endl;
 			foundIrregularVerbContinuousCase = true;
 			*baseNameFound = irregularVerbBaseForm;
 		}
+		*/
 		
 		currentTagInIrregularVerbList = currentTagInIrregularVerbList->nextSentence;
 	}

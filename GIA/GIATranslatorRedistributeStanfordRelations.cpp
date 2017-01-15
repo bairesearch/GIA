@@ -23,7 +23,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q7b 02-November-2012
+ * Project Version: 1q8a 07-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -2795,7 +2795,6 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 				{
 					/*
 					Wood is used for delivering milk.
-					What is wood used in the delivering of?
 					NB delivering is correctly tagged as VBG by stanford CoreNLP (NN by Stanford Parser; and this incorrect value is recorded assuming STANFORD_PARSER_USE_POS_TAGS is set)
 					*/
 					//cout << "foundVerb1" << endl;
@@ -2824,23 +2823,24 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 						foundContinuousVerb = true;
 					}
 					#endif	
+					
+					//STANFORD_PARSER_USE_POS_TAGS is no longer supported by GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS/redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs()...
+					/*
 					#ifdef STANFORD_PARSER_USE_POS_TAGS			
 					if(determineIfWordIsVerbContinuousCase(&(actionOrSubstanceEntity->wordOrig)))	//OR &(currentRelationInList->relationGovernor)	//NB must use wordOrig as only wordOrig is guaranteed to still have "ing" attached - the word may be stripped by stanford corenlp in generation of the lemma 
 					{
 						//cout << "foundVerb2b" << endl;
-						/*
-						Wood is used for delivering milk.
-						What is wood used in the delivering of?
-												
-							Wood is used for making milk.
-							What is wood used in the making of?
-							NB making is an irregular verb and will be tagged incorrectly by both Stanford coreNLP and Stanford Parser	
-							still fails because "making" remains recorded as the lemma not "make"
-							a solution involves GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS									
-						*/					
+						//What is wood used in the delivering of?
+						//						
+						//	Wood is used for making milk.
+						//	What is wood used in the making of?
+						//	NB making is an irregular verb and will be tagged incorrectly by both Stanford coreNLP and Stanford Parser	
+						//	still fails because "making" remains recorded as the lemma not "make"
+						//	a solution involves GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS														
 						foundContinuousVerb = true;
 					}
 					#endif
+					*/
 					
 				}
 				

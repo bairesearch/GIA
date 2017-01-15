@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q7b 02-November-2012
+ * Project Version: 1q8a 07-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -52,7 +52,9 @@ using namespace std;
 
 #define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES	//added 11 August 2012	[this is designed to work with GIA_SUPPORT_ALIASES]
 	//#define GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES	//added 8 August 2012		//Not used - already coded - reuse Relex code in linkConditions instead (GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES)
-#define GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS //added 28 October 2012b
+#ifndef STANFORD_PARSER_USE_POS_TAGS
+	#define GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS //added 28 October 2012b
+#endif
 
 #define GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES	//added 9 August 2012 [this is designed to work with GIA_SUPPORT_ALIASES]
 #ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
