@@ -100,17 +100,20 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirac
 		CECodeextension * currentCodeextensionInHeirachy = *codeextensionIter;
 		currentCodeextensionInHeirachy->sentence = currentSentenceInList;
 		#ifdef GIA_WITH_CE_CONVERT_PUNCTUATION_MARK_CHARACTERS_TO_FULL_STOPS
+		#ifdef GIA_WITH_CE_DEBUG
 		cout << "currentCodeextensionInHeirachy->numberSentencesInCodeextension = " << currentCodeextensionInHeirachy->numberSentencesInCodeextension << endl;
+		#endif
 		for(int i=0; i<currentCodeextensionInHeirachy->numberSentencesInCodeextension; i++)
 		{
+			#ifdef GIA_WITH_CE_DEBUG
 			cout << "currentSentenceInList = currentSentenceInList->next" << endl;
+			#endif
 			currentSentenceInList = currentSentenceInList->next;
 		}
 		#else
 		currentSentenceInList = currentSentenceInList->next;
 		#endif
 	}
-	cout << "ateo" << endl;
 
 	#ifdef GIA_WITH_CE_USE_ALL_CODEEXTENSION_COMBINATIONS
 	for(codeextensionIter = codeextensionsList->begin(); codeextensionIter != codeextensionsList->end(); codeextensionIter++)
@@ -124,8 +127,10 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirac
 		Sentence * lastSentenceInArtificialList = currentSentenceInList;
 		Sentence * firstSentenceInArtificialList = generateArtificialSentenceListBasedUponParentCodeextensions(currentCodeextensionInHeirachy, lastSentenceInArtificialList, true);
 
+		#ifdef GIA_WITH_CE_DEBUG
 		cout << "CE DEBUG: print claim heirachy dependency relations for:" << endl;
 		cout << "currentCodeextensionInHeirachy->codeextensionTextRaw = " << currentCodeextensionInHeirachy->codeextensionTextRaw << endl;		
+		#endif
 		Sentence * currentSentenceInArtificialList = firstSentenceInArtificialList;
 		while(currentSentenceInArtificialList->next != NULL)
 		{
@@ -137,8 +142,10 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirac
 			}		
 			currentSentenceInArtificialList = currentSentenceInArtificialList->next;
 		}
+		#ifdef GIA_WITH_CE_DEBUG
 		cout << "\n\n" << endl;
-
+		#endif
+		
 		#ifdef GIA_WITH_CE_OLD
 		vector<GIAEntityNode*> *sentenceConceptEntityNodesList = &(currentCodeextensionInHeirachy->relevantConceptEntityNodeList);
 		setAllCodeextensionEntitiesInHeirachyToUndeclaredInThisContext(firstCodeextensionInHeirachy);

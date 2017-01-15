@@ -849,7 +849,6 @@ int main(int argc,char **argv)
 		//generate codeextensions heirachy
 		//NB codeextensionLayoutFileName = inputTextPlainTXTFileName;
 		//NB codeextensionEnumeratedFileName = inputTextCodeextensionsTXTFileName;
-		string subcodeextensionPrependPartA = CE_SCODEEXTENSION_PREPEND_PART_A_DEFAULT;
 		#ifdef GIA_WITH_CE_DERIVE_SCODEEXTENSION_PREPEND
 		bool deriveSubcodeextensionPrepend = true;
 		#else
@@ -860,7 +859,7 @@ int main(int argc,char **argv)
 		firstCodeextensionInHeirachy = new CECodeextension();
 		codeextensionsList = new vector<CECodeextension*>;
 
-		if(!deriveScodeextensionPrependAndCreateCodeextensionsLayout(inputTextCodeextensionsTXTFileName, inputTextPlainTXTFileName, subcodeextensionPrependPartA, deriveSubcodeextensionPrepend, generateCodeextensionClassHeirachy, firstCodeextensionInHeirachy, codeextensionsList))
+		if(!deriveScodeextensionPrependAndCreateCodeextensionsLayout(inputTextCodeextensionsTXTFileName, inputTextPlainTXTFileName, deriveSubcodeextensionPrepend, generateCodeextensionClassHeirachy, firstCodeextensionInHeirachy, codeextensionsList))
 		{
 			result = false;
 		}
