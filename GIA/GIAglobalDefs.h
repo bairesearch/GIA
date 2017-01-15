@@ -613,7 +613,7 @@
 
 #define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS	//GIA 2b4a
 #ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
-	#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER "_"	//this filler does not appear compatible with Relex (Stanford only); try another filler character
+	#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER "_"	//this filler does not appear compatible with Relex (Stanford only); try another filler character (NB "-" doesn't work with Relex either)
 #endif
 
 #ifndef USE_NLC
