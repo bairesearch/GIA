@@ -23,7 +23,7 @@
  * File Name: GIAEntityConnectionClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q2a 11-October-2012
+ * Project Version: 1q3a 11-October-2012
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -50,6 +50,9 @@
 #include <utility> 			// make_pair	//required for GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
 using namespace std;
 
+#define GIA_ENTITY_CONNECTION_CONFIDENCE_BASE (1.0)
+#define GIA_ENTITY_CONNECTION_CONFIDENCE_INCREMENT (1.0)
+
 class GIAEntityNode;
 
 class GIAEntityConnection
@@ -60,7 +63,8 @@ public:
 	GIAEntityConnection(string * entityName, long idInstance);
 
 	GIAEntityNode * entity;
-
+	double confidence;	
+	
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	bool sameReferenceSet;
 	#endif
