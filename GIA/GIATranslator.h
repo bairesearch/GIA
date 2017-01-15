@@ -34,8 +34,8 @@ using namespace std;
 
 //#define GIA_TRANSLATOR_DEBUG
 
-
-
+#define USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_CONCEPT_ENTITY_IN_A_GIVEN_SENTENCE
+//#define USE_OLD_SUBJ_OBJ_ONLY_ONE_PAIR_RESTRICTION_METHOD 	//default: disabled
 
 //#define GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_PROPERTY_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
 
@@ -323,6 +323,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[]);
 	void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[]);
 	void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList);
+	void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList);
 	void defineIndirectObjects(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[]);
 	void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[]);
 	//4
@@ -354,8 +355,10 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity);
 
 void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
-	void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity);
-	void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
+void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity);
+void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
+	void addActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingAction);
+	void addActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction);	
 		GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity);
 			GIAEntityNode * addAction(GIAEntityNode * actionEntity);
 		

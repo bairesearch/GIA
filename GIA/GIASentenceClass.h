@@ -59,6 +59,8 @@ public:
 	int relationFunctionIndex;
 	
 	bool disabled;
+
+	bool subjObjRelationAlreadyAdded;
 		
 	Relation * next;
 };

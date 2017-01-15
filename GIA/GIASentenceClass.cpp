@@ -23,6 +23,8 @@ Relation::Relation(void)
 	relationFunctionIndex = 0;
 	
 	disabled = false;
+
+	subjObjRelationAlreadyAdded = false;	
 		
 	next = NULL;
 }
@@ -73,7 +75,7 @@ Sentence::Sentence(void)
 	next = NULL;
 	previous = NULL;
 	
-	isQuestion = false;	
+	isQuestion = false;
 }
 
 Sentence::~Sentence(void)
