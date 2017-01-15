@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d6a 16-February-2014
+ * Project Version: 2e1a 10-April-2014
  *
  *******************************************************************************/
 
@@ -125,7 +125,6 @@ GIAentityNode::GIAentityNode(void)
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	grammaticalDefiniteIndexOfDeterminerTemp = GIA_ENTITY_INDEX_UNDEFINED;
 	#endif
-	foundPossibleInfinitiveVerbTemp = false;
 	#ifdef GIA_USE_STANFORD_CORENLP
 	/*
 	CharacterOffsetBeginTemp = -1;
@@ -679,7 +678,6 @@ bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * ent
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	testEntityCharacteristicIterationint(entity->grammaticalDefiniteIndexOfDeterminerTemp, entityCharacteristic, "grammaticalDefiniteIndexOfDeterminerTemp", &foundMatch);
 	#endif
-	testEntityCharacteristicIterationbool(entity->foundPossibleInfinitiveVerbTemp, entityCharacteristic, "foundPossibleInfinitiveVerbTemp", &foundMatch);
 	#ifdef GIA_USE_STANFORD_CORENLP
 	testEntityCharacteristicIterationstring(entity->stanfordPOStemp, entityCharacteristic, "stanfordPOStemp", &foundMatch);
 	testEntityCharacteristicIterationstring(entity->NormalizedNERtemp, entityCharacteristic, "NormalizedNERtemp", &foundMatch);
@@ -836,7 +834,6 @@ bool setEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * enti
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	setEntityCharacteristicIterationint(&(entity->grammaticalDefiniteIndexOfDeterminerTemp), entityCharacteristic, "grammaticalDefiniteIndexOfDeterminerTemp", &foundMatch);
 	#endif
-	setEntityCharacteristicIterationbool(&(entity->foundPossibleInfinitiveVerbTemp), entityCharacteristic, "foundPossibleInfinitiveVerbTemp", &foundMatch);
 	#ifdef GIA_USE_STANFORD_CORENLP
 	setEntityCharacteristicIterationstring(&(entity->stanfordPOStemp), entityCharacteristic, "stanfordPOStemp", &foundMatch);
 	setEntityCharacteristicIterationstring(&(entity->NormalizedNERtemp), entityCharacteristic, "NormalizedNERtemp", &foundMatch);
@@ -966,7 +963,6 @@ bool getEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * enti
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	getEntityCharacteristicIterationint(entity->grammaticalDefiniteIndexOfDeterminerTemp, entityCharacteristic, "grammaticalDefiniteIndexOfDeterminerTemp", &foundMatch);
 	#endif
-	getEntityCharacteristicIterationbool(entity->foundPossibleInfinitiveVerbTemp, entityCharacteristic, "foundPossibleInfinitiveVerbTemp", &foundMatch);
 	#ifdef GIA_USE_STANFORD_CORENLP
 	getEntityCharacteristicIterationstring(entity->stanfordPOStemp, entityCharacteristic, "stanfordPOStemp", &foundMatch);
 	getEntityCharacteristicIterationstring(entity->NormalizedNERtemp, entityCharacteristic, "NormalizedNERtemp", &foundMatch);

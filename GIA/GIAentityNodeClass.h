@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d6a 16-February-2014
+ * Project Version: 2e1a 10-April-2014
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -97,6 +97,7 @@ using namespace std;
 #define GRAMMATICAL_TENSE_MODIFIER_INFINITIVE 3
 #define GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE 4
 #define GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES 5
+#define GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_TEMP (GRAMMATICAL_TENSE_MODIFIER_INFINITIVE)
 
 #define GRAMMATICAL_NUMBER_UNDEFINED 0
 #define GRAMMATICAL_NUMBER_UNCOUNTABLE 1
@@ -356,7 +357,6 @@ public:
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	int grammaticalDefiniteIndexOfDeterminerTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	#endif
-	bool foundPossibleInfinitiveVerbTemp;	//added 28 July 2013 to help support action concepts
 	#ifdef GIA_USE_STANFORD_CORENLP
 	string stanfordPOStemp;
 	string NormalizedNERtemp;

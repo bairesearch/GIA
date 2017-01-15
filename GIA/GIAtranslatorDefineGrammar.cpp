@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d6a 16-February-2014
+ * Project Version: 2e1a 10-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -500,18 +500,27 @@ void extractGrammaticalInformationFromPOStag(string * POStag, Feature * feature)
 		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] = true;
 	}
 
-	//infinitive tense extraction (added 28 July 2013);
-	bool infinitiveDetected = false;
+	//infinitive tense extraction (added 28 July 2013) + imperative tense extraction (added 10 April 2014)
+	bool infinitiveOrImperativeDetected = false;
 	for(int i=0; i<FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES; i++)
 	{
-		if(*POStag == posTagVerbInfinitiveArray[i])
+		if(*POStag == posTagVerbInfinitiveOrImperativeArray[i])
 		{
-			infinitiveDetected = true;
+			//cout << "infinitiveOrImperativeDetected:" << feature->lemma << endl;	
+			infinitiveOrImperativeDetected = true;
 		}
 	}
-	if(infinitiveDetected)
+	if(infinitiveOrImperativeDetected)
 	{
-		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] = true;
+		if(feature->previousWordInSentenceIsTo)
+		{
+			feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] = true;
+		}
+		else
+		{
+			feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE] = true;
+			//cout << "imperativeFOUND:" << feature->lemma << endl;
+		}
 	}
 
 	//singular/plural detection;
@@ -573,9 +582,24 @@ void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLP
 {
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
+		bool toDetected = false;
 		Feature * currentFeatureInList = firstFeatureInList;
 		while(currentFeatureInList->next != NULL)
 		{
+			//added 10 April 2014 - GIA 2e1a
+			if(toDetected)
+			{
+				currentFeatureInList->previousWordInSentenceIsTo = true;
+			}
+			if(currentFeatureInList->lemma == RELATION_TYPE_PREPOSITION_TO)
+			{
+				toDetected = true;
+			}
+			else
+			{
+				toDetected = false;
+			}
+
 			int currentFeatureIndex = currentFeatureInList->entityIndex;
 
 			extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList);
@@ -944,8 +968,6 @@ void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode * entity, Feature * cu
 	#ifdef GIA_USE_STANFORD_CORENLP
 	entity->stanfordPOStemp = currentFeatureInList->stanfordPOS;
 	#endif
-
-	entity->foundPossibleInfinitiveVerbTemp = currentFeatureInList->foundPossibleInfinitiveVerb;
 }
 
 

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d6a 16-February-2014
+ * Project Version: 2e1a 10-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1468,11 +1468,9 @@ void defineSubstancesActionConcepts(Sentence * currentSentenceInList, bool GIAen
 	EntityCharacteristic entityCharacteristicsTest1("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_VERB_STRING);
 	EntityCharacteristic entityCharacteristicsTest2("grammaticalTenseModifierArrayTemp", "true", GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE);
 	EntityCharacteristic entityCharacteristicsTest3("grammaticalTenseModifierArrayTemp", "true", GRAMMATICAL_TENSE_MODIFIER_INFINITIVE);
-	EntityCharacteristic entityCharacteristicsTest4("foundPossibleInfinitiveVerbTemp", "true");
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
 	param.specialCaseCharacteristicsTestOrVector.push_back(&entityCharacteristicsTest2);
 	param.specialCaseCharacteristicsTestOrVector.push_back(&entityCharacteristicsTest3);
-	param.specialCaseCharacteristicsTestOrVector.push_back(&entityCharacteristicsTest4);
 	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	genericEntityInterpretation(&param);
 #else
@@ -1482,7 +1480,7 @@ void defineSubstancesActionConcepts(Sentence * currentSentenceInList, bool GIAen
 		{
 			if(!(GIAentityNodeArray[w]->disabled))
 			{
-				if((featureArrayTemp[w]->grammaticalWordType == GRAMMATICAL_WORD_TYPE_VERB) && ((featureArrayTemp[w]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true) || (featureArrayTemp[w]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true) || (featureArrayTemp[w]->foundPossibleInfinitiveVerb)))
+				if((featureArrayTemp[w]->grammaticalWordType == GRAMMATICAL_WORD_TYPE_VERB) && ((featureArrayTemp[w]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true) || (featureArrayTemp[w]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true)))
 				{
 					GIAentityNode * currentGIAEntityNode = GIAentityNodeArray[w];
 					#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG

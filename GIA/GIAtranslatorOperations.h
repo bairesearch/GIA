@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d6a 16-February-2014
+ * Project Version: 2e1a 10-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -980,7 +980,7 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 static string posTagVerbPastArray[FEATURE_POS_TAG_VERB_PAST_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBD, FEATURE_POS_TAG_VERB_VBN};
 static string posTagVerbPresentArray[FEATURE_POS_TAG_VERB_PRESENT_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBP, FEATURE_POS_TAG_VERB_VBZ};
 static string posTagVerbProgressiveArray[FEATURE_POS_TAG_VERB_PROGRESSIVE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBG};
-static string posTagVerbInfinitiveArray[FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VB};
+static string posTagVerbInfinitiveOrImperativeArray[FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VB};
 
 #define FEATURE_POS_TAG_PROPER_NOUN_NUMBER_OF_TYPES 2
 #define FEATURE_POS_TAG_COMMON_NOUN_NUMBER_OF_TYPES 2

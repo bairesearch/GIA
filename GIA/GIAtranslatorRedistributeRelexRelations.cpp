@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d6a 16-February-2014
+ * Project Version: 2e1a 10-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -40,9 +40,11 @@
 
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 
+//NB Translator:fillGrammaticalArraysStanford():extractGrammaticalInformationStanford():extractPOSrelatedGrammaticalInformationStanford():extractGrammaticalInformationFromPOStag() performs initial infinitive/imperative determination based on NLP tags and previous word "to" (and sets previousWordInSentenceIsTo for redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllContinuousVerbs():extractPOSrelatedGrammaticalInformationStanford():extractGrammaticalInformationFromPOStag() to reperform infinitive/imperative determination in case Stanford parser/CoreNLP failed to tag the word correctly ie as VB);
 void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
 {
 	//eg What is wood used in the delivering of?   interpret prep_of(xing, y) as obj(xing, y) )
+
 
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -56,7 +58,6 @@ void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllContinuous
 			int dependentIndex = currentRelationInList->relationDependentIndex;
 			GIAentityNode * governorEntity = GIAentityNodeArray[governorIndex];
 			GIAentityNode * dependentEntity = GIAentityNodeArray[dependentIndex];
-
 
 			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 			//cout << "governorEntity->entityName = " << governorEntity->entityName << endl;
@@ -88,21 +89,31 @@ bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity
 	string baseNameFound = "";
 	int grammaticalTenseModifier = -1;
 
-	bool foundContinuousOrInfinitiveVerb = determineVerbCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound, &grammaticalTenseModifier);
+	bool foundContinuousOrInfinitiveOrImperativeVerb = determineVerbCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound, &grammaticalTenseModifier);
 
-	//This section of code cannot be used as originally intended as some verb infinitives are also nouns (eg "yarn") - therefore must formally rely on correct infinitive tagging of verbs (use foundPossibleInfinitiveVerbTemp just in case)...
-	bool foundInfinitiveVerb = false;
-	if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true))
+	//This section of code cannot be used as originally intended as some verb infinitives are also nouns (eg "yarn") - therefore must formally rely on correct infinitive tagging of verbs...
+	if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && ((actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true) || (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE] == true)))
 	{
-		foundInfinitiveVerb = true;
+		//infinitive/imperative verb already detected by NLP/extractGrammaticalInformationFromPOStag()
 	}
 	else
 	{
-		if(foundContinuousOrInfinitiveVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_INFINITIVE))
+		if(currentFeature->stanfordPOS == FEATURE_POS_TAG_VERB_VB)
 		{
-			foundInfinitiveVerb = true;
-			actionOrSubstanceEntity->foundPossibleInfinitiveVerbTemp = true;
-			//mark possible infinitive found
+			cout << "correctContinuousVerbPOStagAndLemma(): expectation error; FEATURE_POS_TAG_VERB_VB already defined" << endl;
+		}
+		if(foundContinuousOrInfinitiveOrImperativeVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_TEMP))
+		{
+			//Should the NLP settings be overruled here - is a verb base form always an imperative or infinitive? Answer = NO; Therefore only perform upgrade for special infinitive cases
+			if(currentFeature->previousWordInSentenceIsTo)
+			{//only perform upgrade here for special infinitive cases... (eg "to verbbaseform"), as some verbbaseforms are also nouns (eg "tabled" and "table")
+				//cout << "upgrading to FEATURE_POS_TAG_VERB_VB; " << currentFeature->lemma << endl;
+				string stanfordPOS = FEATURE_POS_TAG_VERB_VB;
+				currentFeature->stanfordPOS = stanfordPOS;
+
+				extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
+				applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
+			}
 		}
 	}
 
@@ -110,6 +121,7 @@ bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity
 	//if(actionOrSubstanceEntity->stanfordPOStemp == FEATURE_POS_TAG_VERB_VBG)		//Only Stanford Compatible
 	if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true))	//Relex compatible
 	{
+		//continuous verb already detected by NLP
 		/*
 		Wood is used for delivering milk.
 		NB delivering is correctly tagged as VBG by stanford CoreNLP (NN by Stanford Parser; and this incorrect value is recorded assuming STANFORD_PARSER_USE_POS_TAGS is set)
@@ -124,7 +136,7 @@ bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity
 		#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
 		if(determineIfWordIsIrregularVerbContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))
 		#elif defined GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
-		if(foundContinuousOrInfinitiveVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE))
+		if(foundContinuousOrInfinitiveOrImperativeVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE))
 		#endif
 		{
 			foundContinuousVerb = true;
