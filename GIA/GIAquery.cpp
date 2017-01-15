@@ -70,7 +70,6 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 						*foundAnswer = true;
 						*confidence = bestConfidenceAssumingFoundAnswer;
 						
-						#ifdef GIA_QUERY_USE_LONG_CONTEXT_TRACE
 						#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
 						if(*foundAnswer)
 						{
@@ -78,9 +77,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 							generateTexualContextEntityStringBackwards(queryAnswerContext, conceptEntityMatchingCurrentQueryEntity);
 							cout << "queryAnswerContext = " << *queryAnswerContext << endl;
 						}
-						#endif	
-						#endif	
-						
+						#endif							
 					}
 				}
 			}
@@ -645,11 +642,17 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 	if(!(entityNode->testedForQueryComparison))
 	{
 		
-		/*
-		#ifdef GIA_QUERY_USE_LONG_CONTEXT_TRACE
+		cout << "\tqueryEntityNode = " << queryEntityNode->entityName << endl;
+		cout << "\tentityNode = " << entityNode->entityName << endl;
+			
+		/*	
+		#ifdef GIA_QUERY_USE_EXTRA_LONG_CONTEXT_TRACE
 		generateTexualContextBackwards(queryAnswerContext, sourceContext, entityNode);	
 		#endif
 		*/
+		
+		cout << "*queryAnswerContext = " << *queryAnswerContext << endl;
+		
 
 		bool foundMatch = false;
 		if(sourceIsConditionAndHasComparisonVariableAttached)
@@ -680,17 +683,6 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 				}
 				else
 				{
-					string queryAnswerContextTemp = "";
-					bool foundAnswerTemp = false;
-
-					queryAnswerNode = testEntityNodeForQuery(queryEntityNode, entityNode, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, queryAnswerPreviousNode, &queryAnswerContextTemp);
-
-					if(foundAnswerTemp)
-					{
-						*foundAnswer = foundAnswerTemp;
-						*queryAnswerContext = *queryAnswerContext + queryAnswerContextTemp;
-					}
-
 					if(isSuitableNodeTypeForInexactAnswer)
 					{
 						if(findBestInexactAnswerAndSetDrawParameters)
@@ -719,7 +711,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 				}
 			}
 		}
-
+				
 		if(foundMatch)
 		{
 			//OLD: if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters))
@@ -747,13 +739,23 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 			}	
 
 		}
+		
+		string queryAnswerContextTemp = "";
+		queryAnswerNode = testEntityNodeForQuery(queryEntityNode, entityNode, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, queryAnswerPreviousNode, &queryAnswerContextTemp);
 
 		#ifdef GIA_QUERY_USE_LONG_CONTEXT_TRACE
 		if(*foundAnswer)
 		{
+			*queryAnswerContext = *queryAnswerContext + queryAnswerContextTemp;
 			generateTexualContextBackwards(queryAnswerContext, sourceContext, entityNode);
+			/*
+			#ifndef GIA_QUERY_USE_EXTRA_LONG_CONTEXT_TRACE
+			generateTexualContextBackwards(queryAnswerContext, sourceContext, entityNode);
+			#endif
+			*/
 		}	
 		#endif
+
 	}
 	
 	return queryAnswerNode;
