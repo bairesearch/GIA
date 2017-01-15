@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i30b 06-February-2015
+ * Project Version: 2i31a 06-February-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -137,6 +137,9 @@ GIAreferenceTraceParameters::GIAreferenceTraceParameters(void)
 	
 	#ifdef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY
 	traceSubstanceConceptsOnly = false;
+	#endif
+	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
+	logicalConditionDisableTraceSubstanceConcepts = false;
 	#endif
 }
 GIAreferenceTraceParameters::~GIAreferenceTraceParameters(void)
@@ -778,7 +781,7 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode* queryEntityNode, 
 												if(passReferenceContextMatch)
 												{
 												#endif
-													#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
+													#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
 													if(!(entityNode->NLCmathTextParsablePhraseEntity))
 													{
 													#endif
@@ -796,15 +799,30 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode* queryEntityNode, 
 														if(passSubstanceConceptOnlyTraceRequirements)
 														{
 														#endif
-															//cout << "\texactMatch" << endl;
-															if(testEntityNodeForQueryOrReferenceSet2(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
+															#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
+															bool passLogicalConditionRequirements = true;
+															if(referenceTraceParameters->logicalConditionDisableTraceSubstanceConcepts)
 															{
-																exactMatch = true;
+																if(entityNode->isSubstanceConcept)
+																{
+																	passLogicalConditionRequirements = false;
+																}
 															}
+															if(passLogicalConditionRequirements)
+															{
+															#endif
+																//cout << "\texactMatch" << endl;
+																if(testEntityNodeForQueryOrReferenceSet2(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
+																{
+																	exactMatch = true;
+																}
+															#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
+															}
+															#endif
 														#ifdef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY
 														}
 														#endif
-													#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
+													#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
 													}
 													#endif
 												#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
@@ -1487,7 +1505,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode* queryEntityNode, GI
 											{
 											#endif
 											//cout << "passed isSubstanceConcept tests" << endl;
-												#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
+												#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
 												if(!(entityNode->NLCmathTextParsablePhraseEntity))
 												{
 												#endif
@@ -1505,29 +1523,44 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode* queryEntityNode, GI
 													if(passSubstanceConceptOnlyTraceRequirements)
 													{
 													#endif
-														if(testEntityNodeForQueryOrReferenceSet(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
+														#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
+														bool passLogicalConditionRequirements = true;
+														if(referenceTraceParameters->logicalConditionDisableTraceSubstanceConcepts)
 														{
-															result = EXACT_MATCH_PASS;
-
-															#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-															/*
-															#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-															if(referenceTraceParameters->intrasentenceReference)
+															if(entityNode->isSubstanceConcept)
 															{
-																cout << "EXACT_MATCH_PASS" << endl;
+																passLogicalConditionRequirements = false;
 															}
-															#endif
-															*/
-															#endif
 														}
-														else
+														if(passLogicalConditionRequirements)
 														{
-															result = EXACT_MATCH_FAIL;
+														#endif
+															if(testEntityNodeForQueryOrReferenceSet(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
+															{
+																result = EXACT_MATCH_PASS;
+
+																#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+																/*
+																#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+																if(referenceTraceParameters->intrasentenceReference)
+																{
+																	cout << "EXACT_MATCH_PASS" << endl;
+																}
+																#endif
+																*/
+																#endif
+															}
+															else
+															{
+																result = EXACT_MATCH_FAIL;
+															}
+														#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
 														}
+														#endif
 													#ifdef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY
 													}
 													#endif
-												#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
+												#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
 												}
 												#endif
 											#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
