@@ -164,17 +164,19 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 {
 	//if(findBestInexactAnswerAndSetDrawParameters)
 	//{
+		/*
 		cout << "queryEntityNode->entityName = " << queryEntityNode->entityName << endl;
 		cout << "entityNode->entityName = " << entityNode->entityName << endl;
 		cout << "findBestInexactAnswerAndSetDrawParameters = " << findBestInexactAnswerAndSetDrawParameters << endl;
 		cout << "entityNode->testedForQueryComparison = " << entityNode->testedForQueryComparison << endl;
 		cout << "findBestInexactAnswerAndSetDrawParameters = " << findBestInexactAnswerAndSetDrawParameters << endl;
 		cout << "entityNode->isAnswerContextToQuery = " << entityNode->isAnswerContextToQuery << endl;
+		*/
 	//}
 	
 	if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters && !(entityNode->isAnswerContextToQuery)))
 	{
-		cout << "IE-1" << endl;
+		//cout << "IE-1" << endl;
 
 		
 		//cout << "\tqueryEntityNode = " << queryEntityNode->entityName << endl;
@@ -207,7 +209,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 		{
 			if(queryEntityNode->entityName == entityNode->entityName)	//allow non-equal conditions to be matched during network comparison
 			{
-				cout << "IE0" << endl;
+				//cout << "IE0" << endl;
 
 				if(detectComparisonVariable && comparisonVariableNode->hasQuantity && queryEntityNode->hasQuantity && entityNode->hasQuantity)
 				{//exact match found [NB if a quantity, the queryEntityNode's entityName will not have the comparisonVariable name (_$qVar) specified, and therefore a matched entity node entityName is required]
@@ -218,14 +220,14 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 				}
 				else
 				{
-					cout << "IE1" << endl;
+					//cout << "IE1" << endl;
 					if(isSuitableNodeTypeForInexactAnswer)
 					{
-						cout << "IE2" << endl;
+						//cout << "IE2" << endl;
 						
 						if(findBestInexactAnswerAndSetDrawParameters)
 						{
-							cout << "IE3" << endl;
+							//cout << "IE3" << endl;
 							foundMatch = true;
 							#ifdef GIA_QUERY_DEBUG
 							cout << "foundBestInexactAnswerAndSetDrawParameters:" << entityNode->entityName << endl;
@@ -281,13 +283,13 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 		
 		string queryAnswerContextTemp = "";
 		#ifndef GIA_QUERY_TRACE_PAST_ANSWER
-		if(((queryEntityNode->entityName == entityNode->entityName) || isCondition) && !(*foundAnswer))
-		{//only trace if matching entity names [or if it is a condition; allows for non-matching conditions to be compared], and do not trace past the answer
+		if(((queryEntityNode->entityName == entityNode->entityName) || isCondition) && !(*foundAnswer))	//only trace if matching entity names [or if it is a condition; allows for non-matching conditions to be compared], and do not trace past the answer
+		#else
+		if(((queryEntityNode->entityName == entityNode->entityName) || isCondition))	//allow trace past the answer		
 		#endif
+		{
 			queryAnswerNode = testEntityNodeForQuery(queryEntityNode, entityNode, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, queryAnswerPreviousNode, &queryAnswerContextTemp);
-		#ifndef GIA_QUERY_TRACE_PAST_ANSWER
 		}
-		#endif
 		
 		#ifdef GIA_QUERY_USE_LONG_CONTEXT_TRACE
 		if(*foundAnswer)
@@ -335,6 +337,7 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 	if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters && !(entityNode->isAnswerContextToQuery)))
 	{//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]
 	
+		cout << "testEntityNodeForQuery:" << endl;
 		cout << "entityNode = " << entityNode->entityName << endl;
 	
 		if(findBestInexactAnswerAndSetDrawParameters)
@@ -709,7 +712,7 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 				string sourceContext = "is ";	//is defined by
 				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, isSuitableNodeTypeForInexactAnswer, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);				
 			
-				cout << "done" << endl;
+				//cout << "done" << endl;
 			
 			}
 		}
@@ -1059,8 +1062,10 @@ void traceEntityNode(GIAEntityNode * entityNode, int function, int * numberOfMat
 {
 	if(!(entityNode->queryEntityTraced))
 	{
+		
 		cout << "entityNode being traced = " << entityNode->entityName << endl;
 		cout << "*numberOfMatchedNodes = " << *numberOfMatchedNodes << endl;
+		
 		
 		entityNode->queryEntityTraced = true;
 		*numberOfMatchedNodes = *numberOfMatchedNodes + 1;

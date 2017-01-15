@@ -95,28 +95,28 @@ using namespace std;
 #define CFF_XML_TAG_features ((string)"features")
 
 static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any of the following\n"
-"\n\n\t-itxt [string]  : plain text .txt input filename to be parsed by Relex (def: text.txt)"
-"\n\n\t-irelex [string] : RelEx compact output .xml input filename (def: relexCompactOutput.xml)"
-"\n\n\t-ixml [string]   : semantic network definition .xml input filename (def: semanticNet.xml)"
-"\n\n\t-qtxt [string]  : plain text .txt query filename to be parsed by Relex (def: textQuery.txt)"
-"\n\n\t-qrelex [string] : RelEx compact output .xml query filename (def: relexCompactOutputQuery.xml)"
+"\n\n\t-itxt [string]  : plain text .txt inputText filename to be parsed by Relex (def: inputText.txt)"
+"\n\n\t-irelex [string] : RelEx compact outputText .xml inputText filename (def: relexCompactOutput.xml)"
+"\n\n\t-ixml [string]   : semantic network definition .xml inputText filename (def: semanticNet.xml)"
+"\n\n\t-qtxt [string]  : plain text .txt query filename to be parsed by Relex (def: inputQuery.txt)"
+"\n\n\t-qrelex [string] : RelEx compact outputText .xml query filename (def: relexCompactOutputQuery.xml)"
 "\n\n\t-qxml [string]   : semantic network definition .xml query filename (def: semanticNetQuery.xml)"
-"\n\n\t-oxml [string]   : semantic network definition .xml output filename (def: semanticNet.xml)"
-"\n\t-osvg [string]     : semantic network display .svg 2D vector graphics output filename (def: semanticNet.svg)"
-"\n\t-oldr [string]     : semantic network display .ldr 3D vector graphics output filename (def: semanticNet.ldr)"
-"\n\t-oppm [string]     : semantic network display .ppm raster graphics output filename (def: semanticNet.ppm)"
-"\n\t-oall [string]     : semantic network display xml/.svg/.ldr/.ppm default generic output filename (def: semanticNet)"
+"\n\n\t-oxml [string]   : semantic network definition .xml outputText filename (def: semanticNet.xml)"
+"\n\t-osvg [string]     : semantic network display .svg 2D vector graphics outputText filename (def: semanticNet.svg)"
+"\n\t-oldr [string]     : semantic network display .ldr 3D vector graphics outputText filename (def: semanticNet.ldr)"
+"\n\t-oppm [string]     : semantic network display .ppm raster graphics outputText filename (def: semanticNet.ppm)"
+"\n\t-oall [string]     : semantic network display xml/.svg/.ldr/.ppm default generic outputText filename (def: semanticNet)"
 "\n\t-oanswer [string]  : plain text .txt file containing the answer to the query (def: answer.txt)"
-"\n\t-notshow           : do not display output in opengl"
+"\n\t-notshow           : do not display outputText in opengl"
 "\n\t-width [int]       : raster graphics width in pixels (def: 640)"
 "\n\t-height [int]      : raster graphics height in pixels (def: 480)"
 "\n"
 "\n\t-workingfolder [string] : working directory name for input files (def: same as exe)"
 "\n\t-exefolder [string]     : exe directory name for executables GIA.exe and (def: same as exe)"
-"\n\t-tempfolder [string]    : temp directory name for temporary and output files (def: same as exe)"
+"\n\t-tempfolder [string]    : temp directory name for temporary and outputText files (def: same as exe)"
 "\n"
 "\n\n\t-version         : print version"
-"\n\n\tThis program performs GIA (General Intelligence Algorithm) operations - creates semantic network based upon RelEx dependencies file (.xml) or GIA semantic network file (.xml); outputs semantic network to GIA semantic network file (.xml); displays semantic network (using opengl); prints semantic network to raster image (.ppm), 3D vector graphics (.ldr), or 2D vector graphics (.svg).\n\n";
+"\n\n\tThis program performs GIA (General Intelligence Algorithm) operations - creates semantic network based upon RelEx dependencies file (.xml) or GIA semantic network file (.xml); outputTexts semantic network to GIA semantic network file (.xml); displays semantic network (using opengl); prints semantic network to raster image (.ppm), 3D vector graphics (.ldr), or 2D vector graphics (.svg).\n\n";
 
 //Dependency Relationship Extractor
 
@@ -133,41 +133,53 @@ int main(int argc,char **argv)
 		 
 	bool result = true;
 
-	bool useInputPlainTXTFile = false;
-	string inputPlainTXTFileName = "text.txt";
+	bool useInputTextPlainTXTFile = false;
+	string inputTextPlainTXTFileName = "inputText.txt";
 		
-	bool useInputRelexXMLFile = false;
-	string inputRelexXMLFileName = "relexCompactOutput.xml";
+	bool useInputTextRelexXMLFile = false;
+	string inputTextRelexXMLFileName = "relexCompactOutput.xml";
 	
-	bool useInputXMLFile = false;
-	string inputXMLFileName = "semanticNet.xml";
-
-	bool useQueryPlainTXTFile = false;
-	string queryPlainTXTFileName = "textQuery.txt";
+	bool useInputTextXMLFile = false;
+	string inputTextXMLFileName = "semanticNet.xml";
 		
-	bool useQueryRelexXMLFile = false;
-	string queryRelexXMLFileName = "relexCompactOutputQuery.xml";
+	bool useOutputTextXMLFile = false;
+	string outputTextXMLFileName = "semanticNet.xml";
 	
-	bool useQueryXMLFile = false;
-	string queryXMLFileName = "semanticNetQuery.xml";
+	bool useOutputTextLDRFile = false;
+	string outputTextLDRFileName = "semanticNet.ldr";
+	
+	bool useOutputTextPPMFile = false;
+	string outputTextPPMFileName = "semanticNet.ppm";
+	
+	bool useOutputTextSVGFile = false;
+	string outputTextSVGFileName = "semanticNet.svg";
+	
+	bool useInputQueryPlainTXTFile = false;
+	string inputQueryPlainTXTFileName = "inputQuery.txt";
 		
-	bool useOutputXMLFile = false;
-	string outputXMLFileName = "semanticNet.xml";
+	bool useInputQueryRelexXMLFile = false;
+	string inputQueryRelexXMLFileName = "relexCompactOutputQuery.xml";
 	
-	bool useOutputLDRFile = false;
-	string outputLDRFileName = "semanticNet.ldr";
+	bool useInputQueryXMLFile = false;
+	string inputQueryXMLFileName = "semanticNetQuery.xml";	
 	
-	bool useOutputPPMFile = false;
-	string outputPPMFileName = "semanticNet.ppm";
+	//bool useOutputQueryXMLFile = true;
+	//string outputQueryXMLFileName = "semanticNetQuery.xml";
 	
-	bool useOutputSVGFile = false;
-	string outputSVGFileName = "semanticNet.svg";
+	bool useOutputQueryLDRFile = true;
+	string outputQueryLDRFileName = "semanticNetQuery.ldr";
 	
-	bool useOutputAllFile = false;
-	string outputAllFileName = "semanticNet";
+	bool useOutputQueryPPMFile = true;
+	string outputQueryPPMFileName = "semanticNetQuery.ppm";
 	
-	bool useOutputAnswerPlainTXTFile = false;
-	string outputAnswerPlainTXTFileName = "answer.txt";
+	bool useOutputQuerySVGFile = true;
+	string outputQuerySVGFileName = "semanticNetQuery.svg";
+		
+	bool useOutputTextAllFile = false;
+	string outputTextAllFileName = "semanticNet";
+			
+	bool useOutputTextAnswerPlainTXTFile = false;
+	string outputTextAnswerPlainTXTFileName = "answer.txt";
 			
 	bool printOutput = false;
 	bool displayInOpenGLAndOutputScreenshot = true;
@@ -175,93 +187,93 @@ int main(int argc,char **argv)
 	int rasterImageWidth = 640;
 	int rasterImageHeight = 480; 
 	
-	bool useQuery = false;
+	bool useInputQuery = false;
 	
 	//bool train = false;
 	//bool form = true;
 
-	//basic execution flow outline; if no dataset or xml input file is specified, just form network - do not train network
+	//basic execution flow outline; if no dataset or xml inputText file is specified, just form network - do not train network
 
 	if(exists_argument(argc,argv,"-itxt") || exists_argument(argc,argv,"-irelex") || exists_argument(argc,argv,"-ixml"))
 	{
 		if(exists_argument(argc,argv,"-itxt"))
 		{
-			inputPlainTXTFileName=get_char_argument(argc,argv,"-itxt");
-			useInputPlainTXTFile = true;
+			inputTextPlainTXTFileName=get_char_argument(argc,argv,"-itxt");
+			useInputTextPlainTXTFile = true;
 		}
 	
 		if(exists_argument(argc,argv,"-irelex"))
 		{
-			inputRelexXMLFileName=get_char_argument(argc,argv,"-irelex");
-			useInputRelexXMLFile = true;
+			inputTextRelexXMLFileName=get_char_argument(argc,argv,"-irelex");
+			useInputTextRelexXMLFile = true;
 		}
 
 		if(exists_argument(argc,argv,"-ixml"))
 		{
-			inputXMLFileName=get_char_argument(argc,argv,"-ixml");
+			inputTextXMLFileName=get_char_argument(argc,argv,"-ixml");
 			//train = true;
-			useInputXMLFile = true;
+			useInputTextXMLFile = true;
 		}
 
 		if(exists_argument(argc,argv,"-qtxt"))
 		{
-			queryPlainTXTFileName=get_char_argument(argc,argv,"-qtxt");
-			useQueryPlainTXTFile = true;
-			useQuery = true;
+			inputQueryPlainTXTFileName=get_char_argument(argc,argv,"-qtxt");
+			useInputQueryPlainTXTFile = true;
+			useInputQuery = true;
 		}
 
 		if(exists_argument(argc,argv,"-qrelex"))
 		{
-			queryRelexXMLFileName=get_char_argument(argc,argv,"-qrelex");
-			useQueryRelexXMLFile = true;
-			useQuery = true;
+			inputQueryRelexXMLFileName=get_char_argument(argc,argv,"-qrelex");
+			useInputQueryRelexXMLFile = true;
+			useInputQuery = true;
 		}
 
 		if(exists_argument(argc,argv,"-qxml"))
 		{
-			queryXMLFileName=get_char_argument(argc,argv,"-qxml");
-			useQueryXMLFile = true;
-			useQuery = true;
+			inputQueryXMLFileName=get_char_argument(argc,argv,"-qxml");
+			useInputQueryXMLFile = true;
+			useInputQuery = true;
 		}
 		
 		if(exists_argument(argc,argv,"-oxml"))
 		{
-			outputXMLFileName=get_char_argument(argc,argv,"-oxml");
-			useOutputXMLFile = true;
+			outputTextXMLFileName=get_char_argument(argc,argv,"-oxml");
+			useOutputTextXMLFile = true;
 		}
 
 		if(exists_argument(argc,argv,"-oldr"))
 		{
-			outputLDRFileName=get_char_argument(argc,argv,"-oldr");
-			useOutputLDRFile = true;
+			outputTextLDRFileName=get_char_argument(argc,argv,"-oldr");
+			useOutputTextLDRFile = true;
 			printOutput = true;
 		}
 
 		if(exists_argument(argc,argv,"-oppm"))
 		{
-			outputPPMFileName=get_char_argument(argc,argv,"-oppm");
-			useOutputPPMFile = true;
+			outputTextPPMFileName=get_char_argument(argc,argv,"-oppm");
+			useOutputTextPPMFile = true;
 			printOutput = true;
 		}
 
 		if(exists_argument(argc,argv,"-osvg"))
 		{
-			outputSVGFileName=get_char_argument(argc,argv,"-osvg");
-			useOutputSVGFile = true;
+			outputTextSVGFileName=get_char_argument(argc,argv,"-osvg");
+			useOutputTextSVGFile = true;
 			printOutput = true;
 		}
 
 		if(exists_argument(argc,argv,"-oall"))
 		{
-			outputAllFileName=get_char_argument(argc,argv,"-oall");
-			useOutputAllFile = true;
+			outputTextAllFileName=get_char_argument(argc,argv,"-oall");
+			useOutputTextAllFile = true;
 			printOutput = true;
 		}
 		
 		if(exists_argument(argc,argv,"-oanswer"))
 		{
-			outputAnswerPlainTXTFileName=get_char_argument(argc,argv,"-oanswer");
-			useOutputAnswerPlainTXTFile = true;
+			outputTextAnswerPlainTXTFileName=get_char_argument(argc,argv,"-oanswer");
+			useOutputTextAnswerPlainTXTFile = true;
 		}		
 		
 		/*
@@ -332,7 +344,7 @@ int main(int argc,char **argv)
 	}
 	else
 	{
-		cout << "error: GIA requires either a plain text input file (.txt), a relex input file (.xml) or GIA semantic network (.xml) to be defined" << endl;
+		cout << "error: GIA requires either a plain text inputText file (.txt), a relex inputText file (.xml) or GIA semantic network (.xml) to be defined" << endl;
 		printf(errmessage);
 		exit(1);
 	}
@@ -374,69 +386,69 @@ int main(int argc,char **argv)
 			
 	if(printOutput)
 	{
-		if(!useOutputXMLFile)
+		if(!useOutputTextXMLFile)
 		{	
-			if(useOutputAllFile)
+			if(useOutputTextAllFile)
 			{	
-				useOutputXMLFile = true;		
-				outputXMLFileName = outputAllFileName + ".xml";
+				useOutputTextXMLFile = true;		
+				outputTextXMLFileName = outputTextAllFileName + ".xml";
 			}
 		}		
-		if(!useOutputLDRFile)
+		if(!useOutputTextLDRFile)
 		{		
-			if(useOutputAllFile || displayInOpenGLAndOutputScreenshot)		//LDR output is always required when displaying semantic network in OpenGL and outputing screenshot
+			if(useOutputTextAllFile || displayInOpenGLAndOutputScreenshot)		//LDR outputText is always required when displaying semantic network in OpenGL and outputTexting screenshot
 			{
-				useOutputLDRFile = true;			
-				outputLDRFileName = outputAllFileName + ".ldr";
+				useOutputTextLDRFile = true;			
+				outputTextLDRFileName = outputTextAllFileName + ".ldr";
 			}
 		}
-		if(!useOutputSVGFile)
+		if(!useOutputTextSVGFile)
 		{	
-			useOutputSVGFile = true;	//SVG output is always required when printing/drawing semantic network
-			outputSVGFileName = outputAllFileName + ".svg";
+			useOutputTextSVGFile = true;	//SVG outputText is always required when printing/drawing semantic network
+			outputTextSVGFileName = outputTextAllFileName + ".svg";
 		}
-		if(!useOutputPPMFile)
+		if(!useOutputTextPPMFile)
 		{
-			if(useOutputAllFile)
+			if(useOutputTextAllFile)
 			{
-				useOutputPPMFile = true;		
-				outputPPMFileName = outputAllFileName + ".ppm";
+				useOutputTextPPMFile = true;		
+				outputTextPPMFileName = outputTextAllFileName + ".ppm";
 			}
 		}		
 	}
 
 					
-	if(useInputPlainTXTFile)
+	if(useInputTextPlainTXTFile)
 	{
-		if(useInputRelexXMLFile)
+		if(useInputTextRelexXMLFile)
 		{
-			cout << "error: useInputPlainTXTFile && useInputRelexXMLFile" << endl;
+			cout << "error: useInputTextPlainTXTFile && useInputTextRelexXMLFile" << endl;
 			exit(0);
 		}
-		else if(useInputXMLFile)
+		else if(useInputTextXMLFile)
 		{
-			cout << "error: useInputPlainTXTFile && useInputXMLFile" << endl;
+			cout << "error: useInputTextPlainTXTFile && useInputTextXMLFile" << endl;
 			exit(0);
 		}
 		else
 		{	
-			executeRelex(inputPlainTXTFileName, inputRelexXMLFileName);			
-			useInputRelexXMLFile = true;	//now will parse the relex file
+			executeRelex(inputTextPlainTXTFileName, inputTextRelexXMLFileName);			
+			useInputTextRelexXMLFile = true;	//now will parse the relex file
 		}
 	}
 	
 	
-	if(useInputRelexXMLFile)
+	if(useInputTextRelexXMLFile)
 	{
-		if(useInputXMLFile)
+		if(useInputTextXMLFile)
 		{
-			cout << "error: useInputXMLFile && useInputRelexXMLFile" << endl;
+			cout << "error: useInputTextXMLFile && useInputTextRelexXMLFile" << endl;
 			exit(0);
 		}
 		else
 		{
 			//cout << "as" << endl;
-			if(!parseRelexFile(inputRelexXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList, timeConditionNodesList, timeConditionNumbersList, false))
+			if(!parseRelexFile(inputTextRelexXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList, timeConditionNodesList, timeConditionNumbersList, false))
 			{
 				result = false;
 			}
@@ -444,21 +456,21 @@ int main(int argc,char **argv)
 		}
 	}
 	
-	if(useInputXMLFile)
+	if(useInputTextXMLFile)
 	{
-		if(useInputPlainTXTFile)
+		if(useInputTextPlainTXTFile)
 		{
-			cout << "error: useInputXMLFile && useInputPlainTXTFile" << endl;
+			cout << "error: useInputTextXMLFile && useInputTextPlainTXTFile" << endl;
 			exit(0);		
 		}
-		if(useInputRelexXMLFile)
+		if(useInputTextRelexXMLFile)
 		{
-			cout << "error: useInputXMLFile && useInputRelexXMLFile" << endl;
+			cout << "error: useInputTextXMLFile && useInputTextRelexXMLFile" << endl;
 			exit(0);
 		}
 		else
 		{		
-			if(!readSemanticNetXMLFile(inputXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList))
+			if(!readSemanticNetXMLFile(inputTextXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList))
 			{
 				result = false;
 			}
@@ -466,57 +478,65 @@ int main(int argc,char **argv)
 		}
 	}
 			
-	if(useQueryPlainTXTFile)
+	if(useInputQueryPlainTXTFile)
 	{
-		if(useQueryRelexXMLFile)
+		if(useInputQueryRelexXMLFile)
 		{
-			cout << "error: useQueryPlainTXTFile && useQueryRelexXMLFile" << endl;
+			cout << "error: useInputQueryPlainTXTFile && useInputQueryRelexXMLFile" << endl;
 			exit(0);
 		}
-		else if(useQueryXMLFile)
+		else if(useInputQueryXMLFile)
 		{
-			cout << "error: useQueryPlainTXTFile && useQueryXMLFile" << endl;
+			cout << "error: useInputQueryPlainTXTFile && useInputQueryXMLFile" << endl;
 			exit(0);
 		}
 		else
 		{	
-			executeRelex(queryPlainTXTFileName, queryRelexXMLFileName);			
-			useQueryRelexXMLFile = true;	//now will parse the relex file
+			executeRelex(inputQueryPlainTXTFileName, inputQueryRelexXMLFileName);			
+			useInputQueryRelexXMLFile = true;	//now will parse the relex file
 		}
 	}
 			
-	if(useQueryRelexXMLFile)
+	if(useInputQueryRelexXMLFile)
 	{
-		if(useQueryXMLFile)
+		if(useInputQueryXMLFile)
 		{
-			cout << "error: useQueryXMLFile && useQueryRelexXMLFile" << endl;
+			cout << "error: useInputQueryXMLFile && useInputQueryRelexXMLFile" << endl;
 			exit(0);
 		}
 		else
 		{
-			if(!parseRelexFile(queryRelexXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, conceptEntityNamesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true))
+			if(!parseRelexFile(inputQueryRelexXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, conceptEntityNamesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true))
 			{
 				result = false;
 			}
 		}
+
+	#ifdef GIA_DEBUG_PRINT_QUERY_SEMANTIC_NETWORK		
+		if(printOutput)
+		{	
+			printGIAnetworkNodes(entityNodesCompleteListQuery, rasterImageWidth, rasterImageHeight, outputQueryLDRFileName, outputQuerySVGFileName, outputQueryPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputQueryLDRFile, useOutputQueryPPMFile);
+		}	
+	#endif
+			
 	}
 		
-	if(useQueryXMLFile)
+	if(useInputQueryXMLFile)
 	{
-		if(useQueryPlainTXTFile)
+		if(useInputQueryPlainTXTFile)
 		{
-			cout << "error: useQueryXMLFile && useQueryPlainTXTFile" << endl;
+			cout << "error: useInputQueryXMLFile && useInputQueryPlainTXTFile" << endl;
 			exit(0);		
 		}
-		if(useQueryRelexXMLFile)
+		if(useInputQueryRelexXMLFile)
 		{
-			cout << "error: useQueryXMLFile && useQueryRelexXMLFile" << endl;
+			cout << "error: useInputQueryXMLFile && useInputQueryRelexXMLFile" << endl;
 			exit(0);
 		}
 		else
 		{		
 			entityNodesCompleteListQuery = new vector<GIAEntityNode*>;
-			if(!readSemanticNetXMLFile(queryXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, conceptEntityNamesListQuery))
+			if(!readSemanticNetXMLFile(inputQueryXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, conceptEntityNamesListQuery))
 			{
 				result = false;
 			}
@@ -525,7 +545,7 @@ int main(int argc,char **argv)
 	}
 		
 
-	if(useQuery)
+	if(useInputQuery)
 	{
 		/*
 		implement comparison of question semantic net to semanic net - locate the question semantic net as a subset of the semantic net, and;
@@ -542,7 +562,9 @@ int main(int argc,char **argv)
 		GIAEntityNode* queryAnswerNode;
 		GIAEntityNode* queryAnswerPreviousNode;
 		string queryAnswerContext = "";
+		cout << "a" << endl;
 		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(conceptEntityNodesList, conceptEntityNamesList, conceptEntityNodesListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerPreviousNode, &queryAnswerContext);
+		cout << "b" << endl;
 		
 		double maxConfidence = determineMaxConfidenceOfQuerySemanticNetwork(conceptEntityNodesListQuery);		//OLD [simple]: entityNodesCompleteListQuery->size();
 	
@@ -637,12 +659,12 @@ int main(int argc,char **argv)
 		#endif
 										
 		char * fileByteArray = const_cast<char*>(answerString.c_str());
-		char * outputAnswerPlainTXTFileNameCharStar = const_cast<char*>(outputAnswerPlainTXTFileName.c_str());	
-		writeByteArrayToFile(outputAnswerPlainTXTFileNameCharStar, fileByteArray, answerString.length());		
+		char * outputTextAnswerPlainTXTFileNameCharStar = const_cast<char*>(outputTextAnswerPlainTXTFileName.c_str());	
+		writeByteArrayToFile(outputTextAnswerPlainTXTFileNameCharStar, fileByteArray, answerString.length());		
 	}
-	else if(useOutputAnswerPlainTXTFile)
+	else if(useOutputTextAnswerPlainTXTFile)
 	{
-		cout << "error: output answer require a query to be set" << endl;
+		cout << "error: outputText answer require a query to be set" << endl;
 	}
 	
 	#ifdef LINUX
@@ -653,7 +675,7 @@ int main(int argc,char **argv)
 			
 	if(printOutput)
 	{	
-		printGIAnetworkNodes(entityNodesCompleteList, rasterImageWidth, rasterImageHeight, outputLDRFileName, outputSVGFileName, outputPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputLDRFile, useOutputPPMFile);
+		printGIAnetworkNodes(entityNodesCompleteList, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile);
 	}			
 	
 	#ifdef GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
@@ -662,9 +684,9 @@ int main(int argc,char **argv)
 		result = false;
 	}
 	#else				
-	if(useOutputXMLFile)
+	if(useOutputTextXMLFile)
 	{			
-		if(!writeSemanticNetXMLFile(outputXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList))
+		if(!writeSemanticNetXMLFile(outputTextXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList))
 		{
 			result = false;
 		}
@@ -679,11 +701,11 @@ int main(int argc,char **argv)
 	
 }
 
-void executeRelex(string inputPlainTXTFileName, string inputRelexXMLFileName)
+void executeRelex(string inputTextPlainTXTFileName, string inputTextRelexXMLFileName)
 {
 	//execute Relex on plain text
 	string executeRelexCommand = "";	
-	executeRelexCommand = executeRelexCommand + exeFolderCharStar + "/" + GIA_RELEX_EXECUTABLE_NAME + " " + inputPlainTXTFileName + " " + inputRelexXMLFileName + " " + workingFolderCharStar + " " + tempFolderCharStar;
+	executeRelexCommand = executeRelexCommand + exeFolderCharStar + "/" + GIA_RELEX_EXECUTABLE_NAME + " " + inputTextPlainTXTFileName + " " + inputTextRelexXMLFileName + " " + workingFolderCharStar + " " + tempFolderCharStar;
 
 	#ifdef LINUX
 	chdir(exeFolderCharStar);						
@@ -706,7 +728,7 @@ void executeRelex(string inputPlainTXTFileName, string inputRelexXMLFileName)
 
 
 	
-bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<string> * conceptEntityNamesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery)
+bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<string> * conceptEntityNamesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery)
 {
 	bool result = true;
 	
@@ -718,7 +740,7 @@ bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entity
 	Sentence * currentSentence = firstSentenceInList;
 
 	XMLParserTag * firstTagInXMLFile = new XMLParserTag();
-	readXMLFile(inputRelexXMLFileName, firstTagInXMLFile);
+	readXMLFile(inputTextRelexXMLFileName, firstTagInXMLFile);
 
 	XMLParserTag * currentTag = firstTagInXMLFile;
 	currentTag = parseTagDownALevel(currentTag, CFF_XML_TAG_nlparse, &result);
