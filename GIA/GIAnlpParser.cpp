@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16b 27-January-2015
+ * Project Version: 2i16c 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -101,16 +101,7 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 				{
 					currentRelation->sameReferenceSet = false;
 				}
-				if(sameReferenceSetString.find(createRcmodIndicatesSameReferenceSetRecord2(true)) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
-				{
-					currentRelation->rcmodIndicatesSameReferenceSet = true;
-				}
-				else
-				{
-					currentRelation->rcmodIndicatesSameReferenceSet = false;
-				}
 				//cout << "currentRelation->sameReferenceSet = " << currentRelation->sameReferenceSet << endl;
-				//cout << "currentRelation->rcmodIndicatesSameReferenceSet = " << currentRelation->rcmodIndicatesSameReferenceSet << endl;
 			}
 			#endif
 
@@ -483,11 +474,6 @@ string createSameReferenceSetRecord2(bool sameReferenceSet)
 {
 	string sameReferenceSetRecord = "[sameReferenceSet=" + convertBoolToString(sameReferenceSet) + "]";
 	return sameReferenceSetRecord;
-}
-string createRcmodIndicatesSameReferenceSetRecord2(bool rcmodIndicatesSameReferenceSet)
-{
-	string rcmodIndicatesSameReferenceSetRecord = "[rcmodIndicatesSameReferenceSet=" + convertBoolToString(rcmodIndicatesSameReferenceSet) + "]";
-	return rcmodIndicatesSameReferenceSetRecord;
 }
 #endif
 
