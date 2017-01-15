@@ -16,7 +16,7 @@
 
 #define GIA_TM_STRUCT_YEAR_OFFSET 1900
 
-#define GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
+//#define GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 
 //#define GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
 
@@ -27,7 +27,7 @@ int main(int argc,char **argv);
 bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<string> * conceptEntityNamesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList);
 void executeRelex(string inputPlainTXTFileName, string inputRelexXMLFileName);
 
-string printEntityNode(GIAEntityNode * queryAnswerNode);
+string printEntityNode(GIAEntityNode * queryAnswerNode, GIAEntityNode* queryAnswerPreviousNode);
 	void addToPrintEntityNodeString(string * printEntityNodeString, string entityName, string context);
 
 #endif

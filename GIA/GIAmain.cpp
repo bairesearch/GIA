@@ -541,7 +541,8 @@ int main(int argc,char **argv)
 		
 		GIAEntityNode* queryAnswerNode;
 		GIAEntityNode* queryAnswerPreviousNode;
-		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(conceptEntityNodesList, conceptEntityNamesList, conceptEntityNodesListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerPreviousNode);
+		string queryAnswerContext = "";
+		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(conceptEntityNodesList, conceptEntityNamesList, conceptEntityNodesListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerPreviousNode, &queryAnswerContext);
 		
 		double maxConfidence = entityNodesCompleteListQuery->size();
 	
@@ -569,6 +570,7 @@ int main(int argc,char **argv)
 					sprintf(tempQuantityNumberStringCharStar, "%d", queryAnswerNode->quantityNumber);					
 					answerString = answerString + "\nQuantity number: " + tempQuantityNumberStringCharStar;	
 				}
+				/*
 				if(queryAnswerPreviousNode->isCondition)
 				{
 					#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
@@ -576,6 +578,7 @@ int main(int argc,char **argv)
 					#endif
 					answerString = answerString + "\nAnswer is a Condition of type/preposition: " + queryAnswerPreviousNode->entityName;	
 				}
+				*/
 			}
 			//cout << "ahsd2" << endl;
 		}
@@ -593,8 +596,16 @@ int main(int argc,char **argv)
 			cout << "Best Inexact Answer Found:" << queryAnswerNode->entityName << endl;
 			#endif
 			answerString = answerString + "\nBest Inexact Answer Found:" + queryAnswerNode->entityName;
-			answerString = answerString + printEntityNode(queryAnswerNode);	
+			//answerString = answerString + printEntityNode(queryAnswerNode);	
 		}
+		
+		if(foundAnswer)
+		{
+			//print AnswerPreviousNode relationship with answerNode
+			cout << "Answer Context:" << queryAnswerContext << endl;
+			answerString = answerString + "\nAnswer Context:" + queryAnswerContext;
+		}
+		
 					
 		//add confidence to answer
 		char tempConfidenceStringCharStar[100]; 
@@ -676,7 +687,7 @@ void addToPrintEntityNodeString(string * printEntityNodeString, string entityNam
 	*printEntityNodeString = *printEntityNodeString + "\nContext: " + context + " = " + entityName;		
 	#endif
 }
-string printEntityNode(GIAEntityNode * queryAnswerNode)
+string printEntityNode(GIAEntityNode * queryAnswerNode, GIAEntityNode* queryAnswerPreviousNode)
 {
 	string printEntityNodeString = "";
 	

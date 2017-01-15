@@ -13,7 +13,7 @@
 #include "GIAquery.h"
 #include "GIAdatabase.h"
 
-GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, vector<GIAEntityNode*> *conceptEntityNodesListQuery, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, double * confidence, GIAEntityNode** queryAnswerPreviousNode)
+GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, vector<GIAEntityNode*> *conceptEntityNodesListQuery, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, double * confidence, GIAEntityNode** queryAnswerPreviousNode, string * queryAnswerContext)
 {
 	double bestConfidence = 0.0;
 	double bestConfidenceAssumingFoundAnswer = 0.0;
@@ -51,8 +51,9 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 			bool foundAnswerTemp = false;
 			GIAEntityNode* queryAnswerNodeTemp = NULL;
 			GIAEntityNode* queryPeviousAnswerNodeTemp = NULL;
+			string queryAnswerContextTemp = "";
 
-			queryAnswerNodeTemp = testEntityNodeForQuery(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodes, false, &queryPeviousAnswerNodeTemp);
+			queryAnswerNodeTemp = testEntityNodeForQuery(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodes, false, &queryPeviousAnswerNodeTemp, &queryAnswerContextTemp);
 
 			double currentConfidence = (double)numberOfMatchedNodes;	//NB confidence value definition for query network structure matching is currently very simple; it is just equal to the number of matched nodes found 
 
@@ -65,6 +66,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 						bestConfidenceAssumingFoundAnswer = currentConfidence;
 						queryAnswerNode = queryAnswerNodeTemp;
 						*queryAnswerPreviousNode = queryPeviousAnswerNodeTemp;
+						*queryAnswerContext = queryAnswerContextTemp;
 						*foundAnswer = true;
 						*confidence = bestConfidenceAssumingFoundAnswer;
 					}
@@ -94,9 +96,10 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		bool foundAnswerTemp = false;
 		GIAEntityNode* queryAnswerNodeTemp = NULL;
 		GIAEntityNode* queryPeviousAnswerNodeTemp = NULL;
+		string queryAnswerContextTemp = "";
 		int numberOfMatchedNodes = 0;
 		
-		queryAnswerNodeTemp = testEntityNodeForQuery(queryEntityNodeWhenSearchedResultsInBestConfidence, networkEntityNodeWhenSearchedResultsInBestConfidence, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodes, true, queryAnswerPreviousNode);
+		queryAnswerNodeTemp = testEntityNodeForQuery(queryEntityNodeWhenSearchedResultsInBestConfidence, networkEntityNodeWhenSearchedResultsInBestConfidence, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodes, true, queryAnswerPreviousNode, &queryAnswerContextTemp);
 	
 		if(!detectComparisonVariable && foundAnswerTemp)
 		{
@@ -104,6 +107,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 			*foundAnswer = true;
 			queryAnswerNode = queryAnswerNodeTemp;
 			*queryAnswerPreviousNode = queryPeviousAnswerNodeTemp;
+			*queryAnswerContext = queryAnswerContextTemp;
 		}
 		*confidence = (double)numberOfMatchedNodes;
 	}
@@ -114,100 +118,10 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 				
 }
 
-GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode * comparisonVariableNode,  bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters, bool isSuitableNodeTypeForInexactAnswer, bool isCondition, GIAEntityNode** queryAnswerPreviousNode, GIAEntityNode* sourceEntityNode, bool sourceIsConditionAndHasComparisonVariableAttached)
-{	
-	bool foundMatch = false;
-	if(sourceIsConditionAndHasComparisonVariableAttached)
-	{
-		if(detectComparisonVariable)
-		{//assumed true
-			
-			if(!(*foundAnswer))
-			{//do not overwrite match, if already found match 
-			
-				//cout << "queryEntityNode->entityName = " << queryEntityNode->entityName << endl;
-				//cout << "entityNode->entityName = " << entityNode->entityName << endl;			
-				//this case is required in the case an answer is connected to a condition property or a condition definition (both new additions to the algorithm)
-				foundMatch = true;
-			}
-		}	
-	}
-	else
-	{
-		if((queryEntityNode->entityName == entityNode->entityName) || isCondition)	//allow non-equal conditions to be matched during network comparison
-		{
-			if(detectComparisonVariable && comparisonVariableNode->hasQuantity && queryEntityNode->hasQuantity && entityNode->hasQuantity)
-			{//exact match found [NB if a quantity, the queryEntityNode's entityName will not have the comparisonVariable name (_$qVar) specified, and therefore a matched entity node entityName is required]
-				foundMatch = true;
-				#ifdef GIA_QUERY_DEBUG
-				cout << "entityNode->quantityNumber = " << entityNode->quantityNumber << endl;
-				#endif
-			}
-			else
-			{
-				queryAnswerNode = testEntityNodeForQuery(queryEntityNode, entityNode, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, queryAnswerPreviousNode);
 
-				if(isSuitableNodeTypeForInexactAnswer)
-				{
-					if(findBestInexactAnswerAndSetDrawParameters)
-					{
-						foundMatch = true;
-						#ifdef GIA_QUERY_DEBUG
-						cout << "foundBestInexactAnswerAndSetDrawParameters:" << entityNode->entityName << endl;
-						#endif
-						//set queryAnswerNode if entityNode is an object;
-						/*eg;
-						Which house does did Jane buy?
-						Which house is that?
-						What day is it?
-						What house did Jane buy?
-						*/
-
-					}			
-				}
-			}
-		}
-		else if(detectComparisonVariable)
-		{
-			if(queryEntityNode->entityName == comparisonVariableNode->entityName)
-			{//exact match found
-				foundMatch = true;
-			}
-		}
-	}
-
-	if(foundMatch)
-	{
-		//OLD: if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters))
-		
-		*queryAnswerPreviousNode = sourceEntityNode;
-		
-		entityNode->isAnswerToQuery = true;
-		*foundAnswer = true; 
-		queryAnswerNode = entityNode;
-		#ifdef GIA_QUERY_DEBUG
-		cout << "foundAnswer:" << entityNode->entityName << endl;
-		#endif
-		//CHECKTHIS; need to take into account vector of answers (not just a single answer)
-
-		if(findBestInexactAnswerAndSetDrawParameters)
-		{
-			entityNode->isAnswerContextToQuery = true;			 
-		}
-		else
-		{
-			entityNode->testedForQueryComparison = true;		//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]				
-		}	
-			
-	}
-	
-	return queryAnswerNode;
-	
-	
-}
 				
 //current queryEntityNode, currentEntityNode
-GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters, GIAEntityNode** queryAnswerPreviousNode)
+GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters, GIAEntityNode** queryAnswerPreviousNode, string * queryAnswerContext)
 {
 	*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
 		
@@ -286,7 +200,7 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 			if(detectComparisonVariable)
 			{
 				bool sourceIsConditionAndHasComparisonVariableAttached = false;
-				cout << "\tentityNode = " << entityNode->entityName << " (is condition)" << endl;	
+				//cout << "\tentityNode = " << entityNode->entityName << " (is condition)" << endl;	
 
 				vector<GIAEntityNode*>::iterator entityIterQuery;	
 				for(entityIterQuery = queryEntityNode->PropertyNodeList.begin(); entityIterQuery != queryEntityNode->PropertyNodeList.end(); entityIterQuery++) 
@@ -338,13 +252,15 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 					vector<GIAEntityNode*>::iterator entityIter;
 					for(entityIter = entityNode->EntityNodeDefinitionList.begin(); entityIter != entityNode->EntityNodeDefinitionList.end(); entityIter++) 
 					{
-						queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIter, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, true);				
+						string sourceContext = "being ";
+						queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIter, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, true, queryAnswerContext, sourceContext);				
 					}
 	
 					for(entityIter = entityNode->PropertyNodeList.begin(); entityIter != entityNode->PropertyNodeList.end(); entityIter++) 
 					{//DRAW SHOULD NOT BE REQUIRED	
 						//cout << "a31" << endl;
-						queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIter, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, true);
+						string sourceContext = "having ";
+						queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIter, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, true, queryAnswerContext, sourceContext);
 					}
 					
 					//CHECK THIS; need to take into account condition types for match
@@ -352,7 +268,8 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 					vector<GIAEntityNode*>::iterator ConditionIter;	
 					for(ConditionIter = entityNode->ConditionNodeList.begin(); ConditionIter != entityNode->ConditionNodeList.end(); ConditionIter++) 
 					{	
-						queryAnswerNode = testReferencedEntityNodeForNameMatch(*ConditionIter, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, true, queryAnswerPreviousNode, entityNode, true);
+						string sourceContext = "";
+						queryAnswerNode = testReferencedEntityNodeForNameMatch(*ConditionIter, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, true, queryAnswerPreviousNode, entityNode, true, queryAnswerContext, sourceContext);
 					}			
 									
 					//CHECK THIS; need to take into account condition types for match		
@@ -360,7 +277,8 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 						
 					for(ConditionIter = entityNode->IncomingConditionNodeList.begin(); ConditionIter != entityNode->IncomingConditionNodeList.end(); ConditionIter++) 
 					{	
-						queryAnswerNode = testReferencedEntityNodeForNameMatch(*ConditionIter, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, true, queryAnswerPreviousNode, entityNode, true);
+						string sourceContext = "";
+						queryAnswerNode = testReferencedEntityNodeForNameMatch(*ConditionIter, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, true, queryAnswerPreviousNode, entityNode, true, queryAnswerContext, sourceContext);
 					}							
 				}
 			}
@@ -373,7 +291,8 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 			for(actionIter = entityNode->IncomingActionNodeList.begin(); actionIter != entityNode->IncomingActionNodeList.end(); actionIter++) 
 			{
 				//cout << "A" << endl;
-				queryAnswerNode = testReferencedEntityNodeForNameMatch(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false);
+				string sourceContext = "is done to ";
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 			
 				//cout << "AA" << endl;
 			}
@@ -382,24 +301,24 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{
 			for(actionIter = entityNode->ActionNodeList.begin(); actionIter != entityNode->ActionNodeList.end(); actionIter++) 
 			{
+				string sourceContext = "";
 				//cout << "AAA" << endl;	
-				queryAnswerNode = testReferencedEntityNodeForNameMatch(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false);				
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);				
 				//cout << "AAAA" << endl;
 			}
 		}	
 
-
-
-		
 		if(queryEntityNode->actionSubjectEntity != NULL)
 		{		
 			if(entityNode->actionSubjectEntity != NULL)
 			{		
+				string sourceContext = "is done by ";
+				
 				//cout << "b5" << endl;
 				//cout << "entityNode->actionSubjectEntity->testedForQueryComparison = " << entityNode->actionSubjectEntity->testedForQueryComparison << endl;
 				//cout << "entityNode->actionSubjectEntity->entityName = " << entityNode->actionSubjectEntity->entityName << endl;
 				//cout << "entityNode->actionObjectEntity->entityName = " << entityNode->actionObjectEntity->entityName << endl;
-				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->actionSubjectEntity, entityNode->actionSubjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false);
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->actionSubjectEntity, entityNode->actionSubjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 							
 				//cout << "b6" << endl;		
 			}	
@@ -407,10 +326,11 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		if(queryEntityNode->actionObjectEntity != NULL)
 		{		
 			if(entityNode->actionObjectEntity != NULL)
-			{		
+			{	
+				string sourceContext = "";	
 				//cout << "b7" << endl;
 
-				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->actionObjectEntity, entityNode->actionObjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, true, false, queryAnswerPreviousNode, entityNode, false);
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->actionObjectEntity, entityNode->actionObjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, true, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 				
 				//cout << "b8" << endl;		
 			}	
@@ -428,7 +348,8 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{	
 			for(ConditionIter = entityNode->ConditionNodeList.begin(); ConditionIter != entityNode->ConditionNodeList.end(); ConditionIter++) 
 			{	
-				queryAnswerNode = testReferencedEntityNodeForNameMatch(*ConditionIterQuery, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, true, queryAnswerPreviousNode, entityNode, false);
+				string sourceContext = "";
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*ConditionIterQuery, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, true, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 			}			
 		}				
 		//CHECK THIS; need to take into account condition types for match		
@@ -437,19 +358,21 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{	
 			for(ConditionIter = entityNode->IncomingConditionNodeList.begin(); ConditionIter != entityNode->IncomingConditionNodeList.end(); ConditionIter++) 
 			{	
-				queryAnswerNode = testReferencedEntityNodeForNameMatch(*ConditionIterQuery, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, true, queryAnswerPreviousNode, entityNode, false);
+				string sourceContext = "";
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*ConditionIterQuery, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, true, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 			}	
 		}
 		
 		if(queryEntityNode->conditionSubjectEntity != NULL)
 		{		
 			if(entityNode->conditionSubjectEntity != NULL)
-			{		
+			{	
+				string sourceContext = "";	
 				//cout << "b5" << endl;
 				//cout << "entityNode->conditionSubjectEntity->testedForQueryComparison = " << entityNode->conditionSubjectEntity->testedForQueryComparison << endl;
 				//cout << "entityNode->conditionSubjectEntity->entityName = " << entityNode->conditionSubjectEntity->entityName << endl;
 				//cout << "entityNode->conditionObjectEntity->entityName = " << entityNode->conditionObjectEntity->entityName << endl;
-				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->conditionSubjectEntity, entityNode->conditionSubjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, true, queryAnswerPreviousNode, entityNode, false);
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->conditionSubjectEntity, entityNode->conditionSubjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, true, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 							
 				//cout << "b6" << endl;		
 			}	
@@ -457,10 +380,11 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		if(queryEntityNode->conditionObjectEntity != NULL)
 		{		
 			if(entityNode->conditionObjectEntity != NULL)
-			{		
+			{	
+				string sourceContext = "";	
 				//cout << "b7" << endl;
 
-				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->conditionObjectEntity, entityNode->conditionObjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, true, true, queryAnswerPreviousNode, entityNode, false);
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->conditionObjectEntity, entityNode->conditionObjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, true, true, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 				
 				//cout << "b8" << endl;		
 			}	
@@ -480,7 +404,8 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 			for(entityIter = entityNode->PropertyNodeList.begin(); entityIter != entityNode->PropertyNodeList.end(); entityIter++) 
 			{//DRAW SHOULD NOT BE REQUIRED	
 				//cout << "a31" << endl;
-				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false);
+				string sourceContext = "has ";
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 			}		
 		}
 		/*this has been removed 25 Sept - use entityNodeContainingThisProperty instead
@@ -497,8 +422,9 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{
 			if(entityNode->entityNodeDefiningThisInstance != NULL)
 			{
+				string sourceContext = "is ";
 				//cout << "a33" << endl;
-				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->entityNodeDefiningThisInstance, entityNode->entityNodeDefiningThisInstance, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false);
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->entityNodeDefiningThisInstance, entityNode->entityNodeDefiningThisInstance, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 			}		
 		}
 		//cout << "a3c" << endl;
@@ -506,8 +432,9 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{
 			if(entityNode->entityNodeContainingThisProperty != NULL)
 			{
+				string sourceContext = "is possessed by ";
 				//cout << "a34" << endl;
-				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->entityNodeContainingThisProperty, entityNode->entityNodeContainingThisProperty, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false);
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->entityNodeContainingThisProperty, entityNode->entityNodeContainingThisProperty, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 			}
 		}
 		//cout << "a4" << endl;
@@ -519,7 +446,8 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{
 			for(entityIter = entityNode->EntityNodeDefinitionList.begin(); entityIter != entityNode->EntityNodeDefinitionList.end(); entityIter++) 
 			{
-				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false);				
+				string sourceContext = "is ";	//is defined by
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);				
 			}
 		}
 		//go reverse also...	
@@ -527,7 +455,8 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
 			for(entityIter = entityNode->EntityNodeDefinitionReverseList.begin(); entityIter != entityNode->EntityNodeDefinitionReverseList.end(); entityIter++) 
 			{//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
-				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false);						
+				string sourceContext = "defines ";
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);						
 			}
 		}
 		//cout << "a6" << endl;
@@ -539,8 +468,9 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{
 			for(entityIter = entityNode->AssociatedInstanceNodeList.begin(); entityIter != entityNode->AssociatedInstanceNodeList.end(); entityIter++) 
 			{
+				string sourceContext = "is seen in ";	//is realised in/defines/is instantiated in
 				//cout << "as0" << endl;
-				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false);						
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);						
 				//cout << "as1" << endl;
 			}
 		}	
@@ -683,6 +613,165 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 
 
 
+GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode * comparisonVariableNode,  bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters, bool isSuitableNodeTypeForInexactAnswer, bool isCondition, GIAEntityNode** queryAnswerPreviousNode, GIAEntityNode* sourceEntityNode, bool sourceIsConditionAndHasComparisonVariableAttached, string * queryAnswerContext, string sourceContext)
+{	
+	#ifdef GIA_QUERY_USE_LONG_CONTEXT_TRACE
+	generateTexualContext(queryAnswerContext, sourceContext, entityNode);
+	//generateTexualContextWithPreviousNode(queryAnswerContext, sourceContext, entityNode, sourceEntityNode);		//*queryAnswerContext = sourceContext;	
+	#endif
+	
+	bool foundMatch = false;
+	if(sourceIsConditionAndHasComparisonVariableAttached)
+	{
+		if(detectComparisonVariable)
+		{//assumed true
+			
+			if(!(*foundAnswer))
+			{//do not overwrite match, if already found match 
+			
+				cout << "queryEntityNode->entityName = " << queryEntityNode->entityName << endl;
+				cout << "entityNode->entityName = " << entityNode->entityName << endl;			
+				//this case is required in the case an answer is connected to a condition property or a condition definition (both new additions to the algorithm)
+				foundMatch = true;
+			}
+		}	
+	}
+	else
+	{
+		if((queryEntityNode->entityName == entityNode->entityName) || isCondition)	//allow non-equal conditions to be matched during network comparison
+		{
+			if(detectComparisonVariable && comparisonVariableNode->hasQuantity && queryEntityNode->hasQuantity && entityNode->hasQuantity)
+			{//exact match found [NB if a quantity, the queryEntityNode's entityName will not have the comparisonVariable name (_$qVar) specified, and therefore a matched entity node entityName is required]
+				foundMatch = true;
+				#ifdef GIA_QUERY_DEBUG
+				cout << "entityNode->quantityNumber = " << entityNode->quantityNumber << endl;
+				#endif
+			}
+			else
+			{
+				string queryAnswerContextTemp = "";
+				bool foundAnswerTemp = false;
+				
+				queryAnswerNode = testEntityNodeForQuery(queryEntityNode, entityNode, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, queryAnswerPreviousNode, &queryAnswerContextTemp);
+
+				if(foundAnswerTemp)
+				{
+					*foundAnswer = foundAnswerTemp;
+					*queryAnswerContext = *queryAnswerContext + queryAnswerContextTemp;
+				}
+				
+				if(isSuitableNodeTypeForInexactAnswer)
+				{
+					if(findBestInexactAnswerAndSetDrawParameters)
+					{
+						foundMatch = true;
+						#ifdef GIA_QUERY_DEBUG
+						cout << "foundBestInexactAnswerAndSetDrawParameters:" << entityNode->entityName << endl;
+						#endif
+						//set queryAnswerNode if entityNode is an object;
+						/*eg;
+						Which house does did Jane buy?
+						Which house is that?
+						What day is it?
+						What house did Jane buy?
+						*/
+
+					}			
+				}
+			}
+		}
+		else if(detectComparisonVariable)
+		{
+			if(queryEntityNode->entityName == comparisonVariableNode->entityName)
+			{//exact match found
+				foundMatch = true;
+			}
+		}
+	}
+
+	if(foundMatch)
+	{
+		//OLD: if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters))
+		
+		*queryAnswerPreviousNode = sourceEntityNode;
+		#ifndef GIA_QUERY_USE_LONG_CONTEXT_TRACE
+		generateTexualContextWithPreviousNode(queryAnswerContext, sourceContext, entityNode, *queryAnswerPreviousNode);	//*queryAnswerContext = sourceContext;
+		#endif
+		
+		entityNode->isAnswerToQuery = true;
+		*foundAnswer = true; 
+		queryAnswerNode = entityNode;
+		#ifdef GIA_QUERY_DEBUG
+		cout << "foundAnswer:" << entityNode->entityName << endl;
+		#endif
+		//CHECKTHIS; need to take into account vector of answers (not just a single answer)
+
+		if(findBestInexactAnswerAndSetDrawParameters)
+		{
+			entityNode->isAnswerContextToQuery = true;			 
+		}
+		else
+		{
+			entityNode->testedForQueryComparison = true;		//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]				
+		}	
+			
+	}
+	
+	return queryAnswerNode;
+	
+	
+}
+
+void generateTexualContextWithPreviousNode(string * queryAnswerContext, string sourceContext, GIAEntityNode* entityNode, GIAEntityNode* entityNodePrevious)
+{
+	generateTexualContextEntityString(queryAnswerContext, entityNodePrevious);
+
+	*queryAnswerContext = *queryAnswerContext + sourceContext;
+	
+	generateTexualContextEntityString(queryAnswerContext, entityNode);
+	
+	*queryAnswerContext = *queryAnswerContext + ". ";
+}
+
+void generateTexualContext(string * queryAnswerContext, string sourceContext, GIAEntityNode* entityNode)
+{	
+	*queryAnswerContext = *queryAnswerContext + sourceContext;
+	
+	generateTexualContextEntityString(queryAnswerContext, entityNode);
+}
+
+void generateTexualContextEntityString(string * queryAnswerContext, GIAEntityNode* entityNode)
+{
+	string entityPretext = "";
+	
+	if(entityNode->negative)
+	{
+		entityPretext = entityPretext + "(not) ";
+	}
+	
+	/*
+	if(entityNode->isDefinite)
+	{//ie definite noun
+		entityPretext = entityPretext + "the ";
+	}
+	*/
+	
+	if(entityNode->isProperty)
+	{
+	}
+	else if(entityNode->isAction)
+	{	
+	}
+	else if(entityNode->isCondition)
+	{
+	}
+	else
+	{//concept
+		entityPretext = entityPretext + "a ";
+	}
+	
+	*queryAnswerContext = *queryAnswerContext + entityPretext + entityNode->entityName + " ";
+}
 
 
 
