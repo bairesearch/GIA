@@ -27,6 +27,39 @@ string quantityModifierNameArray[QUANTITY_MODIFIER_NUMBER_OF_TYPES] = {"almost"}
 //~nouns
 GIAEntityNode::GIAEntityNode(void)
 {
+	id = 0;				
+	entityName = "";
+	confidence = 1.0;
+	
+	isProperty = false;
+	hasAssociatedProperty = false;
+	hasAssociatedAction = false;
+	hasAssociatedTime = false;
+	
+	//type = undefinedEntityType;
+	//instance = undefinedInstance;
+
+	entityNodeContainingThisProperty = NULL;				//if property only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
+	entityNodeDefiningThisProperty = NULL; 		
+
+	grammaticalNumber = GRAMMATICAL_NUMBER_UNDEFINED;
+	
+	hasQuantity = false;
+	quantityNumber = QUANTITY_NUMBER_UNDEFINED;
+	quantityModifier = QUANTITY_MODIFIER_UNDEFINED;	//not yet implemented
+	quantityModifierString = "";	//eg "almost"
+	hasMeasure = false;
+	measureType = MEASURE_TYPE_UNDEFINED;
+
+	initialisedForPrinting = false;
+	printed = false;
+	printX = 0;
+	printY = 0;
+	printXIndex = 0;
+	printYIndex = 0;
+	printTextX = 0;
+	printTextY = 0;
+
 	grammaticalTenseTemp = GRAMMATICAL_TENSE_UNDEFINED;
 	grammaticalNumberTemp = GRAMMATICAL_NUMBER_UNDEFINED;
 	grammaticalDefiniteTemp = GRAMMATICAL_DEFINITE_UNDEFINED;
@@ -42,38 +75,6 @@ GIAEntityNode::GIAEntityNode(void)
 	hasAssociatedPropertyTemp = false;
 	hasAssociatedActionTemp = false;
 	
-	grammaticalNumber = GRAMMATICAL_NUMBER_UNDEFINED;
-	
-	hasQuantity = false;
-	quantityNumber = QUANTITY_NUMBER_UNDEFINED;
-	quantityModifier = QUANTITY_MODIFIER_UNDEFINED;	//not yet implemented
-	quantityModifierString = "";	//eg "almost"
-	hasMeasure = false;
-	measureType = MEASURE_TYPE_UNDEFINED;
-			
-	initialisedForPrinting = false;
-	printed = false;
-	printX = 0;
-	printY = 0;
-	printXIndex = 0;
-	printYIndex = 0;
-	printTextX = 0;
-	printTextY = 0;
-	
-	entityName = "";
-	confidence = 1.0;
-	isProperty = false;
-	hasAssociatedProperty = false;
-	hasAssociatedAction = false;
-	hasAssociatedTime = false;
-	
-	//type = undefinedEntityType;
-	//instance = undefinedInstance;
-
-	entityNodeContainingThisProperty = NULL;				//if property only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
-	entityNodeDefiningThisProperty = NULL; 		
-	
-	id = 0;		
 }
 GIAEntityNode::~GIAEntityNode(void)
 {

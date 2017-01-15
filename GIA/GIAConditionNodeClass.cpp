@@ -14,15 +14,7 @@
 
 GIAConditionNode::GIAConditionNode(void)
 {
-	initialisedForPrinting = false;
-	printed = false;
-	printX = 0;
-	printY = 0;
-	printXIndex = 0;
-	printYIndex = 0;
-	printTextX = 0;
-	printTextY = 0;
-	
+	id = 0;	
 	conditionName = "";
 	confidence = 1.0;
 
@@ -37,7 +29,14 @@ GIAConditionNode::GIAConditionNode(void)
 	conditionType = CONDITION_NODE_TYPE_UNDEFINED;
 	timeConditionNode = NULL;
 	
-	id = 0;	
+	initialisedForPrinting = false;
+	printed = false;
+	printX = 0;
+	printY = 0;
+	printXIndex = 0;
+	printYIndex = 0;
+	printTextX = 0;
+	printTextY = 0;
 }
 GIAConditionNode::~GIAConditionNode(void)
 {

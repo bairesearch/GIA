@@ -78,49 +78,15 @@ public:
 	GIAEntityNode(void);
 	~GIAEntityNode(void);
 	
-	int grammaticalTenseTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	int grammaticalNumberTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	bool grammaticalDefiniteTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	bool grammaticalPersonTemp;	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed		
-	int grammaticalGenderTemp; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-	//bool grammaticalCountTemp;	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed		
-	bool isSubjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-	bool isObjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-	bool hasPropertyTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-	
-	//bool isReferenceEntityInThisSentence;	//temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
-	bool entityAlreadyDeclaredInThisContext;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
-
-	bool hasAssociatedPropertyTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	bool hasAssociatedActionTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	
-	int grammaticalNumber;
-	
-	bool hasQuantity;
-	int quantityNumber;
-	int quantityModifier;	//not yet implemented
-	string quantityModifierString;	//eg "almost"
-	bool hasMeasure;
-	int measureType;
-	
-		
-	bool initialisedForPrinting;
-	bool printed;
-	int printX;
-	int printY;
-	int printXIndex;
-	int printYIndex;
-	int printTextX;
-	int printTextY;
-	
+	long id;
 	string entityName;
 	double confidence;
-	
+		
 	bool isProperty;		//is this entity a property?
 	bool hasAssociatedProperty;	//this boolean appears to only represent whether this entity defines a child property node [and not whether it contains one]
 	bool hasAssociatedAction;
 	bool hasAssociatedTime;
-	
+		
 	/*
 	enum
 	{
@@ -175,7 +141,44 @@ public:
 	vector<GIAConditionNode*> ConditionNodeReverseList;	//this property is required by the following... //aka reason	[NB these may only be property, location, {and time action condtions}, not action conditions]
 	vector<GIAConditionNode*>::iterator ConditionNodeReverseListIterator;		
 	
-	long id;	
+
+	int grammaticalNumber;
+	
+	bool hasQuantity;
+	int quantityNumber;
+	int quantityModifier;	//not yet implemented
+	string quantityModifierString;	//eg "almost"
+	bool hasMeasure;
+	int measureType;
+	
+		
+	bool initialisedForPrinting;
+	bool printed;
+	int printX;
+	int printY;
+	int printXIndex;
+	int printYIndex;
+	int printTextX;
+	int printTextY;
+
+
+	int grammaticalTenseTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+	int grammaticalNumberTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+	bool grammaticalDefiniteTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+	bool grammaticalPersonTemp;	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed		
+	int grammaticalGenderTemp; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+	//bool grammaticalCountTemp;	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed		
+	bool isSubjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+	bool isObjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+	bool hasPropertyTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+	
+	//bool isReferenceEntityInThisSentence;	//temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
+	bool entityAlreadyDeclaredInThisContext;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
+
+	bool hasAssociatedPropertyTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+	bool hasAssociatedActionTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+
+	
 };
 
 /*

@@ -31,6 +31,7 @@ using namespace std;
 #include "GIAEntityNodeClass.h"
 #include "GIAActionNodeClass.h"
 #include "GIAdraw.h"
+#include "GIAXMLconversion.h"
 #include "XMLParserClass.h"
 #include "XMLrulesClass.h"
 
@@ -52,10 +53,10 @@ int main(int argc,char **argv)
 	firstSentenceInList->firstFeatureInList = newFeature;
 	Sentence * currentSentence = firstSentenceInList;
 	
-	string xmlFileName = "test-corpus-parsed.xml";
+	string relexOutputXMLFileName = "test-corpus-parsed.xml";
 	
 	XMLParserTag * firstTagInXMLFile = new XMLParserTag();
-	readXMLFile(xmlFileName, firstTagInXMLFile);
+	readXMLFile(relexOutputXMLFileName, firstTagInXMLFile);
 
 	cout << "hasd" << endl;
 	
@@ -98,7 +99,7 @@ int main(int argc,char **argv)
 				}
 				Sentence * newSentence = new Sentence();
 				Relation * newRelation = new Relation();
-				Feature * newFeature = new Feature();
+				Feature * newFeaturesultre = new Feature();
 				newSentence->previous = currentSentence;				
 				newSentence->firstRelationInList = newRelation;
 				newSentence->firstFeatureInList = newFeature;					
@@ -128,4 +129,18 @@ int main(int argc,char **argv)
 	
 	printGIAnetworkNodes(&indexOfEntityNodes, rasterImageWidth, rasterImageHeight, outputFileName, display);
 
+	
+	/*
+	string semanticNetXMLFileName = GIA_SEMANTIC_NET_XML_FILE_NAME;
+	if(!writeSemanticNetXMLFile(semanticNetXMLFileName, getTranslatorEntityNodesCompleteList(), getTranslatorActionNodesCompleteList(), getTranslatorConditionNodesCompleteList()))
+	{
+		result = false;
+	}
+	*/
+	string semanticNetXMLFileName = GIA_SEMANTIC_NET_XML_FILE_NAME;
+	if(!testReadSemanticNetXMLFile2(getTranslatorEntityNodesCompleteList(), getTranslatorActionNodesCompleteList(), getTranslatorConditionNodesCompleteList()))
+	{
+		result = false;
+	}
+	
 }

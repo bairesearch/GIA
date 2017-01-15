@@ -51,15 +51,7 @@ public:
 	GIAActionNode(void);
 	~GIAActionNode(void);
 	
-	bool initialisedForPrinting;	
-	bool printed;
-	int printX;
-	int printY;
-	int printXIndex;
-	int printYIndex;
-	int printTextX;
-	int printTextY;
-	
+	long id;
 	string actionName;
 	double confidence;
 
@@ -84,8 +76,16 @@ public:
 	GIAEntityNode * actionSubjectEntity;
 	//record of which entity that is the object of this action instance
 	GIAEntityNode * actionObjectEntity;
-	
-	long id;
+
+		
+	bool initialisedForPrinting;	
+	bool printed;
+	int printX;
+	int printY;
+	int printXIndex;
+	int printYIndex;
+	int printTextX;
+	int printTextY;
 };
 
 /*

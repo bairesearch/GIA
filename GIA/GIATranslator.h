@@ -156,11 +156,11 @@ using namespace std;
 #define REFERENCE_TYPE_PERSON_PLURAL_THEY "it"
 */
 
-
+/*
 extern vector<GIAEntityNode*> entityNodesCompleteList;
 extern vector<GIAActionNode*> actionNodesCompleteList;
 extern vector<GIAConditionNode*> conditionNodesCompleteList;
-
+*/
 
 
 /*
@@ -201,6 +201,9 @@ void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode 
 
 
 
+vector<GIAEntityNode*> * getTranslatorEntityNodesCompleteList();
+vector<GIAActionNode*> * getTranslatorActionNodesCompleteList();
+vector<GIAConditionNode*> * getTranslatorConditionNodesCompleteList();
 
 long maxLong(long a, long b);
 

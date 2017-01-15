@@ -29,6 +29,7 @@ using namespace std;
 #include "GIAActionNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
+#define GIA_SEMANTIC_NET_XML_NULL_NODE_ID "-1"
 
 #define GIA_SEMANTIC_NET_XML_FILE_NAME "semanticNet.xml"
 #define GIA_SEMANTIC_NET_XML_FILE_NAME1 "semanticNet1.xml"
@@ -55,13 +56,42 @@ using namespace std;
 		#define NET_XML_TAG_conditionNode ((string)"conditionNode")
 			#define NET_XML_TAG_timeConditionNode ((string)"timeConditionNode")
 
+#define NET_XML_TAG_actionNodeReference ((string)"actionNodeReference")
+#define NET_XML_ATTRIBUTE_actionNodeID ((string)"actionNodeID")
+#define NET_XML_TAG_entityNodeReference ((string)"entityNodeReference")
+#define NET_XML_ATTRIBUTE_entityNodeID ((string)"entityNodeID")
+#define NET_XML_TAG_conditionNodeReference ((string)"conditionNodeReference")
+#define NET_XML_ATTRIBUTE_conditionNodeID ((string)"conditionNodeID")
 
 
 
 /*entity node*/
 
 #define NET_XML_ATTRIBUTE_id ((string)"id")
-
+#define NET_XML_ATTRIBUTE_entityName ((string)"entityName")
+#define NET_XML_ATTRIBUTE_confidence ((string)"confidence")
+//
+#define NET_XML_ATTRIBUTE_isProperty ((string)"isProperty")
+#define NET_XML_ATTRIBUTE_hasAssociatedProperty ((string)"hasAssociatedProperty")
+#define NET_XML_ATTRIBUTE_hasAssociatedAction ((string)"hasAssociatedAction")
+#define NET_XML_ATTRIBUTE_hasAssociatedTime ((string)"hasAssociatedTime")
+//
+#define NET_XML_TAG_ActionNodeList ((string)"ActionNodeList")
+#define NET_XML_TAG_IncomingActionNodeList ((string)"IncomingActionNodeList")
+//
+#define NET_XML_TAG_PropertyNodeList ((string)"PropertyNodeList")
+/*#define NET_XML_TAG_PropertyNodeReverseList ((string)"PropertyNodeReverseList")*/	//this has been removed 25 Sept - use entityNodeContainingThisProperty instead
+#define NET_XML_ATTRIBUTE_entityNodeContainingThisProperty ((string)"entityNodeContainingThisProperty")
+#define NET_XML_ATTRIBUTE_entityNodeDefiningThisProperty ((string)"entityNodeDefiningThisProperty")
+//
+#define NET_XML_TAG_EntityNodeDefinitionList ((string)"EntityNodeDefinitionList")
+#define NET_XML_TAG_EntityNodeDefinitionReverseList ((string)"EntityNodeDefinitionReverseList")
+#define NET_XML_TAG_AssociatedActionNodeList ((string)"AssociatedActionNodeList")
+#define NET_XML_TAG_AssociatedPropertyNodeList ((string)"AssociatedPropertyNodeList")
+//
+#define NET_XML_TAG_ConditionNodeList ((string)"ConditionNodeList")
+#define NET_XML_TAG_ConditionNodeReverseList ((string)"ConditionNodeReverseList")
+//
 #define NET_XML_ATTRIBUTE_grammaticalNumber ((string)"grammaticalNumber")
 #define NET_XML_ATTRIBUTE_hasQuantity ((string)"hasQuantity")
 #define NET_XML_ATTRIBUTE_quantityNumber ((string)"quantityNumber")
@@ -77,42 +107,23 @@ using namespace std;
 #define NET_XML_ATTRIBUTE_printTextX ((string)"printTextX")
 #define NET_XML_ATTRIBUTE_printTextY ((string)"printTextY")
 //
-#define NET_XML_ATTRIBUTE_entityName ((string)"entityName")
-#define NET_XML_ATTRIBUTE_confidence ((string)"confidence")
-#define NET_XML_ATTRIBUTE_isProperty ((string)"isProperty")
-#define NET_XML_ATTRIBUTE_hasAssociatedProperty ((string)"hasAssociatedProperty")
-#define NET_XML_ATTRIBUTE_hasAssociatedAction ((string)"hasAssociatedAction")
-#define NET_XML_ATTRIBUTE_hasAssociatedTime ((string)"hasAssociatedTime")
-//
-#define NET_XML_TAG_ActionNodeList ((string)"ActionNodeList")
-#define NET_XML_TAG_IncomingActionNodeList ((string)"IncomingActionNodeList")
-//
-#define NET_XML_TAG_PropertyNodeList ((string)"PropertyNodeList")
-/*#define NET_XML_TAG_PropertyNodeReverseList ((string)"PropertyNodeReverseList")*/	//this has been removed 25 Sept - use entityNodeContainingThisProperty instead
-#define NET_XML_ATTRIBUTE_entityNodeContainingThisProperty ((string)"entityNodeContainingThisProperty")
-#define NET_XML_ATTRIBUTE_entityNodeDefiningThisProperty ((string)"entityNodeDefiningThisProperty")
 
-#define NET_XML_TAG_EntityNodeDefinitionList ((string)"EntityNodeDefinitionList")
-#define NET_XML_TAG_EntityNodeDefinitionReverseList ((string)"EntityNodeDefinitionReverseList")
-#define NET_XML_TAG_AssociatedActionNodeList ((string)"AssociatedActionNodeList")
-#define NET_XML_TAG_AssociatedPropertyNodeList ((string)"AssociatedPropertyNodeList")
-//
-#define NET_XML_TAG_ConditionNodeList ((string)"ConditionNodeList")
-#define NET_XML_TAG_ConditionNodeReverseList ((string)"ConditionNodeReverseList")
-
-#define NET_XML_TAG_actionNodeReference ((string)"actionNodeReference")
-#define NET_XML_ATTRIBUTE_actionNodeID ((string)"actionNodeID")
-#define NET_XML_TAG_entityNodeReference ((string)"entityNodeReference")
-#define NET_XML_ATTRIBUTE_entityNodeID ((string)"entityNodeID")
-#define NET_XML_TAG_conditionNodeReference ((string)"conditionNodeReference")
-#define NET_XML_ATTRIBUTE_conditionNodeID ((string)"conditionNodeID")
 
 
 /*action node*/
-#define NET_XML_ATTRIBUTE_actionName ((string)"actionName")
 /*
 #define NET_XML_ATTRIBUTE_id ((string)"id")
-
+*/
+#define NET_XML_ATTRIBUTE_actionName ((string)"actionName")
+//
+#define NET_XML_ATTRIBUTE_entityNodeDefiningThisAction ((string)"entityNodeDefiningThisAction")
+#define NET_XML_ATTRIBUTE_actionSubjectEntity ((string)"actionSubjectEntity")
+#define NET_XML_ATTRIBUTE_actionObjectEntity ((string)"actionObjectEntity")
+/*already defined
+#define NET_XML_TAG_ConditionNodeList ((string)"ConditionNodeList")
+#define NET_XML_TAG_ConditionNodeReverseList ((string)"ConditionNodeReverseList")
+*/
+/*
 #define NET_XML_ATTRIBUTE_printX ((string)"printX")
 #define NET_XML_ATTRIBUTE_printY ((string)"printY")
 #define NET_XML_ATTRIBUTE_printXIndex ((string)"printXIndex")
@@ -121,20 +132,16 @@ using namespace std;
 #define NET_XML_ATTRIBUTE_printTextY ((string)"printTextY")
 #define NET_XML_ATTRIBUTE_confidence ((string)"confidence")
 */
-/*already defined
-#define NET_XML_TAG_ConditionNodeList ((string)"ConditionNodeList")
-#define NET_XML_TAG_ConditionNodeReverseList ((string)"ConditionNodeReverseList")
-*/
-#define NET_XML_ATTRIBUTE_entityNodeDefiningThisAction ((string)"entityNodeDefiningThisAction")
-#define NET_XML_ATTRIBUTE_actionSubjectEntity ((string)"actionSubjectEntity")
-#define NET_XML_ATTRIBUTE_actionObjectEntity ((string)"actionObjectEntity")
-
 
 
 
 
 /*condition node*/
+/*
+#define NET_XML_ATTRIBUTE_id ((string)"id")
+*/
 #define NET_XML_ATTRIBUTE_conditionName ((string)"conditionName")
+//
 #define NET_XML_ATTRIBUTE_conditionIsAction ((string)"conditionIsAction")
 #define NET_XML_ATTRIBUTE_conditionAction ((string)"conditionAction")
 #define NET_XML_ATTRIBUTE_conditionEntity ((string)"conditionEntity")
@@ -142,10 +149,8 @@ using namespace std;
 #define NET_XML_ATTRIBUTE_parentAction ((string)"parentAction")
 #define NET_XML_ATTRIBUTE_parentProperty ((string)"parentProperty")
 #define NET_XML_ATTRIBUTE_conditionType ((string)"conditionType")	//time,location,action,property
-
+//
 #define NET_XML_TAG_timeConditionNode ((string)"timeConditionNode")
-
-
 /*
 #define NET_XML_ATTRIBUTE_printX ((string)"printX")
 #define NET_XML_ATTRIBUTE_printY ((string)"printY")

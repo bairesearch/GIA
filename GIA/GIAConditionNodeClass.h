@@ -76,18 +76,9 @@ public:
 	GIAConditionNode(void);
 	~GIAConditionNode(void);
 	
-	bool initialisedForPrinting;	
-	bool printed;
-	int printX;
-	int printY;
-	int printXIndex;
-	int printYIndex;
-	int printTextX;
-	int printTextY;
-	
+	long id;	
+	string conditionName;	//for debug purposes only? [record original language text?]	
 	double confidence;
-	
-	string conditionName;	//for debug purposes only? [record original language text?]
 	
 	//this MAY NEED to be replaced with a vector of action/property/location/time descriptive node pointers
 	bool conditionIsAction;	//ie, strictly speaking, entity not action
@@ -111,8 +102,15 @@ public:
 
 	int conditionType;	//added 25 Sept 11	
 	GIATimeConditionNode * timeConditionNode;		//if conditionType == CONDITION_NODE_TYPE_TIME
-	
-	long id;
+
+	bool initialisedForPrinting;	
+	bool printed;
+	int printX;
+	int printY;
+	int printXIndex;
+	int printYIndex;
+	int printTextX;
+	int printTextY;
 };
 
 /*

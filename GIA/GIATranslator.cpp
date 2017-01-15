@@ -70,15 +70,29 @@ bool referenceTypePersonCrossReferencePersonArray[REFERENCE_TYPE_PERSON_NUMBER_O
 static long currentEntityNodeIDInCompleteList;
 static long currentActionNodeIDInCompleteList;
 static long currentConditionNodeIDInCompleteList;
-vector<GIAEntityNode*> entityNodesCompleteList;
-vector<GIAActionNode*> actionNodesCompleteList;
-vector<GIAConditionNode*> conditionNodesCompleteList;
+static vector<GIAEntityNode*> entityNodesCompleteList;
+static vector<GIAActionNode*> actionNodesCompleteList;
+static vector<GIAConditionNode*> conditionNodesCompleteList;
 /*
 GIAEntityNode * currentEntityNodeInCompleteList;
 GIAActionNode * currentActionNodeInCompleteList;
 GIAConditionNode * currentConditionNodeInCompleteList;
 */
 
+
+vector<GIAEntityNode*> * getTranslatorEntityNodesCompleteList()
+{
+	return &entityNodesCompleteList;
+}
+vector<GIAActionNode*> * getTranslatorActionNodesCompleteList()
+{
+	return &actionNodesCompleteList;
+}	
+vector<GIAConditionNode*> * getTranslatorConditionNodesCompleteList()
+{
+	return &conditionNodesCompleteList;
+}
+	
 	
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity)
 {

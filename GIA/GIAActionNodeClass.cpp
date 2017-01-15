@@ -15,8 +15,13 @@
 //~verbs
 GIAActionNode::GIAActionNode(void)
 {
+	id = 0;	
 	actionName = "";
 	confidence = 1.0;
+
+	entityNodeDefiningThisAction = NULL;
+	actionSubjectEntity = NULL;
+	actionObjectEntity = NULL;
 
 	initialisedForPrinting = false;
 	printed = false;
@@ -25,13 +30,7 @@ GIAActionNode::GIAActionNode(void)
 	printXIndex = 0;
 	printYIndex = 0;
 	printTextX = 0;
-	printTextY = 0;
-
-	entityNodeDefiningThisAction = NULL;
-	actionSubjectEntity = NULL;
-	actionObjectEntity = NULL;
-	
-	id = 0;	
+	printTextY = 0;	
 }
 GIAActionNode::~GIAActionNode(void)
 {
