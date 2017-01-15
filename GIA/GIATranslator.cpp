@@ -355,10 +355,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
 		while(currentFeatureInList->next != NULL)
 		{
+			//cout << "currentFeatureInList->tense = " << currentFeatureInList->tense << endl;
 			if(currentFeatureInList->tense == FEATURE_TENSE_DATE)
 			{
 				GIAEntityNodeIsDate[currentFeatureInList->entityIndex] = true;
+				//cout << "hasTime currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 			}
+			
 			currentFeatureInList = currentFeatureInList->next;
 		}
 		
@@ -386,8 +389,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			{
 				GIAEntityNode * functionEntity = findOrAddEntityNodeByName(indexOfEntityNodes, indexOfEntityNames, &functionName, &functionEntityAlreadyExistant, &functionEntityIndex, true);
 				GIAEntityNodeArrayFilled[relationFunctionIndex] = true;
-				GIAEntityNodeArray[relationFunctionIndex] = functionEntity;				
+				GIAEntityNodeArray[relationFunctionIndex] = functionEntity;
 				functionEntity->hasAssociatedTime = GIAEntityNodeIsDate[relationFunctionIndex]; 
+				//cout << "functionEntity->hasAssociatedTime = " << functionEntity->hasAssociatedTime << endl;
+				//cout << "relationFunctionIndex = " << relationFunctionIndex << endl;	
 			}
 			if(!GIAEntityNodeArrayFilled[relationArgumentIndex])
 			{
@@ -395,6 +400,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				GIAEntityNodeArrayFilled[relationArgumentIndex] = true;
 				GIAEntityNodeArray[relationArgumentIndex] = argumentEntity;				
 				argumentEntity->hasAssociatedTime = GIAEntityNodeIsDate[relationArgumentIndex]; 
+				//cout << "argumentEntity->hasAssociatedTime = " << argumentEntity->hasAssociatedTime << endl;	
+				//cout << "relationArgumentIndex = " << relationArgumentIndex << endl;
 			}
 			
 			currentRelationInList = currentRelationInList->next;
@@ -681,6 +688,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					{
 						string timeConditionName = currentRelationInList->relationArgument; 
 						
+						//cout << "HERE" << endl;
 						cout << "actionName = " << actionNode->actionName << endl;
 						cout << "timeConditionName = " << timeConditionName << endl;
 
@@ -691,6 +699,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 
 						string locationConditionName = currentRelationInList->relationArgument; 
 						
+						//cout << "HERE2" << endl;
 						cout << "actionName = " << actionNode->actionName << endl;
 						cout << "locationConditionName = " << locationConditionName << endl;
 
@@ -881,6 +890,11 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 		string previousTempName;
 		string nameTemp;
 		long previousFindIndex = findIndex;
+		
+		previousTempName = indexOfEntityNames->at(findIndex);	//requires start value
+		
+		bool first = true;
+		
 		while(searchOptionsAvailable == true)
 		{
 			//cout << "vectorSize = "  << vectorSize << endl;
@@ -888,13 +902,15 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 			//cout << "findRange = " << findRange << endl;
 			nameTemp = indexOfEntityNames->at(findIndex);
 			//cout << "nameTemp = " << nameTemp << endl;
-
+			//cout << "*entityNodeName = " << *entityNodeName << endl;
 			
-
 			if(nameTemp > *entityNodeName)
 			{
-				if(previousTempName < *entityNodeName)
+				//cout << nameTemp << ">" << *entityNodeName << endl;
+				//cout << "previousTempName = " << previousTempName << endl;
+				if((previousTempName < *entityNodeName) || (vectorSize==1))	//&& (!first || (vectorSize==1))
 				{//optimum position lies inbetween
+					//cout << "as" <<endl;
 					searchOptionsAvailable = false;
 					*found = false;	
 					//findIndex = findIndex [use current findIndex, nb vectors get inserted before the current index]			
@@ -903,27 +919,29 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 				{
 					previousFindIndex = findIndex;
 					long temp = (findIndex - findRange);
-					findIndex = maximumLong(temp, 1);
-
-					//cout << nameTemp << ">" << *entityNodeName << endl;
+					//cout << "temp = " << temp;
+					//findIndex = maximumLong(temp, 1);
+					findIndex = temp;
+					
 					if(findIndex < 0)
 					{
 						//cout << "error: (findIndex < 0)" << endl;
-						//cout << "entityNodeName " << *entityNodeName << " not found " << endl;
+							//cout << "entityNodeName " << *entityNodeName << " not found " << endl;
 						searchOptionsAvailable = false;
 						*found = false;
-						findIndex++;
+						findIndex = 0; //findIndex++;
 							//addIfNonexistant... see below
 					}
 				}
-
 
 				findRange = maximumLong(findRange/2, 1);	//findRange = (findRange+1)/2;
 
 			}
 			else if(nameTemp < *entityNodeName)
 			{
-				if(previousTempName > *entityNodeName)
+				//cout << nameTemp << "<" << *entityNodeName << endl;	
+				
+				if((previousTempName > *entityNodeName) || (vectorSize==1))		//& (!first || (vectorSize==1))
 				{//optimum position lies inbetween
 					searchOptionsAvailable = false;
 					*found = false;
@@ -933,16 +951,16 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 				{	
 					previousFindIndex = findIndex;			
 					long temp = (findIndex + findRange);
-					findIndex = maximumLong(temp, 1);
-
-					//cout << nameTemp << "<" << *entityNodeName << endl;		
+					//findIndex = maximumLong(temp, 1);
+					findIndex = temp;
+					
 					if(findIndex > (vectorSize-1))
 					{
 
-						//cout << "findIndex = " << findIndex << endl;
-						//cout << "*entityNodeName = " << *entityNodeName << endl;
+							//cout << "findIndex = " << findIndex << endl;
+							//cout << "*entityNodeName = " << *entityNodeName << endl;
 						//cout << "error: (findIndex > (vectorSize-1))" << endl;
-						//cout << "entityNodeName " << *entityNodeName << " not found " << endl;
+							//cout << "entityNodeName " << *entityNodeName << " not found " << endl;
 						searchOptionsAvailable = false;
 						*found = false;
 							//addIfNonexistant... see below
@@ -957,7 +975,7 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 				*index = findIndex;
 				entityNodeFound = indexOfEntityNodes->at(findIndex);
 
-				cout << "entity node found; " << *entityNodeName << endl;
+				cout << "\tentity node found; " << *entityNodeName << endl;
 				//cout << "findIndex = " << findIndex << endl;
 				
 				searchOptionsAvailable = false;
@@ -966,7 +984,7 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 			
 			if((searchOptionsAvailable == false) && (*found == false) && (addIfNonexistant))
 			{
-				cout << "adding entity node; " << *entityNodeName << endl;
+				cout << "\t\tadding entity node; " << *entityNodeName << endl;
 				//cout << "previousFindIndex = " << previousFindIndex << endl;
 				
 				entityNodeFound = new GIAEntityNode();
@@ -981,6 +999,9 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 				advance(indexOfEntityNamesIterator,findIndex);
 				indexOfEntityNames->insert(indexOfEntityNamesIterator, *entityNodeName);
 			}
+			
+			first = false;
+			
 			previousTempName = nameTemp;
 			
 
@@ -1037,6 +1058,9 @@ GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *
 		long previousTempTime;
 		long timeTemp;
 		long previousFindIndex = findIndex;
+		
+		previousTempTime = indexOfTimeNumbers->at(findIndex);	//requires start value
+		
 		while(searchOptionsAvailable == true)
 		{
 			//cout << "vectorSize = "  << vectorSize << endl;
@@ -1049,7 +1073,7 @@ GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *
 
 			if(timeTemp > *timeNodeNumber)
 			{
-				if(previousTempTime < *timeNodeNumber)
+				if((previousTempTime < *timeNodeNumber) || (vectorSize==1))
 				{//optimum position lies inbetween
 					searchOptionsAvailable = false;
 					*found = false;	
@@ -1059,8 +1083,9 @@ GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *
 				{
 					previousFindIndex = findIndex;
 					long temp = (findIndex - findRange);
-					findIndex = maximumLong(temp, 1);
-
+					//findIndex = maximumLong(temp, 1);
+					findIndex = temp;
+					
 					//cout << timeTemp << ">" << *timeNodeNumber << endl;
 					if(findIndex < 0)
 					{
@@ -1068,7 +1093,7 @@ GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *
 						//cout << "timeNodeNumber " << *timeNodeNumber << " not found " << endl;
 						searchOptionsAvailable = false;
 						*found = false;
-						findIndex++;
+						findIndex = 0; //findIndex++;
 							//addIfNonexistant... see below
 					}
 				}
@@ -1079,7 +1104,7 @@ GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *
 			}
 			else if(timeTemp < *timeNodeNumber)
 			{
-				if(previousTempTime > *timeNodeNumber)
+				if((previousTempTime > *timeNodeNumber) || (vectorSize==1))
 				{//optimum position lies inbetween
 					searchOptionsAvailable = false;
 					*found = false;
@@ -1089,8 +1114,9 @@ GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *
 				{	
 					previousFindIndex = findIndex;			
 					long temp = (findIndex + findRange);
-					findIndex = maximumLong(temp, 1);
-
+					//findIndex = maximumLong(temp, 1);
+					findIndex = temp;
+					
 					//cout << timeTemp << "<" << *timeNodeNumber << endl;		
 					if(findIndex > (vectorSize-1))
 					{
