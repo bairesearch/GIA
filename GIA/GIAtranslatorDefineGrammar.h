@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h9a 20-January-2015
+ * Project Version: 2h9b 20-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -68,12 +68,12 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList);
 //uses dependency relations to derive grammar [uses stanfordPOS/NER information to derive grammar, if NLPfeatureParser == Stanford Core NLP]
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAentityNodeArrayFilled[], GIAentityNode * GIAfeatureTempEntityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[]);
-#endif
 	void extractPastTense(Feature * featureWithEntityIndex, int entityIndexContainingTenseIndication, Feature * firstFeatureInList, int NLPfeatureParser);
 		void extractPastTenseFromPOStag(string * POStag, Feature * feature);
 	void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLPfeatureParser);
 		void extractPOSrelatedGrammaticalInformationStanford(Feature * currentFeature);
 			void extractGrammaticalInformationFromPOStag(string * POStag, Feature * feature);
+#endif
 
 void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * firstFeatureInSentence);
 	void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode * entity, Feature * currentFeatureInList);

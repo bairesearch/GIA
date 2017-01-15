@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h9a 20-January-2015
+ * Project Version: 2h9b 20-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -642,14 +642,17 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 				int entityIndexOfNoun = currentRelationInList->relationGovernorIndex;
 
 				bool definiteDeterminerFound = false;
-				#ifdef GIA_SUPPORT_MULTIPLE_DEFINITE_DETERMINERS
 				if(textInTextArray(determiner, relationDeterminerGovernorDefiniteArray, GRAMMATICAL_DETERMINER_GOVERNOR_DEFINITE_ARRAY_NUMBER_OF_TYPES))
 				{
 					definiteDeterminerFound = true;
 				}
-				#endif
+				bool indefiniteDeterminerFound = false;
+				if(textInTextArray(determiner, relationDeterminerGovernorIndefiniteArray, GRAMMATICAL_DETERMINER_GOVERNOR_INDEFINITE_ARRAY_NUMBER_OF_TYPES))
+				{
+					indefiniteDeterminerFound = true;
+				}
 				
-				if(definiteDeterminerFound || (determiner == GRAMMATICAL_DETERMINER_DEFINITE) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR))
+				if(definiteDeterminerFound || indefiniteDeterminerFound)
 				{//if condition added 4 July 2013 to ensure only real determiners (the, some, a) are disabled [and not "What" in det(time-2, What-1)]
 					//cout << "disabling feature temp entity" << endl;
 					GIAfeatureTempEntityNodeArray[entityIndexOfDeterminier]->disabled = true;
@@ -697,26 +700,22 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 		currentRelationInList = currentRelationInList->next;
 	}
 }
-#endif
 
 void extractPastTense(Feature * featureWithEntityIndex, int entityIndexContainingTenseIndication, Feature * firstFeatureInList, int NLPfeatureParser)
 {
-	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
-	{
-		//use the copular to set the tense of the noun
+	//use the copular to set the tense of the noun
 
-		Feature * currentFeatureInList = firstFeatureInList;
-		while(currentFeatureInList->next != NULL)
+	Feature * currentFeatureInList = firstFeatureInList;
+	while(currentFeatureInList->next != NULL)
+	{
+		if(currentFeatureInList->entityIndex == entityIndexContainingTenseIndication)
 		{
-			if(currentFeatureInList->entityIndex == entityIndexContainingTenseIndication)
-			{
-				#ifdef GIA_TRANSLATOR_DEBUG
-				//cout << "extractPastTense; entityIndex = " << entityIndexContainingTenseIndication << endl;
-				#endif
-				extractPastTenseFromPOStag(&(currentFeatureInList->stanfordPOS), featureWithEntityIndex);
-			}
-			currentFeatureInList = currentFeatureInList->next;
+			#ifdef GIA_TRANSLATOR_DEBUG
+			//cout << "extractPastTense; entityIndex = " << entityIndexContainingTenseIndication << endl;
+			#endif
+			extractPastTenseFromPOStag(&(currentFeatureInList->stanfordPOS), featureWithEntityIndex);
 		}
+		currentFeatureInList = currentFeatureInList->next;
 	}
 }
 void extractPastTenseFromPOStag(string * POStag, Feature * feature)
@@ -742,30 +741,30 @@ void extractPastTenseFromPOStag(string * POStag, Feature * feature)
 
 void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLPfeatureParser)
 {
-	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+	bool toDetected = false;
+	Feature * currentFeatureInList = firstFeatureInList;
+	while(currentFeatureInList->next != NULL)
 	{
-		bool toDetected = false;
-		Feature * currentFeatureInList = firstFeatureInList;
-		while(currentFeatureInList->next != NULL)
+		//added 10 April 2014 - GIA 2e1a
+		if(toDetected)
 		{
-			//added 10 April 2014 - GIA 2e1a
-			if(toDetected)
-			{
-				currentFeatureInList->previousWordInSentenceIsTo = true;
-			}
-			if(currentFeatureInList->lemma == RELATION_TYPE_PREPOSITION_TO)
-			{
-				toDetected = true;
-			}
-			else
-			{
-				toDetected = false;
-			}
+			currentFeatureInList->previousWordInSentenceIsTo = true;
+		}
+		if(currentFeatureInList->lemma == RELATION_TYPE_PREPOSITION_TO)
+		{
+			toDetected = true;
+		}
+		else
+		{
+			toDetected = false;
+		}
 
-			int currentFeatureIndex = currentFeatureInList->entityIndex;
+		int currentFeatureIndex = currentFeatureInList->entityIndex;
 
-			extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList);
+		extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList);
 
+		if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+		{
 			if((currentFeatureInList->NER == FEATURE_NER_DATE) || (currentFeatureInList->NER == FEATURE_NER_TIME))
 			{
 				currentFeatureInList->grammaticalIsDateOrTime = true;
@@ -784,22 +783,23 @@ void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLP
 			}
 			#endif
 
+
 			/*//NB the GIAEntityNodeGrammaticalIsProperNounArray array for stanford core nlp does not relate to persons (only proper nouns)
 			if(currentFeatureInList->NER == FEATURE_NER_PERSON)
 			{
 				currentFeatureInList->grammaticalIsProperNounArray = true;
 			}
 			*/
-
-			/*
-			cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
-			cout << "currentFeatureInList->stanfordPOS = " << currentFeatureInList->stanfordPOS << endl;
-			cout << "currentFeatureInList->type = " << currentFeatureInList->type << endl;
-			cout << "currentFeatureInList->grammaticalWordType = " << currentFeatureInList->grammaticalWordType << endl;
-			*/
-
-			currentFeatureInList = currentFeatureInList->next;
 		}
+
+		/*
+		cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
+		cout << "currentFeatureInList->stanfordPOS = " << currentFeatureInList->stanfordPOS << endl;
+		cout << "currentFeatureInList->type = " << currentFeatureInList->type << endl;
+		cout << "currentFeatureInList->grammaticalWordType = " << currentFeatureInList->grammaticalWordType << endl;
+		*/
+
+		currentFeatureInList = currentFeatureInList->next;
 	}
 }
 
@@ -924,7 +924,7 @@ void extractGrammaticalInformationFromPOStag(string * POStag, Feature * feature)
 	#endif
 }
 
-
+#endif
 
 
 
