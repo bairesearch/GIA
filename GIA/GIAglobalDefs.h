@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4d 24-July-2012
+ * Project Version: 1n4e 25-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -92,7 +92,7 @@
 //#define GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
 
 //Debug [Disable these for official build];
-//#define GIA_NLG_DEBUG
+#define GIA_NLG_DEBUG
 #ifdef GIA_USE_NLG2
 	#define GIA_NLG_DEBUG_MANUALLY_HARDCODE_INTO_NLG2
 #endif
