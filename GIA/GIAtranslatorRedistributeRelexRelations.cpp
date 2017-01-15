@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2c 18-November-2014
+ * Project Version: 2h2d 18-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -112,8 +112,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 			//Should the NLP settings be overruled here - is a verb base form always an imperative or infinitive? Answer = NO; Therefore only perform upgrade for special infinitive cases
 			if(currentFeature->previousWordInSentenceIsTo)
 			{//only perform upgrade here for special infinitive cases... (eg "to verbbaseform"), as some verbbaseforms are also nouns (eg "tabled" and "table"). Also don't wish to overwrite VBP cases eg "I eat the..."
-				//cout << "upgrading to FEATURE_POS_TAG_VERB_VB; " << currentFeature->lemma << endl;
-				string stanfordPOS = FEATURE_POS_TAG_VERB_VB;
+				string stanfordPOS = FEATURE_POS_TAG_VERB_VB;	//FUTURE GIA - consider using new non-standard pos tage FEATURE_POS_TAG_VERB_VBDEFINITION instead of reusing FEATURE_POS_TAG_VERB_VBs
 				currentFeature->stanfordPOS = stanfordPOS;
 
 				extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
@@ -144,7 +143,6 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 		#endif
 		{
 			string stanfordPOS = FEATURE_POS_TAG_VERB_VBG;
-			//cout << "foundVerb GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE" << endl;
 			/*
 			Wood is used for making milk.
 			What is wood used in the making of?
@@ -188,7 +186,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 	#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
 	if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP))
 	{
-		if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ)	//NB "able" words will be marked as JJ/adjective by Stanford/Relex POS tagger
+		if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ)	//NB "able" words will be marked as JJ/adjective or NN/noun by Stanford/Relex POS tagger (but ignore nouns)
 		{
 			string stanfordPOS = FEATURE_POS_TAG_VERB_VBPOTENTIAL;
 			//cout << "foundVerb FEATURE_POS_TAG_VERB_VBPOTENTIAL" << endl;
@@ -198,13 +196,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 			{
 				updatedLemma = true;
 
-				//cout << "2 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
-				//cout << "2 baseNameFound = " << baseNameFound << endl;
 				actionOrSubstanceEntity->entityName = baseNameFound;
-
-				//cout << "actionOrSubstanceEntity->wordOrig = " << actionOrSubstanceEntity->wordOrig << endl;
-				//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
-				//cout << "foundPotentialVerb" << endl;
 
 				currentFeature->stanfordPOS = stanfordPOS;
 				currentFeature->lemma = actionOrSubstanceEntity->entityName;
@@ -227,17 +219,11 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 			{
 				updatedLemma = true;
 
-				//cout << "2 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
-				//cout << "2 baseNameFound = " << baseNameFound << endl;
 				actionOrSubstanceEntity->entityName = baseNameFound;
-
-				//cout << "actionOrSubstanceEntity->wordOrig = " << actionOrSubstanceEntity->wordOrig << endl;
-				//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
-				//cout << "foundPotentialVerb" << endl;
-
+				
 				currentFeature->stanfordPOS = stanfordPOS;
 				currentFeature->lemma = actionOrSubstanceEntity->entityName;
-
+				
 				extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
 				applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
 			}
@@ -251,11 +237,6 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 		if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ)	//NB "is ..." and "is ..ed" (not Stanford CoreNLP/Relex) verbs may be marked as JJ/adjective by Stanford/Relex POS tagger eg "It is open"/"He is tired."
 		{
 			string stanfordPOS = FEATURE_POS_TAG_VERB_VBSTATE;
-			//cout << "foundVerb FEATURE_POS_TAG_VERB_VBSTATE" << endl;
-
-			//cout << "actionOrSubstanceEntity->wordOrig = " << actionOrSubstanceEntity->wordOrig << endl;
-			//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
-			//cout << "foundPotentialVerb" << endl;
 
 			currentFeature->stanfordPOS = stanfordPOS;
 
@@ -264,7 +245,30 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 		}
 	}
 	#endif
+	#ifdef GIA_FEATURE_POS_TAG_VERB_DEFINITION
+	if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP))
+	{
+		if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_NOUN)	//NB "ion"/"ment" words will be marked as NN/noun by Stanford/Relex POS tagger
+		{
+			string stanfordPOS = FEATURE_POS_TAG_VERB_VBDEFINITION;
 
+			string wordOrigLowerCase = convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
+			if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = runnable, and entityName (NLP identified lemma) = runnable; then apply the lemma correction
+			{
+				updatedLemma = true;
+
+				actionOrSubstanceEntity->entityName = baseNameFound;
+
+				currentFeature->stanfordPOS = stanfordPOS;
+				currentFeature->lemma = actionOrSubstanceEntity->entityName;
+
+				extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
+				applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
+			}
+		}
+	}
+	#endif
+	
 	return updatedLemma;
 }
 
