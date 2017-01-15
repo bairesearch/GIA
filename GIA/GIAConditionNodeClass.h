@@ -104,10 +104,25 @@ public:
 	int conditionType;	//added 25 Sept 11	
 	GIATimeConditionNode * timeConditionNode;		//if conditionType == CONDITION_NODE_TYPE_TIME
 	
-	//flat tree structures are not used - this is only used for the semanticNet xml parse (read) process;	
-	GIAConditionNode * next;
 	long id;
 };
+
+/*
+class GIAConditionNodeContainer
+{
+public:
+
+	GIAConditionNodeContainer(void);
+	~GIAConditionNodeContainer(void);
+	
+	//flat tree structures are not used - this is only used for the semanticNet xml parse (read) process;		
+	GIAConditionNode * node;
+	GIAConditionNodeContainer * next;
+	long id;	
+	
+}
+*/
+
 
 
 class GIATimeConditionNode

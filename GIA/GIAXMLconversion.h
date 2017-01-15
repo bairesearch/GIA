@@ -42,6 +42,9 @@
 
 
 /*entity node*/
+
+#define NET_XML_ATTRIBUTE_id ((string)"id")
+
 #define NET_XML_ATTRIBUTE_grammaticalNumber ((string)"grammaticalNumber")
 #define NET_XML_ATTRIBUTE_hasQuantity ((string)"hasQuantity")
 #define NET_XML_ATTRIBUTE_quantityNumber ((string)"quantityNumber")

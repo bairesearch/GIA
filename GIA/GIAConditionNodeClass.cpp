@@ -36,19 +36,30 @@ GIAConditionNode::GIAConditionNode(void)
 	
 	conditionType = CONDITION_NODE_TYPE_UNDEFINED;
 	timeConditionNode = NULL;
-		
-	next = NULL;
 	
+	id = 0;	
 }
 GIAConditionNode::~GIAConditionNode(void)
 {
-	/*
+}
+
+/*
+GIAConditionNodeContainer::GIAConditionNodeContainer(void)
+{
+	id = 0;
+	node = NULL; 			
+	next = NULL;
+}
+GIAConditionNodeContainer::~GIAConditionNodeContainer(void)
+{	
+	//delete node		
 	if(next != NULL)
 	{
 		delete next;
 	}
-	*/
 }
+*/
+
 
 
 

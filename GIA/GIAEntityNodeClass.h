@@ -175,11 +175,24 @@ public:
 	vector<GIAConditionNode*> ConditionNodeReverseList;	//this property is required by the following... //aka reason	[NB these may only be property, location, {and time action condtions}, not action conditions]
 	vector<GIAConditionNode*>::iterator ConditionNodeReverseListIterator;		
 	
-	//flat tree structures are not used - this is only used for the semanticNet xml parse (read) process;		
-	GIAEntityNode * next;
-	long id;
-	
+	long id;	
 };
+
+/*
+class GIAEntityNodeContainer
+{
+public:
+
+	GIAEntityNodeContainer(void);
+	~GIAEntityNodeContainer(void);
+	
+	//flat tree structures are not used - this is only used for the semanticNet xml parse (read) process;		
+	GIAEntityNode * node;
+	GIAEntityNodeContainer * next;
+	long id;	
+	
+}
+*/
 
 int calculateQuantityNumberInt(string quantityNumberString);
 int calculateQuantityModifierInt(string quantityModifierString);

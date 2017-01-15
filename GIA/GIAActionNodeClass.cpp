@@ -30,20 +30,29 @@ GIAActionNode::GIAActionNode(void)
 	entityNodeDefiningThisAction = NULL;
 	actionSubjectEntity = NULL;
 	actionObjectEntity = NULL;
-		
-	next = NULL;
+	
+	id = 0;	
 }
 GIAActionNode::~GIAActionNode(void)
 {
-	/*
+}
+
+/*
+GIAActionNodeContainer::GIAActionNodeContainer(void)
+{
+	id = 0;
+	node = NULL; 			
+	next = NULL;
+}
+GIAActionNodeContainer::~GIAActionNodeContainer(void)
+{	
+	//delete node		
 	if(next != NULL)
 	{
 		delete next;
 	}
-	*/
-
 }
-
+*/
 
 
 

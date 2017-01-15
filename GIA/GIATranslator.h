@@ -157,6 +157,9 @@ using namespace std;
 */
 
 
+extern vector<GIAEntityNode*> entityNodesCompleteList;
+extern vector<GIAActionNode*> actionNodesCompleteList;
+extern vector<GIAConditionNode*> conditionNodesCompleteList;
 
 
 

@@ -85,10 +85,25 @@ public:
 	//record of which entity that is the object of this action instance
 	GIAEntityNode * actionObjectEntity;
 	
-	//flat tree structures are not used - this is only used for the semanticNet xml parse (read) process;	
-	GIAActionNode * next;
 	long id;
 };
+
+/*
+class GIAActionNodeContainer
+{
+public:
+
+	GIAActionNodeContainer(void);
+	~GIAActionNodeContainer(void);
+	
+	//flat tree structures are not used - this is only used for the semanticNet xml parse (read) process;		
+	GIAActionNode * node;
+	GIAActionNodeContainer * next;
+	long id;	
+	
+}
+*/
+
 
 
 #endif

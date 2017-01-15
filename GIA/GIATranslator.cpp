@@ -67,7 +67,19 @@ bool referenceTypePersonCrossReferenceDefiniteArray[REFERENCE_TYPE_PERSON_NUMBER
 bool referenceTypePersonCrossReferencePersonArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {GRAMMATICAL_PERSON_UNDEFINED, GRAMMATICAL_PERSON, GRAMMATICAL_PERSON, GRAMMATICAL_PERSON_UNDEFINED, GRAMMATICAL_PERSON_UNDEFINED};
 
 
+static long currentEntityNodeIDInCompleteList;
+static long currentActionNodeIDInCompleteList;
+static long currentConditionNodeIDInCompleteList;
+vector<GIAEntityNode*> entityNodesCompleteList;
+vector<GIAActionNode*> actionNodesCompleteList;
+vector<GIAConditionNode*> conditionNodesCompleteList;
+/*
+GIAEntityNode * currentEntityNodeInCompleteList;
+GIAActionNode * currentActionNodeInCompleteList;
+GIAConditionNode * currentConditionNodeInCompleteList;
+*/
 
+	
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity)
 {
 	if(propertyEntity->hasAssociatedPropertyTemp)
@@ -95,6 +107,8 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 	
 		//configure property node
 		GIAEntityNode * newProperty = new GIAEntityNode();
+		entityNodesCompleteList.push_back(newProperty);
+		newProperty->id = currentEntityNodeIDInCompleteList++;
 		newProperty->entityName = propertyEntity->entityName;
 		newProperty->isProperty = true;
 		newProperty->entityNodeContainingThisProperty = thingEntity;
@@ -133,6 +147,8 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 	{	
 		//configure property node
 		GIAEntityNode * newProperty = new GIAEntityNode();
+		entityNodesCompleteList.push_back(newProperty);
+		newProperty->id = currentEntityNodeIDInCompleteList++;
 		newProperty->entityName = propertyEntity->entityName;
 		newProperty->isProperty = true;
 		newProperty->entityNodeContainingThisProperty = NULL;
@@ -174,6 +190,8 @@ void connnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * prope
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense)
 {
 	GIAConditionNode * newCondition = new GIAConditionNode();
+	conditionNodesCompleteList.push_back(newCondition);
+	newCondition->id = currentConditionNodeIDInCompleteList++;
 	newCondition->conditionName = grammaticalTenseNameArray[tense];
 	newCondition->conditionEntity = NULL;
 	newCondition->parentProperty = propertyNode;
@@ -191,6 +209,8 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense
 void addTenseOnlyTimeConditionToAction(GIAActionNode * actionNode, int tense)
 {
 	GIAConditionNode * newCondition = new GIAConditionNode();
+	conditionNodesCompleteList.push_back(newCondition);
+	newCondition->id = currentConditionNodeIDInCompleteList++;
 	newCondition->conditionName = grammaticalTenseNameArray[tense];
 	newCondition->conditionEntity = NULL;
 	newCondition->parentAction = actionNode;
@@ -277,6 +297,8 @@ GIAActionNode * addAction(GIAEntityNode * actionEntity)
 		
 	//configure action node
 	GIAActionNode * newAction = new GIAActionNode();
+	actionNodesCompleteList.push_back(newAction);
+	newAction->id = currentActionNodeIDInCompleteList++;
 	newAction->actionName = actionEntity->entityName;
 	newAction->entityNodeDefiningThisAction = actionEntity;
 	actionEntity->AssociatedActionNodeList.push_back(newAction);
@@ -351,6 +373,8 @@ void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntit
 void addLocationConditionToAction(GIAActionNode * actionNode, GIAEntityNode * locationConditionEntity)
 {
 	GIAConditionNode * newCondition = new GIAConditionNode();
+	conditionNodesCompleteList.push_back(newCondition);
+	newCondition->id = currentConditionNodeIDInCompleteList++;
 	newCondition->conditionName = locationConditionEntity->entityName;
 	newCondition->conditionEntity = locationConditionEntity;
 	newCondition->parentAction = actionNode;
@@ -366,6 +390,8 @@ void addLocationConditionToAction(GIAActionNode * actionNode, GIAEntityNode * lo
 void addTimeConditionToAction(GIAActionNode * actionNode, GIAEntityNode * timeConditionEntity)
 {
 	GIAConditionNode * newCondition = new GIAConditionNode();
+	conditionNodesCompleteList.push_back(newCondition);
+	newCondition->id = currentConditionNodeIDInCompleteList++;
 	newCondition->conditionName = timeConditionEntity->entityName;
 	//TO DO: parse time info here [into seconds since start of universe, totalTimeInSeconds]
 	newCondition->conditionEntity = timeConditionEntity;
@@ -384,6 +410,8 @@ void addTimeConditionToAction(GIAActionNode * actionNode, GIAEntityNode * timeCo
 void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity)
 {
 	GIAConditionNode * newCondition = new GIAConditionNode();
+	conditionNodesCompleteList.push_back(newCondition);
+	newCondition->id = currentConditionNodeIDInCompleteList++;
 	newCondition->conditionName = locationConditionEntity->entityName;
 	newCondition->conditionEntity = locationConditionEntity;
 	newCondition->parentProperty = propertyNode;
@@ -399,6 +427,8 @@ void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode 
 void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity)
 {
 	GIAConditionNode * newCondition = new GIAConditionNode();
+	conditionNodesCompleteList.push_back(newCondition);
+	newCondition->id = currentConditionNodeIDInCompleteList++;
 	newCondition->conditionName = timeConditionEntity->entityName;
 	//TO DO: parse time info here [into seconds since start of universe, totalTimeInSeconds]
 	newCondition->conditionEntity = timeConditionEntity;
@@ -420,6 +450,8 @@ void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * ti
 void addActionConditionToAction(GIAActionNode * actionNode, GIAActionNode * actionConditionActionNode)
 {
 	GIAConditionNode * newCondition = new GIAConditionNode();
+	conditionNodesCompleteList.push_back(newCondition);
+	newCondition->id = currentConditionNodeIDInCompleteList++;
 	newCondition->conditionName = actionConditionActionNode->actionName;
 	newCondition->conditionAction = actionConditionActionNode;
 	newCondition->parentAction = actionNode;
@@ -435,6 +467,8 @@ void addActionConditionToAction(GIAActionNode * actionNode, GIAActionNode * acti
 void addPropertyConditionToAction(GIAActionNode * actionNode, GIAEntityNode * propertyConditionEntity)
 {
 	GIAConditionNode * newCondition = new GIAConditionNode();
+	conditionNodesCompleteList.push_back(newCondition);
+	newCondition->id = currentConditionNodeIDInCompleteList++;
 	newCondition->conditionName = propertyConditionEntity->entityName;
 	newCondition->conditionEntity = propertyConditionEntity;
 	newCondition->parentAction = actionNode;
@@ -450,6 +484,8 @@ void addPropertyConditionToAction(GIAActionNode * actionNode, GIAEntityNode * pr
 void addActionConditionToProperty(GIAEntityNode * propertyNode, GIAActionNode * actionConditionActionNode)
 {
 	GIAConditionNode * newCondition = new GIAConditionNode();
+	conditionNodesCompleteList.push_back(newCondition);
+	newCondition->id = currentConditionNodeIDInCompleteList++;
 	newCondition->conditionName = actionConditionActionNode->actionName;
 	newCondition->conditionAction = actionConditionActionNode;
 	newCondition->parentProperty = propertyNode;
@@ -465,6 +501,8 @@ void addActionConditionToProperty(GIAEntityNode * propertyNode, GIAActionNode * 
 void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity)
 {
 	GIAConditionNode * newCondition = new GIAConditionNode();
+	conditionNodesCompleteList.push_back(newCondition);
+	newCondition->id = currentConditionNodeIDInCompleteList++;
 	newCondition->conditionName = propertyConditionEntity->entityName;
 	newCondition->conditionEntity = propertyConditionEntity;
 	newCondition->parentProperty = propertyNode;
@@ -484,6 +522,15 @@ void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode 
 
 void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, vector<string> *indexOfEntityNames, vector<GIATimeConditionNode*> *indexOfTimeNodes, vector<long> *indexOfTimeNumbers, Sentence * firstSentenceInList)
 {
+	
+	currentEntityNodeIDInCompleteList = 0;
+	currentActionNodeIDInCompleteList = 0;
+	currentConditionNodeIDInCompleteList = 0;
+	/*
+	currentEntityNodeInCompleteList = new GIAEntityNode();
+	currentActionNodeInCompleteList = new GIAActionNode();
+	currentConditionNodeInCompleteList = new GIAConditionNode();
+	*/
 	
 	vector<GIAEntityNode*>::iterator indexOfEntityNodesIterator;
 	vector<string*>::iterator indexOfEntityNamesIterator;
@@ -1906,6 +1953,8 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 		cout << "adding entity node; " << *entityNodeName << endl;
 
 		entityNodeFound = new GIAEntityNode();
+		entityNodesCompleteList.push_back(entityNodeFound);
+		entityNodeFound->id = currentEntityNodeIDInCompleteList++;
 		entityNodeFound->entityName = *entityNodeName;
 			//configure property definition node
 		indexOfEntityNodes->push_back(entityNodeFound);	
@@ -2051,6 +2100,8 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 				//cout << "previousFindIndex = " << previousFindIndex << endl;
 				
 				entityNodeFound = new GIAEntityNode();
+				entityNodesCompleteList.push_back(entityNodeFound);
+				entityNodeFound->id = currentEntityNodeIDInCompleteList++;
 				entityNodeFound->entityName = *entityNodeName;
 				vector<GIAEntityNode*>::iterator indexOfEntityNodesIterator = indexOfEntityNodes->begin();
 				//indexOfEntityNodesIterator = indexOfEntityNodes->at(findIndex);
