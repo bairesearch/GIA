@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36a 19-March-2015
+ * Project Version: 2i36b 10-May-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -54,9 +54,11 @@ unordered_map<string, GIAconceptEntityLoaded*>* DBconceptEntityNodesLoadedList;	
 unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndexDBcache;	//represents data loaded into RAM from database
 unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndexDBactive;	//represents data in entityNodesActiveListComplete
 
+#endif
 
 GIAentityNode* findOrAddConceptEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, string* entityNodeName, bool* found, long* index, bool addIfNonexistant, long* currentEntityNodeIDinCompleteList, long* currentEntityNodeIDinConceptEntityNodesList, bool saveNetwork)
 {
+	#ifdef GIA_USE_DATABASE
 	GIAentityNode* entityNodeFound = NULL;
 	if((useDatabase == GIA_USE_DATABASE_TRUE_READ_INACTIVE) || (useDatabase == GIA_USE_DATABASE_TRUE_READ_ACTIVE))
 	{
@@ -66,9 +68,13 @@ GIAentityNode* findOrAddConceptEntityNodeByName(vector<GIAentityNode*>* entityNo
 	{
 		entityNodeFound = LocalFindOrAddConceptEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodeName, found, index, addIfNonexistant, currentEntityNodeIDinCompleteList, currentEntityNodeIDinConceptEntityNodesList, saveNetwork);
 	}
+	#else
+	entityNodeFound = LocalFindOrAddConceptEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodeName, found, index, addIfNonexistant, currentEntityNodeIDinCompleteList, currentEntityNodeIDinConceptEntityNodesList, saveNetwork);
+	#endif
 	return entityNodeFound;
 }
 
+#ifdef GIA_USE_DATABASE
 GIAentityNode* DBfindOrAddConceptEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, string* entityNodeName, bool* found, long* index, bool addIfNonexistant, long* currentEntityNodeIDinCompleteList, long* currentEntityNodeIDinConceptEntityNodesList, bool saveNetwork)
 {
 	GIAentityNode* entityNodeFound = NULL;
@@ -188,11 +194,7 @@ GIAentityNode* DBfindOrAddConceptEntityNodeByName(vector<GIAentityNode*>* entity
 
 
 //uses fast search algorithm
-#ifdef GIA_USE_DATABASE
 GIAentityNode* LocalFindOrAddConceptEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, string* entityNodeName, bool* found, long* index, bool addIfNonexistant, long* currentEntityNodeIDinCompleteList, long* currentEntityNodeIDinConceptEntityNodesList, bool saveNetwork)
-#else
-GIAentityNode* findOrAddConceptEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, string* entityNodeName, bool* found, long* index, bool addIfNonexistant, long* currentEntityNodeIDinCompleteList, long* currentEntityNodeIDinConceptEntityNodesList, bool saveNetwork)
-#endif
 {
 	GIAentityNode* entityNodeFound = NULL;
 
