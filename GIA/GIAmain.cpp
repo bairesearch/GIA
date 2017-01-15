@@ -558,13 +558,13 @@ int main(int argc,char **argv)
 			if(foundComparisonVariable)
 			{
 				#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
-				cout << "Exact Found Answer:" << queryAnswerNode->entityName << endl;
+				cout << "Exact Found Answer: " << queryAnswerNode->entityName << endl;
 				#endif
 				answerString = answerString + "\nExact Answer found: " + queryAnswerNode->entityName;	
 				if(comparisonVariableNode->hasQuantity)
 				{
 					#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
-					cout << "Quantity number:" << queryAnswerNode->quantityNumber << endl;
+					cout << "Quantity number: " << queryAnswerNode->quantityNumber << endl;
 					#endif
 					char tempQuantityNumberStringCharStar[100]; 
 					sprintf(tempQuantityNumberStringCharStar, "%d", queryAnswerNode->quantityNumber);					
@@ -593,17 +593,19 @@ int main(int argc,char **argv)
 		if(foundAnswer && !foundComparisonVariable)
 		{
 			#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
-			cout << "Best Inexact Answer Found:" << queryAnswerNode->entityName << endl;
+			cout << "Best Inexact Answer Found: " << queryAnswerNode->entityName << endl;
 			#endif
-			answerString = answerString + "\nBest Inexact Answer Found:" + queryAnswerNode->entityName;
+			answerString = answerString + "\nBest Inexact Answer Found: " + queryAnswerNode->entityName;
 			//answerString = answerString + printEntityNode(queryAnswerNode);	
 		}
 		
 		if(foundAnswer)
 		{
 			//print AnswerPreviousNode relationship with answerNode
-			cout << "Answer Context:" << queryAnswerContext << endl;
-			answerString = answerString + "\nAnswer Context:" + queryAnswerContext;
+			#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
+			cout << "Answer Context: " << queryAnswerContext << endl;
+			answerString = answerString + "\nAnswer Context: " + queryAnswerContext;
+			#endif
 		}
 		
 					
@@ -614,6 +616,10 @@ int main(int argc,char **argv)
 		sprintf(tempMaxConfidenceStringCharStar, "%0.6f", maxConfidence);		
 		answerString = answerString + "\nconfidence = " + tempConfidenceStringCharStar;			
 		answerString = answerString + "\nmax confidence = " + tempMaxConfidenceStringCharStar;	
+		#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
+		cout << "confidence: " << tempConfidenceStringCharStar << endl;
+		cout << "max confidence: " << tempMaxConfidenceStringCharStar << endl;
+		#endif
 										
 		char * fileByteArray = const_cast<char*>(answerString.c_str());
 		char * outputAnswerPlainTXTFileNameCharStar = const_cast<char*>(outputAnswerPlainTXTFileName.c_str());	

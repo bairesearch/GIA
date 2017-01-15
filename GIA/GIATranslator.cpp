@@ -2509,7 +2509,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 						{
 							if(currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_3)
 							{
-								cout << "ASD" << endl;
+								//cout << "ASD" << endl;
 								
 								GIAEntityNode * actionOrPropertyConditionEntity;
 								if((firstIndex == SUBJECT_INDEX) && (subjectObjectEntityArray[firstIndex]->entityName == currentRelationInList3->relationArgument))
