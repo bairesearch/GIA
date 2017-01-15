@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j1c 15-May-2015
+ * Project Version: 2j2a 18-May-2015
  *
  *******************************************************************************/
 -->
@@ -105,6 +105,43 @@
 	</draw>
 	<translator>
 		<file name="GIAtranslatorRedistributeStanfordRelations">
+		
+			<!-- XML only function (not hard coded) -->
+			<!-- #ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER -->
+			<function name="redistributeStanfordRelationsSwitchAclRelclRelations">
+				<example><!--
+				eg interpret 'There is a new movie we can see.'			acl:relcl(movie-5, see-8) -> dobj(see-8, movie-5) [+ sameReferenceSet]
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_acl:relcl" />
+				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityReassignment="_obj" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<option useRedistributeSpecialCaseRcmodIndicatesSameReferenceSet="true" REL="1" />
+				</paramDepRel>
+			</function>
+			<function name="redistributeStanfordRelationsConvertCompoundToQuantityOrNNrelation">
+				<example><!--
+				eg interpret 'Robert ate 4 times a day.'			compound(times-4, 4-3) -> number(times-4, 4-3)
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_compound" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="NERTemp" value="4" REL="1" REL_ENT="2" />	<!-- NUMBER -->
+				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityReassignment="_quantity" />
+				</paramDepRel>
+				<example><!--
+				eg interpret 'Hamish smoked at the toy shop.'			compound(shop-6, toy-5) -> nn(shop-6, toy-5)
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_compound" />
+				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityReassignment="_nn" />
+				</paramDepRel>
+			</function>
+			<!-- #endif -->
+			
 			<function name="disableRedundantNodesStanfordCoreNLP">
 				<!-- eliminate all redundant date relations eg num(December-4, 3rd-5)/num(December-4, 1990-7)/nn(3rd-5, December-4)/appos(3rd-5, 1990-7), where both the governer and the dependent have NER tag set to DATE -->
 				<example><!--Also: Ms. Savata's hand slipped.
@@ -2601,9 +2638,6 @@
 				</paramDepRel>
 			
 			</function>
-
-
-			
 		</file>
 		<file name="GIAtranslatorRedistributeRelexRelations">
 					

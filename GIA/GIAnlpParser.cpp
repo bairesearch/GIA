@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j1c 15-May-2015
+ * Project Version: 2j2a 18-May-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -582,7 +582,7 @@ void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsente
 	//prepend '_'
 	string relationTypeRelexStandard = "";
 	relationTypeRelexStandard = relationTypeRelexStandard + RELEX_DEPENDENCY_RELATION_PREPENDITION + stanfordRelation;
-
+	bool foundReducableStanfordRelation = false;
 	//now deal with anamolies between dependency relation definitions;
 	for(int i=0; i<GIA_NUMBER_OF_RELEX_VERSUS_STANFORD_DEPENDENCY_RELATION_DISCREPANCIES; i++)
 	{
@@ -594,6 +594,7 @@ void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsente
 		if(stanfordRelation == relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i])
 		{
 			relationTypeRelexStandard = relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i];
+			foundReducableStanfordRelation = true;
 		}
 	}
 
@@ -603,6 +604,17 @@ void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsente
 	{
 		relationTypeRelexStandard = stanfordRelation;	//do not modify stanford preposition relations "prep_...." to "_prep_..."
 	}
+	#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
+	if(!foundReducableStanfordRelation)
+	{
+		//cout << "stanfordRelation = " << stanfordRelation << endl;
+		if(stanfordRelation.substr(0, RELATION_TYPE_PREPOSITION_MODIFIER2_LENGTH) == RELATION_TYPE_PREPOSITION_MODIFIER2)
+		{
+			stanfordPrepositionFound = true;
+			relationTypeRelexStandard = string(STANFORD_PARSER_PREPOSITION_PREPEND) + stanfordRelation.substr(RELATION_TYPE_PREPOSITION_MODIFIER2_LENGTH, stanfordRelation.length()-RELATION_TYPE_PREPOSITION_MODIFIER2_LENGTH);	//converts _nmod:[preposition] to prep_[preposition]
+		}
+	}
+	#endif
 
 	#ifdef GIA_USE_LRP
 	//if(stanfordPrepositionFound)
