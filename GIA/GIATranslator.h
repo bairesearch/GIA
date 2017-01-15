@@ -110,7 +110,7 @@ using namespace std;
 //Properties:	[NB properties are attached to either another property or a straight entity);]
 //properties (derived from obj/subj relationships);					
 #define RELATION_FUNCTION_COMPOSITION_1 "contains"	//eg x contains y
-#define RELATION_FUNCTION_COMPOSITION_2 "comprises"
+#define RELATION_FUNCTION_COMPOSITION_2 "comprise"
 #define RELATION_FUNCTION_COMPOSITION_3 "has"	
 #define RELATION_FUNCTION_COMPOSITION_4 "have"
 #define RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES (4)						
