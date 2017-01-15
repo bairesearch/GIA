@@ -1345,6 +1345,8 @@ void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassConceptE
 
 	if(!subclassToParentEntityConnectionAlreadyMade)
 	{
+		//should a new subclassNonspecificSubstanceConcept be defined here regardless; ie GIAentityNode* subclassNonspecificSubstanceConcept = createNewNonspecificSubstanceConcept(subclassConceptEntity)? (because new substance concepts are created every sentence, even for non-specific substance concepts; eg "Pies are apples. Pies are berries.")
+		
 		GIAentityNode* parentClassNonspecificSubstanceConcept = getNonspecificSubstanceConceptEntity(parentClassConceptEntity);
 		if(parentClassNonspecificSubstanceConcept == NULL)
 		{
