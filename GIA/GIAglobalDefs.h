@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o6b 22-October-2016
+ * Project Version: 2o7a 23-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -745,6 +745,9 @@
 		#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO	//2o6a
 	#endif
 	#define GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES	//2m2a
+	#ifdef GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES
+		//#define GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES_SUPPORT_QUERY_PLURAL_TO_QUANTITY_MATCH	//added 2o5a, removed 2o7a
+	#endif
 	#ifdef USE_NLC
 		//#define GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ACCEPT_PROPERNOUNS_ISOLATE	//2m5b, disabled 2m5c
 	#endif

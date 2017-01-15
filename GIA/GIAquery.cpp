@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o6b 22-October-2016
+ * Project Version: 2o7a 23-October-2016
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -2663,14 +2663,18 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 								}
 								else if(entityNode->hasQuantity)
 								{
+									#ifdef GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES_SUPPORT_QUERY_PLURAL_TO_QUANTITY_MATCH
 									if(queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
 									{
 										passPluralityMatch = true;
 									}
 									else
 									{
+									#endif
 										passPluralityMatch = false;
+									#ifdef GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES_SUPPORT_QUERY_PLURAL_TO_QUANTITY_MATCH
 									}
+									#endif
 								}
 								#endif
 								if(passPluralityMatch)
