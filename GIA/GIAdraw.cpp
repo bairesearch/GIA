@@ -326,6 +326,8 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		{	
 			//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
 			
+			int boxThickness = GIA_DRAW_THICKNESS_NORMAL;
+			
 			int entityColour;
 			if(entityNode->hasAssociatedAction)
 			{
@@ -333,6 +335,10 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			}			
 			else if(entityNode->isProperty)
 			{
+				if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
+				{
+					boxThickness = GIA_DRAW_THICKNESS_THICK;
+				}
 				entityColour = GIA_DRAW_PROPERTY_NODE_COLOUR;
 			}
 			else if(entityNode->hasAssociatedTime)
@@ -358,9 +364,11 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				entityColour = GIA_DRAW_BASICENTITY_NODE_COLOUR;
 			}
 			
-												
+			
+			
+											
 			//first, print this action node.
-			currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &(entityNode->entityName), writeFileObject);
+			currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &(entityNode->entityName), writeFileObject, boxThickness);
 
 		}
 		
@@ -550,7 +558,7 @@ Reference * initialiseActionNodeForPrinting(GIAActionNode * actionNode, int y, i
 		if(initialiseOrPrint == DRAW_PRINT)
 		{										
 			//print this action node.
-			currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, GIA_DRAW_ACTION_NODE_COLOUR, &(actionNode->actionName), writeFileObject);
+			currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, GIA_DRAW_ACTION_NODE_COLOUR, &(actionNode->actionName), writeFileObject, GIA_DRAW_THICKNESS_NORMAL);
 		}
 			
 	}
@@ -660,7 +668,7 @@ Reference * initialiseConditionNodeForPrinting(GIASharedConditionNode * sharedCo
 		{	
 			//may accidentially overwrite adjacent nodes/connections that have already been printed here; be careful...
 		
-			currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_NODE_COLOUR, &(sharedConditionNode->conditionName), writeFileObject);
+			currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_NODE_COLOUR, &(sharedConditionNode->conditionName), writeFileObject, GIA_DRAW_THICKNESS_NORMAL);
 		}
 		
 		cout << "Exiting: conditionNode = " << sharedConditionNode->conditionName << endl;
@@ -718,7 +726,7 @@ Reference * createReferenceConnection(Reference * currentReferenceInPrintList, v
 
 //consider using elipse instead; <ellipse cx="240" cy="100" rx="220" ry="30">
 
-Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, ofstream * writeFileObject)
+Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, ofstream * writeFileObject, int thickness)
 {
 	Reference * newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
@@ -760,7 +768,70 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 	cout << "newCurrentReferenceInPrintList->vertex4relativePosition.z = " << newCurrentReferenceInPrintList->vertex4relativePosition.z << endl;
 	*/
 
-	Reference * newDispayReference = new Reference();
+	Reference * newDispayReference;
+	
+	newDispayReference = new Reference();
+	newCurrentReferenceInPrintList->next = newDispayReference;
+	newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
+
+	newCurrentReferenceInPrintList->type = REFERENCE_TYPE_LINE;
+	newCurrentReferenceInPrintList->colour = DAT_FILE_COLOUR_BLACK;
+	
+	newCurrentReferenceInPrintList->vertex1relativePosition.x = vect->x - width/2.0;
+	newCurrentReferenceInPrintList->vertex1relativePosition.y = vect->y + height/2.0;
+	newCurrentReferenceInPrintList->vertex1relativePosition.z = vect->z;
+
+	newCurrentReferenceInPrintList->vertex2relativePosition.x = vect->x + width/2.0;
+	newCurrentReferenceInPrintList->vertex2relativePosition.y = vect->y + height/2.0;
+	newCurrentReferenceInPrintList->vertex2relativePosition.z = vect->z;
+	
+	newDispayReference = new Reference();
+	newCurrentReferenceInPrintList->next = newDispayReference;
+	newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
+
+	newCurrentReferenceInPrintList->type = REFERENCE_TYPE_LINE;
+	newCurrentReferenceInPrintList->colour = DAT_FILE_COLOUR_BLACK;
+	
+	newCurrentReferenceInPrintList->vertex2relativePosition.x = vect->x + width/2.0;
+	newCurrentReferenceInPrintList->vertex2relativePosition.y = vect->y + height/2.0;
+	newCurrentReferenceInPrintList->vertex2relativePosition.z = vect->z;
+
+	newCurrentReferenceInPrintList->vertex3relativePosition.x = vect->x + width/2.0;
+	newCurrentReferenceInPrintList->vertex3relativePosition.y = vect->y - height/2.0;
+	newCurrentReferenceInPrintList->vertex3relativePosition.z = vect->z;
+	
+	newDispayReference = new Reference();
+	newCurrentReferenceInPrintList->next = newDispayReference;
+	newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
+
+	newCurrentReferenceInPrintList->type = REFERENCE_TYPE_LINE;
+	newCurrentReferenceInPrintList->colour = DAT_FILE_COLOUR_BLACK;
+	
+	newCurrentReferenceInPrintList->vertex3relativePosition.x = vect->x + width/2.0;
+	newCurrentReferenceInPrintList->vertex3relativePosition.y = vect->y - height/2.0;
+	newCurrentReferenceInPrintList->vertex3relativePosition.z = vect->z;
+
+	newCurrentReferenceInPrintList->vertex4relativePosition.x = vect->x - width/2.0;
+	newCurrentReferenceInPrintList->vertex4relativePosition.y = vect->y - height/2.0;
+	newCurrentReferenceInPrintList->vertex4relativePosition.z = vect->z;
+	
+	newDispayReference = new Reference();
+	newCurrentReferenceInPrintList->next = newDispayReference;
+	newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
+
+	newCurrentReferenceInPrintList->type = REFERENCE_TYPE_LINE;
+	newCurrentReferenceInPrintList->colour = DAT_FILE_COLOUR_BLACK;
+	
+	newCurrentReferenceInPrintList->vertex1relativePosition.x = vect->x - width/2.0;
+	newCurrentReferenceInPrintList->vertex1relativePosition.y = vect->y + height/2.0;
+	newCurrentReferenceInPrintList->vertex1relativePosition.z = vect->z;
+
+	newCurrentReferenceInPrintList->vertex4relativePosition.x = vect->x - width/2.0;
+	newCurrentReferenceInPrintList->vertex4relativePosition.y = vect->y - height/2.0;
+	newCurrentReferenceInPrintList->vertex4relativePosition.z = vect->z;
+	
+		
+	newDispayReference = new Reference();
 	newCurrentReferenceInPrintList->next = newDispayReference;
 	newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
 	
@@ -775,7 +846,7 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 	positionSVG.x = vect->x + GIA_DRAW_BASICENTITY_NODE_WIDTH/2;
 	positionSVG.y = vect->y;	
 	positionSVG.z = GIA_OUTPUT_Z_POSITION_NODES;
-	writeSVGBox(writeFileObject, &positionSVG, width, height, colour, GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG);
+	writeSVGBox(writeFileObject, &positionSVG, width, height, colour, GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG*thickness);
 	positionSVG.x = vect->x - GIA_DRAW_BASICENTITY_NODE_WIDTH/4;
 	positionSVG.y = vect->y;
 	positionSVG.z = GIA_OUTPUT_Z_POSITION_TEXT;

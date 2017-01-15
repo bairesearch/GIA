@@ -45,6 +45,11 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 		propertyEntity->hasAssociatedProperty = true;
 		propertyEntity->hasAssociatedPropertyTemp = true;
 		
+		//if(propertyEntity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
+		//{
+		newProperty->grammaticalNumber = propertyEntity->grammaticalNumberTemp;
+		//}
+			
 		if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
 		{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
 			addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp);
@@ -69,6 +74,11 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 	propertyEntity->hasAssociatedProperty = true;
 	propertyEntity->hasAssociatedPropertyTemp = true;
 	
+	//if(propertyEntity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
+	//{
+	newProperty->grammaticalNumber = propertyEntity->grammaticalNumberTemp;
+	//}				
+
 	if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
 	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
 		addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp);
@@ -95,7 +105,7 @@ void connnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * prope
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense)
 {
 	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
-	newTimeCondition->sharedCondition->conditionName = tenseNameArray[tense];
+	newTimeCondition->sharedCondition->conditionName = grammaticalTenseNameArray[tense];
 	newTimeCondition->tense = tense;
 	newTimeCondition->sharedCondition->conditionEntity = NULL;
 	newTimeCondition->sharedCondition->parentProperty = propertyNode;
@@ -107,7 +117,7 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense
 void addTenseOnlyTimeConditionToAction(GIAActionNode * actionNode, int tense)
 {
 	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
-	newTimeCondition->sharedCondition->conditionName = tenseNameArray[tense];
+	newTimeCondition->sharedCondition->conditionName = grammaticalTenseNameArray[tense];
 	newTimeCondition->tense = tense;
 	newTimeCondition->sharedCondition->conditionEntity = NULL;
 	newTimeCondition->sharedCondition->parentAction = actionNode;
@@ -449,33 +459,32 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			if((currentFeatureInList->tense).find(FEATURE_GRAMMATICAL_TENSE_DATE) != -1)
 			{
 				GIAEntityNodeIsDate[currentFeatureInList->entityIndex] = true;
-				cout << "isDate currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
-				
+				//cout << "isDate currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 			}
 			
 			for(int grammaticalTenseIndex = 0; grammaticalTenseIndex < GRAMMATICAL_TENSE_NUMBER_OF_TYPES; grammaticalTenseIndex++)
 			{
 				//NB only the first characters of currentFeatureInList->tense contain the tense type name 
-				if((currentFeatureInList->tense).find(tenseNameArray[grammaticalTenseIndex]) != -1) 
-				//if((currentFeatureInList->tense).substr(0, tenseNameLengthsArray[grammaticalTenseIndex]) == tenseNameArray[grammaticalTenseIndex]) 
+				if((currentFeatureInList->tense).find(grammaticalTenseNameArray[grammaticalTenseIndex]) != -1) 
+				//if((currentFeatureInList->tense).substr(0, grammaticalTenseNameLengthsArray[grammaticalTenseIndex]) == grammaticalTenseNameArray[grammaticalTenseIndex]) 
 				{
 					GIAEntityNodeGrammaticalTenseArray[currentFeatureInList->entityIndex] = grammaticalTenseIndex;
-					cout << "currentFeatureInList->entityIndex grammaticalTenseIndex = " << tenseNameArray[grammaticalTenseIndex] << endl;
+					//cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalTenseIndex = " << grammaticalTenseNameArray[grammaticalTenseIndex] << endl;
 				}			
 			}
 			for(int grammaticalNumberIndex = 0; grammaticalNumberIndex < GRAMMATICAL_NUMBER_NUMBER_OF_TYPES; grammaticalNumberIndex++)
 			{
-				//NB only the first characters of currentFeatureInList->tense contain the tense type name 
-				if((currentFeatureInList->tense).find(tenseNameArray[grammaticalNumberIndex]) != -1) 				
+				//NB only the first characters of currentFeatureInList->tense contain the grammatical number type name 
+				if((currentFeatureInList->tense).find(grammaticalNumberNameArray[grammaticalNumberIndex]) != -1) 				
 				{
 					GIAEntityNodeGrammaticalNumberArray[currentFeatureInList->entityIndex] = grammaticalNumberIndex;
-					cout << "currentFeatureInList->entityIndex grammaticalNumberIndex = " << tenseNameArray[grammaticalNumberIndex] << endl;
+					//cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalNumberIndex = " << grammaticalNumberNameArray[grammaticalNumberIndex] << endl;
 				}			
 			}
 			if((currentFeatureInList->tense).find(GRAMMATICAL_DEFINITE_NAME) != -1)
 			{
 				GIAEntityNodeGrammaticalIsDefiniteArray[currentFeatureInList->entityIndex] = GRAMMATICAL_DEFINITE;
-				cout << "isDate currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+				//cout << "isDefinite currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 				
 			}			
 									 
@@ -543,12 +552,15 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		
 		//pass B;	
 		
-		//0 pass; define properties (definite nouns); eg the house
-		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+		if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS == 1)
 		{
-			if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
+			//0 pass; define properties (definite nouns); eg the house
+			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 			{
-				addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
+				if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
+				{
+					addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
+				}
 			}
 		}
 							

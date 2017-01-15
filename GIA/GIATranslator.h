@@ -35,6 +35,7 @@ using namespace std;
 
 
 #define GIA_ASSIGN_UNIQUE_ACTION_NODE_TO_EACH_ACTION_INSTANCE_OF_A_GIVEN_ACTION_NAME (1)
+#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS (1)		//NB must make this 0 for large.xml to work (after GIA Archive - 1a5f - 04May11a, eg GIA Archive - 1a5g - 04May11a)
 
 #define SUBJECT_INDEX (0)
 #define OBJECT_INDEX (1)

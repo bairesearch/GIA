@@ -29,7 +29,12 @@ using namespace std;
 #include "GIAActionNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
-#define MAX_GIA_TREE_DEPTH (100)
+#define MAX_GIA_TREE_DEPTH (10000)
+#define DRAW_X_INITIAL_OFFSET (150)
+#define DRAW_Y_INITIAL_OFFSET (150)
+
+#define GIA_DRAW_THICKNESS_NORMAL (1)
+#define GIA_DRAW_THICKNESS_THICK (2)
 
 #define GIA_DRAW_CONDITION_NODE_COLOUR (DAT_FILE_COLOUR_RED)				//this was red in the original spec	
 #define GIA_DRAW_CONDITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was red in the original spec	
@@ -60,8 +65,7 @@ using namespace std;
 #define GIA_DRAW_PROPERTY_NODE_HEIGHT (5)
 #define GIA_DRAW_PROPERTY_NODE_WIDTH (20)
 
-#define DRAW_X_INITIAL_OFFSET (300)
-#define DRAW_Y_INITIAL_OFFSET (200)
+
 
 #define DRAW_Y_SPACE_BETWEEN_ENTITIES (0)				//OLD: should really be 1 for initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_ENTITIES (200)
@@ -114,7 +118,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 Reference * initialiseActionNodeForPrinting(GIAActionNode * actionNode, int y, int x, int initialiseOrPrint, Reference * currentReferenceInPrintList, ofstream * writeFileObject);
 Reference * initialiseConditionNodeForPrinting(GIASharedConditionNode * sharedConditionNode, int y, int x, int initialiseOrPrint, Reference * currentReferenceInPrintList, ofstream * writeFileObject);
 Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, ofstream * writeFileObject);
-Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, ofstream * writeFileObject);
+Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, ofstream * writeFileObject, int thickness);
 
 
 

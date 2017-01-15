@@ -44,8 +44,8 @@ class GIATimeConditionNode;
 #define GRAMMATICAL_DEFINITE true
 #define GRAMMATICAL_DEFINITE_NAME "definite"
 
-extern string tenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
-extern int tenseNameLengthsArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
+extern string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
+extern int grammaticalTenseNameLengthsArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
 extern string grammaticalNumberNameArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES];
 extern int grammaticalNumberNameLengthsArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES];
 
@@ -61,6 +61,8 @@ public:
 	bool definiteTemp; 		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	bool hasAssociatedPropertyTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	bool hasAssociatedActionTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+	
+	int grammaticalNumber; 
 	
 	bool initialisedForPrinting;
 	bool printed;
