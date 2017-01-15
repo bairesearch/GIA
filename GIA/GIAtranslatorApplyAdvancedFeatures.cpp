@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a10a 13-December-2013
+ * Project Version: 2a11a 14-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -438,7 +438,8 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 
 					int quantityNumberInt = calculateQuantityNumberInt(quantitySubstance->quantityNumberString);
 					quantitySubstance->quantityNumber = quantityNumberInt;
-
+					quantitySubstance->isSubstanceConcept = false;	//added 2a11a [because defineSubstanceConcepts() does not have access to quantity data]
+						
 					disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
 
 					if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
@@ -578,7 +579,8 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 
 				int quantityNumberInt = calculateQuantityNumberInt(quantitySubstance->quantityNumberString);
 				quantitySubstance->quantityNumber = quantityNumberInt;
-
+				quantitySubstance->isSubstanceConcept = false;	//added 2a11a [because defineSubstanceConcepts() does not have access to quantity data]
+				
 				if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 				{//update comparison variable (set it to the quantity)
 					quantitySubstance->isQuery = true;
