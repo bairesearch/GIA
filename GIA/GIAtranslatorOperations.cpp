@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f19a 23-July-2014
+ * Project Version: 2f19b 23-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -450,6 +450,14 @@ void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubsta
 	{
 		newSubstance->negative = true;
 	}
+
+	#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY		
+	newSubstance->entityIndexTemp = entity->entityIndexTemp;
+	newSubstance->sentenceIndexTemp = entity->sentenceIndexTemp;
+	//cout << "newSubstance->entityIndexTemp = " << newSubstance->entityIndexTemp << endl;
+	//cout << "newSubstance->sentenceIndexTemp = " << newSubstance->sentenceIndexTemp << endl;
+	#endif
+
 }
 
 
@@ -2198,6 +2206,9 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 
 		#ifdef GIA_ALIASES_DEBUG
 		cout << "finished: mergeEntityNodesAddAlias" << endl;
+		cout << "entityNode->entityName = " << entityNode->entityName << endl;
+		cout << "entityNode->aliasList[0] = " << entityNode->aliasList[0] << endl;
+		cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
 		#endif
 	}
 }

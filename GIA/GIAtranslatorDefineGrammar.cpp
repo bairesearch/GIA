@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f19a 23-July-2014
+ * Project Version: 2f19b 23-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -131,6 +131,10 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 				GIAentityNodeArrayFilled[relationIndex[i]] = true;
 				GIAentityNode * featureTempEntity = new GIAentityNode();
 				featureTempEntity->entityName = name[i];
+				#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
+				featureTempEntity->entityIndexTemp = relationIndex[i];
+				featureTempEntity->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
+				#endif
 				GIAfeatureTempEntityNodeArray[relationIndex[i]] = featureTempEntity;
 
 				//cout << "filling: " << relationIndex[i] << " " << name[i] << endl;
@@ -186,6 +190,10 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 					*/
 					GIAentityNode * featureTempEntity = new GIAentityNode();
 					featureTempEntity->entityName = prepositionName;
+					#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
+					featureTempEntity->entityIndexTemp = prepositionEntityIndex;
+					featureTempEntity->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
+					#endif
 					GIAfeatureTempEntityNodeArray[prepositionEntityIndex] = featureTempEntity;
 				}
 			}
@@ -264,6 +272,11 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAen
 				//cout << "entity->entityName = " << entity->entityName << endl;
 				#endif
 
+				#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
+				entity->entityIndexTemp = featureTempEntityNode->entityIndexTemp;
+				entity->sentenceIndexTemp = featureTempEntityNode->sentenceIndexTemp;
+				#endif
+				
 				#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)	//ie if(NLPdependencyRelationsType != GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)		//updated 2d1a, OLD: if(NLPfeatureParser == GIA_NLP_PARSER_RELEX) //ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
 				{

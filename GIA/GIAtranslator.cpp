@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f19a 23-July-2014
+ * Project Version: 2f19b 23-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1336,16 +1336,31 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	{
 		if(GIAentityNodeArrayFilled[w])
 		{
-			#ifdef GIA_DO_NOT_OVERWRITE_SENTENCE_INDEX_OF_REFERENCE_SOURCE
+			#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 			if(!(GIAentityNodeArray[w]->wasReference))
 			{
-			#endif
+				if(GIAentityNodeArray[w]->entityIndexTemp == GIA_ENTITY_INDEX_UNDEFINED)
+				{
+					//do not overwrite sentence index of source
+					GIAentityNodeArray[w]->entityIndexTemp = w;
+					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes() error: GIAentityNodeArray[" << w << "] entityIndexTemp undefined, is this an artificial entity?" << endl;
+				}
+				if(GIAentityNodeArray[w]->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
+				{
+					//do not overwrite sentence index of source
+					GIAentityNodeArray[w]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
+					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes() error: GIAentityNodeArray[" << w << "] sentenceIndexTemp undefined, is this an artificial entity?" << endl;
+				}
+			}
+			#else
+			if(!(GIAentityNodeArray[w]->wasReference))
+			{
 				//do not overwrite sentence index of source
 				GIAentityNodeArray[w]->entityIndexTemp = w;
 				GIAentityNodeArray[w]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;	//LIMITATION: if !GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR, this will not assign sentence indicies for prepositions...
-			#ifdef GIA_DO_NOT_OVERWRITE_SENTENCE_INDEX_OF_REFERENCE_SOURCE
 			}
 			#endif
+						
 			#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 			//record sentenceIndex for concept entity nodes also (NB cannot use GIAconceptNodeArray here as it won't include concept entity nodes for prepositions)
 			if(!(GIAentityNodeArray[w]->entityNodeDefiningThisInstance->empty()))

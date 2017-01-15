@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f19a 23-July-2014
+ * Project Version: 2f19b 23-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1460,12 +1460,14 @@ GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIA
 			if(!(entityNode->entityNodeDefiningThisInstance->empty()))
 			{//do not reference concept entities - condition added 16 July 2012
 
-				#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+				#ifdef GIA_ADVANCED_REFERENCING_DEBUG	
 				cout << "\taddingEntityCorrespondingBestMatch. entityNode being traced: = " << entityNode->entityName << endl;
 				cout << "entityNode->entityName = " << entityNode->entityName << endl;
 				cout << "entityNode->entityCorrespondingBestMatch->entityName = " << entityNode->entityCorrespondingBestMatch->entityName << endl;
 				cout << "entityNode->entityCorrespondingBestMatch->idInstance = " << entityNode->entityCorrespondingBestMatch->idInstance << endl;
+				cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
 				#endif
+
 
 				//now add the GIAcoReference to the list...
 				GIAMention * sourceMention = currentGIAcoreferenceInList->firstMentionInList;
@@ -1473,6 +1475,16 @@ GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIA
 				sourceMention->idActiveList = entityNode->entityCorrespondingBestMatch->idActiveList;
 				sourceMention->entityIndex = entityNode->entityCorrespondingBestMatch->entityIndexTemp; 	//this is only used for intrasentence references
 				sourceMention->entityName = entityNode->entityCorrespondingBestMatch->entityName;
+
+				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+				cout << "\taddingEntityCorrespondingBestMatch. entityNode being traced: = " << entityNode->entityName << endl;
+				cout << "entityNode->entityName = " << entityNode->entityName << endl;
+				cout << "entityNode->entityCorrespondingBestMatch->entityName = " << entityNode->entityCorrespondingBestMatch->entityName << endl;
+				cout << "entityNode->entityCorrespondingBestMatch->idInstance = " << entityNode->entityCorrespondingBestMatch->idInstance << endl;
+				cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
+				cout << "sourceMention->entityName = " << sourceMention->entityName << endl;				
+				#endif
+				
 
 				GIAMention * referenceMention = new GIAMention();
 				referenceMention->representative = false;
@@ -1714,9 +1726,10 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 							cout << "referenceEntityIndex = " << referenceEntityIndex << endl;
 							#endif
 						
-
+							/*//2f19a 23-July-2014:
 							#ifndef GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA
 							//copy reference aliases to referenceSource
+							//required for; A red dog is fat. The name of the red dog is Tom.
 							GIAentityNode * reference = GIAentityNodeArray[referenceEntityIndex];
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
 							cout << "reference->entityName = " << reference->entityName << endl;
@@ -1749,6 +1762,7 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 							}
 							//what about; A red dog is fat. The name of the red dog is Tom. Tom rides the bike. (merge must copy aliases across)
 							#endif	
+							*/
 
 							#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS
 							if(GIAentityNodeArrayFilled[referenceEntityIndex])
