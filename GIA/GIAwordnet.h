@@ -3,7 +3,7 @@
  * File Name: GIAwordnet.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l4a 01-June-2012
+ * Project Version: 1l4b 02-June-2012
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -43,7 +43,7 @@ static int wordnetDataEntryPointersIndicatingSimilarSynsetsArray[WORDNET_DATA_EN
 	#define WORDNET_DATA_ENTRY_POINTERS_INDICATING_RELATED_SYNSETS_NUMBER_OF_TYPES (0)
 	static int wordnetDataEntryPointersIndicatingRelatedSynsetsArray[WORDNET_DATA_ENTRY_POINTERS_INDICATING_RELATED_SYNSETS_NUMBER_OF_TYPES] = {};
 #endif
-#define CURRENTSYNSETPOINTERINDEX (WORDNET_DATA_ENTRY_POINTERS_INDICATING_RELATED_SYNSETS_NUMBER_OF_TYPES)
+#define CURRENTSYNSETPOINTERINDEX (-1)
 
 void initialiseWordNet();
 

@@ -3,7 +3,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l4a 01-June-2012
+ * Project Version: 1l4b 02-June-2012
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -227,7 +227,8 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 	bool stillSensesToGo = true;
 	while(stillSensesToGo)
 	{
-		for(int pointerIndex = 0; pointerIndex<currentSenseInList->ptrcount + 1; pointerIndex++)	//+1 to allow for CURRENTSYNSETPOINTERINDEX
+		//cout << "currentSenseInList->ptrcount = " << currentSenseInList->ptrcount << endl;
+		for(int pointerIndex = CURRENTSYNSETPOINTERINDEX; pointerIndex<currentSenseInList->ptrcount; pointerIndex++)	//updated 2 June 2012 to properly account for CURRENTSYNSETPOINTERINDEX
 		{		
 			SynsetPtr currentRelatedSense = NULL;
 			bool passed = false;
