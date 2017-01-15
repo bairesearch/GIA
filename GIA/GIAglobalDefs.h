@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l2b 14-October-2015
+ * Project Version: 2l3a 15-October-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -665,12 +665,12 @@
 //#define GIA_DISABLE_2k_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2l_CODE_FOR_DEBUG
 #ifndef GIA_DISABLE_2l_CODE_FOR_DEBUG
-	//#define GIA_QUERY_WILD_CARDS	//2l3a	//support something/anything - affects both GIA advanced referencing and queries
-	#ifdef GIA_QUERY_WILD_CARDS
-		#define GIA_QUERY_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES (2)
-		#define GIA_QUERY_WILD_CARDS_ACTIONS_NUMBER_OF_TYPES (1)
-		static string giaQueryWildCardSubstanceArray[GIA_QUERY_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES] = {"something", "anything"};
-		static string giaQueryWildCardActionArray[GIA_QUERY_WILD_CARDS_ACTIONS_NUMBER_OF_TYPES] = {"do"};
+	#define GIA_REFERENCING_WILD_CARDS	//2l3a	//interpret something/anything entities as GIA wild card - affects both GIA advanced referencing and queries
+	#ifdef GIA_REFERENCING_WILD_CARDS
+		#define GIA_REFERENCING_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES (2)
+		#define GIA_REFERENCING_WILD_CARDS_ACTIONS_NUMBER_OF_TYPES (1)
+		static string giaReferencingWildCardSubstanceArray[GIA_REFERENCING_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES] = {"something", "anything"};
+		static string giaReferencingWildCardActionArray[GIA_REFERENCING_WILD_CARDS_ACTIONS_NUMBER_OF_TYPES] = {"do"};
 	#endif
 #endif
 

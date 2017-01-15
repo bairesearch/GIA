@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l2b 14-October-2015
+ * Project Version: 2l3a 15-October-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -2473,7 +2473,7 @@ bool compareEntityStandard(GIAentityNode* queryEntityNode, GIAentityNode* entity
 	}
 	#endif
 
-	#ifdef GIA_QUERY_WILD_CARDS
+	#ifdef GIA_REFERENCING_WILD_CARDS
  	if(!traceModeIsQuery)
 	{
 		#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
@@ -2490,14 +2490,14 @@ bool compareEntityStandard(GIAentityNode* queryEntityNode, GIAentityNode* entity
 				#endif
 					if(entityNode->isAction)
 					{
-						if(textInTextArray(queryEntityNode->entityName, giaQueryWildCardActionArray, GIA_QUERY_WILD_CARDS_ACTIONS_NUMBER_OF_TYPES))
+						if(textInTextArray(queryEntityNode->entityName, giaReferencingWildCardActionArray, GIA_REFERENCING_WILD_CARDS_ACTIONS_NUMBER_OF_TYPES))
 						{
 							compareEntityNamesResult = true;
 						}
 					}
 					else
 					{
-						if(textInTextArray(queryEntityNode->entityName, giaQueryWildCardSubstanceArray, GIA_QUERY_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES))
+						if(textInTextArray(queryEntityNode->entityName, giaReferencingWildCardSubstanceArray, GIA_REFERENCING_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES))
 						{
 							compareEntityNamesResult = true;
 						}
