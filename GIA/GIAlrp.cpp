@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1d 14-November-2014
+ * Project Version: 2h1e 14-November-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -2216,7 +2216,7 @@ void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool * inver
 	GIALRPtag * currentTagInPrepositionsInverseList = firstTagInPrepositionsInverseList;
 	while(currentTagInPrepositionsInverseList->nextSentence != NULL)
 	{
-		#ifdef GIA_LRP_DEBUG
+		#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
 		//cout << "qcurrentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
 		#endif
 		
@@ -2237,14 +2237,14 @@ void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool * inver
 					if(currentTagInPrepositionsInverseListSentence->tagName == conditionNameNew)
 					{
 						*twoWayConditionRequired = true;
-						#ifdef GIA_TRANSLATOR_DEBUG
+						#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
 						cout << "detectIfInverseOrTwoWayConditionRequired(): twoWayConditionRequired: conditionName = " << conditionName << endl;
 						#endif
 					}
 					else
 					{
 						foundConditionToInvert = true;
-						#ifdef GIA_TRANSLATOR_DEBUG
+						#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
 						cout << "detectIfInverseOrTwoWayConditionRequired(): foundConditionToInvert: conditionName = " << conditionName << endl;
 						#endif
 					}
@@ -2258,7 +2258,7 @@ void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool * inver
 					{
 						*inverseConditionRequired = true;
 						*inverseConditionName = conditionNameNew;
-						#ifdef GIA_TRANSLATOR_DEBUG
+						#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
 						cout << "detectIfInverseOrTwoWayConditionRequired(): inverseConditionRequired: conditionNameNew = " << conditionNameNew << endl;
 						#endif
 					}
@@ -2282,7 +2282,7 @@ bool identifyConditionType(GIAentityNode * conditionEntity)
 	GIALRPtag * currentTagInPrepositionsInverseList = firstTagInPrepositionsInverseList;
 	while(currentTagInPrepositionsInverseList->nextSentence != NULL)
 	{
-		#ifdef GIA_LRP_DEBUG
+		#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
 		//cout << "qcurrentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
 		#endif
 		
@@ -2295,7 +2295,7 @@ bool identifyConditionType(GIAentityNode * conditionEntity)
 				if(i == GIA_LRP_PREPOSITIONS_DATABASE_TAG_TYPE)
 				{
 					conditionEntity->conditionType2 = currentTagInPrepositionsInverseListSentence->tagName;
-					#ifdef GIA_TRANSLATOR_DEBUG
+					#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
 					cout << "identifyConditionTypeAndInvertIfNecessary(): conditionEntity->conditionType2 = " << conditionEntity->conditionType2 << endl;
 					#endif
 					conditionTypeIdentified = true;

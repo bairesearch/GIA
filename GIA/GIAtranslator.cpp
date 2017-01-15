@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1d 14-November-2014
+ * Project Version: 2h1e 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1279,7 +1279,7 @@ void invertOrDuplicateConditionsIfRequired(Sentence * currentSentenceInList, boo
 					#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
 					if(inverseConditionRequired)
 					{
-						#ifdef GIA_TRANSLATOR_DEBUG
+						#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
 						cout << "invertOrDuplicateConditionsIfRequired(): inverseConditionRequired: conditionName = " << conditionName  << endl;
 						#endif
 						createNewInverseConditionEntity(currentRelationInList, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, inverseConditionName, featureArrayTemp);
@@ -1288,7 +1288,7 @@ void invertOrDuplicateConditionsIfRequired(Sentence * currentSentenceInList, boo
 					#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
 					if(twoWayConditionRequired)
 					{
-						#ifdef GIA_TRANSLATOR_DEBUG
+						#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
 						cout << "invertOrDuplicateConditionsIfRequired(): twoWayConditionRequired: conditionName = " << conditionName << endl;
 						#endif
 						#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
