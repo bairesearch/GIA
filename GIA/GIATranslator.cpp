@@ -3719,10 +3719,26 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode
 			#endif
 			#endif
 				
-				GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
-				GIAEntityNode * propertyEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
-			
-				addOrConnectPropertyToEntity(entityNode, propertyEntity);
+				if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_BE)
+				{
+					GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
+					GIAEntityNode * propertyEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+
+					addOrConnectPropertyToEntity(entityNode, propertyEntity);				
+				}
+				else if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO)
+				{
+					GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
+					GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+					GIAEntityNode * conditionTypeEntityNode;
+					string conditionTypeEntityNodeName = currentRelationInList->relationType;
+					long EntityIndex = -1;
+					bool EntityAlreadyExistant = false;	
+					conditionTypeEntityNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &conditionTypeEntityNodeName, &EntityAlreadyExistant, &EntityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+
+					addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntityNode);				
+				}
+
 			#ifndef GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_PROPERTY_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
 			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
 			}
