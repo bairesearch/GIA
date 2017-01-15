@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k8b 06-September-2015
+ * Project Version: 2k9a 07-September-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -199,7 +199,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											*/
 
 											/*
-											if(functionName == "redistributeStanfordRelationsCase")	//defineSubstancesBasedOnDeterminatesOfDefinitionEntities //linkEntityDefinitionsAppositiveOfNouns
+											if(functionName == "redistributeStanfordRelationsInterpretNamedAsDefinition2")
 											{
 												GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 												while(currentRelationInList->next != NULL)
