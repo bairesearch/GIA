@@ -72,6 +72,9 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 						*foundAnswer = true;
 						*confidence = bestConfidenceAssumingFoundAnswer;
 						
+						networkEntityNodeWhenSearchedResultsInBestConfidence = conceptEntityMatchingCurrentQueryEntity;
+						queryEntityNodeWhenSearchedResultsInBestConfidence = currentQueryEntityNode;
+					
 						#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
 						if(*foundAnswer)
 						{
@@ -90,8 +93,11 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 			{
 				bestConfidence = currentConfidence;
 				//cout << "bestConfidence = " << bestConfidence << endl;
-				networkEntityNodeWhenSearchedResultsInBestConfidence = conceptEntityMatchingCurrentQueryEntity;
-				queryEntityNodeWhenSearchedResultsInBestConfidence = currentQueryEntityNode;
+				if(!detectComparisonVariable)
+				{
+					networkEntityNodeWhenSearchedResultsInBestConfidence = conceptEntityMatchingCurrentQueryEntity;
+					queryEntityNodeWhenSearchedResultsInBestConfidence = currentQueryEntityNode;
+				}
 			}				
 
 			
@@ -102,9 +108,10 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	cout << "finished query round 1" << endl;
 	#endif
 	
+	#ifndef GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND
 	if(!detectComparisonVariable || !(*foundAnswer))
 	{//now set draw parameters for optimium solution...
-	
+	#endif
 		//cout << "asf2" << endl;
 		//cout << "queryEntityNodeWhenSearchedResultsInBestConfidence->entityName = " << queryEntityNodeWhenSearchedResultsInBestConfidence->entityName << endl; 
 		bool foundAnswerTemp = false;
@@ -117,16 +124,28 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	
 		//cout << "numberOfMatchedNodes = " << numberOfMatchedNodes << endl;
 		
-		if(!detectComparisonVariable && foundAnswerTemp)
-		{
-			//cout << "asf1" << endl;
-			*foundAnswer = true;
-			queryAnswerNode = queryAnswerNodeTemp;
-			*queryAnswerPreviousNode = queryPeviousAnswerNodeTemp;
-			*queryAnswerContext = queryAnswerContextTemp;
+		#ifdef GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND
+		if(!detectComparisonVariable || !(*foundAnswer))
+		{//now set draw parameters for optimium solution...
+		#endif
+					
+			if(!detectComparisonVariable && foundAnswerTemp)
+			{
+				//cout << "asf1" << endl;
+				*foundAnswer = true;
+				queryAnswerNode = queryAnswerNodeTemp;
+				*queryAnswerPreviousNode = queryPeviousAnswerNodeTemp;
+				*queryAnswerContext = queryAnswerContextTemp;
+			}
+			*confidence = (double)numberOfMatchedNodes;
+			
+		#ifdef GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND
 		}
-		*confidence = (double)numberOfMatchedNodes;
+		#endif		
+	
+	#ifndef GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND	
 	}
+	#endif
 	
 
 		
@@ -729,12 +748,12 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 				if(!(entityNode->isProperty))
 				{		
 					//added 2 May 11a (highlight entities which define property nodes)
-					entityColour = GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_BASICENTITY_NODE_COLOUR;
+					entityColour = GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_CONCEPT_NODE_COLOUR;
 				}
 			}					
 			else
 			{	
-				entityColour = GIA_DRAW_BASICENTITY_NODE_COLOUR;
+				entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
 			}
 										
 			//first, print this action node.
@@ -911,8 +930,11 @@ double determineMaxConfidenceOfQuerySemanticNetwork(vector<GIAEntityNode*> *conc
 		}				
 	}
 	
+	#ifdef GIA_QUERY_USE_ARTIFICIALLY_ADJUSTED_MAX_CONFIDENCE
 	return bestConfidence-1.0;
-
+	#else
+	return bestConfidence;
+	#endif
 }
 
 

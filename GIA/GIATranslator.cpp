@@ -781,7 +781,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 		linkPropertiesPossessiveRelationships(currentSentenceInList, GIAEntityNodeArray);
 		
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "2 pass; link properties (descriptive relationships); eg joe is happy" << endl;
+		cout << "2a pass; link properties (descriptive relationships); eg joe is happy" << endl;
 		#endif
 		linkPropertiesDescriptiveRelationships(currentSentenceInList, GIAEntityNodeArray);
 		
@@ -791,7 +791,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 		linkEntityDefinitionsAppositiveOfNouns(currentSentenceInList, GIAEntityNodeArray);
 		
 		#ifdef GIA_TRANSLATOR_DEBUG
- 		cout <<"3 pass; define dependent subject-object definition/composition/action relationships and independent subject/object action relationships" << endl;
+ 		cout <<"3a pass; define dependent subject-object definition/composition/action relationships and independent subject/object action relationships" << endl;
 		#endif
 		defineSubjectObjectRelationships(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList, conceptEntityNamesList);
 				

@@ -359,7 +359,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				pos2.x = (*entityIter)->printX;
 				pos2.y = (*entityIter)->printY;	
 				pos2.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_BASICENTITY_CONNECTION_COLOUR, writeFileObject, "definition");
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONCEPT_CONNECTION_COLOUR, writeFileObject, "definition");
 			}
 			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;
 
@@ -462,12 +462,12 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				if(!(entityNode->isProperty))
 				{		
 					//added 2 May 11a (highlight entities which define property nodes)
-					entityColour = GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_BASICENTITY_NODE_COLOUR;
+					entityColour = GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_CONCEPT_NODE_COLOUR;
 				}
 			}					
 			else
 			{	
-				entityColour = GIA_DRAW_BASICENTITY_NODE_COLOUR;
+				entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
 			}
 										
 			//first, print this action node.
