@@ -609,7 +609,7 @@
 #include "SHAREDglobalDefs.h"
 
 #ifdef USE_NLC
-	#define GIA_STORE_CONNECTION_SENTENCE_INDEX
+	//#define GIA_STORE_CONNECTION_SENTENCE_INDEX	//added 2f14b 14-July-2014 [required for NLC 1g15a+]
 #endif
 //#define GIA_ENABLE_WARNINGS
 #define GIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES	//added 2f13a 14-July-2014
@@ -1041,9 +1041,9 @@
 //#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. concept-list -> concepts or substances
 #define GIA_DRAW_DISPLAY_ANSWER_CONTEXTS
 #ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS	//is this condition required?
-	#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX		//this is required by USE_NLC
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-		//#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED		//more robust implementation (should activate when using GIA_USE_DATABASE to ensure all the semantic network connections are visible)
+		#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED		//more robust implementation (should activate when using GIA_USE_DATABASE to ensure all the semantic network connections are visible)
 	#endif
 #endif
 

@@ -398,7 +398,7 @@ string DBgenerateServerDatabaseName(string * entityName, int fileType, string de
 		databaseName = serverName + defaultDatabaseName;
 		#else
 		databaseName = databaseFolderNameUserChoice;
-		cout << "corpusDatabaseFolderName = " << databaseFolderNameUserChoice << endl;
+		//cout << "databaseFolderNameUserChoice = " << databaseFolderNameUserChoice << endl;
 		#endif
 
 	}
