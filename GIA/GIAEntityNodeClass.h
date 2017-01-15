@@ -52,6 +52,18 @@ class GIATimeConditionNode;
 #define GRAMMATICAL_GENDER_FEMININE 3
 #define GRAMMATICAL_GENDER_NUMBER_OF_TYPES (4)
 #define GRAMMATICAL_CATEGORY_UNDEFINED (0)
+//#define GRAMMATICAL_COUNT_UNDEFINED 0
+
+
+#define QUANTITY_NUMBER_UNDEFINED (1)
+#define QUANTITY_NUMBER_LOW_NUMBER_OF_TYPES (20)
+#define QUANTITY_NUMBER_TENS_NUMBER_OF_TYPES (10)
+#define QUANTITY_MULTIPLIER_NUMBER_OF_TYPES (7)		//do: work out what these are/can be
+
+
+#define QUANTITY_MODIFIER_UNDEFINED (-1)		//WARNING: not yet implemented
+#define QUANTITY_MODIFIER_NUMBER_OF_TYPES (1)		//WARNING: not yet implemented	//do: work out what these are/can be	
+
 
 
 extern string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
@@ -76,6 +88,7 @@ public:
 	bool grammaticalDefiniteTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	bool grammaticalPersonTemp;	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed		
 	int grammaticalGenderTemp; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+	//bool grammaticalCountTemp;	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed		
 	bool isSubjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool isObjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool hasPropertyTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
@@ -86,8 +99,14 @@ public:
 	bool hasAssociatedPropertyTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	bool hasAssociatedActionTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	
-	int grammaticalNumber; 
+	int grammaticalNumber;
 	
+	int quantityNumber;
+	int quantityModifier;	//not yet implemented
+	string quantityModifierString;	//eg "almost"
+	//bool isMeasure;
+	bool hasQuantity;
+		
 	bool initialisedForPrinting;
 	bool printed;
 	int printX;
@@ -173,6 +192,9 @@ public:
 	*/
 };
 
+int calculateQuantityNumberInt(string quantityNumberString);
+int calculateQuantityModifierInt(string quantityModifierString);
+int calculateQuantityMultiplierInt(string quantityMultiplierString);
 
 
 

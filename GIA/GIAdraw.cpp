@@ -363,12 +363,20 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			{	
 				entityColour = GIA_DRAW_BASICENTITY_NODE_COLOUR;
 			}
-			
-			
-			
-											
+										
 			//first, print this action node.
-			currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &(entityNode->entityName), writeFileObject, boxThickness);
+			string nameOfBox = "";
+			if(entityNode->hasQuantity)
+			{
+				char quantityNumberStringcharstar[20];
+				sprintf(quantityNumberStringcharstar, "%d", entityNode->quantityNumber);
+				nameOfBox = nameOfBox + quantityNumberStringcharstar + " " + entityNode->entityName;
+			}
+			else
+			{
+				nameOfBox = entityNode->entityName;
+			}
+			currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, writeFileObject, boxThickness);
 
 		}
 		

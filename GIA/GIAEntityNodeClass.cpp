@@ -17,6 +17,13 @@ string grammaticalNumberNameArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {"undefi
 string grammaticalGenderNameArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES] = {"undefined", "person", "masculine", "feminine"};
 //int grammaticalGenderNameLengthsArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES] = {9, 6, 9, 8};
 
+string quantityNumberLowNameArray[QUANTITY_NUMBER_LOW_NUMBER_OF_TYPES] = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"};
+string quantityNumberTensNameArray[QUANTITY_NUMBER_TENS_NUMBER_OF_TYPES] = {"zero", "ten", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy", "eighty", "ninety"};
+string quantityMultiplierNameArray[QUANTITY_MULTIPLIER_NUMBER_OF_TYPES] = {"one", "ten", "hundred", "thousand", "million", "billion", "trillion"};
+string quantityModifierNameArray[QUANTITY_MODIFIER_NUMBER_OF_TYPES] = {"almost"};
+
+//int grammaticalTenseNameLengthsArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES] = {9, 7, 4, 6};
+
 //~nouns
 GIAEntityNode::GIAEntityNode(void)
 {
@@ -25,6 +32,7 @@ GIAEntityNode::GIAEntityNode(void)
 	grammaticalDefiniteTemp = GRAMMATICAL_DEFINITE_UNDEFINED;
 	grammaticalPersonTemp = GRAMMATICAL_PERSON_UNDEFINED;		
 	grammaticalGenderTemp = GRAMMATICAL_GENDER_UNDEFINED;
+	//grammaticalCountTemp = GRAMMATICAL_COUNT_UNDEFINED;
 	isSubjectTemp = false;
 	isObjectTemp = false;
 	hasPropertyTemp = false;
@@ -36,6 +44,12 @@ GIAEntityNode::GIAEntityNode(void)
 	
 	grammaticalNumber = GRAMMATICAL_NUMBER_UNDEFINED;
 	
+	quantityNumber = QUANTITY_NUMBER_UNDEFINED;
+	quantityModifier = QUANTITY_MODIFIER_UNDEFINED;	//not yet implemented
+	quantityModifierString = "";	//eg "almost"
+	//isMeasure = false;
+	hasQuantity = false;
+		
 	initialisedForPrinting = false;
 	printed = false;
 	printX = 0;
@@ -71,5 +85,99 @@ GIAEntityNode::~GIAEntityNode(void)
 		delete next;
 	}
 	*/
+}
+
+
+
+int calculateQuantityNumberInt(string quantityNumberString)
+{
+	int quantityNumberInt = 1;
+	bool found = false;
+	for(int i=0; i<QUANTITY_NUMBER_LOW_NUMBER_OF_TYPES; i++)
+	{
+		if(quantityNumberString == quantityNumberLowNameArray[i])
+		{
+			quantityNumberInt = i;
+			found = true;
+		}
+	}
+	for(int i=0; i<QUANTITY_NUMBER_TENS_NUMBER_OF_TYPES; i++)
+	{
+		if(quantityNumberString == quantityNumberTensNameArray[i])
+		{
+			quantityNumberInt = i*10;
+			found = true;
+		}
+	}
+	for(int i=0; i<QUANTITY_MULTIPLIER_NUMBER_OF_TYPES; i++)
+	{
+		if(quantityNumberString == quantityMultiplierNameArray[i])
+		{
+			quantityNumberInt = pow(10, i);
+			found = true;
+		}
+	}		
+	if(!found)
+	{//parse as simple number
+		char * quantityNumberStringcharstar = const_cast<char*>(quantityNumberString.c_str());
+		quantityNumberInt = atoi(quantityNumberStringcharstar);	
+	}	
+	return quantityNumberInt;
+}
+
+
+int calculateQuantityMultiplierInt(string quantityMultiplierString)
+{
+	int quantityMultiplierInt = 1;
+	bool found = false;
+	for(int i=0; i<QUANTITY_NUMBER_LOW_NUMBER_OF_TYPES; i++)
+	{
+		if(quantityMultiplierString == quantityNumberLowNameArray[i])
+		{
+			quantityMultiplierInt = i;
+			found = true;
+		}
+	}
+	for(int i=0; i<QUANTITY_NUMBER_TENS_NUMBER_OF_TYPES; i++)
+	{
+		if(quantityMultiplierString == quantityNumberTensNameArray[i])
+		{
+			quantityMultiplierInt = i*10;
+			found = true;
+		}
+	}	
+	for(int i=0; i<QUANTITY_MULTIPLIER_NUMBER_OF_TYPES; i++)
+	{
+		if(quantityMultiplierString == quantityMultiplierNameArray[i])
+		{
+			quantityMultiplierInt = pow(10, i);
+			found = true;
+		}
+	}
+	if(!found)
+	{//parse as simple number
+	
+		char * quantityMultiplierStringcharstar = const_cast<char*>(quantityMultiplierString.c_str());
+		quantityMultiplierInt = atoi(quantityMultiplierStringcharstar);
+	}
+	
+	return quantityMultiplierInt;
+}
+
+int calculateQuantityModifierInt(string quantityModifierString)
+{
+	cout << "warning: calculateQuantityModifierInt() not yet implemented" << endl;
+	
+	int quantityModifierInt = 1;
+	bool found = false;
+	for(int i=0; i<QUANTITY_MODIFIER_NUMBER_OF_TYPES; i++)
+	{
+		if(quantityModifierString == quantityModifierNameArray[i])
+		{
+			quantityModifierInt = i;
+			found = true;
+		}
+	}
+	return quantityModifierInt;	
 }
 

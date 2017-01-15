@@ -90,8 +90,8 @@ using namespace std;
 #define RELATION_TYPE_MEASURE_SIZE "_measure_size" 
 #define RELATION_TYPE_MEASURE_TIME "_measure_time"
 #define RELATION_TYPE_QUANTITY "_quantity"
-#define RELATION_TYPE_QUANTITY_MOD "_quantity_mult"
-#define RELATION_TYPE_QUANTITY_MULT "_measure_time"
+#define RELATION_TYPE_QUANTITY_MOD "_quantity_mod"
+#define RELATION_TYPE_QUANTITY_MULT "_quantity_mult"
 	//? DOING NOW: references: yet to integrate - see http://wiki.opencog.org/w/Ideas#Improved_reference_resolution for integration (also check for the existence of the "person" tag in the feature "tense" data block)
 	//? #define RELATION_TYPE_QUANTITY "_quantity"	//eg his bike	[bike him]		/its bike
 
@@ -107,6 +107,7 @@ using namespace std;
 #define RELATION_TYPE_SUCH_THAT "such"
 #define RELATION_TYPE_SO "so"
 
+#define RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES (5)
 
 #define RELATION_TYPE_OBJECT_NUMBER_OF_TYPES (5)
 #define RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES (2)

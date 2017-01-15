@@ -29,6 +29,9 @@ int referenceTypeHasDeterminateCrossReferenceNumberArray[GRAMMATICAL_NUMBER_TYPE
 string relationTypeAdjectiveWhichImplyEntityInstanceNameArray[RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_1, RELATION_TYPE_ADJECTIVE_3};
 string relationTypeRequireSwitchingNameArray[RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT_THAT};
 
+string relationTypeQuantityOrMeasureNameArray[RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES] = {RELATION_TYPE_QUANTITY, RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_PER, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME};
+
+
 //int timeMonthIntArray[TIME_MONTH_NUMBER_OF_TYPES] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 string timeMonthStringArray[TIME_MONTH_NUMBER_OF_TYPES] = {TIME_MONTH_JANUARY, TIME_MONTH_FEBRUARY, TIME_MONTH_MARCH, TIME_MONTH_APRIL, TIME_MONTH_MAY, TIME_MONTH_JUNE, TIME_MONTH_JULY, TIME_MONTH_AUGUST, TIME_MONTH_SEPTEMBER, TIME_MONTH_OCTOBER, TIME_MONTH_NOVEMBER, TIME_MONTH_DECEMBER};
 	
@@ -506,6 +509,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		bool GIAEntityNodeGrammaticalIsDefiniteArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 		bool GIAEntityNodeGrammaticalIsPersonArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 		int GIAEntityNodeGrammaticalGenderArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
+		//bool GIAEntityNodeGrammaticalHasCountArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 		
 		bool GIAEntityNodeArrayFilled[MAX_NUMBER_OF_WORDS_PER_SENTENCE];		//NB could also use currentSentence->maxNumberOfWordsInSentence
 		GIAEntityNode * GIAEntityNodeArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
@@ -522,6 +526,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			GIAEntityNodeGrammaticalIsDefiniteArray[w] = false;
 			GIAEntityNodeGrammaticalIsPersonArray[w] = false;
 			GIAEntityNodeGrammaticalGenderArray[w] = GRAMMATICAL_NUMBER_UNDEFINED;
+			//GIAEntityNodeGrammaticalHasCountArray[w] = GRAMMATICAL_NUMBER_UNDEFINED;
 			
 			GIAEntityNodeArrayFilled[w] = false;
 
@@ -584,6 +589,15 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalGenderIndex = " << grammaticalGenderNameArray[grammaticalGenderIndex] << endl;
 				}			
 			}
+			
+			/*
+			//this date code probably requires an update [there appear to be multiple ways in which dates are defined in relex...
+			if((currentFeatureInList->grammar).find(FEATURE_GRAMMATICAL_COUNT) != -1)
+			{
+				GIAEntityNodeGrammaticalHasCountArray[currentFeatureInList->entityIndex] = true;
+				//cout << "hasCount currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+			}	
+			*/		
 												 
 			currentFeatureInList = currentFeatureInList->next;
 		}
@@ -1053,8 +1067,30 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}				
 		
+		//0d pass; define properties (quantities [not quantity mods/multipiers] and measures);
+		currentRelationInList = currentSentenceInList->firstRelationInList;
+ 		while(currentRelationInList->next != NULL)
+		{			
+			bool passed = false;
+			for(int i=0; i<RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypeQuantityOrMeasureNameArray[i])
+				{
+					passed = true;
+				}
+			}						
+			if(passed)
+			{
+				//create a new property for the entity and assign a property definition entity if not already created
+				int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationFunctionIndex];
+				
+				addPropertyToPropertyDefinition(propertyEntity);					
+			}			
+			currentRelationInList = currentRelationInList->next;
+		}				
 		
-			
+					
 										
 		//1 pass; link properties (possessive relationships); eg joe's bike
 		currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -1675,8 +1711,60 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;		
 		}
 		
-		//4c pass; extract measures, quantities	
+		//4c pass; extract quantities	
+		currentRelationInList = currentSentenceInList->firstRelationInList;
+		while(currentRelationInList->next != NULL)
+		{	
+			//cout << "here1" << endl;
+			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+														
+			if(currentRelationInList->relationType == RELATION_TYPE_QUANTITY)
+			{
+				GIAEntityNode * quantityEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
+				if(quantityEntity->firstAssociatedPropertyNodeInList.back() != NULL)
+				{
+					GIAEntityNode * quantityProperty = quantityEntity->firstAssociatedPropertyNodeInList.back();
+					quantityProperty->hasQuantity = true;
+					int quantityNumberInt = calculateQuantityNumberInt(currentRelationInList->relationArgument);
+					quantityProperty->quantityNumber = quantityNumberInt;
+
+					//now locate quantity modifiers and multiplicators
+					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+					while(currentRelationInList2->next != NULL)
+					{	
+						//cout << "here1" << endl;
+						//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+
+						if(currentRelationInList2->relationType == RELATION_TYPE_QUANTITY_MOD)
+						{	
+							if(currentRelationInList2->relationFunction == currentRelationInList->relationArgument)
+							{
+								/*
+								int quantityModifierInt = calculateQuantityModifierInt(currentRelationInList2->relationArgument);
+								quantityProperty->quantityModifier = quantityModifierInt;
+								*/
+								quantityProperty->quantityModifierString = currentRelationInList->relationArgument;
+							}
+
+						}	
+						if(currentRelationInList2->relationType == RELATION_TYPE_QUANTITY_MULT)
+						{
+							if(currentRelationInList2->relationFunction == currentRelationInList->relationArgument)
+							{
+								int quantityMultiplierInt = calculateQuantityMultiplierInt(currentRelationInList2->relationArgument);
+								quantityProperty->quantityNumber = quantityProperty->quantityNumber * quantityMultiplierInt;
+							}						
+						}						
+
+						currentRelationInList2 = currentRelationInList2->next;
+					}		
+				}								
+			}
+			currentRelationInList = currentRelationInList->next;		
+		}
 		
+		//4d pass; extract measures
+				
 		/*
 		//restore critical variables; temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
 		for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
