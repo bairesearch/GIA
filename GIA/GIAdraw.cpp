@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g10b 17-October-2014
+ * Project Version: 2g11a 21-October-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -397,7 +397,12 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 							pass = false;
 						}
 					}
-
+					#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+					if((*connectionIter)->isAlias)
+					{
+						entityConnectionColour = GIA_DRAW_DEFINITION_MARK_AS_ALIAS_CONNECTION_COLOUR;
+					}
+					#endif
 					if(pass)
 					{
 						if(entityVectorConnectionDrawConnectionArray[i])

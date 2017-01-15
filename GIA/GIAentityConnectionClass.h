@@ -26,7 +26,7 @@
  * File Name: GIAentityConnectionClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g10b 17-October-2014
+ * Project Version: 2g11a 21-October-2014
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -101,7 +101,10 @@ public:
 	#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 	int sentenceIndexTemp;
 	#endif
-
+	#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+	bool isAlias;
+	#endif
+	
 	/*
 	#ifdef GIA_USE_NLG
 	bool parsedForLanguageGeneration;

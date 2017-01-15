@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g10b 17-October-2014
+ * Project Version: 2g11a 21-October-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -529,6 +529,29 @@ void addDefinitionToEntity(GIAentityNode * thingEntity, GIAentityNode * definiti
 	}
 	#endif
 }
+
+#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+void addDefinitionToEntityMarkConnectionAsAlias(GIAentityNode * thingEntity, GIAentityNode * definitionEntity, bool sameReferenceSet)
+{
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(thingEntity->disabled))
+	{
+	if(!(definitionEntity->disabled))
+	{
+	#endif
+		//configure entity node and entity definition node
+		GIAentityConnection * connection = writeVectorConnection(thingEntity, definitionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);
+		connection->isAlias = true;
+		GIAentityConnection * connectionReverse = writeVectorConnection(definitionEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet);
+		connectionReverse->isAlias = true;
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	}
+	}
+	#endif	
+}
+#endif
+
+
 
 
 
