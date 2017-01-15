@@ -23,7 +23,7 @@
  * File Name: GIAcorpusOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c2f 14-January-2014
+ * Project Version: 2c3a 14-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -346,6 +346,16 @@ void determineGIAconnectionistNetworkPOStypeNameStanford(Feature * currentFeatur
 			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_DOING;
 		}
 	}
+	#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
+	for(int i=0; i<GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->lemma == grammaticalDeterminerIndefiniteArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_DETERMINER_LIMITED_INDEFINITE;
+		}
+	}
+	#endif
+	
 	/*
 	//requires updating (add more cases from PENN tree above)
 	if(currentFeatureInSentence->grammaticalWordType == GRAMMATICAL_WORD_TYPE_NOUN)
@@ -473,7 +483,17 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(Feature * currentFeatureIn
 			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_DOING;
 		}
 	}
-		
+
+	#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
+	for(int i=0; i<GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES; i++)
+	{
+		if(currentFeatureInSentence->lemma == grammaticalDeterminerIndefiniteArray[i])
+		{
+			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_DETERMINER_LIMITED_INDEFINITE;
+		}
+	}
+	#endif
+	
 	currentFeatureInSentence->GIAconnectionistNetworkPOStype = GIAconnectionistNetworkPOStype;
 	//cout << "GIAconnectionistNetworkPOStype = " << GIAconnectionistNetworkPOStype << endl;
 }

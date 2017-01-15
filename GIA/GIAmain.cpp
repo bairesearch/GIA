@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c2f 14-January-2014
+ * Project Version: 2c3a 14-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -1423,7 +1423,7 @@ int main2(int argc,char **argv)
 				#else
 				::SetCurrentDirectory(tempFolderCharStar);
 				#endif
-
+				
 				/*
 				#ifdef GIA_USE_LRP
 				convertRevertNLPtagNamesToOfficialLRPOutput(NLPdependencyRelationsParser, NLPfeatureParser, LRPTextForNLPonlyPlainTXTFileName, LRPTextPlainTXTFileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName);
@@ -1480,9 +1480,7 @@ int main2(int argc,char **argv)
 		}
 
 		if(useInputTextXMLFile)
-		{
-			cout << "SAFSF" << endl;
-			
+		{			
 			#ifdef GIA_MAIN_DEBUG
 			//cout << "useInputTextXMLFile" << endl;
 			#endif

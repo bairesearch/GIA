@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c2f 14-January-2014
+ * Project Version: 2c3a 14-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -626,6 +626,28 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, vector<GIAentityNode*> *sentenceConceptEntityNodesList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations)
 #endif
 {
+	Relation * currentRelationInList;
+
+	/*
+	cout << "dependency relations: " << endl;
+	currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		if(!(currentRelationInList->disabled))
+		{
+			string relationType = currentRelationInList->relationType;
+			string relationGoverner = currentRelationInList->relationGovernor;
+			string relationDependent = currentRelationInList->relationDependent;
+
+			cout << "relationType = " << currentRelationInList->relationType << endl;
+			cout << "relationGoverner = " << relationGoverner << endl;
+			cout << "relationDependent = " << relationDependent << endl;
+
+		}
+		currentRelationInList = currentRelationInList->next;
+	}
+	*/
+	
 	#ifndef GIA_USE_ADVANCED_REFERENCING
 	bool linkPreestablishedReferencesGIA = true;	//irrelevant
 	#endif
@@ -641,8 +663,6 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		cout << sentenceText << endl;
 	}
 	#endif
-
-	Relation * currentRelationInList;
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	//cout << "\t" << currentSentenceInList->sentenceText << endl;

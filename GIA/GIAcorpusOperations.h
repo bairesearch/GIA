@@ -23,7 +23,7 @@
  * File Name: GIAcorpusOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c2f 14-January-2014
+ * Project Version: 2c3a 14-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -108,8 +108,8 @@ static string entityPredeterminerArray[ENTITY_PREDETERMINER_ARRAY_NUMBER_OF_TYPE
 	//predeterminer could be merged with adjective
 
 //not required for Stanford CoreNLP as "an" lemma is "a" (but is required for Relex)
-#define GRAMMATICAL_DETERMINER_INDEFINITE_NUMBER_OF_TYPES (2)	
-static string grammaticalDeterminerIndefiniteArray[GRAMMATICAL_DETERMINER_INDEFINITE_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_INDEFINITE, GRAMMATICAL_DETERMINER_INDEFINITE_FIRST_LETTER_VOWEL};
+#define GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES (2)	
+static string grammaticalDeterminerIndefiniteArray[GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_INDEFINITE, GRAMMATICAL_DETERMINER_INDEFINITE_FIRST_LETTER_VOWEL};	//NB this intentionally discludes GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL "some" as this is handled the same as a definite determinier by GIA2 POS tag system
 
 
 #define GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNDEFINED 0		//added in case Stanford POS extraction does not equate exactly to PENN tree bank specification
@@ -133,10 +133,16 @@ static string grammaticalDeterminerIndefiniteArray[GRAMMATICAL_DETERMINER_INDEFI
 #define GIA_CONNECTIONIST_NETWORK_POS_TYPE_PUNCTUATION_DIVISION 18
 #define GIA_CONNECTIONIST_NETWORK_POS_TYPE_PUNCTUATION_QUOTE 19
 #define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_BEING 20		//additional case required for GIA semantics extraction
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_HAVING 21		//additional case required for GIA semantics extraction
+#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_HAVING 21		//additional case required for GIA semantics extraction	//check this is still required now that GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC is disabled GIA 2c+
 #define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_DOING 22		//additional case required for GIA semantics extraction
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES (23)
-static string GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"undefined", "coordinatingConjunction", "number", "determiner", "unknown", "predeterminer", "posessiveEnding", "modalAuxiliary", "preposition", "adjective", "noun", "adverb", "pronounPersonal", "pronounPossessive", "particle", "interjection", "verb", "wh", "punctuationDivision", "punctuationQuote", "isAuxillaryBeing", "isAuxillaryHaving", "isAuxillaryDoing"};
+#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
+	#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_DETERMINER_LIMITED_INDEFINITE 23
+	#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES (24)
+	static string GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"undefined", "coordinatingConjunction", "number", "determiner", "unknown", "predeterminer", "posessiveEnding", "modalAuxiliary", "preposition", "adjective", "noun", "adverb", "pronounPersonal", "pronounPossessive", "particle", "interjection", "verb", "wh", "punctuationDivision", "punctuationQuote", "isAuxillaryBeing", "isAuxillaryHaving", "isAuxillaryDoing", "determinerLimitedIndefinite"};
+#else
+	#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES (23)
+	static string GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"undefined", "coordinatingConjunction", "number", "determiner", "unknown", "predeterminer", "posessiveEnding", "modalAuxiliary", "preposition", "adjective", "noun", "adverb", "pronounPersonal", "pronounPossessive", "particle", "interjection", "verb", "wh", "punctuationDivision", "punctuationQuote", "isAuxillaryBeing", "isAuxillaryHaving", "isAuxillaryDoing"};
+#endif
 static int featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[FEATURE_RELEX_POS_NUMBER_OF_TYPES] = {GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNDEFINED, GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADJECTIVE, GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADVERB, GIA_CONNECTIONIST_NETWORK_POS_TYPE_PUNCTUATION_DIVISION, GIA_CONNECTIONIST_NETWORK_POS_TYPE_DETERMINER, GIA_CONNECTIONIST_NETWORK_POS_TYPE_NOUN, GIA_CONNECTIONIST_NETWORK_POS_TYPE_PARTICLE, GIA_CONNECTIONIST_NETWORK_POS_TYPE_PREPOSITION, GIA_CONNECTIONIST_NETWORK_POS_TYPE_PUNCTUATION_QUOTE, GIA_CONNECTIONIST_NETWORK_POS_TYPE_VERB, GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNKNOWN};
 
 /*
@@ -171,9 +177,16 @@ static string relationAuxiliaryFutureTenseNameArray[RELATION_AUXILIARY_FUTURE_TE
 
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_DETERMINER (14)
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_COMPOSITION_AUXILIARY (15)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA (16)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_QUANTITY (17)
-#define GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 4)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_QUANTITY (16)
+#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA (17)
+	#define GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 4)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
+#elif defined GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
+	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_ENTITY_NODES_ADD_ALIAS (17)
+	#define GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 4)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
+#else
+	#define GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 3)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
+#endif
 
 #ifdef GIA_USE_CORPUS_DATABASE
 static string GIA2semanticDependencyRelationNameArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"actionSubject", "actionObject", "conditionSubject", "conditionObject", "property", "property", "definition", "definition", "instance", "actionSubject", "actionObject", "conditionSubject", "conditionObject", "instance", "determiner", "compositionAuxiliary", "modalAuxiliaryOrCopula", "quantity"};

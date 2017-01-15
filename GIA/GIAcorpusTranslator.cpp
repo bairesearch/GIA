@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c2f 14-January-2014
+ * Project Version: 2c3a 14-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -351,14 +351,17 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(Sentence * currentSe
 
 void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
 {
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation * currentRelationInList
+	
+	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+	currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		if(!(currentRelationInList->disabled))
 		{
 			if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_COMPOSITION_AUXILIARY])
 			{
-				//auxiliary found; eg auxiliary(it-6, had-5)	The dog must have had it
+				//auxiliary found; eg auxiliary(it-6, had-5)	The dog must have it.
 				int thingIndex = currentRelationInList->relationGovernorIndex;
 				int auxiliaryIndex = currentRelationInList->relationDependentIndex;
 				GIAentityNode * entity = GIAentityNodeArray[thingIndex];
@@ -392,6 +395,7 @@ void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(Sentence * curre
 		}
 		currentRelationInList = currentRelationInList->next;
 	}
+	#endif
 	
 	currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -416,6 +420,7 @@ void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(Sentence * curre
 
 }
 
+#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 void updateGrammaticalValuesBasedOnCompositionAuxiliary(GIAentityNode * entity, string compositionAuxiliaryString)
 {
 	for(int i=0; i<RELATION_GOVERNOR_COMPOSITION_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES; i++)
@@ -433,6 +438,7 @@ void updateGrammaticalValuesBasedOnCompositionAuxiliary(GIAentityNode * entity, 
 		}
 	}
 }
+#endif
 
 void updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(GIAentityNode * entity, string modalAuxiliaryString)
 {
@@ -495,7 +501,7 @@ void defineSubstancesBasedOnSemanticRelations(Sentence * currentSentenceInList, 
 								hasDeterminer = true;
 								determinerString = GIAentityNodeArray[determinerIndex]->entityName;
 								currentRelationInList->disabled = true;
-								for(int i=0; i<GRAMMATICAL_DETERMINER_INDEFINITE_NUMBER_OF_TYPES; i++)
+								for(int i=0; i<GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES; i++)
 								{
 									if(determinerString == grammaticalDeterminerIndefiniteArray[i])
 									{
@@ -662,6 +668,12 @@ void defineConnectionsBasedOnSemanticRelations(Sentence * currentSentenceInList,
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS])
 			{
 				addDefinitionToEntity(entity1, entity2, sameReferenceSet);
+				currentRelationInList->disabled = true;
+			}
+			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_ENTITY_NODES_ADD_ALIAS])
+			{
+				mergeEntityNodesAddAlias(entity1, entity2);
+				GIAentityNodeArray[entity2Index] = GIAentityNodeArray[entity1Index];
 				currentRelationInList->disabled = true;
 			}
 			else

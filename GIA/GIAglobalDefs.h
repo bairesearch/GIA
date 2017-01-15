@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c2f 14-January-2014
+ * Project Version: 2c3a 14-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -528,6 +528,7 @@
 		#else
 			#define GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE 	
 		#endif
+		//#define GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
 	#else
 		//this compilation is for development purposes only:
 		#define GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN 
