@@ -3,7 +3,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l4g 03-June-2012
+ * Project Version: 1l5a 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -407,14 +407,15 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 										nsubj(are-4, claims-2)
 										prep_on(are-4, frame-7)
 										rcmod(claims-2, are-4)
-										*/										
+										*/	
+											//NB prepositions imply same reference set by default: "The claims that are on the frame are blue." = "The claims on the frame are blue." 							
 										bool auxillaryIndicatesDifferentReferenceSet = true;
 										Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
 										while(currentRelationInList3->next != NULL)
 										{
 											if(currentRelationInList3->relationType == RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER)
 											{
-												if((currentRelationInList3->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList3->relationGovernor == RELATION_ENTITY_BE))
+												if((currentRelationInList3->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList3->relationGovernorIndex == currentRelationInList->relationDependentIndex) && (currentRelationInList3->relationDependent == RELATION_ENTITY_BE))
 												{
 													auxillaryIndicatesDifferentReferenceSet = false;	
 												}
@@ -422,6 +423,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 											currentRelationInList3 = currentRelationInList3->next;
 										}
 										currentRelationInList2->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;
+										//cout << "\n\n\n\n\n\n\nauxillaryIndicatesDifferentReferenceSet = " << auxillaryIndicatesDifferentReferenceSet << endl;
 										#endif
 																								
 										currentRelationInList->disabled = true;

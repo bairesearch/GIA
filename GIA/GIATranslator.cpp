@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l4g 03-June-2012
+ * Project Version: 1l5a 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -556,16 +556,17 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	}
 	cout << "features (tags): " << endl;
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{	
+	{
+		//cout << w << endl; 	
 		if(GIAEntityNodeArrayFilled[w])
 		{	
 			if(!(GIAConceptNodeArray[w]->disabled))
-			{	
+			{
 				Feature * currentFeature = featureArrayTemp[w];
 				cout << w << " = " << currentFeature->lemma << endl;				
 			}
 		}
-	}	
+	}
 	#endif	
 			
 							
@@ -687,7 +688,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "3d pass; define object/subject of preposition" << endl;
 	#endif
-	defineObjectSubjectOfPreposition(currentSentenceInList, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
+	defineObjectSubjectOfPreposition(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
 #ifdef GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
 	#ifdef GIA_TRANSLATOR_DEBUG

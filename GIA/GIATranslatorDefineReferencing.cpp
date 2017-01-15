@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l4g 03-June-2012
+ * Project Version: 1l5a 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1323,6 +1323,8 @@ GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIA
 		{
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 			cout << "addingEntityCorrespondingBestMatch. entityNode being traced: = " << entityNode->entityName << endl;
+			cout << "entityNode->entityName = " << entityNode->entityName << endl;
+			cout << "entityNode->entityCorrespondingBestMatch->entityName = " << entityNode->entityCorrespondingBestMatch->entityName << endl;
 			#endif
 
 			//now add the GIAcoReference to the list...
@@ -1451,13 +1453,28 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 						cout << "entityIndex = " << entityIndex << endl;
 						#endif
 						
+						#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
+						if(GIAEntityNodeArrayFilled[entityIndex])
+						{
+						#endif
+							GIAEntityNode * reference = GIAConceptNodeArray[entityIndex];		//not required [only for debugging/clarity purposes]
+							#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+							cout << "linkAdvancedReferencesGIA: reference->entityName = " << reference->entityName << endl;
+							#endif	
+						#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS							
+						}
+						else
+						{
+							GIAEntityNodeArrayFilled[entityIndex] = true;	//preposition reference
+							GIAConceptNodeArray[entityIndex] = referenceSource->entityNodeDefiningThisInstance->back()->entity;
+						}						
+						#endif
 						
-						GIAEntityNode * reference = GIAConceptNodeArray[entityIndex];		//not required [only for debugging/clarity purposes]
 						GIAEntityNodeArray[entityIndex] = referenceSource;
 						
 						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-						cout << "linkAdvancedReferencesGIA: reference->entityName = " << reference->entityName << endl;
-						//cout << "linkAdvancedReferencesGIA: referenceSource->entityName = " << referenceSource->entityName << endl;
+						cout << "linkAdvancedReferencesGIA: referenceSource->entityName = " << referenceSource->entityName << endl;
+						cout << "linkAdvancedReferencesGIA: GIAEntityNodeArray[entityIndex]->entityName = " << GIAEntityNodeArray[entityIndex]->entityName << endl;
 						#endif						
 					}
 				}

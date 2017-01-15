@@ -3,7 +3,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l4g 03-June-2012
+ * Project Version: 1l5a 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -362,7 +362,7 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, GIAEntit
 									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 									bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
-									addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity, sameReferenceSet);
+									addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity, sameReferenceSet);
 
 								}
 
@@ -498,7 +498,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, GIAEntityNode * GI
 								GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 								
 								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
-								addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity, sameReferenceSet);
+								addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity, sameReferenceSet);
 
 							}
 
@@ -611,7 +611,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, GIAEntityNode * GI
 						
 						//now add measure_per condition node
 						sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
-						addOrConnectPropertyConditionToEntity(newQuantityTimesEntity, measureProperty, conditionTypeConceptEntity, sameReferenceSet);
+						addOrConnectConditionToEntity(newQuantityTimesEntity, measureProperty, conditionTypeConceptEntity, sameReferenceSet);
 
 					}
 				}								
@@ -688,11 +688,11 @@ void extractMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntity
 				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 				if(measureDependencyFound)
 				{
-					addOrConnectPropertyConditionToEntity(quantityEntity, measurePropertyEntity, conditionTypeConceptEntity, sameReferenceSet);
+					addOrConnectConditionToEntity(quantityEntity, measurePropertyEntity, conditionTypeConceptEntity, sameReferenceSet);
 				}
 				else
 				{
-					addOrConnectPropertyConditionToEntity(measurePropertyEntity, quantityEntity, conditionTypeConceptEntity, sameReferenceSet);
+					addOrConnectConditionToEntity(measurePropertyEntity, quantityEntity, conditionTypeConceptEntity, sameReferenceSet);
 				}								
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -795,7 +795,7 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode
 						conditionTypeEntityNode = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeEntityNodeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 						bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;
-						addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntityNode, sameReferenceSet);				
+						addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntityNode, sameReferenceSet);				
 
 					#ifndef GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_PROPERTY_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
 					#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
@@ -894,7 +894,7 @@ void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode
 				#else
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 				#endif
-				addConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);				
+				addOrConnectConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);				
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			

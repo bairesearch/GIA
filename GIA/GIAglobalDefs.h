@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l4g 03-June-2012
+ * Project Version: 1l5a 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific version of shared globals (replace if compiling other projects)
  *
@@ -20,6 +20,9 @@
 	#define GIA_USE_DATABASE_FILESYSTEM
 #endif
 #define GIA_USE_ADVANCED_REFERENCING	//this needs to be debugged (not yet tested)
+#ifdef GIA_USE_ADVANCED_REFERENCING
+	#define GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
+#endif
 
 //variables currently under attention for testing purposes
 #define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING			//default: on	//this enables pronoun detection	//OLD: {this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}

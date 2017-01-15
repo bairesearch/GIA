@@ -3,7 +3,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l4g 03-June-2012
+ * Project Version: 1l5a 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -338,7 +338,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 											//cout << "actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;
 											//cout << "conditionTypeConceptEntity = " << conditionTypeConceptEntity->entityName << endl;
 
-											addOrConnectPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
+											addOrConnectConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 										}
 									}
 								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -662,7 +662,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 															//cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
 															GIAEntityNodeArray[actionIndex] = addActionToActionDefinition(actionOrPropertyConditionEntity);	//not required is done later?
 															actionOrPropertyConditionEntity = GIAEntityNodeArray[actionIndex];
-															addOrConnectPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
+															addOrConnectConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 
 															GIAEntityNode * actionEntity = actionOrPropertyConditionEntity;
 															GIAEntityNodeArray[actionIndex] = addActionToObject(objectEntityTemp, actionEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);																			
@@ -712,7 +712,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 														passpasscomposition = false;		//treat "being" as an action
 														#endif
 
-														addOrConnectPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
+														addOrConnectConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 													#endif	
 
 													}
@@ -824,7 +824,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 												GIAEntityNode * actionOrPropertyConditionEntity = subjectEntityTemp;
 												GIAEntityNode * conditionTypeConceptEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
 
-												addOrConnectPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
+												addOrConnectConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 											#endif	
 											}
 											else
@@ -875,7 +875,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 												bool entityAlreadyExistant = false;
 												GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
-												addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
+												addOrConnectConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 
 											#endif								
 										}
@@ -1052,7 +1052,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 																	cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl;
 																	*/
 
-																	addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);														
+																	addOrConnectConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);														
 
 																	foundPartner = true;
 																	currentRelationInList->subjObjRelationAlreadyAdded = true;
@@ -1312,7 +1312,7 @@ void defineHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * curre
 #endif
 
 //is this still used by Stanford?
-void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType)
+void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1358,7 +1358,7 @@ void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntit
 								//should really take into account the boolean and of both values: bool relationNegative = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->negative & GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->negative;
 
 								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//CHECK THIS... defineObjectSubjectOfPreposition use DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS?
-								createConditionBasedUponPreposition(entityNode, conditionEntityNode, conditionTypeConceptEntity->entityName, false, entityNodesActiveListConcepts, NLPdependencyRelationsType, sameReferenceSet);
+								createConditionBasedUponPreposition(entityNode, conditionEntityNode, conditionTypeConceptEntity->entityName, false, currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType, sameReferenceSet);
 
 								/*
 								bool passedPropositionTime = false;	
@@ -1383,7 +1383,7 @@ void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntit
 								}
 								else
 								{
-									addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);							
+									addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);							
 								}
 								*/
 
@@ -1537,7 +1537,7 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 				#else
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 				#endif
-				createConditionBasedUponPreposition(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType, false, entityNodesActiveListConcepts, NLPdependencyRelationsType, sameReferenceSet);
+				createConditionBasedUponPreposition(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType, false, currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType, sameReferenceSet);
 			}
 		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
@@ -1547,8 +1547,37 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 	}
 }
 
+bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, string * prepositionName, int * indexOfPreposition)
+{
+	bool prepositionFeatureFound = false;
+	Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
+	while(currentFeatureInList->next != NULL)
+	{
+		string singleWordPreposition = *prepositionName;
+		int indexOfPrepositionDelimiter = prepositionName->find(STANFORD_PARSER_PREPOSITION_DELIMITER);
+		if(indexOfPrepositionDelimiter != string::npos)
+		{
+			int lengthOfSingleWordPreposition = indexOfPrepositionDelimiter;
+			singleWordPreposition = prepositionName->substr(0, lengthOfSingleWordPreposition);
+			if(indexOfPrepositionDelimiter == 0)
+			{
+				cout << "determineFeatureIndexOfPreposition: illegal multiword preposition; indexOfPrepositionDelimiter == 0" << endl;
+				cout << "prepositionName = " << *prepositionName << endl;
+				exit(0);
+			}
+		}
+		
+		if(currentFeatureInList->lemma == singleWordPreposition)
+		{
+			prepositionFeatureFound = true;
+			*indexOfPreposition = currentFeatureInList->entityIndex;
+		}
+		currentFeatureInList = currentFeatureInList->next;
+	}	
+	return prepositionFeatureFound;
+} 
 
-void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity, GIAEntityNode * actionOrPropertyConditionEntity, string relationType, bool negative, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType, bool sameReferenceSet)
+void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity, GIAEntityNode * actionOrPropertyConditionEntity, string relationType, bool negative, Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType, bool sameReferenceSet)
 {	
 	/* does not cover all grounds	
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
@@ -1661,9 +1690,43 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 
 		//cout << "prepositionName = " << prepositionName << endl;
 		
+		#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
+		//added 3 June 2012 for advanced referencing of prepositions
+		GIAEntityNode * conditionTypeConceptEntity;
+		int featureIndexOfPreposition = -1;
+		
+		bool prepositionFeatureFound = determineFeatureIndexOfPreposition(currentSentenceInList, &prepositionName, &featureIndexOfPreposition);
+		if(prepositionFeatureFound)
+		{
+			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+			cout << "prepositionFeatureFound" << endl;
+			cout << "prepositionName = " << prepositionName << endl;
+			cout << "featureIndexOfPreposition = " << featureIndexOfPreposition << endl;
+			#endif
+			if(GIAEntityNodeArrayFilled[featureIndexOfPreposition])
+			{
+				conditionTypeConceptEntity = GIAEntityNodeArray[featureIndexOfPreposition];
+			}
+			else
+			{
+				string conditionTypeName = prepositionName;
+				bool entityAlreadyExistant = false;
+				conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);				
+				GIAEntityNodeArrayFilled[featureIndexOfPreposition] = true;
+			}
+		}
+		else
+		{
+			cout << "error: !prepositionFeatureFound" << endl;
+			exit(0);
+		}		
+		#else
 		string conditionTypeName = prepositionName;
 		bool entityAlreadyExistant = false;
 		GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+		#endif
+		
+
 													
 		//cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl; 
 	
@@ -1678,7 +1741,11 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			cout << "timeConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
 			#endif
 
-			addTimeConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);				
+			#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
+			GIAEntityNodeArray[featureIndexOfPreposition] = addTimeConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);				
+			#else
+			addTimeConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
+			#endif
 		}
 		else if(passedPropositionLocation)
 		{
@@ -1686,8 +1753,12 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
 			cout << "locationConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
 			#endif
-
-			addLocationConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);	
+			
+			#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
+			GIAEntityNodeArray[featureIndexOfPreposition] = addLocationConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);	
+			#else
+			addLocationConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);				
+			#endif
 		}		
 		else if(passedPropositionReasonOrCircumstances)
 		{
@@ -1696,7 +1767,11 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			cout << "reasonConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
 			#endif
 
+			#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
+			GIAEntityNodeArray[featureIndexOfPreposition] = addReasonConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);		
+			#else
 			addReasonConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);		
+			#endif
 		}
 		//else if(passedPropositionUnknown)		//removed 17 April 2012
 		else
@@ -1706,7 +1781,11 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			cout << "actionOrPropertyConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
 			#endif
 
+			#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
+			GIAEntityNodeArray[featureIndexOfPreposition] = addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);				
+			#else
 			addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);				
+			#endif
 			//currentRelationInList->relationType.substr(1, currentRelationInList->relationType.length()-1)
 		}	
 
@@ -1767,7 +1846,7 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntity
 void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, GIAEntityNode * conditionTypeConceptEntity)
 #endif
 */
-void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, GIAEntityNode * conditionTypeConceptEntity, bool sameReferenceSet)
+GIAEntityNode * addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, GIAEntityNode * conditionTypeConceptEntity, bool sameReferenceSet)
 {	
 	//cout << "addTimeConditionToProperty propertyNode->entityName = " << propertyNode->entityName << endl;
 	timeConditionEntity->conditionType = CONDITION_NODE_TYPE_TIME;
@@ -1787,28 +1866,28 @@ void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * ti
 	
 	timeConditionEntity->timeConditionNode = newTimeCondition;	
 	
-	addConditionToProperty(propertyNode, timeConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
+	return addOrConnectConditionToEntity(propertyNode, timeConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 }
 
-void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity, GIAEntityNode * conditionTypeConceptEntity, bool sameReferenceSet)
+GIAEntityNode * addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity, GIAEntityNode * conditionTypeConceptEntity, bool sameReferenceSet)
 {	
 	locationConditionEntity->conditionType = CONDITION_NODE_TYPE_LOCATION;
 	
-	addConditionToProperty(propertyNode, locationConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
+	return addOrConnectConditionToEntity(propertyNode, locationConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 }
 
-void addReasonConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * reasonConditionEntity, GIAEntityNode * conditionTypeConceptEntity, bool sameReferenceSet)
+GIAEntityNode * addReasonConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * reasonConditionEntity, GIAEntityNode * conditionTypeConceptEntity, bool sameReferenceSet)
 {	
 	reasonConditionEntity->conditionType = CONDITION_NODE_TYPE_REASON;
 	
-	addConditionToProperty(propertyNode, reasonConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
+	return addOrConnectConditionToEntity(propertyNode, reasonConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 }
 
 
-void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, GIAEntityNode * conditionTypeConceptEntity, bool sameReferenceSet)
+GIAEntityNode * addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, GIAEntityNode * conditionTypeConceptEntity, bool sameReferenceSet)
 {
 	//timeConditionEntity->conditionType = CONDITION_NODE_TYPE_UNDEFINED;
 	
-	addConditionToProperty(propertyNode, propertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
+	return addOrConnectConditionToEntity(propertyNode, propertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 }
 
