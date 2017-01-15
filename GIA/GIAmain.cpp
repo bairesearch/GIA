@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1a 06-July-2013
+ * Project Version: 1t1b 14-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -636,7 +636,7 @@ int main(int argc,char **argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1t1a 06-July-2013" << endl;
+			cout << "OpenGIA.exe - Project Version: 1t1b 14-July-2013" << endl;
 			exit(1);
 		}
 
@@ -884,6 +884,111 @@ bool executeGIA(
 			
 	)
 {
+
+	/*
+	cout << NLPfeatureParser << endl; 
+	cout << NLPdependencyRelationsParser << endl; 
+	cout << NLPrelexCompatibilityMode << endl; 
+	cout << NLPassumePreCollapsedStanfordRelations << endl; 
+
+	cout << queryNLPfeatureParser << endl; 
+	cout << queryNLPdependencyRelationsParser << endl; 
+	cout << queryNLPrelexCompatibilityMode	 << endl; 
+	cout << queryNLPassumePreCollapsedStanfordRelations << endl; 
+
+	cout << NLPexeFolderArray[0] << endl; 
+	cout << NLPexeFolderArray[1] << endl; 
+
+	cout << useInputTextPlainTXTFile << endl; 
+	cout << inputTextPlainTXTfileName << endl; 
+
+#ifdef USE_CE
+	cout << useInputTextCodeextensionsTXTFileName << endl; 
+	cout << inputTextCodeextensionsTXTFileName << endl; 
+#endif
+
+	cout << useInputTextNLPrelationXMLFile << endl; 
+	cout << inputTextNLPrelationXMLfileName << endl; 
+	cout << useInputTextNLPfeatureXMLFile << endl; 
+	cout << inputTextNLPfeatureXMLfileName << endl; 
+	cout << useOutputTextCFFFile << endl; 
+	cout << outputTextCFFFileName << endl; 
+	cout << useInputTextXMLFile << endl; 
+	cout << inputTextXMLFileName << endl; 
+	cout << useOutputTextXMLFile << endl; 
+	cout << outputTextXMLFileName << endl; 
+	cout << useOutputTextCXLFile << endl; 
+	cout << outputTextCXLFileName << endl; 
+	cout << useOutputTextLDRFile << endl; 
+	cout << outputTextLDRFileName << endl; 
+	cout << useOutputTextPPMFile << endl; 
+	cout << outputTextPPMFileName << endl; 
+	cout << useOutputTextSVGFile << endl; 
+	cout << outputTextSVGFileName << endl; 
+	cout << useInputQueryPlainTXTFile << endl; 
+	cout << inputQueryPlainTXTFileName << endl; 
+	cout << useInputQueryNLPrelationXMLFile << endl; 
+	cout << inputQueryNLPrelationXMLFileName << endl; 
+	cout << useInputQueryNLPfeatureXMLFile << endl; 
+	cout << inputQueryNLPfeatureXMLFileName << endl; 
+	cout << useOutputQueryCFFFile << endl; 
+	cout << outputQueryCFFFileName << endl; 
+	cout << useInputQueryXMLFile << endl; 
+	cout << inputQueryXMLFileName << endl; 
+	cout << useOutputQueryXMLFile << endl; 
+	cout << outputQueryXMLFileName << endl; 
+	cout << useOutputQueryCXLFile << endl; 
+	cout << outputQueryCXLFileName << endl; 
+	cout << useOutputQueryLDRFile << endl; 
+	cout << outputQueryLDRFileName << endl; 
+	cout << useOutputQueryPPMFile << endl; 
+	cout << outputQueryPPMFileName << endl; 
+	cout << useOutputQuerySVGFile << endl; 
+	cout << outputQuerySVGFileName << endl; 
+	cout << useOutputTextAllFile << endl; 
+	cout << outputTextAllFileName << endl; 
+	cout << useOutputTextAnswerPlainTXTFile << endl; 
+	cout << outputTextAnswerPlainTXTFileName << endl; 
+
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
+	cout << inputFileList << endl; 
+#endif	
+	cout << printOutput << endl; 
+	cout << printOutputQuery << endl; 
+	cout << displayInOpenGLAndOutputScreenshot << endl; 
+
+	cout << rasterImageWidth << endl; 
+	cout << rasterImageHeight << endl; 
+
+	cout << useInputQuery << endl; 
+
+#ifdef GIA_USE_DATABASE
+	cout << readFromDatabase << endl; 
+	cout << writeToDatabase << endl; 
+	cout << useDatabase << endl; 
+	cout << databaseFolderName << endl; 
+#endif
+
+#ifdef GIA_USE_LRP
+	cout << useLRP << endl; 
+	cout << useOutputLRPTextPlainTXTFile << endl; 
+	cout << outputLRPTextPlainTXTFileName << endl; 
+	cout << useOutputLRPTextForNLPonlyPlainTXTFile << endl; 
+	cout << outputLRPTextForNLPonlyPlainTXTFileName << endl; 
+	cout << useOutputQueryLRPTextPlainTXTFile << endl; 
+	cout << outputQueryLRPTextPlainTXTFileName << endl; 
+	cout << useOutputQueryLRPTextForNLPonlyPlainTXTFile << endl; 
+	cout << outputQueryLRPTextForNLPonlyPlainTXTFileName << endl; 
+	cout << lrpDataFolderName << endl; 
+#endif
+
+#ifdef USE_WORDNET
+	cout << synonymnDetectionStatus << endl; 
+#endif
+	exit(0);
+	*/	
+	
+	
 	bool result = true;
 	
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
