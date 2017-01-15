@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r10f 28-November-2012
+ * Project Version: 1r10g 28-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1085,7 +1085,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 			//record sentenceIndex for concept entity nodes also (NB cannot use GIAconceptNodeArray here as it won't include concept entity nodes for prepositions)
 			if(!(GIAentityNodeArray[w]->entityNodeDefiningThisInstance->empty()))
 			{
-				GIAentityNode * conceptNode = (GIAentityNodeArray[w]->entityNodeDefiningThisInstance->back())->entity;
+				GIAentityNode * conceptNode = getPrimaryConceptNodeDefiningInstance(GIAentityNodeArray[w]);
 				if(conceptNode->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
 				{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network 
 					//cout << "assigning: " <<  currentSentenceInList->sentenceIndex << endl;

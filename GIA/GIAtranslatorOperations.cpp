@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r10f 28-November-2012
+ * Project Version: 1r10g 28-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -404,7 +404,7 @@ void upgradeSubstanceToAction(GIAentityNode * substance)
 	GIAentityNode * existingAction = substance;
 
 	//CHECK THIS; must remove from substance list, and add to action list
-	(existingAction->entityNodeDefiningThisInstance->back())->entity->hasAssociatedInstanceIsAction = true;
+	getPrimaryConceptNodeDefiningInstance(existingAction)->hasAssociatedInstanceIsAction = true;
 	existingAction->isSubstance = false;
 	existingAction->isAction = true;
 
@@ -1201,6 +1201,7 @@ void disableConceptEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAe
 	#endif
 }
 
+//NB only disables the primary concept node defining the instance
 void disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNode * entity)
 {
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
@@ -1209,7 +1210,7 @@ void disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAe
 	if(!(entity->entityNodeDefiningThisInstance->empty()))
 	{
 		//CHECKTHIS; only disable the concept if it was created in the immediate context (eg sentence)
-		GIAentityNode * conceptEntity = (entity->entityNodeDefiningThisInstance->back())->entity;
+		GIAentityNode * conceptEntity = getPrimaryConceptNodeDefiningInstance(entity);
 
 		disableConceptEntityBasedUponFirstSentenceToAppearInNetwork(conceptEntity);
 	}
@@ -1492,10 +1493,16 @@ void writeVectorConnection(GIAentityNode * entityNode, GIAentityNode * entityNod
 			vector<GIAentityConnection*> * vectorConnection = &(entityNode->entityVectorConnectionsArray[connectionType]);
 			if(entityVectorConnectionIsBasicArray[connectionType])
 			{
-				vectorConnection->clear();	//clear the vector (basic connections only support 1 node)
-
+				#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+				if(connectionType != GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
+				{
+				#endif
+					vectorConnection->clear();	//clear the vector (basic connections only support 1 node)
+				#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+				}
+				#endif			
 			}
-
+			
 			GIAentityConnection * newConnection = new GIAentityConnection();
 			newConnection->entity = entityNodeToAdd;
 			vectorConnection->push_back(newConnection);
@@ -1594,7 +1601,7 @@ long determineNextIdInstance(GIAentityNode * entity)
 		if(!(entity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE].empty()))
 		{
 			//the current entity is a substance of a concept entity
-			conceptEntity = entity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE].back()->entity;
+			conceptEntity = getPrimaryConceptNodeDefiningInstance(entity);
 			#ifdef GIA_DATABASE_DEBUG
 			cout << "\t\tDEBUG: determineNextIdInstance(); 1a. conceptEntity->entityName = " << conceptEntity->entityName << endl;
 			cout << "\t\tDEBUG: determineNextIdInstance(); 1a. conceptEntity->idInstance = " << conceptEntity->idInstance << endl;
@@ -1769,16 +1776,16 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 			}
 			#endif
 
-			//disconnect reference sources from each other, as their connection between each other will be redeclared in current context
-			int iInverted = inverseVectorConnectionsArray[i];
-			for(vector<GIAentityConnection*>::iterator connectionIter2 = entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].begin(); connectionIter2 != entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].end(); )
-			{
-				bool connectionIter2Erased = false;
-				GIAentityNode * entityConnectedToEntityConnectedToEntityToMerge = (*connectionIter2)->entity;
+			if(entityNode != entityConnectedToEntityToMerge)
+			{//added 29 November 2012
 				
-				if(entityConnectedToEntityToMerge != entityNode)
-				{//added 29 November 2012
-				
+				//disconnect reference sources from each other, as their connection between each other will be redeclared in current context
+				int iInverted = inverseVectorConnectionsArray[i];
+				for(vector<GIAentityConnection*>::iterator connectionIter2 = entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].begin(); connectionIter2 != entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].end(); )
+				{
+					bool connectionIter2Erased = false;
+					GIAentityNode * entityConnectedToEntityConnectedToEntityToMerge = (*connectionIter2)->entity;
+
 					#ifdef GIA_ALIASES_DEBUG
 					if(entityConnectedToEntityConnectedToEntityToMerge->isConcept)
 					{
@@ -1792,7 +1799,8 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 
 					if(entityNodeToMerge == entityConnectedToEntityConnectedToEntityToMerge)	//OR (entityNodeToMerge == entityConnectedToEntityConnectedToEntityToMerge)?
 					{
-						//?required for advanced referencing (eg concept Tom has associated instance Dog) [NB this means that instances can appear to have more than one entityNodeDefiningThisInstance]
+						#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+						//the commenting out of the below case is required for advanced referencing (eg concept Tom has associated instance Dog) [NB this means that instances can appear to have more than one entityNodeDefiningThisInstance]
 						if((entityConnectedToEntityToMerge->isConcept) && (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE))
 						{//restored 29 November 2012, and condition (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE) added
 							//disconnect entityConnectedToEntityConnectedToEntityToMerge from entityConnectedToEntityToMerge (concept) (z2)
@@ -1809,6 +1817,7 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 						}
 						else
 						{
+						#endif
 							//connect entityConnectedToEntityConnectedToEntityToMerge back to entityNode (z)
 							#ifdef GIA_ALIASES_DEBUG
 							cout << "change entityConnectedToEntityConnectedToEntityToMerge (" << entityConnectedToEntityConnectedToEntityToMerge->entityName << ") to entityNode (" << entityNode->entityName << ") (z)" << endl;
@@ -1818,7 +1827,9 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 							#ifdef GIA_USE_DATABASE
 							(*connectionIter2)->modified = true;
 							#endif
+						#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 						}
+						#endif
 					}
 
 					if(!connectionIter2Erased)
@@ -1826,30 +1837,26 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 						connectionIter2++;
 					}
 				}
-			}
 
-			//connect entityNode to entityConnectedToEntityToMerge (x)
-			if(entityNode != entityConnectedToEntityToMerge)
-			{
-				if(i != GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
-				{//condition (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE) added 29 November 2012
-					/*required for advanced referencing (eg concept Tom has associated instance Dog) [NB this means that instances can appear to have more than one entityNodeDefiningThisInstance]
-					if(!(entityConnectedToEntityToMerge->isConcept))
-					{
-					*/
-						#ifdef GIA_ALIASES_DEBUG
-						cout << "connect entityNode (" << entityNode->entityName << ") to entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (x)" << endl;
-						#endif
-						#ifdef GIA_USE_ADVANCED_REFERENCING
-						bool sameReferenceSet = (*connectionIter)->sameReferenceSet;
-						#else
-						bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-						#endif
-						writeVectorConnection(entityNode, entityConnectedToEntityToMerge, i, sameReferenceSet);
-					/*
-					}
-					*/
+				//connect entityNode to entityConnectedToEntityToMerge (x)
+				
+				#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+				//the commenting out of the below case is required for advanced referencing (eg concept Tom has associated instance Dog) [NB this means that instances can appear to have more than one entityNodeDefiningThisInstance]
+				if(!((entityConnectedToEntityToMerge->isConcept) && (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)))
+				{
+				#endif
+					#ifdef GIA_ALIASES_DEBUG
+					cout << "connect entityNode (" << entityNode->entityName << ") to entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (x)" << endl;
+					#endif
+					#ifdef GIA_USE_ADVANCED_REFERENCING
+					bool sameReferenceSet = (*connectionIter)->sameReferenceSet;
+					#else
+					bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+					#endif
+					writeVectorConnection(entityNode, entityConnectedToEntityToMerge, i, sameReferenceSet);
+				#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 				}
+				#endif
 			}
 
 			//disconnect entityConnectedToEntityToMerge from entityNodeToMerge

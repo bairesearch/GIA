@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r10f 28-November-2012
+ * Project Version: 1r10g 28-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -582,6 +582,9 @@
 #endif
 
 #define GIA_SUPPORT_ALIASES
+#ifdef GIA_SUPPORT_ALIASES
+	#define GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE	//NB this is required for advanced referencing to work properly with specific cases of aliasing eg; The name of the red dog is Tom. Tom ate a bone near the house.
+#endif
 #define GIA_TEMPORARILY_DISABLE_GIA_XML_READ_CHECKS
 
 #define GIA_USE_NLG
@@ -672,7 +675,7 @@
 //#define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 //#define GIA_TRANSLATOR_DEBUG
 //#define GIA_NLP_DEBUG
-//#define GIA_DRAW_DEBUG
+#define GIA_DRAW_DEBUG
 //#define GIA_SEMANTIC_NET_XML_DEBUG
 //#define GIA_SEMANTIC_NET_CXL_DEBUG
 //#define GIA_FREE_MEMORY_DEBUG

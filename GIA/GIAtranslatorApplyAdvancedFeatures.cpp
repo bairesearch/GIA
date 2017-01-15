@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r10f 28-November-2012
+ * Project Version: 1r10g 28-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * ?TO DO: extract date information of entities from relex <features> tag area
@@ -82,9 +82,9 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAentit
 							if(!(timeEntity->entityNodeDefiningThisInstance->empty()))
 							{//required for anomaly
 								#ifdef GIA_TRANSLATOR_DEBUG
-								//cout << "timeEntity->entityNodeDefiningThisInstance->NormalizedNERtemp = " << timeEntity->entityNodeDefiningThisInstance->NormalizedNERtemp << endl;
+								//cout << "(getPrimaryConceptNodeDefiningInstance(timeEntity))->NormalizedNERtemp = " << (getPrimaryConceptNodeDefiningInstance(timeEntity))->NormalizedNERtemp << endl;
 								#endif
-								timeEntity->timeConditionNode->conditionName = (timeEntity->entityNodeDefiningThisInstance->back())->entity->NormalizedNERtemp;
+								timeEntity->timeConditionNode->conditionName = (getPrimaryConceptNodeDefiningInstance(timeEntity))->NormalizedNERtemp;
 							}
 							else
 							{
@@ -98,7 +98,7 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAentit
 								/*
 								#ifdef GIA_TRANSLATOR_DEBUG
 								cout << "timeEntity->NormalizedNERtemp = " << timeEntity->NormalizedNERtemp << endl;
-								cout << "error: timeEntity->entityNodeDefiningThisInstance != NULL [1b]" << endl;
+								cout << "error: getPrimaryConceptNodeDefiningInstance(timeEntity) != NULL [1b]" << endl;
 								#else
 								cout << "error: [confidential 1b]" << endl;
 								#endif
