@@ -23,7 +23,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p11f 24-September-2012
+ * Project Version: 1p12a 26-September-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -184,16 +184,15 @@ void setCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
 void initialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
 void deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
 
-bool parseTextFileAndReduceLanguage(string inputTextPlainTXTFileName, string outputLRPTextPlainTXTFileName, string outputLRPTextForNLPonlyPlainTXTFileName);
-	bool loadPhrasalVerbDataAndGenerateAllTenseVariants();
-		bool loadIrregularVerbList(string irregularVerbListFileName, GIALRPtag * firstTagInIrregularVerbList);
-		bool loadPhrasalVerbDataAndGenerateAllTenseVariants(string phrasalVerbDatabaseFileName, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtag * firstTagInIrregularVerbList);
-			bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagInIrregularVerbList);
-				void copyDefaultVerbTenseFormsToAlternateTenseForms(GIALRPtag * baseTag, bool irregularVerbFound);
-		bool loadMultiWordPrepositionData(string multiwordPrepositionListFileName, GIALRPtag * firstTagInMultiwordPrepositionList);
-		bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlainText);
-		bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTagInPlainText, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtag * firstTagInMultiwordPrepositionList, string plainTextLRPOutputFileName, string plainTextLRPforNLPOutputFileName, GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo);
-			bool writeTagListToFile(GIALRPtag * firstTagInPlainText, string plainTextLRPOutputFileName, string plainTextLRPforNLPOutputFileName);
+bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainTextLRPOutputFileName, string plainTextLRPforNLPOutputFileName);
+	bool loadIrregularVerbList(string irregularVerbListFileName, GIALRPtag * firstTagInIrregularVerbList);
+	bool loadPhrasalVerbDataAndGenerateAllTenseVariants(string phrasalVerbDatabaseFileName, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtag * firstTagInIrregularVerbList);
+		bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagInIrregularVerbList);
+			void copyDefaultVerbTenseFormsToAlternateTenseForms(GIALRPtag * baseTag, bool irregularVerbFound);
+	bool loadMultiWordPrepositionData(string multiwordPrepositionListFileName, GIALRPtag * firstTagInMultiwordPrepositionList);
+	bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlainText);
+	bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTagInPlainText, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtag * firstTagInMultiwordPrepositionList, string plainTextLRPOutputFileName, string plainTextLRPforNLPOutputFileName, GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo);
+		bool writeTagListToFile(GIALRPtag * firstTagInPlainText, string plainTextLRPOutputFileName, string plainTextLRPforNLPOutputFileName);
 
 void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentSentenceInList, Relation * currentRelationInListForPrepositionsOnly, bool isPreposition, bool * foundOfficialLRPreplacementString);
 
