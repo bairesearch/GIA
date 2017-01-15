@@ -1111,6 +1111,19 @@ void fillGrammaticalArrays(Sentence * currentSentenceInList, bool GIAEntityNodeI
 				//cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalTenseModifierIndex true = " << grammaticalTenseModifierNameArray[grammaticalTenseModifierIndex] << endl;
 			}			
 		}
+		
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2A
+		//interpret "present_perfect" relex flag as past tense
+		if(GIAEntityNodeGrammaticalTenseArray[currentFeatureInList->entityIndex] == GRAMMATICAL_TENSE_PRESENT)
+		{
+			//cout << "a" << endl;
+			if(GIAEntityNodeGrammaticalTenseModifierArray[currentFeatureInList->entityIndex*GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES + GRAMMATICAL_TENSE_MODIFIER_PERFECT] == true)
+			{
+				//cout << "b" << endl;
+				GIAEntityNodeGrammaticalTenseArray[currentFeatureInList->entityIndex] = GRAMMATICAL_TENSE_PAST;
+			}		
+		}
+	#endif
 
 		for(int grammaticalNumberIndex = 0; grammaticalNumberIndex < GRAMMATICAL_NUMBER_NUMBER_OF_TYPES; grammaticalNumberIndex++)
 		{
