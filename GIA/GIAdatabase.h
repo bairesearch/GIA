@@ -3,7 +3,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1e 23-May-2012
+ * Project Version: 1l1f 23-May-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -60,10 +60,12 @@ using namespace std;
 	
 	#define GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE (0)
 	
+	/*
 	#define GIA_DATABASE_GENERATE_FILENAME_CONNECTION_VECTOR (true)
 	#define GIA_DATABASE_GENERATE_FILENAME_CONNECTION_BASIC (false)
 	#define GIA_DATABASE_GENERATE_FILENAME_CONNECTION_IRRELEVANT (false)
-	#define GIA_DATABASE_GENERATE_FILENAME_CONNECTION_TYPE_IRRELEVANT (-1) 
+	*/
+	#define GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT (-1) 
 	#define GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY (1)
 	#define GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES (2)
 	#define GIA_DATABASE_GENERATE_FILENAME_FILE_TIME_CONDITION_NODE (3)
@@ -139,17 +141,14 @@ static string serverNameArray[ASCII_TABLE_NUMBER_OF_LETTERS_IN_ALPHABET] = {GIA_
 GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, bool> *DBconceptEntityNodesLoadedList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList, bool saveNetwork)
 
 string DBgenerateServerName(string * entityName);
-string DBgenerateFileName(string * entityName, long idInstance, int connectionType, bool vectorOrBasic, int fileType);
+string DBgenerateFileName(string * entityName, long idInstance, int connectionType, int fileType);
 
 void DBreadVectorConnections(string * entityName, long idInstance, int connectionType, vector<string> *entityVectorConnectionsName, vector<long> *entityVectorConnectionsID, vector<bool> *entityVectorConnectionsLoaded, vector<GIAEntityNode*> *entityVectorConnections);
-void DBreadBasicConnections(string * entityName, long idInstance, int connectionType, string *entityBasicConnectionsName, long *entityBasicConnectionsID, bool *entityBasicConnectionLoaded, GIAEntityNode* entityBasicConnection);
 	void DBreadVectorConnectionsReferences(string * entityName, long idInstance, int connectionType, vector<string> *entityVectorConnectionsName, vector<long> *entityVectorConnectionsID);
 		void DBreadVectorConnectionsReference(string * entityName, long idInstance, int connectionType, string *entityVectorConnectionsName, long *entityVectorConnectionsID, long referenceIndex);
-	void DBreadBasicConnectionsReferences(string * entityName, long idInstance, int connectionType, string *entityBasicConnectionsName, long *entityBasicConnectionsID);
 	void DBwriteVectorConnectionsReferences(string * entityName, long idInstance, int connectionType, vector<string> *entityVectorConnectionsName, vector<long> *entityVectorConnectionsID);	//not yet used (this will need to be used)
 		void DBmodifyVectorConnectionsReference(string * entityName, long idInstance, int connectionType, string *entityVectorConnectionsName, long *entityVectorConnectionsID, long referenceIndex);
 		void DBappendVectorConnectionsReference(string * entityName, long idInstance, int connectionType, string *entityVectorConnectionsName, long *entityVectorConnectionsID);
-	void DBwriteBasicConnectionsReferences(string * entityName, long idInstance, int connectionType, string *entityBasicConnectionsName, long *entityBasicConnectionsID);				//not yet used (this will need to be used)
 
 void DBreadConceptEntityNode(string * entityName, GIAEntityNode * conceptEntityNode);
 	void DBreadEntityNode(string * entityName, long idInstance, GIAEntityNode * entityNode);
@@ -157,7 +156,6 @@ void DBreadConceptEntityNode(string * entityName, GIAEntityNode * conceptEntityN
 		void DBwriteEntityNodeFile(string * entityFileName, GIAEntityNode* entity);
 		void DBreadTimeConditionNodeFile(string * timeConditionFileName, GIATimeConditionNode* timeCondition);
 		void DBwriteTimeConditionNodeFile(string * timeConditionFileName, GIATimeConditionNode* timeCondition);
-
 
 void DBsetEntityConnectionsLoaded(GIAEntityNode * entityNode, bool loaded)
 

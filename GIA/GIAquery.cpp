@@ -3,7 +3,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1e 23-May-2012
+ * Project Version: 1l1f 23-May-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes 
@@ -612,196 +612,145 @@ bool testEntityNodeForReferenceSet(GIAEntityNode * queryEntityNode, GIAEntityNod
 				
 		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 		{
-			for(vector<GIAEntityNode*>::iterator entityIterQuery = queryEntityNode->entityVectorConnectionsArray[i].begin(); entityIterQuery != queryEntityNode->entityVectorConnectionsArray[i].end(); entityIterQuery++) 
+			bool pass = true;
+			#ifndef GIA_QUERY_TRACE_INSTANTIATIONS
+			if((i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE) && (traceModeIsQuery))	//check: do not trace instantinations for queries only
 			{
-				bool alreadyFoundAnAnswer = false;
-				if(traceModeIsQuery)
-				{
-					queryTraceParameters->sourceContext = entityVectorConnectionSourceContextArray[i];
-					queryTraceParameters->isCondition = entityVectorConnectionIsConditionArray[i];
-					queryTraceParameters->sourceEntityNode = entityNode;	
-					if(queryTraceParameters->foundAnswer)
-					{
-						alreadyFoundAnAnswer = true;
-					}
-					#ifndef GIA_QUERY_TRACE_INSTANTIATIONS
-					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES)	//check: do not trace instantinations for queries only
-					{
-						queryTraceParameters->thisIsInstanceAndPreviousNodeWasDefinition = true;
-					}
-					else
-					{
-						queryTraceParameters->thisIsInstanceAndPreviousNodeWasDefinition = false;
-					}
-					#endif					
-				}
+				pass = false;
+			}
+			#endif
+			if(pass)
+			{
 							
-				bool foundExactMatchFail = false;
-				bool foundExactMatchPass = false;
-							
-				int numberOfMatchedNodesTempMax = 0;
-				int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax = 0;
-				GIAEntityNode * queryEntityCorrespondingBestMatch;
-				int numberOfMatchedNodesAtPreviousAnswerNode = 0;
-				readVectorConnection(entityNode, i);
-				for(vector<GIAEntityNode*>::iterator entityIter = entityNode->entityVectorConnectionsArray[i].end(); entityIter != entityNode->entityVectorConnectionsArray[i].begin(); entityIter--)	//always search from end position first (to take the latest/newest reference/answer, if equal number of matched nodes is detected) 
+				for(vector<GIAEntityNode*>::iterator entityIterQuery = queryEntityNode->entityVectorConnectionsArray[i].begin(); entityIterQuery != queryEntityNode->entityVectorConnectionsArray[i].end(); entityIterQuery++) 
 				{
-					GIAQueryTraceParameters queryTraceParametersTemp(queryTraceParameters);
-					
-					int numberOfMatchedNodesTemp = 0;
-					int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
-									
-					int exactMatchTemp = testReferencedEntityNodeForExactNameMatch(*entityIterQuery, *entityIter, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParametersTemp, referenceTraceParameters);
-					if(exactMatchTemp == EXACT_MATCH_PASS)
+					bool alreadyFoundAnAnswer = false;
+					if(traceModeIsQuery)
 					{
-						foundExactMatchPass = true;
+						queryTraceParameters->sourceContext = entityVectorConnectionSourceContextArray[i];
+						queryTraceParameters->isCondition = entityVectorConnectionIsConditionArray[i];
+						queryTraceParameters->sourceEntityNode = entityNode;	
+						if(queryTraceParameters->foundAnswer)
+						{
+							alreadyFoundAnAnswer = true;
+						}
+						#ifndef GIA_QUERY_TRACE_INSTANTIATIONS
+						if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES)	//check: do not trace instantinations for queries only
+						{
+							queryTraceParameters->thisIsInstanceAndPreviousNodeWasDefinition = true;
+						}
+						else
+						{
+							queryTraceParameters->thisIsInstanceAndPreviousNodeWasDefinition = false;
+						}
+						#endif					
 					}
-					else if((exactMatchTemp == EXACT_MATCH_FAIL) || (exactMatchTemp == MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS))
+
+					bool foundExactMatchFail = false;
+					bool foundExactMatchPass = false;
+
+					int numberOfMatchedNodesTempMax = 0;
+					int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax = 0;
+					GIAEntityNode * queryEntityCorrespondingBestMatch;
+					int numberOfMatchedNodesAtPreviousAnswerNode = 0;
+					readVectorConnection(entityNode, i);
+					for(vector<GIAEntityNode*>::iterator entityIter = entityNode->entityVectorConnectionsArray[i].end(); entityIter != entityNode->entityVectorConnectionsArray[i].begin(); entityIter--)	//always search from end position first (to take the latest/newest reference/answer, if equal number of matched nodes is detected) 
 					{
-						foundExactMatchFail = true;
-					}
-					
-					if(exactMatchTemp != MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS)
-					{
-						bool bestAnswerCandidate = determineIfBestAnswerCandidate(traceModeIsQuery, queryTraceParametersTemp.foundAnswer, alreadyFoundAnAnswer, numberOfMatchedNodesTemp, numberOfMatchedNodesTempMax, numberOfMatchedNodesRequiredSynonymnDetectionTemp, numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax);
-						if(bestAnswerCandidate)
-						{			
-							queryEntityCorrespondingBestMatch = *entityIter;
-							numberOfMatchedNodesTempMax = numberOfMatchedNodesTemp;
-							numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax = numberOfMatchedNodesRequiredSynonymnDetectionTemp;
+						GIAQueryTraceParameters queryTraceParametersTemp(queryTraceParameters);
+
+						int numberOfMatchedNodesTemp = 0;
+						int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
+
+						int exactMatchTemp = testReferencedEntityNodeForExactNameMatch(*entityIterQuery, *entityIter, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParametersTemp, referenceTraceParameters);
+						if(exactMatchTemp == EXACT_MATCH_PASS)
+						{
+							foundExactMatchPass = true;
+						}
+						else if((exactMatchTemp == EXACT_MATCH_FAIL) || (exactMatchTemp == MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS))
+						{
+							foundExactMatchFail = true;
 						}
 
-						#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS												
-						if(traceModeIsQuery)
-						{	
-							//if(queryTraceParametersTemp.detectComparisonVariable)
-							//{ 						
-								if(queryTraceParametersTemp.foundAnswer)
-								{
-									if(alreadyFoundAnAnswer)
-									{
-										cout << "error: query error 1b: answer already found on alternate trace branch" << endl;							
-									}
-									else
-									{
-										if(numberOfMatchedNodesTemp > numberOfMatchedNodesAtPreviousAnswerNode)		//do not record deficient answers [those are known to provide less node matches than the previously recorded answer(s)]
-										{
-											//current answer provides better match... clear previous answer nodes...
-											queryTraceParameters->queryAnswerNodes.clear();
-											queryTraceParameters->numberAnswersFound = 0;
+						if(exactMatchTemp != MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS)
+						{
+							bool bestAnswerCandidate = determineIfBestAnswerCandidate(traceModeIsQuery, queryTraceParametersTemp.foundAnswer, alreadyFoundAnAnswer, numberOfMatchedNodesTemp, numberOfMatchedNodesTempMax, numberOfMatchedNodesRequiredSynonymnDetectionTemp, numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax);
+							if(bestAnswerCandidate)
+							{			
+								queryEntityCorrespondingBestMatch = *entityIter;
+								numberOfMatchedNodesTempMax = numberOfMatchedNodesTemp;
+								numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax = numberOfMatchedNodesRequiredSynonymnDetectionTemp;
+							}
 
-										}
-										if(numberOfMatchedNodesTemp >= numberOfMatchedNodesAtPreviousAnswerNode)
+							#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS												
+							if(traceModeIsQuery)
+							{	
+								//if(queryTraceParametersTemp.detectComparisonVariable)
+								//{ 						
+									if(queryTraceParametersTemp.foundAnswer)
+									{
+										if(alreadyFoundAnAnswer)
 										{
-											for(vector<GIAEntityNode*>::iterator entityAnswerIter = queryTraceParametersTemp.queryAnswerNodes.begin(); entityAnswerIter != queryTraceParametersTemp.queryAnswerNodes.begin(); entityAnswerIter++)
-											{							
-												queryTraceParameters->queryAnswerNodes.push_back(*entityAnswerIter);
-												queryTraceParameters->numberAnswersFound = queryTraceParameters->numberAnswersFound + 1;
+											cout << "error: query error 1b: answer already found on alternate trace branch" << endl;							
+										}
+										else
+										{
+											if(numberOfMatchedNodesTemp > numberOfMatchedNodesAtPreviousAnswerNode)		//do not record deficient answers [those are known to provide less node matches than the previously recorded answer(s)]
+											{
+												//current answer provides better match... clear previous answer nodes...
+												queryTraceParameters->queryAnswerNodes.clear();
+												queryTraceParameters->numberAnswersFound = 0;
+
 											}
-											numberOfMatchedNodesAtPreviousAnswerNode = numberOfMatchedNodesTemp;	
+											if(numberOfMatchedNodesTemp >= numberOfMatchedNodesAtPreviousAnswerNode)
+											{
+												for(vector<GIAEntityNode*>::iterator entityAnswerIter = queryTraceParametersTemp.queryAnswerNodes.begin(); entityAnswerIter != queryTraceParametersTemp.queryAnswerNodes.begin(); entityAnswerIter++)
+												{							
+													queryTraceParameters->queryAnswerNodes.push_back(*entityAnswerIter);
+													queryTraceParameters->numberAnswersFound = queryTraceParameters->numberAnswersFound + 1;
+												}
+												numberOfMatchedNodesAtPreviousAnswerNode = numberOfMatchedNodesTemp;	
+											}
 										}
 									}
-								}
-							//}
+								//}
+							}
+							#endif
+
+							//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
+							int irrelevantInt;
+							string irrelevantString = "";
+							#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
+							bool traceInstantiations = true;	
+							#else
+							bool traceInstantiations = false;
+							#endif				
+							traceEntityNode(*entityIter, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
+							traceEntityNode(*entityIterQuery, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
 						}
-						#endif
-
-						//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
-						int irrelevantInt;
-						string irrelevantString = "";
-						#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
-						bool traceInstantiations = true;	
-						#else
-						bool traceInstantiations = false;
-						#endif				
-						traceEntityNode(*entityIter, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
-						traceEntityNode(*entityIterQuery, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
 					}
-				}
-				
-				bool exactMatchFoundTemp = false;
-				if(!foundExactMatchFail && foundExactMatchPass)
-				{	
-					exactMatchFoundTemp = true;	
-				}
-				
-				bool matchFound = determineMatchParameters(exactMatchFoundTemp, traceModeIsQuery, referenceTraceParameters->traceMode, numberOfMatchedNodesTempMax, &exactMatch);
 
-				if(matchFound)
-				{	
-					if(knownBestMatch)
-					{
-						(*entityIterQuery)->entityCorrespondingBestMatch = queryEntityCorrespondingBestMatch;		//this shouldn't be required for queries....
+					bool exactMatchFoundTemp = false;
+					if(!foundExactMatchFail && foundExactMatchPass)
+					{	
+						exactMatchFoundTemp = true;	
 					}
-					//now set the matched nodes as already passed (required such that they are not retraced...)	
-				
-					int exactMatchTemp = testReferencedEntityNodeForExactNameMatch(*entityIterQuery, queryEntityCorrespondingBestMatch, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters);			//numberOfMatchedNodesTemp, numberOfMatchedNodesRequiredSynonymnDetectionTemp			
+
+					bool matchFound = determineMatchParameters(exactMatchFoundTemp, traceModeIsQuery, referenceTraceParameters->traceMode, numberOfMatchedNodesTempMax, &exactMatch);
+
+					if(matchFound)
+					{	
+						if(knownBestMatch)
+						{
+							(*entityIterQuery)->entityCorrespondingBestMatch = queryEntityCorrespondingBestMatch;		//this shouldn't be required for queries....
+						}
+						//now set the matched nodes as already passed (required such that they are not retraced...)	
+
+						int exactMatchTemp = testReferencedEntityNodeForExactNameMatch(*entityIterQuery, queryEntityCorrespondingBestMatch, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters);			//numberOfMatchedNodesTemp, numberOfMatchedNodesRequiredSynonymnDetectionTemp			
+					}
 				}
 			}
 		}
-		for(int i=0; i<GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES; i++)
-		{		
-			if(queryEntityNode->entityBasicConnectionsArray[i] != NULL)
-			{	
-				readBasicConnection(queryEntityNode, i);
-				if(entityNode->entityBasicConnectionsArray[i] != NULL)
-				{	
-				
-					bool pass = true;
-					#ifndef GIA_QUERY_TRACE_INSTANTIATIONS
-					if((i == GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE) && (traceModeIsQuery))	//check: do not trace instantinations for queries only
-					{
-						pass = false;
-					}
-					#endif
-					if(pass)
-					{
-						int numberOfMatchedNodesPrevious = *numberOfMatchedNodes;
-						
-						if(traceModeIsQuery)
-						{
-							queryTraceParameters->sourceContext = entityBasicConnectionSourceContextArray[i];
-							queryTraceParameters->isCondition = entityBasicConnectionIsConditionArray[i];
-							queryTraceParameters->sourceEntityNode = entityNode;					
-						
-							#ifndef GIA_QUERY_TRACE_INSTANTIATIONS
-							if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES)	//check: do not trace instantinations for queries only
-							{
-								queryTraceParameters->thisIsInstanceAndPreviousNodeWasDefinition = true;
-							}
-							else
-							{
-								queryTraceParameters->thisIsInstanceAndPreviousNodeWasDefinition = false;
-							}
-							#endif	
-											
-						}
-						int result = testReferencedEntityNodeForExactNameMatch(queryEntityNode->entityBasicConnectionsArray[i], entityNode->entityBasicConnectionsArray[i], numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters);		//numberOfMatchedNodesTemp, numberOfMatchedNodesRequiredSynonymnDetectionTemp
 
-						if(result != MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS)
-						{
-							bool exactMatchFoundTemp = false;
-							if(result != EXACT_MATCH_FAIL)
-							{
-								exactMatchFoundTemp = true;
-							}
-
-							int numberOfMatchedNodesMax = *numberOfMatchedNodes - numberOfMatchedNodesPrevious;
-							bool matchFound = determineMatchParameters(exactMatchFoundTemp, traceModeIsQuery, referenceTraceParameters->traceMode, numberOfMatchedNodesMax, &exactMatch);
-							
-							if(matchFound)
-							{	
-								if(knownBestMatch)
-								{
-									queryEntityNode->entityBasicConnectionsArray[i]->entityCorrespondingBestMatch = entityNode->entityBasicConnectionsArray[i];				
-								}	
-							}						
-						}
-					}				
-				}				
-			}					
-		}
-			
 		//cout << "a7" << endl;
 				
 		//cout << "a8" << endl;	
@@ -1251,32 +1200,22 @@ void traceEntityNode(GIAEntityNode * entityNode, int function, int * numberOfMat
 
 		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 		{
-			for(vector<GIAEntityNode*>::iterator entityIter = entityNode->entityVectorConnectionsArray[i].begin(); entityIter != entityNode->entityVectorConnectionsArray[i].end(); entityIter++) 
-			{		
-				traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*(entityIter)), entityVectorConnectionContextArray[i], function, numberOfMatchedNodes, entityVectorConnectionThisIsInstanceAndPreviousNodeWasDefinitionArray[i], referenceSetID, traceInstantiations);			
+			if(traceInstantiations)
+			{
+				if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
+				{
+					pass = false;
+				}
+			}
+			if(pass)
+			{			
+				for(vector<GIAEntityNode*>::iterator entityIter = entityNode->entityVectorConnectionsArray[i].begin(); entityIter != entityNode->entityVectorConnectionsArray[i].end(); entityIter++) 
+				{		
+					traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*(entityIter)), entityVectorConnectionContextArray[i], function, numberOfMatchedNodes, entityVectorConnectionThisIsInstanceAndPreviousNodeWasDefinitionArray[i], referenceSetID, traceInstantiations);			
+				}
 			}
 		}
-		for(int i=0; i<GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES; i++)
-		{				
-			if(entityNode->entityBasicConnectionsArray[i] != NULL)
-			{	
-				bool pass = true;
-				if(traceInstantiations)
-				{
-					if(i == GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
-					{
-						pass = false;
-					}
-				}
-				if(pass)
-				{				
-					traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, entityNode->entityBasicConnectionsArray[i], entityBasicConnectionContextArray[i], function, numberOfMatchedNodes, entityVectorConnectionThisIsInstanceAndPreviousNodeWasDefinitionArray[i], referenceSetID, traceInstantiations);				
-				}
-			}									
-		}
-	
 	}	
-
 }
 
 

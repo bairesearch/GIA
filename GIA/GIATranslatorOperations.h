@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1e 23-May-2012
+ * Project Version: 1l1f 23-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -931,7 +931,7 @@ bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relatio
 GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList);
 
 void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int vectorConnectionType, bool sameReferenceSet);
-void writeBasicConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int basicConnectionType, bool sameReferenceSet);
+void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int basicConnectionType, bool sameReferenceSet);
 void readVectorConnections(GIAEntityNode * entityNode, int connectionType);
 void readBasicConnections(GIAEntityNode * entityNode, int connectionType);
 

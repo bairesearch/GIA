@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1e 23-May-2012
+ * Project Version: 1l1f 23-May-2012
  *
  *******************************************************************************/
 
@@ -106,11 +106,11 @@ GIAEntityNode::GIAEntityNode(void)
 	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS] = EntityNodeDefinitionList;
 	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS] = EntityNodeDefinitionReverseList;
 	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES] = AssociatedInstanceNodeList;
-	entityBasicConnectionsArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_SUBJECT] = actionSubjectEntity;
-	entityBasicConnectionsArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_OBJECT] = actionObjectEntity;
-	entityBasicConnectionsArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_SUBJECT] = conditionSubjectEntity;
-	entityBasicConnectionsArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_OBJECT] = conditionObjectEntity;
-	entityBasicConnectionsArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE] = entityNodeDefiningThisInstance;
+	entityBasicConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT] = actionSubjectEntity;
+	entityBasicConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT] = actionObjectEntity;
+	entityBasicConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT] = conditionSubjectEntity;
+	entityBasicConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT] = conditionObjectEntity;
+	entityBasicConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE] = entityNodeDefiningThisInstance;
 
 	#ifdef GIA_USE_DATABASE
 	setEntityConnectionsLoaded(true);	//for now, assume that a new entity will be configured with its connections loaded into RAM
@@ -180,6 +180,42 @@ GIAEntityNode::GIAEntityNode(void)
 GIAEntityNode::~GIAEntityNode(void)
 {
 }
+
+
+GIAConnectionProperties::GIAConnectionProperties(void)
+{
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	sameReferenceSet = false;	//CHECK THIS default value
+	#endif
+
+	#ifdef GIA_USE_DATABASE
+	referenceLoaded = false;
+	entityName = "";
+	idInstance = -1;
+	loaded = false;
+	modified = false;
+	added = false;
+	#endif	
+}
+GIAConnectionProperties::~GIAConnectionProperties(void)
+{
+}
+GIAConnectionProperties::GIAConnectionProperties(string * entityName, long idInstance)
+{
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	sameReferenceSet = false;	//CHECK THIS default value
+	#endif
+
+	#ifdef GIA_USE_DATABASE
+	referenceLoaded = false;
+	entityName = "";
+	idInstance = -1;
+	loaded = false;
+	modified = false;
+	added = false;
+	#endif	
+}
+
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode)
 {

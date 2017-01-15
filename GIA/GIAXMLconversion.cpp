@@ -3,7 +3,7 @@
  * File Name: GIAXMLconversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1e 23-May-2012
+ * Project Version: 1l1f 23-May-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -487,12 +487,6 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 	bool isPropertyFound = false;
 	bool isActionFound = false;
 	bool isConditionFound = false;
-
-	bool entityBasicConnectionNodeFoundArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];
-	for(int i=0; i<GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES; i++)
-	{
-		entityBasicConnectionNodeFoundArray[i] = false;
-	}
 			
 	bool conditionTypeFound = false;
 	
@@ -714,21 +708,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			entityNode->printTextY = attributeValue;
 			printTextYFound = true;
 		}
-				
-		for(int i=0; i<GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES; i++)
-		{
-			if(currentAttribute->name == entityBasicConnectionXMLAttributeNameArray[i])
-			{
-				if(currentAttribute->value != GIA_SEMANTIC_NET_XML_NULL_NODE_ID)
-				{		
-					long attributeValue = atol(currentAttribute->value.c_str());	
-					entityNode->entityNodeDefiningThisInstance = findEntityNodeByID(attributeValue, entityNodesCompleteList);
-					entityBasicConnectionNodeFoundArray[i] = true;
-				}
-			}
-		}
-					
-		
+
 		//cout << "df3" << endl;
 		
 		currentAttribute = currentAttribute->nextAttribute;
@@ -776,7 +756,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			result = false;
 		}
 		*/
-		if(!entityBasicConnectionNodeFoundArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE])
+		if(!entityVectorConnectionNodeFoundArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE])
 		{
 			cout << "parseEntityNodeTag error: isPropertyFound && entityNode->isProperty && !entityNodeDefiningThisPropertyFound" << endl;
 			result = false;
@@ -1207,31 +1187,6 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	newAttribute = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
-
-	for(int i=0; i<GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES; i++)
-	{
-		if(currentEntity->entityBasicConnectionsArray[i] != NULL)
-		{
-			currentAttribute->name = entityBasicConnectionXMLAttributeNameArray[i];
-			sprintf(tempString, "%ld", (currentEntity->entityBasicConnectionsArray[i]->idActiveListReorderdIDforXMLsave));
-			currentAttribute->value = tempString;
-
-			newAttribute = new XMLParserAttribute();
-			currentAttribute->nextAttribute = newAttribute;
-			currentAttribute = currentAttribute->nextAttribute;			
-		}
-		#ifndef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
-		else
-		{
-			currentAttribute->name = entityBasicConnectionXMLAttributeNameArray[i];
-			currentAttribute->value = GIA_SEMANTIC_NET_XML_NULL_NODE_ID;
-
-			newAttribute = new XMLParserAttribute();
-			currentAttribute->nextAttribute = newAttribute;
-			currentAttribute = currentAttribute->nextAttribute;	
-		}
-		#endif		
-	}
 		
 	currentAttribute->name = NET_XML_ATTRIBUTE_conditionType;
 	sprintf(tempString, "%d", currentEntity->conditionType);

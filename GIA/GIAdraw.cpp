@@ -3,7 +3,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1e 23-May-2012
+ * Project Version: 1l1f 23-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -178,24 +178,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			{	
 				currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 				
-				if(entityVectorConnectionDrawConnectionArray[i])
-				{
-					currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, (*entityIter), currentReferenceInPrintList, initialiseOrPrint, entityVectorConnectionDrawConnectionNameArray[i], entityVectorConnectionDrawColourNameArray[i], writeFileObject);				
-				}
-				q = q + entityVectorConnectionDrawPosYspacingArray[i];			
-			}
-		}
-		for(int i=0; i<GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES; i++)
-		{
-			int q = entityBasicConnectionDrawPosYinitialArray[i];
-			int r = entityBasicConnectionDrawPosXinitialArray[i];							
-			if(entityNode->entityBasicConnectionsArray[i] != NULL)
-			{	
-				currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->actionSubjectEntity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-				
 				bool pass = true;
-				int entityConnectionColour = entityBasicConnectionDrawColourNameArray[i];
-				if(i == GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
+				int entityConnectionColour = entityVectorConnectionDrawColourNameArray[i];
+				if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
 				{
 					if(initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] == true)
 					{
@@ -208,15 +193,15 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				}
 				
 				if(pass)
-				{
-					if(entityBasicConnectionDrawConnectionArray[i])
+				{				
+					if(entityVectorConnectionDrawConnectionArray[i])
 					{
-						currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, entityNode->entityBasicConnectionsArray[i], currentReferenceInPrintList, initialiseOrPrint, entityBasicConnectionDrawConnectionNameArray[i], entityConnectionColour, writeFileObject);						
+						currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, (*entityIter), currentReferenceInPrintList, initialiseOrPrint, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, writeFileObject);				
 					}
 				}
-			}									
-		}
-				
+				q = q + entityVectorConnectionDrawPosYspacingArray[i];			
+			}
+		}		
 						
 		if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
 		{
@@ -237,9 +222,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_TIME_CONNECTION_COLOUR, writeFileObject, "time", initialiseOrPrint);
 			
 		}
-		
-		
-		
+
 				
 		//cout << "a7" << endl;
 		

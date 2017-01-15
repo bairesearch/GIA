@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1e 23-May-2012
+ * Project Version: 1l1f 23-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -354,7 +354,7 @@ GIAEntityNode * addProperty(GIAEntityNode * entity)
 	//}
 	forwardTimeInfoToNewProperty(entity, newProperty);
 
-	writeBasicConnection(newProperty, entity, GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);		
+	writeVectorConnection(newProperty, entity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);		
 	writeVectorConnection(entity, newProperty, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
 
 	entity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
@@ -558,7 +558,7 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 
 	newAction->entityName = actionEntity->entityName;
 	
-	writeBasicConnection(newAction, actionEntity, GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);	
+	writeVectorConnection(newAction, actionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);	
 	writeVectorConnection(actionEntity, newAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
 
 	actionEntity->hasAssociatedInstance = true;
@@ -693,7 +693,7 @@ void addActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * n
 {		
 	//configure subject entity node
 	writeVectorConnection(subjectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS, sameReferenceSet);			
-	writeBasicConnection(newOrExistingAction, subjectEntity, GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_SUBJECT, sameReferenceSet);
+	writeVectorConnection(newOrExistingAction, subjectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, sameReferenceSet);
 
 	//cout << "BUG SHOULD BE JOE; subjectEntity->entityName = " << subjectEntity->entityName << endl;
 	
@@ -725,7 +725,7 @@ void addActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * new
 {			
 	//configure object entity node
 	writeVectorConnection(objectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS, sameReferenceSet);	
-	writeBasicConnection(newOrExistingAction, objectEntity, GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_OBJECT, sameReferenceSet);
+	writeVectorConnection(newOrExistingAction, objectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, sameReferenceSet);
 
 	objectEntity->isObjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 }
@@ -788,7 +788,7 @@ void addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GI
 		newCondition->negative = negative;	//overwrite negative with orrect one from context; ie that from "being" entity node
 		//cout << "negative = " << negative;
 
-		writeBasicConnection(newCondition, entityNode, GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
+		writeVectorConnection(newCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
 		writeVectorConnection(entityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);				
 		writeVectorConnection(newCondition, conditionDefinitionNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);				
 		writeVectorConnection(conditionDefinitionNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet);
@@ -814,7 +814,7 @@ void addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIA
 		GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
 		newCondition->negative = negative;	//overwrite negative with correct one from context; ie that from "having" entity node
 
-		writeBasicConnection(newCondition, entityNode, GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
+		writeVectorConnection(newCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
 		writeVectorConnection(entityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);				
 		writeVectorConnection(conditionPropertyNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);				
 		writeVectorConnection(newCondition, conditionPropertyNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
@@ -841,8 +841,8 @@ void addConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * proper
 		//cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl;
 		GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
 
-		writeBasicConnection(newCondition, propertyNode, GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
-		writeBasicConnection(newCondition, propertyConditionEntity, GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_OBJECT, sameReferenceSet);
+		writeVectorConnection(newCondition, propertyNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
+		writeVectorConnection(newCondition, propertyConditionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, sameReferenceSet);
 		writeVectorConnection(propertyNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);	
 		writeVectorConnection(propertyConditionEntity, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS, sameReferenceSet);	
 		
@@ -885,7 +885,7 @@ GIAEntityNode * addCondition(GIAEntityNode * conditionEntity)
 	
 	newCondition->entityName = conditionEntity->entityName;		
 	
-	writeBasicConnection(newCondition, conditionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);	
+	writeVectorConnection(newCondition, conditionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);	
 	writeVectorConnection(conditionEntity, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
 	
 	conditionEntity->hasAssociatedInstance = true;
@@ -1292,73 +1292,45 @@ GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapper(string * entityNodeName, 
 /*these functions have been added for GIA Database compatibility*/
 void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet)
 {
-	entityNode->entityVectorConnectionsArray[connectionType].push_back(existingProperty);
-	entityNode->entityVectorConnectionsParametersSameReferenceSetArray[connectionType].push_back(sameReferenceSet);
-	#ifdef GIA_USE_DATABASE
-	//entityNode->modified = true;		//not required; as an entity's connections can be modified without modifying the entity itself (ie, its properties)
-	if(!entityVectorConnectionsReferenceListLoadedArray[connectionType])
+	vector<GIAConnectionProperties*> * vectorConnectionProperties = entityNode->entityVectorConnectionsPropertiesArray[connectionType];
+	if(entityVectorConnectionIsBasicArray[connectionType])
 	{
-		cout << "error: writeBasicConnection called, but entityVectorBasicReferenceListLoadedArray set to false" << endl;
+		vectorConnectionProperties->clear();	//clear the vector (basic connections only support 1 node)
+	
+	}
+	GIAConnectionProperties * newConnectionProperties = new GIAConnectionProperties();
+	connectionProperties->push_back(newConnectionProperties);
+	
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	newConnectionProperties->sameReferenceSet = true;
+	#endif
+	
+	#ifdef GIA_USE_DATABASE
+	//required for database syncronisation with RAM
+	if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
+	{
+		cout << "error: writeVectorConnection called, but entityVectorConnectionsReferenceListLoadedArray set to false" << endl;
 		exit(0);
 	}	
-	entityNode->entityVectorConnectionsNameArray[connectionType].push_back(entityNodeToAdd->entityName);	//required for database syncronisation with RAM
-	entityNode->entityVectorConnectionsIDArray[connectionType].push_back(entityNodeToAdd->idInstance);	//required for database syncronisation with RAM
-	entityNode->entityVectorConnectionsLoadedArray[connectionType].push_back(true);				//required for database syncronisation with RAM		
-	entityNode->entityVectorConnectionsModifiedArray[connectionType].push_back(true);			//required for database syncronisation with RAM [this is used such that only the single line in the vector connection list file {for the connectionType} is required to be updated; ie the entire the vector connection list file {for the connectionType} does not have to be rewritten]
-	entityNode->entityVectorConnectionsAddedArray[connectionType].push_back(true);				//required for database syncronisation with RAM [this is used such that only the single line in the vector connection list file {for the connectionType} is required to be updated; ie the entire the vector connection list file {for the connectionType} does not have to be rewritten]
+	newConnectionProperties->entityName = entityNodeToAdd->entityName;
+	newConnectionProperties->idInstance = entityNodeToAdd->idInstance;
+	newConnectionProperties->loaded = true;
+	newConnectionProperties->modified = false;
+	newConnectionProperties->added = true;		//this allows for fast update of the DB (append reference connections)
 	#endif
 }
-
-void writeBasicConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet)
-{
-	entityNode->entityBasicConnectionsArray[connectionType] = existingProperty;
-	entityNode->entityBasicConnectionsParametersSameReferenceSetArray[connectionType] = sameReferenceSet;
-	#ifdef GIA_USE_DATABASE
-	//entityNode->modified = true;		//not required; as an entity's connections can be modified without modifying the entity itself (ie, its properties)
-	if(!entityVectorBasicReferenceListLoadedArray[connectionType])
-	{
-		cout << "error: writeBasicConnection called, but entityVectorBasicReferenceListLoadedArray set to false" << endl;
-		exit(0);
-	}
-	entityNode->entityBasicConnectionsNameArray[connectionType].push_back(entityNodeToAdd->entityName);	//required for database syncronisation with RAM
-	entityNode->entityBasicConnectionsIDArray[connectionType].push_back(entityNodeToAdd->idInstance);	//required for database syncronisation with RAM	
-	entityNode->entityBasicConnectionsLoadedArray[connectionType].push_back(true);				//required for database syncronisation with RAM		
-	entityNode->entityBasicConnectionsModifiedArray[connectionType] = true;					//required for database syncronisation with RAM [is this required?]
-	entityNode->entityBasicConnectionsAddedArray[connectionType] = true;					//required for database syncronisation with RAM [is this required?]
-	#endif
-}
-
 
 void readVectorConnections(GIAEntityNode * entityNode, int connectionType)
 {	
 	#ifdef GIA_USE_DATABASE_FILESYSTEM
 	if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
 	{
-		DBreadVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsNameArray[connectionType]), &(entityNode->entityVectorConnectionsIDArray[connectionType]);
+		DBreadVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsPropertiesArray[connectionType]);
+		entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType] = true;
 	}
-	if(!(entityNode->entityAllVectorConnectionsLoadedArray[connectionType]))
-	{
-		DBreadVectorConnections(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsNameArray[connectionType]), &(entityNode->entityVectorConnectionsIDArray[connectionType]), &(entityNode->entityVectorConnectionsLoadedArray[connectionType]), &(entityNode->entityVectorConnectionsArray[connectionType]);	
-		entityNode->entityAllVectorConnectionsLoadedArray[connectionType] = true;
-	}
-	#else
-	cout << "error: must use GIA_USE_DATABASE_FILESYSTEM" << endl;
-	#endif		
-}
+	
+	DBreadVectorConnections(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsPropertiesArray[connectionType]), &(entityNode->entityVectorConnectionsArray[connectionType]);	
 
-
-void readBasicConnections(GIAEntityNode * entityNode, int connectionType)
-{
-	#ifdef GIA_USE_DATABASE_FILESYSTEM
-	if(!(entityNode->entityBasicConnectionsReferenceListLoadedArray[connectionType]))
-	{
-		DBreadBasicConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityBasicConnectionsNameArray[connectionType]), &(entityNode->entityBasicConnectionsIDArray[connectionType]);
-	}
-	if(!(entityNode->entityAllBasicConnectionsLoadedArray[connectionType]))
-	{
-		DBreadBasicConnections(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityBasicConnectionsNameArray[connectionType]), &(entityNode->entityBasicConnectionsIDArray[connectionType]), &(entityNode->entityBasicConnectionsLoadedArray[connectionType]), &(entityNode->entityBasicConnectionsArray[connectionType]);	
-		entityNode->entityAllBasicConnectionsLoadedArray[connectionType] = true;
-	}
 	#else
 	cout << "error: must use GIA_USE_DATABASE_FILESYSTEM" << endl;
 	#endif		
