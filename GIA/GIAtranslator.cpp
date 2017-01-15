@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f11a 13-July-2014
+ * Project Version: 2f12a 13-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -713,6 +713,20 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	}
 	#endif
 
+	/*
+	cout << "applyGrammaticalInfoToAllEntities: " << endl;
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{
+		if(GIAentityNodeArrayFilled[w])
+		{
+			if(!(GIAfeatureTempEntityNodeArray[w]->disabled))
+			{
+				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " !disabled " << w << endl;
+			}
+		}
+	}
+	*/
+	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1a; fillGrammaticalArrays" << endl;
 	#endif
@@ -730,13 +744,40 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	//need to transfer featureArrayTemp->feature->entityDisabled information into GIAentityNodeArray...
 
+	/*
+	cout << "applyGrammaticalInfoToAllEntities: " << endl;
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{
+		if(GIAentityNodeArrayFilled[w])
+		{
+			if(!(GIAfeatureTempEntityNodeArray[w]->disabled))
+			{
+				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " !disabled " << w << endl;
+			}
+		}
+	}
+	*/
+	
 	//this function is first only executed in a temporary fashion (where its output is only used by relex linkPronounReferencesRelex())
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1b; applyGrammaticalInfoToAllEntities [execution#1]" << endl;
 	#endif
  	applyGrammaticalInfoToAllEntities(GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, currentSentenceInList->firstFeatureInList);
 
-
+	/*
+	cout << "redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllContinuousVerbs: " << endl;
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{
+		if(GIAentityNodeArrayFilled[w])
+		{
+			if(!(GIAfeatureTempEntityNodeArray[w]->disabled))
+			{
+				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " !disabled " << w << endl;
+			}
+		}
+	}
+	*/
+	
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 	#ifndef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION
 	/*
@@ -773,7 +814,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	}
 	*/
 	
-	/*
+	/*	
 	cout << "redistributeStanfordRelations: " << endl;
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f11a 13-July-2014
+ * Project Version: 2f12a 13-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -154,6 +154,8 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 													}
 												}
 											}
+											*/
+											/*
 											Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 											while(currentRelationInList->next != NULL)
 											{
@@ -647,9 +649,12 @@ bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParame
 
 	genericEntityInterpretationApplyOptionbool(&(paramDepRel->disableEntity[REL][REL_ENT]), xmlAttribute, "disableEntity", &foundMatch);
 	genericEntityInterpretationApplyOptionbool(&(paramDepRel->disableEntityUseOriginalValues[REL][REL_ENT]), xmlAttribute, "disableEntityUseOriginalValues", &foundMatch);
+	genericEntityInterpretationApplyOptionbool(&(paramDepRel->enableEntity[REL][REL_ENT]), xmlAttribute, "enableEntity", &foundMatch);	//added GIA 2f12a 13-July-2014
 	genericEntityInterpretationApplyOptionbool(&(paramDepRel->disableRelation[REL]), xmlAttribute, "disableRelation", &foundMatch);
 	genericEntityInterpretationApplyOptionbool(&(paramDepRel->disableRelationDuringLink[REL]), xmlAttribute, "disableRelationDuringLink", &foundMatch);
 
+	genericEntityInterpretationApplyOptionbool(&(paramDepRel->useRedistributeSpecialCaseNonExistantRelationCheck[REL]), xmlAttribute, "useRedistributeSpecialCaseNonExistantRelationCheck", &foundMatch);	//non existant relations tests - added GIA 2f12a 13-July-2014
+	
 	return foundMatch;
 }
 

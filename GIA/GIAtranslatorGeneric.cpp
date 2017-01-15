@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f11a 13-July-2014
+ * Project Version: 2f12a 13-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -136,16 +136,20 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	conditionEntityDefaultIndex = INT_DEFAULT_VALUE;
 
 	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
-	initialiseBoolArray2D(&disableEntity[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false); 	//for entity1 and entity2 only
+	initialiseBoolArray2D(&disableEntity[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false);
 	initialiseBoolArray2D(&disableEntityUseOriginalValues[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false); 	//for disabling an entity based on its original index
+	initialiseBoolArray2D(&enableEntity[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false);	//added GIA 2f12a 13-July-2014
 	#else
 	initialiseBoolArray2D(&disableEntity[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION, false); 	//for entity1 and entity2 only
 	initialiseBoolArray2D(&disableEntityUseOriginalValues[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION, false); 	//for disabling an entity based on its original index
+	initialiseBoolArray2D(&enableEntity[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION, false);	//added GIA 2f12a 13-July-2014
 	#endif
 	initialiseBoolArray1D(disableRelation, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, false);
 	initialiseBoolArray1D(disableRelationDuringLink, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, false);
 
 	functionName = "";
+	
+	initialiseBoolArray1D(useRedistributeSpecialCaseNonExistantRelationCheck, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, false);	//non existant relations tests - added GIA 2f12a 13-July-2014
 }
 GIAgenericDepRelInterpretationParameters::~GIAgenericDepRelInterpretationParameters(void)
 {
@@ -203,10 +207,11 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 {
 	//cout << "START genericDependecyRelationInterpretation: " << currentRelationID << endl;
 	bool result = false;
+	
 	#ifdef GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES
 	int conjunctionRelationIndex = 0;
 	#endif
-	
+
 	Relation * currentRelationInList = param->currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -375,17 +380,20 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 
 					int minRelationToTest = 0;
 					int maxRelationToTest = param->numberOfRelations;
-					bool specialCaseAuxiliaryIndicatesDifferentReferenceSetCheck = false;
+					bool specialCaseRelationCheck = false;
 					if(currentRelationID == param->numberOfRelations)
 					{
-						specialCaseAuxiliaryIndicatesDifferentReferenceSetCheck = true;
+						//cout << "currentRelationID == param->numberOfRelations: " << param->numberOfRelations << endl;
+						specialCaseRelationCheck = true;
 						minRelationToTest = param->numberOfRelations;
 						maxRelationToTest = param->numberOfRelations+1;
 					}
 					for(int relationID=minRelationToTest; relationID<maxRelationToTest; relationID++)
 					{
+						//cout << "relationID = " << relationID << endl;
 						for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION; relationEntityID++)	//changed from GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION 25 July 2013
 						{
+							//cout << "param->useRelationIndexTest[relationID][relationEntityID] = " << param->useRelationIndexTest[relationID][relationEntityID] << endl;
 							if(param->useRelationIndexTest[relationID][relationEntityID])
 							{
 								//cout << "useRelationIndexTest: " << relationID << ", " << relationEntityID << endl;
@@ -425,7 +433,6 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 												passedEntityMatchTests = true;
 											}
 										}
-
 									}
 								}
 							}
@@ -444,11 +451,29 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 							}
 						}
 					}
+					if(param->useRedistributeSpecialCaseNonExistantRelationCheck[currentRelationID])
+					{//non existant relations tests - added GIA 2f12a 13-July-2014
+						#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+						cout << "trying to find non allowed relation:" << endl;
+						cout << currentRelationID << ": [SpecialCaseNonExistantRelationCheck]: " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
+						#endif
+						GIAgenericDepRelInterpretationParameters paramTemp = *param;
+						if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1)))
+						{
+							passedEntityMatchTests = false;
+							#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+							cout << "found disallowed relation" << endl;
+							#endif
+						}
+					}
+
 					if(passedEntityMatchTests)
 					{
 						#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 						cout << "passedEntityMatchTests" << endl;
 						#endif
+						//cout << "currentRelationID = " << currentRelationID << endl;
+
 						result = true;
 
 						//cout << "\t\t\genericDependecyRelationInterpretation() passed: function = " << param->functionName << endl;
@@ -468,7 +493,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 							}
 						}
 
-						if(!specialCaseAuxiliaryIndicatesDifferentReferenceSetCheck)
+						if(!specialCaseRelationCheck)
 						{
 							if(param->executeOrReassign)
 							{//execute
@@ -519,7 +544,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										{
 											conditionEntityName = param->relationEntity[param->functionEntityRelationID[FUNC_ENT3]][param->functionEntityRelationEntityID[FUNC_ENT3]];
 										}
-									
+
 										#ifdef GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES
 										int conjunctionType = INT_DEFAULT_VALUE;	//not used
 										string conditionEntityNameOrig = param->relationEntity[param->functionEntityRelationID[FUNC_ENT3]][param->functionEntityRelationEntityID[FUNC_ENT3]];
@@ -849,7 +874,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 													//cout << "prev; GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = " << param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName << endl;											
 												}
 												*/
-												
+
 												param->relation[relationID]->relationType = param->redistributeRelationEntityReassignment[relationID][relationEntityID];
 												#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 												if(param->relationEntityIndex[relationID][relationEntityID] != INT_DEFAULT_VALUE)
@@ -857,7 +882,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 													param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = param->redistributeRelationEntityReassignment[relationID][relationEntityID];
 												}
 												#endif
-												
+
 												/*
 												if(param->functionName == "redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos")
 												{
@@ -972,6 +997,20 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										}
 										#endif
 									}
+									if(param->enableEntity[relationID][relationEntityID])
+									{
+										GIAentityNode * entityToRenable;
+										#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
+										if(param->relationEntityIndexOriginal[relationID][relationEntityID] != INT_DEFAULT_VALUE)	//check whether attempting to disable a non-preposition (and therefore non-existant) relationType entity
+										{
+										#endif
+											entityToRenable = param->GIAentityNodeArray[param->relationEntityIndexOriginal[relationID][relationEntityID]];
+											//cout << "entityToRenable->entityName" << entityToRenable->entityName << endl;
+											entityToRenable->disabled = false;
+										#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
+										}
+										#endif
+									}
 								}
 								if(param->disableRelation[relationID])
 								{
@@ -989,6 +1028,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 		}
 		currentRelationInList = currentRelationInList->next;
 	}
+	
 	//cout << "END genericDependecyRelationInterpretation: " << currentRelationID << endl;
 	return result;
 }

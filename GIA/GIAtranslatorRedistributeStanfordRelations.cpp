@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f11a 13-July-2014
+ * Project Version: 2f12a 13-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -202,14 +202,12 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 	redistributeStanfordRelationsDependencyPreposition(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 
-	/*
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "1c19 pass; redistributeStanfordRelationsAuxHave (eg Red dogs have flies.	aux(flies-4, have-3) + nsubj(flies-4, dogs-2) -> _predadj(dogs-2, flies-4" << endl;
+	cout << "1c19 pass; redistributeStanfordRelationsAuxHave (eg Red dogs have flies.	aux(flies-4, have-3) + nsubj(flies-4, dogs-2) -> obj(have-3, flies-4) + nsubj(have-3, dogs-2)" << endl;	//updated 2f12a 13-July-2014
 	#endif
 	redistributeStanfordRelationsAuxHave(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
-	*/
 
 	#ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 	//added 12 July 2013
@@ -4456,17 +4454,18 @@ void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSenten
 #endif
 }
 
-//redistributeStanfordRelationsAuxHave() was designed for faulty case "flies" is incorrectly tagged by stanford parser in "Red dogs have flies." STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS
-/*
+//redistributeStanfordRelationsAuxHave() was designed for faulty case "flies" is incorrectly tagged by stanford parser in "Red dogs have flies." (a fault which occurs with STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS, when using Stanford Parser in conjunction with Stanford CoreNLP. redistributeStanfordRelationsAuxHave() was temporarily disabled @GIA 2c2a [because it was incompatible with "The chicken has not eaten a pie."])
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 void redistributeStanfordRelationsAuxHave(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	eg Red dogs have flies.	aux(flies-4, have-3) + nsubj(flies-4, dogs-2) -> _predadj(dogs-2, flies-4)
+	/*
+	eg Red dogs have flies.	aux(flies-4, have-3) + nsubj(flies-4, dogs-2) + !obj(flies-4, x) -> obj(have-3, flies-4) + nsubj(have-3, dogs-2)	//updated 2f12a 13-July-2014
 	nn(dogs-2, Red-1)
 	nsubj(flies-4, dogs-2)
 	aux(flies-4, have-3)
 	root(ROOT-0, flies-4)
 	Joe is happy.	_predadj(Joe[1], happy[3])
+	*/
 //#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 2;
@@ -4474,18 +4473,24 @@ void redistributeStanfordRelationsAuxHave(Sentence * currentSentenceInList, bool
 	param.useRelationTest[REL1][REL_ENT2] = true; param.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_HAVE;
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.useRelationIndexTest[REL1][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT1] = REL2; param.relationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT1;
-	param.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_ADJECTIVE_PREDADJ;
-	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
-	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT1; param.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL2][REL_ENT2] = true;
-	param.disableRelation[REL1] = true;
+	
+	param.useRedistributeSpecialCaseNonExistantRelationCheck[REL2] = true;
+	param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_OBJECT;
+	param.useRelationIndexTest[REL3][REL_ENT1] = true; param.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT1;
 	param.disableEntity[REL1][REL_ENT2] = true;
+				
+	param.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_OBJECT;
+	param.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_SUBJECT;
+	param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2; param.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL1][REL_ENT1] = true;
+	param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1; param.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL1][REL_ENT2] = true;
+	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2; param.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL2][REL_ENT1] = true;
 	genericDependecyRelationInterpretation(&param, REL1);
 //#else
 	//not coded as this function was developed after GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 //#endif
 }
 #endif
-*/
+
 
 
 #ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START

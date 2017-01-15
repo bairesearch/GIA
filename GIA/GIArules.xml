@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f11a 13-July-2014
+ * Project Version: 2f12a 13-July-2014
  *
  *******************************************************************************/
 -->
@@ -1990,11 +1990,12 @@
 				</paramDepRel>
 			</function>
 
-			<!-- redistributeStanfordRelationsAuxHave() was designed for faulty case "flies" is incorrectly tagged by stanford parser in "Red dogs have flies." STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS -->
-			<!--
+			<!-- updated and reactivated 2f12a 13-July-2014 -->
+			<!-- redistributeStanfordRelationsAuxHave() was designed for faulty case "flies" is incorrectly tagged by stanford parser in "Red dogs have flies." (a fault which occurs with STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS, when using Stanford Parser in conjunction with Stanford CoreNLP. redistributeStanfordRelationsAuxHave() was temporarily disabled @GIA 2c2a [because it was incompatible with "The chicken has not eaten a pie."]) -->
+			<!-- #ifdefSTANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS, -->
 			<function name="redistributeStanfordRelationsAuxHave">
 				<example>
-				eg Red dogs have flies. aux(flies-4, have-3) + nsubj(flies-4, dogs-2) -> _predadj(dogs-2, flies-4)
+				eg Red dogs have flies. aux(flies-4, have-3) + nsubj(flies-4, dogs-2) + !obj(flies-4, x) -> obj(have-3, flies-4) + nsubj(have-3, dogs-2)	<!-- updated 2f12a 13-July-2014 -->
 				</example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="2" />
@@ -2002,14 +2003,20 @@
 				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="have" />
 				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_subj" />
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
-				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_predadj" />
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
-				<option disableRelation="true" REL="1" />
-				<option disableEntity="true" REL="1" REL_ENT="2" /> //disable "have" entity
+				
+				<option useRedistributeSpecialCaseNonExistantRelationCheck="true" REL="2" />
+				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_obj" />
+				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
+				<option enableEntity="true" REL="1" REL_ENT="2" /> <!-- reenable "have" entity -->
+
+				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityReassignment="_obj" />
+				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_subj" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
 				</paramDepRel>
 			</function>
-			-->
+			<!-- #endif -->
 			
 			<!-- #ifdefGIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START -->
 			<function name="redistributeStanfordRelationsDisableAuxAndCop">
