@@ -340,7 +340,7 @@ int main(int argc,char **argv)
 						}
 						Sentence * newSentence = new Sentence();
 						Relation * newRelation = new Relation();
-						Feature * newFeaturesultre = new Feature();
+						Feature * newFeature = new Feature();
 						newSentence->previous = currentSentence;				
 						newSentence->firstRelationInList = newRelation;
 						newSentence->firstFeatureInList = newFeature;					
