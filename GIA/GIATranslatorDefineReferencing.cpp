@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o3a 12-August-2012
+ * Project Version: 1o4a 15-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -144,6 +144,9 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 							GIAEntityNode * queryComparisonVariableEntityNode = GIAEntityNodeArray[currentFeatureInList->entityIndex];
 							queryComparisonVariableEntityNode->isQuery = true;
 							queryComparisonVariableEntityNode->isWhichQuery = true;
+							#ifdef GIA_SUPPORT_WHICH_QUERY_ALIAS_ANSWERS
+							queryComparisonVariableEntityNode->isNameQuery = true;
+							#endif
 							setFoundComparisonVariable(true);
 							setComparisonVariableNode(queryComparisonVariableEntityNode);
 							#ifdef GIA_TRANSLATOR_DEBUG
@@ -1264,7 +1267,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 			//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
 			int irrelevantInt;
 			string irrelevantString = "";
-			bool traceInstantiations = GIA_QUERY_TRACE_INSTANTIATIONS_VALUE;
+			bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
 			#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
 			traceEntityNode(queryEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);		//is this required?	//added 13 July 2012
 			traceEntityNode(networkEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);					//added 13 July 2012
@@ -1314,7 +1317,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 	GIAEntityNode* firstNodeConceptEntityNodesListQuery = entityIterQuery->second;
 
 	int maxNumberOfMatchedNodesPossible = 0;
-	bool traceInstantiations = GIA_QUERY_TRACE_INSTANTIATIONS_VALUE;
+	bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
 	traceEntityNode(firstNodeConceptEntityNodesListQuery, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY, &maxNumberOfMatchedNodesPossible, NULL, NULL, referenceSetID, traceInstantiations);
 
 	for(entityIterQuery = entityNodesActiveListConceptsQuery->begin(); entityIterQuery != entityNodesActiveListConceptsQuery->end(); entityIterQuery++)
@@ -1402,7 +1405,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 				//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
 				int irrelevantInt;
 				string irrelevantString = "";
-				bool traceInstantiations = GIA_QUERY_TRACE_INSTANTIATIONS_VALUE;
+				bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
 				traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
 				traceEntityNode(conceptEntityMatchingCurrentQueryEntity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
 				//cout << "b" << endl;

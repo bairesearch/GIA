@@ -23,7 +23,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o3a 12-August-2012
+ * Project Version: 1o4a 15-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -162,13 +162,17 @@ void linkSubstancesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 	}
 }
 
+#ifdef GIA_USE_ADVANCED_REFERENCING
+void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], bool linkPreestablishedReferencesGIA)
+#else
 void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+#endif
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		if(!(currentRelationInList->disabled))
+		if(!(currentRelationInList->disabled))		//?this condition may be required to prevent redundant RELATION_TYPE_APPOSITIVE_OF_NOUN relations eg in 'Where is the ball?'
 		{
 		#endif
 			if(currentRelationInList->relationType == RELATION_TYPE_APPOSITIVE_OF_NOUN)
@@ -191,7 +195,90 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				#else
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 				#endif
-				addDefinitionToEntity(thingEntity, definitionEntity, sameReferenceSet);
+				
+				#ifdef GIA_SUPPORT_ALIASES
+				bool treatDefinitionAsEquality = false;
+				bool treatDefinitionAsEqualityReversePrimary = false;
+				#ifdef GIA_USE_ADVANCED_REFERENCING
+				if(linkPreestablishedReferencesGIA)
+				{	
+				#endif				
+					if((thingEntity->isSubstance || thingEntity->isNameQuery) && (definitionEntity->isSubstance || definitionEntity->isNameQuery))
+					{//equality link found - add alias instead
+
+						#ifndef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS
+						if(!(definitionEntity->hasAssociatedTime))
+						{
+						#endif
+							treatDefinitionAsEquality = true;
+							if(definitionEntity->grammaticalRelexPersonOrStanfordProperNounTemp || definitionEntity->isNameQuery)
+							{
+								#ifdef GIA_ALIASES_DEBUG
+								cout << "linkEntityDefinitionsAppositiveOfNouns1" << endl; 
+								#endif
+								//eg max = the brown dog
+							}
+							else if(thingEntity->grammaticalRelexPersonOrStanfordProperNounTemp || thingEntity->isNameQuery)
+							{
+								treatDefinitionAsEqualityReversePrimary = true;
+								#ifdef GIA_ALIASES_DEBUG
+								cout << "linkEntityDefinitionsAppositiveOfNouns2" << endl;
+								#endif
+								//eg max = the brown dog
+							}
+							else
+							{
+								#ifdef GIA_ALIASES_DEBUG
+								cout << "linkEntityDefinitionsAppositiveOfNouns3" << endl;
+								#endif
+								//if no proper noun (or query) detected, each node is equal, eg the brown dog == the happy wolf]
+							}
+						#ifndef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS
+						}
+						#endif							
+					}
+					#ifdef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS
+					else if((thingEntity->isSubstance && thingEntity->entityName == FEATURE_RELEX_FLAG_TIME_NAME) && (definitionEntity->isQuery))
+					{
+						#ifdef GIA_ALIASES_DEBUG
+						cout << "linkEntityDefinitionsAppositiveOfNouns4" << endl;
+						#endif
+						//eg what is the time					
+						treatDefinitionAsEquality = true;
+						definitionEntity->isNameQuery = true;
+					}
+					#endif
+				#ifdef GIA_USE_ADVANCED_REFERENCING	
+				}
+				#endif				
+				if(treatDefinitionAsEquality)
+				{
+					if(treatDefinitionAsEqualityReversePrimary)
+					{
+						#ifdef GIA_ALIASES_DEBUG
+						cout << "treatDefinitionAsEquality: treatDefinitionAsEqualityReversePrimary" << endl;
+						#endif
+						//eg max = the brown dog
+						mergeEntityNodesAddAlias(definitionEntity, thingEntity);		//less nodes to merge (more efficient)
+						GIAEntityNodeArray[thingIndex] = GIAEntityNodeArray[definitionIndex];
+					}
+					else
+					{
+						#ifdef GIA_ALIASES_DEBUG
+						cout << "treatDefinitionAsEquality: !treatDefinitionAsEqualityReversePrimary" << endl;
+						#endif
+						//if no proper noun (or query) detected, each node is equal, eg the brown dog == the happy wolf]
+						mergeEntityNodesAddAlias(thingEntity, definitionEntity);
+						GIAEntityNodeArray[definitionIndex] = GIAEntityNodeArray[thingIndex];
+					}				
+				}
+				else
+				{
+				#endif
+					addDefinitionToEntity(thingEntity, definitionEntity, sameReferenceSet);
+				#ifdef GIA_SUPPORT_ALIASES
+				}
+				#endif
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}

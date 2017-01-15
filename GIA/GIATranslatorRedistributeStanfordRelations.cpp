@@ -23,7 +23,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o3a 12-August-2012
+ * Project Version: 1o4a 15-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1132,9 +1132,9 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 			{
 				/*
 				bool queryWhoWhatRelationDependentFound = false;
-				for(int i=0; i<FEATURE_QUERY_WORD_WHO_WHAT_NUMBER_OF_TYPES; i++)
+				for(int i=0; i<FEATURE_QUERY_WHAT_IS_THE_NAME_NUMBER_OF_NUMBER_OF_TYPES; i++)
 				{
-					if(currentRelationInList->relationDependent == featureQueryWordWhoWhatNameArray[i])
+					if(currentRelationInList->relationDependent == featureQueryWhatIsTheNameNumberOfNameArray[i])
 					{
 						queryWhoWhatRelationDependentFound = true;
 					}
@@ -1156,9 +1156,9 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 							if(currentRelationInList2->relationType == RELATION_TYPE_ATTRIBUTIVE)
 							{
 								bool queryWhoWhatRelationDependentFound2 = false;
-								for(int i=0; i<FEATURE_QUERY_WORD_WHO_WHAT_NUMBER_OF_TYPES; i++)
+								for(int i=0; i<FEATURE_QUERY_WHAT_IS_THE_NAME_NUMBER_OF_NUMBER_OF_TYPES; i++)
 								{
-									if(currentRelationInList2->relationDependent == featureQueryWordWhoWhatNameArray[i])
+									if(currentRelationInList2->relationDependent == featureQueryWhatIsTheNameNumberOfNameArray[i])
 									{
 										queryWhoWhatRelationDependentFound2 = true;
 									}
@@ -1216,6 +1216,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 																	currentRelationInList2->relationGovernor = currentRelationInList3->relationDependent;
 
 																	GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]->entityName = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What" to _$qVar
+																	GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]->isNameQuery = true;
 																	currentRelationInList2->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	
 
 																}
@@ -2209,6 +2210,12 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 				{
 					//interpret; 'Who rode the bike?' / 'What broke the glass?' -> nsubj(rode-2, Who-1) -> nsubj(rode-2, _$qVar) / nsubj(broke-2, What-1) -> nsubj(broke-2, _$qVar) [added 7 August 2012]
 					GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->entityName = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What"/"Who" to _$qVar
+					#ifdef GIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS
+					if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_QUERY_WHO)
+					{
+						GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->isNameQuery = true;	
+					}
+					#endif					
 					currentRelationInList->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
 				}				
 				else
@@ -2258,6 +2265,12 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 											currentRelationInList2->relationGovernor = currentRelationInList->relationDependent;
 
 											GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]->entityName = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What"/"Who" to _$qVar
+											#ifdef GIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS
+											if(currentRelationInList2->relationDependent == REFERENCE_TYPE_QUESTION_QUERY_WHO)
+											{
+												GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]->isNameQuery = true;	
+											}
+											#endif
 											currentRelationInList2->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
 
 										#else
@@ -2271,6 +2284,12 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 											currentRelationInList->relationGovernor = currentRelationInList2->relationDependent;
 
 											GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->entityName = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What"/"Who" to _$qVar
+											#ifdef GIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS
+											if(currentRelationInList2->relationDependent == REFERENCE_TYPE_QUESTION_QUERY_WHO)
+											{
+												GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->isNameQuery = true;	
+											}				
+											#endif							
 											currentRelationInList->relationGovernor = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
 
 										#endif

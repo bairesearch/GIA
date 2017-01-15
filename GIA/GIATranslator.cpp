@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o3a 12-August-2012
+ * Project Version: 1o4a 15-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -643,6 +643,17 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	defineSubstancesDefiniteNouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
 	#endif
 	
+	/*
+	#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_OLD
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "0kSHIFTED pass; define substances (non explicit pronouns eg 'that');" << endl;
+	#endif
+	defineSubstancesNonExplicitPronouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+	#endif	
+	#endif
+	*/
+			
 	#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0b pass; define substances based upon definitions" << endl;
@@ -759,8 +770,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "2c pass; link entity definitions (appositive of nouns only)" << endl;
 	#endif
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	linkEntityDefinitionsAppositiveOfNouns(currentSentenceInList, GIAEntityNodeArray, linkPreestablishedReferencesGIA);
+	#else
 	linkEntityDefinitionsAppositiveOfNouns(currentSentenceInList, GIAEntityNodeArray);
-
+	#endif
+	
 	#ifdef GIA_TRANSLATOR_DEBUG
  	cout <<"3a pass; link dependent subject-object definition/composition/action relationships" << endl;
 	#endif

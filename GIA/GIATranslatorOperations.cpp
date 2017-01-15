@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o3a 12-August-2012
+ * Project Version: 1o4a 15-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1676,6 +1676,194 @@ void addEntityNodeToActiveLists(GIAEntityNode * entity, unordered_map<string, GI
 		entity->idActiveList = currentEntityNodeIDInSentenceCompleteList;
 		currentEntityNodeIDInSentenceCompleteList++;
 	}
+}
+#endif
+
+
+
+#ifdef GIA_SUPPORT_ALIASES
+void mergeEntityNodesAddAlias(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToMerge)
+{
+	entityNode->aliasList.push_back(entityNodeToMerge->entityName);
+	
+	#ifdef GIA_ALIASES_DEBUG
+	cout << "\n" << endl;
+	cout << "entityNode->entityName = " << entityNode->entityName << endl;
+	cout << "entityNodeToMerge->entityName = " << entityNodeToMerge->entityName << endl;
+	#endif
+			
+	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+	{	
+		for(vector<GIAEntityConnection*>::iterator connectionIter = entityNodeToMerge->entityVectorConnectionsArray[i].begin(); connectionIter != entityNodeToMerge->entityVectorConnectionsArray[i].end(); )
+		{
+			bool connectionIterErased = false;
+			//connect entityNodeToMerge ambient node to entityNode
+			GIAEntityNode * entityConnectedToEntityToMerge = (*connectionIter)->entity;
+			
+			#ifdef GIA_ALIASES_DEBUG
+			if(entityConnectedToEntityToMerge->isConcept)
+			{
+				cout << "entityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityToMerge->entityName << " (concept)" << endl;
+			}
+			else
+			{
+				cout << "entityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityToMerge->entityName << endl;			
+			}
+			#endif
+			
+			//disconnect reference sources from each other, as their connection between each other will be redeclared in current context
+			int iInverted = inverseVectorConnectionsArray[i];
+			for(vector<GIAEntityConnection*>::iterator connectionIter2 = entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].begin(); connectionIter2 != entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].end(); )
+			{
+				bool connectionIter2Erased = false;
+				GIAEntityNode * entityConnectedToEntityConnectedToEntityToMerge = (*connectionIter2)->entity;
+				#ifdef GIA_ALIASES_DEBUG
+				cout << "entityConnectedToEntityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityConnectedToEntityToMerge->entityName << endl;
+				#endif
+					
+				if(entityNodeToMerge->idActiveList == entityConnectedToEntityConnectedToEntityToMerge->idActiveList)	//OR (entityNodeToMerge == entityConnectedToEntityConnectedToEntityToMerge)?
+				{	
+					/*required for advanced referencing (eg concept Tom has associated instance Dog) [NB this means that instances can appear to have more than one entityNodeDefiningThisInstance]
+					if(entityConnectedToEntityToMerge->isConcept)
+					{
+						//disconnect entityConnectedToEntityConnectedToEntityToMerge from entityConnectedToEntityToMerge (concept) (z2)
+						#ifdef GIA_ALIASES_DEBUG
+						cout << "disconnect entityConnectedToEntityConnectedToEntityToMerge (" << entityConnectedToEntityConnectedToEntityToMerge->entityName << ") from entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (concept) (z2)" << endl;
+						#endif
+						//delete *connectionIter2;	//delete connection
+						connectionIter2 = entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].erase(connectionIter2);		//(*connectionIter2)->entity = NULL;	//need a better delete routine
+						connectionIter2Erased = true;
+						#ifdef GIA_USE_DATABASE
+						//(*connectionIter2)->modified = true;
+						entityConnectedToEntityToMerge->entityVectorConnectionsRemovedArray[iInverted] = true;	//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
+						#endif					
+					}	
+					else
+					{	
+					*/						
+						//connect entityConnectedToEntityConnectedToEntityToMerge back to entityNode (z)
+						#ifdef GIA_ALIASES_DEBUG
+						cout << "change entityConnectedToEntityConnectedToEntityToMerge (" << entityConnectedToEntityConnectedToEntityToMerge->entityName << ") to entityNode (" << entityNode->entityName << ") (z)" << endl;
+						#endif
+						
+						(*connectionIter2)->entity = entityNode;
+						#ifdef GIA_USE_DATABASE
+						(*connectionIter2)->modified = true;
+						#endif
+					/*	
+					}	
+					*/			
+				}
+				
+				if(!connectionIter2Erased)
+				{
+					connectionIter2++;
+				}
+			}
+
+			//connect entityNode to entityConnectedToEntityToMerge (x)
+			if(entityNode->idActiveList != entityConnectedToEntityToMerge->idActiveList)
+			{
+				/*required for advanced referencing (eg concept Tom has associated instance Dog) [NB this means that instances can appear to have more than one entityNodeDefiningThisInstance]
+				if(!(entityConnectedToEntityToMerge->isConcept))
+				{
+				*/
+					#ifdef GIA_ALIASES_DEBUG
+					cout << "connect entityNode (" << entityNode->entityName << ") to entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (x)" << endl;	
+					#endif
+					writeVectorConnection(entityNode, entityConnectedToEntityToMerge, i, (*connectionIter)->sameReferenceSet);			
+				/*
+				}
+				*/
+			}
+			
+			//disconnect entityConnectedToEntityToMerge from entityNodeToMerge
+			#ifdef GIA_ALIASES_DEBUG
+			if(entityConnectedToEntityToMerge->isConcept)
+			{
+				cout << "disconnect entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (concept) from entityNodeToMerge (" << entityNodeToMerge->entityName << ") (x2)" << endl;										
+			}
+			else
+			{
+				cout << "disconnect entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") from entityNodeToMerge (" << entityNodeToMerge->entityName << ") (x2)" << endl;										
+			}
+			#endif			
+			//delete *connectionIter;	//delete connection
+			connectionIter = entityNodeToMerge->entityVectorConnectionsArray[i].erase(connectionIter);		//(*connectionIter)->entity = NULL;	//need a better delete routine
+			connectionIterErased = true;
+			#ifdef GIA_USE_DATABASE
+			//(*connectionIter)->modified = true;
+			entityNodeToMerge->entityVectorConnectionsRemovedArray[i] = true;	//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
+			#endif
+			
+			//cout << "asf" << endl;
+			if(!connectionIterErased)
+			{
+				connectionIter++;
+			}			
+		}		
+	}
+	
+	//disconnect entityNode from entityNodeToMerge
+	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+	{	
+		for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); )
+		{
+			bool connectionIterErased = false;
+			GIAEntityNode * entityConnectedToEntity = (*connectionIter)->entity;
+			if(entityConnectedToEntity->idActiveList == entityNodeToMerge->idActiveList)
+			{
+				//disconnect entityNodeToMerge from entityNode (y)
+				#ifdef GIA_ALIASES_DEBUG
+				cout << "disconnect entityNodeToMerge (" << entityNodeToMerge->entityName << ") from entityNode (" << entityNode->entityName << ") (y)" << endl;				
+				#endif
+				connectionIter = entityNodeToMerge->entityVectorConnectionsArray[i].erase(connectionIter);		//(*connectionIter)->entity = NULL;	//need a better delete routine
+				connectionIterErased = true;
+				#ifdef GIA_USE_DATABASE
+				//(*connectionIter)->modified = true;
+				entityNode->entityVectorConnectionsRemovedArray[i] = true;	//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
+				#endif
+			}
+			if(!connectionIterErased)
+			{
+				connectionIter++;
+			}			
+		}
+	}
+	
+	#ifdef GIA_ALIASES_DEBUG
+	cout << "\n" << endl;
+	#endif
+	
+	//copy secondary node properties
+	if(entityNodeToMerge->conditionType == CONDITION_NODE_TYPE_TIME)
+	{
+		entityNode->conditionType = entityNodeToMerge->conditionType;
+		entityNode->timeConditionNode = entityNodeToMerge->timeConditionNode;
+	}
+	if(entityNodeToMerge->hasQuantity)
+	{
+		entityNode->hasQuantity = entityNodeToMerge->hasQuantity;
+		entityNode->quantityNumber = entityNodeToMerge->quantityNumber;
+		entityNode->hasQuantity = entityNodeToMerge->hasQuantity;
+		entityNode->quantityModifier = entityNodeToMerge->quantityModifier;
+		entityNode->quantityModifierString = entityNodeToMerge->quantityModifierString;
+		entityNode->hasQuantityMultiplier = entityNodeToMerge->hasQuantityMultiplier;
+	}
+	if(entityNodeToMerge->hasMeasure)
+	{
+		entityNode->hasMeasure = entityNodeToMerge->hasMeasure;
+		entityNode->measureType = entityNodeToMerge->measureType;
+	}
+	if(entityNodeToMerge->isQuery)
+	{
+		entityNode->isQuery = entityNodeToMerge->isQuery;
+		entityNode->isWhichQuery = entityNodeToMerge->isWhichQuery;
+		entityNode->isNameQuery = entityNodeToMerge->isNameQuery;
+	}		
+
+	disableEntity(entityNodeToMerge);
+
 }
 #endif
 

@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o3a 12-August-2012
+ * Project Version: 1o4a 15-August-2012
  *
  *******************************************************************************/
 
@@ -64,7 +64,7 @@ GIAEntityNode::GIAEntityNode(void)
 	wordOrig = "";		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
 	#endif
 	confidence = 1.0;
-
+	
 	isConcept = false;
 	isSubstance = false;
 	isAction = false;
@@ -384,5 +384,4 @@ string printQuantityNumberString(GIAEntityNode * entityNode)
 
 	return quantityNumberStringTemp;
 }
-
 

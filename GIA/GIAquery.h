@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o3a 12-August-2012
+ * Project Version: 1o4a 15-August-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
@@ -49,12 +49,15 @@
 #endif
 #define GIA_QUERY_TRACE_PAST_ANSWER						//default: enabled [untested]
 
-//#define GIA_QUERY_TRACE_INSTANTIATIONS	//default: disabled
-#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
-	#define GIA_QUERY_TRACE_INSTANTIATIONS_VALUE (true)		//added with GIA_USE_1N1ATEMP1TO8_CHANGES
-	//#define GIA_QUERY_TRACE_INSTANTIATIONS_OLD_TEXTUAL_OUTPUT
+//#define GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS	//default: disabled
+#ifdef GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS
+	#define GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE (true)		//added with GIA_USE_1N1ATEMP1TO8_CHANGES
+	//#define GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_OLD_TEXTUAL_OUTPUT
 #else
-	#define GIA_QUERY_TRACE_INSTANTIATIONS_VALUE (false)		//added with GIA_USE_1N1ATEMP1TO8_CHANGES
+	#ifndef GIA_SUPPORT_ALIASES
+		#define GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES	//removed 15 August 2012
+	#endif
+	#define GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE (false)		//added with GIA_USE_1N1ATEMP1TO8_CHANGES
 #endif
 
 
@@ -74,7 +77,7 @@
 #define GIA_QUERY_USE_LONG_CONTEXT_TRACE
 #ifdef GIA_QUERY_USE_LONG_CONTEXT_TRACE
 	//#define GIA_QUERY_USE_EXTRA_LONG_CONTEXT_TRACE
-	//#define GIA_QUERY_TRACE_INSTANTIATIONS
+	//#define GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS
 #endif
 #define GIA_QUERY_FRACTION_MAX_CONFIDENCE_REQUIRED_FOR_UNPRECISE_ANSWER (0.5)
 
@@ -159,6 +162,9 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		bool determineIfBestAnswerCandidate(bool traceModeIsQuery, bool queryTraceParametersTempFoundAnswer, bool alreadyFoundAnAnswer, int numberOfMatchedNodesTemp, int numberOfMatchedNodesTempMax, int numberOfMatchedNodesRequiredSynonymnDetectionTemp, int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax, int referenceTraceParametersTraceMode, int exactMatchTemp);
 
 bool compareEntityNames(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode);
+#ifdef GIA_SUPPORT_ALIASES
+bool compareEntityAliases(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode);
+#endif
 void generateTexualContextWithPreviousNodeForwards(string * queryAnswerContext, string sourceContext, GIAEntityNode* entityNode, GIAEntityNode* entityNodePrevious);
 	void generateTexualContextForwards(string * queryAnswerContext, string sourceContext, GIAEntityNode* entityNode);
 	void generateTexualContextBackwards(string * queryAnswerContext, string sourceContext, GIAEntityNode* entityNode);

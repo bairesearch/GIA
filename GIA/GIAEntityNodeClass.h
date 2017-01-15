@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o3a 12-August-2012
+ * Project Version: 1o4a 15-August-2012
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -174,7 +174,11 @@ static string entityVectorConnectionDrawConnectionNameArray[GIA_ENTITY_NUMBER_OF
 #define GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPES (2)
 */
 
-static int inverseVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES};
+static int inverseVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES};
+
+
+#define GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES_EQUALITIES (2)
+static int entityVectorConnectionEqualitiesArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES_EQUALITIES] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS};
 
 
 #define VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN (true)
@@ -215,7 +219,10 @@ public:
 	string wordOrig;		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
 	#endif
 	double confidence;
-
+	#ifdef GIA_SUPPORT_ALIASES
+	vector<string> aliasList;
+	#endif
+	
 	bool isConcept;			//is this entity a concept? [added 10 May 2012]
 	bool isSubstance;		//is this entity a substance?
 	bool isAction;			//is this entity an action?
@@ -226,7 +233,7 @@ public:
 	bool hasAssociatedTime;
 	bool isSubstanceQuality;		//PRECISE ORIGINAL NAME: isSubstanceQualityOrAffection	//eg 'the locked door..' / 'Jim runs quickly' / 'Mr. Smith is late' 	[Not: Tom has an arm'/'Tom's bike']
 
-	bool hasProgressiveTemp;	//PRECISE ORIGINALNAME: isActionOrSubstanceState		//eg The cat is lying on the bed. / Mark is being happy.
+	bool hasProgressiveTemp;	//PRECISE ORIGINALNAME: isActionOrSubstanceQualityState		//eg The cat is lying on the bed. / Mark is being happy.
 
 	vector<GIAEntityConnection*> entityVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];		//allows for generic coding
 	#ifdef GIA_USE_ADVANCED_REFERENCING
@@ -338,6 +345,9 @@ public:
 
 	bool isQuery;
 	bool isWhichQuery;
+	#ifdef GIA_SUPPORT_ALIASES
+	bool isNameQuery;
+	#endif
 	bool isAnswerToQuery;
 	bool testedForQueryComparison;
 	bool testedForQueryComparisonTemp; //added 17 May 2012 - support better trace routine
@@ -400,7 +410,6 @@ int calculateQuantityModifierInt(string quantityModifierString);
 int calculateQuantityMultiplierInt(string quantityMultiplierString);
 
 string printQuantityNumberString(GIAEntityNode * entityNode);
-
 
 #endif
 

@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o3a 12-August-2012
+ * Project Version: 1o4a 15-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -657,7 +657,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1o3a 12-August-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1o4a 15-August-2012" << endl;
 			exit(1);
 		}
 
@@ -1058,6 +1058,15 @@ int main(int argc,char **argv)
 			if(foundComparisonVariable)
 			{
 				#ifndef GIA_DO_NOT_PRINT_RESULTS
+				#ifdef GIA_SUPPORT_ALIASES
+				if(comparisonVariableNode->isNameQuery)
+				{
+					for(vector<string>::iterator aliasIter = queryAnswerNode->aliasList.begin(); aliasIter != queryAnswerNode->aliasList.end(); aliasIter++)
+					{
+						cout << "Exact Found Answer (alias): " << *aliasIter << endl;		//CHECKTHIS; this is not working yet	
+					}	
+				}
+				#endif
 				cout << "Exact Found Answer: " << queryAnswerNode->entityName << endl;
 				#endif
 				answerString = answerString + "\nExact Answer found: " + queryAnswerNode->entityName;
@@ -1127,7 +1136,7 @@ int main(int argc,char **argv)
 		#ifdef GIA_COMPILE_PRINT_INEXACT_ANSWER_AMBIENT_CONTEXT
 			int irrelevant;
 			string printEntityNodeString = "";
-			#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
+			#ifdef GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS
 			bool traceInstantiations = true;
 			#else
 			bool traceInstantiations = false;
