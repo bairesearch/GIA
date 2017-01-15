@@ -243,6 +243,12 @@ void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEnti
 	//conditions required to be added [eg when, where, how, why]
 GIAActionNode * addAction(GIAEntityNode * actionEntity)
 {
+	if(actionEntity->hasAssociatedPropertyTemp)
+	{
+		actionEntity = actionEntity->firstAssociatedPropertyNodeInList.back();	//added 27 Aug 11a
+	}
+	
+		
 	//configure action node
 	GIAActionNode * newAction = new GIAActionNode();
 	newAction->actionName = actionEntity->entityName;
@@ -260,13 +266,14 @@ GIAActionNode * addAction(GIAEntityNode * actionEntity)
 		//exit(0);
 		addTenseOnlyTimeConditionToAction(newAction, actionEntity->grammaticalTenseTemp);
 	}
-		
 	
 	return newAction;
 }
 
 void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity)
 {
+	cout << "HERE" << endl;
+	
 	GIAActionNode * newOrExistingAction;
 	if(!(actionEntity->hasAssociatedActionTemp))
 	{
@@ -897,7 +904,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			{
 				if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
 				{
-					cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
+					//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
 					addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
 				}
 			}
@@ -912,11 +919,6 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					bool passed = false;
 					for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
 					{
-						cout << "as" << endl;
-
-						cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
-						cout << "GIAEntityNodeArray[i]->grammaticalNumberTemp = " << GIAEntityNodeArray[i]->grammaticalNumberTemp << endl;
-
 						if(GIAEntityNodeArray[i]->grammaticalNumberTemp == referenceTypeHasDeterminateCrossReferenceNumberArray[j])
 						{
 							passed = true;
@@ -924,14 +926,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					}
 					if(passed == true)
 					{
-						cout << "DETERMINATE DETECTED GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;
 						addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
 					}
 				}
 			}
 		}
 		
-		/*
 		//0c pass; define properties (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late] 
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
@@ -957,8 +957,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				addPropertyToPropertyDefinition(thingEntity);					
 			}			
 			currentRelationInList = currentRelationInList->next;
-		}
-		*/				
+		}				
 		
 		
 			
@@ -1221,7 +1220,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 							cout << "actionName = " << actionName << endl;
 							GIAEntityNode * actionEntity = GIAEntityNodeArray[relationFunctionIndex];
 
-							addAction(actionEntity);
+							//addAction(actionEntity);	//WHY WAS THIS HERE????
 							if(firstIndex == SUBJECT_INDEX)
 							{//fired by joe..???? [is there a possible example of this?]
 							
