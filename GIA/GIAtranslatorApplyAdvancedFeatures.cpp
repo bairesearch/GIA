@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -42,7 +42,7 @@
 
 
 
-void applyAdvancedFeatures(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, int NLPdependencyRelationsType, int NLPfeatureParser)
+void applyAdvancedFeatures(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType, int NLPfeatureParser)
 {
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -53,19 +53,19 @@ void applyAdvancedFeatures(GIAsentence* currentSentenceInList, bool GIAentityNod
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B4b; extractMeasures;  eg The boy is 4 feet away. / Take these 4 times a day. / The boy is 4 feet tall. / The birthday boy is 12 years old.	_measure_distance(away, foot) / _measure_per(times, day) / _measure_size(tall, feet) / _measure_time(old, years)" << endl;
 	#endif
-	extractMeasures(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs);
+	extractMeasures(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B4c/4d; defineToBeAndToDoConditions;" << endl;
 	cout << "eg1 The pastry tasted awesome. _to-be(taste[3], awesome[4]) + _subj(taste[3], pastry[2])" << endl;
 	cout << "eg2 Jezel likes to draw. _to-do(like[2], draw[4]) + _subj(like[2], Jezel[1])" << endl;
 	#endif
-	defineToBeAndToDoConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs);
+	defineToBeAndToDoConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B4e; extractQualities; eg The broken pencil fell apart. / Giants are red. [Joe is happy.] / Tom runs quickly. _amod(pencil, broken) / _predadj(giants, red) / _advmod(run, quick)" << endl;
 	#endif
-	extractQualities(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs, NLPdependencyRelationsType);
+	extractQualities(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B4f; linkPropertiesParataxis; eg The guy, Akari said, left early in the morning. _parataxis(leave[7], say[5])" << endl;
@@ -89,12 +89,12 @@ void applyAdvancedFeatures(GIAsentence* currentSentenceInList, bool GIAentityNod
 	#endif
 	defineTenseOnlyTimeConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 
-	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXS
+	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXES
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "section B4h; defineActionNetworkIndexs1" << endl;
+	cout << "section B4h; defineActionConcepts1" << endl;
 	#endif
-	defineActionNetworkIndexs1(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	defineActionConcepts1(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 	#endif
 #endif
@@ -107,13 +107,13 @@ void applyAdvancedFeatures(GIAsentence* currentSentenceInList, bool GIAentityNod
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B4j; extractQuantities; eg He lost three dollars. /   He lost almost three dollars. / He lost three hundred dollars. _quantity(dollar, three) / _quantity_mod(three, almost) / _quantity_mult(hundred, three) " << endl;
 	#endif
-	extractQuantities(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs, NLPfeatureParser);
+	extractQuantities(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, NLPfeatureParser);
 
-	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXS
+	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXES
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "section B4k; defineActionNetworkIndexs2" << endl;
+	cout << "section B4k; defineActionConcepts2" << endl;
 	#endif
-	defineActionNetworkIndexs2(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	defineActionConcepts2(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 
 	#ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
@@ -399,7 +399,7 @@ void addTimeToSubstance(GIAentityNode* timeConditionEntity)
 }
 #endif
 
-void extractQuantities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, int NLPfeatureParser)
+void extractQuantities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPfeatureParser)
 {
 	/*
 	eg He lost three dollars. /   He lost almost three dollars. / He lost three hundred dollars.	_quantity(dollar, three) / _quantity_mod(three, almost) / _quantity_mult(hundred, three)
@@ -407,20 +407,20 @@ void extractQuantities(GIAsentence* currentSentenceInList, bool GIAentityNodeArr
 	#ifdef GIA_USE_RELEX
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
-		extractQuantitiesRelex(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs);
+		extractQuantitiesRelex(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes);
 	}
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
 	//NB GIA could support quantity extraction with Stanford Parser only (ie without Stanford CoreNLP as the NLPfeatureParser) but this has not been implemented
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
-		extractQuantitiesStanfordCoreNLP(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs);
+		extractQuantitiesStanfordCoreNLP(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes);
 	}
 	#endif
 }
 
 #ifdef GIA_USE_STANFORD_CORENLP
-void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs)
+void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 
@@ -489,7 +489,7 @@ void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool G
 					#ifdef GIA_DEBUG
 					//cout << "quantitySubstance->quantityNumber = " << quantitySubstance->quantityNumber << endl;
 					#endif
-					quantitySubstance->isConcept = false;	//added 2a11a [because defineConcepts() does not have access to quantity data]
+					quantitySubstance->entityType = GIA_ENTITY_TYPE_TYPE_SUBSTANCE;	//added 2a11a [because defineConcepts() does not have access to quantity data]
 
 					disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
 
@@ -532,7 +532,7 @@ void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool G
 									currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 
 									bool entityAlreadyExistant = false;
-									GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
+									GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 
 									bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 
@@ -607,7 +607,7 @@ void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool G
 #endif
 
 #ifdef GIA_USE_RELEX
-void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs)
+void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -641,7 +641,7 @@ void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNo
 
 				int quantityNumberInt = calculateQuantityNumberInt(quantitySubstance->quantityNumberString);
 				quantitySubstance->quantityNumber = quantityNumberInt;
-				quantitySubstance->isConcept = false;	//added 2a11a [because defineConcepts() does not have access to quantity data]
+				quantitySubstance->entityType = GIA_ENTITY_TYPE_TYPE_SUBSTANCE;	//added 2a11a [because defineConcepts() does not have access to quantity data]
 
 				if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 				{//update comparison variable (set it to the quantity)
@@ -682,7 +682,7 @@ void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNo
 								currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 
 								bool entityAlreadyExistant = false;
-								GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
+								GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 
 								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 								#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
@@ -808,7 +808,7 @@ void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNo
 						int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
 						currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 
-						GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
+						GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 
 						//now add measure_per condition node
 						sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
@@ -836,14 +836,14 @@ void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNo
 
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 
-void extractMeasures(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs)
+void extractMeasures(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 	/*
 	eg The boy is 4 feet away. / Take these 4 times a day. / The boy is 4 feet tall. / The birthday boy is 12 years old.	_measure_distance(away, foot) / _measure_per(times, day) / _measure_size(tall, feet) / _measure_time(old, years)
 	*/
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
-	param.entityNodesActiveListNetworkIndexs = entityNodesActiveListNetworkIndexs;
+	param.entityNodesActiveListNetworkIndexes = entityNodesActiveListNetworkIndexes;
 	param.numberOfRelations = 1;
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;	//coincidentially this condition holds for both cases
@@ -920,7 +920,7 @@ void extractMeasures(GIAsentence* currentSentenceInList, bool GIAentityNodeArray
 				int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
 				currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 
-				GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
+				GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 
 				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 
@@ -953,7 +953,7 @@ void extractMeasures(GIAsentence* currentSentenceInList, bool GIAentityNodeArray
 }
 
 
-void defineToBeAndToDoConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs)
+void defineToBeAndToDoConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
@@ -1077,7 +1077,7 @@ void defineToBeAndToDoConditions(GIAsentence* currentSentenceInList, bool GIAent
 						string conditionEntityNodeName = currentRelationInList->relationType;
 
 						bool entityAlreadyExistant = false;
-						GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexNewCondition, &conditionEntityNodeName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
+						GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexNewCondition, &conditionEntityNodeName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 
 						bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//eg The chicken ate the pie that likes to draw.
 
@@ -1097,7 +1097,7 @@ void defineToBeAndToDoConditions(GIAsentence* currentSentenceInList, bool GIAent
 #endif
 }
 
-void extractQualities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, int NLPdependencyRelationsType)
+void extractQualities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
 {
 	/*
 	eg The broken pencil fell apart. / Giants are red. [Joe is happy.] / Tom runs quickly.	_amod(pencil, broken) / _predadj(giants, red) / _advmod(run, quick)
@@ -1147,7 +1147,7 @@ void extractQualities(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 					GIAentityNode* thingEntity = GIAentityNodeArray[relationGovernorIndex];
 					GIAentityNode* substanceEntity = GIAentityNodeArray[relationDependentIndex];
 
-					substanceEntity->isSubstanceQuality = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
+					substanceEntity->entityType = GIA_ENTITY_TYPE_TYPE_QUALITY;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
 				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 				}
 				#endif
@@ -1303,10 +1303,10 @@ void defineTenseOnlyTimeConditions(GIAsentence* currentSentenceInList, bool GIAe
 #endif
 }
 
-#ifdef GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXS
+#ifdef GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXES
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
-void defineActionNetworkIndexs1(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void defineActionConcepts1(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 //#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
@@ -1316,8 +1316,10 @@ void defineActionNetworkIndexs1(GIAsentence* currentSentenceInList, bool GIAenti
 	param.useRelationTest[REL1][REL_ENT2] = true; param.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_CAN;
 	GIAentityCharacteristic entityCharacteristicsTest("isAction", "true");
 	param.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest);
-	GIAentityCharacteristic useRedistributeSpecialCaseAssignment("isActionNetworkIndex", "true");
-	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&useRedistributeSpecialCaseAssignment);
+	GIAentityCharacteristic useRedistributeSpecialCaseAssignment1("isConcept", "true");
+	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&useRedistributeSpecialCaseAssignment1);
+	GIAentityCharacteristic useRedistributeSpecialCaseAssignment2("isActionConcept", "true");
+	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&useRedistributeSpecialCaseAssignment2);
 	genericDependecyRelationInterpretation(&param, REL1);
 //#else
 	//not coded as this function was developed after GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
@@ -1325,7 +1327,7 @@ void defineActionNetworkIndexs1(GIAsentence* currentSentenceInList, bool GIAenti
 }
 #endif
 
-void defineActionNetworkIndexs2(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void defineActionConcepts2(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	/*
 	eg Writing is good exercise. / To eat a pie requires strength.
@@ -1341,7 +1343,7 @@ void defineActionNetworkIndexs2(GIAsentence* currentSentenceInList, bool GIAenti
 			//cout << "entity->grammaticalTenseTemp = " << entity->grammaticalTenseTemp << endl;
 			#endif
 
-			//if(entity->isAction)	//do not check for isAction; because action networkIndexs are assigned for nodes which have not been defined as actions by GIA; eg "eating is fun"
+			//if(entity->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)	//do not check for isAction; because action networkIndexes are assigned for nodes which have not been defined as actions by GIA; eg "eating is fun"
 			//Condition A.
 			if((entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && ((entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true) || (entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true)))
 			{
@@ -1366,7 +1368,8 @@ void defineActionNetworkIndexs2(GIAsentence* currentSentenceInList, bool GIAenti
 						if(foundActionNetworkIndex)
 						{
 							//GIAentityNodeArray[i] = addInstanceToInstanceDefinition(entity, GIA_ENTITY_TYPE_TYPE_ACTION);	//is this required?
-							GIAentityNodeArray[i]->isActionNetworkIndex = true;
+							GIAentityNodeArray[i]->entityType = GIA_ENTITY_TYPE_TYPE_CONCEPT;
+							GIAentityNodeArray[i]->isActionConcept = true;
 						}
 					}
 				}
@@ -1393,14 +1396,14 @@ void updateConceptDesignationBasedPropertyOwnerContext(GIAsentence* currentSente
 		if(GIAentityNodeArrayFilled[i])
 		{
 			GIAentityNode* entity = GIAentityNodeArray[i];
-			if(entity->isConcept)
+			if(entity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
 			{
 				if(!(entity->propertyNodeReverseList->empty()))
 				{
 					GIAentityNode* propertyOwner = (entity->propertyNodeReverseList->back())->entity;
-					if(!(propertyOwner->isConcept))
+					if(!(propertyOwner->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))
 					{
-						entity->isConcept = false;
+						entity->entityType = GIA_ENTITY_TYPE_TYPE_SUBSTANCE;
 					}
 				}
 			}

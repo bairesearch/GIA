@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -48,7 +48,7 @@ void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 	#endif
 	defineSubstancesExpletives(currentSentenceInList, GIAentityNodeArray);
 
-	#ifdef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS
+	#ifdef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B0; defineSubstancesAllNodes" << endl;
 	#endif
@@ -87,7 +87,7 @@ void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 	defineSubstancesTagIsToBeComplimentOfAction(currentSentenceInList, GIAentityNodeArray);	//NB this function contains code for defineSubstancesTagIsToBeComplimentOfAction{}
 
 
-#ifndef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS
+#ifndef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B0; define substances (objects/subjects with substances; eg 'Truffles which are picked are tasty.' - Truffle must be an instance/substance in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
@@ -154,11 +154,11 @@ void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 	defineSubstancesActions(currentSentenceInList, GIAentityNodeArray);
 	#endif
 
-	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXS
+	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXES
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "section B0; define substances action networkIndexs, eg 'swim' in 'To swim to the beach requires strength.'" << endl;
+	cout << "section B0; define substances action networkIndexes, eg 'swim' in 'To swim to the beach requires strength.'" << endl;
 	#endif
-	defineSubstancesActionNetworkIndexs(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
+	defineSubstancesActionNetworkIndexes(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
 	#endif
 
 #endif
@@ -594,7 +594,8 @@ void defineConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 	GIAentityCharacteristic entityCharacteristicsTestA8("mustNotSetIsConceptBasedOnPrenomonalModifierRelation", "false");
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA8);
 	#endif
-	paramA.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_upgradeSubstanceToConcept;
+	GIAentityCharacteristic entityCharacteristicsSetA("isConcept", "true");
+	paramA.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetA);
 	genericEntityInterpretation(&paramA);
 
 	GIAgenericEntityInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
@@ -610,7 +611,8 @@ void defineConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 	#endif
 	GIAentityCharacteristic entityCharacteristicsTestB4("mustSetIsConceptBasedOnApposRelation", "true");
 	paramB.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestB4);
-	paramB.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_upgradeSubstanceToConcept;
+	GIAentityCharacteristic entityCharacteristicsSetB("isConcept", "true");
+	paramB.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetB);
 	genericEntityInterpretation(&paramB);
 
 	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS
@@ -623,7 +625,8 @@ void defineConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 	#endif
 	GIAentityCharacteristic entityCharacteristicsTestC3("grammaticalPronounTemp", "true");
 	paramC.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestC3);
-	paramC.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_upgradeSubstanceToConcept;
+	GIAentityCharacteristic entityCharacteristicsSetC("isConcept", "true");
+	paramC.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetC);
 	genericEntityInterpretation(&paramC);
 	#endif
 
@@ -637,7 +640,8 @@ void defineConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 	#endif
 	GIAentityCharacteristic entityCharacteristicsTestD3("grammaticalProperNounTemp", "true");
 	paramD.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestD3);
-	paramD.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_upgradeSubstanceToConcept;
+	GIAentityCharacteristic entityCharacteristicsSetD("isConcept", "true");
+	paramD.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetD);
 	genericEntityInterpretation(&paramD);
 	#endif
 #else
@@ -810,7 +814,7 @@ void defineSubstancesTagIsToBeComplimentOfAction(GIAsentence* currentSentenceInL
 }
 
 
-#ifndef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS
+#ifndef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES
 
 
 void defineSubstancesObjectsAndSubjectsWithSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAentityNode* GIAfeatureTempEntityNodeArray[])
@@ -1485,8 +1489,8 @@ void defineSubstancesAllNodes(GIAsentence* currentSentenceInList, bool GIAentity
 	#endif
 }
 
-#ifdef GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXS
-void defineSubstancesActionNetworkIndexs(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
+#ifdef GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXES
+void defineSubstancesActionNetworkIndexes(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
 {
 	/*
 	eg 'swim' in 'To swim to the beach requires strength.'
@@ -1512,7 +1516,7 @@ void defineSubstancesActionNetworkIndexs(GIAsentence* currentSentenceInList, boo
 				{
 					GIAentityNode* currentGIAEntityNode = GIAentityNodeArray[w];
 					#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
-					cout << "defineSubstancesActionNetworkIndexs: " << currentGIAEntityNode->entityName << endl;
+					cout << "defineSubstancesActionNetworkIndexes: " << currentGIAEntityNode->entityName << endl;
 					#endif
 					GIAentityNodeArray[w] = addInstanceToInstanceDefinition(currentGIAEntityNode, GIA_ENTITY_TYPE_TYPE_SUBSTANCE);
 				}

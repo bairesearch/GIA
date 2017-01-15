@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -261,7 +261,7 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 			cout << "\nentityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp << endl;
 			cout << "entityNode->entityName = " << entityNode->entityName << endl;
 			cout << "entityNode->wasReference = " << entityNode->wasReference << endl;
-			if(entityNode->isNetworkIndex)
+			if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX)
 			{
 				cout << "entityNode = " << entityNode->entityName << " (is networkIndex)" << endl;
 			}
@@ -273,15 +273,15 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 			#endif
 
 			#ifdef GIA_DRAW_DEBUG
-			if(entityNode->isSubstance)
+			if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
 			{
 				cout << "entityNode = " << entityNode->entityName << " (is substance)" << endl;
 			}
-			else if(entityNode->isAction)
+			else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 			{
 				cout << "entityNode = " << entityNode->entityName << " (is action)" << endl;
 			}
-			else if(entityNode->isCondition)
+			else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
 			{
 				cout << "entityNode = " << entityNode->entityName << " (is condition)" << endl;
 			}
@@ -328,15 +328,15 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 
 
 			int entityDefinitionConnectionColour;
-			if(entityNode->isSubstance)
+			if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
 			{
 				entityDefinitionConnectionColour = GIA_DRAW_SUBSTANCE_DEFINITION_CONNECTION_COLOUR;
 			}
-			else if(entityNode->isAction)
+			else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 			{
 				entityDefinitionConnectionColour = GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR;
 			}
-			else if(entityNode->isCondition)
+			else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
 			{
 				entityDefinitionConnectionColour = GIA_DRAW_CONDITION_DEFINITION_CONNECTION_COLOUR;
 			}
@@ -470,9 +470,9 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 				else if(entityNode->hasAssociatedInstanceIsAction)
 				{
 					#ifdef GIA_DRAW_DEBUG
-					//if(entityNode->isAction)
+					//if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 					//{
-					//	cout << "(entityNode->hasAssociatedInstanceIsAction) && (entityNode->isAction)" << endl;
+					//	cout << "(entityNode->hasAssociatedInstanceIsAction) && (entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)" << endl;
 					//}
 					#endif
 					if(entityNode->hasMeasure)
@@ -489,22 +489,22 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 					entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
 				}
 				*/
-				else if(entityNode->isActionNetworkIndex)
+				else if(entityNode->isActionConcept)
 				{
 					entityColour = GIA_DRAW_ACTION_NETWORK_INDEX_NODE_COLOUR;
 				}
-				else if(entityNode->isSubstance)
+				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
 				{
 					if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
 					{
 						boxThickness = GIA_DRAW_THICKNESS_THICK;
 					}
 
-					if(entityNode->isConcept)
+					if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
 					{
 						entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
 					}
-					else if(entityNode->isSubstanceQuality)
+					else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
 					{
 						entityColour = GIA_DRAW_SUBSTANCE_QUALITY_NODE_COLOUR;
 					}
@@ -523,7 +523,7 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 					}
 
 				}
-				else if(entityNode->isAction)
+				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 				{
 					entityColour = GIA_DRAW_ACTION_NODE_COLOUR;
 				}
@@ -533,13 +533,13 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 					entityColour = GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR;	//clear identify a time node
 				}
 				*/
-				else if(entityNode->isCondition)
+				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
 				{
 					entityColour = GIA_DRAW_CONDITION_NODE_COLOUR;	//clear identify a time node
 				}
 				else if(entityNode->hasAssociatedInstance)
 				{//the original spec seemed to imply that entities that have associated substances (ie, that define substances) are special but they don't appear to be
-					if(!(entityNode->isSubstance))
+					if(!(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE))
 					{
 						//added 2 May 11a (highlight entities which define substance nodes)
 						entityColour = GIA_DRAW_SUBSTANCE_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_NETWORK_INDEX_NODE_COLOUR;
@@ -604,15 +604,15 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 
 
 			#ifdef GIA_DRAW_DEBUG
-			if(entityNode->isSubstance)
+			if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
 			{
 				cout << "Exiting: entityNode = " << entityNode->entityName << " (is substance)" << endl;
 			}
-			else if(entityNode->isAction)
+			else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 			{
 				cout << "Exiting: entityNode = " << entityNode->entityName << " (is action)" << endl;
 			}
-			else if(entityNode->isCondition)
+			else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
 			{
 				cout << "Exiting: entityNode = " << entityNode->entityName << " (is condition)" << endl;
 			}

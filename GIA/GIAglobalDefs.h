@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -829,7 +829,7 @@
 	#define GIA_XML_RECORD_ADDITIONAL_VARIABLES
 #endif
 
-#define GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS		//GIA 2a7a		//this is recommended for NLC and required for USE_GIA2	//warning: GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS needs to be tested independently without USE_GIA2
+#define GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES		//GIA 2a7a		//this is recommended for NLC and required for USE_GIA2	//warning: GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES needs to be tested independently without USE_GIA2
 #ifndef GIA_DISABLE_2i_CODE_FOR_DEBUG
 	//#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES	//defined out of scope
 		#define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_PLURAL_DEPENDENT	//added 2i7e
@@ -838,7 +838,7 @@
 	#define GIA_PREVENT_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_CONCEPTS	//2i20a
 	#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 		#ifdef USE_NLC
-			#define GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING_ONLY	//2i19c	//NB this requires !GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS	//designed for GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS
+			#define GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING_ONLY	//2i19c	//NB this requires !GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS	//designed for GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES
 			#ifdef GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING_ONLY
 				#define GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING	//2i19e
 			#endif
@@ -852,9 +852,9 @@
 	#define GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES	//2i18a
 	#define GIA_TRANSLATOR_CONVERT_AMOD_WITH_NUMBERS_TO_QUANTITY_RELATION	//2i12a
 	#define GIA_TRANSLATOR_DO_NOT_CREATE_CONCEPT_PROPERTIES_FOR_NON_CONCEPT_PARENTS	//2i10a
-	#ifdef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS
+	#ifdef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES
 		#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS
-			#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS	//disabled 2m1a	//2i9a	//requires GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS (this is required such that only the instance list of a networkIndex need be parsed when tracing both its definitions and properties/conditions)
+			#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS	//disabled 2m1a	//2i9a	//requires GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES (this is required such that only the instance list of a networkIndex need be parsed when tracing both its definitions and properties/conditions)
 		#endif
 		#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS
 			#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_SWITCH_DEFINITION_LINKS_IF_NON_MATCHING_CONCEPTS	//2i10b - designed to enable compatibility with NLC
@@ -924,7 +924,7 @@
 
 //#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC	//disabled GIA 2c1a
 #ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-	#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR	//assumes GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS is true (why is this required?)
+	#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR	//assumes GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES is true (why is this required?)
 	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 		#define GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY	//this is required for !GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA
 	#endif
@@ -1012,7 +1012,7 @@
 #define GIA_TRANSLATOR_XML_INTERPRETATION
 //#define GIA_TEMPORARY_COMPILATION_GCC_FLAG_E_PREPROCESS_TRANSLATOR_XML_FILES	//for use with compileGIAstopAfterPreprocessingXML.bat only: g++ -E GIAmain.cpp GIAparser.cpp GIAtranslator.cpp GIAtranslatorDefineGrammar.cpp GIAtranslatorDefineReferencing.cpp GIAtranslatorRedistributeRelationsStanford.xml GIAtranslatorRedistributeRelationsRelex.xml GIAtranslatorDefineSubstances.xml GIAtranslatorLinkEntities.xml GIAtranslatorApplyAdvancedFeatures.xml GIAtranslatorOperations.cpp GIAentityNodeClass.cpp GIAentityConnectionClass.cpp GIAconditionNodeClass.cpp GIAsentenceClass.cpp GIAdraw.cpp GIAxmlConversion.cpp GIAcxlConversion.cpp GIAquery.cpp GIAdatabase.cpp GIAnlp.cpp GIAwordnet.cpp GIAnlg.cpp GIAlrp.cpp GIAbot.cpp XMLparserClass.cpp XMLrulesClass.cpp LDsvg.cpp LDopengl.cpp LDparser.cpp LDsprite.cpp LDreferenceManipulation.cpp LDreferenceClass.cpp RToperations.cpp  RTparser.cpp  RTpixelMaps.cpp  RTppm.cpp  RTraytracer.cpp  RTreferenceManipulation.cpp  RTscene.cpp  RTviewinfo.cpp SHAREDglobalDefs.cpp SHAREDvector.cpp SHAREDvars.cpp
 //#define GIA_DO_NOT_USE_UNTESTED_BUGFIX_REGARDING_grammaticalDefiniteIndexOfDeterminerTemp	//1t6b
-#define GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXS
+#define GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXES
 #define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
 #define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
 #define GIA_USE_GENERIC_ENTITY_INTERPRETATION						//1t6b
@@ -1051,12 +1051,12 @@
 
 //variables currently being tested (1q1a+)
 
-#define GIA_SUPPORT_SPECIFIC_CONCEPTS	//added 1q4a to take into account specific networkIndexs eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
+#define GIA_SUPPORT_SPECIFIC_CONCEPTS	//added 1q4a to take into account specific networkIndexes eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
 #ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 	//#define GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS	//added 1q10a [activated 1q10c] //removed 1t2d
 	//#define GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS	//added 1q10a [activated 1q10c]	//removed 1s8c	//check this does not undo advanced referencing/quering...
 #endif
-	//NB the phrase 'concept'/'substance quality' is a misnomer, as networkIndexs and qualities are not really substances [NB networkIndexs are considered secondary substances in Aristotle's categories, but GIA has a separate Entity class for networkIndexs marked by isNetworkIndex: which is confusingly not being used in this case of 'specific networkIndexs' - a software development/history artefact]" << endl;
+	//NB the phrase 'concept'/'substance quality' is a misnomer, as networkIndexes and qualities are not really substances [NB networkIndexes are considered secondary substances in Aristotle's categories, but GIA has a separate Entity class for networkIndexes marked by isNetworkIndex: which is confusingly not being used in this case of 'specific networkIndexes' - a software development/history artefact]" << endl;
 
 #ifndef GIA_STORE_CONNECTION_SENTENCE_INDEX
 	#define GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
@@ -1253,7 +1253,7 @@
 #define GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS		//this was (effectively) disabled before version 1h3b 	//NB used to be called 'GIA_DO_NOT_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS'
 #define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 //#define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE2
-/*#define GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_SUBSTANCES_TAKE_NETWORK_INDEXS_ONLY	//untested (removed 1l1c)*/	//commented out completely
+/*#define GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_SUBSTANCES_TAKE_NETWORK_INDEXES_ONLY	//untested (removed 1l1c)*/	//commented out completely
 #define GIA_ID_INSTANCE_ALLOW_INSTANCE_DELETIONS
 #define GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILIARY_AND_SET_DIFFERENT_REFERENCE_SET
 
@@ -1421,7 +1421,7 @@
 
 //~GIAdraw
 //#define GIA_DRAW_USE_PATENT			//modifies colours of nodes such that they print uniquely in black and white
-//#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. networkIndex-list -> networkIndexs or substances
+//#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. networkIndex-list -> networkIndexes or substances
 #define GIA_DRAW_DISPLAY_ANSWER_CONTEXTS
 #define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 #ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX

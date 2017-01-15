@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -49,7 +49,7 @@
 
 //Pass A
 void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], int NLPdependencyRelationsType);
-void locateAndAddAllNetworkIndexEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, int NLPdependencyRelationsType, GIAentityNode* GIAfeatureTempEntityNodeArray[]);
+void locateAndAddAllNetworkIndexEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, int NLPdependencyRelationsType, GIAentityNode* GIAfeatureTempEntityNodeArray[]);
 
 #ifdef GIA_USE_RELEX
 void fillGrammaticalArraysRelex(GIAsentence* currentSentenceInList);

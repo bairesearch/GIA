@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -42,7 +42,7 @@
 
 
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
-void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, int NLPdependencyRelationsType, bool linkPreestablishedReferencesGIA)
+void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType, bool linkPreestablishedReferencesGIA)
 {
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B2a; link properties (possessive relationships); eg Joe's bike is blue. _poss(bike[3], Joe[1]) / Hamish smoked at the toy shop. _nn(shop[6], toy[5])" << endl;
@@ -82,7 +82,7 @@ void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFil
 	cout << "eg2; Space is saved through/by being a chicken. prep_through/by(saved-3, be-5) + dobj(be-5, chicken-7) 	[Relex Only - note Relex currently fails to parse 'through having' but can parse 'by having']" << endl;
 	cout << "eg3; Space is saved through/by being a chicken. prepc_through/by(saved-3, chicken-7) + cop(chicken-7, being-5) 	[Stanford Only]" << endl;
 	#endif
-	linkHavingPropertyConditionsAndBeingDefinitionConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs, NLPdependencyRelationsType);
+	linkHavingPropertyConditionsAndBeingDefinitionConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, NLPdependencyRelationsType);
 	#endif
 	#endif
 
@@ -99,12 +99,12 @@ void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFil
 	cout << "OLD: eg3; The house has a table. _subj(have[3], house[2]) + _obj(have[3], table[5])" << endl;
 	cout << "eg4; Tom rides the bike. _subj(ride[2], Tom[1]) + _obj(ride[2], bike[4])" << endl;
 	#endif
-	linkSubjectObjectRelationships(currentSentenceInList, GIAentityNodeArray, entityNodesActiveListNetworkIndexs, NLPdependencyRelationsType);
+	linkSubjectObjectRelationships(currentSentenceInList, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
  	cout <<"section B2g; link independent subject/object action relationships; eg Tom runs quickly. _subj(run[2], Tom[1]) / The bike was ridden. _obj(ride[4], bike[2])" << endl;
 	#endif
-	linkSubjectOrObjectRelationships(currentSentenceInList, GIAentityNodeArray, entityNodesActiveListNetworkIndexs, NLPdependencyRelationsType);
+	linkSubjectOrObjectRelationships(currentSentenceInList, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
@@ -114,7 +114,7 @@ void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFil
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "section B2hOLD; link Having Substance Conditions And Being Definition Conditions" << endl;
 		#endif
-		linkHavingPropertyConditionsAndBeingDefinitionConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs, NLPdependencyRelationsType);
+		linkHavingPropertyConditionsAndBeingDefinitionConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, NLPdependencyRelationsType);
 		#endif
 	}
 	#endif
@@ -123,13 +123,13 @@ void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFil
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B2h; link object/subject of preposition; eg The garage is next to the house. _pobj(next_to, house)  + _psubj(next_to, garage) [appears to be Relex only]" << endl;
 	#endif
-	linkObjectSubjectOfPreposition(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs, NLPdependencyRelationsType);
+	linkObjectSubjectOfPreposition(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B2i; linkConjunctionConditions (and/or); eg Tom and/or Max eat the cake. conj_and(Tom[1], Max[3]) / conj_or(Tom[2], Max[4])" << endl;
 	#endif
-	linkConjunctionConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs);
+	linkConjunctionConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes);
 	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -140,7 +140,7 @@ void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFil
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B2k; linkConditions; eg Joe is sad at the park. at(sad[3], park[6])" << endl;
 	#endif
-	linkConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs, NLPdependencyRelationsType);
+	linkConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_TYPE2
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
@@ -149,7 +149,7 @@ void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFil
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "section B2k; linkDependentActionsType2; eg To copy the files[, ]create a backup of the old file.	dep(create-6, copy-2)" << endl;
 		#endif
-		linkDependentActionsType2(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs);
+		linkDependentActionsType2(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes);
 	}
 	#endif
 }
@@ -572,7 +572,7 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 						//cout << "definitionEntity->isConcept = " << definitionEntity->isSubstance << endl;
 						#endif
 						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-						if(!(thingEntity->isConcept) && (!(definitionEntity->isConcept))) 	//only required with GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS: || (definitionEntity->isName)))
+						if(!(thingEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT) && (!(definitionEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))) 	//only required with GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS: || (definitionEntity->isName)))
 						{
 						#endif
 							#ifdef GIA_TRANSLATOR_DEBUG
@@ -773,7 +773,7 @@ void linkDependentActionsType1(GIAsentence* currentSentenceInList, GIAentityNode
 }
 
 #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-void linkHavingPropertyConditionsAndBeingDefinitionConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, int NLPdependencyRelationsType)
+void linkHavingPropertyConditionsAndBeingDefinitionConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	/*
@@ -787,7 +787,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(GIAsentence* curre
 	*/
 
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
-	param.entityNodesActiveListNetworkIndexs = entityNodesActiveListNetworkIndexs;
+	param.entityNodesActiveListNetworkIndexes = entityNodesActiveListNetworkIndexes;
 	param.NLPdependencyRelationsType = NLPdependencyRelationsType;
 	param.numberOfRelations = 2;
 	param.disableRelationDuringLink[REL1] = true;	//required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions()
@@ -896,7 +896,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(GIAsentence* curre
 										int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
 										currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 
-										GIAentityNode* conditionNetworkIndexEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
+										GIAentityNode* conditionNetworkIndexEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 
 										GIAentityNode* haveEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 										#ifdef GIA_DEBUG
@@ -945,7 +945,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(GIAsentence* curre
 										int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
 										currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 
-										GIAentityNode* conditionNetworkIndexEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
+										GIAentityNode* conditionNetworkIndexEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 
 										GIAentityNode* beEntity = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
 										bool negative = beEntity->negative;
@@ -1071,7 +1071,7 @@ void linkIndirectObjects(GIAsentence* currentSentenceInList, GIAentityNode* GIAe
 #endif
 }
 
-void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, int NLPdependencyRelationsType)
+void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 
@@ -1411,7 +1411,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 														GIAentityNode* actionOrSubstanceConditionSubjectEntity = GIAentityNodeArray[currentRelationInList3->relationGovernorIndex];
 														GIAentityNode* conditionNetworkIndexEntity = subjectEntityTemp;
 
-														conditionNetworkIndexEntity->isSubstanceQuality = false;	//added 5 July 2013	//eg Apples are used for making juice.	- to prevent for from being left marked as a quality based on the original _advmod relation
+														conditionNetworkIndexEntity->entityType = GIA_ENTITY_TYPE_TYPE_SUBSTANCE;	//remove isSubstanceQuality	//added 5 July 2013	//eg Apples are used for making juice.	- to prevent for from being left marked as a quality based on the original _advmod relation
 
 														subjectIsConnectedToAnAdvMod = true;
 
@@ -1482,7 +1482,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 														//create arbitrarySubjectSpecialNetworkIndexEntityNode
 														string arbitrarySubjectSpecialNetworkIndexEntityNodeName = ARBITRARY_SUBJECT_SPECIAL_NETWORK_INDEX_NODE_NAME;
 														bool entityAlreadyExistant = false;
-														GIAentityNode* arbitrarySubjectSpecialNetworkIndexEntityNode = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&arbitrarySubjectSpecialNetworkIndexEntityNodeName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
+														GIAentityNode* arbitrarySubjectSpecialNetworkIndexEntityNode = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&arbitrarySubjectSpecialNetworkIndexEntityNodeName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 														subjectEntityTemp = arbitrarySubjectSpecialNetworkIndexEntityNode;		//overwrites subjectEntityTemp
 														#endif
 
@@ -1697,10 +1697,10 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 												int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
 												currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 
-												GIAentityNode* conditionNetworkIndexEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
+												GIAentityNode* conditionNetworkIndexEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 												GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(subjectEntityOrSubstance, specialConditionNode, conditionNetworkIndexEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 												#else
-												GIAentityNode* conditionNetworkIndexEntity = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
+												GIAentityNode* conditionNetworkIndexEntity = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 												addOrConnectConditionToEntity(subjectEntityOrSubstance, specialConditionNode, conditionNetworkIndexEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 												#endif
 											#endif
@@ -1958,7 +1958,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 #endif
 }
 
-void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, int NLPdependencyRelationsType)
+void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
 {
 	/*
 	Tom runs quickly. 	_subj(run[2], Tom[1])
@@ -2225,14 +2225,14 @@ void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAent
 }
 
 //is this still used by Stanford? [appears to be Relex only]
-void linkObjectSubjectOfPreposition(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, int NLPdependencyRelationsType)
+void linkObjectSubjectOfPreposition(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	/*
 	The garage is next to the house.	_pobj(next_to, house)  + _psubj(next_to, garage)
 	*/
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
-	param.entityNodesActiveListNetworkIndexs = entityNodesActiveListNetworkIndexs;
+	param.entityNodesActiveListNetworkIndexes = entityNodesActiveListNetworkIndexes;
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION;
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION;
@@ -2287,7 +2287,7 @@ void linkObjectSubjectOfPreposition(GIAsentence* currentSentenceInList, bool GIA
 								#endif
 
 								//OLD: should really take into account the boolean and of both values: bool relationNegative = GIAentityNodeArray[currentRelationInList->relationGovernorIndex]->negative & GIAentityNodeArray[currentRelationInList2->relationGovernorIndex]->negative;
-								//OLD: createConditionBasedUponPreposition{entityNode, conditionObjectEntity, conditionNetworkIndexEntity->entityName, false, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs, NLPdependencyRelationsType, sameReferenceSet};
+								//OLD: createConditionBasedUponPreposition{entityNode, conditionObjectEntity, conditionNetworkIndexEntity->entityName, false, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, NLPdependencyRelationsType, sameReferenceSet};
 
 								#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS
 								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//CHECK THIS... linkObjectSubjectOfPreposition use DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS?
@@ -2341,14 +2341,14 @@ void linkObjectSubjectOfPreposition(GIAsentence* currentSentenceInList, bool GIA
 #endif
 }
 
-void linkConjunctionConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs)
+void linkConjunctionConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	/*
 	Tom and/or Max eat the cake.	conj_and(Tom[1], Max[3]) / conj_or(Tom[2], Max[4])
 	*/
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
-	param.entityNodesActiveListNetworkIndexs = entityNodesActiveListNetworkIndexs;
+	param.entityNodesActiveListNetworkIndexes = entityNodesActiveListNetworkIndexes;
 	param.numberOfRelations = 1;
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
@@ -2415,7 +2415,7 @@ void linkConjunctionConditions(GIAsentence* currentSentenceInList, bool GIAentit
 				bool entityAlreadyExistant = false;
 				int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
 				currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
-				GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
+				GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 
 				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "actionOrSubstanceConditionSubjectEntity->entityName = " << actionOrSubstanceConditionSubjectEntity->entityName << endl;
@@ -2443,7 +2443,7 @@ void linkConjunctionConditions(GIAsentence* currentSentenceInList, bool GIAentit
 #endif
 }
 
-void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, int NLPdependencyRelationsType)
+void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 
@@ -2500,7 +2500,7 @@ void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 	Joe is sad at the park. at(sad[3], park[6])
 	*/
 	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
-	paramC.entityNodesActiveListNetworkIndexs = entityNodesActiveListNetworkIndexs;	//required for preposition entity node creation (findOrAddEntityNodeByNameSimpleWrapperCondition)
+	paramC.entityNodesActiveListNetworkIndexes = entityNodesActiveListNetworkIndexes;	//required for preposition entity node creation (findOrAddEntityNodeByNameSimpleWrapperCondition)
 	paramC.numberOfRelations = 1;
 	paramC.NLPdependencyRelationsType = NLPdependencyRelationsType;	//this is required for expectToFindPrepositionTest
 	paramC.expectToFindPrepositionTest[REL1] = true;
@@ -2612,7 +2612,7 @@ void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 				bool foundAction = false;
 
 				//this section was completely changed (perhaps fixed) in version 10 May 2012 - test this...
-				if((actionOrSubstanceConditionSubjectEntity->isAction) || (actionOrSubstanceConditionSubjectEntity->isToBeComplimentOfActionTemp))
+				if((actionOrSubstanceConditionSubjectEntity->entityType == GIA_ENTITY_TYPE_TYPE_ACTION) || (actionOrSubstanceConditionSubjectEntity->isToBeComplimentOfActionTemp))
 				{
 					/*Relex:
 					NB not in this case "She grew tired of the pie."
@@ -2664,7 +2664,7 @@ void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 				#else
 				bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 				#endif
-				createConditionBasedUponPreposition(actionOrSubstanceConditionSubjectEntity, actionOrSubstanceConditionObjectEntity, relationType, false, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs, NLPdependencyRelationsType, sameReferenceSet);
+				createConditionBasedUponPreposition(actionOrSubstanceConditionSubjectEntity, actionOrSubstanceConditionObjectEntity, relationType, false, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, NLPdependencyRelationsType, sameReferenceSet);
 			}
 		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
@@ -2676,7 +2676,7 @@ void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 }
 
 #ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
-void createConditionBasedUponPreposition(GIAentityNode* actionOrSubstanceConditionSubjectEntity, GIAentityNode* actionOrSubstanceConditionObjectEntity, GIArelation* currentRelationInList, bool negative, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, int NLPdependencyRelationsType, bool sameReferenceSet)
+void createConditionBasedUponPreposition(GIAentityNode* actionOrSubstanceConditionSubjectEntity, GIAentityNode* actionOrSubstanceConditionObjectEntity, GIArelation* currentRelationInList, bool negative, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType, bool sameReferenceSet)
 {
 	string relationType = currentRelationInList->relationType;
 
@@ -2799,7 +2799,7 @@ void createConditionBasedUponPreposition(GIAentityNode* actionOrSubstanceConditi
 
 		bool entityAlreadyExistant = false;
 		string conditionName = prepositionName;
-		conditionNetworkIndexEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfPreposition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
+		conditionNetworkIndexEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfPreposition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "prepositionFeatureFound = " << prepositionFeatureFound << endl;
@@ -2974,7 +2974,7 @@ string performPrepositionReduction(string relationType)
 
 
 //Stanford Only
-void linkDependentActionsType2(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs)
+void linkDependentActionsType2(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 	/*
 	eg To copy the files[, ]create a backup of the old file.
@@ -3032,7 +3032,7 @@ void linkDependentActionsType2(GIAsentence* currentSentenceInList, bool GIAentit
 				bool entityAlreadyExistant = false;
 				int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
 				currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
-				GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
+				GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 
 				#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 				GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(actionOrSubstanceConditionSubjectEntity, actionOrSubstanceConditionObjectEntity, conditionEntity, sameReferenceSet);

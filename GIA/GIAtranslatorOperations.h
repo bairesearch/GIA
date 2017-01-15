@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -74,12 +74,6 @@ GIAentityNode* addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAentityNod
 
 GIAentityNode* addInstanceToInstanceDefinition(GIAentityNode* entity, int instanceType);
 	GIAentityNode* addInstance(GIAentityNode* entity, int instanceType);
-	void upgradeSubstanceToAction(GIAentityNode* substance);
-	void upgradeSubstanceToConcept(GIAentityNode* substance);
-	void upgradeSubstanceToCondition(GIAentityNode* substance);
-	void downgradeConceptToSubstance(GIAentityNode* concept);
-		void eraseSubstanceFromSubstanceList(GIAentityNode* existingEntity);
-		void eraseConceptFromConceptList(GIAentityNode* existingEntity);
 
 void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstance);
 
@@ -177,9 +171,9 @@ GIAentityNode* getEntitySubstanceThatWasDeclaredInContext(GIAentityNode* entityN
 bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, GIArelation* relation);
 #endif
 
-GIAentityNode* findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int featureIndex, string* entityNodeName, bool* entityAlreadyExistant, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs);
-	GIAentityNode* findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(string* entityNodeName, bool* entityAlreadyExistant, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs);
-		GIAentityNode* findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(string* entityNodeName, bool* entityAlreadyExistant, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, bool tempEntityEnabled);
+GIAentityNode* findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int featureIndex, string* entityNodeName, bool* entityAlreadyExistant, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes);
+	GIAentityNode* findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(string* entityNodeName, bool* entityAlreadyExistant, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes);
+		GIAentityNode* findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(string* entityNodeName, bool* entityAlreadyExistant, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, bool tempEntityEnabled);
 
 GIAentityConnection* writeVectorConnection(GIAentityNode* entityNode, GIAentityNode* entityNodeToAdd, int connectionType, bool sameReferenceSet);
 	GIAentityConnection* findEntityNodePointerInVector(GIAentityNode* entityNode, GIAentityNode* entityNodeToFind, int connectionType, bool* foundNode);
@@ -211,7 +205,7 @@ bool checkIfSentenceIsMathTextParsablePhrase(GIAsentence* currentSentenceInList)
 #endif
 
 #ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
-#ifdef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS
+#ifdef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES
 GIAentityNode* createNewNonspecificConcept(GIAentityNode* networkIndexEntity);
 GIAentityNode* getNonspecificConceptEntityFromNetworkIndex(GIAentityNode* networkIndexEntity);
 GIAentityNode* getNonspecificConceptEntityFromInstance(GIAentityNode* instanceEntity);

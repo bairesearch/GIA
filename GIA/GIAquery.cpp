@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -148,7 +148,7 @@ GIAreferenceTraceParameters::~GIAreferenceTraceParameters(void)
 
 
 #ifdef GIA_QUERY_SIMPLIFIED_SEARCH
-GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork2(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexsQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool* foundAnswer, GIAentityNode* queryAnswerNode, double* numberOfMatchedNodes, string* queryAnswerContext)
+GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork2(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool* foundAnswer, GIAentityNode* queryAnswerNode, double* numberOfMatchedNodes, string* queryAnswerContext)
 {
 	bool traceModeIsQuery = TRACE_MODE_IS_QUERY_TRUE;
 
@@ -157,7 +157,7 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 	bool foundBestAnswerCandidate = false;
 	int maxNumberMatchedNodes = 0;
 
-	for(unordered_map<string, GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListNetworkIndexsQuery->begin(); entityIterQuery != entityNodesActiveListNetworkIndexsQuery->end(); entityIterQuery++)
+	for(unordered_map<string, GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListNetworkIndexesQuery->begin(); entityIterQuery != entityNodesActiveListNetworkIndexesQuery->end(); entityIterQuery++)
 	{//for each node in query semantic net;
 
 		GIAentityNode* currentQueryEntityNode = entityIterQuery->second;
@@ -172,7 +172,7 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 				long queryEntityNodeIndex = INT_DEFAULT_VALUE;
 				string queryEntityNodeName = currentQueryEntityNode->entityName;
 
-				GIAentityNode* networkIndexEntityMatchingCurrentQueryEntity = findOrAddNetworkIndexEntityNodeByName(NULL, entityNodesActiveListNetworkIndexs, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
+				GIAentityNode* networkIndexEntityMatchingCurrentQueryEntity = findOrAddNetworkIndexEntityNodeByName(NULL, entityNodesActiveListNetworkIndexes, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
 
 				if(foundQueryEntityNodeName)
 				{
@@ -671,7 +671,7 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode* queryEntityNode, 
 #endif
 
 
-GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexsQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool* foundAnswer, GIAentityNode* queryAnswerNode, double* numberOfMatchedNodes, string* queryAnswerContext)
+GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool* foundAnswer, GIAentityNode* queryAnswerNode, double* numberOfMatchedNodes, string* queryAnswerContext)
 {
 	bool traceModeIsQuery = TRACE_MODE_IS_QUERY_TRUE;
 
@@ -693,7 +693,7 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 
 	bool foundAtLeastOneMatch = false;
 
-	for(unordered_map<string, GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListNetworkIndexsQuery->begin(); entityIterQuery != entityNodesActiveListNetworkIndexsQuery->end(); entityIterQuery++)
+	for(unordered_map<string, GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListNetworkIndexesQuery->begin(); entityIterQuery != entityNodesActiveListNetworkIndexesQuery->end(); entityIterQuery++)
 	{//for each node in query semantic net;
 
 		#ifdef GIA_QUERY_DEBUG
@@ -715,7 +715,7 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 				long queryEntityNodeIndex = INT_DEFAULT_VALUE;
 				string queryEntityNodeName = currentQueryEntityNode->entityName;
 
-				GIAentityNode* networkIndexEntityMatchingCurrentQueryEntity = findOrAddNetworkIndexEntityNodeByName(NULL, entityNodesActiveListNetworkIndexs, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
+				GIAentityNode* networkIndexEntityMatchingCurrentQueryEntity = findOrAddNetworkIndexEntityNodeByName(NULL, entityNodesActiveListNetworkIndexes, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
 
 				if(foundQueryEntityNodeName)
 				{
@@ -1273,19 +1273,19 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAent
 
 		#ifdef GIA_QUERY_DEBUG
 		//cout << "\tqueryEntityNode->entityName = " << queryEntityNode->entityName << endl;
-		if(entityNode->isNetworkIndex)
+		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is networkIndex)" << endl;
 		}
-		if(entityNode->isSubstance)
+		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is substance)" << endl;
 		}
-		else if(entityNode->isAction)
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is action)" << endl;
 		}
-		else if(entityNode->isCondition)
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is condition)" << endl;
 		}
@@ -1781,7 +1781,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAent
 		{
 			for(vector<GIAentityConnection*>::iterator connectionIterQuery = queryEntityNode->entityVectorConnectionsArray[entityVectorConnectionEqualitiesArray[i]].begin(); connectionIterQuery != queryEntityNode->entityVectorConnectionsArray[entityVectorConnectionEqualitiesArray[i]].end(); connectionIterQuery++)
 			{
-				if(entityNode->isSubstance && (*connectionIter)->entity->isSubstance)
+				if(entityNode->isSubstance && (*connectionIter)->entity->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
 				{
 					//equality link found - enable pass through
 					testEntityNodeForQueryOrReferenceSet((*connectionIter)->entity, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters);
@@ -1791,7 +1791,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAent
 			}
 			for(vector<GIAentityConnection*>::reverse_iterator connectionIter = entityNode->entityVectorConnectionsArray[i].rbegin(); connectionIter != entityNode->entityVectorConnectionsArray[i].rend(); connectionIter++)	//reverse iterator not required here
 			{
-				if(entityNode->isSubstance && (*connectionIter)->entity->isSubstance)
+				if(entityNode->isSubstance && (*connectionIter)->entity->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
 				{
 					//equality link found - enable pass through
 					testEntityNodeForQueryOrReferenceSet(queryEntityNode, (*connectionIter)->entity, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters);
@@ -1801,15 +1801,15 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAent
 		#endif
 
 		#ifdef GIA_QUERY_DEBUG
-		if(entityNode->isSubstance)
+		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (is substance)" << endl;
 		}
-		else if(entityNode->isAction)
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (is action)" << endl;
 		}
-		else if(entityNode->isCondition)
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (is condition)" << endl;
 		}
@@ -2206,13 +2206,13 @@ void generateTexualContextEntityString(string* texualContextEntityString, GIAent
 		string quantityNumberStringTemp = printQuantityNumberString(entityNode);
 		entityPretext = entityPretext + quantityNumberStringTemp + " ";
 	}
-	else if(entityNode->isSubstance)
+	else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
 	{
 	}
-	else if(entityNode->isAction)
+	else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 	{
 	}
-	else if(entityNode->isCondition)
+	else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
 	{
 	}
 	else
@@ -2226,11 +2226,11 @@ void generateTexualContextEntityString(string* texualContextEntityString, GIAent
 
 
 
-double determineMaxConfidenceOfQuerySemanticNetwork(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexsQuery)
+double determineMaxConfidenceOfQuerySemanticNetwork(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery)
 {
 	double maxNumberOfMatchedNodes = 0.0;
 
-	for(unordered_map<string, GIAentityNode*>::iterator connectionIterQuery = entityNodesActiveListNetworkIndexsQuery->begin(); connectionIterQuery != entityNodesActiveListNetworkIndexsQuery->end(); connectionIterQuery++)
+	for(unordered_map<string, GIAentityNode*>::iterator connectionIterQuery = entityNodesActiveListNetworkIndexesQuery->begin(); connectionIterQuery != entityNodesActiveListNetworkIndexesQuery->end(); connectionIterQuery++)
 	{//for each node in query semantic net;
 
 		GIAentityNode* currentQueryEntityNode = connectionIterQuery->second;
@@ -2268,7 +2268,7 @@ void printEntityNodeQualitiesOnly(GIAentityNode* entityNode, string* printEntity
 	for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->propertyNodeList->begin(); connectionIter < entityNode->propertyNodeList->end(); connectionIter++)
 	{
 		GIAentityNode* substanceNode = (*connectionIter)->entity;
-		if(substanceNode->isSubstanceQuality)
+		if(substanceNode->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
 		{
 			if(numberQualities > 0)
 			{
@@ -2499,7 +2499,7 @@ bool compareEntityStandard(GIAentityNode* queryEntityNode, GIAentityNode* entity
 				if(!(referenceTraceParameters->linkSpecificConceptsAndActions))
 				{
 				#endif
-					if(entityNode->isAction)
+					if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 					{
 						if(textInTextArray(queryEntityNode->entityName, giaReferencingWildCardActionArray, GIA_REFERENCING_WILD_CARDS_ACTIONS_NUMBER_OF_TYPES))
 						{
@@ -2545,7 +2545,7 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 	#ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
 	//cout << "referenceTraceParameters->doNotParseQuerySubnetsWithConcepts = " << referenceTraceParameters->doNotParseQuerySubnetsWithConcepts << endl;
 	//cout << "queryEntityNode->isConcept = " << queryEntityNode->isConcept << endl;
-	if(!(referenceTraceParameters->doNotParseQuerySubnetsWithConcepts) || !(queryEntityNode->isConcept))
+	if(!(referenceTraceParameters->doNotParseQuerySubnetsWithConcepts) || !(queryEntityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))
 	{
 	#endif
 		if((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))	//only trace paths of same reference set ID
@@ -2597,8 +2597,8 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 
 							#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 							bool passSpecificConcepts = true;
-							if(((queryEntityNode->isConcept) && !(entityNode->isConcept)) ||
-							((entityNode->isConcept) && !(queryEntityNode->isConcept)))
+							if(((queryEntityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT) && !(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)) ||
+							((entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT) && !(queryEntityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)))
 							{
 								passSpecificConcepts = false;
 								#ifdef GIA_DEBUG
@@ -2610,7 +2610,7 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 							{
 								//override passSpecificConcepts value:
 								#ifndef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS_ADVANCED
-								if((entityNode->isConcept) || (entityNode->isActionNetworkIndex))
+								if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
 								{
 									passSpecificConcepts = false;
 								}
@@ -2631,7 +2631,7 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 								if(((queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)) ||
 								((entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)))
 								{
-									if(!(entityNode->isConcept && queryEntityNode->isConcept))	//condition added 29 Sept 2013
+									if(!(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT && queryEntityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))	//condition added 29 Sept 2013
 									{//if they are concepts, ignore plural (in fact concepts should not be assigned plural in the first place; this is an artefact of the english grammmar system: eg "blue chickens are strong")
 										passPluralityMatch = false;
 									}
@@ -2674,7 +2674,7 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 											if(referenceTraceParameters->traceConceptsOnly)
 											{
 												passConceptOnlyTraceRequirements = false;
-												if(entityNode->isConcept || entityNode->isSubstanceQuality)
+												if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT || entityNode->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
 												{
 													passConceptOnlyTraceRequirements = true;
 													//rely on previous testReferencedEntityNodeForExactNameMatch2() passSpecificConcepts checks to test entityNode target (connectionIter) for isConcept also
@@ -2687,7 +2687,7 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 												bool passLogicalConditionRequirements = true;
 												if(referenceTraceParameters->logicalConditionDisableTraceConcepts)
 												{
-													if(entityNode->isConcept)
+													if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
 													{
 														passLogicalConditionRequirements = false;
 													}

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -50,7 +50,7 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	currentSentenceInList = newcurrentSentenceInList;
 	GIAentityNodeArrayFilled = newGIAentityNodeArrayFilled;
 	GIAentityNodeArray = newGIAentityNodeArray;
-	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs;
+	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes;
 
 	executeOrReassign = newexecuteOrReassign;
 
@@ -696,7 +696,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									{
 										//NB if networkIndex type entity name has already been defined (GIAentityNodeArrayFilled[functionEntityIndex3]), then findOrAddEntityNodeByNameSimpleWrapperCondition will use it instead
 										bool entityAlreadyExistant = false;
-										param->GIAentityNodeArray[functionEntityIndex3] = findOrAddEntityNodeByNameSimpleWrapperCondition(param->GIAentityNodeArrayFilled, param->GIAentityNodeArray, functionEntityIndex3, &conditionEntityName, &entityAlreadyExistant, param->entityNodesActiveListNetworkIndexs);
+										param->GIAentityNodeArray[functionEntityIndex3] = findOrAddEntityNodeByNameSimpleWrapperCondition(param->GIAentityNodeArrayFilled, param->GIAentityNodeArray, functionEntityIndex3, &conditionEntityName, &entityAlreadyExistant, param->entityNodesActiveListNetworkIndexes);
 										//GIAentityNode* conditionNetworkIndexEntity = above
 									}
 								}
@@ -710,7 +710,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										functionEntityIndex3 = param->currentSentenceInList->conditionEntityArtificialIndexCurrent;
 										param->currentSentenceInList->conditionEntityArtificialIndexCurrent = param->currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 										bool entityAlreadyExistant = false;
-										param->GIAentityNodeArray[functionEntityIndex3] = findOrAddEntityNodeByNameSimpleWrapperCondition(param->GIAentityNodeArrayFilled, param->GIAentityNodeArray, functionEntityIndex3, &conditionEntityName, &entityAlreadyExistant, param->entityNodesActiveListNetworkIndexs);
+										param->GIAentityNodeArray[functionEntityIndex3] = findOrAddEntityNodeByNameSimpleWrapperCondition(param->GIAentityNodeArrayFilled, param->GIAentityNodeArray, functionEntityIndex3, &conditionEntityName, &entityAlreadyExistant, param->entityNodesActiveListNetworkIndexes);
 										//GIAentityNode* conditionNetworkIndexEntity = above
 									}
 								}
@@ -956,18 +956,6 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									mergeEntityNodesAddAlias(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2]);
 									param->GIAentityNodeArray[functionEntityIndex2] = param->GIAentityNodeArray[functionEntityIndex1];
 									#endif
-								}
-								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntityEnsureDependentNotConcept)
-								{
-									#ifdef GIA_DEBUG
-									//cout << "param->GIAentityNodeArray[functionEntityIndex1]->entityName = " << param->GIAentityNodeArray[functionEntityIndex1]->entityName << endl;
-									//cout << "param->GIAentityNodeArray[functionEntityIndex2]->entityName = " << param->GIAentityNodeArray[functionEntityIndex2]->entityName << endl;
-									#endif
-									param->GIAentityNodeArray[functionEntityIndex2] = addOrConnectPropertyToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
-									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
-									#endif
-									downgradeConceptToSubstance(param->GIAentityNodeArray[functionEntityIndex2]);
 								}
 								else
 								{
@@ -1355,10 +1343,6 @@ bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters* param
 						else if(param->functionToExecuteUponFind == GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addTenseOnlyTimeConditionToSubstance)
 						{
 							addTenseOnlyTimeConditionToSubstance(param->GIAentityNodeArray[i], param->GIAentityNodeArray[i]->grammaticalTenseTemp, param->GIAentityNodeArray[i]->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE]);
-						}
-						else if(param->functionToExecuteUponFind == GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_upgradeSubstanceToConcept)
-						{
-							upgradeSubstanceToConcept(param->GIAentityNodeArray[i]);
 						}
 						else
 						{

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -39,7 +39,7 @@
 
 #ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 
-bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, GIAfeature* featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA)
+bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAfeature* featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA)
 {
 	//int tempindex = 1;
 
@@ -145,7 +145,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											{
 												if(GIAentityNodeArrayFilled[w])
 												{
-													if(!(GIAentityNodeArray[w]->isNetworkIndex))
+													if(!(GIAentityNodeArray[w]->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX))
 													{
 														if(!(GIAentityNodeArray[w]->disabled))
 														{
@@ -174,7 +174,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											if(currentSentenceInList->sentenceIndex == 20)
 											{
 												cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
-												for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListIter2 = entityNodesActiveListNetworkIndexs->begin(); networkIndexEntityNodesListIter2 != entityNodesActiveListNetworkIndexs->end(); networkIndexEntityNodesListIter2++)
+												for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListIter2 = entityNodesActiveListNetworkIndexes->begin(); networkIndexEntityNodesListIter2 != entityNodesActiveListNetworkIndexes->end(); networkIndexEntityNodesListIter2++)
 												{
 													GIAentityNode* entityNode = networkIndexEntityNodesListIter2->second;
 													cout << "entityNode->disabled = " << entityNode->entityName << ", " << int(entityNode->disabled) << endl;
@@ -274,7 +274,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											#endif
 
 											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation
-											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))
+											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))
 											{
 											}
 											else
@@ -347,7 +347,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 	return result;
 }
 
-bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRelOrEntity, bool executeOrReassign, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, GIAfeature* featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA, string functionName)
+bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRelOrEntity, bool executeOrReassign, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAfeature* featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA, string functionName)
 {
 	bool result = false;
 	if(currentParamTag->firstLowerLevelTag != NULL)
@@ -358,7 +358,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 
 		GIAgenericDepRelInterpretationParameters paramDepRel(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, executeOrReassign);
 		paramDepRel.functionName = functionName;
-		paramDepRel.entityNodesActiveListNetworkIndexs = entityNodesActiveListNetworkIndexs;
+		paramDepRel.entityNodesActiveListNetworkIndexes = entityNodesActiveListNetworkIndexes;
 		paramDepRel.NLPdependencyRelationsType = NLPdependencyRelationsType;
 		paramDepRel.executeOrReassign = executeOrReassign;
 		GIAgenericEntityInterpretationParameters paramEntity(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, executeOrReassign);

@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -53,12 +53,15 @@
 #include <utility> // make_pair	//required for GIA_USE_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR
 using namespace std;
 
-
+//entity types added 2n1c
+#define GIA_ENTITY_TYPE_TYPE_UNDEFINED (-1)
 #define GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX (0)
 #define GIA_ENTITY_TYPE_TYPE_SUBSTANCE (1)
 #define GIA_ENTITY_TYPE_TYPE_ACTION (2)
 #define GIA_ENTITY_TYPE_TYPE_CONDITION (3)
 #define GIA_ENTITY_TYPE_TYPE_CONCEPT (4)
+#define GIA_ENTITY_TYPE_TYPE_QUALITY (5)
+#define GIA_ENTITY_NUMBER_OF_TYPES (6)
 
 //#ifdef GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION (0)
@@ -148,7 +151,7 @@ using namespace std;
 #define GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE 4		//eg Mow the grass! / ~VB
 #define GRAMMATICAL_TENSE_MODIFIER_POTENTIAL 5	//added 2h2a/2h2c: _able/_ive adjectives (ignore nouns)	//eg mowable / affirmative
 #define GRAMMATICAL_TENSE_MODIFIER_STATE 6	//added 2h2a	//eg is mowed (as opposed to was mowed)	//used for both states and affections - note noun versus verb base forms are not distinguished here by POS tagger; both are assigned VBN
-#define GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION 7	//added 2h2d: _ment/_ion nouns	//eg movement / transition	//note these are different than action networkIndexs, as these define an instance of an action, not an action in general; eg "the movement"/"the transition"
+#define GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION 7	//added 2h2d: _ment/_ion nouns	//eg movement / transition	//note these are different than action networkIndexes, as these define an instance of an action, not an action in general; eg "the movement"/"the transition"
 #define GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES 8
 #define GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_OR_PRESENT_NOT_THIRD_PERSON_SINGULAR_OR_STATE_TEMP (7)
 #define GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP (8)
@@ -316,7 +319,7 @@ public:
 	long idActiveList;
 	long idActiveEntityTypeList;
 	long idActiveListReorderdIDforXMLsave;	//for CXL output only
-	long idInstance; 		//not for networkIndexs (this instance idActiveList of the networkIndex entityName)
+	long idInstance; 		//not for networkIndexes (this instance idActiveList of the networkIndex entityName)
 
 
 	/*GIA Entity Name*/
@@ -331,17 +334,10 @@ public:
 
 
 	/*GIA Entity Type*/
-	bool isNetworkIndex;		//is this entity a networkIndex? [added 10 May 2012]
-	bool isSubstance;		//is this entity a substance?
-	bool isAction;			//is this entity an action?
-	bool isCondition;		//is this entity a condition?
+	int entityType;
 	bool hasAssociatedInstance;	//this boolean appears to only represent whether this entity defines a child substance node [and not whether it contains one]
-	bool hasAssociatedInstanceIsAction;
-	bool hasAssociatedInstanceIsCondition;
 	bool hasAssociatedTime;
-	bool isSubstanceQuality;		//PRECISE ORIGINAL NAME: isSubstanceQualityOrAffection	//eg 'the locked door..' / 'Jim runs quickly' / 'Mr. Smith is late' 	[Not: Tom has an arm'/'Tom's bike']
-	bool isConcept;		//added 1q4a to take into account specific networkIndexs eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
-	bool isActionNetworkIndex;			//added 1t5a to take into account specific actions eg 'eating pies', 'to eat a pie'
+	bool isActionConcept;			//added 1t5a to take into account specific actions eg 'eating pies', 'to eat a pie'
 	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for substances and actions; but relex does not appear to output this information]
 
 
@@ -358,7 +354,7 @@ public:
 	vector<GIAentityConnection*>* actionNodeList;	//where this entity is the subject of the action
 	vector<GIAentityConnection*>* incomingActionNodeList;	//where this entity is the object of the action
 	//actions only;
-	//NB actions can be performed by and on networkIndexs, and by and on substances?
+	//NB actions can be performed by and on networkIndexes, and by and on substances?
 	vector<GIAentityConnection*>* actionSubjectEntity;	//record of entity that is the subject of this action instance
 	vector<GIAentityConnection*>* actionObjectEntity;	//record of which entity that is the object of this action instance
 		//condition connections;
@@ -367,7 +363,7 @@ public:
 	vector<GIAentityConnection*>* conditionNodeList;		//this substance requires the following...
 	vector<GIAentityConnection*>* incomingConditionNodeList;	//this substance is required by the following... //aka reason
 	//conditions only;
-	//NB conditions can be performed by and on networkIndexs, and by and on substances?
+	//NB conditions can be performed by and on networkIndexes, and by and on substances?
 	vector<GIAentityConnection*>* conditionSubjectEntity;		//record of entity that is the subject of this action instance
 	vector<GIAentityConnection*>* conditionObjectEntity;		//record of which entity that is the object of this action instance
 		//substance connections;
@@ -380,7 +376,7 @@ public:
 	//record parent and child entity definition nodes
 	vector<GIAentityConnection*>* entityNodeDefinitionList;			//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
 	vector<GIAentityConnection*>* entityNodeDefinitionReverseList;			//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
-	//networkIndexs only (not substances/"instances" of entities);
+	//networkIndexes only (not substances/"instances" of entities);
 	//associated actions and substances [ie does this entity also define an action/verb or a substance/adjective? [ie, it is not just a thing/noun]]
 	vector<GIAentityConnection*>* associatedInstanceNodeList;			//if this entity is not a substance/instance but defines one or more substances/instances
 		//time condition connections;
@@ -425,7 +421,7 @@ public:
 	#ifdef GIA_SUPPORT_PREDETERMINERS
 	int grammaticalPredeterminerTemp;
 	#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
-	unordered_map<int, int> grammaticalPredeterminerTempSentenceArray;	//only for instances (not for networkIndexs)	- required for GIA advanced referencing as different references to an entity may well have different predeterminers (eg each)
+	unordered_map<int, int> grammaticalPredeterminerTempSentenceArray;	//only for instances (not for networkIndexes)	- required for GIA advanced referencing as different references to an entity may well have different predeterminers (eg each)
 	#endif
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP

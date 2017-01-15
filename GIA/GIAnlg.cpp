@@ -26,7 +26,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -51,15 +51,15 @@ GIANLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, GIANLG
 	if(!(entityNode->parsedForLanguageGeneration) && !(entityNode->disabled))
 	{
 		#ifdef GIA_NLG_DEBUG
-		if(entityNode->isSubstance)
+		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is substance)" << endl;
 		}
-		else if(entityNode->isAction)
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is action)" << endl;
 		}
-		else if(entityNode->isCondition)
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is condition)" << endl;
 		}
@@ -88,7 +88,7 @@ GIANLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, GIANLG
 		{
 		#endif
  			bool supportAdditionalLinks = true;
-			if(entityNode->isAction)
+			if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 			{
 				if(!isQueryAnswerContext || (isQueryAnswerContextRound == 1))
 				{
@@ -104,7 +104,7 @@ GIANLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, GIANLG
 					currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;
 				}
 			}
-			else if(entityNode->isCondition)
+			else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
 			{
 				if(!isQueryAnswerContext || (isQueryAnswerContextRound == 2))
 				{
@@ -158,15 +158,15 @@ GIANLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, GIANLG
 		}
 
 		#ifdef GIA_NLG_DEBUG
-		if(entityNode->isSubstance)
+		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (is substance)" << endl;
 		}
-		else if(entityNode->isAction)
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (is action)" << endl;
 		}
-		else if(entityNode->isCondition)
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (is condition)" << endl;
 		}
@@ -336,7 +336,7 @@ void generateThreeEntitySentenceFromEntityNode(GIAentityNode* entityNode0, strin
 							bool passAdditionalExtraRequirements = false;
 							if(vectorConnectionIndex == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)
 							{
-								if(entityNodeAdditional->isSubstanceQuality)
+								if(entityNodeAdditional->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
 								{
 									passAdditionalExtraRequirements = true;
 								}
@@ -550,31 +550,31 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 
 
 
-	if(entityNode2->isAction)
+	if(entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 	{
 		#ifdef GIA_NLG_DEBUG
-		//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->isAction)" << endl;
+		//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)" << endl;
 		#endif
 	}
-	else if(entityNode2->isCondition)
+	else if(entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
 	{
 		#ifdef GIA_NLG_DEBUG
-		//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->isCondition)" << endl;
+		//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)" << endl;
 		#endif
 	}
 
 	if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)
 	{
 		/*
-		if(entityNode2->isSubstance)
+		if(entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
 		{
 		*/
 		#ifdef NLG_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
 		bool isSubstanceQuality = false;
-		if(entityNode2->isSubstanceQuality)
+		if(entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
 		{
 			isSubstanceQuality = true;
-			if(entityNode1->isAction)
+			if(entityNode1->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 			{
 				#ifdef GIA_USE_NLG2
 				nlgDependencyRelationType1 = RELATION_TYPE_ADJECTIVE_ADVMOD
@@ -614,10 +614,10 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 		}
 		else
 		{
-			if(entityNode2->isNetworkIndex)
+			if(entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX)
 			{//isNetworkIndex
 				#ifdef GIA_NLG_DEBUG
-				//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->isNetworkIndex) && (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)" << endl;
+				//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX) && (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)" << endl;
 				#endif
 			}
 		}
@@ -645,7 +645,7 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 	{
 		GIAentityNode* entityNode0 = new GIAentityNode();
 		entityNode0->entityName = nlgDependencyRelationSharedArgument;
-		entityNode0->isAction = true;	//NB "have"/"be" are interpreted as actions/verbs by NLP/stanford/relex (but reduced by GIA)
+		entityNode0->entityType = GIA_ENTITY_TYPE_TYPE_ACTION;	//NB "have"/"be" are interpreted as actions/verbs by NLP/stanford/relex (but reduced by GIA)
 		NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode0, entityIndex0, generatedText);
 		NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode1, entityIndex1, generatedText);
 		NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode2, entityIndex2, generatedText);
@@ -712,7 +712,7 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 		{
 			GIAentityNode* entityNode0 = new GIAentityNode();
 			entityNode0->entityName = linkingWord;
-			entityNode0->isAction = true;	//NB "have"/"be" are interpreted as actions/verbs by NLP/stanford/relex (but reduced by GIA)
+			entityNode0->entityType = GIA_ENTITY_TYPE_TYPE_ACTION;	//NB "have"/"be" are interpreted as actions/verbs by NLP/stanford/relex (but reduced by GIA)
 			entityTextExpandedArray[0] = linkingWord;
 
 			addDeterminate(entityNode0, &(entityTextExpandedArray[0]));
@@ -840,28 +840,28 @@ void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode
 	string inflectionString = "";
 	string posString = "";
 	bool isDefinite = false;
-	if(entityNode->isAction)
+	if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 	{
 		inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_VERB];
 		posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_VERB];
 	}
-	else if(entityNode->isCondition)
+	else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
 	{
 		//inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_PREP];	//no inflection for prepositions
 		posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_PREP];
 	}
-	else if((entityNode->isSubstance) && !(entityNode->isConcept))
+	else if((entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE) && !(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))
 	{
 		#ifdef NLG_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
 		bool isSubstanceQuality = false;
-		if(entityNode->isSubstanceQuality)
+		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
 		{
 			isSubstanceQuality = true;
 			bool substanceOwnerIsAction = false;
 			if(!(entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES].empty()))
 			{
 				GIAentityNode* substanceOwner = entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES].back()->entity;
-				if(substanceOwner->isAction)
+				if(substanceOwner->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 				{
 					substanceOwnerIsAction = true;
 					//inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_ADV];	//no inflection for adjectives?
@@ -887,7 +887,7 @@ void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode
 		}
 		#endif
 	}
-	else if(entityNode->isNetworkIndex || entityNode->isConcept)
+	else if(entityNode->isNetworkIndex || entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
 	{//isNetworkIndex
 		inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_NOUN];
 		posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NOUN];
@@ -1069,17 +1069,17 @@ string calcDeterminate(GIAentityNode* entityNode)
 	//determinate
 	bool addDeterminate = false;
 	string determinate = "";
-	if(entityNode->isAction)
+	if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 	{
 
 	}
-	else if(entityNode->isCondition)
+	else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
 	{
 
 	}
-	else if((entityNode->isSubstance) && !(entityNode->isConcept))
+	else if((entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE) && !(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))
 	{
-		if(!(entityNode->isSubstanceQuality))
+		if(!(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY))
 		{
 			if(entityNode->sourceReferencedInLanguageGeneration)
 			{
@@ -1109,7 +1109,7 @@ string calcDeterminate(GIAentityNode* entityNode)
 			}
 		}
 	}
-	else if((entityNode->isNetworkIndex) || (entityNode->isConcept))
+	else if((entityNode->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX) || (entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))
 	{//isNetworkIndex
 
 	}

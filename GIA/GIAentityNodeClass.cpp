@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  *
  *******************************************************************************/
 
@@ -76,15 +76,10 @@ GIAentityNode::GIAentityNode(void)
 
 
 	/*GIA Entity Type*/
-	isNetworkIndex = false;
-	isSubstance = false;
-	isAction = false;
-	isCondition = false;
+	entityType = GIA_ENTITY_TYPE_TYPE_UNDEFINED;
+	isActionConcept = false;
 	hasAssociatedInstance = false;
 	hasAssociatedTime = false;
-	isSubstanceQuality = false;
-	isConcept = false;
-	isActionNetworkIndex = false;
 	negative = false;
 
 
@@ -316,15 +311,10 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 
 
 	GIA Entity Type
-	isNetworkIndex = false;
-	isSubstance = false;
-	isAction = false;
-	isCondition = false;
+	entityType = GIA_ENTITY_TYPE_TYPE_UNDEFINED;
+	isActionConcept = false;
 	hasAssociatedInstance = false;
 	hasAssociatedTime = false;
-	isSubstanceQuality = false;
-	isConcept = false;
-	isActionNetworkIndex = false;
 	negative = false;
 
 
@@ -917,15 +907,10 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 	#endif
 	
 	/*GIA Entity Type*/
-	testEntityCharacteristicIterationbool(entity->isNetworkIndex, entityCharacteristic, "isNetworkIndex", &foundMatch);
-	testEntityCharacteristicIterationbool(entity->isSubstance, entityCharacteristic, "isSubstance", &foundMatch);
-	testEntityCharacteristicIterationbool(entity->isAction, entityCharacteristic, "isAction", &foundMatch);
-	testEntityCharacteristicIterationbool(entity->isCondition, entityCharacteristic, "isCondition", &foundMatch);
+	testEntityCharacteristicIterationint(entity->entityType, entityCharacteristic, "entityType", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->isActionConcept, entityCharacteristic, "isActionConcept", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->hasAssociatedInstance, entityCharacteristic, "hasAssociatedInstance", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->hasAssociatedTime, entityCharacteristic, "hasAssociatedTime", &foundMatch);
-	testEntityCharacteristicIterationbool(entity->isSubstanceQuality, entityCharacteristic, "isSubstanceQuality", &foundMatch);
-	testEntityCharacteristicIterationbool(entity->isConcept, entityCharacteristic, "isConcept", &foundMatch);
-	testEntityCharacteristicIterationbool(entity->isActionNetworkIndex, entityCharacteristic, "isActionNetworkIndex", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->negative, entityCharacteristic, "negative", &foundMatch);
 
 	/*GIA Connections*/
@@ -1101,15 +1086,10 @@ bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	#endif
 	
 	/*GIA Entity Type*/
-	setEntityCharacteristicIterationbool(&(entity->isNetworkIndex), entityCharacteristic, "isNetworkIndex", &foundMatch);
-	setEntityCharacteristicIterationbool(&(entity->isSubstance), entityCharacteristic, "isSubstance", &foundMatch);
-	setEntityCharacteristicIterationbool(&(entity->isAction), entityCharacteristic, "isAction", &foundMatch);
-	setEntityCharacteristicIterationbool(&(entity->isCondition), entityCharacteristic, "isCondition", &foundMatch);
+	setEntityCharacteristicIterationint(&(entity->entityType), entityCharacteristic, "entityType", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->isActionConcept), entityCharacteristic, "isActionConcept", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->hasAssociatedInstance), entityCharacteristic, "hasAssociatedInstance", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->hasAssociatedTime), entityCharacteristic, "hasAssociatedTime", &foundMatch);
-	setEntityCharacteristicIterationbool(&(entity->isSubstanceQuality), entityCharacteristic, "isSubstanceQuality", &foundMatch);
-	setEntityCharacteristicIterationbool(&(entity->isConcept), entityCharacteristic, "isConcept", &foundMatch);
-	setEntityCharacteristicIterationbool(&(entity->isActionNetworkIndex), entityCharacteristic, "isActionNetworkIndex", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->negative), entityCharacteristic, "negative", &foundMatch);
 
 	/*GIA Connections*/
@@ -1249,15 +1229,10 @@ bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	#endif
 
 	/*GIA Entity Type*/
-	getEntityCharacteristicIterationbool(entity->isNetworkIndex, entityCharacteristic, "isNetworkIndex", &foundMatch);
-	getEntityCharacteristicIterationbool(entity->isSubstance, entityCharacteristic, "isSubstance", &foundMatch);
-	getEntityCharacteristicIterationbool(entity->isAction, entityCharacteristic, "isAction", &foundMatch);
-	getEntityCharacteristicIterationbool(entity->isCondition, entityCharacteristic, "isCondition", &foundMatch);
+	getEntityCharacteristicIterationint(entity->entityType, entityCharacteristic, "entityType", &foundMatch);
+	getEntityCharacteristicIterationbool(entity->isActionConcept, entityCharacteristic, "isActionConcept", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->hasAssociatedInstance, entityCharacteristic, "hasAssociatedInstance", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->hasAssociatedTime, entityCharacteristic, "hasAssociatedTime", &foundMatch);
-	getEntityCharacteristicIterationbool(entity->isSubstanceQuality, entityCharacteristic, "isSubstanceQuality", &foundMatch);
-	getEntityCharacteristicIterationbool(entity->isConcept, entityCharacteristic, "isConcept", &foundMatch);
-	getEntityCharacteristicIterationbool(entity->isActionNetworkIndex, entityCharacteristic, "isActionNetworkIndex", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->negative, entityCharacteristic, "negative", &foundMatch);
 
 	/*GIA Connections*/

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -191,7 +191,7 @@ void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool
 					/*
 					//NB if networkIndex type entity name has already been defined (GIAentityNodeArrayFilled[functionEntityIndex3]), then findOrAddEntityNodeByNameSimpleWrapperCondition will use it instead
 					bool entityAlreadyExistant = false;
-					GIAentityNode* entity = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&prepositionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
+					GIAentityNode* entity = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&prepositionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 					*/
 					GIAentityNode* featureTempEntity = new GIAentityNode();
 					featureTempEntity->entityName = prepositionName;
@@ -236,7 +236,7 @@ void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool
 }
 
 
-void locateAndAddAllNetworkIndexEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, int NLPdependencyRelationsType, GIAentityNode* GIAfeatureTempEntityNodeArray[])
+void locateAndAddAllNetworkIndexEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, int NLPdependencyRelationsType, GIAentityNode* GIAfeatureTempEntityNodeArray[])
 {
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -249,7 +249,7 @@ void locateAndAddAllNetworkIndexEntities(GIAsentence* currentSentenceInList, boo
 			#endif
 
 			bool entityAlreadyExistant = false;
-			GIAentityNode* entity = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&(featureTempEntityNode->entityName), &entityAlreadyExistant, entityNodesActiveListNetworkIndexs, !(featureTempEntityNode->disabled));
+			GIAentityNode* entity = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&(featureTempEntityNode->entityName), &entityAlreadyExistant, entityNodesActiveListNetworkIndexes, !(featureTempEntityNode->disabled));
 			#ifdef GIA_DEBUG
 			//cout << "entity->disabled = " << entity->disabled << endl;
 			#endif
@@ -1078,7 +1078,7 @@ void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode* entity, GIAfeature* c
 	}
 	entity->grammaticalTenseTemp = currentFeatureInList->grammaticalTense;
 	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-	if(!(entity->isConcept))
+	if(!(entity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))
 	{
 	#endif
 		entity->grammaticalNumber = currentFeatureInList->grammaticalNumber;

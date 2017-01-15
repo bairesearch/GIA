@@ -26,7 +26,7 @@
  * File Name: GIAmain.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1b 12-September-2016
+ * Project Version: 2n1c 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -158,11 +158,7 @@ bool executeGIA(
 #endif
 
 	vector<GIAentityNode*>* entityNodesActiveListComplete,
-	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs,
-	vector<GIAentityNode*>* entityNodesActiveListSubstances,
-	vector<GIAentityNode*>* entityNodesActiveListActions,
-	vector<GIAentityNode*>* entityNodesActiveListConditions,
-	vector<GIAentityNode*>* entityNodesActiveListConcepts,
+	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes,
 	map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences,
 	unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList,
 
