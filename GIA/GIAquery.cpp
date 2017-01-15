@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a9a 10-December-2013
+ * Project Version: 2a10a 13-December-2013
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -114,6 +114,9 @@ GIAreferenceTraceParameters::GIAreferenceTraceParameters(void)
 	#endif
 	#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 	intrasentenceReference = false;
+	#endif
+	#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
+	doNotParseQuerySubnetsWithSubstanceConcepts = false;
 	#endif
 }
 GIAreferenceTraceParameters::~GIAreferenceTraceParameters(void)
@@ -573,154 +576,163 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode * queryEntityNode,
 			cout << "(referenceTraceParameters->traceModeAssertSameReferenceSetID) = " << (referenceTraceParameters->traceModeAssertSameReferenceSetID) << endl;
 			*/
 			#endif
-			if((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))	//only trace paths of same reference set ID
+			#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
+			cout << "referenceTraceParameters->doNotParseQuerySubnetsWithSubstanceConcepts = " << referenceTraceParameters->doNotParseQuerySubnetsWithSubstanceConcepts << endl;
+			cout << "queryEntityNode->isSubstanceConcept = " << queryEntityNode->isSubstanceConcept << endl;
+			if(!(referenceTraceParameters->doNotParseQuerySubnetsWithSubstanceConcepts) || !(queryEntityNode->isSubstanceConcept))
 			{
-				#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-				//cout << "A2: ((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))" << endl;
-				#endif
-
-				#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
-				if(queryEntityNode->referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)		//added 13 July 2012
+			#endif
+				if((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))	//only trace paths of same reference set ID
 				{
-				#endif
-					#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
-					if(queryEntityNode->idActiveList != entityNode->idActiveList)	//else they are exactly the same [NB with new implementation of GIA_USE_ADVANCED_REFERENCING, it will detect the same nodes as a reference match, so they need to be ignored when this happens]
+					#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+					//cout << "A2: ((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))" << endl;
+					#endif
+
+					#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
+					if(queryEntityNode->referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)		//added 13 July 2012
 					{
 					#endif
-						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-						bool passIntrasentenceReferenceRequirements = true;
-						if(referenceTraceParameters->intrasentenceReference)
-						{
-							passIntrasentenceReferenceRequirements = false;
-							/*
-							cout << "\nqueryEntityNode->entityName = " << queryEntityNode->entityName << endl;
-							cout << "queryEntityNode->referenceSetID = " << queryEntityNode->referenceSetID << endl;
-							cout << "queryEntityNode->minimumEntityIndexOfReferenceSet = " << queryEntityNode->minimumEntityIndexOfReferenceSet << endl;
-							cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
-							*/
-							if(entityNode->entityIndexTemp < queryEntityNode->minimumEntityIndexOfReferenceSet)
-							{
-								passIntrasentenceReferenceRequirements = true;
-							}
-						}
-
-						if(passIntrasentenceReferenceRequirements)
+						#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
+						if(queryEntityNode->idActiveList != entityNode->idActiveList)	//else they are exactly the same [NB with new implementation of GIA_USE_ADVANCED_REFERENCING, it will detect the same nodes as a reference match, so they need to be ignored when this happens]
 						{
 						#endif
-							if(compareEntityNamesResult)
+							#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+							bool passIntrasentenceReferenceRequirements = true;
+							if(referenceTraceParameters->intrasentenceReference)
 							{
-								#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-								cout << "compareEntityNamesResult: queryEntityNode->entityName = " << queryEntityNode->entityName << ", entityNode->entityName = " << entityNode->entityName << endl;
-
-								cout << "queryEntityNode->isSubstance = " << queryEntityNode->isSubstance << endl;
-								cout << "queryEntityNode->isSubstanceConcept = " << queryEntityNode->isSubstanceConcept << endl;
-								cout << "entityNode->isSubstance = " << entityNode->isSubstance << endl;
-								cout << "entityNode->isSubstanceConcept = " << entityNode->isSubstanceConcept << endl;
-								#endif
-
-								#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
-								bool passSpecificConcepts = true;
-								if(((queryEntityNode->isSubstanceConcept) && !(entityNode->isSubstanceConcept)) ||
-								((entityNode->isSubstanceConcept) && !(queryEntityNode->isSubstanceConcept)))
+								passIntrasentenceReferenceRequirements = false;
+								/*
+								cout << "\nqueryEntityNode->entityName = " << queryEntityNode->entityName << endl;
+								cout << "queryEntityNode->referenceSetID = " << queryEntityNode->referenceSetID << endl;
+								cout << "queryEntityNode->minimumEntityIndexOfReferenceSet = " << queryEntityNode->minimumEntityIndexOfReferenceSet << endl;
+								cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
+								*/
+								if(entityNode->entityIndexTemp < queryEntityNode->minimumEntityIndexOfReferenceSet)
 								{
-									passSpecificConcepts = false;
-									//cout << "\t\t\t !passSpecificConcepts" << endl;
+									passIntrasentenceReferenceRequirements = true;
 								}
-								#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-								if(referenceTraceParameters->linkSpecificConceptsAndActions)
+							}
+
+							if(passIntrasentenceReferenceRequirements)
+							{
+							#endif
+								if(compareEntityNamesResult)
 								{
-									if((entityNode->isSubstanceConcept) || (entityNode->isActionConcept))
+									#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+									cout << "compareEntityNamesResult: queryEntityNode->entityName = " << queryEntityNode->entityName << ", entityNode->entityName = " << entityNode->entityName << endl;
+
+									cout << "queryEntityNode->isSubstance = " << queryEntityNode->isSubstance << endl;
+									cout << "queryEntityNode->isSubstanceConcept = " << queryEntityNode->isSubstanceConcept << endl;
+									cout << "entityNode->isSubstance = " << entityNode->isSubstance << endl;
+									cout << "entityNode->isSubstanceConcept = " << entityNode->isSubstanceConcept << endl;
+									#endif
+
+									#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
+									bool passSpecificConcepts = true;
+									if(((queryEntityNode->isSubstanceConcept) && !(entityNode->isSubstanceConcept)) ||
+									((entityNode->isSubstanceConcept) && !(queryEntityNode->isSubstanceConcept)))
 									{
 										passSpecificConcepts = false;
-									}
-									else
-									{
-										passSpecificConcepts = true;
-									}
-								}
-								#endif
-								if(passSpecificConcepts)
-								{
-								#endif
-									#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
-									bool passPluralityMatch = true;
-									if(((queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)) ||
-									((entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)))
-									{
-										if(!(entityNode->isSubstanceConcept && queryEntityNode->isSubstanceConcept))	//condition added 29 Sept 2013
-										{//if they are substance concepts, ignore plural (in fact substance concepts should not be assigned plural in the first place; this is an artefact of the english grammmar system: eg "blue chickens are strong")
-											passPluralityMatch = false;
-										}
+										//cout << "\t\t\t !passSpecificConcepts" << endl;
 									}
 									#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
 									if(referenceTraceParameters->linkSpecificConceptsAndActions)
 									{
-										passPluralityMatch = true;
+										if((entityNode->isSubstanceConcept) || (entityNode->isActionConcept))
+										{
+											passSpecificConcepts = false;
+										}
+										else
+										{
+											passSpecificConcepts = true;
+										}
 									}
 									#endif
-									if(passPluralityMatch)
+									if(passSpecificConcepts)
 									{
 									#endif
-										//cout << "\tpassed isSubstanceConcept tests" << endl;
-
-										//cout << "\texactMatch" << endl;
-										if(testEntityNodeForQueryOrReferenceSet2(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
+										#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
+										bool passPluralityMatch = true;
+										if(((queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)) ||
+										((entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)))
 										{
-											exactMatch = true;
+											if(!(entityNode->isSubstanceConcept && queryEntityNode->isSubstanceConcept))	//condition added 29 Sept 2013
+											{//if they are substance concepts, ignore plural (in fact substance concepts should not be assigned plural in the first place; this is an artefact of the english grammmar system: eg "blue chickens are strong")
+												passPluralityMatch = false;
+											}
 										}
-									#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
+										#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+										if(referenceTraceParameters->linkSpecificConceptsAndActions)
+										{
+											passPluralityMatch = true;
+										}
+										#endif
+										if(passPluralityMatch)
+										{
+										#endif
+											//cout << "\tpassed isSubstanceConcept tests" << endl;
+
+											//cout << "\texactMatch" << endl;
+											if(testEntityNodeForQueryOrReferenceSet2(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
+											{
+												exactMatch = true;
+											}
+										#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
+										}
+										else
+										{
+											//cout << "!passPluralityMatch" << endl;
+										}
+										#endif
+									#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 									}
 									else
 									{
-										//cout << "!passPluralityMatch" << endl;
+										//cout << "!passSpecificConcepts" << endl;
+										//cout << "compareEntityNamesResult: queryEntityNode->entityName = " << queryEntityNode->entityName << ", entityNode->entityName = " << entityNode->entityName << endl;
 									}
 									#endif
-								#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 								}
 								else
 								{
-									//cout << "!passSpecificConcepts" << endl;
-									//cout << "compareEntityNamesResult: queryEntityNode->entityName = " << queryEntityNode->entityName << ", entityNode->entityName = " << entityNode->entityName << endl;
+									//cout << "!compareEntityNamesResult" << endl;
 								}
-								#endif
+							#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 							}
 							else
 							{
-								//cout << "!compareEntityNamesResult" << endl;
+								//cout << "!passIntrasentenceReferenceRequirements" << endl;
+								//cout << "\t!(entityNode->entityIndexTemp < queryEntityNode->minimumEntityIndexOfReferenceSet)" << endl;
+								//cout << "\tentityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
+								//cout << "\tqueryEntityNode->minimumEntityIndexOfReferenceSet = " << queryEntityNode->minimumEntityIndexOfReferenceSet << endl;
 							}
-						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+							#endif
+						#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
 						}
 						else
 						{
-							//cout << "!passIntrasentenceReferenceRequirements" << endl;
-							//cout << "\t!(entityNode->entityIndexTemp < queryEntityNode->minimumEntityIndexOfReferenceSet)" << endl;
-							//cout << "\tentityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
-							//cout << "\tqueryEntityNode->minimumEntityIndexOfReferenceSet = " << queryEntityNode->minimumEntityIndexOfReferenceSet << endl;
+							//cout << "(queryEntityNode->idActiveList == entityNode->idActiveList)" << endl;
 						}
 						#endif
-					#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
+					#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
 					}
 					else
 					{
-						//cout << "(queryEntityNode->idActiveList == entityNode->idActiveList)" << endl;
+						//cout << "(queryEntityNode->referenceSetID == GIA_REFERENCE_SET_ID_UNDEFINED)" << endl;
 					}
 					#endif
-				#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
 				}
 				else
 				{
-					//cout << "(queryEntityNode->referenceSetID == GIA_REFERENCE_SET_ID_UNDEFINED)" << endl;
+					//cout << "!((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))" << endl;
+					//cout << "\t(referenceTraceParameters->traceModeAssertSameReferenceSetID) = " << (referenceTraceParameters->traceModeAssertSameReferenceSetID) << endl;
+					//cout << "\t(queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID)  = " << (queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID)  << endl;
+					//cout << "\tqueryEntityNode->referenceSetID = " << queryEntityNode->referenceSetID  << endl;
+					//cout << "\treferenceTraceParameters->referenceSetID = " << referenceTraceParameters->referenceSetID  << endl;
 				}
-				#endif
+			#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
 			}
-			else
-			{
-				//cout << "!((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))" << endl;
-				//cout << "\t(referenceTraceParameters->traceModeAssertSameReferenceSetID) = " << (referenceTraceParameters->traceModeAssertSameReferenceSetID) << endl;
-				//cout << "\t(queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID)  = " << (queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID)  << endl;
-				//cout << "\tqueryEntityNode->referenceSetID = " << queryEntityNode->referenceSetID  << endl;
-				//cout << "\treferenceTraceParameters->referenceSetID = " << referenceTraceParameters->referenceSetID  << endl;
-			}
+			#endif
 		}
 		#endif
 	}
@@ -1262,154 +1274,163 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode * queryEntityNode, G
 			cout << "(referenceTraceParameters->traceModeAssertSameReferenceSetID) = " << (referenceTraceParameters->traceModeAssertSameReferenceSetID) << endl;
 			*/
 			#endif
-			if((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))	//only trace paths of same reference set ID
+			#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
+			cout << "referenceTraceParameters->doNotParseQuerySubnetsWithSubstanceConcepts = " << referenceTraceParameters->doNotParseQuerySubnetsWithSubstanceConcepts << endl;
+			cout << "queryEntityNode->isSubstanceConcept = " << queryEntityNode->isSubstanceConcept << endl;
+			if(!(referenceTraceParameters->doNotParseQuerySubnetsWithSubstanceConcepts) || !(queryEntityNode->isSubstanceConcept))
 			{
-				#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-				//cout << "A2: ((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))" << endl;
-				#endif
-
-				#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
-				if(queryEntityNode->referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)		//added 13 July 2012
+			#endif
+				if((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))	//only trace paths of same reference set ID
 				{
-				#endif
-					#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
-					if(queryEntityNode->idActiveList != entityNode->idActiveList)	//else they are exactly the same [NB with new implementation of GIA_USE_ADVANCED_REFERENCING, it will detect the same nodes as a reference match, so they need to be ignored when this happens]
+					#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+					//cout << "A2: ((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))" << endl;
+					#endif
+
+					#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
+					if(queryEntityNode->referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)		//added 13 July 2012
 					{
 					#endif
-						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-						bool passIntrasentenceReferenceRequirements = true;
-						if(referenceTraceParameters->intrasentenceReference)
-						{
-							passIntrasentenceReferenceRequirements = false;
-							if(entityNode->entityIndexTemp < queryEntityNode->minimumEntityIndexOfReferenceSet)
-							{
-								/*
-								if((queryEntityNode->wordOrig == "file") && (entityNode->wordOrig == "files"))
-								{
-									cout << "WARNING:" << endl;
-									cout << "queryEntityNode->minimumEntityIndexOfReferenceSet = " << queryEntityNode->minimumEntityIndexOfReferenceSet << endl;
-									cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
-								}
-								*/
-								passIntrasentenceReferenceRequirements = true;
-							}
-						}
-
-						if(passIntrasentenceReferenceRequirements)
+						#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
+						if(queryEntityNode->idActiveList != entityNode->idActiveList)	//else they are exactly the same [NB with new implementation of GIA_USE_ADVANCED_REFERENCING, it will detect the same nodes as a reference match, so they need to be ignored when this happens]
 						{
 						#endif
-							if(compareEntityNamesResult)
+							#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+							bool passIntrasentenceReferenceRequirements = true;
+							if(referenceTraceParameters->intrasentenceReference)
 							{
-								#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-								for(int level=0; level<queryTraceParameters->level+1; level++)
+								passIntrasentenceReferenceRequirements = false;
+								if(entityNode->entityIndexTemp < queryEntityNode->minimumEntityIndexOfReferenceSet)
 								{
-									cout << "\t";
-								}
-								cout << "compareEntityNamesResult: queryEntityNode->entityName = " << queryEntityNode->entityName << ", entityNode->entityName = " << entityNode->entityName << endl;
-								/*
-								cout << "queryEntityNode->isSubstance = " << queryEntityNode->isSubstance << endl;
-								cout << "queryEntityNode->isSubstanceConcept = " << queryEntityNode->isSubstanceConcept << endl;
-								cout << "entityNode->isSubstance = " << entityNode->isSubstance << endl;
-								cout << "entityNode->isSubstanceConcept = " << entityNode->isSubstanceConcept << endl;
-								*/
-								#endif
-
-								#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
-								bool passSpecificConcepts = true;
-								if(((queryEntityNode->isSubstanceConcept) && !(entityNode->isSubstanceConcept)) ||
-								((entityNode->isSubstanceConcept) && !(queryEntityNode->isSubstanceConcept)))
-								{
-									passSpecificConcepts = false;
-									//cout << "\t\t\t !passSpecificConcepts" << endl;
-								}
-								if(passSpecificConcepts)
-								{
-								#endif
-									#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
-									bool passPluralityMatch = true;
-									if(((queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)) ||
-									((entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)))
+									/*
+									if((queryEntityNode->wordOrig == "file") && (entityNode->wordOrig == "files"))
 									{
-										passPluralityMatch = false;
+										cout << "WARNING:" << endl;
+										cout << "queryEntityNode->minimumEntityIndexOfReferenceSet = " << queryEntityNode->minimumEntityIndexOfReferenceSet << endl;
+										cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
 									}
-									if(passPluralityMatch)
+									*/
+									passIntrasentenceReferenceRequirements = true;
+								}
+							}
+
+							if(passIntrasentenceReferenceRequirements)
+							{
+							#endif
+								if(compareEntityNamesResult)
+								{
+									#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+									for(int level=0; level<queryTraceParameters->level+1; level++)
+									{
+										cout << "\t";
+									}
+									cout << "compareEntityNamesResult: queryEntityNode->entityName = " << queryEntityNode->entityName << ", entityNode->entityName = " << entityNode->entityName << endl;
+									/*
+									cout << "queryEntityNode->isSubstance = " << queryEntityNode->isSubstance << endl;
+									cout << "queryEntityNode->isSubstanceConcept = " << queryEntityNode->isSubstanceConcept << endl;
+									cout << "entityNode->isSubstance = " << entityNode->isSubstance << endl;
+									cout << "entityNode->isSubstanceConcept = " << entityNode->isSubstanceConcept << endl;
+									*/
+									#endif
+
+									#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
+									bool passSpecificConcepts = true;
+									if(((queryEntityNode->isSubstanceConcept) && !(entityNode->isSubstanceConcept)) ||
+									((entityNode->isSubstanceConcept) && !(queryEntityNode->isSubstanceConcept)))
+									{
+										passSpecificConcepts = false;
+										//cout << "\t\t\t !passSpecificConcepts" << endl;
+									}
+									if(passSpecificConcepts)
 									{
 									#endif
-									//cout << "passed isSubstanceConcept tests" << endl;
-
-										if(testEntityNodeForQueryOrReferenceSet(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
+										#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
+										bool passPluralityMatch = true;
+										if(((queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)) ||
+										((entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)))
 										{
-											result = EXACT_MATCH_PASS;
+											passPluralityMatch = false;
+										}
+										if(passPluralityMatch)
+										{
+										#endif
+										//cout << "passed isSubstanceConcept tests" << endl;
 
-											#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-											/*
-											#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-											if(referenceTraceParameters->intrasentenceReference)
+											if(testEntityNodeForQueryOrReferenceSet(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
 											{
-												cout << "EXACT_MATCH_PASS" << endl;
+												result = EXACT_MATCH_PASS;
+
+												#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+												/*
+												#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+												if(referenceTraceParameters->intrasentenceReference)
+												{
+													cout << "EXACT_MATCH_PASS" << endl;
+												}
+												#endif
+												*/
+												#endif
 											}
-											#endif
-											*/
-											#endif
+											else
+											{
+												result = EXACT_MATCH_FAIL;
+											}
+										#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
 										}
 										else
 										{
-											result = EXACT_MATCH_FAIL;
+											/*
+											cout << "\t\t\t !passPluralityMatch" << endl;
+											cout << "entityName = " << queryEntityNode->entityName << endl;
+											cout << "queryEntityNode->isConcept = " << queryEntityNode->isConcept << endl;
+											cout << "queryEntityNode->grammaticalNumber = " << queryEntityNode->grammaticalNumber << endl;
+											cout << "entityNode->grammaticalNumber = " << entityNode->grammaticalNumber << endl;
+											*/
 										}
-									#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
-									}
-									else
-									{
-										/*
-										cout << "\t\t\t !passPluralityMatch" << endl;
-										cout << "entityName = " << queryEntityNode->entityName << endl;
-										cout << "queryEntityNode->isConcept = " << queryEntityNode->isConcept << endl;
-										cout << "queryEntityNode->grammaticalNumber = " << queryEntityNode->grammaticalNumber << endl;
-										cout << "entityNode->grammaticalNumber = " << entityNode->grammaticalNumber << endl;
-										*/
+										#endif
+									#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 									}
 									#endif
-								#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 								}
-								#endif
+								else
+								{
+									//cout << "!compareEntityNamesResult" << endl;
+									result = EXACT_MATCH_FAIL;
+								}
+							#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 							}
 							else
 							{
-								//cout << "!compareEntityNamesResult" << endl;
-								result = EXACT_MATCH_FAIL;
+								result = EXACT_MATCH_FAIL;	//CHECKTHIS
 							}
-						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+							#endif
+						#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
 						}
 						else
 						{
 							result = EXACT_MATCH_FAIL;	//CHECKTHIS
 						}
 						#endif
-					#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
+					#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
 					}
 					else
 					{
-						result = EXACT_MATCH_FAIL;	//CHECKTHIS
+						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+						//cout << "(queryEntityNode->referenceSetID == GIA_REFERENCE_SET_ID_UNDEFINED)" << endl;
+						#endif
+						result = EXACT_MATCH_OUT_OF_BOUNDS;	//CHECKTHIS
 					}
 					#endif
-				#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
 				}
 				else
 				{
 					#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-					//cout << "(queryEntityNode->referenceSetID == GIA_REFERENCE_SET_ID_UNDEFINED)" << endl;
+					//cout << "EXACT_MATCH_OUT_OF_BOUNDS1" << endl;
 					#endif
-					result = EXACT_MATCH_OUT_OF_BOUNDS;	//CHECKTHIS
+					result = EXACT_MATCH_OUT_OF_BOUNDS;
 				}
-				#endif
+			#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
 			}
-			else
-			{
-				#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-				//cout << "EXACT_MATCH_OUT_OF_BOUNDS1" << endl;
-				#endif
-				result = EXACT_MATCH_OUT_OF_BOUNDS;
-			}
+			#endif
 		}
 		#endif
 	}

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a9a 10-December-2013
+ * Project Version: 2a10a 13-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1361,6 +1361,9 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 		referenceTraceParameters.intrasentenceReference = false;
 		#endif
+		#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
+		referenceTraceParameters.doNotParseQuerySubnetsWithSubstanceConcepts = true;
+		#endif
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		cout << "1. createGIAcoreferenceInListBasedUponIdentifiedReferenceSet (!intrasentenceReference)" << endl;
 		#endif
@@ -1375,6 +1378,9 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		setUseDatabase(GIA_USE_DATABASE_FALSE);
 		#endif
 		referenceTraceParameters.intrasentenceReference = true;
+		#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
+		referenceTraceParameters.doNotParseQuerySubnetsWithSubstanceConcepts = false;	//unnecessary as sentences with substance concepts will never contain intrasentence referencing... (eg "black birds are really fast, and black birds are really tall" does not require intrasentence referencing; where as "a black bird lives is really fast, and the black bird is tall" requires intrasentence referencing)
+		#endif
 		bool foundAtLeastOneMatchIntraSentence = false;
 		createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(sentenceConceptEntityNodesList, sentenceConceptEntityNodesList, &referenceTraceParameters, &maxNumberOfMatchedNodes, &queryEntityWithMaxNumberNodesMatched, &networkEntityWithMaxNumberNodesMatched, &foundAtLeastOneMatchIntraSentence);	//always perform intrasentence reference detection last (as this takes priority)
 		//cout << "intersentence end" << endl;
