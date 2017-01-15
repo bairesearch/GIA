@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6a 10-June-2015
+ * Project Version: 2j6b 10-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -147,126 +147,159 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 				currentRelation->relationGovernor = relationGovernor;
 				currentRelation->relationDependent = relationDependent;
 				*/
-				bool useLemmaFromFeatureSet = false;
-				if(!parseGIA2file)
+				
+				#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
+				if(!(currentRelation->relationDependentRevertedToOfficialLRPTemp))
+				#endif
 				{
-					useLemmaFromFeatureSet = true;
-				}
-				else if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
-				{
-					#ifdef GIA2_SUPPORT_QUERIES
-					if(!parseGIA2file || !(findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))	//!parseGIA2file condition added GIA 1d1a
+					bool useLemmaFromFeatureSet = false;
+					if(!parseGIA2file)
 					{
-					#endif
 						useLemmaFromFeatureSet = true;
-					#ifdef GIA2_SUPPORT_QUERIES
 					}
-					#endif
-				}
-
-				GIAfeature* currentFeatureInList = firstFeatureInList;
-				//cout << "relationDependent = " << relationDependent << endl;
-				//cout << "relationDependentIndex = " << relationDependentIndex << endl;
-				if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
-				{
-					for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationDependentIndex; f++)
-					{
-						currentFeatureInList = currentFeatureInList->next;
-					}
-				}
-				if(useLemmaFromFeatureSet)
-				{
-					//cout << "currentFeatureInList->lemma = " << currentFeatureInList->lemma << endl;
-
-					currentRelation->relationDependent = currentFeatureInList->lemma;
-				}
-				else
-				{
-					//cout << "relationDependent = " << relationDependent << endl;
-					currentRelation->relationDependent = relationDependent;	//eg "_measure" of _measure-993
-				}
-				#ifdef GIA2_SUPPORT_QUERIES
-				if(parseGIA2file)	//condition added 1d1a
-				{
-					if(findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE))
-					{
-						currentRelation->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+					else
+					{//parseGIA2file
 						if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
 						{
-							currentFeatureInList->lemma = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+							#ifdef GIA2_SUPPORT_QUERIES
+							if(!(findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))	//redundant !parseGIA2file condition added GIA1d1a, removed GIA2j6b
+							{
+							#endif
+								useLemmaFromFeatureSet = true;
+							#ifdef GIA2_SUPPORT_QUERIES
+							}
+							#endif
 						}
-						if(findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+					}
+
+					GIAfeature* currentFeatureInList = firstFeatureInList;
+					//cout << "relationDependent = " << relationDependent << endl;
+					//cout << "relationDependentIndex = " << relationDependentIndex << endl;
+					if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+					{
+						for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationDependentIndex; f++)
 						{
-							currentRelation->corpusSpecialRelationDependentIsQuery = relationDependent.substr(REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH, relationDependent.length()-REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH);
+							currentFeatureInList = currentFeatureInList->next;
 						}
+					}
+					if(useLemmaFromFeatureSet)
+					{
+						currentRelation->relationDependent = currentFeatureInList->lemma;
+						//cout << "currentRelation->relationDependent = " << currentRelation->relationDependent << endl;
 					}
 					else
 					{
-						if(findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+						currentRelation->relationDependent = relationDependent;	//eg "_measure" of _measure-993
+						//cout << "relationDependent = " << relationDependent << endl;
+					}
+					#ifdef GIA2_SUPPORT_QUERIES
+					if(parseGIA2file)	//condition added 1d1a
+					{
+						if(findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE))
 						{
-							currentRelation->corpusSpecialRelationDependentIsQuery = relationDependent;
+							//ie !useLemmaFromFeatureSet
+							currentRelation->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+							if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+							{
+								currentFeatureInList->lemma = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+							}
+							if(findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+							{
+								currentRelation->corpusSpecialRelationDependentIsQuery = relationDependent.substr(REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH, relationDependent.length()-REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH);
+							}
+						}
+						else
+						{	//ie useLemmaFromFeatureSet
+							if(findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+							{
+								currentRelation->corpusSpecialRelationDependentIsQuery = relationDependent;
+							}
 						}
 					}
-				}
-				#endif
-				useLemmaFromFeatureSet = false;
-				if(!parseGIA2file)
-				{
-					useLemmaFromFeatureSet = true;
-				}
-				else if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
-				{
-					#ifdef GIA2_SUPPORT_QUERIES
-					if(!parseGIA2file || !(findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))	//!parseGIA2file condition added GIA 1d1a
-					{
-					#endif
-						useLemmaFromFeatureSet = true;
-					#ifdef GIA2_SUPPORT_QUERIES
-					}
 					#endif
 				}
-				currentFeatureInList = firstFeatureInList;
-				if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
-				{
-					for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationGovernorIndex; f++)
-					{
-						currentFeatureInList = currentFeatureInList->next;
-					}
-				}
-				if(useLemmaFromFeatureSet)
-				{
-					currentRelation->relationGovernor = currentFeatureInList->lemma;
-					//cout << "currentRelation->relationGovernor = " << currentRelation->relationGovernor << endl;
-				}
+				/*
 				else
 				{
-					//cout << "relationGovernor = " << relationGovernor << endl;
-					currentRelation->relationGovernor = relationGovernor;	//eg "_measure" of _measure-993
+					cout << "relationDependentRevertedToOfficialLRPTemp" << endl;
 				}
-				#ifdef GIA2_SUPPORT_QUERIES
-				if(parseGIA2file)	//condition added 1d1a
+				*/				
+				
+				#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
+				if(!(currentRelation->relationGovernorRevertedToOfficialLRPTemp))
+				#endif
 				{
-					if(findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE))
+					bool useLemmaFromFeatureSet = false;
+					if(!parseGIA2file)
 					{
-						currentRelation->relationGovernor = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+						useLemmaFromFeatureSet = true;
+					}
+					else 
+					{//parseGIA2file
 						if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
 						{
-							currentFeatureInList->lemma = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+							#ifdef GIA2_SUPPORT_QUERIES
+							if(!(findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))	//redundant !parseGIA2file condition added GIA1d1a, removed GIA2j6b
+							{
+							#endif
+								useLemmaFromFeatureSet = true;
+							#ifdef GIA2_SUPPORT_QUERIES
+							}
+							#endif
 						}
-						if(findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+					}
+				
+					GIAfeature* currentFeatureInList = firstFeatureInList;
+					if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+					{
+						for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationGovernorIndex; f++)
 						{
-							currentRelation->corpusSpecialRelationGovernorIsQuery = relationGovernor.substr(REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH, relationGovernor.length()-REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH);
+							currentFeatureInList = currentFeatureInList->next;
 						}
+					}
+					if(useLemmaFromFeatureSet)
+					{
+						currentRelation->relationGovernor = currentFeatureInList->lemma;
+						//cout << "currentRelation->relationGovernor = " << currentRelation->relationGovernor << endl;
 					}
 					else
 					{
-						if(findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+						currentRelation->relationGovernor = relationGovernor;	//eg "_measure" of _measure-993
+						//cout << "relationGovernor = " << relationGovernor << endl;
+					}
+					#ifdef GIA2_SUPPORT_QUERIES
+					if(parseGIA2file)	//condition added 1d1a
+					{
+						if(findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE))	
 						{
-							currentRelation->corpusSpecialRelationGovernorIsQuery = relationGovernor;
+							//ie !useLemmaFromFeatureSet
+							currentRelation->relationGovernor = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+							if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+							{
+								currentFeatureInList->lemma = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+							}
+							if(findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+							{
+								currentRelation->corpusSpecialRelationGovernorIsQuery = relationGovernor.substr(REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH, relationGovernor.length()-REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH);
+							}
+						}
+						else
+						{	//ie useLemmaFromFeatureSet
+							if(findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+							{
+								currentRelation->corpusSpecialRelationGovernorIsQuery = relationGovernor;
+							}
 						}
 					}
+					#endif
 				}
-				#endif
+				/*
+				else
+				{
+					cout << "relationGovernorRevertedToOfficialLRPTemp" << endl;
+				}
+				*/
+
 			}
 
 			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
@@ -631,9 +664,44 @@ void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsente
 			#ifdef GIA_LRP_DEBUG
 			cout << "convertStanfordRelationToRelex() foundOfficialLRPreplacementString: tempRelexPrepositionString = " << tempRelexPrepositionString << ", relationTypeRelexStandard= " << relationTypeRelexStandard << endl;
 			#endif
-			//currentRelationInList->relationTypeForNLPonly = relationTypeRelexStandard;	//not required
 		}
 		delete tempFeature;
+		
+		#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
+		//takes into account the fact prepositions are often defined via case(city-6, near-4) instead of prep_near(is-3, city-6) with Stanford 2015-04-20+ [ie are not necessarily parsed as relationType]:
+		foundOfficialLRPreplacementString = false;
+		tempFeature = new GIAfeature();
+		string relationGovernorForNLPonly = currentRelationInList->relationGovernor;
+		tempFeature->word = relationGovernorForNLPonly;
+		tempFeature->entityIndex = currentRelationInList->relationGovernorIndex;
+		revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, false, &foundOfficialLRPreplacementString);
+		if(foundOfficialLRPreplacementString)
+		{
+			string officialLRPentityName = tempFeature->word;
+			currentRelationInList->relationGovernor = officialLRPentityName;
+			currentRelationInList->relationGovernorRevertedToOfficialLRPTemp = true;
+			#ifdef GIA_LRP_DEBUG
+			cout << "convertStanfordRelationToRelex() foundOfficialLRPreplacementString: relationGovernorForNLPonly = " << relationGovernorForNLPonly << ", currentRelationInList->relationGovernor= " << currentRelationInList->relationGovernor << endl;
+			#endif
+		}
+		delete tempFeature;		
+		foundOfficialLRPreplacementString = false;
+		tempFeature = new GIAfeature();
+		string relationDependentForNLPonly = currentRelationInList->relationDependent;
+		tempFeature->word = relationDependentForNLPonly;
+		tempFeature->entityIndex = currentRelationInList->relationDependentIndex;
+		revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, false, &foundOfficialLRPreplacementString);
+		if(foundOfficialLRPreplacementString)
+		{
+			string officialLRPentityName = tempFeature->word;
+			currentRelationInList->relationDependent = officialLRPentityName;
+			currentRelationInList->relationDependentRevertedToOfficialLRPTemp = true;
+			#ifdef GIA_LRP_DEBUG
+			cout << "convertStanfordRelationToRelex() foundOfficialLRPreplacementString: relationDependentForNLPonly = " << relationDependentForNLPonly << ", currentRelationInList->relationDependent= " << currentRelationInList->relationDependent << endl;
+			#endif
+		}
+		delete tempFeature;		
+		#endif
 	}
 	//}
 	#endif

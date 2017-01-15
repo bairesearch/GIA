@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6a 10-June-2015
+ * Project Version: 2j6b 10-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -784,19 +784,31 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 										//cout << "currentRelationInList->relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
 										#endif
 
-										currentFeatureInList = firstFeatureInList;
-										for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationDependentIndex; f++)
+										#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
+										if(!(currentRelationInList->relationGovernorRevertedToOfficialLRPTemp))
 										{
-											currentFeatureInList = currentFeatureInList->next;
+										#endif
+											currentFeatureInList = firstFeatureInList;
+											for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationGovernorIndex; f++)
+											{
+												currentFeatureInList = currentFeatureInList->next;
+											}
+											currentRelationInList->relationGovernor = currentFeatureInList->lemma;
+										#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
 										}
-										currentRelationInList->relationDependent = currentFeatureInList->lemma;
-										currentFeatureInList = firstFeatureInList;
-										for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationGovernorIndex; f++)
+										if(!(currentRelationInList->relationDependentRevertedToOfficialLRPTemp))
 										{
-											currentFeatureInList = currentFeatureInList->next;
+										#endif
+											currentFeatureInList = firstFeatureInList;
+											for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationDependentIndex; f++)
+											{
+												currentFeatureInList = currentFeatureInList->next;
+											}
+											currentRelationInList->relationDependent = currentFeatureInList->lemma;
+										#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
 										}
-										currentRelationInList->relationGovernor = currentFeatureInList->lemma;
-
+										#endif
+										
 										#ifdef GIA_NLP_DEBUG
 										//cout << "currentRelationInList->relationGovernor = " << currentRelationInList->relationGovernor << endl;
 										//cout << "currentRelationInList->relationDependent = " << currentRelationInList->relationDependent << endl;

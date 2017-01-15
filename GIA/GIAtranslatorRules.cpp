@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6a 10-June-2015
+ * Project Version: 2j6b 10-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -199,7 +199,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											*/
 
 											/*
-											if(functionName == "defineSubstanceConcepts")	//defineSubstancesBasedOnDeterminatesOfDefinitionEntities //linkEntityDefinitionsAppositiveOfNouns
+											if(functionName == "redistributeStanfordRelationsCase")	//defineSubstancesBasedOnDeterminatesOfDefinitionEntities //linkEntityDefinitionsAppositiveOfNouns
 											{
 												GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 												while(currentRelationInList->next != NULL)
@@ -207,28 +207,34 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 													if(!(currentRelationInList->disabled))
 													{
 														string relationType = currentRelationInList->relationType;
-														if(relationType == RELATION_TYPE_APPOSITIVE_OF_NOUN)
-														{
-															GIAentityNode* relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-															GIAentityNode* relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+														GIAentityNode* relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+														GIAentityNode* relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+														
+														cout << "relationType = " << currentRelationInList->relationType << endl;
+														cout << "relationGoverner = " << currentRelationInList->relationGovernor << endl;
+														cout << "relationDependent = " << currentRelationInList->relationDependent << endl;
+														cout << "relationGovernerIndex = " << currentRelationInList->relationGovernorIndex << endl;
+														cout << "relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
+														cout << "GIAentityNodeArray relationGoverner->entityName = " << relationGoverner->entityName << endl;
+														cout << "GIAentityNodeArray relationDependent->entityName = " << relationDependent->entityName << endl;
 
-															cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
+															//cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
 
-															cout << "relationGoverner->grammaticalWordTypeTemp = " << relationGoverner->grammaticalWordTypeTemp << endl;
+															//cout << "relationGoverner->grammaticalWordTypeTemp = " << relationGoverner->grammaticalWordTypeTemp << endl;
 															//cout << "relationGoverner->wasReference = " << relationGoverner->wasReference << endl;
-															cout << "relationGoverner->grammaticalPronounTemp = " << relationGoverner->grammaticalPronounTemp << endl;
-															cout << "relationGoverner->grammaticalNumber = " << relationGoverner->grammaticalNumber << endl;
-															cout << "relationGoverner->grammaticalDefiniteTemp = " << relationGoverner->grammaticalDefiniteTemp << endl;
-															cout << "relationGoverner->grammaticalIndefinitePluralTemp = " << relationGoverner->grammaticalIndefinitePluralTemp << endl;
-															cout << "relationGoverner->isSubstanceConcept = " << relationGoverner->isSubstanceConcept << endl;
+															//cout << "relationGoverner->grammaticalPronounTemp = " << relationGoverner->grammaticalPronounTemp << endl;
+															//cout << "relationGoverner->grammaticalNumber = " << relationGoverner->grammaticalNumber << endl;
+															//cout << "relationGoverner->grammaticalDefiniteTemp = " << relationGoverner->grammaticalDefiniteTemp << endl;
+															//cout << "relationGoverner->grammaticalIndefinitePluralTemp = " << relationGoverner->grammaticalIndefinitePluralTemp << endl;
+															//cout << "relationGoverner->isSubstanceConcept = " << relationGoverner->isSubstanceConcept << endl;
 
-															cout << "relationDependent->grammaticalWordTypeTemp = " << relationDependent->grammaticalWordTypeTemp << endl;
+															//cout << "relationDependent->grammaticalWordTypeTemp = " << relationDependent->grammaticalWordTypeTemp << endl;
 															//cout << "relationDependent->wasReference = " << relationDependent->wasReference << endl;
-															cout << "relationDependent->grammaticalPronounTemp = " << relationDependent->grammaticalPronounTemp << endl;
-															cout << "relationDependent->grammaticalNumber = " << relationDependent->grammaticalNumber << endl;
-															cout << "relationDependent->grammaticalDefiniteTemp = " << relationDependent->grammaticalDefiniteTemp << endl;
-															cout << "relationDependent->grammaticalIndefinitePluralTemp = " << relationDependent->grammaticalIndefinitePluralTemp << endl;
-															cout << "relationDependent->isSubstanceConcept = " << relationDependent->isSubstanceConcept << endl;
+															//cout << "relationDependent->grammaticalPronounTemp = " << relationDependent->grammaticalPronounTemp << endl;
+															//cout << "relationDependent->grammaticalNumber = " << relationDependent->grammaticalNumber << endl;
+															//cout << "relationDependent->grammaticalDefiniteTemp = " << relationDependent->grammaticalDefiniteTemp << endl;
+															//cout << "relationDependent->grammaticalIndefinitePluralTemp = " << relationDependent->grammaticalIndefinitePluralTemp << endl;
+															//cout << "relationDependent->isSubstanceConcept = " << relationDependent->isSubstanceConcept << endl;
 															
 															//cout << "relationGoverner->grammaticalNumber = " << relationGoverner->grammaticalNumber << endl;
 															//cout << "relationGoverner->grammaticalDefiniteTemp = " << relationGoverner->grammaticalDefiniteTemp << endl;
@@ -259,12 +265,13 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 															//cout << "relationDependent->isNameQuery = " << relationDependent->isNameQuery << endl;	
 															
 														
-														}
+														
 													}
 													currentRelationInList = currentRelationInList->next;
 												}
 											}
 											*/
+											
 
 											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation
 											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))

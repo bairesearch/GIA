@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6a 10-June-2015
+ * Project Version: 2j6b 10-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -689,7 +689,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		}
 	}
 	#endif
-
+	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1a; fillGrammaticalArrays" << endl;
 	#endif
@@ -731,7 +731,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	*/
 	#endif
 	#endif
-
+	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -776,6 +776,33 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	locateAndAddAllConceptEntities(currentSentenceInList, GIAentityNodeArrayFilled, GIAconceptNodeArray, entityNodesActiveListConcepts, sentenceConceptEntityNodesList, NLPdependencyRelationsType, GIAfeatureTempEntityNodeArray);
 
+	/*
+	cout << "TEST" << endl;
+	currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		if(!(currentRelationInList->disabled))
+		{
+			cout << "relationType = " << currentRelationInList->relationType << endl;
+			cout << "relationGoverner = " << currentRelationInList->relationGovernor << endl;
+			cout << "relationDependent = " << currentRelationInList->relationDependent << endl;
+			cout << "relationGovernerIndex = " << currentRelationInList->relationGovernorIndex << endl;
+			cout << "relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
+			if(GIAentityNodeArrayFilled[currentRelationInList->relationGovernorIndex])
+			{
+				GIAentityNode* relationGoverner = GIAconceptNodeArray[currentRelationInList->relationGovernorIndex];
+				cout << "GIAconceptNodeArray relationGoverner->entityName = " << relationGoverner->entityName << endl;
+			}
+			if(GIAentityNodeArrayFilled[currentRelationInList->relationDependentIndex])
+			{	
+				GIAentityNode* relationDependent = GIAconceptNodeArray[currentRelationInList->relationDependentIndex];
+				cout << "GIAconceptNodeArray relationDependent->entityName = " << relationDependent->entityName << endl;
+			}
+		}
+		currentRelationInList = currentRelationInList->next;
+	}
+	*/
+	
 	#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG
 	cout << "dependency relations: " << endl;
 	currentRelationInList = currentSentenceInList->firstRelationInList;
