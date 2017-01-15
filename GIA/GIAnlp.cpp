@@ -3,7 +3,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i13b 15-Apr-2012
+ * Project Version: 1i14a 16-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -33,7 +33,7 @@ using namespace std;
 #include "GIAParser.h"
 
 
-void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelationXMLFileName, int NLPParser, bool NLPparserType, bool isQuery)
+void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelationXMLFileName, int NLPParser, string NLPexeFolderArray[])
 {
 	/*
 	int inputTextNLPParsedXMLFileNameLength = inputTextNLPrelationXMLFileName.length();
@@ -47,62 +47,38 @@ void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelat
 	
 	bool result = true;
 	string NLPParserExecutableName = "";
+	string NLPexeFolder = "";
 	#ifdef GIA_USE_RELEX
 	if(NLPParser == GIA_NLP_PARSER_RELEX)
 	{
 		NLPParserExecutableName = GIA_RELEX_EXECUTABLE_NAME;
+		NLPexeFolder = NLPexeFolderArray[GIA_NLP_PARSER_RELEX];
 	}
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
 	if(NLPParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
 		NLPParserExecutableName = GIA_STANFORD_NLP_EXECUTABLE_NAME;
+		NLPexeFolder = NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_CORENLP];
 	}
 	#endif
 	#ifdef GIA_USE_STANFORD_PARSER
 	if(NLPParser == GIA_NLP_PARSER_STANFORD_PARSER)
 	{
 		NLPParserExecutableName = GIA_STANFORD_PARSER_EXECUTABLE_NAME;
+		NLPexeFolder = NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_PARSER];
+		
 	}
 	#endif
 	
-	string NPLexeFolder = "";
-	if(NLPparserType == GIA_NLP_PARSER_TYPE_RELATIONS)
-	{
-		if(isQuery)
-		{
-			NPLexeFolder = queryNPLrelationExeFolderCharStar;
-		}
-		else
-		{
-			NPLexeFolder = NPLrelationExeFolderCharStar;
-		}
-	}
-	else if(NLPparserType == GIA_NLP_PARSER_TYPE_FEATURES)
-	{
-		if(isQuery)
-		{
-			NPLexeFolder = queryNPLfeatureExeFolderCharStar;
-		}
-		else
-		{
-			NPLexeFolder = NPLfeatureExeFolderCharStar;
-		}	
-	}
-	else
-	{
-		cout << "executeNLPparser(): error - invalid NLPparserType" << endl;
-		exit(0);
-	}
-	
 	//execute NLP parser on plain text
 	string executeRelexCommand = "";	
-	executeRelexCommand = executeRelexCommand + NPLexeFolder + "/" + NLPParserExecutableName + " " + inputTextPlainTXTFileName + " " + inputTextNLPrelationXMLFileName + " " + workingFolderCharStar + " " + tempFolderCharStar + " " + StanfordCoreNLPdefaultOutputFileExtensionAppend;
+	executeRelexCommand = executeRelexCommand + NLPexeFolder + "/" + NLPParserExecutableName + " " + inputTextPlainTXTFileName + " " + inputTextNLPrelationXMLFileName + " " + workingFolderCharStar + " " + tempFolderCharStar + " " + StanfordCoreNLPdefaultOutputFileExtensionAppend;
 	
 	#ifdef LINUX
-	chdir(NPLexeFolder.c_str());						
+	chdir(NLPexeFolder.c_str());						
 	#else
-	::SetCurrentDirectory(NPLexeFolder.c_str());
+	::SetCurrentDirectory(NLPexeFolder.c_str());
 	#endif	
 
 	#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE

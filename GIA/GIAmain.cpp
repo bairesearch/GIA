@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i13b 15-Apr-2012
+ * Project Version: 1i14a 16-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
@@ -60,9 +60,9 @@ NB execute-relex.sh contains the following text;
 
 	cat $3/$1 | java $VM_OPTS $RELEX_OPTS $CLASSPATH relex.WebFormat -g --url "$3/$1" > $3/$2
 
-Make sure to set the nlprelexefolder to the folder where relex-1.x.0 presides, eg;
+Make sure to set the nlprelexfolder to the folder where relex-1.x.0 presides, eg;
 
-./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelexefolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlprelation 0 -notshowOR
+./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelexfolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlprelation 0 -notshow
 
 */	
 
@@ -72,7 +72,7 @@ NB execute-stanfordCoreNLP.sh contains the following text;
 
 	java -cp stanford-corenlp-2012-04-03.jar:stanford-corenlp-2012-03-09-models.jar:xom.jar:joda-time.jar -Xmx3g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file $3/$1 -outputDirectory $4 -outputExtension $5
 
-./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelexefolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlprelation 1 -notshow
+./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlpstanfordcorenlpfolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlprelation 1 -notshow
 
 */
 
@@ -84,16 +84,16 @@ NB execute-stanfordParser.sh contains the following text;
 	scriptdir=`dirname $0`
 	java -mx150m -cp "$scriptdir/*:" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz $3/$1 > $4/$2
 
-./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelexefolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -nlprelation 2 -notshow
+./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlpstanfordparserfolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -nlprelation 2 -notshow
 
+*/
+
+/*
 Additional example where relations + features are parsed from different NLP files;
-./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelation 2 -nlprelexefolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -nlpfeature 1 -nlptagexefolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -notshow
+./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelation 2 -nlpfeature 1 -nlprelexfolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -notshow
 
 Additional example where relations + features parsed from different NLP file, queries parsed using different NLP file;
-./GIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelation 2 -nlprelexefolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -nlpfeature 1 -nlptagexefolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlprelationq 0 -nlprelqexefolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlpfeatureq 0 -nlptagqexefolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -notshow
-
-Additional example where relations + features parsed from different NLP file, queries parsed using different NLP file;
-./GIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlprelexefolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -nlpfeature 1 -nlptagexefolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlprelationq 0 -nlprelqexefolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlpfeatureq 0 -nlptagqexefolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -notshow
+./GIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -notshow
 
 */	
 
@@ -163,11 +163,10 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-nlpfeatureq [int] : query NLP feature parser to be executed by GIA (0 - Relex [def], 1 - Stanford Core NLP, 2 - Stanford Parser (ie, none))"
 "\n\t-nlpcompmodeq      : query sets Relex into Stanford compatibility mode (Relex dependency relation parser creates Stanford relations type) [UNIMPLEMENTED]"
 "\n"
-"\n\t-workingfolder [string]    : working directory name for input files (def: same as exe)"
-"\n\t-nlprelexefolder [string]  : exe directory name for NLP dependency relation parser executable (def: same as exe)"
-"\n\t-nlptagexefolder [string]  : exe directory name for NLP feature tag parser executable (def: same as nlprelexefolder)"
-"\n\t-nlprelqexefolder [string] : query exe directory name for NLP dependency relation parser executable (def: same as nlprelexefolder)"
-"\n\t-nlptagqexefolder [string] : query exe directory name for NLP feature tag parser executable (def: same as nlprelqexefolder)"
+"\n\t-workingfolder [string]            : working directory name for input files (def: same as exe)"
+"\n\t-nlprelexfolder [string]           : directory name for Relex (def: same as exe)"
+"\n\t-nlpstanfordcorenlpfolder [string] : directory name for Stanford Parser (def: same as nlprelexefolder)"
+"\n\t-nlpstanfordparserfolder [string]  : directory name for Stanford CoreNLP (def: same as nlprelexefolder)"
 "\n\t-tempfolder [string]       : temp directory name for temporary and outputText files (def: same as exe)"
 "\n"
 "\n\n\t-version         : print version"
@@ -198,6 +197,8 @@ int main(int argc,char **argv)
 	int queryNLPdependencyRelationsParser = GIA_NLP_RELATIONS_PARSER_FOR_INPUT_QUERY_DEFAULT;
 	bool queryNLPrelexCompatibilityMode = false;		//sets Relex dependency Relations to Stanford type
 		
+	string NLPexeFolderArray[GIA_NLP_PARSER_NUMBER_OF_TYPES];
+	
 	bool useInputTextPlainTXTFile = false;
 	string inputTextPlainTXTFileName = "inputText.txt";
 
@@ -495,44 +496,38 @@ int main(int argc,char **argv)
 								
 		if (exists_argument(argc,argv,"-workingfolder"))
 		{
-			workingFolderCharStar=get_char_argument(argc,argv,"-workingfolder");
+			workingFolderCharStar =get_char_argument(argc,argv,"-workingfolder");
 		}
 		else
 		{
 			workingFolderCharStar = currentFolder;		
 		}
-		if (exists_argument(argc,argv,"-nlprelexefolder"))
+		
+		if (exists_argument(argc,argv,"-nlprelexfolder"))
 		{
-			NPLrelationExeFolderCharStar=get_char_argument(argc,argv,"-nlprelexefolder");
+			NLPexeFolderArray[GIA_NLP_PARSER_RELEX] =get_char_argument(argc,argv,"-nlprelexfolder");
 		}
 		else
 		{
-			NPLrelationExeFolderCharStar = currentFolder;
+			NLPexeFolderArray[GIA_NLP_PARSER_RELEX] = currentFolder;
 		}
-		if (exists_argument(argc,argv,"-nlptagexefolder"))
+		if (exists_argument(argc,argv,"-nlpstanfordcorenlpfolder"))
 		{
-			NPLfeatureExeFolderCharStar=get_char_argument(argc,argv,"-nlptagexefolder");
-		}
-		else
-		{
-			NPLfeatureExeFolderCharStar = NPLrelationExeFolderCharStar;
-		}
-		if (exists_argument(argc,argv,"-nlprelqexefolder"))
-		{
-			queryNPLrelationExeFolderCharStar=get_char_argument(argc,argv,"-nlprelqexefolder");
+			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_CORENLP] =get_char_argument(argc,argv,"-nlpstanfordcorenlpfolder");
 		}
 		else
 		{
-			queryNPLrelationExeFolderCharStar = NPLrelationExeFolderCharStar;
-		}
-		if (exists_argument(argc,argv,"-nlptagqexefolder"))
+			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_CORENLP] = currentFolder;
+		}		
+		if (exists_argument(argc,argv,"-nlpstanfordparserfolder"))
 		{
-			queryNPLfeatureExeFolderCharStar=get_char_argument(argc,argv,"-nlptagqexefolder");
+			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_PARSER] =get_char_argument(argc,argv,"-nlpstanfordparserfolder");
 		}
 		else
 		{
-			queryNPLfeatureExeFolderCharStar = queryNPLrelationExeFolderCharStar;
-		}						
+			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_PARSER] = currentFolder;
+		}
+						
 		if (exists_argument(argc,argv,"-tempfolder"))
 		{
 			tempFolderCharStar=get_char_argument(argc,argv,"-tempfolder");
@@ -550,7 +545,7 @@ int main(int argc,char **argv)
 								
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe - Project Version: 1i13b 15-Apr-2012" << endl;
+			cout << "GIA.exe - Project Version: 1i14a 16-Apr-2012" << endl;
 			exit(1);
 		}
 
@@ -766,10 +761,10 @@ int main(int argc,char **argv)
 		}
 		else
 		{	
-			executeNLPparser(inputTextPlainTXTFileName, inputTextNLPrelationXMLFileName, NLPdependencyRelationsParser, GIA_NLP_PARSER_TYPE_RELATIONS, false);	
+			executeNLPparser(inputTextPlainTXTFileName, inputTextNLPrelationXMLFileName, NLPdependencyRelationsParser, NLPexeFolderArray);	
 			if(inputTextNLPfeatureXMLFileName != inputTextNLPrelationXMLFileName)
 			{
-				executeNLPparser(inputTextPlainTXTFileName, inputTextNLPfeatureXMLFileName, NLPfeatureParser, GIA_NLP_PARSER_TYPE_FEATURES, false);	
+				executeNLPparser(inputTextPlainTXTFileName, inputTextNLPfeatureXMLFileName, NLPfeatureParser, NLPexeFolderArray);	
 			}		
 			useInputTextNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
 		}
@@ -841,10 +836,10 @@ int main(int argc,char **argv)
 		}
 		else
 		{	
-			executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, queryNLPdependencyRelationsParser, GIA_NLP_PARSER_TYPE_RELATIONS, true);	
+			executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, queryNLPdependencyRelationsParser, NLPexeFolderArray);	
 			if(inputQueryNLPfeatureXMLFileName != inputQueryNLPrelationXMLFileName)
 			{
-				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, GIA_NLP_PARSER_TYPE_FEATURES, true);	
+				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray);	
 			}					
 			useInputQueryNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
 		}
