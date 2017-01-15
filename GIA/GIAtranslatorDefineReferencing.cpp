@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g10a 17-October-2014
+ * Project Version: 2g10b 17-October-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1063,7 +1063,7 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 				{
 					passDefiniteSetChecks = true;
 				}
-				#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY_ACCEPT_PROPERNOUNS
+				#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ACCEPT_PROPERNOUNS
 				if(currentInstance->grammaticalProperNounTemp)
 				{
 					passDefiniteSetChecks = true;
@@ -1170,7 +1170,6 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		referenceTraceParameters.referenceSetID = referenceSetID;
 		
 		#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
-		referenceTraceParameters.testReferenceSetContext = true;
 		referenceTraceParameters.referenceSetDefiniteEntity = referenceSetDefiniteEntity;
 		//referenceTraceParameters.firstSentenceInList = firstSentenceInList;
 		#endif
@@ -1184,6 +1183,9 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 
 		#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 		referenceTraceParameters.intrasentenceReference = false;
+		#endif
+		#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+		referenceTraceParameters.testReferenceSetContext = true;
 		#endif
 		#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
 		referenceTraceParameters.doNotParseQuerySubnetsWithSubstanceConcepts = true;
@@ -1202,6 +1204,9 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		setUseDatabase(GIA_USE_DATABASE_FALSE);
 		#endif
 		referenceTraceParameters.intrasentenceReference = true;
+		#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+		referenceTraceParameters.testReferenceSetContext = false;
+		#endif
 		#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
 		referenceTraceParameters.doNotParseQuerySubnetsWithSubstanceConcepts = false;	//unnecessary as sentences with substance concepts will never contain intrasentence referencing... (eg "black birds are really fast, and black birds are really tall" does not require intrasentence referencing; where as "a black bird lives is really fast, and the black bird is tall" requires intrasentence referencing)
 		#endif
@@ -1215,10 +1220,16 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 			#endif
 			foundAtLeastOneMatch = true;
 			referenceTraceParameters.intrasentenceReference = true;		//already the case
+			#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+			referenceTraceParameters.testReferenceSetContext = false;
+			#endif
 		}
 		else
 		{
 			referenceTraceParameters.intrasentenceReference = false;
+			#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+			referenceTraceParameters.testReferenceSetContext = true;
+			#endif
 		}
 		#ifdef GIA_USE_DATABASE
 		setUseDatabase(useDatabaseOriginal);
@@ -1850,7 +1861,6 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 
 
 #ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-
 void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GIAentityNode*> * entityNodesActiveListComplete)
 {
 	#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
@@ -1884,7 +1894,6 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 				{
 					bool traceModeIsQuery = false;
 					
-					//[*****^]
 					GIAreferenceTraceParameters referenceTraceParameters;
 					referenceTraceParameters.referenceSetID = referenceSetID;
 					referenceTraceParameters.linkSpecificConceptsAndActions = true;
@@ -1964,7 +1973,6 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 		}
 	}
 }
-
 #endif
 
 #ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION

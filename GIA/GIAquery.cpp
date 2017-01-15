@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g10a 17-October-2014
+ * Project Version: 2g10b 17-October-2014
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -714,7 +714,7 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode * queryEntityNode,
 											}
 										}
 										#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-										if(referenceTraceParameters->linkSpecificConceptsAndActions)
+										if(referenceTraceParameters->linkSpecificConceptsAndActions)	//removed "|| referenceTraceParameters->referenceSetDefiniteEntity" - findIndefiniteEntityCorrespondingToDefiniteEntityInSameContext() referenceSetDefiniteEntity now uses testReferencedEntityNodeForExactNameMatch2 to perform plurality tests
 										{
 											passPluralityMatch = true;
 										}
