@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1h 25-May-2012
+ * Project Version: 1l1i 26-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -584,7 +584,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAEntity
 							{//take first instance/property in list
 
 								#ifdef GIA_TRANSLATOR_DEBUG
-								cout << "NonPronoun/property referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
+								cout << "NonPronoun/property referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
 								#endif
 
 								//found the property in the referenceSource concept entity that matches the referenceSource sentence/entity index 
@@ -599,7 +599,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAEntity
 						if(!conceptHasAProperty)
 						{
 							#ifdef GIA_TRANSLATOR_DEBUG
-							cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
+							cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
 							#endif
 							
 							featureArrayTemp[w]->isPronounReference = true;									
@@ -1084,7 +1084,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 
 					int numberOfMatchedNodesTemp = 0;	
 					int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;		
-					bool exactMatch = testEntityNodeForReferenceSet(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, &referenceTraceParameters);
+					bool exactMatch = testEntityNodeForQueryOrReferenceSet(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, &referenceTraceParameters);
 					
 					bool matchFound = false;
 					if(referenceTraceParameters.traceMode == TRACE_MODE_ONLY_RECORD_EXACT_MATCH)
@@ -1124,7 +1124,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 			int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;	
 			
 			//now set the matched nodes as already passed (required such that they are not retraced...) 
-			int result = testEntityNodeForReferenceSet(queryEntityWithMaxNumberNodesMatched, networkEntityWithMaxNumberNodesMatched, &numberOfMatchedNodesTemp, true, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, &referenceTraceParameters);
+			int result = testEntityNodeForQueryOrReferenceSet(queryEntityWithMaxNumberNodesMatched, networkEntityWithMaxNumberNodesMatched, &numberOfMatchedNodesTemp, true, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, &referenceTraceParameters);
 			
 		
 			//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
