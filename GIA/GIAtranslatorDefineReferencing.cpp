@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4a 26-July-2013
+ * Project Version: 1t4b 27-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -217,124 +217,6 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 }
 
 
-
-
-void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList, int NLPdependencyRelationsType)
-{
-	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
-	{
-	#endif
-		if(GIA_PERFORM_RELATION_GOVERNOR_ARGUMENT_SWITCHING_WHERE_NECESSARY)
-		{
-			Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
-			while(currentRelationInList->next != NULL)
-			{
-				#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-				if(!(currentRelationInList->disabled))
-				{
-				#endif
-					bool passed = false;
-					for(int i=0; i<RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES; i++)
-					{
-						if(currentRelationInList->relationType == relationTypeRequireSwitchingNameArray[i])
-						{
-							passed = true;
-						}
-					}
-					if(passed)
-					{
-						bool passed2 = false;
-
-						if(GIA_PERFORM_RELATION_GOVERNOR_ARGUMENT_SWITCHING_ONLY_WHEN_REQUIRED)
-						{
-							//now find the associated object..
- 							Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
-							while(currentRelationInList2->next != NULL)
-							{
-								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-								if(!(currentRelationInList2->disabled))
-								{
-								#endif
-									/*
-									bool partnerTypeRequiredFoundObj = false;
-									for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
-									{
-										if(currentRelationInList2->relationType == relationTypeObjectNameArray[i])
-										{
-											partnerTypeRequiredFoundObj = true;
-										}
-									}
-									*/
-									bool partnerTypeRequiredFoundSubj = false;
-									for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
-									{
-										if(currentRelationInList2->relationType == relationTypeSubjectNameArray[i])
-										{
-											partnerTypeRequiredFoundSubj = true;
-										}
-									}
-									if(partnerTypeRequiredFoundSubj)
-									{
-										if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationDependentIndex)
-										{//found a matching subject-that[obj] relationship that requires function/argument switching										
-											passed2 = true;
-											#ifdef GIA_TRANSLATOR_DEBUG
-											cout << "found a matching subject-that[obj] relationship that requires function/argument switching" << endl;
-											//cout << "partnerTypeRequiredFound: currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
-											#endif												
-										}
-									}
-								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-								}
-								#endif
-
-								currentRelationInList2 = currentRelationInList2->next;
-							}
-						}
-						else
-						{
-							passed2 = true;
-						}
-						if(passed2)
-						{
-							string tempString = currentRelationInList->relationDependent;
-							int tempIndex = currentRelationInList->relationDependentIndex;
-							currentRelationInList->relationDependent = currentRelationInList->relationGovernor;
-							currentRelationInList->relationGovernor = tempString;
-							currentRelationInList->relationDependentIndex = currentRelationInList->relationGovernorIndex;
-							currentRelationInList->relationGovernorIndex = tempIndex;
-						}
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-					}
-					#endif
-				}
-				currentRelationInList = currentRelationInList->next;
-			}
-		}
-		
-		Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
-		while(currentRelationInList->next != NULL)
-		{
-			#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-			if(!(currentRelationInList->disabled))
-			{
-			#endif
-				if(currentRelationInList->relationType == RELATION_TYPE_OBJECT_THAT_RELEX_EXPLICIT_PREPOSITION)
-				{
-					currentRelationInList->relationType = RELATION_TYPE_OBJECT_THAT_RELEX;	
-				}	
-			
-			#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-			}
-			#endif		
-			currentRelationInList = currentRelationInList->next;
-		}
-		
-	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-	}
-	#endif
-}
 
 void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType)
 {

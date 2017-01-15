@@ -23,7 +23,7 @@
  * File Name: GIAwordnet.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4a 26-July-2013
+ * Project Version: 1t4b 27-July-2013
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *

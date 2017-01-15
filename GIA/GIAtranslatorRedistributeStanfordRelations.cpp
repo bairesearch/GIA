@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4a 26-July-2013
+ * Project Version: 1t4b 27-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -3889,7 +3889,7 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 #ifdef GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES
 void redistributeStanfordRelationsExpletives(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	//eg 'There is a place that we go.' _expl(be[2], there[1]) + _subj(be[2], place[4]) + _subj(go[7], we[6]) [IRRELEVANT] + _obj(be[2], go[7]) -> _subj(go[7], we[6]) + _obj(place[4], go[7]) 
+	//eg 'There is a place that we go.' _expl(be[2], there[1]) + _subj(be[2], place[4]) + _subj(go[7], we[6]) [IRRELEVANT] + _obj(be[2], go[7]) -> _subj(go[7], we[6]) + _obj(go[7], place[4]) 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 3;
@@ -3899,11 +3899,12 @@ void redistributeStanfordRelationsExpletives(Sentence * currentSentenceInList, b
 	param.useRelationTest[REL1][REL_ENT1] = true; param.relationTest[REL1][REL_ENT1] = RELATION_ENTITY_BE;
 	param.useRelationIndexTest[REL1][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT1] = REL2; param.relationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT1;
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL3; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
-	param.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT1] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT1] = REL_ENT2;
+	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL3; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
+	param.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
 	param.disableRelation[REL1] = true;
-	param.disableRelation[REL2] = true;
+	param.disableRelation[REL3] = true;
 	param.disableEntity[REL1][REL_ENT1] = true;
-	param.disableEntity[REL2][REL_ENT2] = true;
+	param.disableEntity[REL1][REL_ENT2] = true;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -3939,12 +3940,22 @@ void redistributeStanfordRelationsExpletives(Sentence * currentSentenceInList, b
 											{
 												if(currentRelationInList->relationGovernorIndex == currentRelationInList3->relationGovernorIndex)
 												{
+													currentRelationInList2->relationType = RELATION_TYPE_OBJECT;
+													currentRelationInList2->relationGovernorIndex = currentRelationInList3->relationDependentIndex; 
+													currentRelationInList2->relationGovernor = currentRelationInList3->relationDependent; 
+													currentRelationInList->disabled = true; 
+													currentRelationInList3->disabled = true; 
+													disableEntity(GIAentityNodeArray[currentRelationInList->relationGovernorIndex]);
+													disableEntity(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
+																									
+													/*WRONG;
 													currentRelationInList3->relationGovernorIndex = currentRelationInList2->relationDependentIndex; 
 													currentRelationInList3->relationGovernor = currentRelationInList2->relationDependent; 
 													currentRelationInList->disabled = true; 
 													currentRelationInList2->disabled = true; 
 													disableEntity(GIAentityNodeArray[currentRelationInList->relationGovernorIndex]);
 													disableEntity(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
+													*/
 												}	
 											}
 										}				

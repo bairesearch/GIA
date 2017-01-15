@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4a 26-July-2013
+ * Project Version: 1t4b 27-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -707,7 +707,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		#ifdef GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES
 		//Added 13 November 2012
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "pass 1c17; redistribute Stanford Relations - expletives (eg 'There is a place that we go'   _expl(be[2], there[1]) / _subj(be[2], place[4]) / _subj(go[7], we[6]) / _obj(be[2], go[7]) -> _subj(go[7], we[6]) / _obj(place[4], go[7])  )" << endl;
+		cout << "pass 1c17; redistribute Stanford Relations - expletives (eg 'There is a place that we go'   _expl(be[2], there[1]) + _subj(be[2], place[4]) + _subj(go[7], we[6]) + _obj(be[2], go[7]) -> _subj(go[7], we[6]) + _obj(go[7], place[4])  )" << endl;
 		#endif
 		redistributeStanfordRelationsExpletives(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
 		#endif
@@ -816,7 +816,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		//required for aliasing to work
 		redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
 		#endif	
-	#endif						
+		
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1c8Alternate; switch argument/functions where necessary" << endl;
+		#endif
+		switchArgumentsAndFunctionsWhereNecessaryRelex(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);		
+		#endif						
 				
 	}
 	#endif
@@ -904,11 +909,6 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	//}
 	#endif
 #endif	
-
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "pass 1f; switch argument/functions where necessary" << endl;
-	#endif
-	switchArgumentsAndFunctionsWhereNecessary(currentSentenceInList, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 2; identify entity types [define entities as objects, subjects, and being possessive of substances];" << endl;

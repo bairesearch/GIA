@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4a 26-July-2013
+ * Project Version: 1t4b 27-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -217,7 +217,6 @@ bool determineIfWordIsVerbContinuousCase(string * word)
 
 
 #endif
-
 
 
 void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
@@ -865,6 +864,198 @@ void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(Senten
 #endif
 
 
+void switchArgumentsAndFunctionsWhereNecessaryRelex(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]) 
+{
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, false);	
+	paramA.numberOfRelations = 1;
+	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_OBJECT_THAT_RELEX_EXPLICIT_PREPOSITION;
+	paramA.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramA.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_OBJECT_THAT_RELEX;
+	genericDependecyRelationInterpretation(&paramA, REL1);
+	
+	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, NULL, GIAentityNodeArray, false);	
+	paramB.numberOfRelations = 2;
+	paramB.useRelationArrayTest[REL1][REL_ENT3] = true; paramB.relationArrayTest[REL1][REL_ENT3] = relationTypeRequireSwitchingNameArray; paramB.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES;
+	paramB.useRelationArrayTest[REL2][REL_ENT3] = true; paramB.relationArrayTest[REL2][REL_ENT3] = relationTypeSubjectNameArray; paramB.relationArrayTestSize[REL2][REL_ENT3] = RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES;
+	paramB.useRelationIndexTest[REL2][REL_ENT1] = true; paramB.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; paramB.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT2;
+	paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1; paramB.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL1][REL_ENT2] = true;		
+	paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2; 
+	genericDependecyRelationInterpretation(&paramB, REL1);	
+#else	
+	#ifdef GIA_PERFORM_RELATION_GOVERNOR_ARGUMENT_SWITCHING_WHERE_NECESSARY	
+	/*
+	Not necessary as "there" is a redundant node: change _expl to _subj for relex and mark 'there' as definite:
+
+	There is a place that we go.
+	_expl(be[2], there[1])
+	_obj(be[2], place[4])
+	_subj(go[7], we[6])
+	that(place[4], go[7])
+
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT_EXPLETIVE)
+			{
+				cout << "change _expl to _subj for relex (and mark 'there' as definite)" << endl;
+				currentRelationInList->relationType = RELATION_TYPE_SUBJECT;	
+			}	
+
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		}
+		#endif		
+		currentRelationInList = currentRelationInList->next;
+	}
+	*/
+
+	/*
+	change that preposition to _that for relex
+	There is a place that we go.
+	_expl(be[2], there[1])
+	_obj(be[2], place[4])
+	_subj(go[7], we[6])
+	that(place[4], go[7])
+	*/
+
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			bool prepositionFound = false;
+			string preposition = convertPrepositionToRelex(&(currentRelationInList->relationType), &prepositionFound);	//convert stanford prep_x to relex x 
+			if(preposition == RELATION_TYPE_OBJECT_THAT_RELEX_EXPLICIT_PREPOSITION)
+			{
+				currentRelationInList->relationType = RELATION_TYPE_OBJECT_THAT_RELEX;	
+			}	
+
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		}
+		#endif		
+		currentRelationInList = currentRelationInList->next;
+	}
+
+	currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			bool passed = false;
+			for(int i=0; i<RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypeRequireSwitchingNameArray[i])
+				{
+					passed = true;
+				}
+			}
+			if(passed)
+			{
+				bool passed2 = false;
+
+				#ifdef GIA_PERFORM_RELATION_GOVERNOR_ARGUMENT_SWITCHING_ONLY_WHEN_REQUIRED
+				//now find the associated object..
+ 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				while(currentRelationInList2->next != NULL)
+				{
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+					if(!(currentRelationInList2->disabled))
+					{
+					#endif
+						bool partnerTypeRequiredFoundSubj = false;
+						for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
+						{
+							if(currentRelationInList2->relationType == relationTypeSubjectNameArray[i])
+							{
+								partnerTypeRequiredFoundSubj = true;
+							}
+						}
+						if(partnerTypeRequiredFoundSubj)
+						{
+							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationDependentIndex)
+							{//found a matching subject-that[obj] relationship that requires function/argument switching										
+								passed2 = true;
+								#ifdef GIA_TRANSLATOR_DEBUG
+								cout << "found a matching subject-that[obj] relationship that requires function/argument switching" << endl;
+								//cout << "partnerTypeRequiredFound: currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
+								#endif												
+							}
+						}
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+					}
+					#endif
+
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+				#else
+				passed2 = true;
+				#endif
+
+				if(passed2)
+				{
+					string tempString = currentRelationInList->relationDependent;
+					int tempIndex = currentRelationInList->relationDependentIndex;
+					currentRelationInList->relationDependent = currentRelationInList->relationGovernor;
+					currentRelationInList->relationGovernor = tempString;
+					currentRelationInList->relationDependentIndex = currentRelationInList->relationGovernorIndex;
+					currentRelationInList->relationGovernorIndex = tempIndex;
+				}
+			#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+			}
+			#endif
+		}
+		currentRelationInList = currentRelationInList->next;
+	}
+	#endif
+#endif	
+}
 
 
+/* **************************************************** START SCENARIOS NOT YET IMPLEMENTED FOR RELEX ****************************************************/
 
+#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_WHAT_IS_THE_NAME_NUMBER_OF_QUERIES
+void redistributeRelexRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+{
+	/*interpret;
+		[given 'The name of the dog near the farm is Max.']
+		'What is the name of the red dog near the farm?' [return entity names]
+			nsubj(is-2, name-4) + attr(is-2, What-1) {+ det(name-4, the-3)} + poss/prep_of(name-4, dog-8) -> appos(dog[8], _$qVar[1])	{_name(dog[8], _$qVar)??}
+		'What is the dog's name?'
+			nsubj(is-2, name-6) + attr(is-2, What-1) + poss(name-6, dog-4)	
+				
+		'What is the number of the red dogs near the farm?' [return entity number/quantity]
+			nsubj(is-2, number-4) + attr(is-2, What-1) {/ det(number-4, the-3)} + poss/prep_of(number-4, dogs-8) -> _quantity(dog[8], _$qVar[1])
+		
+	*/
+	
+//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		
+//#else
+	//not coded as this function was developed after GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+//#endif
+}
+#endif
+
+#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
+void redistributeRelexRelationsInterpretNameOfAsDefinition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+{
+	//eg interpret 'The red dog's name is Max.'		nsubj(Max-7, name-5) + poss(name-5, dog-3) -> appos(dog-3, Max-7)
+	//eg interpret 'The name of the red dog is Max.'	nsubj(Max-7, name-5) + prep_of(name-5, dog-3) -> appos(dog-3, Max-7)
+	//eg interpret 'Max is the name of the red dog.' 	nsubj(name-4, Max-1) + prep_of(name-4, dog-8) -> appos(dog-3, Max-7)
+
+//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+
+//#else
+	//not coded as this function was developed after GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+//#endif
+}
+#endif
+
+/* **************************************************** END SCENARIOS NOT YET IMPLEMENTED FOR RELEX ****************************************************/
