@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s8f 04-July-2013
+ * Project Version: 1s9a 04-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -3013,8 +3013,9 @@ void redistributeStanfordRelationsCorrectPOStagsAndLemmasOfAllContinuousVerbs(Se
 			GIAentityNode * governorEntity = GIAentityNodeArray[governorIndex];
 			GIAentityNode * dependentEntity = GIAentityNodeArray[dependentIndex];		
 			
-			//cout << governorEntity->entityName << endl;
-			//cout << dependentEntity->entityName << endl;
+			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+			//cout << "governorEntity->entityName = " << governorEntity->entityName << endl;
+			//cout << "dependentEntity->entityName = " << dependentEntity->entityName << endl;
 			if(correctContinuousVerbPOStagAndLemma(governorEntity))
 			{
 				featureArrayTemp[governorIndex]->stanfordPOS = FEATURE_POS_TAG_VBG;
@@ -3061,6 +3062,8 @@ bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity
 {
 	bool foundContinuousVerb = false;
 	
+	//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
+	
 	if(actionOrSubstanceEntity->stanfordPOStemp == FEATURE_POS_TAG_VBG)
 	//if(actionOrSubstanceEntity->wordNetPOS == GRAMMATICAL_WORD_TYPE_VERB)
 	{
@@ -3094,7 +3097,7 @@ bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity
 				actionOrSubstanceEntity->stanfordPOStemp = FEATURE_POS_TAG_VBG;
 				actionOrSubstanceEntity->wordNetPOS = GRAMMATICAL_WORD_TYPE_VERB;
 			}
-
+			
 			foundContinuousVerb = true;
 		}
 
