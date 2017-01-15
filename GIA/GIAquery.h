@@ -3,7 +3,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l3a 31-May-2012
+ * Project Version: 1l4a 01-June-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
@@ -30,6 +30,15 @@
 #ifdef GIA_QUERY_TRACE_INSTANTIATIONS
 	//#define GIA_QUERY_TRACE_INSTANTIATIONS_OLD_TEXTUAL_OUTPUT
 #endif
+
+
+#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+	#define GIA_QUERY_DEBUG_LEVEL
+#endif
+#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+	#define GIA_QUERY_DEBUG_LEVEL
+#endif
+
 
 //#define GIA_QUERY_USE_ARTIFICIALLY_ADJUSTED_MAX_CONFIDENCE
 
@@ -89,7 +98,7 @@ public:
 	GIAEntityNode* sourceEntityNode;			//temp variable	//not required for testEntityNodeForQuery
 	string sourceContext;					//temp variable	//not required for testEntityNodeForQuery	
 
-	#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+	#ifdef GIA_QUERY_DEBUG_LEVEL
 	int level;
 	#endif
 };
@@ -114,7 +123,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, int * numberOfMatchedNodes, bool knownBestMatch, int * numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAQueryTraceParameters * queryTraceParameters, GIAReferenceTraceParameters * referenceTraceParameters);
 			bool verifyThatAnswerEntityIsDefinedByComparisonVariableNode(GIAEntityNode * entityNode, string comparisonVariableNodeName);
 		bool determineMatchParameters(bool exactMatchFoundTemp, bool traceIsQuery, int referenceTraceParametersTraceMode, int numberOfMatchedNodesTempMax, bool * exactMatch);
-		bool determineIfBestAnswerCandidate(bool traceModeIsQuery, int queryTraceParametersTempFoundAnswer, bool alreadyFoundAnAnswer, bool numberOfMatchedNodesTemp, int numberOfMatchedNodesTempMax, int numberOfMatchedNodesRequiredSynonymnDetectionTemp, int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax);
+		bool determineIfBestAnswerCandidate(bool traceModeIsQuery, int queryTraceParametersTempFoundAnswer, bool alreadyFoundAnAnswer, bool numberOfMatchedNodesTemp, int numberOfMatchedNodesTempMax, int numberOfMatchedNodesRequiredSynonymnDetectionTemp, int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax, int referenceTraceParametersTraceMode, bool exactMatchTemp);
 
 bool compareEntityNames(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode);	
 void generateTexualContextWithPreviousNodeForwards(string * queryAnswerContext, string sourceContext, GIAEntityNode* entityNode, GIAEntityNode* entityNodePrevious);

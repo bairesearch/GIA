@@ -3,7 +3,7 @@
  * File Name: GIASentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l3a 31-May-2012
+ * Project Version: 1l4a 01-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -256,6 +256,95 @@ Paragraph::~Paragraph(void)
 	}
 }
 
+void copySentences(Sentence * sentenceToCopy, Sentence * newSentence)
+{
+	newSentence->sentenceIndex = sentenceToCopy->sentenceIndex;
+
+	#ifdef GIA_USE_RELEX
+	newSentence->sentenceText = sentenceToCopy->sentenceText;
+	newSentence->constituentsText = sentenceToCopy->constituentsText;
+	newSentence->featuresText = sentenceToCopy->featuresText;
+	newSentence->relationsText = sentenceToCopy->relationsText;
+	newSentence->linksText = sentenceToCopy->linksText;
+	#endif	
+	
+	#ifdef GIA_USE_STANFORD_CORENLP
+	newSentence->firstCoreferenceInList = sentenceToCopy->firstCoreferenceInList;
+	#endif
+
+	newSentence->maxNumberOfWordsInSentence = sentenceToCopy->maxNumberOfWordsInSentence;
+		
+	copyRelations(sentenceToCopy->firstRelationInList, newSentence->firstRelationInList);
+	copyFeatures(sentenceToCopy->firstFeatureInList, newSentence->firstFeatureInList);
+		
+	newSentence->next = sentenceToCopy->next;
+	newSentence->previous = sentenceToCopy->previous;
+	
+	newSentence->isQuestion = sentenceToCopy->isQuestion;
+}
+
+
+void copyRelations(Relation * firstRelationInListToCopy, Relation * firstRelationInList)
+{
+	Relation * currentRelationToCopy = firstRelationInListToCopy;
+	Relation * currentRelation = firstRelationInList;
+	while(currentRelationToCopy->next != NULL)
+	{
+
+		currentRelation->relationType = currentRelationToCopy->relationType;
+		currentRelation->relationDependent = currentRelationToCopy->relationDependent;
+		currentRelation->relationDependentIndex = currentRelationToCopy->relationDependentIndex;
+		currentRelation->relationGovernor = currentRelationToCopy->relationGovernor;
+		currentRelation->relationGovernorIndex = currentRelationToCopy->relationGovernorIndex;
+
+		//cout << "copy relation:" << endl;
+		//cout << currentRelation->relationType << "(" << currentRelation->relationGovernor << ", " << currentRelation->relationDependent << ")" << endl;	
+						
+		Relation * newRelation = new Relation();
+		//newRelation->previous = currentRelation;
+		currentRelation->next = newRelation;
+				
+		currentRelationToCopy = currentRelationToCopy->next;
+		currentRelation = currentRelation->next;
+	}
+}
+
+void copyFeatures(Feature * firstFeatureInListToCopy, Feature * firstFeatureInList)
+{
+	Feature * currentFeatureToCopy = firstFeatureInListToCopy;
+	Feature * currentFeature = firstFeatureInList;
+	while(currentFeatureToCopy->next != NULL)
+	{	
+
+		currentFeature->entityIndex = currentFeatureToCopy->entityIndex;
+		currentFeature->word = currentFeatureToCopy->word;
+		currentFeature->lemma = currentFeatureToCopy->lemma;
+		
+		#ifdef GIA_USE_RELEX
+		currentFeature->type = currentFeatureToCopy->type;
+		currentFeature->grammar = currentFeatureToCopy->grammar;		
+		#endif
+
+		currentFeature->NER = currentFeatureToCopy->NER;
+		#ifdef GIA_USE_STANFORD_CORENLP
+		currentFeature->CharacterOffsetBegin = currentFeatureToCopy->CharacterOffsetBegin;
+		currentFeature->CharacterOffsetEnd = currentFeatureToCopy->CharacterOffsetEnd;
+		currentFeature->stanfordPOS = currentFeatureToCopy->stanfordPOS;
+		currentFeature->NormalizedNER = currentFeatureToCopy->NormalizedNER;
+		currentFeature->Timex = currentFeatureToCopy->Timex;		
+		#endif
+		
+		//cout << "copy feature:" << endl;
+		//cout << currentFeature->lemma << endl;				
+			
+		Feature * newFeature = new Feature();
+		newFeature->previous = currentFeature;		
+		currentFeature->next = newFeature;
+		
+		currentFeatureToCopy = currentFeatureToCopy->next;
+		currentFeature = currentFeature->next;
+	}
+}
 
 
 

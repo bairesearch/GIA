@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l3a 31-May-2012
+ * Project Version: 1l4a 01-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -113,8 +113,12 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 				
 				GIAEntityNodeArray[relationIndex[i]]->isObjectTemp = false;		
 				GIAEntityNodeArray[relationIndex[i]]->isSubjectTemp = false;		
-				GIAEntityNodeArray[relationIndex[i]]->hasPropertyTemp = false;		
-				
+				GIAEntityNodeArray[relationIndex[i]]->hasPropertyTemp = false;	
+				#ifdef GIA_USE_ADVANCED_REFERENCING	
+				//this is required for fillGrammaticalArraysStanford findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet()	[nb these values are applied to concept entities only]
+				GIAEntityNodeArray[relationIndex[i]]->entityIndexTemp = relationIndex[i];
+				GIAEntityNodeArray[relationIndex[i]]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
+				#endif
 			}		
 		}
 
@@ -476,9 +480,9 @@ void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * cu
 				}
 			}			
 						
-			if(subjectObjectEntityWithAuxillary->entityIndexTemp = currentRelationInList->relationDependentIndex)
+			if(subjectObjectEntityWithAuxillary->entityIndexTemp = currentRelationInList->relationGovernorIndex)	//CHECK THIS; this used to be currentRelationInList->relationDependentIndex [before 1 June 2012]
 			{
-				if(subjectObjectEntityWithAuxillary->entityName == currentRelationInList->relationDependent)
+				if(subjectObjectEntityWithAuxillary->entityName == currentRelationInList->relationGovernor)	//CHECK THIS; this used to be currentRelationInList->relationDependent [before 1 June 2012]
 				{//this check is redundant
 					currentRelationInList->auxillaryIndicatesDifferentReferenceSet = true;
 				}				

@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineProperties.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l3a 31-May-2012
+ * Project Version: 1l4a 01-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -143,9 +143,13 @@ void definePropertiesObjectsAndSubjectsWithProperties(Sentence * currentSentence
 	{	
 		if(GIAEntityNodeArrayFilled[i])
 		{
-			if(((GIAConceptNodeArray[i]->isObjectTemp) && (GIAConceptNodeArray[i]->hasPropertyTemp)) || ((GIAConceptNodeArray[i]->isSubjectTemp) && (GIAConceptNodeArray[i]->hasPropertyTemp)))
+			#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
+			if(((GIAConceptNodeArray[i]->isObjectTemp2) && (GIAConceptNodeArray[i]->hasPropertyTemp2)) || ((GIAConceptNodeArray[i]->isSubjectTemp2) && (GIAConceptNodeArray[i]->hasPropertyTemp2)))
+			#else
+			if(((GIAConceptNodeArray[i]->isObjectTemp) && (GIAConceptNodeArray[i]->hasPropertyTemp)) || ((GIAConceptNodeArray[i]->isSubjectTemp) && (GIAConceptNodeArray[i]->hasPropertyTemp)))			
+			#endif
 			{
-				GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i], i, currentSentenceInList->sentenceIndex);	
+				GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);	
 			}
 		}
 	}
@@ -167,7 +171,7 @@ void definePropertiesDefiniteNouns(Sentence * currentSentenceInList, bool GIAEnt
 						{
 							//cout << "as0" << endl;
 							//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
-							GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i], i, currentSentenceInList->sentenceIndex);			
+							GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
 						}
 					}
 				}
@@ -200,7 +204,7 @@ void definePropertiesNounsWithDeterminates(Sentence * currentSentenceInList, boo
 						{
 							//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;
 							//cout << "as1" << endl;
-							GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i], i, currentSentenceInList->sentenceIndex);
+							GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
 							//cout << "as2" << endl;
 						}
 					}
@@ -245,7 +249,7 @@ void definePropertiesNounsWithAdjectives(Sentence * currentSentenceInList, GIAEn
 
 					//cout << "as2" << endl;
 
-					GIAEntityNodeArray[thingIndex] = addPropertyToPropertyDefinition(thingEntity, thingIndex, currentSentenceInList->sentenceIndex);			
+					GIAEntityNodeArray[thingIndex] = addPropertyToPropertyDefinition(thingEntity);			
 				}
 			}			
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -280,7 +284,7 @@ void definePropertiesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIA
 
 				//cout << "as3" << endl;
 
-				GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity, propertyIndex, currentSentenceInList->sentenceIndex);					
+				GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity);					
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
@@ -314,7 +318,7 @@ void definePropertiesQuantityModifiers(Sentence * currentSentenceInList, GIAEnti
 				GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 
 				//cout << "as3" << endl;
-				GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity, propertyIndex, currentSentenceInList->sentenceIndex);					
+				GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity);					
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
@@ -343,7 +347,7 @@ void definePropertiesExpletives(Sentence * currentSentenceInList, GIAEntityNode 
 
 				#ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
 				//cout << "as4" << endl;
-				GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity, propertyIndex, currentSentenceInList->sentenceIndex);	
+				GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity);	
 				#else
 				disableEntityBasedUponFirstSentenceToAppearInNetwork(propertyEntity);
 				#endif				
@@ -371,7 +375,7 @@ void definePropertiesPronouns(Sentence * currentSentenceInList, bool GIAEntityNo
 						//cout << "as5" << endl;
 						//cout << "asd" << endl;
 						//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
-						GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i], i, currentSentenceInList->sentenceIndex);			
+						GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
 					}
 				}
 			}
@@ -400,7 +404,7 @@ void definePropertiesNonExplicitPronouns(Sentence * currentSentenceInList, bool 
 			
 			if(passed)
 			{
-				GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i], i, currentSentenceInList->sentenceIndex);	
+				GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);	
 			}
 		}
 	}
@@ -424,7 +428,7 @@ void definePropertiesToBe(Sentence * currentSentenceInList, GIAEntityNode * GIAE
 				int propertyIndex = currentRelationInList->relationDependentIndex;
 				GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 
-				GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity, propertyIndex, currentSentenceInList->sentenceIndex);
+				GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
@@ -453,7 +457,7 @@ void definePropertiesToDo(Sentence * currentSentenceInList, GIAEntityNode * GIAE
 				int actionIndex = currentRelationInList->relationDependentIndex;
 				GIAEntityNode * actionEntity = GIAEntityNodeArray[actionIndex];
 
-				GIAEntityNodeArray[actionIndex] = addActionToActionDefinition(actionEntity, actionIndex, currentSentenceInList->sentenceIndex);
+				GIAEntityNodeArray[actionIndex] = addActionToActionDefinitionDefineProperties(actionEntity);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
@@ -477,7 +481,7 @@ void definePropertiesHasTime(Sentence * currentSentenceInList, bool GIAEntityNod
 				GIAEntityNode * currentGIAEntityNode = GIAEntityNodeArray[w];
 				//cout << "hastime; currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
 
-				GIAEntityNodeArray[w] = addPropertyToPropertyDefinition(currentGIAEntityNode, w, currentSentenceInList->sentenceIndex);			
+				GIAEntityNodeArray[w] = addPropertyToPropertyDefinition(currentGIAEntityNode);			
 			}
 		}
 	}
@@ -525,7 +529,7 @@ void definePropertiesIndirectObjects(Sentence * currentSentenceInList, GIAEntity
 								GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 								GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
 
-								GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity, propertyIndex, currentSentenceInList->sentenceIndex);			
+								GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity);			
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS

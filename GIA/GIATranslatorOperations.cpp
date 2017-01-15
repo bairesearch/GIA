@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l3a 31-May-2012
+ * Project Version: 1l4a 01-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -232,7 +232,7 @@ GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEnt
 	return newOrExistingProperty;		
 }
 
-GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity, int entityIndexTemp, int sentenceIndexTemp)
+GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 {	
 	//cout << "df1" << endl;
 	GIAEntityNode * newOrExistingProperty = propertyEntity;
@@ -253,11 +253,10 @@ GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity, 
 				The green chicken ate the pie.
 				The blue chicken is late.			
 				*/
-				//if(checkEntityHasPropertyThatWasDeclaredInContext(propertyEntity) && (propertyEntity->grammaticalDefiniteTemp || propertyEntity->grammaticalRelexPersonOrStanfordProperNounTemp))	//NB the grammaticalRelexPersonOrStanfordProperNounTemp condition should only be required here if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS is set to true
 				#ifdef GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
-				if(checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(propertyEntity, entityIndexTemp, sentenceIndexTemp) && (propertyEntity->grammaticalDefiniteTemp || propertyEntity->grammaticalRelexPersonOrStanfordProperNounTemp))	//NB the grammaticalRelexPersonOrStanfordProperNounTemp condition should only be required here if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS is set to true				
+				if(checkEntityHasPropertyThatWasDeclaredInContext(propertyEntity) && (propertyEntity->grammaticalDefiniteTemp || propertyEntity->grammaticalRelexPersonOrStanfordProperNounTemp))	//NB the grammaticalRelexPersonOrStanfordProperNounTemp condition should only be required here if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS is set to true				
 				#else
-				if(checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(propertyEntity, entityIndexTemp, sentenceIndexTemp))
+				if(checkEntityHasPropertyThatWasDeclaredInContext(propertyEntity))
 				#endif
 				{	
 					//cout << "\tbreak; assigning: propertyEntity->entityName = " << propertyEntity->entityName << endl;
@@ -272,15 +271,16 @@ GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity, 
 				else
 				{	
 					//cout << "\tbreak; adding: propertyEntity->entityName = " << propertyEntity->entityName << endl;
-					newOrExistingProperty = addProperty(propertyEntity);
-					newOrExistingProperty->entityIndexTemp = entityIndexTemp;
-					newOrExistingProperty->sentenceIndexTemp = sentenceIndexTemp;
+					newOrExistingProperty = addProperty(propertyEntity);p;
 				}
 			#else
 				//cout << "\tbreak2; propertyEntity->entityName = " << propertyEntity->entityName << endl;
 				newOrExistingProperty = addProperty(propertyEntity);
-				newOrExistingProperty->entityIndexTemp = entityIndexTemp;
-				newOrExistingProperty->sentenceIndexTemp = sentenceIndexTemp;				
+				
+				/*
+				cout << "addPropertyToPropertyDefinition():" << endl;
+				cout << "\tnewOrExistingProperty->entityName = " << newOrExistingProperty->entityName << endl;						
+				*/
 			#endif
 		}
 		else
@@ -426,7 +426,7 @@ void upgradePropertyToAction(GIAEntityNode * property)
 	}
 }
 
-GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity, int entityIndexTemp, int sentenceIndexTemp)
+GIAEntityNode * addActionToActionDefinitionDefineProperties(GIAEntityNode * actionEntity)
 {
 	//cout << "SD1" << endl;
 	
@@ -440,11 +440,10 @@ GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity, int en
 		if(actionEntity->isConcept)
 		{
 			#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-				//if(checkEntityHasPropertyThatWasDeclaredInContext(actionEntity) && (actionEntity->grammaticalDefiniteTemp || actionEntity->grammaticalRelexPersonOrStanfordProperNounTemp))	//NB the grammaticalRelexPersonOrStanfordProperNounTemp condition should only be required here if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS is set to true
 				#ifdef GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
-				if(checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(actionEntity, entityIndexTemp, sentenceIndexTemp) && (actionEntity->grammaticalDefiniteTemp || actionEntity->grammaticalRelexPersonOrStanfordProperNounTemp))	//NB the grammaticalRelexPersonOrStanfordProperNounTemp condition should only be required here if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS is set to true				
+				if(checkEntityHasPropertyThatWasDeclaredInContext(actionEntity) && (actionEntity->grammaticalDefiniteTemp || actionEntity->grammaticalRelexPersonOrStanfordProperNounTemp))	//NB the grammaticalRelexPersonOrStanfordProperNounTemp condition should only be required here if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS is set to true				
 				#else
-				if(checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(actionEntity, entityIndexTemp, sentenceIndexTemp))
+				if(checkEntityHasPropertyThatWasDeclaredInContext(actionEntity))
 				#endif
 				{	
 					//cout << "\tbreak; actionEntity->entityName = " << actionEntity->entityName << endl;
@@ -453,15 +452,10 @@ GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity, int en
 				else
 				{	
 					newOrExistingAction = addAction(actionEntity);
-					newOrExistingAction->entityIndexTemp = entityIndexTemp;
-					newOrExistingAction->sentenceIndexTemp = sentenceIndexTemp;
-					
 				}
 			#else
 				//cout << "\tbreak2; actionEntity->entityName = " << actionEntity->entityName << endl;
 				newOrExistingAction = addAction(actionEntity);
-				newOrExistingAction->entityIndexTemp = entityIndexTemp;
-				newOrExistingAction->sentenceIndexTemp = sentenceIndexTemp;				
 			#endif
 		}
 		else
@@ -1190,7 +1184,8 @@ void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArr
 	*/
 }
 
-
+/*
+//NOT REQUIRED: redundant: this unique check is redundant considering if a concept entity has a property that was declared in the immediate context, ie sentence, then the entity node being queried will be the property itself (and not its concept)
 bool checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(GIAEntityNode * entityNode, int entityIndexTemp, int sentenceIndexTemp)
 {
 	bool result = false;
@@ -1198,7 +1193,7 @@ bool checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(GIAEntityNode * e
 	if(checkEntityHasPropertyThatWasDeclaredInContext(entityNode))
 	{
 		GIAEntityNode * entityPropertyDeclaredInContext = getEntityPropertyThatWasDeclaredInContext(entityNode);
-		if(!((entityPropertyDeclaredInContext->entityIndexTemp == entityIndexTemp) && (entityPropertyDeclaredInContext->sentenceIndexTemp == sentenceIndexTemp)))
+		if(!((entityPropertyDeclaredInContext->entityIndexTemp == entityIndexTemp) && (entityPropertyDeclaredInContext->sentenceIndexTemp == sentenceIndexTemp)))		
 		{
 			result = true;
 		}
@@ -1206,6 +1201,7 @@ bool checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(GIAEntityNode * e
 	
 	return result;
 }
+*/
 
 
 bool checkEntityHasPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode)
@@ -1244,18 +1240,31 @@ GIAEntityNode * getEntityPropertyThatWasDeclaredInContext(GIAEntityNode * entity
 #ifdef GIA_USE_ADVANCED_REFERENCING
 bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relation * relation)
 {
+
 	bool auxillaryIndicatesDifferentReferenceSet = relation->auxillaryIndicatesDifferentReferenceSet;
 	bool rcmodIndicatesSameReferenceSet = relation->rcmodIndicatesSameReferenceSet;
-	
+
 	bool sameReferenceSet = defaultSameSetValueForRelation;
 	if(auxillaryIndicatesDifferentReferenceSet)
 	{
-		defaultSameSetValueForRelation = false;
+		sameReferenceSet = false;
 	}
 	if(rcmodIndicatesSameReferenceSet)
 	{
-		defaultSameSetValueForRelation = true;
+		sameReferenceSet = true;
 	}	
+	
+	/*
+	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+	cout << "determineSameReferenceSetValue():" << endl;
+	cout << "\t" << relation->relationType << "(" << relation->relationGovernor << ", " << relation->relationDependent << ")" << endl;
+	cout << "\tauxillaryIndicatesDifferentReferenceSet = " << auxillaryIndicatesDifferentReferenceSet << endl;
+	cout << "\trcmodIndicatesSameReferenceSet = " << rcmodIndicatesSameReferenceSet << endl;
+	cout << "\tdefaultSameSetValueForRelation = " << defaultSameSetValueForRelation << endl;
+	cout << "\tsameReferenceSet = " << sameReferenceSet << endl;
+	#endif
+	*/
+		
 	return sameReferenceSet;
 }
 #endif
@@ -1308,12 +1317,17 @@ void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNod
 	vectorConnection->push_back(newConnection);
 	
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	newConnection->sameReferenceSet = true;
+	newConnection->sameReferenceSet = sameReferenceSet;
+	/*
+	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+	cout << "writeVectorConnection: newConnection->sameReferenceSet = " << sameReferenceSet << endl;
+	#endif
+	*/
 	#endif
 	
 	#ifdef GIA_USE_DATABASE
 	if(getUseDatabase())
-	{	
+	{
 		//required for database syncronisation with RAM
 		if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
 		{

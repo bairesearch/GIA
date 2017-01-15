@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l3a 31-May-2012
+ * Project Version: 1l4a 01-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -44,13 +44,18 @@ using namespace std;
 	#define FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION 	//added 26 April 2012 [UNTESTED]
 //#endif
 
-//#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
+#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE	//differentiate between explicit subjects/objects [NLP/temp2] and derived subjects and objects [GIA/temp]
 
 #ifdef GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-		//#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
+		#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY	//this is required considering reference look up of non definite sets is never desired
 		#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
-			#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_EXPLICIT_SUBJECT_ONLY
+			#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_ONLY
+			#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_ONLY
+				#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
+					#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_EXPLICIT_SUBJECT_ONLY	//requires differentiation between explicit subjects/objects [NLP/temp2] and derived subjects and objects [GIA/temp]
+				#endif
+			#endif
 		#endif
 		#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
 		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
@@ -76,7 +81,7 @@ using namespace std;
 #endif
 
 
-//#define GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE		//this has been disabled because it has been deemed inappropriate for 'The disaster happened over night.?'  [prt(happened-3, over-4)]
+#define GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE		//this was previously disabled because it was deemed inappropriate for 'The disaster happened over night.'  [prt(happened-3, over-4)] - but this case has now been integrated
 
 //#define GIA_ENFORCE_USE_OF_RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES
 
@@ -853,7 +858,7 @@ bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation * currentRelation
 bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, Relation * currentRelationInList, int NLPdependencyRelationsType);								//Stanford Compatible
 
 GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet);
-GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity, int entityIndexTemp, int sentenceIndexTemp);
+GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
 	GIAEntityNode * addProperty(GIAEntityNode * propertyEntity);
 	
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, bool isProgressive);
@@ -865,7 +870,7 @@ GIAEntityNode * addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode 
 GIAEntityNode * addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet);
 	void addActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet);
 	void addActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet);	
-GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity, int entityIndexTemp, int sentenceIndexTemp);
+GIAEntityNode * addActionToActionDefinitionDefineProperties(GIAEntityNode * actionEntity);
 GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity);
 	void upgradePropertyToAction(GIAEntityNode * property);
 	GIAEntityNode * addAction(GIAEntityNode * actionEntity);			
@@ -923,7 +928,7 @@ void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, stri
 
 void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArrayTemp[]);	//used for intrafunction memory allocation purposes only
 
-bool checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(GIAEntityNode * entityNode, int entityIndexTemp, int sentenceIndexTemp);				//added 1j8a 10 May 2012
+//bool checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(GIAEntityNode * entityNode, int entityIndexTemp, int sentenceIndexTemp);		//NOT REQUIRED: redundant: this unique check is redundant considering if a concept entity has a property that was declared in the immediate context, ie sentence, then the entity node being queried will be the property itself (and not its concept)	//added 1j8a 10 May 2012
 
 bool checkEntityHasPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7d 9 May 2012
 GIAEntityNode * getEntityPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7g 9 May 2012

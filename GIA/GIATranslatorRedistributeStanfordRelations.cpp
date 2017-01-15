@@ -3,7 +3,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l3a 31-May-2012
+ * Project Version: 1l4a 01-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -401,6 +401,13 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 										//cout << "hello2" << endl;
 										
 										#ifdef GIA_USE_ADVANCED_REFERENCING
+										/*eg;
+										[case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING]
+										The claims that are on the frame are blue.
+										nsubj(are-4, claims-2)
+										prep_on(are-4, frame-7)
+										rcmod(claims-2, are-4)
+										*/										
 										bool auxillaryIndicatesDifferentReferenceSet = true;
 										Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
 										while(currentRelationInList3->next != NULL)
@@ -482,6 +489,13 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	nsubj(broke-3, computer-2)
 	acomp(broke-3, due-4)
 	prep_to(due-4, fire-7)
+	
+		[case added 1 June 2012]
+		He used a computer that broke due to the fire.
+		nsubj(broke-6, computer-4)
+		rcmod(computer-4, broke-6)
+		acomp(broke-6, due-7)
+		prep_to(due-7, fire-10)
 
 	nsubj(went-2, They-1)
 	advmod(went-2, back-3)
@@ -672,6 +686,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 														#ifdef GIA_USE_ADVANCED_REFERENCING
 														/*											
 														[case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING]
+														He rode the carriage that is near to the horse.
 														nsubj(near-7, carriage-4)
 														cop(near-7, is-6)
 														rcmod(carriage-4, near-7)
@@ -683,7 +698,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 														{
 															if(currentRelationInList4->relationType == RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER)
 															{
-																if((currentRelationInList4->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList->relationDependentIndex))
+																if((currentRelationInList4->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList3->relationDependentIndex))		//OLD: before 1 June 2012 code review: if((currentRelationInList4->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList->relationDependentIndex))
 																{
 																	auxillaryIndicatesDifferentReferenceSet = false;	
 																}
@@ -719,6 +734,32 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 															exit(0);
 														}
 														*/
+														
+														#ifdef GIA_USE_ADVANCED_REFERENCING
+														/*											
+														[case added 1 June 2012 for GIA_USE_ADVANCED_REFERENCING]
+														He used a computer that broke due to the fire.
+														nsubj(broke-6, computer-4)
+														rcmod(computer-4, broke-6)
+														acomp(broke-6, due-7)
+														prep_to(due-7, fire-10)
+														*/
+														bool auxillaryIndicatesDifferentReferenceSet = true;
+														Relation * currentRelationInList4 = currentSentenceInList->firstRelationInList;
+														while(currentRelationInList4->next != NULL)
+														{
+															if(currentRelationInList4->relationType == RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER)
+															{
+																if((currentRelationInList4->relationDependentIndex == currentRelationInList2->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList3->relationDependentIndex))
+																{
+																	auxillaryIndicatesDifferentReferenceSet = false;	
+																}
+															}																			
+															currentRelationInList4 = currentRelationInList4->next;
+														}
+														currentRelationInList->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;	
+														#endif		
+		
 														
 														GIAEntityNode * entityContainingFirstWordOfMultiwordPreposition = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
 
@@ -807,7 +848,12 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 										//CASE CURRENTLY ENABLED
 										
 										#ifdef GIA_USE_ADVANCED_REFERENCING
-										//case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; nsubj(is-4, rabbit-2) / advmod(is-4, away-7) / rcmod(rabbit-2, is-4) -> _predadj(rabbit-2, away-7) 
+										//case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; 
+										The rabbit that is 20 meters away is fat.
+										nsubj(is-4, rabbit-2)
+										advmod(is-4, away-7)
+										rcmod(rabbit-2, is-4) 
+										*/
 										bool auxillaryIndicatesDifferentReferenceSet = true;
 										currentRelationInList3 = currentSentenceInList->firstRelationInList;
 										while(currentRelationInList3->next != NULL)
@@ -821,7 +867,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 											}																			
 											currentRelationInList3 = currentRelationInList3->next;
 										}
-										currentRelationInList->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;	
+										currentRelationInList2->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;	//was currentRelationInList before 1 June 2012 code check 
 										#endif
 																								
 										currentRelationInList2->relationType = RELATION_TYPE_ADJECTIVE_PREDADJ;
@@ -1166,6 +1212,7 @@ void redistributeStanfordRelationsClausalSubject(Sentence * currentSentenceInLis
 	}
 }				
 
+/*OLD: now merged with redistributeStanfordRelationsPrtAndTmod()
 void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -1193,7 +1240,7 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 		currentRelationInList = currentRelationInList->next;
 	}
 }
-
+*/
 
 void redistributeStanfordRelationsConjunctionAndCoordinate(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
@@ -1407,8 +1454,6 @@ void redistributeStanfordRelationsGenerateMeasures(Sentence * currentSentenceInL
 
 void redistributeStanfordRelationsPrtAndTmod(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
-	//The disaster happened over night.   prt(happened-3, over-4) / tmod(happened-3, night-5) -> over(happened-3, night-5)
-
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{	
@@ -1422,6 +1467,7 @@ void redistributeStanfordRelationsPrtAndTmod(Sentence * currentSentenceInList, b
 			if(currentRelationInList->relationType == RELATION_TYPE_PHRASAL_VERB_PARTICLE)
 			{	
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				bool foundTemporalModifier = false;
 				
 				while(currentRelationInList2->next != NULL)
 				{					
@@ -1434,11 +1480,16 @@ void redistributeStanfordRelationsPrtAndTmod(Sentence * currentSentenceInList, b
 							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
 							{//found a matching relationship
 
+								//cout << "\t\t\tSAF" << endl;
+								
+								//The disaster happened over night.   prt(happened-3, over-4) / tmod(happened-3, night-5) -> over(happened-3, night-5)
+								
 								currentRelationInList->disabled = true;
 								GIAEntityNode * oldPreposition = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
 								string newPrepositionName = "";
 								newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + currentRelationInList->relationDependent;	//oldPreposition->entityName
 								currentRelationInList2->relationType = newPrepositionName;
+								foundTemporalModifier = true;
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -1446,6 +1497,25 @@ void redistributeStanfordRelationsPrtAndTmod(Sentence * currentSentenceInList, b
 					#endif
 					currentRelationInList2 = currentRelationInList2->next;
 				}
+				
+				
+				#ifdef GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE
+				if(!foundTemporalModifier)
+				{
+					//cout << "\t\t\t!foundTemporalModifier" << endl;
+					
+					//cout << "RELATION_TYPE_PHRASAL_VERB_PARTICLE" << endl;
+					//eg They shut down the station. 	prt(shut, down) 			
+
+					GIAEntityNode * governerEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
+					GIAEntityNode * dependentEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+					governerEntity->entityName = governerEntity->entityName + "_" + dependentEntity->entityName;
+					//cout << "governerEntity->entityName = " <<governerEntity->entityName << endl;
+
+					disableEntityBasedUponFirstSentenceToAppearInNetwork(dependentEntity);		
+				}
+				#endif
+				
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}		

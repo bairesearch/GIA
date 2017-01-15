@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l3a 31-May-2012
+ * Project Version: 1l4a 01-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific version of shared globals (replace if compiling other projects)
  *
@@ -19,7 +19,7 @@
 #ifdef GIA_USE_DATABASE
 	#define GIA_USE_DATABASE_FILESYSTEM
 #endif
-//#define GIA_USE_ADVANCED_REFERENCING	//this needs to be debugged (not yet tested)
+#define GIA_USE_ADVANCED_REFERENCING	//this needs to be debugged (not yet tested)
 
 //variables currently under attention for testing purposes
 #define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING			//default: on	//this enables pronoun detection	//OLD: {this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}
@@ -37,6 +37,7 @@
 
 //Debug;
 //#define GIA_ADVANCED_REFERENCING_DEBUG		//this needs to be debugged (not yet tested)
+//#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
 //#define GIA_DATABASE_DEBUG			//this needs to be debugged (not yet tested)
 //#define GIA_QUERY_MULTIPLE_ANSWERS_DEBUG	//just finished first debug using this (1l2a)
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG
@@ -51,6 +52,7 @@
 //#define GIA_DRAW_DEBUG
 //#define GIA_QUERY_DEBUG
 //#define GIA_SEMANTIC_NET_XML_DEBUG
+
 
 //Wordnet
 #define USE_WORDNET	(takes into account synonymns) 

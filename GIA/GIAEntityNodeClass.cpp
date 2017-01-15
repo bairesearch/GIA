@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l3a 31-May-2012
+ * Project Version: 1l4a 01-June-2012
  *
  *******************************************************************************/
 
@@ -168,7 +168,7 @@ GIAEntityNode::GIAEntityNode(void)
 	wordNetPOS = GRAMMATICAL_WORD_TYPE_UNDEFINED;	
 	
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	referenceSetID = -1;
+	referenceSetID = GIA_REFERENCE_SET_ID_UNDEFINED;
 	#endif	
 	
 	#ifdef GIA_USE_DATABASE
