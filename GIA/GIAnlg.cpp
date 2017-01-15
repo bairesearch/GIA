@@ -1,19 +1,19 @@
 /*******************************************************************************
  * 
- * This file is part of OpenGIA.
+ * This file is part of BAIPROJECT.
  * 
- * OpenGIA is free software: you can redistribute it and/or modify
+ * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
  * 
- * OpenGIA is distributed in the hope that it will be useful,
+ * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
  * 
  * You should have received a copy of the GNU Affero General Public License
- * version 3 along with OpenGIA.  If not, see <http://www.gnu.org/licenses/>
+ * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
  * 
  *******************************************************************************/
@@ -23,7 +23,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n8a 03-August-2012
+ * Project Version: 1n8b 04-August-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -1080,6 +1080,21 @@ string calcDeterminate(GIAEntityNode * entityNode)
 
 	}
 
+	//time
+	#ifdef GIA_NLG_SUPPORT_TIME_CONDITIONS
+	bool isTime = false;
+	if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)	//added 4 August 2012
+	{
+		if(entityNode->timeConditionNode != NULL)
+		{
+			if(!(entityNode->timeConditionNode->tenseOnlyTimeCondition))
+			{
+				isTime = true;
+			}
+		}
+	}
+	#endif
+	
 	string determinateFinal = "";
 	if(addDeterminate)
 	{
@@ -1089,8 +1104,15 @@ string calcDeterminate(GIAEntityNode * entityNode)
 			if(!isPronoun)
 			{
 		#endif
-
-				determinateFinal = determinate + NLG_TEXT_SPACE;
+				#ifdef GIA_NLG_SUPPORT_TIME_CONDITIONS
+				if(!isTime)
+				{
+				#endif
+		
+					determinateFinal = determinate + NLG_TEXT_SPACE;
+				#ifdef GIA_NLG_SUPPORT_TIME_CONDITIONS
+				}
+				#endif
 		#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
 			}
 		}
@@ -1136,6 +1158,16 @@ string getWordOrig(GIAEntityNode * entityNode)
 	else if(entityNode->negative)
 	{
 		wordOrig = string(RELATION_TYPE_NEGATIVE_CONTEXT_1) + " " + wordOrig;
+	}
+	else if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)	//added 4 August 2012
+	{
+		if(entityNode->timeConditionNode != NULL)
+		{
+			if(!(entityNode->timeConditionNode->tenseOnlyTimeCondition))
+			{
+				wordOrig = entityNode->timeConditionNode->conditionName;
+			}
+		}
 	}
 	else
 	{
