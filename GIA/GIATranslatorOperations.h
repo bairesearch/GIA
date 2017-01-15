@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i9f 11-Apr-2012
+ * Project Version: 1i10a 12-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -56,7 +56,7 @@ using namespace std;
 	//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B2_IGNORE_DUPLICATE_COMPARISON_VARIABLES_IN_QUERY	//OR this is required
 #endif
 
-//#define GIA_TRANSLATOR_USE_NEW_ACTION_SUBJECT_RELATION_FUNCTION_DEFINITION_IMPLEMENTATION	//if undefined then "tom is being an idiot"= an instance of tom is an idoit. if defined then tom has (a property) of idiocy [NOT YET IMPLEMENTED]
+//#define GIA_TRANSLATOR_USE_NEW_ACTION_SUBJECT_RELATION_GOVERNOR_DEFINITION_IMPLEMENTATION	//if undefined then "tom is being an idiot"= an instance of tom is an idoit. if defined then tom has (a property) of idiocy [NOT YET IMPLEMENTED]
 
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION
 
@@ -85,7 +85,7 @@ using namespace std;
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TOBE_AND_SUBJECT_RELATION_AS_PROPERTY_LINK_AND_ACTION_DEFINITION
-		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES_ADVANCED	//Relex only at present [relies upon isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe() and GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS]
+		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES_ADVANCED	//Relex only at present [relies upon isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe() and GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS]
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2A_GRAMMAR_TREAT_PRESENT_PERFECT_AS_PAST_TENSE							//Relex/Stanford independent
 		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
 			#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION			//CHECK THIS; Stanford compatibility
@@ -109,8 +109,13 @@ using namespace std;
 #endif
 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
-	//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES_AND_COLLAPSE_ADVMOD_RELATION_FUNCTION_BE
-
+	//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES
+		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE 
+		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE
+			#define GIA_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE_TO_PREDADJ_NOT_SUBJ
+		#endif
+	#endif
 #endif
 
 #define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
@@ -162,11 +167,11 @@ using namespace std;
 
 //Properties:	[NB properties are attached to either another property or a straight entity);]
 //properties (derived from obj/subj relationships);					
-#define RELATION_FUNCTION_COMPOSITION_1 "contains"	//eg x contains y
-#define RELATION_FUNCTION_COMPOSITION_2 "comprise"
-#define RELATION_FUNCTION_COMPOSITION_3 "has"	
-#define RELATION_FUNCTION_COMPOSITION_4 "have"
-#define RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES (4)						
+#define RELATION_GOVERNOR_COMPOSITION_1 "contains"	//eg x contains y
+#define RELATION_GOVERNOR_COMPOSITION_2 "comprise"
+#define RELATION_GOVERNOR_COMPOSITION_3 "has"	
+#define RELATION_GOVERNOR_COMPOSITION_4 "have"
+#define RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES (4)						
 //properties (descriptive relationships)
 #define RELATION_TYPE_ADJECTIVE_AMOD "_amod"	  //eg x is happy
 #define RELATION_TYPE_ADJECTIVE_PREDADJ "_predadj"						  
@@ -185,8 +190,8 @@ using namespace std;
 #define RELATION_TYPE_PARATAXIS "_parataxis"	//eg "The guy, Akari said, left..." //added 13 February 2011
 
 //concepts:					
-#define RELATION_FUNCTION_DEFINITION_1 "be"	//eg x is y
-#define RELATION_FUNCTION_DEFINITION_NUMBER_OF_TYPES (1)
+#define RELATION_GOVERNOR_BE "be"	//eg x is y
+#define RELATION_GOVERNOR_DEFINITION_NUMBER_OF_TYPES (1)
 #define RELATION_TYPE_APPOSITIVE_OF_NOUN "_appo"
 #define STANFORD_RELATION_TYPE_APPOSITIVE_OF_NOUN "appos"
 
@@ -278,9 +283,9 @@ using namespace std;
 
 //conjugations;
 #ifdef GIA_USE_RELEX_1.4.0
-	#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_ARGUMENT_INDEX_MINUS_1
-	#ifdef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_ARGUMENT_INDEX_MINUS_1
-		#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_ARGUMENT_INDEX_MINUS_1_REPLACEMENT_INDEX (MAX_NUMBER_OF_WORDS_PER_SENTENCE-2)
+	#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1
+	#ifdef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1
+		#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1_REPLACEMENT_INDEX (MAX_NUMBER_OF_WORDS_PER_SENTENCE-2)
 	#endif
 	//#define GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS	//not necessarily currently as; defineConjunctionConditions() currently performs the same function as defineActionPropertyConditions(). It is used at the moment such that the conjunction prepositions are added to the start of the list
 #endif
@@ -408,7 +413,7 @@ using namespace std;
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN "_%atTime"
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE "_%atLocation"
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY "_%because"
-#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_ARGUMENT_INDEX (MAX_NUMBER_OF_WORDS_PER_SENTENCE-1)
+#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX (MAX_NUMBER_OF_WORDS_PER_SENTENCE-1)
 //#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_QUANTITY_NUMBER_REPLACEMENT -9999
 #define REFERENCE_TYPE_QUESTION_WHEN_CONTEXT_NUMBER_OF_TYPES (15)	//Eg what is the time?
 #define REFERENCE_TYPE_QUESTION_WHERE_CONTEXT_NUMBER_OF_TYPES (3)	//Eg what is the location?
@@ -486,8 +491,8 @@ static string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES
 static string relationTypeAdjectiveNameArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_PREDADJ, RELATION_TYPE_ADJECTIVE_ADVMOD};
 static string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_POSSESSIVE, RELATION_TYPE_PRENOMIAL_MODIFIER};
 
-static string relationFunctionCompositionNameArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_COMPOSITION_1, RELATION_FUNCTION_COMPOSITION_2, RELATION_FUNCTION_COMPOSITION_3, RELATION_FUNCTION_COMPOSITION_4};
-static string relationFunctionDefinitionNameArray[RELATION_FUNCTION_DEFINITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_DEFINITION_1};
+static string relationGovernorCompositionNameArray[RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_GOVERNOR_COMPOSITION_1, RELATION_GOVERNOR_COMPOSITION_2, RELATION_GOVERNOR_COMPOSITION_3, RELATION_GOVERNOR_COMPOSITION_4};
+static string relationGovernorDefinitionNameArray[RELATION_GOVERNOR_DEFINITION_NUMBER_OF_TYPES] = {RELATION_GOVERNOR_BE};
 
 static string relationTypeObjectSpecialConditionMeasureDistanceOrStanfordUnknownNameArray[RELATION_TYPE_OBJECT_SPECIAL_CONDITION_MEASURE_DISTANCE_OR_STANFORD_UNKNOWN_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_UNKNOWN};
 static string relationTypeObjectSpecialConditionToDoPropertyNameArray[RELATION_TYPE_OBJECT_SPECIAL_TO_DO_PROPERTY_NUMBER_OF_TYPES] = {RELATION_TYPE_COMPLIMENT_TO_DO};
@@ -542,7 +547,7 @@ adjective = happy
 
 void initialiseGIATranslatorForTexualContextOperations();
 
-bool isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(Relation * currentRelationInList, GIAEntityNode * GIAEntityNodeArray[], int relationFunctionIndex, int NLPdependencyRelationsType);
+bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation * currentRelationInList, GIAEntityNode * GIAEntityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType);
 bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, Relation * currentRelationInList, int NLPdependencyRelationsType);								//Stanford Compatible
 
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity);

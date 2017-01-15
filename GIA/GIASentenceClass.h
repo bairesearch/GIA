@@ -3,7 +3,7 @@
  * File Name: GIASentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i9f 11-Apr-2012
+ * Project Version: 1i10a 12-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -76,10 +76,10 @@ public:
 	~Relation(void);
 
 	string relationType;
-	string relationArgument;
-	int relationArgumentIndex;
-	string relationFunction;
-	int relationFunctionIndex;
+	string relationDependent;
+	int relationDependentIndex;
+	string relationGovernor;
+	int relationGovernorIndex;
 	
 	bool disabled;
 

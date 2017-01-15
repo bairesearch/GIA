@@ -3,7 +3,7 @@
  * File Name: GIASentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i9f 11-Apr-2012
+ * Project Version: 1i10a 12-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -65,10 +65,10 @@ StanfordCoreNLPCoreference::~StanfordCoreNLPCoreference(void)
 Relation::Relation(void)
 {
 	relationType = "";
-	relationArgument = "";
-	relationArgumentIndex = 0;
-	relationFunction = "";
-	relationFunctionIndex = 0;
+	relationDependent = "";
+	relationDependentIndex = 0;
+	relationGovernor = "";
+	relationGovernorIndex = 0;
 	
 	disabled = false;
 

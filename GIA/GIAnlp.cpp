@@ -3,7 +3,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i9f 11-Apr-2012
+ * Project Version: 1i10a 12-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -444,28 +444,28 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 							string relationTypeRelexStandard = convertStanfordRelationToRelex(&(currentTagInDependencies->firstAttribute->value));
 							currentRelationInList->relationType = relationTypeRelexStandard;
 
-							string relationFunctionIndexString = governerTagInDep->firstAttribute->value;
-							string relationArgumentIndexString = dependentTagInDep->firstAttribute->value;
-							currentRelationInList->relationFunctionIndex = atoi(relationFunctionIndexString.c_str());						
-							currentRelationInList->relationArgumentIndex = atoi(relationArgumentIndexString.c_str());
+							string relationGovernorIndexString = governerTagInDep->firstAttribute->value;
+							string relationDependentIndexString = dependentTagInDep->firstAttribute->value;
+							currentRelationInList->relationGovernorIndex = atoi(relationGovernorIndexString.c_str());						
+							currentRelationInList->relationDependentIndex = atoi(relationDependentIndexString.c_str());
 
 							/*
 							//don't use these, use lemmas instead (as per Stanford Core NLP/Relex dependency relation definitions)
-							currentRelationInList->relationFunction = governerTagInDep->value;
-							currentRelationInList->relationArgument = dependentTagInDep->value;						
+							currentRelationInList->relationGovernor = governerTagInDep->value;
+							currentRelationInList->relationDependent = dependentTagInDep->value;						
 							*/				
 							currentFeatureInList = firstFeatureInList;
-							for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationArgumentIndex; f++)
+							for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationDependentIndex; f++)
 							{
 								currentFeatureInList = currentFeatureInList->next;
 							} 
-							currentRelationInList->relationArgument = currentFeatureInList->lemma;
+							currentRelationInList->relationDependent = currentFeatureInList->lemma;
 							currentFeatureInList = firstFeatureInList;
-							for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationFunctionIndex; f++)
+							for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationGovernorIndex; f++)
 							{
 								currentFeatureInList = currentFeatureInList->next;
 							} 				
-							currentRelationInList->relationFunction = currentFeatureInList->lemma;				
+							currentRelationInList->relationGovernor = currentFeatureInList->lemma;				
 
 							Relation * newRelation = new Relation();
 							currentRelationInList->next = newRelation;
@@ -576,10 +576,10 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 		while(currentRelationInList->next != NULL)
 		{	
 			cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-			cout << "currentRelationInList->relationArgument = " << currentRelationInList->relationArgument << endl;
-			cout << "currentRelationInList->relationArgumentIndex = " << currentRelationInList->relationArgumentIndex << endl;
-			cout << "currentRelationInList->relationFunction = " << currentRelationInList->relationFunction << endl;
-			cout << "currentRelationInList->relationFunctionIndex = " << currentRelationInList->relationFunctionIndex << endl;
+			cout << "currentRelationInList->relationDependent = " << currentRelationInList->relationDependent << endl;
+			cout << "currentRelationInList->relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
+			cout << "currentRelationInList->relationGovernor = " << currentRelationInList->relationGovernor << endl;
+			cout << "currentRelationInList->relationGovernorIndex = " << currentRelationInList->relationGovernorIndex << endl;
 
 			currentRelationInList = currentRelationInList->next;	
 		}

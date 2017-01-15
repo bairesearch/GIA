@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i9f 11-Apr-2012
+ * Project Version: 1i10a 12-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -90,7 +90,7 @@ void initialiseGIATranslatorForTexualContextOperations()
 	*/
 }
 
-bool isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(Relation * currentRelationInList, GIAEntityNode * GIAEntityNodeArray[], int relationFunctionIndex, int NLPdependencyRelationsType)
+bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation * currentRelationInList, GIAEntityNode * GIAEntityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType)
 {
 	bool result = true;
 	
@@ -99,13 +99,13 @@ bool isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(Relation * currentRelation
 	{
 	#endif
 		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES_ADVANCED
-		if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD) && (GIAEntityNodeArray[relationFunctionIndex]->entityName == RELATION_FUNCTION_DEFINITION_1))
+		if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD) && (GIAEntityNodeArray[relationGovernorIndex]->entityName == RELATION_GOVERNOR_BE))
 		{//added condition Fri 27 Jan - remove 'be' node artefacts
 			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
-			GIAEntityNodeArray[relationFunctionIndex]->disabled = true;
+			GIAEntityNodeArray[relationGovernorIndex]->disabled = true;
 			#endif		
 			result = false;
-			//cout << "GIAEntityNodeArray[relationFunctionIndex]->disabled = true" << endl;		
+			//cout << "GIAEntityNodeArray[relationGovernorIndex]->disabled = true" << endl;		
 		}
 		#endif
 	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE	
@@ -147,7 +147,7 @@ bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, 
 
 				if(partnerTypeRequiredFound)
 				{
-					if(currentRelationInList->relationArgumentIndex == currentRelationInList3->relationArgumentIndex)
+					if(currentRelationInList->relationDependentIndex == currentRelationInList3->relationDependentIndex)
 					{//do not add property, if _advmod argument (eg 'by') is connected to a subject/object
 						passed2 = false;
 						//cout << "ASFS" << endl;

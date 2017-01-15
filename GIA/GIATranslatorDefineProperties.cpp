@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineProperties.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i9f 11-Apr-2012
+ * Project Version: 1i10a 12-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -47,8 +47,8 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 			//eg The chicken has not eaten a pie.: neg(eaten-5, not-4)
 			
 			currentRelationInList->disabled = true;
-			GIAEntityNodeArray[currentRelationInList->relationFunctionIndex]->negative = true;
-			GIAEntityNodeArray[currentRelationInList->relationArgumentIndex]->disabled = true;
+			GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->negative = true;
+			GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->disabled = true;
 
 		}
 		currentRelationInList = currentRelationInList->next;		
@@ -73,7 +73,7 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 			bool passed = false;
 			for(int j=0; j<RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES; j++)
 			{
-				if(GIAEntityNodeArray[currentRelationInList->relationFunctionIndex]->entityName == relationContextNegativeNameArray[j])
+				if(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->entityName == relationContextNegativeNameArray[j])
 				{
 					passed = true;
 				}
@@ -92,7 +92,7 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 						bool passed2 = false;
 						for(int j=0; j<RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES; j++)
 						{
-							if(GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex]->entityName == relationContextNegativeNameArray[j])
+							if(GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]->entityName == relationContextNegativeNameArray[j])
 							{
 								passed2 = true;
 							}
@@ -100,11 +100,11 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 						if(passed2)
 						{
 							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
-							GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex]->disabled = true;
-							GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex]->disabled = true;
+							GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->disabled = true;
+							GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]->disabled = true;
 							#endif
-							GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex] = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
-							GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex]->negative = true;
+							GIAEntityNodeArray[currentRelationInList2->relationDependentIndex] = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+							GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->negative = true;
 							currentRelationInList->disabled = true;
 
 						}
@@ -204,19 +204,19 @@ void definePropertiesNounsWithAdjectives(Sentence * currentSentenceInList, GIAEn
 		}						
 		if(passed)
 		{
-			bool passed3 = isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(currentRelationInList, GIAEntityNodeArray, currentRelationInList->relationFunctionIndex, NLPdependencyRelationsType);
+			bool passed3 = isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(currentRelationInList, GIAEntityNodeArray, currentRelationInList->relationGovernorIndex, NLPdependencyRelationsType);
 
 			if(passed3)
 			{	
 				//create a new property for the entity and assign a property definition entity if not already created
-				string thingName = currentRelationInList->relationFunction;
-				string propertyName = currentRelationInList->relationArgument; 
-				int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
-				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
+				string thingName = currentRelationInList->relationGovernor;
+				string propertyName = currentRelationInList->relationDependent; 
+				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
+				int relationDependentIndex = currentRelationInList->relationDependentIndex;
 
 
-				GIAEntityNode * thingEntity = GIAEntityNodeArray[relationFunctionIndex];
-				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+				GIAEntityNode * thingEntity = GIAEntityNodeArray[relationGovernorIndex];
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
 
 				//cout << "as2" << endl;
 
@@ -243,8 +243,8 @@ void definePropertiesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIA
 		if(passed)
 		{
 			//create a new property for the entity and assign a property definition entity if not already created
-			int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
-			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationFunctionIndex];
+			int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
+			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationGovernorIndex];
 
 			//cout << "as3" << endl;
 
@@ -271,8 +271,8 @@ void definePropertiesQuantityModifiers(Sentence * currentSentenceInList, GIAEnti
 		if(passed)
 		{
 			//create a new property for the entity and assign a property definition entity if not already created
-			int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
-			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+			int relationDependentIndex = currentRelationInList->relationDependentIndex;
+			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
 
 			//cout << "as3" << endl;
 			addPropertyToPropertyDefinition(propertyEntity);					
@@ -292,8 +292,8 @@ void definePropertiesExpletives(Sentence * currentSentenceInList, GIAEntityNode 
 		if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT_EXPLETIVE)
 		{
 			//create property definition
-			int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
-			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+			int relationDependentIndex = currentRelationInList->relationDependentIndex;
+			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
 
 			#ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
 			//cout << "as4" << endl;
@@ -367,8 +367,8 @@ void definePropertiesToBe(Sentence * currentSentenceInList, GIAEntityNode * GIAE
 		if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_BE)
 		{
 			//create a new property for the entity and assign a property definition entity if not already created
-			int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
-			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+			int relationDependentIndex = currentRelationInList->relationDependentIndex;
+			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
 
 			addPropertyToPropertyDefinition(propertyEntity);
 		}
@@ -388,8 +388,8 @@ void definePropertiesToDo(Sentence * currentSentenceInList, GIAEntityNode * GIAE
 		if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO)
 		{
 			//create a new property for the entity and assign a property definition entity if not already created
-			int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
-			GIAEntityNode * actionEntity = GIAEntityNodeArray[relationArgumentIndex];
+			int relationDependentIndex = currentRelationInList->relationDependentIndex;
+			GIAEntityNode * actionEntity = GIAEntityNodeArray[relationDependentIndex];
 
 			addActionToActionDefinition(actionEntity);
 		}

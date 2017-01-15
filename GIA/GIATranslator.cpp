@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i9f 11-Apr-2012
+ * Project Version: 1i10a 12-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -206,11 +206,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
 					
-		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES_AND_COLLAPSE_ADVMOD_RELATION_FUNCTION_BE
+		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "pass 1z0; redistribute Stanford Relations -Collapse Advmod Relation Function Be (eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - > nsubj(away-6, rabbit-2) )" << endl;
+		cout << "pass 1z0; redistribute Stanford Relations -Collapse Advmod Relation Function Be (eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - > _predadj(rabbit-2, away-6)   +    Kane is late.	nsubj(late-3, Kane-1) / cop(late-3, is-2) -> _predadj(kane-1, late-3) 
+		//[OLD: nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - >nsubj(away-6, rabbit-2)] )" << endl;
 		#endif
-		redistributeStanfordRelationsCollapseAdvmodRelationFunctionBe(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);		
+		redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);		
 		#endif
 				
 		#ifdef GIA_TRANSLATOR_DEBUG
@@ -245,7 +246,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		#endif
 		redistributeStanfordRelationsGenerateUnparsedQuantityModifers(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);	
 		
-		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES_AND_COLLAPSE_ADVMOD_RELATION_FUNCTION_BE
+		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1z7; redistribute Stanford Relations - Generate Measures (eg years old - npadvmod(old, years) / _measure_time(old[7], years[6]))" << endl;
 		#endif
@@ -262,8 +263,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 			if(!(currentRelationInList->disabled))
 			{
 				string relationType = currentRelationInList->relationType;
-				GIAEntityNode * relationGoverner = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];				
-				GIAEntityNode * relationDependent = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+				GIAEntityNode * relationGoverner = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];				
+				GIAEntityNode * relationDependent = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
 
 				cout << "relationType = " << currentRelationInList->relationType << endl;	      
 				cout << "relationGoverner = " << relationGoverner->entityName << endl;

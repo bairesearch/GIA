@@ -3,7 +3,7 @@
  * File Name: GIAParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i9f 11-Apr-2012
+ * Project Version: 1i10a 12-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of CFF File
  *
@@ -91,10 +91,10 @@ void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelati
 				/*
 				cout << "relation added;" << endl;
 				cout << "currentRelation->relationType = " << currentRelation->relationType << endl;
-				cout << "currentRelation->relationFunction = " << currentRelation->relationFunction << endl;
-				cout << "currentRelation->relationArgument = " << currentRelation->relationArgument << endl;
-				cout << "currentRelation->relationFunctionIndex = " << currentRelation->relationFunctionIndex << endl;
-				cout << "currentRelation->relationArgumentIndex = " << currentRelation->relationArgumentIndex << endl;
+				cout << "currentRelation->relationGovernor = " << currentRelation->relationGovernor << endl;
+				cout << "currentRelation->relationDependent = " << currentRelation->relationDependent << endl;
+				cout << "currentRelation->relationGovernorIndex = " << currentRelation->relationGovernorIndex << endl;
+				cout << "currentRelation->relationDependentIndex = " << currentRelation->relationDependentIndex << endl;
 				*/
 					
 				Relation * newRelation = new Relation();
@@ -129,11 +129,11 @@ void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelati
 			{
 				if(currentRelationPart == 1)
 				{	
-					currentRelation->relationFunction = currentItemString;
+					currentRelation->relationGovernor = currentItemString;
 				}
 				else if(currentRelationPart == 2)
 				{
-					currentRelation->relationArgument = currentItemString;
+					currentRelation->relationDependent = currentItemString;
 				}
 				currentItemString[0] = '\0';
 							
@@ -143,16 +143,16 @@ void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelati
 			{
 				if(currentRelationPart == 1)
 				{	
-					currentRelation->relationFunctionIndex = int(atof(currentItemString));
+					currentRelation->relationGovernorIndex = int(atof(currentItemString));
 				}
 				else if(currentRelationPart == 2)
 				{
-					currentRelation->relationArgumentIndex = int(atof(currentItemString));
+					currentRelation->relationDependentIndex = int(atof(currentItemString));
 				}
 				
-				if(currentRelation->relationArgumentIndex > *maxNumberOfWordsInSentence)
+				if(currentRelation->relationDependentIndex > *maxNumberOfWordsInSentence)
 				{
-					*maxNumberOfWordsInSentence = currentRelation->relationArgumentIndex;
+					*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;
 				}
 						
 				currentItemString[0] = '\0';
@@ -189,10 +189,10 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 	Feature * firstFeatureInList = currentSentenceInList->firstFeatureInList;
 
 	string relationType;
-	string relationFunction;
-	string relationArgument;
-	int relationFunctionIndex;
-	int relationArgumentIndex;
+	string relationGovernor;
+	string relationDependent;
+	int relationGovernorIndex;
+	int relationDependentIndex;
 
 	*maxNumberOfWordsInSentence = 0;
 	
@@ -223,43 +223,43 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 		if(c == CHAR_NEW_LINE)
 		{
 			currentRelation->relationType = relationType;
-			currentRelation->relationFunctionIndex = relationFunctionIndex;
-			currentRelation->relationArgumentIndex = relationArgumentIndex;		
+			currentRelation->relationGovernorIndex = relationGovernorIndex;
+			currentRelation->relationDependentIndex = relationDependentIndex;		
 			
 			if(!featuresNotPreviouslyFilled)
 			{
 				/*
 				//don't use these, use lemmas instead (as per Stanford Core NLP/Relex dependency relation definitions)
-				currentRelation->relationFunction = relationFunction;
-				currentRelation->relationArgument = relationArgument;						
+				currentRelation->relationGovernor = relationGovernor;
+				currentRelation->relationDependent = relationDependent;						
 				*/				
 				Feature * currentFeatureInList = firstFeatureInList;
-				for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationArgumentIndex; f++)
+				for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationDependentIndex; f++)
 				{
 					currentFeatureInList = currentFeatureInList->next;
 				}
-				currentRelation->relationArgument = currentFeatureInList->lemma;
+				currentRelation->relationDependent = currentFeatureInList->lemma;
 				currentFeatureInList = firstFeatureInList;
-				for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationFunctionIndex; f++)
+				for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationGovernorIndex; f++)
 				{
 					currentFeatureInList = currentFeatureInList->next;
 				} 				
-				currentRelation->relationFunction = currentFeatureInList->lemma;						
+				currentRelation->relationGovernor = currentFeatureInList->lemma;						
 			}
 			else
 			{
-				currentRelation->relationFunction = relationFunction;
-				currentRelation->relationArgument = relationArgument;			
+				currentRelation->relationGovernor = relationGovernor;
+				currentRelation->relationDependent = relationDependent;			
 			}
 			
 			/*
 			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 			cout << "relation added;" << endl;
 			cout << "currentRelation->relationType = " << currentRelation->relationType << endl;
-			cout << "currentRelation->relationFunction = " << currentRelation->relationFunction << endl;
-			cout << "currentRelation->relationArgument = " << currentRelation->relationArgument << endl;
-			cout << "currentRelation->relationFunctionIndex = " << currentRelation->relationFunctionIndex << endl;
-			cout << "currentRelation->relationArgumentIndex = " << currentRelation->relationArgumentIndex << endl;
+			cout << "currentRelation->relationGovernor = " << currentRelation->relationGovernor << endl;
+			cout << "currentRelation->relationDependent = " << currentRelation->relationDependent << endl;
+			cout << "currentRelation->relationGovernorIndex = " << currentRelation->relationGovernorIndex << endl;
+			cout << "currentRelation->relationDependentIndex = " << currentRelation->relationDependentIndex << endl;
 			#endif
 			*/
 			
@@ -293,11 +293,11 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 		{
 			if(currentRelationPart == 1)
 			{	
-				relationFunction = currentItemString;
+				relationGovernor = currentItemString;
 			}
 			else if(currentRelationPart == 2)
 			{
-				relationArgument = currentItemString;
+				relationDependent = currentItemString;
 			}
 			currentItemString[0] = '\0';
 		}
@@ -305,16 +305,16 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 		{
 			if(currentRelationPart == 1)
 			{	
-				relationFunctionIndex = int(atof(currentItemString));
+				relationGovernorIndex = int(atof(currentItemString));
 			}
 			else if(currentRelationPart == 2)
 			{
-				relationArgumentIndex = int(atof(currentItemString));
+				relationDependentIndex = int(atof(currentItemString));
 			}
 
-			if(currentRelation->relationArgumentIndex > *maxNumberOfWordsInSentence)
+			if(currentRelation->relationDependentIndex > *maxNumberOfWordsInSentence)
 			{
-				*maxNumberOfWordsInSentence = currentRelation->relationArgumentIndex;
+				*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;
 			}
 
 			currentItemString[0] = '\0';
