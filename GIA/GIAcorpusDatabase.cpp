@@ -26,7 +26,7 @@
  * File Name: GIAcorpusDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g1b 25-August-2014
+ * Project Version: 2g2a 29-August-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -51,6 +51,7 @@ using namespace std;
 #include "GIAcorpusDatabase.h"
 #include "GIAdatabase.h"
 #include "GIAnlp.h"
+#include "SHAREDvars.h"	//required for writeStringToFileObject
 
 #ifndef LINUX
 	#include <windows.h>
@@ -81,23 +82,15 @@ void closeCorpusFile()
 
 void saveTextLineToCurrentCorpusFile(string sentenceText)
 {
-	writeStringToFileObject2(sentenceText, &corpusWriteFileObjectStream);
-	writeStringToFileObject2(STRING_NEW_LINE, &corpusWriteFileObjectStream);
+	writeStringToFileObject(sentenceText, &corpusWriteFileObjectStream);
+	writeStringToFileObject(STRING_NEW_LINE, &corpusWriteFileObjectStream);
 }
 
 void saveTextToCurrentCorpusFile(string sentenceText)
 {
-	writeStringToFileObject2(sentenceText, &corpusWriteFileObjectStream);
+	writeStringToFileObject(sentenceText, &corpusWriteFileObjectStream);
 }
 
-//from XMLparserClass.cpp
-void writeStringToFileObject2(string s, ofstream * writeFileObject)
-{
-	for(int i=0; i < s.size(); i++)
-	{
-		writeFileObject->put(s[i]); //(s.cStr())[i]
-	}
-}
 
 
 //preconditions: determineGIAconnectionistNetworkPOStypeNames has been executed
