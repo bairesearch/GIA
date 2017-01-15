@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2j 23-July-2013
+ * Project Version: 1t2k 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -202,6 +202,7 @@ void disableRedundantNodesStanfordParser(Sentence * currentSentenceInList, bool 
 void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	
 		//general parameters
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.useRelationIndexTest[REL1][REL_ENT3] = true; param.relationIndexTestRelationID[REL1][REL_ENT3] = REL2; param.relationIndexTestEntityID[REL1][REL_ENT3] = REL_ENT3; param.relationIndexTestIsNegative[REL1][REL_ENT3] = true;
@@ -209,11 +210,11 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	param.useRelationArrayTest[REL2][REL_ENT2] = true; param.relationArrayTest[REL2][REL_ENT2] = featureQueryActionPrepositionActionEquivalentQueryVariableNameArray; param.relationArrayTestSize[REL2][REL_ENT2] = FEATURE_QUERY_ACTION_PREPOSITION_ACTION_EQUIVALENT_QUERY_VARIABLE_NUMBER_OF_TYPES;
 
 		//opt1
-	GIAgenericDepRelInterpretationParameters paramOpt1 = param;	
-	paramOpt1.expectToFindPrepositionTest[REL1] = true;
+	GIAgenericDepRelInterpretationParameters paramOpt1 = param;
 	
 		//opt1a
-	GIAgenericDepRelInterpretationParameters paramOpt1a = paramOpt1;		
+	GIAgenericDepRelInterpretationParameters paramOpt1a = paramOpt1;	
+	paramOpt1a.expectToFindPrepositionTest[REL1] = true;	//added 24 July 2013
 	/*
 	What is yarn used in the making of?
 	dobj(used-4, What-1)
@@ -258,6 +259,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	xcomp(designed-5, integrate-7) + dep(designed, what) + prep(integrate-7, with-8)	-> prep_with(integrate[7], what[1])
 	*/		
 	GIAgenericDepRelInterpretationParameters paramOpt1b = paramOpt1a;
+	paramOpt1b.expectToFindPrepositionTest[REL1] = false;
 	paramOpt1b.useRelationTest[REL1][REL_ENT3] = true; paramOpt1b.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
 	if(genericDependecyRelationInterpretation(&paramOpt1b, REL1))
 	{
@@ -296,6 +298,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 		_%atLocation(use[4], _$qVar[1]) + prepc_for(use[4], eat[6]) -> _%atLocation(eat[6], _$qVar[1])
 	*/		
 	GIAgenericDepRelInterpretationParameters paramOpt1c = paramOpt1;
+	paramOpt1c.expectToFindPrepositionTest[REL1] = true;
 	paramOpt1c.numberOfRelations = 2;
 	paramOpt1c.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt1c.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt1c.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
 	if(genericDependecyRelationInterpretation(&paramOpt1c, REL1))
@@ -355,7 +358,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 		//cout << "opt2c" << endl;
 	}
 					
-	#endif	
+	#endif		
 		
 #else
 	//cout << "\n" << endl;
@@ -389,13 +392,10 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 					if(!(currentRelationInList2->disabled))
 					{
 					#endif
-						cout << "a1" << endl;
 						if(currentRelationInList->relationType != currentRelationInList2->relationType)
 						{
-							cout << "a2" << endl;
 							if(currentRelationInList->relationGovernorIndex == currentRelationInList2->relationGovernorIndex)
 							{
-								cout << "a3" << endl;
 								bool queryEquivalentQueryVariableFound = false;
 								for(int i=0; i<FEATURE_QUERY_ACTION_PREPOSITION_ACTION_EQUIVALENT_QUERY_VARIABLE_NUMBER_OF_TYPES; i++)
 								{
@@ -406,10 +406,8 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 								}							
 								if(queryEquivalentQueryVariableFound)
 								{
-									cout << "a4" << endl;
 									if(!foundFirstPreposition)
 									{
-										cout << "a5" << endl;
 										bool foundSecondPreposition = false;
  										Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
 										while(currentRelationInList3->next != NULL)
@@ -464,7 +462,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 
 										if(!foundSecondPreposition)
 										{//opt1c/2c
-											cout << "1c/2c" << endl;
+											//cout << "opt1c/2c" << endl;
 											//cout << "(!foundSecondPreposition)" << endl;
 
 											/*
@@ -559,13 +557,9 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 
 void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-
 	Relation * currentRelationInList;
 	
-#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_ACTION_PREPOSITION_ACTION
-	//added 28 October 2012
-	redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
-#else	
+#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_ACTION_PREPOSITION_ACTION	
 	//for queries only (1j6h)
 	#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
