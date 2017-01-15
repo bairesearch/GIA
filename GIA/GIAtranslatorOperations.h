@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i23a 02-February-2015
+ * Project Version: 2i24a 03-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -42,7 +42,7 @@
 #include "GIAentityConnectionClass.h"
 #include "GIAconditionNodeClass.h"
 #include "GIAtranslatorDefs.h"
-#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+#ifdef GIA_SUPPORT_NLC_INTEGRATION
 #include "NLCpreprocessorSentenceClass.h"
 #endif
 
@@ -198,10 +198,15 @@ void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNo
 
 GIAentityNode* getPrimaryConceptNodeDefiningInstance(GIAentityNode* instanceEntity);
 
-#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+#ifdef GIA_SUPPORT_NLC_INTEGRATION
 NLCsentence* getFirstNLCsentenceInList();
 void setFirstNLCsentenceInList(NLCsentence* firstNLCsentenceInListNew);
+#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNode* indefiniteEntity, GIAentityNode* definiteEntity);
+#endif
+#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
+bool checkIfSentenceIsMathTextParsablePhrase(GIAsentence* currentSentenceInList);
+#endif
 #endif
 
 #endif

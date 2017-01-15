@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i23a 02-February-2015
+ * Project Version: 2i24a 03-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -78,7 +78,8 @@ GIAstanfordCoreNLPcoreference::~GIAstanfordCoreNLPcoreference(void)
 }
 #endif
 
-#ifdef GIA_USE_ADVANCED_REFERENCING
+//#ifdef GIA_USE_ADVANCED_REFERENCING	
+//these classes are only used by GIA_USE_ADVANCED_REFERENCING:
 GIAMention::GIAMention(void)
 {
 	representative = false;
@@ -120,8 +121,8 @@ GIACoreference::~GIACoreference(void)
 		delete next;
 	}
 }
+//#endif
 
-#endif
 
 
 

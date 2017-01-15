@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i23a 02-February-2015
+ * Project Version: 2i24a 03-February-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -122,7 +122,7 @@ GIAreferenceTraceParameters::GIAreferenceTraceParameters(void)
 	doNotParseQuerySubnetsWithSubstanceConcepts = false;
 	#endif
 	
-	#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 	testReferenceSetContext = false;
 	referenceSetDefiniteEntity = NULL;
 	//firstSentenceInList = NULL;
@@ -777,7 +777,7 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode* queryEntityNode, 
 											{
 											#endif
 												//cout << "\tpassed isSubstanceConcept tests" << endl;
-												#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+												#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 												bool passReferenceContextMatch = true;
 												if(referenceTraceParameters->testReferenceSetContext)
 												{
@@ -798,7 +798,7 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode* queryEntityNode, 
 													{
 														exactMatch = true;
 													}
-												#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+												#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 												}
 												#endif
 											#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES

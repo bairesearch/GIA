@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i23a 02-February-2015
+ * Project Version: 2i24a 03-February-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -51,11 +51,7 @@
 #ifdef GIA_USE_CORPUS_DATABASE
 
 //based on convertSentenceSyntacticRelationsIntoGIAnetworkNodes():
-#ifdef GIA_USE_ADVANCED_REFERENCING
-void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, GIAsentence* firstSentenceInList, GIAsentence* currentSentenceInList, vector<GIAentityNode*>* sentenceConceptEntityNodesList, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, int NLPfeatureParser, bool linkPreestablishedReferencesGIA,  GIACoreference* firstGIACoreferenceInList)
-#else
-void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, GIAsentence* firstSentenceInList, GIAsentence* currentSentenceInList, vector<GIAentityNode*>* sentenceConceptEntityNodesList, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, int NLPfeatureParser)
-#endif
+void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, GIAsentence* firstSentenceInList, GIAsentence* currentSentenceInList, vector<GIAentityNode*>* sentenceConceptEntityNodesList, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, int NLPfeatureParser, bool enableAdvancedReferencing, bool linkPreestablishedReferencesGIA,  GIACoreference* firstGIACoreferenceInList)
 {
 	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
 	cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes" << endl;
@@ -277,20 +273,27 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 			entityNodesActiveListSentence->push_back(GIAentityNodeArray[w]);
 		}
 	}
+	
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	if(linkPreestablishedReferencesGIA)
+	if(enableAdvancedReferencing)
+	{
+		if(linkPreestablishedReferencesGIA)
+		{
+			entityNodesActiveListSentences->insert(pair<int, vector<GIAentityNode*>*>(currentSentenceInList->sentenceIndex, entityNodesActiveListSentence));
+		}
+		else
+		{
+			delete entityNodesActiveListSentence;
+		}
+	}
+	else
 	{
 	#endif
 		entityNodesActiveListSentences->insert(pair<int, vector<GIAentityNode*>*>(currentSentenceInList->sentenceIndex, entityNodesActiveListSentence));
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	}
-	else
-	{
-		delete entityNodesActiveListSentence;
-	}
 	#endif
-		
-
+	
 	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
 	cout << "end convertSentenceSemanticRelationsIntoGIAnetworkNodes" << endl;
 	#endif

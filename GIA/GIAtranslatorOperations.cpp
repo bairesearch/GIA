@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i23a 02-February-2015
+ * Project Version: 2i24a 03-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -35,14 +35,14 @@
 
 #include "GIAtranslatorOperations.h"
 #include "GIAdatabase.h"
-#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+#ifdef GIA_SUPPORT_NLC_INTEGRATION
 #include "NLCpreprocessorSentenceClass.h"
 #endif
 #ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 #include "GIAlrp.h"
 #endif
 
-#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+#ifdef GIA_SUPPORT_NLC_INTEGRATION
 NLCsentence* firstNLCsentenceInList;
 #endif
 
@@ -2314,7 +2314,7 @@ GIAentityNode* getPrimaryConceptNodeDefiningInstance(GIAentityNode* instanceEnti
 }
 
 
-#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+#ifdef GIA_SUPPORT_NLC_INTEGRATION
 NLCsentence* getFirstNLCsentenceInList()
 {
 	return firstNLCsentenceInList;
@@ -2323,6 +2323,7 @@ void setFirstNLCsentenceInList(NLCsentence* firstNLCsentenceInListNew)
 {
 	firstNLCsentenceInList = firstNLCsentenceInListNew;
 }
+#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNode* indefiniteEntity, GIAentityNode* definiteEntity)
 {
 	bool foundIndefiniteEntity = false;
@@ -2391,4 +2392,24 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 	
 	return foundIndefiniteEntity;
 }
+#endif
+#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
+bool checkIfSentenceIsMathTextParsablePhrase(GIAsentence* currentSentenceInList)
+{
+	bool sentenceIsMathTextParsablePhrase = false;
+	NLCsentence* currentNLCsentenceInList = firstNLCsentenceInList;
+	while(currentNLCsentenceInList->next != NULL)
+	{
+		if(currentNLCsentenceInList->sentenceIndex == currentSentenceInList->sentenceIndex)
+		{
+			if(currentNLCsentenceInList->mathTextNLPparsablePhraseIndex != INT_DEFAULT_VALUE)
+			{
+				sentenceIsMathTextParsablePhrase = true;
+			}
+		}
+		currentNLCsentenceInList = currentNLCsentenceInList->next;
+	}
+	return sentenceIsMathTextParsablePhrase;
+}
+#endif
 #endif
