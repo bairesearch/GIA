@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g6a 08-September-2014
+ * Project Version: 2g6b 08-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -878,7 +878,6 @@
 			#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 		#endif
 		#define GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-		#define GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET	//added 1m5aTEMP11 [requires Stanford Parser - incompatible with Relex - because it requires record of the sentence entity index of the determiner "the"; grammaticalIndexOfDeterminer/grammaticalIndexOfDeterminerTemp]
 		#define GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES
 	#else
 		//#define GIA_USE_NON_ADVANCED_REFERENCING
@@ -902,6 +901,8 @@
 	#define GIA_ADVANCED_REFERENCING_PREPOSITIONS
 	#define GIA_ADVANCED_REFERENCING_CONDITIONS		//all conditions; ie, not just preposition conditions
 	#define GIA_ADVANCED_REFERENCING_CONDITIONS_RELEX_SPECIFIC - added 2 July 2013 (requires testing)
+	
+	#define GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET	//added 1m5aTEMP11 [requires Stanford Parser - incompatible with Relex - because it requires record of the sentence entity index of the determiner "the"; grammaticalIndexOfDeterminer/grammaticalIndexOfDeterminerTemp]
 #endif
 
 #define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING			//default: on	//this enables pronoun detection	//OLD: {this needs to disable some additional parameters also... (NB substances are still being connected, and not created anew)}
@@ -969,6 +970,7 @@
 //#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
 //#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
 
+//#define GIA_DREAMMODE_REFERENCING_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE
 //#define GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
 //#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG

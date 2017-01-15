@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g6a 08-September-2014
+ * Project Version: 2g6b 08-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1850,7 +1850,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 	{
 		GIAentityNode * currentSpecificConcept = *entityNodesActiveListCompleteIter;
 		#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
-		cout << "\t identifyReferenceSetsSpecificConcepts: " << entityNode->entityName << endl;
+		cout << "\t identifyReferenceSetsSpecificConcepts currentSpecificConcept = : " << currentSpecificConcept->entityName << endl;
 		#endif
 
 		if(!(currentSpecificConcept->disabled))
@@ -1871,7 +1871,14 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 				if(identifyReferenceSetDetermineNextCourseOfAction(currentSpecificConcept, true, referenceSetID, minimumEntityIndexOfReferenceSet, false))
 				{
 					bool traceModeIsQuery = false;
-
+					
+					/*
+					if(currentSpecificConcept->entityName == "fruit")
+					{
+						cout << "identifyReferenceSetDetermineNextCourseOfAction passed" << endl;
+					}
+					*/
+					
 					//[*****^]
 					GIAreferenceTraceParameters referenceTraceParameters;
 					referenceTraceParameters.referenceSetID = referenceSetID;
@@ -1898,10 +1905,15 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 							if(!(entityNode->isConcept))
 							{
 								GIAqueryTraceParameters queryTraceParameters;		//not used
-
-								//cout << "currentSpecificConcept->entityName = " << currentSpecificConcept->entityName << endl;
-								//cout << "entityNode->entityName = " << entityNode->entityName << endl;
-
+								
+								/*
+								if(currentSpecificConcept->entityName == "fruit")
+								{
+									cout << "currentSpecificConcept->entityName = " << currentSpecificConcept->entityName << endl;
+									cout << "entityNode->entityName = " << entityNode->entityName << endl;
+								}
+								*/
+								
 								int numberOfMatchedNodesTemp = 0;
 								int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
 								//bool exactMatch = testEntityNodeForQueryOrReferenceSet2(currentSpecificConcept, entityNode, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParameters, &referenceTraceParameters);
@@ -1909,6 +1921,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 
 								if(exactMatch)
 								{
+									//cout << "exactMatch" << endl;
 									if(numberOfMatchedNodesTemp > 0)
 									{
 										//cout << "exactMatch: numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
@@ -1932,6 +1945,10 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 										}
 										#endif
 									}
+								}
+								else
+								{
+									//cout << "!exactMatch" << endl;
 								}
 
 								//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
@@ -1972,12 +1989,15 @@ bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode,
 		}
 
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
-		cout << "\nentityNode->entityName = " << entityNode->entityName << endl;
-		cout << "entityNode->referenceSetID = " << entityNode->referenceSetID << "(" << referenceSetAlreadyAssigned << ")" << endl;
-		cout << "entityNode->isConcept = " << entityNode->isConcept << endl;
-		cout << "minimumEntityIndexOfReferenceSet = " << minimumEntityIndexOfReferenceSet << endl;
-		cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
-		cout << "entityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
+		//if(entityNode->entityName == "fruit")
+		//{
+			cout << "\nentityNode->entityName = " << entityNode->entityName << endl;
+			cout << "entityNode->referenceSetID = " << entityNode->referenceSetID << "(" << referenceSetAlreadyAssigned << ")" << endl;
+			cout << "entityNode->isConcept = " << entityNode->isConcept << endl;
+			cout << "minimumEntityIndexOfReferenceSet = " << minimumEntityIndexOfReferenceSet << endl;
+			cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
+			cout << "entityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
+		//}
 		#endif
 
 		#ifdef GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET
