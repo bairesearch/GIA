@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k4a 19-July-2015
+ * Project Version: 2k5a 21-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -83,13 +83,13 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 "\n\t-osvg [string]     : semantic network display .svg 2D vector graphics output filename (def: semanticNet.svg)"
 "\n\t-oldr [string]     : semantic network display .ldr 3D vector graphics output filename (def: semanticNet.ldr)"
 "\n\t-oppm [string]     : semantic network display .ppm raster graphics output filename (def: semanticNet.ppm)"
-"\n\t-ocff [string]     : NLP parser generated .cff output filename (def: outputNLP.cff)"
+"\n\t-ocff [string]     : semantic network NLP parser generated .cff output filename (def: semanticNet.cff)"
 "\n\t-oxmlq [string]    : query semantic network definition .xml output filename (def: semanticNetQuery.xml)"
 "\n\t-ocxlq [string]    : query semantic network display .cxl vector graphics output filename (def: semanticNetQuery.cxl)"
 "\n\t-osvgq [string]    : query semantic network display .svg 2D vector graphics output filename (def: semanticNetQuery.svg)"
 "\n\t-oldrq [string]    : query semantic network display .ldr 3D vector graphics output filename (def: semanticNetQuery.ldr)"
 "\n\t-oppmq [string]    : query semantic network display .ppm raster graphics output filename (def: semanticNetQuery.ppm)"
-"\n\t-ocffq [string]    : query NLP parser generated .cff output filename (def: outputNLPQuery.cff)"
+"\n\t-ocffq [string]    : query semantic network NLP parser generated .cff output filename (def: semanticNetQuery.cff)"
 "\n\t-oall [string]     : semantic network display xml/.svg/.ldr/.ppm default generic output filename (def: semanticNet)"
 "\n\t-oanswer [string]  : plain text .txt file containing the answer to the query (def: answer.txt)"
 "\n\t-notshow           : do not display output in opengl"
@@ -104,10 +104,10 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 #ifdef GIA_USE_DATABASE
 "\n\t-dbread            : read from database (GIA knowledge base) [improves referencing capacity]"
 "\n\t-dbwrite           : write to database (GIA knowledge base) [saves knowledge]"
-"\n\t-dbfolder          : database base folder path (def: /home/systemusername/source/GIAKBdatabase)"
+"\n\t-dbfolder [string] : database base folder path (def: /home/systemusername/source/GIAKBdatabase)"
 #endif
 #ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
-"\n\t-dbsemanticparserfolder    : direct semantic parser (corpus or optimised) database base folder path (def: /home/systemusername/source/GIAsemanticparserdatabase)"
+"\n\t-dbsemanticparserfolder [string]   : direct semantic parser (corpus or optimised) database base folder path (def: /home/systemusername/source/GIAsemanticparserdatabase)"
 #endif
 #ifdef GIA_USE_LRP
 "\n\t-lrp                               : language reduction preprocessor"
@@ -115,13 +115,10 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 "\n\t-olrptxtnlp [string]               : plain text .txt output filename with GIA language reduction preprocessor applied, word replacement with dummy prepositions/verbs for NLP compatibility (def: inputTextWithLRPforNLPonly.txt)"
 "\n\t-olrptxtq [string]                 : query plain text .txt output filename with GIA language reduction preprocessor applied (def: inputTextWithLRPQuery.txt)"
 "\n\t-olrptxtnlpq [string]              : query plain text .txt output filename with GIA language reduction preprocessor applied, word replacement with dummy prepositions/verbs for NLP compatibility (def: inputTextWithLRPforNLPonlyQuery.txt)"
-"\n\t-lrpfolder                         : folder of LRP data files (list of multiword verbs, multiword prepositions etc) (def: same as exe)"
+"\n\t-lrpfolder [string]                : folder of LRP data files (list of multiword verbs, multiword prepositions etc) (def: same as exe)"
 #endif
 #ifdef USE_WORDNET
 "\n\t-syndet                            : wordnet synonymn detection (0 - off, 1 - during queries only, 2 - during referencing and queries [def])"
-#endif
-#ifdef GIA_USE_
-
 #endif
 "\n"
 "\n\t-workingfolder [string]            : working directory name for input files (def: same as exe)"
@@ -183,7 +180,7 @@ int main(int argc, char** argv)
 	bool useInputTextNLPfeatureXMLFile = false;
 	string inputTextNLPfeatureXMLfileName = "inputNLPfeature.xml";
 	bool useOutputTextCFFFile = false;
-	string outputTextCFFFileName = "outputNLP.cff";
+	string outputTextCFFFileName = "semanticNet.cff";
 	bool useInputTextXMLFile = false;
 	string inputTextXMLFileName = "semanticNet.xml";
 	bool useOutputTextXMLFile = false;
@@ -203,7 +200,7 @@ int main(int argc, char** argv)
 	bool useInputQueryNLPfeatureXMLFile = false;
 	string inputQueryNLPfeatureXMLFileName = "inputNLPfeatureQuery.xml";
 	bool useOutputQueryCFFFile = false;
-	string outputQueryCFFFileName = "outputNLPQuery.cff";
+	string outputQueryCFFFileName = "semanticNetQuery.cff";
 	bool useInputQueryXMLFile = false;
 	string inputQueryXMLFileName = "semanticNetQuery.xml";
 	bool useOutputQueryXMLFile = false;
@@ -633,7 +630,7 @@ int main(int argc, char** argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 2k4a 19-July-2015" << endl;
+			cout << "OpenGIA.exe - Project Version: 2k5a 21-July-2015" << endl;
 			exit(1);
 		}
 

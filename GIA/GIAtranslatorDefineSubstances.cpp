@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k4a 19-July-2015
+ * Project Version: 2k5a 21-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -44,25 +44,25 @@
 void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], GIAfeature* featureArrayTemp[], int NLPdependencyRelationsType)
 {
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0a0 pass; define substances (objects/subjects with substances; eg 'Truffles which are picked are tasty.' - Truffle must be an instance/substance in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
+	cout << "B0a0 pass; define substances (objects/subjects with substances; eg 'Truffles which are picked are tasty.' - Truffle must be an instance/substance in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
 	#endif
 	defineSubstancesObjectsAndSubjectsWithSubstances(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, GIAentityNodeArray);	//why did this used to be GIAfeatureTempEntityNodeArray?
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0a1 pass; define substances (expletives eg 'there' in 'there is a place');" << endl;
+	cout << "B0a1 pass; define substances (expletives eg 'there' in 'there is a place');" << endl;
 	#endif
 	defineSubstancesExpletives(currentSentenceInList, GIAentityNodeArray);
 
 	#ifdef GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0a2 pass; define substances all nodes" << endl;
+	cout << "B0a2 pass; define substances all nodes" << endl;
 	#endif
 	defineSubstancesAllNodes(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 
 	#ifdef GIA_ASSIGN_SUBSTANCE_TO_ALL_DEFINITIVE_NOUNS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0b pass; define substances (definite nouns); eg the house" << endl;
+	cout << "B0b pass; define substances (definite nouns); eg the house" << endl;
 	#endif
 	defineSubstancesDefiniteNouns(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
 	#endif
@@ -71,7 +71,7 @@ void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 	#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_OLD
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0kSHIFTED pass; define substances (non explicit pronouns eg 'that');" << endl;
+	cout << "B0kSHIFTED pass; define substances (non explicit pronouns eg 'that');" << endl;
 	#endif
 	defineSubstancesNonExplicitPronouns(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
@@ -80,7 +80,7 @@ void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 
 	#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0c pass; define substances based on determinates of definition entities" << endl;
+	cout << "B0c pass; define substances based on determinates of definition entities" << endl;
 	#endif
 	defineSubstancesBasedOnDeterminatesOfDefinitionEntities(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
 	#endif
@@ -97,84 +97,84 @@ void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 
 	#ifdef GIA_ASSIGN_SUBSTANCE_TO_ALL_NOUNS_WITH_DETERMINATES
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0d pass; define substances (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore substances]" << endl;
+	cout << "B0d pass; define substances (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore substances]" << endl;
 	#endif
 	defineSubstancesNounsWithDeterminates(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
 	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0e pass; define substances (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
+	cout << "B0e pass; define substances (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
 	#endif
 	defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(currentSentenceInList, GIAentityNodeArray, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0f pass; define substances (quantities [not quantity mods/multipiers, not measure pers] and measures);" << endl;
+	cout << "B0f pass; define substances (quantities [not quantity mods/multipiers, not measure pers] and measures);" << endl;
 	#endif
 	defineSubstancesQuantitiesAndMeasures(currentSentenceInList, GIAentityNodeArray);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0g pass; define substances (quantity mods);" << endl;
+	cout << "B0g pass; define substances (quantity mods);" << endl;
 	#endif
 	defineSubstancesQuantityModifiers(currentSentenceInList, GIAentityNodeArray);
 
 	#ifdef GIA_ASSIGN_SUBSTANCE_TO_ALL_PRONOUNS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0i pass; define substances (pronouns eg 'we'/'I');" << endl;
+	cout << "B0i pass; define substances (pronouns eg 'we'/'I');" << endl;
 	#endif
 	defineSubstancesPronouns(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
 	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0j pass; define substances (to_be);" << endl;
+	cout << "B0j pass; define substances (to_be);" << endl;
 	#endif
 	defineSubstancesToBe(currentSentenceInList, GIAentityNodeArray);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0k pass; define substances (to_do);" << endl;
+	cout << "B0k pass; define substances (to_do);" << endl;
 	#endif
-	defineActionsToDo(currentSentenceInList, GIAentityNodeArray);
+	defineSubstancesActionsToDo(currentSentenceInList, GIAentityNodeArray);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0l pass; define substances (has time);" << endl;
+	cout << "B0l pass; define substances (has time);" << endl;
 	#endif
 	defineSubstancesHasTime(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
 
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0m pass; define substances (non explicit pronouns eg 'that');" << endl;
+	cout << "B0m pass; define substances (non explicit pronouns eg 'that');" << endl;
 	#endif
 	defineSubstancesNonExplicitPronouns(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_4A_RELATIONS_DEFINE_SUBSTANCES_BASED_UPON_INDIRECT_OBJECTS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0n pass; define substances indirect objects;" << endl;
+	cout << "B0n pass; define substances indirect objects;" << endl;
 	#endif
 	defineSubstancesIndirectObjects(currentSentenceInList, GIAentityNodeArray);
 	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0o pass; define substances (possessive prepositions, eg 'all' in 'all of the mice');" << endl;
+	cout << "B0o pass; define substances (possessive prepositions, eg 'all' in 'all of the mice');" << endl;
 	#endif
 	defineSubstancesOfPossessivePrepositions(currentSentenceInList, GIAentityNodeArray);
 
 	#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0p pass; define substance concepts (ie specific substance concepts)" << endl;
+	cout << "B0p pass; define substance concepts (ie specific substance concepts)" << endl;
 	#endif
 	defineSubstanceConcepts(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
 	#endif
 
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0q pass; define substances (actions), eg 'run' in 'Tom runs' [exceptions 'having a chicken'/being a chicken': dobj(having-5, chicken-7) / dobj(be-5, chicken-7)]);" << endl;
+	cout << "B0q pass; define substances (actions), eg 'run' in 'Tom runs' [exceptions 'having a chicken'/being a chicken': dobj(having-5, chicken-7) / dobj(be-5, chicken-7)]);" << endl;
 	#endif
 	defineSubstancesActions(currentSentenceInList, GIAentityNodeArray);
 	#endif
 
 	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0r pass; define substances action concepts, eg 'swim' in 'To swim to the beach requires strength.'" << endl;
+	cout << "B0r pass; define substances action concepts, eg 'swim' in 'To swim to the beach requires strength.'" << endl;
 	#endif
 	defineSubstancesActionConcepts(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
 	#endif
@@ -954,7 +954,7 @@ void defineSubstancesToBe(GIAsentence* currentSentenceInList, GIAentityNode* GIA
 #endif
 }
 
-void defineActionsToDo(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
+void defineSubstancesActionsToDo(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
@@ -981,7 +981,7 @@ void defineActionsToDo(GIAsentence* currentSentenceInList, GIAentityNode* GIAent
 				GIAentityNodeArray[actionIndex] = addActionToActionDefinitionDefineSubstances(actionEntity);
 
 				#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
-				cout << "defineActionsToDo: " << actionEntity->entityName << endl;
+				cout << "defineSubstancesActionsToDo: " << actionEntity->entityName << endl;
 				#endif
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD

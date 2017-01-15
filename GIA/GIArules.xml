@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k4a 19-July-2015
+ * Project Version: 2k5a 21-July-2015
  *
  *******************************************************************************/
 -->
@@ -3293,7 +3293,7 @@
 				<!-- #endif -->
 			</function>
 
-			<!-- #ifdefGIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS -->
+			<!-- #ifdefGIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS -->
 			<function name="defineSubstancesAllNodes">
 				<paramEntity mode="execute">
 				<option useEntityTest="true" entityTest="_$qVar" entityTestIsNegative="true" />
@@ -3449,7 +3449,7 @@
 				</paramDepRel>
 			</function>
 
-			<function name="defineActionsToDo">
+			<function name="defineSubstancesActionsToDo">
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_to-do" />

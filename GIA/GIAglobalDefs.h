@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k4a 19-July-2015
+ * Project Version: 2k5a 21-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -491,7 +491,7 @@
  *		OpenGIA Development Dependencies Installation
  *		=================================
  *
- *		Compile/Link External Package 1 - Freeglut development libraries
+ *		Install External Package 1 - Freeglut development libraries
  *		--------------------------------------
  *
  *			(Linux Ubuntu 14.04 Only)
@@ -538,7 +538,7 @@
  *		* (Linux) distribution repository
  *		* (Windows) see http://tempvariable.blogspot.com.au/2008/02/installing-freeglut-on-visual-studio.html / http://www.transmissionzero.co.uk/software/freeglut-devel/
  *
- *		Compile/Link External Package 2 - Wordnet development libraries
+ *		Install External Package 2 - Wordnet development libraries
  *		--------------------------------------
  *
  *			(Linux Ubuntu 14.04 Only)
