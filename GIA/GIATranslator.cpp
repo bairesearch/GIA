@@ -653,33 +653,90 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		//cout << "as2" <<endl;
 	
 		//pass 1b; switch argument/functions where necessary
-		currentRelationInList = currentSentenceInList->firstRelationInList;
-		while(currentRelationInList->next != NULL)
+		if(GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_WHERE_NECESSARY)
 		{
-			bool passed = false;
-			for(int i=0; i<RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES; i++)
-			{
+			currentRelationInList = currentSentenceInList->firstRelationInList;
+			while(currentRelationInList->next != NULL)
+			{	
+				//cout << "here1" << endl;
 				//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
- 
-				if(currentRelationInList->relationType == relationTypeRequireSwitchingNameArray[i])
+
+				bool passed = false;
+				for(int i=0; i<RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES; i++)
 				{
-					passed = true;
+					//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+
+					if(currentRelationInList->relationType == relationTypeRequireSwitchingNameArray[i])
+					{
+						passed = true;
+					}
 				}
-			}			
-			if(passed)
-			{
-				//cout << "THERE currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-				string tempString = currentRelationInList->relationArgument;
-				int tempIndex = currentRelationInList->relationArgumentIndex;
-				currentRelationInList->relationArgument = currentRelationInList->relationFunction;				
-				currentRelationInList->relationFunction = tempString;
-				currentRelationInList->relationArgumentIndex = currentRelationInList->relationFunctionIndex;				
-				currentRelationInList->relationFunctionIndex = tempIndex;				
-			}
-			currentRelationInList = currentRelationInList->next;
+				if(passed)
+				{	
+					bool passed2 = false;
+									
+					if(GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_ONLY_WHEN_PAIRED_WITH_SUBJECT)
+					{	
+						
+								
+													
+						//now find the associated object..
+ 						Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+						while(currentRelationInList2->next != NULL)
+						{	
+							
+							/*
+							bool partnerTypeRequiredFoundObj = false;
+							for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
+							{
+								if(currentRelationInList2->relationType == relationTypeObjectNameArray[i])
+								{
+									partnerTypeRequiredFoundObj = true;
+								}
+							}
+							*/
+							bool partnerTypeRequiredFoundSubj = false;
+							for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
+							{
+								if(currentRelationInList2->relationType == relationTypeSubjectNameArray[i])
+								{
+									partnerTypeRequiredFoundSubj = true;
+								}
+							}								
+							if(partnerTypeRequiredFoundSubj)
+							{
+								
+								
+								if(currentRelationInList2->relationFunctionIndex == currentRelationInList->relationArgumentIndex)
+								{//found a matching subject-that[obj] relationship
+
+									//cout << "found a matching subject-that[obj] relationship" << endl;
+									passed2 = true;
+									//cout << "partnerTypeRequiredFound: currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
+								}
+							}
+
+							currentRelationInList2 = currentRelationInList2->next;
+						}
+					}
+					else
+					{
+						passed2 = true;
+					}
+					if(passed2)
+					{
+						string tempString = currentRelationInList->relationArgument;
+						int tempIndex = currentRelationInList->relationArgumentIndex;
+						currentRelationInList->relationArgument = currentRelationInList->relationFunction;				
+						currentRelationInList->relationFunction = tempString;
+						currentRelationInList->relationArgumentIndex = currentRelationInList->relationFunctionIndex;				
+						currentRelationInList->relationFunctionIndex = tempIndex;						
+					}
+				}
+				currentRelationInList = currentRelationInList->next;
+			}					
 		}
 				
-		
 		//pass 2; identify entity types [define entities as objects, subjects, and being possessive of properties];
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
@@ -935,11 +992,17 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		{
 			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 			{
-				if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
-				{
-					//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
-					addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
-				}
+				//if(GIAEntityNodeArrayFilled[i])
+				//{ condition not required; assumed true with GRAMMATICAL_DEFINITE
+					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS || !GIAEntityNodeGrammaticalIsPersonArray[i])
+					{
+						if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
+						{
+							//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
+							addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
+						}
+					}
+				//}
 			}
 		}
 		//0b pass; define properties (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore properties] 
@@ -949,17 +1012,20 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			{	
 				if(GIAEntityNodeArrayFilled[i])
 				{
-					bool passed = false;
-					for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
+					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS || !GIAEntityNodeGrammaticalIsPersonArray[i])
 					{
-						if(GIAEntityNodeArray[i]->grammaticalNumberTemp == referenceTypeHasDeterminateCrossReferenceNumberArray[j])
+						bool passed = false;
+						for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
 						{
-							passed = true;
+							if(GIAEntityNodeArray[i]->grammaticalNumberTemp == referenceTypeHasDeterminateCrossReferenceNumberArray[j])
+							{
+								passed = true;
+							}
 						}
-					}
-					if(passed)
-					{
-						addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
+						if(passed)
+						{
+							addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
+						}
 					}
 				}
 			}
