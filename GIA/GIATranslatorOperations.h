@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i9a 11-Apr-2012
+ * Project Version: 1i9f 11-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -419,7 +419,7 @@ using namespace std;
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY_REPLACEMENT "RELATION_TYPE_PREPOSITION_BECAUSE"
 
 
-#define FEATURE_NER_O "O"
+#define FEATURE_NER_UNDEFINED "O"
 #define FEATURE_NER_DATE "DATE" 
 #define FEATURE_NER_TIME "TIME" 
 #define FEATURE_NER_MONEY "MONEY"
@@ -430,7 +430,13 @@ using namespace std;
 #define FEATURE_NER_MISC "MISC"
 #define FEATURE_NER_DURATION "DURATION"
 
-
+#define FEATURE_NER_EXPLICIT_NUMBER_TYPES (9)
+static string featureNERexplicitTypeArray[FEATURE_NER_EXPLICIT_NUMBER_TYPES] = {FEATURE_NER_DATE, FEATURE_NER_TIME, FEATURE_NER_MONEY, FEATURE_NER_NUMBER, FEATURE_NER_PERSON, FEATURE_NER_LOCATION, FEATURE_NER_ORGANIZATION, FEATURE_NER_MISC, FEATURE_NER_DURATION};
+#define FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_TYPES (4)
+static string featureNERindicatesNameConcatenationRequiredTypeArray[FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_TYPES] = {FEATURE_NER_PERSON, FEATURE_NER_LOCATION, FEATURE_NER_ORGANIZATION, FEATURE_NER_MISC};
+#define FEATURE_NER_INDICATES_NORMALISED_NER_AVAILABLE_NUMBER_TYPES (4)
+static string featureNERindicatesNormalisedNERavailableTypeArray[FEATURE_NER_INDICATES_NORMALISED_NER_AVAILABLE_NUMBER_TYPES] = {FEATURE_NER_DATE, FEATURE_NER_TIME, FEATURE_NER_MONEY, FEATURE_NER_NUMBER};
+#define FEATURE_NER_NAME_CONCATENATION_TOKEN " " 	//or use "_" for Relex format
 
 #define STANFORD_PARSER_PREPOSITION_PREPEND "prep_"
 #define STANFORD_PARSER_PREPOSITION_PREPEND_LENGTH (5)

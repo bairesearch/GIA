@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammarAndReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i9a 11-Apr-2012
+ * Project Version: 1i9f 11-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -447,7 +447,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 			string auxillaryGovernerEntity = currentRelationInList->relationArgument;
 			for(int i=0; i<RELATION_TYPE_AUXILLARY_GOVERNER_INDICATES_FUTURE_TENSE_NUMBER_OF_TYPES; i++)
 			{
-				if(relationAuxillaryGovernerIndicatesFutureTenseArray[RELATION_TYPE_AUXILLARY_GOVERNER_INDICATES_FUTURE_TENSE_NUMBER_OF_TYPES] == auxillaryGovernerEntity)
+				if(relationAuxillaryGovernerIndicatesFutureTenseArray[i] == auxillaryGovernerEntity)
 				{
 					GIAEntityNodeGrammaticalTenseArray[auxillaryDependencyIndex] = GRAMMATICAL_TENSE_FUTURE;
 				}
@@ -1134,19 +1134,22 @@ void redistributeStanfordRelationsCollapseAdvmodRelationFunctionBe(Sentence * cu
 				}
 
 				if(partnerTypeRequiredFound)
-				{		
-					if(currentRelationInList2->relationFunctionIndex == currentRelationInList->relationFunctionIndex)
-					{//found a matching object-subject relationship
-						
-						GIAEntityNode * oldRedundantBeEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
-						
-						currentRelationInList->relationFunctionIndex = currentRelationInList2->relationArgumentIndex;
-						currentRelationInList->relationFunction = GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex]->entityName;
-						
-						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
-						currentRelationInList2->disabled = true;
-						oldRedundantBeEntity->disabled = true;
-						#endif
+				{	
+					if((currentRelationInList->relationFunction == RELATION_FUNCTION_DEFINITION_1) && (currentRelationInList2->relationFunction == RELATION_FUNCTION_DEFINITION_1))
+					{
+						if(currentRelationInList2->relationFunctionIndex == currentRelationInList->relationFunctionIndex)	//redundant test
+						{//found a matching object-subject relationship
+
+							GIAEntityNode * oldRedundantBeEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
+
+							currentRelationInList->relationFunctionIndex = currentRelationInList2->relationArgumentIndex;
+							currentRelationInList->relationFunction = GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex]->entityName;
+
+							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+							currentRelationInList2->disabled = true;
+							oldRedundantBeEntity->disabled = true;
+							#endif
+						}
 					}
 				}
 

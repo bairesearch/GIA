@@ -3,7 +3,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i9a 11-Apr-2012
+ * Project Version: 1i9f 11-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -496,69 +496,73 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 	if(parseFeatures)
 	{
 		currentTagInDocument = currentTagInDocument->nextTag;
-		XMLParserTag * firstTagInCoreferences = parseTagDownALevel(currentTagInDocument, StanfordCoreNLP_XML_TAG_coreferences, &result);
-		XMLParserTag * currentTagInnCoreferences = firstTagInCoreferences;
-		while(currentTagInnCoreferences->nextTag != NULL)
-		{	
-			XMLParserTag * firstTagInCoreference = parseTagDownALevel(currentTagInnCoreferences, StanfordCoreNLP_XML_TAG_coreference, &result);
-			XMLParserTag * currentTagInnCoreference = firstTagInCoreference;
+		bool hasCoreferences = false;
+		XMLParserTag * firstTagInCoreferences = parseTagDownALevel(currentTagInDocument, StanfordCoreNLP_XML_TAG_coreferences, &hasCoreferences);
+		if(hasCoreferences)
+		{
+			XMLParserTag * currentTagInnCoreferences = firstTagInCoreferences;
+			while(currentTagInnCoreferences->nextTag != NULL)
+			{	
+				XMLParserTag * firstTagInCoreference = parseTagDownALevel(currentTagInnCoreferences, StanfordCoreNLP_XML_TAG_coreference, &result);
+				XMLParserTag * currentTagInnCoreference = firstTagInCoreference;
 
-			StanfordCoreNLPMention * firstMentionInList = currentCoreferenceInList->firstMentionInList;
-			StanfordCoreNLPMention * currentMentionInList = firstMentionInList;
-			while(currentTagInnCoreference->nextTag != NULL)
-			{
-				if(currentTagInnCoreference->firstAttribute->name == StanfordCoreNLP_XML_ATTRIBUTE_representative)
+				StanfordCoreNLPMention * firstMentionInList = currentCoreferenceInList->firstMentionInList;
+				StanfordCoreNLPMention * currentMentionInList = firstMentionInList;
+				while(currentTagInnCoreference->nextTag != NULL)
 				{
-					string representativeString = currentTagInnCoreference->firstAttribute->value;
-					if(representativeString == "true")
+					if(currentTagInnCoreference->firstAttribute->name == StanfordCoreNLP_XML_ATTRIBUTE_representative)
 					{
-						#ifdef GIA_NLP_DEBUG
-						cout << "representative found" << endl;
-						#endif
-						currentMentionInList->representative = true;
-					}
-				}
-
-				XMLParserTag * firstTagInMention = parseTagDownALevel(currentTagInnCoreference, StanfordCoreNLP_XML_TAG_mention, &result);
-				XMLParserTag * currentTagInMention = firstTagInMention;
-				while(currentTagInMention->nextTag != NULL)
-				{
-					if(currentTagInMention->name == StanfordCoreNLP_XML_TAG_sentence)
-					{
-						int TagValue = atoi(currentTagInMention->value.c_str());
-						currentMentionInList->sentence = TagValue;
-					}
-					else if(currentTagInMention->name == StanfordCoreNLP_XML_TAG_start)
-					{
-						int TagValue = atoi(currentTagInMention->value.c_str());
-						currentMentionInList->start = TagValue;
-					}
-					else if(currentTagInMention->name == StanfordCoreNLP_XML_TAG_end)
-					{
-						int TagValue = atoi(currentTagInMention->value.c_str());
-						currentMentionInList->end = TagValue;
-					}
-					else if(currentTagInMention->name == StanfordCoreNLP_XML_TAG_head)
-					{
-						int TagValue = atoi(currentTagInMention->value.c_str());
-						currentMentionInList->head = TagValue;
+						string representativeString = currentTagInnCoreference->firstAttribute->value;
+						if(representativeString == "true")
+						{
+							#ifdef GIA_NLP_DEBUG
+							cout << "representative found" << endl;
+							#endif
+							currentMentionInList->representative = true;
+						}
 					}
 
-					currentTagInMention = currentTagInMention->nextTag;													
-				}
+					XMLParserTag * firstTagInMention = parseTagDownALevel(currentTagInnCoreference, StanfordCoreNLP_XML_TAG_mention, &result);
+					XMLParserTag * currentTagInMention = firstTagInMention;
+					while(currentTagInMention->nextTag != NULL)
+					{
+						if(currentTagInMention->name == StanfordCoreNLP_XML_TAG_sentence)
+						{
+							int TagValue = atoi(currentTagInMention->value.c_str());
+							currentMentionInList->sentence = TagValue;
+						}
+						else if(currentTagInMention->name == StanfordCoreNLP_XML_TAG_start)
+						{
+							int TagValue = atoi(currentTagInMention->value.c_str());
+							currentMentionInList->start = TagValue;
+						}
+						else if(currentTagInMention->name == StanfordCoreNLP_XML_TAG_end)
+						{
+							int TagValue = atoi(currentTagInMention->value.c_str());
+							currentMentionInList->end = TagValue;
+						}
+						else if(currentTagInMention->name == StanfordCoreNLP_XML_TAG_head)
+						{
+							int TagValue = atoi(currentTagInMention->value.c_str());
+							currentMentionInList->head = TagValue;
+						}
 
-				StanfordCoreNLPMention * newMention = new StanfordCoreNLPMention();
-				currentMentionInList->next = newMention;
-				currentMentionInList = currentMentionInList->next;		
+						currentTagInMention = currentTagInMention->nextTag;													
+					}
 
-				currentTagInnCoreference = currentTagInnCoreference->nextTag;
-			}	
+					StanfordCoreNLPMention * newMention = new StanfordCoreNLPMention();
+					currentMentionInList->next = newMention;
+					currentMentionInList = currentMentionInList->next;		
 
-			StanfordCoreNLPCoreference * newCoreference = new StanfordCoreNLPCoreference();
-			currentCoreferenceInList->next = newCoreference;
-			currentCoreferenceInList = currentCoreferenceInList->next;	
+					currentTagInnCoreference = currentTagInnCoreference->nextTag;
+				}	
 
-			currentTagInnCoreferences = currentTagInnCoreferences->nextTag;
+				StanfordCoreNLPCoreference * newCoreference = new StanfordCoreNLPCoreference();
+				currentCoreferenceInList->next = newCoreference;
+				currentCoreferenceInList = currentCoreferenceInList->next;	
+
+				currentTagInnCoreferences = currentTagInnCoreferences->nextTag;
+			}
 		}
 	}
 	

@@ -3,7 +3,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i9a 11-Apr-2012
+ * Project Version: 1i9f 11-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -16,6 +16,67 @@
 #include "GIAdatabase.h"
 
 
+
+
+
+#ifdef GIA_USE_STANFORD_CORENLP
+void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+{
+	//eliminate all redundant date relations eg num(December-4, 3rd-5)/num(December-4, 1990-7)/nn(3rd-5, December-4)/appos(3rd-5, 1990-7), where both the governer and the dependent have NER tag set to DATE
+
+		
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		GIAEntityNode * governerEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
+		GIAEntityNode * dependentEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+
+		bool governerAndDependentBothHaveSameNERvalue = false;
+		for(int i=0; i<FEATURE_NER_EXPLICIT_NUMBER_TYPES; i++)
+		{
+			if((governerEntity->NERTemp == featureNERexplicitTypeArray[i]) && (dependentEntity->NERTemp == featureNERexplicitTypeArray[i]))
+			{
+				governerAndDependentBothHaveSameNERvalue = true;
+			}
+		}
+		
+		//if(((governerEntity->NERTemp == FEATURE_NER_DATE) && (dependentEntity->NERTemp == FEATURE_NER_DATE)) || ((governerEntity->NERTemp == FEATURE_NER_MONEY) && (dependentEntity->NERTemp == FEATURE_NER_MONEY)) || ((governerEntity->NERTemp == FEATURE_NER_NUMBER) && (dependentEntity->NERTemp == FEATURE_NER_NUMBER)) || ((governerEntity->NERTemp == FEATURE_NER_TIME) && (dependentEntity->NERTemp == FEATURE_NER_TIME)))
+		if(governerAndDependentBothHaveSameNERvalue)
+		{
+			//cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
+			//cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
+			
+			currentRelationInList->disabled = true;			
+			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES		
+			dependentEntity->disabled = true;
+			#endif
+			
+			if(dependentEntity->hasAssociatedInstanceTemp)
+			{//disable its property also
+				(dependentEntity->AssociatedInstanceNodeList.back())->disabled = true;
+			}	
+			
+			bool featureNERindicatesNameConcatenationRequired = false;
+			for(int i=0; i<FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_TYPES; i++)
+			{
+				if(governerEntity->NERTemp == featureNERindicatesNameConcatenationRequiredTypeArray[i])
+				{
+					featureNERindicatesNameConcatenationRequired = true;
+				}
+			}
+					
+			//if((governerEntity->NETTemp == FEATURE_NER_PERSON) || (governerEntity->NETTemp == FEATURE_NER_LOCATION) || (governerEntity->NETTemp == FEATURE_NER_ORGANIZATION) || (governerEntity->NETTemp == FEATURE_NER_MISC))
+			if(featureNERindicatesNameConcatenationRequired)
+			{
+				governerEntity->entityName = dependentEntity->entityName + FEATURE_NER_NAME_CONCATENATION_TOKEN + governerEntity->entityName;	//join names together
+			}
+		}
+		
+		
+		currentRelationInList = currentRelationInList->next;
+	}
+}
+#endif
 
 
 void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int NLPfeatureParser)
@@ -37,32 +98,6 @@ void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFille
 #ifdef GIA_USE_STANFORD_CORENLP
 void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
-	//eliminate all redundant date relations eg num(December-4, 3rd-5)/num(December-4, 1990-7)/nn(3rd-5, December-4)/appos(3rd-5, 1990-7), where both the governer and the dependent have NER tag set to DATE
-
-	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES		
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
-	while(currentRelationInList->next != NULL)
-	{
-		GIAEntityNode * governerEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
-		GIAEntityNode * dependentEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
-
-		if((governerEntity->NERTemp == FEATURE_NER_DATE) && (dependentEntity->NERTemp == FEATURE_NER_DATE))
-		{
-			//cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
-			//cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
-				
-			dependentEntity->disabled = true;
-			
-			if(dependentEntity->hasAssociatedInstanceTemp)
-			{//disable its property also
-				(dependentEntity->AssociatedInstanceNodeList.back())->disabled = true;
-			}					
-		}
-		
-		currentRelationInList = currentRelationInList->next;
-	}
-	#endif	
-	
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
 		if(GIAEntityNodeArrayFilled[i])
@@ -358,7 +393,25 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 }
 #endif
 
-void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
+
+void extractQuantities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPfeatureParser)
+{	
+	#ifdef GIA_USE_RELEX
+	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
+	{
+		extractQuantitiesRelex(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList);
+	}
+	#endif
+	#ifdef GIA_USE_STANFORD_CORENLP
+	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+	{
+		extractQuantitiesStanfordCoreNLP(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList);
+	}	
+	#endif
+}
+
+#ifdef GIA_USE_STANFORD_CORENLP
+void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -376,9 +429,151 @@ void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 			
 			GIAEntityNode * quantityEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
 			
+			if(quantityEntity->NERTemp != FEATURE_NER_DATE)		//do not assume quantity entities when dealing with Stanford Dates (as they have already been parsed).	//OLD: if(!(quantityEntity->hasAssociatedTime))  [NO because must support times, eg The operation happened at 3:30pm. num(pm-6, 3:30-5)prep_at(happened-3, pm-6)]
+			{
+				if(quantityEntity->AssociatedInstanceNodeList.size() >= 1)
+				//if(quantityEntity->AssociatedInstanceNodeList.back() != NULL) - this is dangerous/impossible to use; it will not return NULL if pop_back() has been executed on the vector				
+				{
+					GIAEntityNode * quantityProperty = quantityEntity->AssociatedInstanceNodeList.back();
+					quantityProperty->hasQuantity = true;
+					if(quantityEntity->NormalizedNERTemp != "")
+					{
+						quantityProperty->quantityNumberString = quantityEntity->NormalizedNERTemp;					
+					}
+					else
+					{
+						quantityProperty->quantityNumberString = currentRelationInList->relationArgument;
+					}
+					#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+					GIAEntityNodeArray[currentRelationInList->relationArgumentIndex]->disabled = true;
+					#endif
+
+
+					//THIS IS PROBABLY NOT POSSIBLE FOR THE STANFORD PARSER; (BUT HAS BEEN LEFT IN INCASE THERE IS A FUTURE IMPROVEMENT TO STANFORD PARSER)
+					if(currentRelationInList->relationArgument == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+					{//update comparison variable (set it to the quantity)	
+						quantityProperty->isQuery = true;
+						GIAEntityNodeArray[currentRelationInList->relationArgumentIndex]->isQuery = false;
+						setComparisonVariableNode(quantityProperty);		
+					}
+
+
+					//now locate quantity modifiers
+					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+					while(currentRelationInList2->next != NULL)
+					{	
+						//cout << "here1" << endl;
+						//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+
+						if(currentRelationInList2->relationType == RELATION_TYPE_QUANTITY_MOD)
+						{	
+							if(currentRelationInList2->relationFunction == currentRelationInList->relationFunction)
+							{
+								//cout << "AAAA" << endl;
+
+								/*
+								int quantityModifierInt = calculateQuantityModifierInt(currentRelationInList2->relationArgument);
+								quantityProperty->quantityModifier = quantityModifierInt;
+								*/
+								quantityProperty->quantityModifierString = currentRelationInList2->relationArgument;
+
+								//added 12 Oct 11; add quantity modifiers as conditions (eg "almost" lost)	
+								GIAEntityNode * entityNode = quantityProperty;
+								GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex];
+								//GIAEntityNode * conditionTypeConceptEntity = quantityProperty->quantityModifierString;
+
+								string conditionTypeName = "quantityModifier";	//quantityProperty->quantityModifierString //CHECKTHIS; 
+								long entityIndex = -1;
+								bool entityAlreadyExistant = false;
+								vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+								long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+								long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();
+								GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
+
+								addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);
+
+							}
+
+						}							
+
+						currentRelationInList2 = currentRelationInList2->next;
+					}																			
+				}	
+			}							
+		}
+		currentRelationInList = currentRelationInList->next;		
+	}
+	
+				
+				
+	/*
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAEntityNodeArrayFilled[i])
+		{
+			GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
+			if(!(currentEntity->disabled))
+			{	
+				//cout << "asd" << endl;
+				bool featureNERindicatesNormalisedNERavailable = false;
+				for(int i=0; i<FEATURE_NER_INDICATES_NORMALISED_NER_AVAILABLE_NUMBER_TYPES; i++)
+				{
+					if(currentEntity->NERTemp == featureNERindicatesNormalisedNERavailableTypeArray[i])
+					{
+						if(currentEntity->NERTemp != FEATURE_NER_DATE)
+						{//do not allow dates here (as these are parsed specifically elsewhere
+							featureNERindicatesNormalisedNERavailable = true;
+						}
+					}
+				}
+
+				if(featureNERindicatesNormalisedNERavailable)
+				{
+					if(!(currentEntity->hasAssociatedTime))
+					{//do not assume quantity entities when dealing with Stanford Dates, eg num(March-5, 11th-6)  / num(March-5, 1973-8)
+
+						if(currentEntity->AssociatedInstanceNodeList.size() >= 1)
+						//if(quantityEntity->AssociatedInstanceNodeList.back() != NULL) - this is dangerous/impossible to use; it will not return NULL if pop_back() has been executed on the vector				
+						{
+							GIAEntityNode * quantityProperty = currentEntity->AssociatedInstanceNodeList.back();
+							quantityProperty->hasQuantity = true;
+							quantityProperty->quantityNumberString = currentEntity->NormalizedNERTemp;
+							cout << "adding quantity: " << quantityProperty << endl; 
+							cout << "quantityNumberString: " << currentEntity->NormalizedNERTemp << endl; 
+						}
+					}		
+				}
+				//cout << "asd2" << endl;
+			}
+		}
+	}
+	*/
+}
+#endif
+
+#ifdef GIA_USE_RELEX
+void extractQuantitiesRelex(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
+{
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{	
+		//cout << "here1" << endl;
+		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+
+		if(currentRelationInList->relationType == RELATION_TYPE_QUANTITY)
+		{
+			/*
+			cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+			cout << "currentRelationInList->relationFunction = " << currentRelationInList->relationFunction << endl;
+			cout << "currentRelationInList->relationArgument = " << currentRelationInList->relationArgument << endl;
+			*/
+			
+			GIAEntityNode * quantityEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
+			
+			/*no longer required as there is now a stanford specific function for parsing quantities
 			if(!(quantityEntity->hasAssociatedTime))
 			{//do not assume quantity entities when dealing with Stanford Dates, eg num(March-5, 11th-6)  / num(March-5, 1973-8)
-				
+			*/
 				if(quantityEntity->AssociatedInstanceNodeList.size() >= 1)
 				//if(quantityEntity->AssociatedInstanceNodeList.back() != NULL) - this is dangerous/impossible to use; it will not return NULL if pop_back() has been executed on the vector				
 				{
@@ -526,13 +721,15 @@ void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 						}
 
 					}
-
+				/*
 				}
+				*/
 			}								
 		}
 		currentRelationInList = currentRelationInList->next;		
 	}
 }
+#endif
 
 void extractMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
 {
