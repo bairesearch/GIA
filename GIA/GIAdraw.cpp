@@ -285,9 +285,10 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		vector<GIAEntityNode*>::iterator entityIter;
 		q = DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES;
 		r = DRAW_X_SPACE_BETWEEN_PROPERTY_NODES;		
+		//int it = 0;
 		for(entityIter = entityNode->PropertyNodeList.begin(); entityIter != entityNode->PropertyNodeList.end(); entityIter++) 
 		{//DRAW SHOULD NOT BE REQUIRED	
-			//cout << "a31" << endl;
+			//cout << "it = " << it << endl;
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE;
 		}

@@ -167,6 +167,7 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 		{
 			propertyEntity->hasAssociatedInstanceTemp = true;
 		}	
+		//cout << "1. propertyEntity->entityName = " << propertyEntity->entityName << endl; 
 	}
 
 	if(thingEntity->entityAlreadyDeclaredInThisContext)
@@ -2205,7 +2206,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 							//cout << "subjectEntityTemp->entityName = " << subjectEntityTemp->entityName << endl;	
 							//cout << "objectEntityTemp->entityName = " << objectEntityTemp->entityName << endl;
 							
-							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C
+							
 							//find out if the subject is connected to an _advmod, if so create a dummy entity as the subject, and assign the subject as a condition [instead of forming default subject-action-object relationship]
 							bool subjectIsConnectedToAnAdvMod = false;
 							Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
@@ -2213,6 +2214,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 							{
 								if(currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_3)
 								{
+									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C
 									if(subjectEntityTemp->entityName == currentRelationInList3->relationArgument)
 									{//subject is connected to an _advmod
 										
@@ -2316,10 +2318,49 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									#endif	
 
 									}
+									#endif
+									
+								
+									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F
+									//cout << "qsd0" << endl;
+									if(currentRelationInList3->relationFunction == RELATION_FUNCTION_DEFINITION_1)
+									{//subject is connected to an _advmod
+									
+										//cout << "qsd1" << endl;
+										
+										if(passdefinition)
+										{
+											//cout << "qsd2" << endl;
+											
+											GIAEntityNode * actionOrPropertyConditionEntity;
+											GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[currentRelationInList3->relationFunctionIndex];
+											GIAEntityNode * conditionTypeConceptEntity = subjectEntityTemp;										
+
+											subjectIsConnectedToAnAdvMod = true;
+										
+											/*eg; The chicken is 3 minutes late.
+											_advmod(be[3], late[6])
+											_obj(be[3], minutes[5])
+											_subj(be[3], chicken[2])
+											_quantity(minutes[5], 3[4]) [IRRELEVANT]
+											*/
+											
+											GIAEntityNode * baseEntity = subjectEntityTemp;
+											GIAEntityNode * definitionEntity = GIAEntityNodeArray[currentRelationInList3->relationArgumentIndex];
+											GIAEntityNode * propertyEntity = objectEntityTemp;
+											
+											addDefinitionToEntity(baseEntity, definitionEntity);
+
+											addOrConnectPropertyToEntity(definitionEntity, propertyEntity);			
+										}
+									}
+									#endif
+									
+									
 								}
 								currentRelationInList3 = currentRelationInList3->next;
 							}	
-							#endif
+							
 
 							#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
 							if(!subjectIsConnectedToAnAdvMod)
@@ -3243,11 +3284,23 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode
 			}
 		}																		
 		if(pass)
-		{					
-			GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
-			GIAEntityNode * propertyEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+		{		
+			#ifndef GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_PROPERTY_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE 
+			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D
+			if(GIAEntityNodeArray[currentRelationInList->relationFunctionIndex]->entityName != RELATION_FUNCTION_DEFINITION_1)
+			{//this condition is required to support GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D			
+			#endif
+			#endif
+				
+				GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
 			
-			addOrConnectPropertyToEntity(entityNode, propertyEntity);
+				addOrConnectPropertyToEntity(entityNode, propertyEntity);
+			#ifndef GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_PROPERTY_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
+			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D
+			}
+			#endif
+			#endif
 		}
 		currentRelationInList = currentRelationInList->next;
 	}
