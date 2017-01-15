@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2k 23-July-2013
+ * Project Version: 1t2l 24-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * ?TO DO: extract date information of entities from relex <features> tag area
@@ -1003,7 +1003,7 @@ void linkPropertiesParataxis(Sentence * currentSentenceInList, bool GIAentityNod
 }
 
 void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts)
-{//NB linkConjunctionConditions() currently performs the same function as linkConditions()
+{
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	/*
 	Tom and/or Max eat the cake.	conj_and(Tom[1], Max[3]) / conj_or(Tom[2], Max[4])
@@ -1022,12 +1022,12 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAentityN
 	
 	GIAgenericDepRelInterpretationParameters paramA = param;	
 	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CONJUGATION_AND;	
-	paramA.conditionTypeEntityDefaultName = RELATION_TYPE_CONJUGATION_AND_BASIC; //change the conditionType name (conj_and -> and)
+	paramA.conditionTypeEntityDefaultName = RELATION_TYPE_CONJUGATION_AND_BASIC; //change the conditionType name (_conj_and -> and)
 	genericDependecyRelationInterpretation(&paramA, 1);
 	
 	GIAgenericDepRelInterpretationParameters paramB = param;
 	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CONJUGATION_OR;
-	paramB.conditionTypeEntityDefaultName = RELATION_TYPE_CONJUGATION_OR_BASIC; //change the conditionType name (conj_or -> or)
+	paramB.conditionTypeEntityDefaultName = RELATION_TYPE_CONJUGATION_OR_BASIC; //change the conditionType name (_conj_or -> or)
 	genericDependecyRelationInterpretation(&paramB, 1);
 #else	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -1056,7 +1056,7 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAentityN
 			}
 
 			if(passed)
-			{
+			{				
 				string conditionTypeName = relationType;
 
 				bool entityAlreadyExistant = false;

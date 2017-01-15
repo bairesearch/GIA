@@ -23,7 +23,7 @@
  * File Name: GIAparser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2k 23-July-2013
+ * Project Version: 1t2l 24-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -592,11 +592,13 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 				string relationType = currentItemString;
 				
 				//added 23 July 2013 - preprocess relex conj_or/conj_and as _conj_or/_conj_and
-				if((relationType == RELATION_TYPE_CONJUGATION_AND) || (relationType == RELATION_TYPE_CONJUGATION_OR))
+				if(relationType == RELATION_TYPE_CONJUGATION_AND_RAW)
 				{
-					string depRelNonPrepositionFirstChar = "";
-					depRelNonPrepositionFirstChar = depRelNonPrepositionFirstChar + RELATION_TYPE_RELEX_NON_PREPOSITION_FIRST_CHARACTER;
-					relationType = depRelNonPrepositionFirstChar + relationType;
+					relationType = RELATION_TYPE_CONJUGATION_AND;
+				}
+				else if(relationType == RELATION_TYPE_CONJUGATION_OR_RAW)
+				{
+					relationType = RELATION_TYPE_CONJUGATION_OR;				
 				}
 				//added 23 July 2013 - preprocess relex prepositions to stanford format for robustness
 				if(relationType[0] != RELATION_TYPE_RELEX_NON_PREPOSITION_FIRST_CHARACTER)

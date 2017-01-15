@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2k 23-July-2013
+ * Project Version: 1t2l 24-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -631,11 +631,11 @@ static string relationContextNegativeNameArray[RELATION_TYPE_NEGATIVE_CONTEXT_NU
 
 
 //conjugations;	
-#ifdef GIA_USE_RELEX_1_4_0
-	//#define GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS	//not necessarily currently as; linkConjunctionConditions() currently performs the same function as linkConditions(). It is used at the moment such that the conjunction prepositions are added to the start of the list
-#endif
-#define RELATION_TYPE_CONJUGATION_AND "conj_and"
-#define RELATION_TYPE_CONJUGATION_OR "conj_or"
+#define GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
+#define RELATION_TYPE_CONJUGATION_AND_RAW "conj_and"
+#define RELATION_TYPE_CONJUGATION_OR_RAW "conj_or"
+#define RELATION_TYPE_CONJUGATION_AND "_conj_and"
+#define RELATION_TYPE_CONJUGATION_OR "_conj_or"
 #define STANFORD_RELATION_TYPE_CONJUNCT "conj"
 #define STANFORD_RELATION_TYPE_COORDINATION "cc"
 #define RELATION_TYPE_CONJUNCT "_conj"
