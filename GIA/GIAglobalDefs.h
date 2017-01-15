@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j17a 07-July-2015
+ * Project Version: 2k1a 09-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -356,65 +356,31 @@
  *		Install External Package 3b - Stanford Parser [OPTIONAL] {Linux/Windows}
  *		--------------------------------------
  *
- *		Download OpenGIANLPDependencies-25September2012.zip / OpenGIANLPDependencies-12October2013.zip / OpenGIANLPDependencies-19April2014 / OpenGIANLPDependencies-07July2015.zip
- *		Copy execute-stanfordParser.sh (Linux) / execute-stanfordParser.bat (Windows) and place it in the Stanford Parser binary folder.
+ *		Create/Copy execute-stanfordParser.sh (Linux) / execute-stanfordParser.bat (Windows) and place it in the Stanford Parser binary folder.
+ *
  *
  *		NB execute-stanfordParser.sh (#!/usr/bin/env bash) contains the following text;
  *
  *			#!/usr/bin/env bash
  *			scriptdir=`dirname $0`
- *			java -mx2g -cp "$scriptdir/*:" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "wordsAndTags,penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz $3/$1 > $4/$2
+ *			java -mx3g -cp "$scriptdir/*:" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "wordsAndTags,penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz $3/$1 > $4/$2
  *
  *		NB execute-stanfordParser.bat contains the following text;
  *
  *			@echo off
  *			:: Runs the English PCFG parser on one or more files, printing trees only
  *			:: usage: lexparser fileToparse
- *			"C:\Program Files\Java\jre8\bin\java.exe" -d64 -mx2g -cp "*;" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "wordsAndTags,penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz %3/%1 > %4/%2
+ *			"C:\Program Files\Java\jre7\bin\java.exe" -d64 -mx3g -cp "*;" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "wordsAndTags,penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz %3/%1 > %4/%2
  *
  *		Stanford Parser may be downloaded via;
- *		(Linux and Windows) eg http://nlp.stanford.edu/software/stanford-parser-2012-03-09.tgz / http://nlp.stanford.edu/software/stanford-parser-2013-04-05.zip / http://nlp.stanford.edu/software/stanford-parser-full-2014-01-04.zip / / http://nlp.stanford.edu/software/stanford-parser-full-2015-04-20.zip
  *
- *		Note Stanford Parser/CoreNLP requires Java Runtime Environment to be installed;
- *	
- *			(Ubuntu 14.04 only);
- *			Java 7 (1.7) installation:
- *				sudo apt-get install openjdk-7-jdk
- *			Java 8 (1.8) installation - required for Stanford Parser/CoreNLP 2015-04-20+:
- *				(http://ubuntuhandbook.org/index.php/2015/01/install-openjdk-8-ubuntu-14-04-12-04-lts)
- *				sudo add-apt-repository ppa:openjdk-r/ppa
- *				sudo apt-get update 
- *				sudo apt-get install openjdk-8-jdk
- *				sudo update-alternatives --config java	[to set active/default version of Java]
- *				sudo update-alternatives --config javac [to set active/default Java Compiler]
- *				java -version [check version of java running]
- *	
- *			(Redhat EL5/EL6 only);
- *			Java 7 (1.7) installation:
- *				yum install java-1.7.0-openjdk-devel
- *				yum install java-1.7.0-openjdk
- *			Java 8 (1.8) installation - required for Stanford Parser/CoreNLP 2015-04-20+:
- *				yum install java-1.8.0-openjdk.x86_64
- *				sudo update-alternatives --config java	[to set active/default version of Java]
- *				NOTNEEDED: sudo update-alternatives --config javac [to set active/default Java Compiler]
- *				java -version [check version of java running]
- *	
- *			(Windows 7/8 x86_64 Only)
- *			Java 7 (1.7) installation:
- *				download and install jre-7uXX-windows-x64.exe
- *				Ensure to install Java 7 to "C:\Program Files\Java\jre7"
- *	
- *			Java 8 (1.8) installation - required for Stanford Parser/CoreNLP 2015-04-20+:
- *				download and install jre-8uXX-windows-x64.exe
- *				(http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
- *				Ensure to install Java 8 to "C:\Program Files\Java\jre8" (change destination folder when installing and create "jre8" folder)
+ *		(Linux and Windows) eg http://nlp.stanford.edu/software/stanford-parser-2012-03-09.tgz / http://nlp.stanford.edu/software/stanford-parser-2013-04-05.zip / http://nlp.stanford.edu/software/stanford-parser-full-2014-01-04.zip
  *
  *
  *		Install External Package 3c - Stanford CoreNLP [OPTIONAL] {Linux/Windows}
  *		--------------------------------------
  *
- *		Download OpenGIANLPDependencies-25September2012.zip / OpenGIANLPDependencies-12October2013.zip / OpenGIANLPDependencies-19April2014 / OpenGIANLPDependencies-07July2015.zip
- *		Copy execute-stanfordCoreNLP.sh and execute-stanfordCoreNLPwithoutPT.sh (Linux) / execute-stanfordCoreNLP.bat and execute-stanfordCoreNLPwithoutPT.bat (Windows) and place them in the Stanford CoreNLP binary folder.
+ *		Create/Copy execute-stanfordCoreNLP.sh (Linux) / execute-stanfordCoreNLP.bat (Windows) and place it in the Stanford CoreNLP binary folder.
  *
  *		NB execute-stanfordCoreNLP.sh contains the following text (depending on the version of Stanford CoreNLP);
  *
@@ -427,9 +393,6 @@
  *				/
  *			scriptdir=`dirname $0`
  *			java -cp $scriptdir/stanford-corenlp-3.3.1.jar:$scriptdir/stanford-corenlp-3.3.1-models.jar:$scriptdir/xom.jar:$scriptdir/joda-time.jar:$scriptdir/jollyday.jar:$scriptdir/ejml-0.23.jar -Xmx3g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file $3/$1 -outputDirectory $4 -outputExtension $5
- *				/
- *			scriptdir=`dirname $0`
- *			java -cp $scriptdir/stanford-corenlp-3.5.2.jar:$scriptdir/stanford-corenlp-3.5.2-models.jar:$scriptdir/xom.jar:$scriptdir/joda-time.jar:$scriptdir/jollyday.jar:$scriptdir/ejml-0.23.jar -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file $3/$1 -outputDirectory $4 -outputExtension $5
  *
  *		NB execute-stanfordCoreNLP.bat contains the following text (depending on the version of Stanford CoreNLP);
  *
@@ -439,8 +402,6 @@
  *			"C:\Program Files\Java\jre7\bin\java.exe" -d64 -cp stanford-corenlp-1.3.5.jar;stanford-corenlp-1.3.5-models.jar;xom.jar;joda-time.jar;jollyday.jar -Xmx3g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file %3/%1 -outputDirectory %4 -outputExtension %5
  *				/
  *			"C:\Program Files\Java\jre7\bin\java.exe" -d64 -cp stanford-corenlp-3.3.1.jar;stanford-corenlp-3.3.1-models.jar;xom.jar;joda-time.jar;jollyday.jar;ejml-0.23.jar -Xmx3g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file %3/%1 -outputDirectory %4 -outputExtension %5
- *				/
- *			"C:\Program Files\Java\jre8\bin\java.exe" -d64 -cp stanford-corenlp-3.5.2.jar;stanford-corenlp-3.5.2-models.jar;xom.jar;joda-time.jar;jollyday.jar;ejml-0.23.jar -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file %3/%1 -outputDirectory %4 -outputExtension %5
  *
  *		NB execute-stanfordCoreNLPwithoutPT.sh contains the following text (depending on the version of Stanford CoreNLP);
  *
@@ -453,9 +414,6 @@
  *				/
  *			scriptdir=`dirname $0`
  *			java -cp $scriptdir/stanford-corenlp-3.3.1.jar:$scriptdir/stanford-corenlp-3.3.1-models.jar:$scriptdir/xom.jar:$scriptdir/joda-time.jar:$scriptdir/jollyday.jar:$scriptdir/ejml-0.23.jar -Xmx3g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,parse -file $3/$1 -outputDirectory $4 -outputExtension $5
- *			/
- *			scriptdir=`dirname $0`
- *			java -cp $scriptdir/stanford-corenlp-3.5.2.jar:$scriptdir/stanford-corenlp-3.5.2-models.jar:$scriptdir/xom.jar:$scriptdir/joda-time.jar:$scriptdir/jollyday.jar:$scriptdir/ejml-0.23.jar -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,parse -file $3/$1 -outputDirectory $4 -outputExtension $5
  *
  *		NB execute-stanfordCoreNLPwithoutPT.bat contains the following text (depending on the version of Stanford CoreNLP);
  *
@@ -465,15 +423,12 @@
  *			"C:\Program Files\Java\jre7\bin\java.exe" -d64 -cp stanford-corenlp-1.3.5.jar;stanford-corenlp-1.3.5-models.jar;xom.jar;joda-time.jar;jollyday.jar -Xmx3g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,parse -file %3/%1 -outputDirectory %4 -outputExtension %5
  *				/
  *			"C:\Program Files\Java\jre7\bin\java.exe" -d64 -cp stanford-corenlp-3.3.1.jar;stanford-corenlp-3.3.1-models.jar;xom.jar;joda-time.jar;jollyday.jar;ejml-0.23.jar -Xmx3g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,parse -file %3/%1 -outputDirectory %4 -outputExtension %5
- *				/
- *			"C:\Program Files\Java\jre8\bin\java.exe" -d64 -cp stanford-corenlp-3.5.2.jar;stanford-corenlp-3.5.2-models.jar;xom.jar;joda-time.jar;jollyday.jar;ejml-0.23.jar -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,parse -file %3/%1 -outputDirectory %4 -outputExtension %5
  *
  *		Stanford CoreNLP may be downloaded via;
- *		(Linux and Windows) eg http://nlp.stanford.edu/software/stanford-corenlp-2012-04-03.tgz / http://nlp.stanford.edu/software/stanford-corenlp-full-2013-04-04.zip / http://nlp.stanford.edu/software/stanford-corenlp-full-2014-01-04.zip / http://nlp.stanford.edu/software/stanford-corenlp-full-2015-04-20.zip
  *
- *		Note Stanford Parser/CoreNLP requires Java Runtime Environment to be installed (see above for instructions).
+ *		(Linux and Windows) eg http://nlp.stanford.edu/software/stanford-corenlp-2012-04-03.tgz / http://nlp.stanford.edu/software/stanford-corenlp-full-2013-04-04.zip / http://nlp.stanford.edu/software/stanford-corenlp-full-2014-01-04.zip
  *
- *		Install dos2unix (required for Stanford CoreNLP compatibility: this is executed by GIA):
+ *			Install dos2unix (required for Stanford CoreNLP compatibility):
  *
  *			(Linux Ubuntu Only)
  *			sudo apt-get install dos2unix
@@ -607,26 +562,27 @@
  *		Usage Examples;
  *		---------------------------------
  *
- *		Linux EL5/EL6/UB14:
+ *		Linux EL5/EL6/UB13:
  *
  *		Examples using NLP input from Relex;
- *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
- *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
+ *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/systemusername/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/soft/BAISource/stanford/coreNLP/stanford-corenlp-full-2014-01-04" -nlpstanfordparserfolder "/home/systemusername/soft/BAISource/stanford/parser/stanford-parser-full-2014-01-04" -notshow
+ *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/systemusername/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/soft/BAISource/stanford/coreNLP/stanford-corenlp-full-2014-01-04" -nlpstanfordparserfolder "/home/systemusername/soft/BAISource/stanford/parser/stanford-parser-full-2014-01-04" -notshow
  *		Example using NLP input from Stanford Core NLP;
- *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
- *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
+ *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelexfolder "/home/systemusername/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/soft/BAISource/stanford/coreNLP/stanford-corenlp-full-2014-01-04" -nlpstanfordparserfolder "/home/systemusername/soft/BAISource/stanford/parser/stanford-parser-full-2014-01-04" -notshow
+ *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/soft/BAISource/stanford/coreNLP/stanford-corenlp-full-2014-01-04" -nlpstanfordparserfolder "/home/systemusername/soft/BAISource/stanford/parser/stanford-parser-full-2014-01-04" -notshow
  *		Example using NLP input from Stanford Parser + Stanford Core NLP;
- *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
- *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow > answer.txt
- *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -syndet 1 -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
- *		
+ *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/soft/BAISource/stanford/coreNLP/stanford-corenlp-full-2014-01-04" -nlpstanfordparserfolder "/home/systemusername/soft/BAISource/stanford/parser/stanford-parser-full-2014-01-04" -notshow
+ *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/soft/BAISource/stanford/coreNLP/stanford-corenlp-full-2014-01-04" -nlpstanfordparserfolder "/home/systemusername/soft/BAISource/stanford/parser/stanford-parser-full-2014-01-04" -notshow
+ *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/source/LRPdata" -syndet 1 -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/soft/BAISource/stanford/coreNLP/stanford-corenlp-full-2014-01-04" -nlpstanfordparserfolder "/home/systemusername/soft/BAISource/stanford/parser/stanford-parser-full-2014-01-04" -notshow
+ *
  *		Windows XP/7/8:
+ *
  *		Example using NLP input from Stanford Core NLP;
- *		OpenGIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2015-04-20" -notshow
- *		OpenGIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2015-04-20" -notshow
+ *		OpenGIA.exe -lrpfolder "C:/Files/source/sourcevs/source/working/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "C:/Files/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/soft/BAISource/stanford/coreNLP/stanford-corenlp-full-2014-01-04" -nlpstanfordparserfolder "C:/Files/soft/BAISource/stanford/parser/stanford-parser-full-2014-01-04" -notshow
+ *		OpenGIA.exe -lrpfolder "C:/Files/source/sourcevs/source/working/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "C:/Files/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/soft/BAISource/stanford/coreNLP/stanford-corenlp-full-2014-01-04" -nlpstanfordparserfolder "C:/Files/soft/BAISource/stanford/parser/stanford-parser-full-2014-01-04" -notshow
  *		Example using NLP input from Stanford Parser + Stanford Core NLP;
- *		OpenGIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2015-04-20" -notshow
- *		OpenGIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2015-04-20" -notshow
+ *		OpenGIA.exe -lrpfolder "C:/Files/source/sourcevs/source/working/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "C:/Files/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/soft/BAISource/stanford/coreNLP/stanford-corenlp-full-2014-01-04" -nlpstanfordparserfolder "C:/Files/soft/BAISource/stanford/parser/stanford-parser-full-2014-01-04" -notshow
+ *		OpenGIA.exe -lrpfolder "C:/Files/source/sourcevs/source/working/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "C:/Files/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/soft/BAISource/stanford/coreNLP/stanford-corenlp-full-2014-01-04" -nlpstanfordparserfolder "C:/Files/soft/BAISource/stanford/parser/stanford-parser-full-2014-01-04" -notshow
  *
  *		Filesystem Database Configuration;
  *		---------------------------------
@@ -659,6 +615,15 @@
 //#define GIA_DISABLE_2h_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2i_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2j_CODE_FOR_DEBUG
+//#define GIA_DISABLE_2k_CODE_FOR_DEBUG
+#ifndef GIA_DISABLE_2k_CODE_FOR_DEBUG
+	//#ifdef GIA2_CONNECTIONIST_NETWORK
+		#define GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS	//2k1a		//NB training a connectionist network with this optimisation requires the NLP to directly connect the primary entity (object) in each subphrase to the subject, with the conjunction relations being auxillary to these connections (not supported by Stanford Parser/CoreNLP at present; to implement a workaround see NLC removeRedundantConditionConjunctions/addConjunctionsConnectedToConditionConjunctionObject for related code)
+		#ifdef GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS
+
+		#endif
+	//#endif
+#endif
 #ifndef GIA_DISABLE_2j_CODE_FOR_DEBUG
 	#define GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER	//takes into account changes in dependency relations generated by Stanford
 	#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
@@ -823,7 +788,7 @@
 	#endif
 #endif
 
-//#define GIA_USE_CORPUS_DATABASE	//disabled for OpenGIA
+#define GIA_USE_CORPUS_DATABASE	//disabled for OpenGIA
 #ifdef GIA_USE_CORPUS_DATABASE
 	#define USE_GIA2		//GIA 2b1a - sets GIA into corpus read mode
 	#ifdef USE_GIA2

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j17a 07-July-2015
+ * Project Version: 2k1a 09-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1221,16 +1221,20 @@ static string grammaticalDeterminerIndefiniteArray[GRAMMATICAL_DETERMINER_LIMITE
 #define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_BEING 20		//additional case required for GIA semantics extraction
 #define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_HAVING 21		//additional case required for GIA semantics extraction	//check this is still required now that GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC is disabled GIA 2c+
 #define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_DOING 22		//additional case required for GIA semantics extraction
-#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
-	#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_DETERMINER_LIMITED_INDEFINITE 23
-	#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES (24)
-	static string GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"undefined", "coordinatingConjunction", "number", "determiner", "unknown", "predeterminer", "posessiveEnding", "modalAuxiliary", "preposition", "adjective", "noun", "adverb", "pronounPersonal", "pronounPossessive", "particle", "interjection", "verb", "wh", "punctuationDivision", "punctuationQuote", "isAuxillaryBeing", "isAuxillaryHaving", "isAuxillaryDoing", "determinerLimitedIndefinite"};
-#else
-	#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES (23)
-	static string GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"undefined", "coordinatingConjunction", "number", "determiner", "unknown", "predeterminer", "posessiveEnding", "modalAuxiliary", "preposition", "adjective", "noun", "adverb", "pronounPersonal", "pronounPossessive", "particle", "interjection", "verb", "wh", "punctuationDivision", "punctuationQuote", "isAuxillaryBeing", "isAuxillaryHaving", "isAuxillaryDoing"};
-#endif
+#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_DETERMINER_LIMITED_INDEFINITE 23
+#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_SPECIAL_REDUCED_CONJUNCTION 24
+#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES (25)
+static string GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"undefined", "coordinatingConjunction", "number", "determiner", "unknown", "predeterminer", "posessiveEnding", "modalAuxiliary", "preposition", "adjective", "noun", "adverb", "pronounPersonal", "pronounPossessive", "particle", "interjection", "verb", "wh", "punctuationDivision", "punctuationQuote", "isAuxillaryBeing", "isAuxillaryHaving", "isAuxillaryDoing", "determinerLimitedIndefinite", "specialReducedConjunction"};
 static int featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[FEATURE_RELEX_POS_NUMBER_OF_TYPES] = {GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNDEFINED, GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADJECTIVE, GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADVERB, GIA_CONNECTIONIST_NETWORK_POS_TYPE_PUNCTUATION_DIVISION, GIA_CONNECTIONIST_NETWORK_POS_TYPE_DETERMINER, GIA_CONNECTIONIST_NETWORK_POS_TYPE_NOUN, GIA_CONNECTIONIST_NETWORK_POS_TYPE_PARTICLE, GIA_CONNECTIONIST_NETWORK_POS_TYPE_PREPOSITION, GIA_CONNECTIONIST_NETWORK_POS_TYPE_PUNCTUATION_QUOTE, GIA_CONNECTIONIST_NETWORK_POS_TYPE_VERB, GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNKNOWN};
 
+#ifdef GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS
+	#define FEATURE_SPECIAL_REDUCED_CONJUNCTIONS_NUMBER_OF_TYPES (2)
+	static string featureSpecialReducedConjunctionArray[FEATURE_SPECIAL_REDUCED_CONJUNCTIONS_NUMBER_OF_TYPES] = {"and", "or"};
+	#define GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS_ILLEGAL_CENTRAL_WORD_NUMBER_OF_TYPES  (3)
+	static string optimiseConnectionistNetworkBasedOnConjunctionsIllegalCentralWordArray[GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS_ILLEGAL_CENTRAL_WORD_NUMBER_OF_TYPES] = {",", "and", "or"};
+
+#endif
+		
 /*
 //requires updating (add more cases from PENN tree)
 #define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NOUN (0)

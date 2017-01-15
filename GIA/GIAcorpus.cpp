@@ -26,7 +26,7 @@
  * File Name: GIAcorpus.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j17a 07-July-2015
+ * Project Version: 2k1a 09-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -185,34 +185,55 @@ bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 						GIAfeature* recordOfFeatureAfterCentralFeatureInSentence = centralFeatureInSentence->next;
 						centralFeatureInSentence->next = dummyBlankFeature;	//temporarily disconnect node at end of sentence subset
 						bool foundACorpusSubsetForCentralWord = false;
-						GIAfeature* firstFeatureInSentenceSubset = currentSentenceInList->firstFeatureInList;
-						for(int firstWord=1; firstWord<=centralWord-(GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1); firstWord++)	//firstWord in subset
+						
+						if(currentSentenceInList->firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)
 						{
-							if(!foundACorpusSubsetForCentralWord)
+							cout << "lookupCorpusFiles{} implementation error*: (sentence->firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)" << endl;
+							exit(0);
+						}
+						#ifdef GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS
+						if(!textInTextArray(centralFeatureInSentence->word, optimiseConnectionistNetworkBasedOnConjunctionsIllegalCentralWordArray, GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS_ILLEGAL_CENTRAL_WORD_NUMBER_OF_TYPES))
+						{
+							GIAfeature* firstFeatureInSentenceSubset = generateOptimisedFeatureSubsetBasedOnContextualConjunctions(currentSentenceInList->firstFeatureInList, centralWord);
+						#else
+						GIAfeature* firstFeatureInSentenceSubset = currentSentenceInList->firstFeatureInList;
+						#endif
+							while(firstFeatureInSentenceSubset->entityIndex <= (centralFeatureInSentence->entityIndex - (GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1)))		//changed 2k1a for GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS compatibility: verify that feature entityIndices are not mutated by GIA referencing*	//OLD:	for(int firstWord=1; firstWord<=centralWord-(GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1); firstWord++)	
 							{
-								//#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
-								cout << "firstWord = " << firstWord << ", " << firstFeatureInSentenceSubset->lemma << endl;
-								//#endif
-								int subsetSize = centralWord-firstWord+1;	//subsetSize aka maxSpread
-
-								//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
-
-								if(loadCorpusFileSemanticDependencyRelations(currentSentenceInList, firstFeatureInSentenceSubset))
+								int firstWord=firstFeatureInSentenceSubset->entityIndex;	//firstWord in subset
+								
+								if(!foundACorpusSubsetForCentralWord)
 								{
-									foundACorpusSubsetForCentralWord = true;
-									if(firstWord == 1)
+									//#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
+									cout << "firstWord = " << firstWord << ", " << firstFeatureInSentenceSubset->lemma << endl;
+									//#endif
+									int subsetSize = centralWord-firstWord+1;	//subsetSize aka maxSpread
+
+									//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
+
+									if(loadCorpusFileSemanticDependencyRelations(currentSentenceInList, firstFeatureInSentenceSubset))
 									{
-										stillNotFoundASubset = false;
+										foundACorpusSubsetForCentralWord = true;
+										if(firstWord == 1)
+										{
+											stillNotFoundASubset = false;
+										}
 									}
 								}
+								firstFeatureInSentenceSubset = firstFeatureInSentenceSubset->next;
 							}
-							firstFeatureInSentenceSubset = firstFeatureInSentenceSubset->next;
+							if(!foundACorpusSubsetForCentralWord)
+							{
+								cout << "************************ warning: notFoundASubsetForAtLeastTwoWords* *****************" << endl;
+								notFoundASubsetForAtLeastTwoWords = true;
+							}
+						#ifdef GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS
+							if(firstFeatureInSentenceSubset != currentSentenceInList->firstFeatureInList)
+							{
+								delete firstFeatureInSentenceSubset;	//delete artificially generated optimised sentence subset
+							}
 						}
-						if(!foundACorpusSubsetForCentralWord)
-						{
-							cout << "************************ warning: notFoundASubsetForAtLeastTwoWords* *****************" << endl;
-							notFoundASubsetForAtLeastTwoWords = true;
-						}
+						#endif
 						centralFeatureInSentence->next = recordOfFeatureAfterCentralFeatureInSentence;	//restore temporarily disconnected node at end of sentence subset
 					#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
 					}

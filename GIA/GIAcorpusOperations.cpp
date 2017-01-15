@@ -26,7 +26,7 @@
  * File Name: GIAcorpusOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j17a 07-July-2015
+ * Project Version: 2k1a 09-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -74,6 +74,7 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 				int entityIndex1 = currentRelationInList->relationGovernorIndex;
 				int entityIndex2 = currentRelationInList->relationDependentIndex;
 				bool sameReferenceSet =	false;	//irrelevant
+				bool rcmodIndicatesSameReferenceSet = false;	//irrelevant (CHECKTHIS)
 
 				/*
 				if(!(currentRelationInList->disabled))
@@ -585,6 +586,126 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeature
 	//cout << "GIAconnectionistNetworkPOStype = " << GIAconnectionistNetworkPOStype << endl;
 }
 
+#ifdef GIA2_CONNECTIONIST_NETWORK
+#ifdef GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS
+//based on NLC generateLogicalConditionImplicitConjunctionsAndIdentifyCommand
+//eg extracts "The pie has a car [GIA_CONNECTIONIST_NETWORK_POS_TYPE_SPECIAL_REDUCED_CONJUNCTION] chicken" from "The pie has a car, bike, and chicken." (where centralWord corresponds to chicken; ie 10)
+GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeature* firstFeatureInSentenceSubset, int centralWord)
+{
+	bool result = true;
+			
+	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
+	cout << "generateOptimisedFeatureSubsetBasedOnContextualConjunctions: firstFeatureInSentence->word = " << firstFeatureInSentence->word << endl;
+	#endif
+	
+	bool commaDetected = false;
+	int indexOfFirstCommaDetected = INT_DEFAULT_VALUE;
+	int indexOfLastCommaDetected = INT_DEFAULT_VALUE;
+	bool conjunctionDetected = false;
+	int indexOfConjunction = INT_DEFAULT_VALUE;
+	bool foundCentralWord = false; 	//redundant because last feature in list will have been set to centralWord
+	
+	GIAfeature* currentFeatureInSentenceSubset = firstFeatureInSentenceSubset;
+	int featureIndex = GIA_NLP_START_ENTITY_INDEX;	//1
+	while(currentFeatureInSentenceSubset = currentFeatureInSentenceSubset->next)
+	{
+		if(foundCentralWord)
+		{
+			cout << "generateOptimisedFeatureSubsetBasedOnContextualConjunctions{} error: foundCentralWord and still parsing features" << endl;
+		}
+		else
+		{
+			if(currentFeatureInSentenceSubset->entityIndex != featureIndex)
+			{
+				//CHECKTHIS: check this test is valid for cases of intra/intersentence referencing
+				cout << "generateOptimisedFeatureSubsetBasedOnContextualConjunctions{} error: (currentFeatureInSentenceSubset->entityIndex != featureIndex)" << endl;
+				cout << "currentFeatureInSentenceSubset->entityIndex = " << currentFeatureInSentenceSubset->entityIndex << endl;
+				cout << "featureIndex = " << featureIndex << endl;
+				exit(0);	
+			}
+
+			if(currentFeatureInSentenceSubset->word == STRING_COMMA)
+			{
+				if(commaDetected)
+				{
+					indexOfFirstCommaDetected = featureIndex;
+				}
+				else
+				{
+					indexOfLastCommaDetected = featureIndex;
+				}
+			}
+
+			int arrayIndexOfResultFound = INT_DEFAULT_VALUE;
+			if(textInTextArray(currentFeatureInSentenceSubset->word, featureSpecialReducedConjunctionArray, FEATURE_SPECIAL_REDUCED_CONJUNCTIONS_NUMBER_OF_TYPES, &arrayIndexOfResultFound))
+			{
+				indexOfConjunction = featureIndex;
+				conjunctionDetected = true;
+			}
+		}
+		
+		if(currentFeatureInSentenceSubset->entityIndex == centralWord)
+		{
+			foundCentralWord = true;	
+		}
+		
+		currentFeatureInSentenceSubset = currentFeatureInSentenceSubset->next;
+		featureIndex++;
+	}
+	
+	GIAfeature* firstFeatureInOptimisedSentenceSubset = NULL;
+	if((commaDetected && conjunctionDetected) || (indexOfLastCommaDetected != INT_DEFAULT_VALUE))
+	{	
+		firstFeatureInOptimisedSentenceSubset = new GIAfeature(*firstFeatureInSentenceSubset);	//copy feature
+		GIAfeature* currentFeatureInOptimisedSentenceSubset = firstFeatureInOptimisedSentenceSubset;
+		GIAfeature* currentFeatureInSentenceSubset = currentFeatureInSentenceSubset;
+		int featureIndex = GIA_NLP_START_ENTITY_INDEX;	//1
+		bool filteredSubphrase = false;
+		bool currentlyFilteringSubphrase = false;
+		while(currentFeatureInSentenceSubset = currentFeatureInSentenceSubset->next)
+		{
+			if(!filteredSubphrase)
+			{
+				if(currentlyFilteringSubphrase)
+				{
+					if(((commaDetected && conjunctionDetected) && (featureIndex == indexOfConjunction)) || 
+					((indexOfLastCommaDetected != INT_DEFAULT_VALUE) && (featureIndex == indexOfLastCommaDetected)))
+					{
+						currentlyFilteringSubphrase = false;
+						filteredSubphrase = true;
+					}
+				}
+				else
+				{
+					if(featureIndex == indexOfFirstCommaDetected)
+					{
+						currentlyFilteringSubphrase = true;
+					}
+					else
+					{
+						GIAfeature* newFeatureInOptimisedSentenceSubset = new GIAfeature(*currentFeatureInSentenceSubset);
+						newFeatureInOptimisedSentenceSubset->previous = currentFeatureInOptimisedSentenceSubset;	//redundant
+						currentFeatureInOptimisedSentenceSubset->next = newFeatureInOptimisedSentenceSubset;
+						currentFeatureInOptimisedSentenceSubset = currentFeatureInOptimisedSentenceSubset->next;
+					}
+				}
+			
+			}
+			
+			currentFeatureInSentenceSubset = currentFeatureInSentenceSubset->next;
+			featureIndex++;
+		}
+	}
+	else
+	{
+		//no superphrase (conjunction/commas) found, do not optimise sentence subset
+		firstFeatureInOptimisedSentenceSubset = firstFeatureInSentenceSubset;
+	}
+	
+	return firstFeatureInOptimisedSentenceSubset;
+}
+#endif
+#endif
 
 #endif
 
