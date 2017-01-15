@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q2c 28-Sept-2013
+ * Project Version: 1q3a 29-Sept-2013
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
@@ -150,6 +150,9 @@ public:
 	bool traceMode;						//never changes
 	bool traceModeAssertSameReferenceSetID;			//never changes
 	bool referenceSetID;					//never changes
+	#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+	bool linkSpecificConceptsAndActions;			//never changes
+	#endif
 
 	#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 	bool intrasentenceReference;
@@ -163,6 +166,11 @@ GIAentityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 			bool verifyThatAnswerEntityIsDefinedByComparisonVariableNode(GIAentityNode * entityNode, string comparisonVariableNodeName);
 		bool determineMatchParameters(bool exactMatchFoundTemp, bool traceIsQuery, int referenceTraceParametersTraceMode, int numberOfMatchedNodesTempMax, bool * exactMatch);
 		bool determineIfBestAnswerCandidate(bool traceModeIsQuery, bool queryTraceParametersTempFoundAnswer, bool alreadyFoundAnAnswer, int numberOfMatchedNodesTemp, int numberOfMatchedNodesTempMax, int numberOfMatchedNodesRequiredSynonymnDetectionTemp, int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax, int referenceTraceParametersTraceMode, int exactMatchTemp);
+#ifdef GIA_QUERY_SIMPLIFIED_SEARCH
+GIAentityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork2(unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, unordered_map<string, GIAentityNode*> *entityNodesActiveListConceptsQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool * foundAnswer, GIAentityNode* queryAnswerNode, double * numberOfMatchedNodes, string * queryAnswerContext);
+	bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode * queryEntityNode, GIAentityNode * entityNode, int * numberOfMatchedNodes, bool knownBestMatch, int * numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAqueryTraceParameters * queryTraceParameters, GIAreferenceTraceParameters * referenceTraceParameters);
+		bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode * queryEntityNode, GIAentityNode * entityNode, int * numberOfMatchedNodes, bool knownBestMatch, int * numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAqueryTraceParameters * queryTraceParameters, GIAreferenceTraceParameters * referenceTraceParameters);
+#endif
 
 #ifdef GIA_USE_SYNONYMN_DETECTION
 bool compareEntitySynonyms(GIAentityNode * queryEntityNode, GIAentityNode * entityNode);

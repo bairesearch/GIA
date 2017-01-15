@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q2c 28-Sept-2013
+ * Project Version: 1q3a 29-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -69,6 +69,10 @@ int identifyReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConcept
 	void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int * referenceSetID, bool haveSentenceEntityIndexOfDeterminers);
 		bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode, bool sameReferenceSet, int referenceSetID, int minimumEntityIndexOfReferenceSet, bool isProperty);
 			void identifyReferenceSet(GIAentityNode * entityNode, int referenceSetID, int minimumEntityIndexOfReferenceSet);
+
+#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GIAentityNode*> *entityNodesActiveListComplete);
+#endif
 
 void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, GIACoreference * firstGIACoreferenceInList, int numberReferenceSets);	//bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]
 	void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<string, GIAentityNode*> *entityNodesActiveListConceptsQuery, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, GIAreferenceTraceParameters *referenceTraceParameters, int *maxNumberOfMatchedNodes, GIAentityNode **queryEntityWithMaxNumberNodesMatched, GIAentityNode **networkEntityWithMaxNumberNodesMatched, bool *foundAtLeastOneMatch);

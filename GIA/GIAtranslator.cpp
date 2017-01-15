@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q2c 28-Sept-2013
+ * Project Version: 1q3a 29-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -109,15 +109,6 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, 
 }
 #endif
 
-#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-void dreamModeLinkSpecificConceptsAndActions(int NLPdependencyRelationsType)
-{
-	vector<GIAentityNode*> * entityNodesActiveListComplete = getTranslatorEntityNodesCompleteList();
-	
-	int numberReferenceSets = identifyReferenceSetsSpecificConcepts(entityNodesActiveListComplete, NLPdependencyRelationsType)
-}
-
-#endif
 
 #ifdef USE_CE
 //NB is convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirachy compatible with Stanford CoreNLP coreferences? [NB sentences are mixed up, but are sentence id's still valid? If there is a problem, then possibly need to either a) re-execute NLP on each codeextension heirachy, or b) revert to GIA pronominal coreference detection (see RelEx function to do this)
@@ -939,6 +930,14 @@ void disableEntitiesBasedOnFeatureTempEntityNodeArray(bool GIAentityNodeArrayFil
 	}
 }
 
+#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+void dreamModeLinkSpecificConceptsAndActions()
+{
+	vector<GIAentityNode*> * entityNodesActiveListComplete = getTranslatorEntityNodesCompleteList();
+	
+	identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(entityNodesActiveListComplete);
+}
+#endif
 
 #ifdef GIA_TRANSLATOR_XML_INTERPRETATION				
 bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA)

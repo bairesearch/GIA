@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q2c 28-Sept-2013
+ * Project Version: 1q3a 29-Sept-2013
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -106,6 +106,12 @@ GIAqueryTraceParameters::GIAqueryTraceParameters(GIAqueryTraceParameters * query
 
 GIAreferenceTraceParameters::GIAreferenceTraceParameters(void)
 {
+	traceMode = TRACE_MODE_ONLY_RECORD_EXACT_MATCH;						//initialisation added 29 Sept 2013
+	traceModeAssertSameReferenceSetID = TRACE_MODE_ASSERT_SAME_REFERENCE_SET_ID_TRUE;	//initialisation added 29 Sept 2013
+	referenceSetID = GIA_REFERENCE_SET_ID_UNDEFINED; 					//initialisation added 29 Sept 2013
+	#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+	linkSpecificConceptsAndActions	= false;						//initialisation added 29 Sept 2013
+	#endif
 	#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 	intrasentenceReference = false;
 	#endif
@@ -113,6 +119,499 @@ GIAreferenceTraceParameters::GIAreferenceTraceParameters(void)
 GIAreferenceTraceParameters::~GIAreferenceTraceParameters(void)
 {
 }
+
+
+#ifdef GIA_QUERY_SIMPLIFIED_SEARCH
+GIAentityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork2(unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, unordered_map<string, GIAentityNode*> *entityNodesActiveListConceptsQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool * foundAnswer, GIAentityNode* queryAnswerNode, double * numberOfMatchedNodes, string * queryAnswerContext)
+{
+	bool traceModeIsQuery = TRACE_MODE_IS_QUERY_TRUE;
+	
+	GIAentityNode * networkEntityWithMaxNumberNodesMatched = NULL;
+	GIAentityNode * queryEntityWithMaxNumberNodesMatched = NULL;
+	bool foundBestAnswerCandidate = false;
+	int maxNumberMatchedNodes = 0;
+	
+	for(unordered_map<string, GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListConceptsQuery->begin(); entityIterQuery != entityNodesActiveListConceptsQuery->end(); entityIterQuery++)
+	{//for each node in query semantic net;
+
+		GIAentityNode* currentQueryEntityNode = entityIterQuery->second;
+
+		#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
+		if(!(currentQueryEntityNode->disabled))
+		{
+		#endif
+			if(currentQueryEntityNode->entityName != REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)	//added 22 August 2012
+			{
+				bool foundQueryEntityNodeName = false;
+				long queryEntityNodeIndex = -1;
+				string queryEntityNodeName = currentQueryEntityNode->entityName;
+
+				GIAentityNode * conceptEntityMatchingCurrentQueryEntity = findOrAddConceptEntityNodeByName(NULL, entityNodesActiveListConcepts, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
+
+				if(foundQueryEntityNodeName)
+				{
+					#ifdef GIA_QUERY_DEBUG
+					cout << "foundQueryEntityNodeName" << endl;
+					cout << "\tcurrentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
+					#endif
+
+					GIAqueryTraceParameters queryTraceParameters;
+					queryTraceParameters.detectComparisonVariable = detectComparisonVariable;
+					queryTraceParameters.comparisonVariableNode = comparisonVariableNode;
+					
+					GIAreferenceTraceParameters referenceTraceParameters;	//not used
+					
+
+					int numberOfMatchedNodesTemp = 0;
+					int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
+					bool exactMatch = testEntityNodeForQueryOrReferenceSet2(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParameters, &referenceTraceParameters);
+
+					if(numberOfMatchedNodesTemp > maxNumberMatchedNodes)
+					{
+						maxNumberMatchedNodes = numberOfMatchedNodesTemp;
+						foundBestAnswerCandidate = true;
+						networkEntityWithMaxNumberNodesMatched = conceptEntityMatchingCurrentQueryEntity;
+						queryEntityWithMaxNumberNodesMatched = currentQueryEntityNode;
+					}
+					
+					//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
+					int irrelevant;
+					string printEntityNodeString = "";
+					bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
+					traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
+					traceEntityNode(conceptEntityMatchingCurrentQueryEntity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);	
+				}
+			}
+		#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
+		}
+		#endif			
+	}
+	
+	if(foundBestAnswerCandidate)
+	{
+		GIAreferenceTraceParameters referenceTraceParameters;	//still used?
+		GIAqueryTraceParameters queryTraceParameters;		//still used?
+
+		int numberOfMatchedNodesTemp = 0;
+		int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
+		bool exactMatch = testEntityNodeForQueryOrReferenceSet2(queryEntityWithMaxNumberNodesMatched, networkEntityWithMaxNumberNodesMatched, &numberOfMatchedNodesTemp, true, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParameters, &referenceTraceParameters);
+	}
+	
+	return queryAnswerNode;
+}
+
+
+
+bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode * queryEntityNode, GIAentityNode * entityNode, int * numberOfMatchedNodes, bool knownBestMatch, int * numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAqueryTraceParameters * queryTraceParameters, GIAreferenceTraceParameters * referenceTraceParameters)
+{
+	bool exactMatch = true;
+
+	bool pass = false;
+	
+	if(!(entityNode->testedForQueryComparison) && !(entityNode->testedForQueryComparisonTemp) && !(queryEntityNode->testedForQueryComparison) && !(queryEntityNode->testedForQueryComparisonTemp))
+	{
+		entityNode->testedForQueryComparison = true;
+		queryEntityNode->testedForQueryComparison = true;
+		entityNode->testedForQueryComparisonTemp = false;
+		queryEntityNode->testedForQueryComparisonTemp = false;
+
+		*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+
+		#ifdef GIA_QUERY_DEBUG
+		cout << "\ntestEntityNodeForQueryOrReferenceSet:" << endl;
+		cout << "entityNode = " << entityNode->entityName << endl;
+		#endif		
+	
+
+		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+		{
+			#ifdef GIA_QUERY_DEBUG
+			//cout << "i = " << i << endl;
+			#endif
+			for(vector<GIAentityConnection*>::iterator connectionIterQuery = queryEntityNode->entityVectorConnectionsArray[i].begin(); connectionIterQuery != queryEntityNode->entityVectorConnectionsArray[i].end(); connectionIterQuery++)
+			{
+				#ifdef GIA_QUERY_DEBUG
+				//cout << "connectionIterQuery = " << (*connectionIterQuery)->entity->entityName << endl;
+				#endif
+
+				#ifdef GIA_USE_DATABASE
+				#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
+				if(getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE)
+				{
+					#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
+					cout << "GIAquery; entityNode->isConcept = " << entityNode->isConcept << endl;
+					cout << "GIAquery; entityNode->isSubstance = " << entityNode->isSubstance << endl;
+					//cout << "DBreadVectorConnections: " << entityNode->entityName << ", " << entityNode->idInstance << ", i=" << i << endl;						
+					#endif
+					DBreadVectorConnections(entityNode, i);		//this is important, as it will read all of the vector connections from the database for this node (conferred 25 May 2012)
+				}
+				#endif
+				#endif
+				
+				int maxNumberMatchedNodes = 0;
+				bool foundBestAnswerCandidate = false;
+				GIAentityNode * networkEntityWithMaxNumberNodesMatched = NULL;
+				
+				for(vector<GIAentityConnection*>::reverse_iterator connectionIter = entityNode->entityVectorConnectionsArray[i].rbegin(); connectionIter != entityNode->entityVectorConnectionsArray[i].rend(); connectionIter++)	//always search from end position first (to take the latest/newest reference/answer, if equal number of matched nodes is detected)
+				{
+					#ifdef GIA_QUERY_DEBUG
+					//cout << "connectionIter = " << (*connectionIter)->entity->entityName << endl;
+					#endif
+
+					int numberOfMatchedNodesTemp = 0;
+					int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
+
+					bool exactMatchTemp = testReferencedEntityNodeForExactNameMatch2((*connectionIterQuery)->entity, (*connectionIter)->entity, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, queryTraceParameters, referenceTraceParameters);
+					
+					if(numberOfMatchedNodesTemp > maxNumberMatchedNodes)
+					{
+						if(!traceModeIsQuery || exactMatchTemp)
+						{
+							maxNumberMatchedNodes = numberOfMatchedNodesTemp;
+							foundBestAnswerCandidate = true;
+							networkEntityWithMaxNumberNodesMatched = (*connectionIter)->entity;
+						}
+					}
+
+					//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
+					int irrelevantInt;
+					string irrelevantString = "";
+					bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;		//clear all (why is this still required if GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS is off? - it is based on testing, but unknown as to why)
+					traceEntityNode((*connectionIter)->entity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
+					traceEntityNode((*connectionIterQuery)->entity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
+
+					#ifdef GIA_QUERY_DEBUG
+					//cout << "finished: connectionIter = " << (*connectionIter)->entity->entityName << endl;
+					#endif
+				}	
+				
+				if(foundBestAnswerCandidate)
+				{
+					#ifdef GIA_USE_ADVANCED_REFERENCING
+					if(knownBestMatch)
+					{
+						//cout << "knownBestMatch" << endl;
+						(*connectionIterQuery)->entity->entityCorrespondingBestMatch = networkEntityWithMaxNumberNodesMatched;		//this shouldn't be required for queries....
+					}
+					#endif
+										
+					int numberOfMatchedNodesTemp = 0;
+					int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
+					if(!testReferencedEntityNodeForExactNameMatch2((*connectionIterQuery)->entity, networkEntityWithMaxNumberNodesMatched, &numberOfMatchedNodesTemp, knownBestMatch, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
+					{
+						exactMatch = false;
+					}
+					*numberOfMatchedNodes = numberOfMatchedNodesTemp;
+					*numberOfMatchedNodesRequiredSynonymnDetection = numberOfMatchedNodesRequiredSynonymnDetectionTemp;					
+				}
+				else
+				{
+					exactMatch = false;
+				}
+			}
+			#ifdef GIA_QUERY_DEBUG
+			//cout << "finished: i = " << i << endl;
+			#endif				
+		}
+
+		entityNode->testedForQueryComparison = false;
+		queryEntityNode->testedForQueryComparison = false;
+		entityNode->testedForQueryComparisonTemp = true;
+		queryEntityNode->testedForQueryComparisonTemp = true;
+	}
+
+	return exactMatch;
+}
+
+
+
+bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode * queryEntityNode, GIAentityNode * entityNode, int * numberOfMatchedNodes, bool knownBestMatch, int * numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAqueryTraceParameters * queryTraceParameters, GIAreferenceTraceParameters * referenceTraceParameters)
+{
+	bool exactMatch = false;
+	string sourceContextCurrent = queryTraceParameters->sourceContext;
+	#ifdef GIA_QUERY_DEBUG
+	cout << "testReferencedEntityNodeForExactNameMatch: queryEntityNode = " << queryEntityNode->entityName << ", entityNode = " << entityNode->entityName << endl;
+	#endif
+	if((entityNode->testedForQueryComparison) && !(queryEntityNode->testedForQueryComparison))
+	{
+		//KB entity traced, but query entity not traced... implies have chosen wrong trace path
+	}
+	else if((entityNode->testedForQueryComparisonTemp) && !(queryEntityNode->testedForQueryComparisonTemp))
+	{
+		//KB entity traced, but query entity not traced... implies have chosen wrong trace path
+	}
+	else if((queryEntityNode->testedForQueryComparison) && !(entityNode->testedForQueryComparison))
+	{
+		//KB entity traced, but query entity not traced... implies have chosen wrong trace path
+	}
+	else if((queryEntityNode->testedForQueryComparisonTemp) && !(entityNode->testedForQueryComparisonTemp))
+	{
+		//KB entity traced, but query entity not traced... implies have chosen wrong trace path
+	}
+	else if(!(entityNode->testedForQueryComparison) && !(entityNode->testedForQueryComparisonTemp))
+	{
+		bool compareEntityNamesResult = false;
+		if(compareEntityAliases(queryEntityNode, entityNode))
+		{
+			compareEntityNamesResult = true;
+		}
+		#ifdef GIA_USE_SYNONYMN_DETECTION
+		else
+		{
+			int synonymnDetectionStatus = getSynonymnDetectionStatus();
+			if(synonymnDetectionStatus != SYNONYMN_DETECTION_STATUS_OFF)
+			{
+				if(traceModeIsQuery || (synonymnDetectionStatus == SYNONYMN_DETECTION_STATUS_QUERIES_AND_ADVANCED_REFERENCING))
+				{
+					if(compareEntitySynonyms(queryEntityNode, entityNode))
+					{
+						compareEntityNamesResult = true;
+						*numberOfMatchedNodesRequiredSynonymnDetection = *numberOfMatchedNodesRequiredSynonymnDetection + 1;
+					}
+				}
+			}
+		}
+		#endif
+
+		if(traceModeIsQuery)
+		{
+			#ifdef GIA_QUERY_DEBUG
+			//cout << "\tqueryEntityNode = " << queryEntityNode->entityName << endl;
+			//cout << "\tentityNode = " << entityNode->entityName << endl;
+			//cout << "queryTraceParameters->queryAnswerContext = " << queryTraceParameters->queryAnswerContext << endl;
+			#endif
+			
+			bool foundMatch = false;
+
+			if(compareEntityNamesResult)
+			{
+				if(queryTraceParameters->detectComparisonVariable)
+				{
+					if(queryTraceParameters->comparisonVariableNode->hasQuantity && queryEntityNode->hasQuantity && entityNode->hasQuantity)
+					{//exact match found [NB if a quantity, the queryEntityNode's entityName will not have the comparisonVariable name (_$qVar) specified, and therefore a matched entity node entityName is required]
+						foundMatch = true;
+						#ifdef GIA_QUERY_DEBUG
+						cout << "detectComparisonVariable && (queryEntityNode->entityName == entityNode->entityName) && (comparisonVariableNode->hasQuantity && queryEntityNode->hasQuantity && entityNode->hasQuantity)" << endl;
+						cout << "\t foundMatch:" << entityNode->entityName << endl;
+						cout << "entityNode->quantityNumberString = " << entityNode->quantityNumberString << endl;
+						#endif
+					}
+					#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES		//also declared suitable to support name queries GIA_SUPPORT_ALIASES
+					else if(queryEntityNode->isQuery)
+					{//added support for which query (alternate method of comparison node detection/designation/definition)
+						foundMatch = true;
+						#ifdef GIA_QUERY_DEBUG
+						cout << "detectComparisonVariable && (queryEntityNode->entityName == entityNode->entityName) && (queryEntityNode->isQuery)" << endl;
+						cout << "\t foundMatch:" << entityNode->entityName << endl;
+						#endif
+					}
+					#endif
+				}
+				else
+				{
+					//if not detecting a comparison variable, then not looking for an exact answer...
+				}
+			}
+			else if(queryTraceParameters->detectComparisonVariable)
+			{
+				if(queryEntityNode->entityName == queryTraceParameters->comparisonVariableNode->entityName)
+				//#endif
+				{//exact match found
+					foundMatch = true;
+					#ifdef GIA_QUERY_DEBUG
+					cout << "detectComparisonVariable && (queryEntityNode->entityName == comparisonVariableNode->entityName)" << endl;
+					cout << "\t foundMatch:" << queryEntityNode->entityName << endl;
+					#endif
+
+					#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
+					if(queryEntityNode->isWhichOrEquivalentWhatQuery)
+					{
+						/*
+						if a 'which' query, then verify that the entityNode is defined by the comparisonVariableNode [ie has a definition corresponding to the comparisonVariableNode]
+						eg1 a dog eats the mud. dogs are animals. / which animal eats the mud?	[answer: 'dog' - which is an instance of 'dog' concept node, where the 'dog' concept node is defined by 'animal'
+							NB answer context text = "eat mud is done by dog" ['eat' is the first node traced, and 'dog' is the answer found'. NB the reason 'mud' is added to the answer context text, is because it is the actionObject, which is parsed after actionSubject in testEntityNodeForQuery {ie, after answer 'dog' has already been found}]
+								for this example, need to then verify that the answer 'dog' is defined in the primary semantic network as an animal
+
+						*/
+						if(!verifyThatAnswerEntityIsDefinedByComparisonVariableNode(entityNode, queryTraceParameters->comparisonVariableNode->entityName))
+						{
+							foundMatch = false;
+						}
+						else
+						{
+							#ifdef GIA_QUERY_DEBUG
+							//cout << "verifyThatAnswerEntityIsDefinedByComparisonVariableNode" << endl;
+							#endif
+						}
+					}
+					#endif
+				}
+			}
+
+			if(foundMatch)
+			{
+				if(knownBestMatch)	//condition added 18 May 2012: only trace the best path (max number of nodes)
+				{
+					entityNode->isAnswerToQuery = true;
+				}
+
+				#ifdef GIA_QUERY_DEBUG
+				cout << "foundAnswer:" << entityNode->entityName << endl;
+				#endif
+			}
+
+			bool nonMatchingConditions = false;
+			if(!compareEntityNamesResult && queryTraceParameters->isCondition)		//now supports unimplemented preposition reduction (need to modify compareEntitySynonyms() to support synonomous prepositions), 	OLD: before 21 May 2012: if((queryEntityNode->entityName != entityNode->entityName) && queryTraceParameters->isCondition)
+			{
+				nonMatchingConditions = true;
+			}
+
+			if((compareEntityNamesResult || nonMatchingConditions || foundMatch) && !(queryTraceParameters->nonMatchingSourceConditions))	//do not continue trace if non-matching source conditions	//allow trace past the answer
+			{
+				queryTraceParameters->nonMatchingSourceConditions = nonMatchingConditions;
+
+				#ifdef GIA_QUERY_DEBUG
+				//cout << "compareEntityNamesResult, testEntityNodeForQueryOrReferenceSet" << endl;
+				#endif
+				if(testEntityNodeForQueryOrReferenceSet2(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
+				{
+					exactMatch = true;
+				}
+			}
+
+			#ifdef GIA_QUERY_USE_LONG_CONTEXT_TRACE
+			if(queryTraceParameters->foundAnswer)
+			{
+				if(knownBestMatch)	//is this condition required?
+				{
+					generateTexualContextBackwards(&(queryTraceParameters->queryAnswerContext), sourceContextCurrent, entityNode);
+					#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+					cout << "queryTraceParameters->queryAnswerContext = " << queryTraceParameters->queryAnswerContext << endl;
+					#endif
+					entityNode->queryAnswerContext = true;
+				}
+			}
+			#endif
+		}
+		#ifdef GIA_USE_ADVANCED_REFERENCING
+		else
+		{
+			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+			//cout << "queryEntityNode->referenceSetID = " << queryEntityNode->referenceSetID << endl;
+			//cout << "referenceTraceParameters->referenceSetID = " << referenceTraceParameters->referenceSetID << endl;
+			/*
+			cout << "A1:" << endl;
+			cout << "queryEntityNode->referenceSetID = " << queryEntityNode->referenceSetID << endl;
+			cout << "referenceTraceParameters->referenceSetID = " << referenceTraceParameters->referenceSetID << endl;
+			cout << "(queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) = " << (queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) << endl;
+			cout << "(referenceTraceParameters->traceModeAssertSameReferenceSetID) = " << (referenceTraceParameters->traceModeAssertSameReferenceSetID) << endl;
+			*/
+			#endif
+			if((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))	//only trace paths of same reference set ID
+			{
+				#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+				//cout << "A2: ((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))" << endl;
+				#endif
+				
+				#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
+				if(queryEntityNode->referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)		//added 13 July 2012
+				{
+				#endif					
+					#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
+					if(queryEntityNode->idActiveList != entityNode->idActiveList)	//else they are exactly the same [NB with new implementation of GIA_USE_ADVANCED_REFERENCING, it will detect the same nodes as a reference match, so they need to be ignored when this happens]
+					{
+					#endif						
+						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+						bool passIntrasentenceReferenceRequirements = true;
+						if(referenceTraceParameters->intrasentenceReference)
+						{
+							passIntrasentenceReferenceRequirements = false;
+							if(entityNode->entityIndexTemp < queryEntityNode->minimumEntityIndexOfReferenceSet)
+							{
+								passIntrasentenceReferenceRequirements = true;
+							}
+						}
+
+						if(passIntrasentenceReferenceRequirements)
+						{
+						#endif							
+							if(compareEntityNamesResult)
+							{								
+								#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+								cout << "compareEntityNamesResult: queryEntityNode->entityName = " << queryEntityNode->entityName << ", entityNode->entityName = " << entityNode->entityName << endl;
+								
+								cout << "queryEntityNode->isSubstance = " << queryEntityNode->isSubstance << endl;
+								cout << "queryEntityNode->isSubstanceConcept = " << queryEntityNode->isSubstanceConcept << endl;
+								cout << "entityNode->isSubstance = " << entityNode->isSubstance << endl;
+								cout << "entityNode->isSubstanceConcept = " << entityNode->isSubstanceConcept << endl;
+								
+								#endif
+								
+								#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
+								bool passSpecificConcepts = true;
+								if(((queryEntityNode->isSubstanceConcept) && !(entityNode->isSubstanceConcept)) || 
+								((entityNode->isSubstanceConcept) && !(queryEntityNode->isSubstanceConcept)))
+								{
+									passSpecificConcepts = false;
+									//cout << "\t\t\t !passSpecificConcepts" << endl;
+								}
+								#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+								if(referenceTraceParameters->linkSpecificConceptsAndActions)
+								{
+									if((entityNode->isSubstanceConcept) || (entityNode->isActionConcept))
+									{
+										passSpecificConcepts = false;
+									}
+									else
+									{
+										passSpecificConcepts = true;
+									}
+								}
+								#endif
+								if(passSpecificConcepts)
+								{
+								#endif
+									#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
+									bool passPluralityMatch = true;
+									if(((queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)) || 
+									((entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)))
+									{
+										passPluralityMatch = false;
+									}
+									if(passPluralityMatch)
+									{
+									#endif
+										//cout << "passed isSubstanceConcept tests" << endl;
+									
+										if(testEntityNodeForQueryOrReferenceSet(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
+										{
+											//cout << "\texactMatch" << endl;
+											exactMatch = true;
+										}
+									#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
+									}
+									#endif										
+								#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
+								}
+								#endif
+							}
+						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+						}
+						#endif
+					#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
+					}
+					#endif
+				#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
+				}
+				#endif
+			}
+		}
+		#endif
+	}
+
+	return exactMatch;
+}
+#endif
 
 
 GIAentityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, unordered_map<string, GIAentityNode*> *entityNodesActiveListConceptsQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool * foundAnswer, GIAentityNode* queryAnswerNode, double * numberOfMatchedNodes, string * queryAnswerContext)
@@ -700,7 +1199,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode * queryEntityNode, G
 								((entityNode->isSubstanceConcept) && !(queryEntityNode->isSubstanceConcept)))
 								{
 									passSpecificConcepts = false;
-									cout << "\t\t\t !passSpecificConcepts" << endl;
+									//cout << "\t\t\t !passSpecificConcepts" << endl;
 								}
 								if(passSpecificConcepts)
 								{
