@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o5c 22-August-2012
+ * Project Version: 1o5d 22-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -336,7 +336,8 @@ using namespace std;
 #define STANFORD_RELATION_TYPE_SUBJECT "nsubj"
 #define STANFORD_RELATION_TYPE_AGENT "agent" 						//agent(kill, police) 	The man has been killed by the police.  		Relex: by(kill, police) 	GIA: subj(kill, police)
 #define STANFORD_PARSER_PREPOSITION_BY "prep_by"
-
+#define PREPOSITION_BY "by"
+#define PREPOSITION_THROUGH "through"
 
 //stanford specific (non Relex) relations implemented in redistributeStanfordRelationsAdverbalClauseModifierAndComplement()/redistributeStanfordRelationsClausalSubject()/redistributeStanfordRelationsPhrasalVerbParticle()/redistributeStanfordRelationsMultiwordPreposition():
 #define STANFORD_RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER "advcl" 			//advcl(happen, fall)	The accident happened as the night was falling. 	Relex: as(happen, fall)
@@ -723,6 +724,9 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 
 
 /********************************* Relations *******************************************/
+
+#define RELATION_TYPE_HAVING_AND_BEING_CONDITIONS_PREPOSITIONS_NUMBER_OF_TYPES (2)
+static string linkHavingPropertyConditionsAndBeingDefinitionConditionsPrepositionsNameArray[RELATION_TYPE_HAVING_AND_BEING_CONDITIONS_PREPOSITIONS_NUMBER_OF_TYPES] = {PREPOSITION_BY, PREPOSITION_THROUGH};
 
 /*		
 #define GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NUMBER_OF_TYPES (2)

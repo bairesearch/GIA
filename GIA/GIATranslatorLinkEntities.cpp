@@ -23,7 +23,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o5c 22-August-2012
+ * Project Version: 1o5d 22-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1323,102 +1323,121 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 
 			if(stanfordPrepositionFound)
 			{
- 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
-
-				while(currentRelationInList2->next != NULL)
+				bool prepositionNamePassed = false;
+				for(int i=0; i<RELATION_TYPE_HAVING_AND_BEING_CONDITIONS_PREPOSITIONS_NUMBER_OF_TYPES; i++)
 				{
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-					if(!(currentRelationInList2->disabled))
+					if(prepositionName == linkHavingPropertyConditionsAndBeingDefinitionConditionsPrepositionsNameArray[i])
 					{
-					#endif
-						//cout << "AS1" << endl;
-
-						#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_CONDITION_PROPERTY
-						if(currentRelationInList2->relationType == RELATION_TYPE_OBJECT)
-						{
-							//cout << "AS2" << endl;
-							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationDependentIndex)
-							{//found a matching relationship
-								//cout << "AS3" << endl;
-								if(currentRelationInList->relationDependent == RELATION_ENTITY_HAVE)
-								{
-									//cout << "AS4" << endl;
-									currentRelationInList->disabled = true;	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
-
-									string conditionTypeName = prepositionName;
-									bool entityAlreadyExistant = false;
-
-									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, FEATURE_INDEX_OF_HAVING_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
-
-									GIAEntityNode * haveEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
-									bool negative = haveEntity->negative;
-									GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
-									GIAEntityNode * conditionSubstanceNode = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
-
-									#ifdef GIA_USE_ADVANCED_REFERENCING
-									bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_CONDITIONS, currentRelationInList2);	//linkHavingPropertyConditionsAndBeingDefinitionConditions check relation to use here... [the chicken saved through having a chicken is.... therefore default same set]
-									//sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_CONDITIONS;	//more precisely
-									#else
-									bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-									#endif
-
-									#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-									GIAEntityNodeArray[FEATURE_INDEX_OF_HAVING_UNKNOWN] = addOrConnectHavingPropertyConditionToEntity(entityNode, conditionSubstanceNode, conditionTypeConceptEntity, negative, sameReferenceSet);
-									#else
-									addOrConnectHavingPropertyConditionToEntity(entityNode, conditionSubstanceNode, conditionTypeConceptEntity, negative, sameReferenceSet);
-									#endif
-
-									disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(haveEntity);
-								}
-							}
-						}
-						#endif
-						#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_CONDITION_DEFINITION
-						else if(currentRelationInList2->relationType == RELATION_TYPE_COPULA)
-						{
-							//cout << "AS2" << endl;
-							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationDependentIndex)
-							{//found a matching relationship
-								//cout << "AS3" << endl;
-								if(currentRelationInList2->relationDependent == RELATION_ENTITY_BE)
-								{
-									//cout << "AS4" << endl;
-									currentRelationInList->disabled = true;	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
-
-									string conditionTypeName = prepositionName;
-									bool entityAlreadyExistant = false;
-
-									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, FEATURE_INDEX_OF_BEING_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
-
-									GIAEntityNode * beEntity = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
-									bool negative = beEntity->negative;
-									GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
-									GIAEntityNode * conditionDefinitionNode = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
-
-									#ifdef GIA_USE_ADVANCED_REFERENCING
-									bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS, currentRelationInList2);	//linkHavingPropertyConditionsAndBeingDefinitionConditions check relation to use here... [the chicken saved through being a chicken is.... therefore default same set]
-									//sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS;	//more precisely
-									#else
-									bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-									#endif
-
-									#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-									GIAEntityNodeArray[FEATURE_INDEX_OF_BEING_UNKNOWN] = addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative, sameReferenceSet);
-									#else
-									addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative, sameReferenceSet);
-									#endif
-
-									disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(beEntity);
-
-								}
-							}
-						}
-						#endif
-
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						prepositionNamePassed = true;
 					}
-					#endif
-					currentRelationInList2 = currentRelationInList2->next;
+				}			
+				if(prepositionNamePassed)
+				{			
+ 					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+
+					while(currentRelationInList2->next != NULL)
+					{
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						if(!(currentRelationInList2->disabled))
+						{
+						#endif
+							//cout << "AS1" << endl;
+
+							#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_CONDITION_PROPERTY
+							if(currentRelationInList2->relationType == RELATION_TYPE_OBJECT)
+							{
+								//cout << "AS2" << endl;
+								if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationDependentIndex)
+								{//found a matching relationship
+									//cout << "AS3" << endl;
+									if(currentRelationInList->relationDependent == RELATION_ENTITY_HAVE)
+									{
+										//cout << "RELATION_ENTITY_HAVE" << endl;
+										//cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
+										//cout << currentRelationInList2->relationType << "(" << currentRelationInList2->relationGovernor << ", " << currentRelationInList2->relationDependent << ")" << endl;
+
+										//cout << "AS4" << endl;
+										currentRelationInList->disabled = true;	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
+
+										string conditionTypeName = prepositionName;
+										bool entityAlreadyExistant = false;
+
+										GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, FEATURE_INDEX_OF_HAVING_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+
+										GIAEntityNode * haveEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+										bool negative = haveEntity->negative;
+										GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
+										GIAEntityNode * conditionSubstanceNode = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
+
+										#ifdef GIA_USE_ADVANCED_REFERENCING
+										bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_CONDITIONS, currentRelationInList2);	//linkHavingPropertyConditionsAndBeingDefinitionConditions check relation to use here... [the chicken saved through having a chicken is.... therefore default same set]
+										//sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_CONDITIONS;	//more precisely
+										#else
+										bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+										#endif
+
+										#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
+										GIAEntityNodeArray[FEATURE_INDEX_OF_HAVING_UNKNOWN] = addOrConnectHavingPropertyConditionToEntity(entityNode, conditionSubstanceNode, conditionTypeConceptEntity, negative, sameReferenceSet);
+										#else
+										addOrConnectHavingPropertyConditionToEntity(entityNode, conditionSubstanceNode, conditionTypeConceptEntity, negative, sameReferenceSet);
+										#endif
+
+										disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(haveEntity);
+									}
+								}
+							}
+							#endif
+							#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_CONDITION_DEFINITION
+							else if(currentRelationInList2->relationType == RELATION_TYPE_COPULA)
+							{
+								//cout << "AS2" << endl;
+								if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationDependentIndex)
+								{//found a matching relationship
+									//cout << "AS3" << endl;
+									if(currentRelationInList2->relationDependent == RELATION_ENTITY_BE)
+									{
+										//cout << "RELATION_ENTITY_BE" << endl;
+										//cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
+										//cout << currentRelationInList2->relationType << "(" << currentRelationInList2->relationGovernor << ", " << currentRelationInList2->relationDependent << ")" << endl;
+
+										//cout << "AS4" << endl;
+										currentRelationInList->disabled = true;	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
+
+										string conditionTypeName = prepositionName;
+										bool entityAlreadyExistant = false;
+
+										GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, FEATURE_INDEX_OF_BEING_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+
+										GIAEntityNode * beEntity = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
+										bool negative = beEntity->negative;
+										GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
+										GIAEntityNode * conditionDefinitionNode = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+
+										#ifdef GIA_USE_ADVANCED_REFERENCING
+										bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS, currentRelationInList2);	//linkHavingPropertyConditionsAndBeingDefinitionConditions check relation to use here... [the chicken saved through being a chicken is.... therefore default same set]
+										//sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS;	//more precisely
+										#else
+										bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+										#endif
+
+										#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
+										GIAEntityNodeArray[FEATURE_INDEX_OF_BEING_UNKNOWN] = addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative, sameReferenceSet);
+										#else
+										addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative, sameReferenceSet);
+										#endif
+
+										disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(beEntity);
+
+									}
+								}
+							}
+							#endif
+
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						}
+						#endif
+						currentRelationInList2 = currentRelationInList2->next;
+					}
 				}
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
