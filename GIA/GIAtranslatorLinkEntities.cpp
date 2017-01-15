@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f23a 24-August-2014
+ * Project Version: 2g1a 25-August-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -169,7 +169,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, true);
 	paramA.numberOfRelations = 1;
 	paramA.useRelationArrayTest[REL1][REL_ENT3] = true; paramA.relationArrayTest[REL1][REL_ENT3] = relationTypePossessiveNameArray; paramA.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES;
-	paramA.mustGenerateConditionName = true; paramA.conditionEntityDefaultName = RELATION_ENTITY_SPECIAL_POSSESSIVE; paramA.conditionEntityDefaultIndex = FEATURE_INDEX_OF_ENTITY_SPECIAL_POSSESSIVE_UNKNOWN;	//create intermediary action 'have'
+	paramA.mustGenerateConditionName = true; paramA.conditionEntityDefaultName = RELATION_ENTITY_SPECIAL_POSSESSIVE; paramA.mustGenerateConditionEntityIndex = true;	//create intermediary action 'have'
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity;
 	paramA.functionEntityRelationID[FUNC_ENT1] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	paramA.functionEntityRelationID[FUNC_ENT2] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
@@ -775,7 +775,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	paramA.useRelationTest[REL2][REL_ENT3] = true; paramA.relationTest[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
 	paramA.useRelationTest[REL1][REL_ENT2] = true; paramA.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_HAVE;
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity;
-	paramA.conditionEntityDefaultIndex = FEATURE_INDEX_OF_HAVING_UNKNOWN;
+	paramA.mustGenerateConditionEntityIndex = true;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramA.defaultSameSetRelationID = REL2; paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_CONDITIONS;
 	#endif
@@ -790,7 +790,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	paramB.useRelationTest[REL2][REL_ENT3] = true; paramB.relationTest[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
 	paramB.useRelationTest[REL1][REL_ENT2] = true; paramB.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_BE;
 	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity;
-	paramB.conditionEntityDefaultIndex = FEATURE_INDEX_OF_BEING_UNKNOWN;
+	paramB.mustGenerateConditionEntityIndex = true;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramB.defaultSameSetRelationID = REL2; paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS;
 	#endif
@@ -807,7 +807,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	paramC.parseDisabledRelation[REL2] = true;	//copula will have been disabled, so must explicitly allow it to be parsed
 	paramC.useRelationTest[REL2][REL_ENT2] = true; paramC.relationTest[REL2][REL_ENT2] = RELATION_ENTITY_BE;
 	paramC.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity;
-	paramC.conditionEntityDefaultIndex = FEATURE_INDEX_OF_BEING_UNKNOWN;
+	paramC.mustGenerateConditionEntityIndex = true;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramC.defaultSameSetRelationID = REL2; paramC.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS;
 	#endif
@@ -864,7 +864,10 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 										string conditionTypeName = prepositionName;
 										bool entityAlreadyExistant = false;
 
-										GIAentityNode * conditionConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_HAVING_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+										int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
+										currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent + 1;
+
+										GIAentityNode * conditionConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 										GIAentityNode * haveEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 										//cout << "haveEntity->negative = " << haveEntity->negative << endl;
@@ -880,7 +883,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 										#endif
 
 										#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-										GIAentityNodeArray[FEATURE_INDEX_OF_HAVING_UNKNOWN] = addOrConnectHavingPropertyConditionToEntity(entityNode, conditionSubstanceNode, conditionConceptEntity, negative, sameReferenceSet);
+										GIAentityNodeArray[featureIndexOfCondition] = addOrConnectHavingPropertyConditionToEntity(entityNode, conditionSubstanceNode, conditionConceptEntity, negative, sameReferenceSet);
 										#else
 										addOrConnectHavingPropertyConditionToEntity(entityNode, conditionSubstanceNode, conditionConceptEntity, negative, sameReferenceSet);
 										#endif
@@ -908,7 +911,10 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 										string conditionTypeName = prepositionName;
 										bool entityAlreadyExistant = false;
 
-										GIAentityNode * conditionConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_BEING_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+										int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
+										currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent + 1;
+
+										GIAentityNode * conditionConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 										GIAentityNode * beEntity = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
 										bool negative = beEntity->negative;
@@ -923,7 +929,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 										#endif
 
 										#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-										GIAentityNodeArray[FEATURE_INDEX_OF_BEING_UNKNOWN] = addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionConceptEntity, negative, sameReferenceSet);
+										GIAentityNodeArray[featureIndexOfCondition] = addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionConceptEntity, negative, sameReferenceSet);
 										#else
 										addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionConceptEntity, negative, sameReferenceSet);
 										#endif
@@ -1652,8 +1658,11 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 
 												bool entityAlreadyExistant = false;
 												#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS_RELEX_SPECIFIC
-												GIAentityNode * conditionConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_SPECIAL_CONDITION_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
-												GIAentityNodeArray[FEATURE_INDEX_OF_SPECIAL_CONDITION_UNKNOWN] = addOrConnectConditionToEntity(subjectEntityOrSubstance, specialConditionNode, conditionConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
+												int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
+												currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent + 1;
+
+												GIAentityNode * conditionConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+												GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(subjectEntityOrSubstance, specialConditionNode, conditionConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 												#else
 												GIAentityNode * conditionConceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 												addOrConnectConditionToEntity(subjectEntityOrSubstance, specialConditionNode, conditionConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
@@ -2195,7 +2204,7 @@ void linkObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIAen
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION;
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
-	param.conditionEntityDefaultIndex = FEATURE_INDEX_OF_PREPOSITION_UNKNOWN;	//shouldn't be required as conditionType corresponds to a relation subject or relation governor (rather than a relation type)
+	param.mustGenerateConditionEntityIndex = true;	//shouldn't be required as conditionType corresponds to a relation subject or relation governor (rather than a relation type)
 	param.functionEntityRelationID[FUNC_ENT1] = REL2; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	param.functionEntityRelationID[FUNC_ENT2] = REL1; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
 	param.functionEntityRelationID[FUNC_ENT3] = REL2; param.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT1;
@@ -2310,7 +2319,7 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAentityN
 	param.numberOfRelations = 1;
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
 	#ifndef GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES
-	param.conditionEntityDefaultIndex = FEATURE_INDEX_OF_CONJUNCTION_UNKNOWN;	//shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)
+	param.mustGenerateConditionEntityIndex = true;	//shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)
 	#endif
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 	param.functionEntityRelationID[FUNC_ENT2] = REL1; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
@@ -2374,7 +2383,9 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAentityN
 				string conditionTypeName = relationType;
 
 				bool entityAlreadyExistant = false;
-				GIAentityNode * conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_CONJUNCTION_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+				int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
+				currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent + 1;	
+				GIAentityNode * conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "actionOrSubstanceConditionSubjectEntity->entityName = " << actionOrSubstanceConditionSubjectEntity->entityName << endl;
@@ -2389,7 +2400,7 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAentityN
 				#endif
 
 				#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-				GIAentityNodeArray[FEATURE_INDEX_OF_CONJUNCTION_UNKNOWN] = addOrConnectConditionToEntity(actionOrSubstanceConditionSubjectEntity, actionOrSubstanceConditionObjectEntity, conditionEntity, sameReferenceSet);
+				GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(actionOrSubstanceConditionSubjectEntity, actionOrSubstanceConditionObjectEntity, conditionEntity, sameReferenceSet);
 				#else
 				addOrConnectConditionToEntity(actionOrSubstanceConditionSubjectEntity, actionOrSubstanceConditionObjectEntity, conditionEntity, sameReferenceSet);
 				#endif
@@ -2473,7 +2484,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 	paramC.functionEntityRelationID[FUNC_ENT1] = REL1; paramC.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 	paramC.functionEntityRelationID[FUNC_ENT2] = REL1; paramC.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
 	paramC.functionEntityRelationID[FUNC_ENT3] = REL1; paramC.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT3;
-	paramC.conditionEntityDefaultIndex = FEATURE_INDEX_OF_PREPOSITION_UNKNOWN;	//may be required as conditionType corresponds to a relation type (not relation subject or relation governor) [assuming a corresponding feature index for the relation type cannot be found in the feature array]
+	paramC.mustGenerateConditionEntityIndex = true;	//may be required as conditionType corresponds to a relation type (not relation subject or relation governor) [assuming a corresponding feature index for the relation type cannot be found in the feature array]
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramC.defaultSameSetRelationID = REL1; paramC.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;
 	#endif
@@ -2746,7 +2757,8 @@ void createConditionBasedUponPreposition(GIAentityNode * actionOrSubstanceCondit
 		bool prepositionFeatureFound = determineFeatureIndexOfPreposition(currentSentenceInList, currentRelationInList, &featureIndexOfPreposition);
 		if(!prepositionFeatureFound)
 		{
-			featureIndexOfPreposition = FEATURE_INDEX_OF_PREPOSITION_UNKNOWN;
+			featureIndexOfPreposition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
+			currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent + 1;
 		}
 
 		bool entityAlreadyExistant = false;
@@ -2943,7 +2955,7 @@ void linkDependentActionsType2(Sentence * currentSentenceInList, bool GIAentityN
 	EntityCharacteristic relationTestSpecialCaseIsAction("isAction", "true");
 	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCaseIsAction);
 	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&relationTestSpecialCaseIsAction);
-	param.mustGenerateConditionName = true; param.conditionEntityDefaultName = GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_DEFAULT_CONDITION_NAME; param.conditionEntityDefaultIndex = FEATURE_INDEX_OF_ACTION_DEPENDENCY_GENERATED_CONDITION_UNKNOWN;
+	param.mustGenerateConditionName = true; param.conditionEntityDefaultName = GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_DEFAULT_CONDITION_NAME; param.mustGenerateConditionEntityIndex = true;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	param.defaultSameSetRelationID = REL1; param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS;
 	#endif
@@ -2980,10 +2992,12 @@ void linkDependentActionsType2(Sentence * currentSentenceInList, bool GIAentityN
 
 				string conditionTypeName = GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_DEFAULT_CONDITION_NAME;
 				bool entityAlreadyExistant = false;
-				GIAentityNode * conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_ACTION_DEPENDENCY_GENERATED_CONDITION_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+				int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
+				currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent + 1;
+				GIAentityNode * conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 				#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-				GIAentityNodeArray[FEATURE_INDEX_OF_ACTION_DEPENDENCY_GENERATED_CONDITION_UNKNOWN] = addOrConnectConditionToEntity(actionOrSubstanceConditionSubjectEntity, actionOrSubstanceConditionObjectEntity, conditionEntity, sameReferenceSet);
+				GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(actionOrSubstanceConditionSubjectEntity, actionOrSubstanceConditionObjectEntity, conditionEntity, sameReferenceSet);
 				#else
 				addOrConnectConditionToEntity(actionOrSubstanceConditionSubjectEntity, actionOrSubstanceConditionObjectEntity, conditionConceptEntity, sameReferenceSet);
 				#endif

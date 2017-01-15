@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f23a 24-August-2014
+ * Project Version: 2g1a 25-August-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -50,6 +50,9 @@ using namespace std;
 
 //#define FEATURE_GRAMMATICAL_TENSE_DATE "date"
 #define FEATURE_WORD_QUESTIONMARK "?"
+
+#define MAX_NUMBER_OF_RELATIONS_PER_SENTENCE (1000)
+#define MAX_NUMBER_OF_WORDS_PER_SENTENCE (1000)
 
 //from http://wiki.opencog.org/w/Word_substances (intermediary - used for translation purposes into WordNet int grammaticalWordTypeTemp only)
 #define FEATURE_RELEX_POS_TYPE_ADJECTIVE (1)
@@ -292,6 +295,8 @@ public:
 	bool isQuestion;
 
 	bool corpusLookupSuccessful;
+	
+	int conditionEntityArtificialIndexCurrent;	//added 2g1a/25-August-2014
 };
 
 class Paragraph

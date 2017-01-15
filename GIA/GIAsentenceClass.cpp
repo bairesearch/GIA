@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f23a 24-August-2014
+ * Project Version: 2g1a 25-August-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -270,6 +270,8 @@ Sentence::Sentence(void)
 	isQuestion = false;
 
 	corpusLookupSuccessful = false;
+	
+	conditionEntityArtificialIndexCurrent = MAX_NUMBER_OF_WORDS_PER_SENTENCE - 2;	//NB REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX = (MAX_NUMBER_OF_WORDS_PER_SENTENCE-1)
 }
 
 Sentence::~Sentence(void)
