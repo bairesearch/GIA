@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j5g 08-June-2015
+ * Project Version: 2j5h 08-June-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -194,7 +194,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	cout << "defineConnectionsBasedOnSemanticRelations" << endl;
 	#endif
 	
-	defineConnectionsBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
+	defineConnectionsBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp);
 	
 	#ifdef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -779,8 +779,8 @@ void identifyComparisonVariableBasedOnSemanticRelations(GIAsentence* currentSent
 }
 #endif
 
-//note featureArrayTemp is required for GIA_LRP_NORMALISE_PREPOSITIONS:GIA2_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES only
-void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
+//note entityNodesActiveListConcepts is required for GIA_LRP_NORMALISE_PREPOSITIONS only / featureArrayTemp is required for GIA_LRP_NORMALISE_PREPOSITIONS:GIA2_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES only
+void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIAfeature* featureArrayTemp[])
 {
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -854,7 +854,7 @@ void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInLis
 							foundMatchingObject = true;
 							
 							#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-							invertOrDuplicateConditionsIfRequiredSemantic(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp, entity1, entity2relation2, entity3, sameReferenceSet);
+							invertOrDuplicateConditionsIfRequiredSemantic(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, entity1, entity2relation2, entity3, sameReferenceSet);
 							#else
 							GIAentityNodeArray[entity3Index] = addOrConnectConditionToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
 							#endif
@@ -897,7 +897,7 @@ void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInLis
 
 #ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 //based on invertOrDuplicateConditionsIfRequired{}
-void invertOrDuplicateConditionsIfRequiredSemantic(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[], GIAentityNode* entity1, GIAentityNode* entity2, GIAentityNode* entity3condition, bool sameReferenceSet)
+void invertOrDuplicateConditionsIfRequiredSemantic(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIAfeature* featureArrayTemp[], GIAentityNode* entity1, GIAentityNode* entity2, GIAentityNode* entity3condition, bool sameReferenceSet)
 {
 	bool inverseConditionRequired = false;
 	bool twoWayConditionRequired = false;
@@ -910,12 +910,12 @@ void invertOrDuplicateConditionsIfRequiredSemantic(GIAsentence* currentSentenceI
 		#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
 		cout << "invertOrDuplicateConditionsIfRequired{}: inverseConditionRequired: conditionName = " << conditionName  << endl;
 		#endif
-		GIAentityNode* inverseConditionEntity = createNewInverseConditionEntitySemantic(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, inverseConditionName, featureArrayTemp);
+		GIAentityNode* inverseConditionEntity = createNewInverseConditionEntitySemantic(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, inverseConditionName, entityNodesActiveListConcepts, featureArrayTemp);
 		GIAentityNodeArray[inverseConditionEntity->entityIndexTemp] = addOrConnectConditionToEntity(entity2, entity1, inverseConditionEntity, sameReferenceSet);
 	}
 	else
 	{
-		cout << "entity3condition->entityIndexTemp = " << entity3condition->entityIndexTemp << endl;
+		//cout << "entity3condition->entityIndexTemp = " << entity3condition->entityIndexTemp << endl;
 		GIAentityNodeArray[entity3condition->entityIndexTemp] = addOrConnectConditionToEntity(entity1, entity2, entity3condition, sameReferenceSet);
 	}
 	#endif
@@ -926,7 +926,7 @@ void invertOrDuplicateConditionsIfRequiredSemantic(GIAsentence* currentSentenceI
 		cout << "invertOrDuplicateConditionsIfRequired{}: twoWayConditionRequired: conditionName = " << conditionName << endl;
 		#endif
 		#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
-		GIAentityNode* inverseConditionEntity = createNewInverseConditionEntitySemantic(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entity3condition->entityName, featureArrayTemp);	
+		GIAentityNode* inverseConditionEntity = createNewInverseConditionEntitySemantic(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entity3condition->entityName, entityNodesActiveListConcepts, featureArrayTemp);	
 		GIAentityNodeArray[inverseConditionEntity->entityIndexTemp] = addOrConnectConditionToEntity(entity2, entity1, inverseConditionEntity, sameReferenceSet);
 		inverseConditionEntity->inverseConditionTwoWay = true;
 		//cout << "inverseConditionTwoWay" << endl;
@@ -938,23 +938,30 @@ void invertOrDuplicateConditionsIfRequiredSemantic(GIAsentence* currentSentenceI
 }
 
 //based on createNewInverseConditionEntity{}
-GIAentityNode* createNewInverseConditionEntitySemantic(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], string inverseConditionName, GIAfeature* featureArrayTemp[])
+GIAentityNode* createNewInverseConditionEntitySemantic(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], string inverseConditionName, unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIAfeature* featureArrayTemp[])
 {
+	//requires GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW?
 	int inverseConditionEntityIndex = currentSentenceInList->conditionEntityArtificialIndexCurrent;
+	currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
+	
+	/*//not possible as concept entities have already been defined (locateAndAddAllConceptEntitiesBasedOnSemanticRelations has already been executed) unlike createNewInverseConditionEntity{} 
+	GIAentityNode* inverseConditionEntity = new GIAentityNode();		
 	GIAentityNodeArrayFilled[inverseConditionEntityIndex] = true;
-	GIAentityNode* inverseConditionEntity = new GIAentityNode();
-	inverseConditionEntity->entityName = inverseConditionName; 
+	GIAentityNodeArray[inverseConditionEntityIndex] = inverseConditionEntity;
+	*/
+	bool entityAlreadyExistant = false;
+	GIAentityNode* inverseConditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, inverseConditionEntityIndex, &inverseConditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 	inverseConditionEntity->wordOrig = inverseConditionName;	//is this necessary?
 	inverseConditionEntity->entityIndexTemp = inverseConditionEntityIndex;
 	//why not set inverseConditionEntity->sentenceIndexTemp?
-	GIAentityNodeArray[inverseConditionEntityIndex] = inverseConditionEntity;
+	
 	#ifdef GIA2_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES
 	featureArrayTemp[inverseConditionEntityIndex] = new GIAfeature(); 
 	featureArrayTemp[inverseConditionEntityIndex]->word = inverseConditionName;
 	featureArrayTemp[inverseConditionEntityIndex]->lemma = inverseConditionName;	//is this necessary?
 	featureArrayTemp[inverseConditionEntityIndex]->entityIndex = inverseConditionEntityIndex;
 	#endif
-	currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
+	
 	return inverseConditionEntity;
 }
 #endif

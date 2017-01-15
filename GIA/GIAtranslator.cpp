@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j5g 08-June-2015
+ * Project Version: 2j5h 08-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1386,7 +1386,10 @@ void invertOrDuplicateConditionsIfRequired(GIAsentence* currentSentenceInList, b
 
 void createNewInverseConditionEntity(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], string inverseConditionName, GIAfeature* featureArrayTemp[])
 {
+	//requires GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW?
 	int inverseConditionEntityIndex = currentSentenceInList->conditionEntityArtificialIndexCurrent;
+	currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
+
 	GIAentityNodeArrayFilled[inverseConditionEntityIndex] = true;
 	GIAentityNode* inverseConditionEntity = new GIAentityNode();
 	inverseConditionEntity->entityName = inverseConditionName; 
@@ -1400,11 +1403,11 @@ void createNewInverseConditionEntity(GIArelation* currentRelationInList, GIAsent
 	currentRelationInList->relationTypeIndex = inverseConditionEntityIndex;
 	currentRelationInList->inverseRelation = true;
 	GIAentityNodeArray[inverseConditionEntityIndex] = inverseConditionEntity;
+	
 	featureArrayTemp[inverseConditionEntityIndex] = new GIAfeature(); 
 	featureArrayTemp[inverseConditionEntityIndex]->word = inverseConditionName;
 	featureArrayTemp[inverseConditionEntityIndex]->lemma = inverseConditionName;	//is this necessary?
 	featureArrayTemp[inverseConditionEntityIndex]->entityIndex = inverseConditionEntityIndex;
-	currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 }		
 
 			
