@@ -3,7 +3,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1a1a 15-Jan-11
+ * Project Version: 1b7a 01-Sept-11
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -331,7 +331,14 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			int entityColour;
 			if(entityNode->hasAssociatedAction)
 			{
-				entityColour = GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
+				if(entityNode->hasMeasure)
+				{
+					entityColour = GIA_DRAW_PROPERTY_MEASURE_NODE_COLOUR;
+				}
+				else
+				{
+					entityColour = GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
+				}
 			}			
 			else if(entityNode->isProperty)
 			{
@@ -339,7 +346,19 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				{
 					boxThickness = GIA_DRAW_THICKNESS_THICK;
 				}
-				entityColour = GIA_DRAW_PROPERTY_NODE_COLOUR;
+				
+				if(entityNode->hasMeasure)
+				{
+					entityColour = GIA_DRAW_PROPERTY_MEASURE_NODE_COLOUR;
+				}
+				else if(entityNode->hasQuantity)
+				{
+					entityColour = GIA_DRAW_PROPERTY_QUANTITY_NODE_COLOUR;
+				}
+				else
+				{
+					entityColour = GIA_DRAW_PROPERTY_NODE_COLOUR;
+				}
 			}
 			else if(entityNode->hasAssociatedTime)
 			{

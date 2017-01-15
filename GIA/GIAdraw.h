@@ -3,7 +3,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1a1a 15-Jan-11
+ * Project Version: 1b7a 01-Sept-11
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -55,6 +55,9 @@ using namespace std;
 #define GIA_DRAW_PROPERTY_NODE_COLOUR (DAT_FILE_COLOUR_CYAN)				//this was cyan(?) in the original spec	
 #define GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_MAGENTA)	//colour not defined in original GIA spec	
 #define GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_MAGENTA)		//Not used	//this was cyan(?) in the original spec			
+
+#define GIA_DRAW_PROPERTY_QUANTITY_NODE_COLOUR (DAT_FILE_COLOUR_PURPLE)
+#define GIA_DRAW_PROPERTY_MEASURE_NODE_COLOUR (DAT_FILE_COLOUR_LIGHTGREY)
 
 #define GIA_DRAW_CONDITION_NODE_HEIGHT (5)
 #define GIA_DRAW_CONDITION_NODE_WIDTH (20)

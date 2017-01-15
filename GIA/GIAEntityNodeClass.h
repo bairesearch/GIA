@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1a1a 15-Jan-11
+ * Project Version: 1b7a 01-Sept-11
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -59,12 +59,10 @@ class GIATimeConditionNode;
 #define QUANTITY_NUMBER_LOW_NUMBER_OF_TYPES (20)
 #define QUANTITY_NUMBER_TENS_NUMBER_OF_TYPES (10)
 #define QUANTITY_MULTIPLIER_NUMBER_OF_TYPES (7)		//do: work out what these are/can be
-
-
 #define QUANTITY_MODIFIER_UNDEFINED (-1)		//WARNING: not yet implemented
 #define QUANTITY_MODIFIER_NUMBER_OF_TYPES (1)		//WARNING: not yet implemented	//do: work out what these are/can be	
 
-
+#define MEASURE_TYPE_UNDEFINED (-1)
 
 extern string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
 extern int grammaticalTenseNameLengthsArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
@@ -101,11 +99,13 @@ public:
 	
 	int grammaticalNumber;
 	
+	bool hasQuantity;
 	int quantityNumber;
 	int quantityModifier;	//not yet implemented
 	string quantityModifierString;	//eg "almost"
-	//bool isMeasure;
-	bool hasQuantity;
+	bool hasMeasure;
+	int measureType;
+	
 		
 	bool initialisedForPrinting;
 	bool printed;

@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1a1a 15-Jan-11
+ * Project Version: 1b7a 01-Sept-11
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -107,7 +107,8 @@ using namespace std;
 #define RELATION_TYPE_SUCH_THAT "such"
 #define RELATION_TYPE_SO "so"
 
-#define RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES (5)
+#define RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES (4)
+#define RELATION_TYPE_MEASURE_NUMBER_OF_TYPES (3)
 
 #define RELATION_TYPE_OBJECT_NUMBER_OF_TYPES (5)
 #define RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES (2)
@@ -120,6 +121,7 @@ using namespace std;
 #define RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES (1)
 */
 
+#define RELATION_FUNCTION_DEFINITION_NUMBER_OF_TYPES (1)
 #define RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES (3)
 #define GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES (1)
 #define RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES (2)

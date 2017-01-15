@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1a1a 15-Jan-11
+ * Project Version: 1b7a 01-Sept-11
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors indexOfEntityNodes/indexOfEntityNames with a map, and replace vectors GIATimeConditionNode/indexOfTimeNumbers with a map
@@ -22,14 +22,19 @@ string relationTypeAdjectiveNameArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] =
 //int relationTypeAdjectiveNameLengthsArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] = {5, 8, 7};
 string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_POSSESSIVE, RELATION_TYPE_PRENOMIAL_MODIFIER};
 //int relationTypePossessiveNameLengthsArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {5, 3};
+
 string relationFunctionCompositionNameArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_COMPOSITION_1, RELATION_FUNCTION_COMPOSITION_2, RELATION_FUNCTION_COMPOSITION_3};
 //int relationFunctionCompositionNameLengthsArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {8, 9, 3};
+string relationFunctionDefinitionNameArray[RELATION_FUNCTION_DEFINITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_DEFINITION_1};
+
+
 
 int referenceTypeHasDeterminateCrossReferenceNumberArray[GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES] = {GRAMMATICAL_NUMBER_SINGULAR};
 string relationTypeAdjectiveWhichImplyEntityInstanceNameArray[RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_1, RELATION_TYPE_ADJECTIVE_3};
 string relationTypeRequireSwitchingNameArray[RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT_THAT};
 
-string relationTypeQuantityOrMeasureNameArray[RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES] = {RELATION_TYPE_QUANTITY, RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_PER, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME};
+string relationTypeQuantityOrMeasureNameArray[RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES] = {RELATION_TYPE_QUANTITY, RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME};
+string relationTypeMeasureNameArray[RELATION_TYPE_MEASURE_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME};
 
 
 //int timeMonthIntArray[TIME_MONTH_NUMBER_OF_TYPES] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
@@ -1107,7 +1112,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			//if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
 			if(passed)
 			{
-				cout << "RELATION_TYPE_POSSESSIVE" << endl;
+				//cout << "RELATION_TYPE_POSSESSIVE" << endl;
 				
 				string propertyName = currentRelationInList->relationFunction; 
 				string ownerName = currentRelationInList->relationArgument; 
@@ -1274,6 +1279,15 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 							passcomposition = true;
 						}
 					}
+
+					bool passdefinition = false;
+					for(int i=0; i<RELATION_FUNCTION_DEFINITION_NUMBER_OF_TYPES; i++)
+					{
+						if(currentRelationInList->relationFunction == relationFunctionDefinitionNameArray[i])
+						{
+							passdefinition = true;
+						}
+					}					
 								
 					//now find the associated object..
  					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
@@ -1321,8 +1335,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 								//cout << "subjectObjectEntityArray[SUBJECT_INDEX]->entityName = " << subjectObjectEntityArray[SUBJECT_INDEX]->entityName << endl;	
 								//cout << "subjectObjectEntityArray[OBJECT_INDEX]->entityName = " << subjectObjectEntityArray[OBJECT_INDEX]->entityName << endl;
 
-					
-								if(currentRelationInList->relationFunction == RELATION_FUNCTION_DEFINITION_1) 
+								//if(currentRelationInList->relationFunction == RELATION_FUNCTION_DEFINITION_1) 
+								if(passdefinition)
 								{//expected subject-object relationship is a definition "is"
 									
 									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
@@ -1764,6 +1778,45 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 		
 		//4d pass; extract measures
+		currentRelationInList = currentSentenceInList->firstRelationInList;
+		while(currentRelationInList->next != NULL)
+		{	
+			//cout << "here1" << endl;
+			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+			bool pass = false;
+			int measureTypeIndex = MEASURE_TYPE_UNDEFINED;
+			for(int i=0; i<RELATION_TYPE_MEASURE_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypeMeasureNameArray[i])
+				{
+					measureTypeIndex = i;
+					pass = true;
+				}
+			}																		
+			if(pass)
+			{
+				GIAEntityNode * measureEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
+				if(measureEntity->firstAssociatedPropertyNodeInList.back() != NULL)
+				{
+					GIAEntityNode * measureProperty = measureEntity->firstAssociatedPropertyNodeInList.back();
+					measureProperty->hasMeasure = true;
+					measureProperty->measureType = measureTypeIndex;
+					
+					//string measurePropertyName = currentRelationInList->relationFunction; 
+					//string quantityName = currentRelationInList->relationArgument; 
+					int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
+					int relationArgumentIndex = currentRelationInList->relationArgumentIndex;				
+					
+					GIAEntityNode * measurePropertyEntity = GIAEntityNodeArray[relationFunctionIndex];
+					GIAEntityNode * quantityPropertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+					cout << "measurePropertyName = " << measurePropertyEntity->entityName << endl;
+					cout << "quantityPropertyName = " << quantityPropertyEntity->entityName << endl;
+
+					addOrConnectPropertyToEntity(measurePropertyEntity, quantityPropertyEntity);	
+				}								
+			}
+			currentRelationInList = currentRelationInList->next;		
+		}
 				
 		/*
 		//restore critical variables; temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
@@ -1774,7 +1827,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				GIAEntityNodeArray[w]->isReferenceEntityInThisSentence = false;
 			}
 		}
-		*/	
+		*/
+		
+
+
+			
 	
 		currentSentenceInList = currentSentenceInList->next;
 	}
