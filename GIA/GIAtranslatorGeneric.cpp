@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f17a 18-July-2014
+ * Project Version: 2f17b 18-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -148,7 +148,7 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	initialiseBoolArray1D(disableRelationDuringLink, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, false);
 
 	functionName = "";
-	
+
 	initialiseBoolArray1D(useRedistributeSpecialCaseNonExistantRelationCheck, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, false);	//non existant relations tests - added GIA 2f12a 13-July-2014
 }
 GIAgenericDepRelInterpretationParameters::~GIAgenericDepRelInterpretationParameters(void)
@@ -207,7 +207,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 {
 	//cout << "START genericDependecyRelationInterpretation: " << currentRelationID << endl;
 	bool result = false;
-	
+
 	#ifdef GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES
 	int conjunctionRelationIndex = 0;
 	#endif
@@ -871,7 +871,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 													cout << "relationID = " << relationID << endl;
 													cout << "relationEntityID = " << relationEntityID << endl;
 													cout << "prev; param->relation[relationID]->relationType = " << param->relation[relationID]->relationType << endl;
-													//cout << "prev; GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = " << param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName << endl;											
+													//cout << "prev; GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = " << param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName << endl;
 												}
 												*/
 
@@ -888,7 +888,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 												{
 													cout << "param->relationEntityIndex[relationID][relationEntityID]  = " << param->relationEntityIndex[relationID][relationEntityID] << endl;
 													cout << "param->relation[relationID]->relationType = " << param->relation[relationID]->relationType << endl;
-													//cout << "GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = " << param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName << endl;	
+													//cout << "GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = " << param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName << endl;
 												}
 												*/
 											}
@@ -1028,7 +1028,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 		}
 		currentRelationInList = currentRelationInList->next;
 	}
-	
+
 	//cout << "END genericDependecyRelationInterpretation: " << currentRelationID << endl;
 	return result;
 }
@@ -1192,7 +1192,7 @@ bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * para
 bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, Relation * prepositionRelation, int * indexOfPreposition)
 {
 	string prepositionName = prepositionRelation->relationType;
-	
+
 	#ifdef GIA_TRANSLATOR_DEBUG
 	//cout << "*prepositionName = " << *prepositionName << endl;
 	#endif
@@ -1203,8 +1203,8 @@ bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, Relati
 	bool centredPrepositionFeatureFound = false;
 	int featureIndexOfNonCentredPrepositionFeature = 0;
 	int numberOfPrepositionFeaturesFound = 0;
-	
-	
+
+
 	Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
@@ -1230,7 +1230,7 @@ bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, Relati
 			cout << "prepositionRelation->relationGovernorIndex: " << prepositionRelation->relationGovernorIndex << endl;
 			cout << "prepositionRelation->relationDependentIndex: " << prepositionRelation->relationDependentIndex << endl;
 			*/
-			
+
 			prepositionFeatureFound = true;
 			if(((currentFeatureInList->entityIndex < prepositionRelation->relationGovernorIndex) && (currentFeatureInList->entityIndex > prepositionRelation->relationDependentIndex))
 			|| ((currentFeatureInList->entityIndex > prepositionRelation->relationGovernorIndex) && (currentFeatureInList->entityIndex < prepositionRelation->relationDependentIndex)))
@@ -1241,13 +1241,13 @@ bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, Relati
 			}
 			else
 			{//added GIA 2f9b 11-July-2014
-				featureIndexOfNonCentredPrepositionFeature = currentFeatureInList->entityIndex;	
+				featureIndexOfNonCentredPrepositionFeature = currentFeatureInList->entityIndex;
 			}
 			numberOfPrepositionFeaturesFound++;
 		}
 		currentFeatureInList = currentFeatureInList->next;
 	}
-	
+
 	if(prepositionFeatureFound && !centredPrepositionFeatureFound)
 	{//added GIA 2f9b 11-July-2014
 		if(numberOfPrepositionFeaturesFound > 1)

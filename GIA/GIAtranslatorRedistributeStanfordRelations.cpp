@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f17a 18-July-2014
+ * Project Version: 2f17b 18-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -226,7 +226,7 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 	collapseRedundantRelationAndMakeNegativeStanford(currentSentenceInList, GIAentityNodeArray);
 	#endif
 	#endif
-	
+
 	//NLC Only (see GIArules.xml)
 	/*
 	#ifdef GIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES
@@ -236,7 +236,7 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 
 }
 
-	
+
 #ifdef GIA_USE_STANFORD_CORENLP
 void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
@@ -2880,7 +2880,7 @@ void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence *
 	param.numberOfRelations = 3;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER;
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_COMPLEMENT_OF_ADVERBAL_CLAUSE_MODIFIER;
-	param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_SUBJECT; 
+	param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.parseDisabledRelation[REL3] = true;
 	param.useRelationTest[REL1][REL_ENT2] = true; param.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_BE;
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT2] = REL1; param.relationIndexTestEntityID[REL1][REL_ENT2] = REL_ENT2;
@@ -4482,12 +4482,12 @@ void redistributeStanfordRelationsAuxHave(Sentence * currentSentenceInList, bool
 	param.useRelationTest[REL1][REL_ENT2] = true; param.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_HAVE;
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.useRelationIndexTest[REL1][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT1] = REL2; param.relationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT1;
-	
+
 	param.useRedistributeSpecialCaseNonExistantRelationCheck[REL2] = true;
 	param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_OBJECT;
 	param.useRelationIndexTest[REL3][REL_ENT1] = true; param.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT1;
 	param.disableEntity[REL1][REL_ENT2] = true;
-				
+
 	param.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_OBJECT;
 	param.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2; param.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL1][REL_ENT1] = true;
@@ -4655,7 +4655,7 @@ void redistributeStanfordRelationsDisableRedundantLogicalConditions(Sentence * c
 					currentRelationInList3 = currentRelationInList3->next;
 				}
 				if(primaryLogicalConditionRelation)
-				{				
+				{
 					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
  					while(currentRelationInList2->next != NULL)
 					{
@@ -4679,7 +4679,7 @@ void redistributeStanfordRelationsDisableRedundantLogicalConditions(Sentence * c
 					}
 				}
 			}
-	
+
 		}
 		currentRelationInList = currentRelationInList->next;
 	}

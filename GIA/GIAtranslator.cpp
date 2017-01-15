@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f17a 18-July-2014
+ * Project Version: 2f17b 18-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -730,7 +730,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		}
 	}
 	*/
-	
+
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1a; fillGrammaticalArrays" << endl;
 	#endif
@@ -761,7 +761,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		}
 	}
 	*/
-	
+
 	//this function is first only executed in a temporary fashion (where its output is only used by relex linkPronounReferencesRelex())
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1b; applyGrammaticalInfoToAllEntities [execution#1]" << endl;
@@ -781,7 +781,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		}
 	}
 	*/
-	
+
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 	#ifndef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION
 	/*
@@ -817,8 +817,8 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		}
 	}
 	*/
-	
-	/*	
+
+	/*
 	cout << "redistributeStanfordRelations: " << endl;
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -1338,10 +1338,12 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		{
 			#ifdef GIA_DO_NOT_OVERWRITE_SENTENCE_INDEX_OF_REFERENCE_SOURCE
 			if(!(GIAentityNodeArray[w]->wasReference))
-			{	
+			{
+			#endif
 				//do not overwrite sentence index of source
 				GIAentityNodeArray[w]->entityIndexTemp = w;
 				GIAentityNodeArray[w]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;	//LIMITATION: if !GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR, this will not assign sentence indicies for prepositions...
+			#ifdef GIA_DO_NOT_OVERWRITE_SENTENCE_INDEX_OF_REFERENCE_SOURCE
 			}
 			#endif
 			#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION

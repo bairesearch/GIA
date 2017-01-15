@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f17a 18-July-2014
+ * Project Version: 2f17b 18-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1666,7 +1666,7 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 							*/
 							GIAentityNodeArray[referenceEntityIndex] = addSubstanceToSubstanceDefinition(GIAentityNodeArray[referenceEntityIndex]);
 							GIAentityNodeArray[intrasentenceReferenceSourceIndex] = GIAentityNodeArray[referenceEntityIndex];
-							
+
 							/*Removed GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
 							#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 							GIAentityNodeArray[intrasentenceReferenceSourceIndex]->wasReference = true;	//added 1 October 2013

@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f17a 18-July-2014
+ * Project Version: 2f17b 18-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -266,7 +266,7 @@
  *
  *		7. 	Install Gate 4.0 (optional)
  *			(download: http://gate.ac.uk/download/)
- *			
+ *
  *				Redhat EL5/EL6 example;
  *				[user needs to have logged in as root at least one time in the past before able to run this from root]
  *
@@ -617,7 +617,7 @@
 #define GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES	//added 2f8a 09-July-2014
 
 //#define GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA //disabled GIA 2c3c [disabling required for GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN] - CHECKTHIS does not cause problems with alternative test scenarios
-	//issue detected (yet to be patched) with the disabling of GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA: advanced referencing of aliases failure 
+	//issue detected (yet to be patched) with the disabling of GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA: advanced referencing of aliases failure
 
 #define GIA_USE_NON_STANDARD_CONDITION_CONDITION_CONNECTIONS_CONNECT_CONJUNCTIONS_TO_THEIR_RELEVANT_PREPOSITIONS	//required for USE_NLC
 /*
