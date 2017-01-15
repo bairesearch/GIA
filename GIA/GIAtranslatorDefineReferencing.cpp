@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7f 30-June-2013
+ * Project Version: 1s7g 30-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -77,7 +77,6 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 			bool foundComparisonVariableAlternateMethod = false;
 
 			bool foundQueryWordAcceptedByAlternateMethod = false;
-			bool foundFirstNounAfterQueryWordAcceptedByAlternateMethod = false;
 			Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
 			while(currentFeatureInList->next != NULL)
 			{
@@ -151,7 +150,7 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 				}
 				if(foundQueryWordAcceptedByAlternateMethod)
 				{
-					bool nounFound = false;	//finds the first noun after "which"
+					bool nounFound = false;	//finds the first noun after "which"[/"what"]
 					#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 					if(currentFeatureInList->grammaticalWordType == GRAMMATICAL_WORD_TYPE_NOUN)
 					{
@@ -356,7 +355,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 				}
 			}
 			//if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
-			#ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
+			#ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR
 			for(int i=0; i<RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES; i++)
 			{
 				if(currentRelationInList->relationType == relationTypePrenominalModifierNameArray[i])
@@ -384,7 +383,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 					passed = true;
 				}
 			}
-			#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
+			#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR
 			for(int i=0; i<RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES; i++)
 			{
 				if(currentRelationInList->relationType == relationTypePrenominalModifierNameArray[i])
@@ -1951,7 +1950,7 @@ void identifyEntityTypesLocal(Relation * currentRelationInList, int NLPdependenc
 		}
 	}
 	//if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
-	#ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
+	#ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR
 	for(int i=0; i<RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES; i++)
 	{
 		if(currentRelationInList->relationType == relationTypePrenominalModifierNameArray[i])
@@ -1978,7 +1977,7 @@ void identifyEntityTypesLocal(Relation * currentRelationInList, int NLPdependenc
 			passed = true;
 		}
 	}
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR
 	for(int i=0; i<RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES; i++)
 	{
 		if(currentRelationInList->relationType == relationTypePrenominalModifierNameArray[i])

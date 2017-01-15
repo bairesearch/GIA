@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7f 30-June-2013
+ * Project Version: 1s7g 30-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1458,7 +1458,10 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
+}
 
+void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
+{
 
 	//eg1 Kane is late 		nsubj(late-3, Kane-1) / cop(late-3, is-2) -> _predadj(kane-1, late-3) 				[NB non-determinate of governer and dependent of subject relation; take as indicator of substance]
 	//or
@@ -1473,7 +1476,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 	//eg6 That is Jim.   		nsubj(Jim-3, That-1) / cop(Jim-3, is-2) -> appos(That-1, Jim-3)
 	//or
 	//eg7 The time is 06:45		nsubj(06:45-4, time-2) / cop(06:45-4, is-3) / det(time-2, The-1) -> appos(time-2, 06:45-4)
-	currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -1512,7 +1515,14 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 										if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 										{
 											GIAentityNode * subjectGovernorEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-
+											
+											#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_WORKAROUND_STANFORD_BUG_SINGLE_DIGIT_TIMES_MARKED_AS_ADJECTIVE
+											if(subjectGovernorEntity->NERTemp == FEATURE_NER_TIME)
+											{
+												subjectGovernorEntity->stanfordPOStemp = FEATURE_POS_TAG_CD;
+											}
+											#endif
+											
 											bool subjectGovernorAdjectiveOrAdvebFound = false;
 											for(int i=0; i<FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_TYPES; i++)
 											{
@@ -1529,7 +1539,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 													subjectGovernorNounFound = true;
 												}
 											}
-
+											
 											if(subjectGovernorAdjectiveOrAdvebFound)
 											{
 												currentRelationInList->relationType = RELATION_TYPE_ADJECTIVE_PREDADJ;
@@ -2991,8 +3001,8 @@ bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity
 			if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = Swimming, and entityName = swimming; then apply the lemma correction 
 			{
 				//change irregular verb name eg making to base irregular verb base name eg make
-				cout << "2 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
-				cout << "2 baseNameFound = " << baseNameFound << endl;
+				//cout << "2 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
+				//cout << "2 baseNameFound = " << baseNameFound << endl;
 				actionOrSubstanceEntity->entityName = baseNameFound;
 				actionOrSubstanceEntity->stanfordPOStemp = FEATURE_POS_TAG_VBG;
 				actionOrSubstanceEntity->wordNetPOS = GRAMMATICAL_WORD_TYPE_VERB;
@@ -3112,5 +3122,73 @@ void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSenten
 
 
 #endif
+
+//required for aliasing to work
+void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
+{
+	/*
+	She is the one.		_obj(be[2], one[4]) + _subj(be[2], she[1]) -> appos(She-1, one-4)
+	Bikes are machines. 	_obj(be[2], machine[3]) + _subj(be[2], bike[1])	-> appos(bike-1, machine-3)		 
+	That is Jim. 		_obj(be[2], Jim[3]) + _subj(be[2], that[1]) -> appos(that-1, Jim-3)		
+	The time is 06:45.	_obj(be[3], 06:45[4]) + _subj(be[3], time[2]) -> appos(time-2, 06:45-4)	
+	...	
+	Kane is late.  No change required (Relex parses this correctly)
+		_predadj(Kane[1], late[3])
+	She is the one.
+		_obj(be[2], one[4]) + _subj(be[2], she[1]) -> appos(She-1, one-4)		 
+	The girl is tall. No change required (Relex parses this correctly)
+		_predadj(girl[2], tall[4])		
+	Bikes are machines. 
+		_obj(be[2], machine[3]) + _subj(be[2], bike[1])	-> appos(bike-1, machine-3)			
+	the wheels are green. No change required (Relex parses this correctly)
+		_predadj(wheel[2], green[4])		
+	That is Jim. 	
+		_obj(be[2], Jim[3]) + _subj(be[2], that[1]) -> appos(that-1, Jim-3)		  
+	The time is 06:45.
+		_obj(be[3], 06:45[4]) + _subj(be[3], time[2]) -> appos(time-2, 06:45-4)	
+	*/
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			if(currentRelationInList->relationType == RELATION_TYPE_OBJECT)
+			{
+				//now find the associated object..
+ 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				while(currentRelationInList2->next != NULL)
+				{
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					if(!(currentRelationInList2->disabled))
+					{
+					#endif
+						if(currentRelationInList2->relationType == RELATION_TYPE_SUBJECT)
+						{
+							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
+							{//found a matching preposition of object-subject relationship
+								
+								currentRelationInList->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+								currentRelationInList->relationGovernorIndex = currentRelationInList2->relationDependentIndex;
+								currentRelationInList->relationGovernor = GIAentityNodeArray[currentRelationInList2->relationDependentIndex]->entityName;
+
+								currentRelationInList2->disabled =  true;
+								currentRelationInList2->relationType = "dummyRelationCollapseSubjectAndObjectGenerateAppos";	//required to prevent use by GIA (when !GIA_DO_NOT_PARSE_DISABLED_RELATIONS)
+							}
+						}
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					}
+					#endif
+
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}
+}
 
 

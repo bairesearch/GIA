@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7f 30-June-2013
+ * Project Version: 1s7g 30-June-2013
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -1811,8 +1811,8 @@ bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * first
 			{
 				if(wordLowerCase == currentTagInIrregularVerb->tagName)
 				{
-					cout << "foundIrregularVerbContinuousCase" << endl;
-					cout << "irregularVerbBaseForm = " << currentTagInIrregularVerbList->tagName << endl;
+					//cout << "foundIrregularVerbContinuousCase" << endl;
+					//cout << "irregularVerbBaseForm = " << currentTagInIrregularVerbList->tagName << endl;
 					foundIrregularVerbContinuousCase = true;
 					*baseNameFound = currentTagInIrregularVerbList->tagName;					
 				}

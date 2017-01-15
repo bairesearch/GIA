@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7f 30-June-2013
+ * Project Version: 1s7g 30-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -88,7 +88,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 		currentRelationInList = currentRelationInList->next;
 	}
 	
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR
 	currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
@@ -306,7 +306,9 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 						if(!(thingEntity->isSubstanceConcept))
 						{
-						#endif					
+						#endif		
+							//cout << "should be flagged" << endl;
+										
 							#ifdef GIA_ALIASES_DEBUG
 							cout << "linkEntityDefinitionsAppositiveOfNouns4" << endl;
 							#endif
@@ -1037,6 +1039,8 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 											//added 1 May 11a (assign actions to instances (substances) of entities and not entities themselves where appropriate)
 												//NB definitions are only assigned to entities, not substances (instances of entities)
 
+										
+											#ifndef GIA_SUPPORT_ALIASES_RELEX_COMPATIBILITY
 											#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
 											if(currentSentenceInList->isQuestion == true)
 											#else
@@ -1044,6 +1048,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 											#endif
 											{//this section of code is only used for RelEx: NB Stanford CoreNLP ouputs "what is"/"who is" queries in appos format (not in obj/subj format)
 											#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
+												//cout << "GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY" << endl;
 												//switch object/subject variables [transform question into answer form]
 												bool sameReferenceSet = false;
 												addDefinitionToEntity(objectEntityTemp, subjectEntityTemp, sameReferenceSet);
@@ -1064,9 +1069,12 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 											}
 											else
 											{
+											#endif
 												bool sameReferenceSet = false;
 												addDefinitionToEntity(subjectEntityTemp, objectEntityTemp, sameReferenceSet);
+											#ifndef GIA_SUPPORT_ALIASES_RELEX_COMPATIBILITY	
 											}
+											#endif
 
 											disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList->relationGovernorIndex]);	//remove lone 'be' artefacts (blue entity nodes). NB these occur because of the nature of the 'is' -> entity definitional substitution procedure
 										}
