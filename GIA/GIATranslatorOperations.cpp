@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k3d 11-May-2012
+ * Project Version: 1k3c 11-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -816,6 +816,7 @@ void addConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * proper
 	{					
 	#endif
 		
+		//cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl;
 		GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
 
 		newCondition->conditionSubjectEntity = propertyNode;
@@ -833,6 +834,13 @@ void addConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * proper
 
 GIAEntityNode * addCondition(GIAEntityNode * conditionEntity)
 {
+	/*
+	if(!(conditionEntity->isConcept))
+	{
+		cout << "error: !(conditionEntity->isConcept)" << endl;
+	}
+	*/
+	
 	GIAEntityNode * newCondition = new GIAEntityNode();
 	newCondition->id = currentEntityNodeIDInCompleteList;
 	newCondition->idSecondary = currentEntityNodeIDInConditionEntityNodesList;
@@ -1117,7 +1125,7 @@ void disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAEntityNo
 }
 */
 
-
+/*
 void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -1132,6 +1140,20 @@ void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(bool GIAEntityNo
 		}
 	}
 }
+*/
+void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap)
+{
+	unordered_map<string, GIAEntityNode*> ::iterator conceptEntityNodesListMapIter;
+	for(conceptEntityNodesListMapIter = conceptEntityNodesListMap->begin(); conceptEntityNodesListMapIter != conceptEntityNodesListMap->end(); conceptEntityNodesListMapIter++) 
+	{	
+		GIAEntityNode * entityNode = conceptEntityNodesListMapIter->second;
+		if(!(entityNode->disabled))
+		{
+			entityNode->permanentConcept = true;
+		}		
+	}
+}
+
 
 //(used for printing/xml write purposes)
 void recordConceptNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap)

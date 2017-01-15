@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k3d 11-May-2012
+ * Project Version: 1k3c 11-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -226,9 +226,18 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		}
 	}
 	#endif
-	*/	
-			
 
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{	
+		if(GIAEntityNodeArrayFilled[w])
+		{	
+			cout << "GIAConceptNodeArray[w]->disabled = " << GIAConceptNodeArray[w]->entityName << ", " << int(GIAConceptNodeArray[w]->disabled) << endl;
+		}
+	}	
+	*/	
+		
+	
+	
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
@@ -538,8 +547,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "3f pass; define action/property conditions" << endl;
 	#endif
-	defineActionPropertyConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, NLPdependencyRelationsType);
-
+	defineActionPropertyConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, NLPdependencyRelationsType);	
 	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout <<"4b pass; extract dates" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
@@ -584,9 +592,17 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "record sentence nodes as permanent if they are still enabled" << endl;
 	#endif
-	recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(GIAEntityNodeArrayFilled, GIAConceptNodeArray);
-	
-	
+	//recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(GIAEntityNodeArrayFilled, GIAConceptNodeArray);		//this method is not sufficient, as some concept entity nodes (eg prepositions/conditions) are not contained within GIAConceptNodeArray
+	recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(conceptEntityNodesList);
+	/*
+	unordered_map<string, GIAEntityNode*> ::iterator conceptEntityNodesListIter2;	
+	for(conceptEntityNodesListIter2 = conceptEntityNodesList->begin(); conceptEntityNodesListIter2 != conceptEntityNodesList->end(); conceptEntityNodesListIter2++) 
+	{	
+		GIAEntityNode * entityNode = conceptEntityNodesListIter2->second;
+		cout << "3entityNode->disabled = " << entityNode->entityName << ", " << int(entityNode->disabled) << endl;
+	}
+	*/	
+		
 	/*OLD DELETE;
 	//cout << "5a pass; parse questions" << endl;	
 	currentRelationInList = currentSentenceInList->firstRelationInList;
