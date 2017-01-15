@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1c 14-November-2014
+ * Project Version: 2h1d 14-November-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -51,7 +51,7 @@ bool verbListLoaded;
 GIALRPtag * firstTagInIrregularVerbListGlobal;
 bool irregularVerbListLoaded;
 #endif
-#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 GIALRPtag * firstTagInPrepositionsInverseListGlobal;
 bool prepositionsInverseListLoaded;
 #endif
@@ -91,13 +91,13 @@ bool initialiseLRP(string newLRPDataFolderName, bool newUseLRP)
 		irregularVerbListLoaded = true;
 	}
 	#endif
-	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	string prepositionsInverseListFileName = lrpDataFolderName + GIA_LRP_PREPOSITIONS_DATABASE_FILE_NAME;
 	prepositionsInverseListLoaded = false;
 	firstTagInPrepositionsInverseListGlobal = new GIALRPtag();
 	if(!loadPrepositionsInverseList(prepositionsInverseListFileName, firstTagInPrepositionsInverseListGlobal))
 	{
-		cout << "!loadPrepositionsInverseList (OpenGIA with GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS requires -lrpfolder to be set): prepositionsInverseListFileName = " << prepositionsInverseListFileName << endl;
+		cout << "!loadPrepositionsInverseList (OpenGIA with GIA_LRP_NORMALISE_PREPOSITIONS requires -lrpfolder to be set): prepositionsInverseListFileName = " << prepositionsInverseListFileName << endl;
 		result = false;
 	}
 	else
@@ -2139,7 +2139,7 @@ bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * first
 
 
 
-#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 bool loadPrepositionsInverseList(string prepositionsInverseListFileName, GIALRPtag * firstTagInPrepositionsInverseList)
 {
 	bool result = true;
@@ -2271,6 +2271,7 @@ void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool * inver
 	}
 }
 
+#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
 bool identifyConditionType(GIAentityNode * conditionEntity)
 {
 	bool conditionTypeIdentified = false;
@@ -2308,5 +2309,6 @@ bool identifyConditionType(GIAentityNode * conditionEntity)
 		
 	return conditionTypeIdentified;
 }
+#endif
 		
 #endif

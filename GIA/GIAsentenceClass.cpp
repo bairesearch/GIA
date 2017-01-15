@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1c 14-November-2014
+ * Project Version: 2h1d 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -166,9 +166,14 @@ Relation::Relation(void)
 	corpusSpecialRelationDependentIsQuery = "";
 	#endif
 	#endif
-
+	
+	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
 	inverseRelation = false;
+	#endif
+	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+	inverseRelationTwoWay = false;
+	#endif
 	#endif
 	
 	next = NULL;

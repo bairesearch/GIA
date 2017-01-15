@@ -26,7 +26,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1c 14-November-2014
+ * Project Version: 2h1d 14-November-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -201,7 +201,7 @@ bool initialiseLRP(string newLRPDataFolderName, bool newUseLRP);
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
 	bool loadVerbList(string irregularVerbListFileName, GIALRPtag * firstTagInIrregularVerbList);
 	#endif
-	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	bool loadPrepositionsInverseList(string prepositionsInverseListFileName, GIALRPtag * firstTagInPrepositionsInverseList);
 	#endif
 bool getUseLRP();
@@ -236,9 +236,11 @@ bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * first
 #endif
 #endif
 
-#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool * inverseConditionRequired, bool * twoWayConditionRequired, string * inverseConditionName);
+#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
 bool identifyConditionType(GIAentityNode * conditionEntity);
+#endif
 #endif
 
 #endif

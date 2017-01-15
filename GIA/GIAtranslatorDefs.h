@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1c 14-November-2014
+ * Project Version: 2h1d 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -152,9 +152,7 @@
 	#define GIA_USE_SUPPORT_MULTIPLE_CONDITION_INSTANCES_PER_CONDITION
 #endif
 //#define GIA_USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
-#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
-	//#define GIA_USE_SUPPORT_MULTIPLE_CONDITION_INSTANCES_PER_CONDITION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
-#endif
+//#define GIA_USE_SUPPORT_MULTIPLE_CONDITION_INSTANCES_PER_CONDITION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
 //#define USE_OLD_SUBJ_OBJ_ONLY_ONE_PAIR_RESTRICTION_METHOD 	//default: disabled
 
 
