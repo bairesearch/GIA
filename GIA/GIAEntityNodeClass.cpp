@@ -11,11 +11,11 @@
 #include "GIAEntityNodeClass.h"
 
 string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES] = {"undefined", "present", "past", "future"};
-int grammaticalTenseNameLengthsArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES] = {9, 7, 4, 6};
+//int grammaticalTenseNameLengthsArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES] = {9, 7, 4, 6};
 string grammaticalNumberNameArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {"undefined", "uncountable", "singular", "plural"};
-int grammaticalNumberNameLengthsArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {9, 11, 8, 6};
+//int grammaticalNumberNameLengthsArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {9, 11, 8, 6};
 string grammaticalGenderNameArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES] = {"undefined", "person", "masculine", "feminine"};
-int grammaticalGenderNameLengthsArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES] = {9, 6, 9, 8};
+//int grammaticalGenderNameLengthsArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES] = {9, 6, 9, 8};
 
 //~nouns
 GIAEntityNode::GIAEntityNode(void)

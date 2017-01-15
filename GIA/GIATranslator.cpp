@@ -24,6 +24,14 @@ string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES]
 //int relationTypePossessiveNameLengthsArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {5, 3};
 string relationFunctionCompositionNameArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_COMPOSITION_1, RELATION_FUNCTION_COMPOSITION_2, RELATION_FUNCTION_COMPOSITION_3};
 //int relationFunctionCompositionNameLengthsArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {8, 9, 3};
+
+int referenceTypeHasDeterminateCrossReferenceNumberArray[GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES] = {GRAMMATICAL_NUMBER_SINGULAR};
+string relationTypeAdjectiveWhichImplyEntityInstanceNameArray[RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_1, RELATION_TYPE_ADJECTIVE_3};
+
+
+
+
+
 /* ORIGINAL v1a;
 string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_TO};
 //int relationTypeObjectNameLengthsArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {4, 2, 6, 6};
@@ -636,6 +644,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{
+			//possessive of properties [NB plural/singular indicates definite noun - eg a robin, the robin, the robins - which is therefore a property (entity instance):
+								
+			//possessive of properties:
+			
 			bool passed = false;
 			for(int i=0; i<RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES; i++)
 			{
@@ -654,6 +666,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				ownerEntity->hasPropertyTemp = true;
 			}
 			
+			//possessive of properties:
+			
 			passed = false;
 			for(int i=0; i<RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES; i++)
 			{
@@ -671,6 +685,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
 				thingEntity->hasPropertyTemp = true;
 			}
+			
+			//has subject:
 				
 			passed = false;
 			for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
@@ -687,6 +703,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				GIAEntityNode * subjectEntity = GIAEntityNodeArray[relationArgumentIndex];
 				subjectEntity->isSubjectTemp = true;
 			}
+			
+			//has object:
 			
 			passed = false;
 			for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
@@ -879,11 +897,72 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			{
 				if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
 				{
+					cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
 					addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
 				}
 			}
 		}
-							
+		//0b pass; define properties (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore properties] 
+		if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_NOUNS_WITH_DETERMINATES == 1)
+		{
+			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+			{	
+				if(GIAEntityNodeArrayFilled[i])
+				{
+					bool passed = false;
+					for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
+					{
+						cout << "as" << endl;
+
+						cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
+						cout << "GIAEntityNodeArray[i]->grammaticalNumberTemp = " << GIAEntityNodeArray[i]->grammaticalNumberTemp << endl;
+
+						if(GIAEntityNodeArray[i]->grammaticalNumberTemp == referenceTypeHasDeterminateCrossReferenceNumberArray[j])
+						{
+							passed = true;
+						}
+					}
+					if(passed == true)
+					{
+						cout << "DETERMINATE DETECTED GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;
+						addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
+					}
+				}
+			}
+		}
+		
+		/*
+		//0c pass; define properties (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late] 
+		currentRelationInList = currentSentenceInList->firstRelationInList;
+ 		while(currentRelationInList->next != NULL)
+		{	
+			bool passed = false;
+			for(int i=0; i<RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypeAdjectiveWhichImplyEntityInstanceNameArray[i])
+				{
+					passed = true;
+				}
+			}						
+			if(passed == true)
+			{
+				//create a new property for the entity and assign a property definition entity if not already created
+				string thingName = currentRelationInList->relationFunction;
+				string propertyName = currentRelationInList->relationArgument; 
+				int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
+				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;				
+				GIAEntityNode * thingEntity = GIAEntityNodeArray[relationFunctionIndex];
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+				
+				addPropertyToPropertyDefinition(thingEntity);					
+			}			
+			currentRelationInList = currentRelationInList->next;
+		}
+		*/				
+		
+		
+			
+										
 		//1 pass; link properties (possessive relationships); eg joe's bike
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
