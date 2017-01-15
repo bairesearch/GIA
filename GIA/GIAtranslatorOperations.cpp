@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b1b 18-December-2013
+ * Project Version: 2b2a 21-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -3056,6 +3056,63 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 		cout << GIA2semanticDependencyRelation << endl;
 	}
 }
+
+//this function [recording aux/cop/det syntatical dependency relations] is required to extract tense and perform instance/concept identification once GIA2 lookup has been performed: it is only currently supported by Stanford parser
+void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(GIAentityNode ** GIAentityNodeArray, Sentence * currentSentenceInList, bool linkPreestablishedReferencesGIA, int NLPdependencyRelationsType)
+{
+	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
+	{
+		if(!linkPreestablishedReferencesGIA)
+		{
+			Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+				
+			while(currentRelationInList->next != NULL)
+			{
+				int entityIndex1 = currentRelationInList->relationGovernorIndex;
+				int entityIndex2 = currentRelationInList->relationDependentIndex;
+				bool sameReferenceSet =	false;	//irrelevant
+			
+				/*
+				if(!(currentRelationInList->disabled))
+				{
+				*/
+				if(currentRelationInList->relationType == RELATION_TYPE_MODAL_AUX)	//same as auxiliary
+				{
+					string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelation(GIAentityNodeArray, GIA_ENTITY_VECTOR_CONNECTION_TYPE_AUXILIARY, entityIndex1, entityIndex2, sameReferenceSet);
+					cout << GIA2semanticDependencyRelation << endl;
+				}
+				
+				if(currentRelationInList->relationType == RELATION_TYPE_PASSIVE_AUX)
+				{
+					string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelation(GIAentityNodeArray, GIA_ENTITY_VECTOR_CONNECTION_TYPE_AUXILIARY, entityIndex1, entityIndex2, sameReferenceSet);
+					cout << GIA2semanticDependencyRelation << endl;
+				}
+
+				if(currentRelationInList->relationType == RELATION_TYPE_COPULA)
+				{
+					string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelation(GIAentityNodeArray, GIA_ENTITY_VECTOR_CONNECTION_TYPE_AUXILIARY, entityIndex1, entityIndex2, sameReferenceSet);
+					cout << GIA2semanticDependencyRelation << endl;
+				}
+
+				if(currentRelationInList->relationType == RELATION_TYPE_DETERMINER)
+				{
+					string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelation(GIAentityNodeArray, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DETERMINER, entityIndex1, entityIndex2, sameReferenceSet);
+					cout << GIA2semanticDependencyRelation << endl;
+				}
+				/*
+				}
+				*/
+
+				currentRelationInList = currentRelationInList->next;
+			}
+		}
+	}
+	else
+	{
+		cout << "GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial() error: function currently requires Stanford parser/CoreNLP" << endl;
+	}
+}
+
 string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet) 
 {
 	string entityWord1 = GIAentityNodeArray[entityIndex1]->wordOrig;
@@ -3265,5 +3322,7 @@ string determineGIAconnectionistNetworkPOStypeName(Feature * currentFeatureInSen
 	*/	
 	return GIAconnectionistNetworkPOStypeName;		
 }
+
+
 #endif	
 									
