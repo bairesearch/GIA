@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c2d 14-January-2014
+ * Project Version: 2c2e 14-January-2014
  *
  *******************************************************************************/
 -->
@@ -2168,6 +2168,27 @@
 				<option functionToExecuteUponFind="1" />
 				</paramEntity>
 			</function>
+			
+			<function name="defineSubstancesExpletives">
+				<!-- eg There is _expl(be[2], there[1]) [Relex] / expl(is-2, There-1) [stanford] -->
+				<!-- #ifdefGIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION -->
+				<!--
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_expl" />
+				<option functionToExecuteUponFind="1" />
+				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="1" />
+				</paramDepRel>
+				-->
+				<!-- #else -->
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_expl" />
+				<option disableEntity="true" REL="0" REL_ENT="1" />
+				<option disableEntity="true" REL="0" REL_ENT="0" />
+				</paramDepRel>
+				<!-- #endif -->
+			</function>
 
 			<!-- #ifdefGIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS -->
 			<function name="defineSubstancesAllNodes">
@@ -2300,27 +2321,6 @@
 				<option functionToExecuteUponFind="1" />
 				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="1" />
 				</paramDepRel>
-			</function>
-
-			<function name="defineSubstancesExpletives">
-				<!-- eg There is _expl(be[2], there[1]) [Relex] / expl(is-2, There-1) [stanford] -->
-				<!-- #ifdefGIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION -->
-				<!--
-				<paramDepRel mode="execute">
-				<option numberOfRelations="1" />
-				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_expl" />
-				<option functionToExecuteUponFind="1" />
-				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="1" />
-				</paramDepRel>
-				-->
-				<!-- #else -->
-				<paramDepRel mode="redistribute">
-				<option numberOfRelations="1" />
-				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_expl" />
-				<option disableEntity="true" REL="0" REL_ENT="1" />
-				<option disableEntity="true" REL="0" REL_ENT="0" />
-				</paramDepRel>
-				<!-- #endif -->
 			</function>
 
 			<function name="defineSubstancesPronouns">

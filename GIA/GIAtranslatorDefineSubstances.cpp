@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c2d 14-January-2014
+ * Project Version: 2c2e 14-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -40,10 +40,15 @@
 void defineSubstances(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[], int NLPdependencyRelationsType)
 {
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0a pass; define substances (objects/subjects with substances; eg 'Truffles which are picked are tasty.' - Truffle must be an instance/substance in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
+	cout << "0a0 pass; define substances (objects/subjects with substances; eg 'Truffles which are picked are tasty.' - Truffle must be an instance/substance in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
 	#endif
 	defineSubstancesObjectsAndSubjectsWithSubstances(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, GIAentityNodeArray);	//why did this used to be GIAfeatureTempEntityNodeArray?
 
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "0a1 pass; define substances (expletives eg 'there' in 'there is a place');" << endl;
+	#endif
+	defineSubstancesExpletives(currentSentenceInList, GIAentityNodeArray);
+	
 	#ifdef GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0a2 pass; define substances all nodes" << endl;
@@ -107,11 +112,6 @@ void defineSubstances(Sentence * currentSentenceInList, bool GIAentityNodeArrayF
 	cout << "0g pass; define substances (quantity mods);" << endl;
 	#endif
 	defineSubstancesQuantityModifiers(currentSentenceInList, GIAentityNodeArray);
-
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0h pass; define substances (expletives eg 'there' in 'there is a place');" << endl;
-	#endif
-	defineSubstancesExpletives(currentSentenceInList, GIAentityNodeArray);
 
 	#ifdef GIA_ASSIGN_SUBSTANCE_TO_ALL_PRONOUNS
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -204,6 +204,73 @@ void defineSubstancesObjectsAndSubjectsWithSubstances(Sentence * currentSentence
 	}
 #endif
 }
+
+void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+{
+	//eg There is 	_expl(be[2], there[1]) [Relex]	/ expl(is-2, There-1) [stanford]
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	#ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
+	param.numberOfRelations = 1;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_EXPLETIVE;
+	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
+	genericDependecyRelationInterpretation(&param, REL1);
+	#else
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, false);
+	param.numberOfRelations = 1;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_EXPLETIVE;
+	param.disableEntity[REL1][REL_ENT2] = true;
+	genericDependecyRelationInterpretation(&param, REL1);
+	#endif
+#else
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+ 	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			bool passed = false;
+			if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT_EXPLETIVE)
+			{
+				//create substance definition
+				int substanceIndex = currentRelationInList->relationDependentIndex;
+				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
+
+				#ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
+				GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
+				#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+				cout << "defineSubstancesExpletives: " << substanceEntity->entityName << endl;
+				#endif
+				#else
+				disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(substanceEntity);
+				#endif
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}
+#endif
+}
+
+
+#ifdef GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
+void defineSubstancesAllNodes(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+{
+	#ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
+	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
+	EntityCharacteristic entityCharacteristicsTest1("isConcept", "true");
+	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
+	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	genericEntityInterpretation(&param);
+	#else
+	cout << "defineSubstancesAllNodes() error: not coded as this function was developed after GIA_USE_GENERIC_ENTITY_INTERPRETATION" << endl;
+	#endif	
+}
+#endif
+
 
 void defineSubstancesDefiniteNouns(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
 {
@@ -817,56 +884,6 @@ void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAenti
 		}
 		#endif
 
-		currentRelationInList = currentRelationInList->next;
-	}
-#endif
-}
-
-void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
-{
-	//eg There is 	_expl(be[2], there[1]) [Relex]	/ expl(is-2, There-1) [stanford]
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
-	#ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
-	param.numberOfRelations = 1;
-	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_EXPLETIVE;
-	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
-	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
-	genericDependecyRelationInterpretation(&param, REL1);
-	#else
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, false);
-	param.numberOfRelations = 1;
-	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_EXPLETIVE;
-	param.disableEntity[REL1][REL_ENT2] = true;
-	genericDependecyRelationInterpretation(&param, REL1);
-	#endif
-#else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
- 	while(currentRelationInList->next != NULL)
-	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-		if(!(currentRelationInList->disabled))
-		{
-		#endif
-			bool passed = false;
-			if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT_EXPLETIVE)
-			{
-				//create substance definition
-				int substanceIndex = currentRelationInList->relationDependentIndex;
-				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
-
-				#ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
-				GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
-				#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
-				cout << "defineSubstancesExpletives: " << substanceEntity->entityName << endl;
-				#endif
-				#else
-				disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(substanceEntity);
-				#endif
-			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-		}
-		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
 #endif
@@ -1494,21 +1511,6 @@ void defineSubstancesActionConcepts(Sentence * currentSentenceInList, bool GIAen
 		}
 	}
 #endif
-}
-#endif
-
-#ifdef GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
-void defineSubstancesAllNodes(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
-{
-	#ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
-	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
-	EntityCharacteristic entityCharacteristicsTest1("isConcept", "true");
-	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
-	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
-	genericEntityInterpretation(&param);
-	#else
-	cout << "defineSubstancesAllNodes() error: not coded as this function was developed after GIA_USE_GENERIC_ENTITY_INTERPRETATION" << endl;
-	#endif	
 }
 #endif
 
