@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n6a 28-July-2012
+ * Project Version: 1n7a 30-July-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -184,12 +184,6 @@ GIAEntityNode * LocalFindOrAddConceptEntityNodeByName(vector<GIAEntityNode*> *en
 GIAEntityNode * findOrAddConceptEntityNodeByName(vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList, bool saveNetwork);
 #endif
 
-/*
-GIAEntityNode * findOrAddConceptEntityNodeByName(vector<GIAEntityNode*> *entityNodesActiveListComplete, vector<GIAEntityNode*> *entityNodesActiveListConcepts, vector<string> *conceptEntityNamesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList);
-#ifdef GIA_USE_TIME_NODE_INDEXING
-GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *timeConditionNodesActiveList, vector<long> *timeConditionNumbersActiveList, long * timeNodeNumber, bool * found, long * index, bool addIfNonexistant, GIATimeConditionNode * prexistingTimeConditionNode);
-#endif
-*/
 
 GIAEntityNode * findActiveEntityNodeByID(long EntityNodeID, vector<GIAEntityNode*> *entityNodesActiveListComplete);
 
@@ -206,7 +200,6 @@ bool setCurrentDirectory(string * folderName);
 bool checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(string * folderName);
 
 
-GIAEntityNode * findOrAddConceptEntityNodeByName(vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, bool> *DBconceptEntityNodesLoadedList, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList, bool saveNetwork);
 
 string DBgenerateServerName(string * entityName, int fileType);
 string DBgenerateFileName(string * entityName, long idInstance, int connectionType, int fileType);

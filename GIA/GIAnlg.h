@@ -23,7 +23,7 @@
  * File Name: GIAnlg.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n6a 28-July-2012
+ * Project Version: 1n7a 30-July-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -119,7 +119,7 @@ static string grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_
 
 NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSentence * currentNLGsentence, bool isQueryAnswerContext, int isQueryAnswerContextRound);
 	void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, string * generatedText, int connectionType1, int connectionType2, int startEntityIndex, bool supportAdditionalLinks);
-	void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode0, GIAEntityConnection * entityConnection, string * generatedText, int connectionType, int startEntityIndex, bool additionalLink);
+	void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, GIAEntityConnection * entityConnection, string * generatedText, int connectionType, int startEntityIndex, bool additionalLink);
 		#ifdef GIA_USE_NLG2
 		void NLG2generateNLGInputViewFeatureTagsGenericPerSentence(string * generatedNLGInputViewTags);
 		void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNode, int entityIndex, string * generatedNLGInputViewTags);

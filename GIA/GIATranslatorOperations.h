@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n6a 28-July-2012
+ * Project Version: 1n7a 30-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -888,7 +888,7 @@ bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, 
 
 GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet);
 GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
-	GIAEntityNode * addProperty(GIAEntityNode * propertyEntity);
+	GIAEntityNode * addProperty(GIAEntityNode * entity);
 
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, bool isProgressive);
 
@@ -948,7 +948,6 @@ void disableEntity(GIAEntityNode * entity);
 void disableConceptEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity);	//not used
 void disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity);	//not used
 
-void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[]);
 void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap);
 void recordConceptNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap);
 void recordConceptNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap);
@@ -973,7 +972,7 @@ bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relatio
 GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int featureIndex, string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts);
 GIAEntityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts);
 
-void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int vectorConnectionType, bool sameReferenceSet);
+void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet);
 
 long determineNextIdInstance(GIAEntityNode * entity);
 

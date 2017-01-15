@@ -23,7 +23,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n6a 28-July-2012
+ * Project Version: 1n7a 30-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -63,7 +63,7 @@ void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFille
 
 void extractQuantities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, int NLPfeatureParser);	//Stanford Compatible
 	#ifdef GIA_USE_RELEX
-	void extractQuantitiesRelex(Sentence * currentSentenceInList,  bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts);
+	void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts);
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
 	void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts);		//Stanford Specific	[requires NERTemp info to be set]

@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n6a 28-July-2012
+ * Project Version: 1n7a 30-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -61,11 +61,7 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, 
 #endif
 	void convertSentenceListRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations);
 		void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations);
-			#ifdef GIA_ADVANCED_REFERENCING_ORIGINAL
 			void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations, bool linkPreestablishedReferencesGIA,  GIACoreference * firstGIACoreferenceInList);
-			#else
-			void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations);
-			#endif
 				void disableConceptEntitiesBasedOnFeatureTempEntityNodeArray(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], GIAEntityNode * GIAFeatureTempEntityNodeArray[]);
 				void disableEntitiesBasedOnFeatureTempEntityNodeArray(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], GIAEntityNode * GIAFeatureTempEntityNodeArray[]);		//added 15 July 2012
 
