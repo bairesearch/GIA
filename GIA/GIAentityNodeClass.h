@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2d 18-November-2014
+ * Project Version: 2h2e 18-November-2014
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -104,14 +104,14 @@ using namespace std;
 #define GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE 4		//eg Mow the grass! / ~VB
 #define GRAMMATICAL_TENSE_MODIFIER_POTENTIAL 5	//added 2h2a/2h2c: _able/_ive adjectives (ignore nouns)	//eg mowable / affirmative
 #define GRAMMATICAL_TENSE_MODIFIER_STATE 6	//added 2h2a	//eg is mowed (as opposed to was mowed)	//used for both states and affections - note noun versus verb base forms are not distinguished here by POS tagger; both are assigned VBN
-#define GRAMMATICAL_TENSE_MODIFIER_DEFINITION 7	//added 2h2d: _ment/_ion nouns	//eg movement / transition	//note these are different than action concepts, as these define an instance of an action, not an action in general; eg "the movement"/"the transition"
+#define GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION 7	//added 2h2d: _ment/_ion nouns	//eg movement / transition	//note these are different than action concepts, as these define an instance of an action, not an action in general; eg "the movement"/"the transition"
 #define GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES 8
 #define GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_OR_PRESENT_NOT_THIRD_PERSON_SINGULAR_OR_STATE_TEMP (7)
 #define GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP (8)
 #define GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP (9)
 #define GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP (10)
 #define GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP (11)	
-#define GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP (12)
+#define GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP (12)
 
 #define GRAMMATICAL_NUMBER_UNDEFINED 0
 #define GRAMMATICAL_NUMBER_UNCOUNTABLE 1

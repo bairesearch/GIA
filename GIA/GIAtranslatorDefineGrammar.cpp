@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2d 18-November-2014
+ * Project Version: 2h2e 18-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -642,21 +642,21 @@ void extractGrammaticalInformationFromPOStag(string * POStag, Feature * feature)
 		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_STATE] = true;
 	}
 	#endif
-	#ifdef GIA_FEATURE_POS_TAG_VERB_DEFINITION
+	#ifdef GIA_FEATURE_POS_TAG_VERB_DESCRIPTION
 	//added 2h2d
 	//not detected by POS standard
 	//"definition" tense extraction;
 	bool definitionDetected = false;
-	for(int i=0; i<FEATURE_POS_TAG_VERB_DEFINITION_NUMBER_OF_TYPES; i++)
+	for(int i=0; i<FEATURE_POS_TAG_VERB_DESCRIPTION_NUMBER_OF_TYPES; i++)
 	{
-		if(*POStag == posTagVerbDefinitionArray[i])
+		if(*POStag == posTagVerbDescriptionArray[i])
 		{
 			definitionDetected = true;
 		}
 	}
 	if(definitionDetected)
 	{
-		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_DEFINITION] = true;
+		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION] = true;
 	}
 	#endif
 }

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2d 18-November-2014
+ * Project Version: 2h2e 18-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -112,7 +112,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 			//Should the NLP settings be overruled here - is a verb base form always an imperative or infinitive? Answer = NO; Therefore only perform upgrade for special infinitive cases
 			if(currentFeature->previousWordInSentenceIsTo)
 			{//only perform upgrade here for special infinitive cases... (eg "to verbbaseform"), as some verbbaseforms are also nouns (eg "tabled" and "table"). Also don't wish to overwrite VBP cases eg "I eat the..."
-				string stanfordPOS = FEATURE_POS_TAG_VERB_VB;	//FUTURE GIA - consider using new non-standard pos tage FEATURE_POS_TAG_VERB_VBDEFINITION instead of reusing FEATURE_POS_TAG_VERB_VBs
+				string stanfordPOS = FEATURE_POS_TAG_VERB_VB;	//FUTURE GIA - consider using new non-standard pos tage FEATURE_POS_TAG_VERB_VBDESCRIPTION instead of reusing FEATURE_POS_TAG_VERB_VBs
 				currentFeature->stanfordPOS = stanfordPOS;
 
 				extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
@@ -245,18 +245,18 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 		}
 	}
 	#endif
-	#ifdef GIA_FEATURE_POS_TAG_VERB_DEFINITION
-	if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP))
+	#ifdef GIA_FEATURE_POS_TAG_VERB_DESCRIPTION
+	if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP))
 	{
 		if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_NOUN)	//NB "ion"/"ment" words will be marked as NN/noun by Stanford/Relex POS tagger
 		{
-			string stanfordPOS = FEATURE_POS_TAG_VERB_VBDEFINITION;
+			string stanfordPOS = FEATURE_POS_TAG_VERB_VBDESCRIPTION;
 
 			string wordOrigLowerCase = convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
 			if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = runnable, and entityName (NLP identified lemma) = runnable; then apply the lemma correction
 			{
 				updatedLemma = true;
-
+				
 				actionOrSubstanceEntity->entityName = baseNameFound;
 
 				currentFeature->stanfordPOS = stanfordPOS;

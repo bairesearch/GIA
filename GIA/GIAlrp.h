@@ -26,7 +26,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2d 18-November-2014
+ * Project Version: 2h2e 18-November-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -95,23 +95,23 @@ using namespace std;
 #define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE3 "imentive"	//last 1 characters replaced (y)
 #endif
 #endif
-#ifdef GIA_FEATURE_POS_TAG_VERB_DEFINITION
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION_APPEND "ment"		//0 characters replaced
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION_APPEND_CASE1II "ament"	//0 characters replaced
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION_APPEND_CASE1III "lment"	//0 characters replaced
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION_APPEND_CASE2 "ment"	//last 1 characters replaced (e)
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION_APPEND_CASE3 "iment"	//last 1 characters replaced (y)
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION_APPEND_CASE5 "pment"	//last 2 characters replaced
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND "ion"		//0 characters replaced
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE1II "ition"	//0 characters replaced
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE1III "ation"	//0 characters replaced
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE2 "ion"	//last 1 characters replaced (e)
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE2II "ition"	//last 1 characters replaced (e)
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE2III "ation"	//last 1 characters replaced (e)
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE3 "ication"	//last 1 characters replaced (y)
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE6I "amation"	//last 3 characters replaced
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE6II "ision"	//last 3 characters replaced
-#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE6III "ition"	//last 3 characters replaced
+#ifdef GIA_FEATURE_POS_TAG_VERB_DESCRIPTION
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND "ment"		//0 characters replaced
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE1II "ament"	//0 characters replaced
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE1III "lment"	//0 characters replaced
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE2 "ment"	//last 1 characters replaced (e)
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE3 "iment"	//last 1 characters replaced (y)
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE5 "pment"	//last 2 characters replaced
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND "ion"		//0 characters replaced
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE1II "ition"	//0 characters replaced
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE1III "ation"	//0 characters replaced
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2 "ion"	//last 1 characters replaced (e)
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2II "ition"	//last 1 characters replaced (e)
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2III "ation"	//last 1 characters replaced (e)
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE3 "ication"	//last 1 characters replaced (y)
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6I "amation"	//last 3 characters replaced
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6II "ision"	//last 3 characters replaced
+#define GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6III "ition"	//last 3 characters replaced
 
 #endif
 

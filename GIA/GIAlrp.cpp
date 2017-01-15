@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2d 18-November-2014
+ * Project Version: 2h2e 18-November-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -2211,49 +2211,49 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 				}
 				#endif
 
-				#ifdef GIA_FEATURE_POS_TAG_VERB_DEFINITION
+				#ifdef GIA_FEATURE_POS_TAG_VERB_DESCRIPTION
 				//added 2h2d
-				//GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_DEFINITION_TEMP _ment:
+				//GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP _ment:
 				//potential rule 1ai: -> ment eg movement/government/derailment/detainment/enjoyment
-				hypotheticalVerbVariantCase1ai = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION_APPEND;
+				hypotheticalVerbVariantCase1ai = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND;
 				if(wordLowerCase == hypotheticalVerbVariantCase1ai)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				//potential rule 1aii: -> ament eg disarmament
-				hypotheticalVerbVariantCase1aii = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION_APPEND_CASE1II;
+				hypotheticalVerbVariantCase1aii = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE1II;
 				if(wordLowerCase == hypotheticalVerbVariantCase1aii)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				//potential rule 1aiii: -> lment eg enrollment/installment/fulfillment
-				hypotheticalVerbVariantCase1aiii = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION_APPEND_CASE1III;
+				hypotheticalVerbVariantCase1aiii = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE1III;
 				if(wordLowerCase == hypotheticalVerbVariantCase1aiii)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				/*
 				//potential rule 1b: running - "run" + "n" [run n] + "itive"
-				hypotheticalVerbVariantCase1b = base + lastCharacterInBase + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION_INVERSE_APPEND;
+				hypotheticalVerbVariantCase1b = base + lastCharacterInBase + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_INVERSE_APPEND;
 				if(wordLowerCase == hypotheticalVerbVariantCase1b)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				*/
 				//potential rule 2i: e -> ment eg judgement/dislodgment
-				hypotheticalVerbVariantCase2i = baseWithLast1LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION_APPEND_CASE2;
+				hypotheticalVerbVariantCase2i = baseWithLast1LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE2;
 				if(wordLowerCase == hypotheticalVerbVariantCase2i)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				/*
@@ -2262,116 +2262,116 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 				if(wordLowerCase == hypotheticalVerbVariantCase2ii)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				*/
 				//potential rule 3a: y -> iment eg worriment/suppliment/embodiment
-				hypotheticalVerbVariantCase3a = baseWithLast1LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION_APPEND_CASE3;
+				hypotheticalVerbVariantCase3a = baseWithLast1LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE3;
 				if(wordLowerCase == hypotheticalVerbVariantCase3a)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				//potential rule 5: pt -> pment eg entrapment/equipment
-				string hypotheticalVerbVariantCase5 = baseWithLast2LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION_APPEND_CASE5;
+				string hypotheticalVerbVariantCase5 = baseWithLast2LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE5;
 				if(wordLowerCase == hypotheticalVerbVariantCase5)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 
-				//GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP _ion:
+				//GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP _ion:
 				//potential rule 1ai: -> ion eg absorption/abstraction/adaptation
-				hypotheticalVerbVariantCase1ai = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND;
+				hypotheticalVerbVariantCase1ai = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND;
 				if(wordLowerCase == hypotheticalVerbVariantCase1ai)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				//potential rule 1aii: -> ition eg addition
-				hypotheticalVerbVariantCase1aii = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE1II;
+				hypotheticalVerbVariantCase1aii = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE1II;
 				if(wordLowerCase == hypotheticalVerbVariantCase1aii)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				//potential rule 1aiii: -> ation eg acceptation/affirmation
-				hypotheticalVerbVariantCase1aiii = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE1III;
+				hypotheticalVerbVariantCase1aiii = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE1III;
 				if(wordLowerCase == hypotheticalVerbVariantCase1aiii)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				/*
 				//potential rule 1b: running - "run" + "n" [run n] + "itive"
-				hypotheticalVerbVariantCase1b = base + lastCharacterInBase + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_INVERSE_APPEND;
+				hypotheticalVerbVariantCase1b = base + lastCharacterInBase + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_INVERSE_APPEND;
 				if(wordLowerCase == hypotheticalVerbVariantCase1b)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				*/
 				//potential rule 2i: e -> ion eg relation/acclimatisation/accommodation/activation/accretion
-				hypotheticalVerbVariantCase2i = baseWithLast1LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE2;
+				hypotheticalVerbVariantCase2i = baseWithLast1LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2;
 				if(wordLowerCase == hypotheticalVerbVariantCase2i)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				//potential rule 2ii: e -> ition + ive eg competition/composition/definition
-				hypotheticalVerbVariantCase2ii = baseWithLast1LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE2II;
+				hypotheticalVerbVariantCase2ii = baseWithLast1LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2II;
 				if(wordLowerCase == hypotheticalVerbVariantCase2ii)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				//potential rule 2iii: e -> ation + ive eg admiration/organisation
-				string hypotheticalVerbVariantCase2iii = baseWithLast1LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE2III;
+				string hypotheticalVerbVariantCase2iii = baseWithLast1LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2III;
 				if(wordLowerCase == hypotheticalVerbVariantCase2iii)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				//potential rule 3a: ify -> ification eg subjectification/amplification/ammonification/identification/beautification
-				hypotheticalVerbVariantCase3a = baseWithLast1LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE3;
+				hypotheticalVerbVariantCase3a = baseWithLast1LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE3;
 				if(wordLowerCase == hypotheticalVerbVariantCase3a)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				//potential rule 6i: aim -> amation eg acclamation {acclimation?}
-				string hypotheticalVerbVariantCase6i = baseWithLast3LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE6I;
+				string hypotheticalVerbVariantCase6i = baseWithLast3LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6I;
 				if(wordLowerCase == hypotheticalVerbVariantCase6i)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				//potential rule 6i: ide -> ision eg division
-				string hypotheticalVerbVariantCase6ii = baseWithLast3LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE6II;
+				string hypotheticalVerbVariantCase6ii = baseWithLast3LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6II;
 				if(wordLowerCase == hypotheticalVerbVariantCase6ii)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				//potential rule 6iii: ish -> ition eg abolition/demolition
-				string  hypotheticalVerbVariantCase6iii = baseWithLast3LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DEFINITION2_APPEND_CASE6III;
+				string  hypotheticalVerbVariantCase6iii = baseWithLast3LettersDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6III;
 				if(wordLowerCase == hypotheticalVerbVariantCase6iii)
 				{
 					foundVerbCase = true;
-					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DEFINITION_TEMP;
+					*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP;
 					*baseNameFound = currentTagInVerbList->tagName;
 				}
 				#endif
