@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f15c 16-July-2014
+ * Project Version: 2f15d 16-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -610,6 +610,7 @@
 
 #ifdef USE_NLC
 	#define GIA_STORE_CONNECTION_SENTENCE_INDEX	//added 2f14b 14-July-2014 [required for NLC 1g15a+]
+	#define GIA_DO_NOT_OVERWRITE_SENTENCE_INDEX_OF_REFERENCE_SOURCE
 #endif
 //#define GIA_ENABLE_WARNINGS
 #define GIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES	//added 2f13a 14-July-2014
