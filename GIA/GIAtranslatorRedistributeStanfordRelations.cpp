@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s9a 04-July-2013
+ * Project Version: 1s9b 04-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -45,7 +45,13 @@
 void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 	//eliminate all redundant date relations eg num(December-4, 3rd-5)/num(December-4, 1990-7)/nn(3rd-5, December-4)/appos(3rd-5, 1990-7), where both the governer and the dependent have NER tag set to DATE
-
+	/*Also: Ms. Savata's hand slipped.
+          <dep type="nn">
+            <governor idx="2">Savata</governor>
+            <dependent idx="1">Ms.</dependent>
+          </dep>
+	*/
+	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -65,10 +71,28 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 				}
 			}
 
-			//if(((governerEntity->NERTemp == FEATURE_NER_DATE) && (dependentEntity->NERTemp == FEATURE_NER_DATE)) || ((governerEntity->NERTemp == FEATURE_NER_MONEY) && (dependentEntity->NERTemp == FEATURE_NER_MONEY)) || ((governerEntity->NERTemp == FEATURE_NER_NUMBER) && (dependentEntity->NERTemp == FEATURE_NER_NUMBER)) || ((governerEntity->NERTemp == FEATURE_NER_TIME) && (dependentEntity->NERTemp == FEATURE_NER_TIME)))
-			if(governerAndDependentBothHaveSameNERvalue)
+			bool governerIsPersonAndRelationTypeIsPrenominalModifier = false;			
+			#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
+			//the assignment of NER values implementation appears to have changed in Stanford Core NLP
+			if((governerEntity->NERTemp == FEATURE_NER_PERSON) && (currentRelationInList->relationType == RELATION_TYPE_PRENOMIAL_MODIFIER))
 			{
-
+				governerIsPersonAndRelationTypeIsPrenominalModifier = true;
+			}
+			#endif
+			
+			/*
+			cout << "governerEntity->entityName = " << governerEntity->entityName << endl;
+			cout << "dependentEntity->entityName = " << dependentEntity->entityName << endl;
+			cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
+			cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
+			*/
+						
+			//if(((governerEntity->NERTemp == FEATURE_NER_DATE) && (dependentEntity->NERTemp == FEATURE_NER_DATE)) || ((governerEntity->NERTemp == FEATURE_NER_MONEY) && (dependentEntity->NERTemp == FEATURE_NER_MONEY)) || ((governerEntity->NERTemp == FEATURE_NER_NUMBER) && (dependentEntity->NERTemp == FEATURE_NER_NUMBER)) || ((governerEntity->NERTemp == FEATURE_NER_TIME) && (dependentEntity->NERTemp == FEATURE_NER_TIME)))
+			if(governerAndDependentBothHaveSameNERvalue || governerIsPersonAndRelationTypeIsPrenominalModifier)
+			{
+				//cout << "governerEntity->entityName = " << governerEntity->entityName << endl;
+				//cout << "dependentEntity->entityName = " << dependentEntity->entityName << endl;
+				
 				bool featureNERindicatesNameConcatenationRequired = false;
 				for(int i=0; i<FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_TYPES; i++)
 				{
@@ -78,7 +102,7 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 					}
 				}
 
-				//if((governerEntity->NETTemp == FEATURE_NER_PERSON) || (governerEntity->NETTemp == FEATURE_NER_LOCATION) || (governerEntity->NETTemp == FEATURE_NER_ORGANIZATION) || (governerEntity->NETTemp == FEATURE_NER_MISC))
+				//if((governerEntity->NERTemp == FEATURE_NER_PERSON) || (governerEntity->NERTemp == FEATURE_NER_LOCATION) || (governerEntity->NERTemp == FEATURE_NER_ORGANIZATION) || (governerEntity->NERTemp == FEATURE_NER_MISC))
 				if(featureNERindicatesNameConcatenationRequired)
 				{
 					bool featureNERindicatesNameConcatenationRequiredAllowedByPOS = false;

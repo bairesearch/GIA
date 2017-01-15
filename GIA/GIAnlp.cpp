@@ -23,7 +23,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s9a 04-July-2013
+ * Project Version: 1s9b 04-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -751,17 +751,19 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 									//cout << "currentRelationInList->relationDependent = " << currentRelationInList->relationDependent << endl;
 									#endif
 									
+									#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
 									#ifdef GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
 									if(currentRelationInList->relationType != RELATION_TYPE_ROOT)
 									{
+									#endif
+									#endif
 										Relation * newRelation = new Relation();
 										currentRelationInList->next = newRelation;
 										currentRelationInList = currentRelationInList->next;
+									#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
+									#ifdef GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION										
 									}
-									#else		
-									Relation * newRelation = new Relation();
-									currentRelationInList->next = newRelation;
-									currentRelationInList = currentRelationInList->next;
+									#endif		
 									#endif
 									
 									currentTagInDependencies = currentTagInDependencies->nextTag;
