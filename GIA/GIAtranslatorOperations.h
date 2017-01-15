@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r9a 28-November-2012
+ * Project Version: 1r10a 28-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -741,7 +741,7 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 
 #define FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_TYPES (4)
 #define FEATURE_NER_INDICATES_NORMALISED_NER_AVAILABLE_NUMBER_TYPES (4)
-#define FEATURE_NER_NAME_CONCATENATION_TOKEN " " 	//or use "_" for Relex format
+#define FEATURE_NER_NAME_CONCATENATION_TOKEN "_" 	//use "_" for Relex format and/or GIA_USE_DATABASE compatibility, else may use " "
 
 #define FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_TYPES (6)
 #define FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_TYPES (5)
