@@ -887,7 +887,8 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 	{
 		long findIndex = vectorSize/2;
 		long findRange = maximumLong(findIndex/2, 1);	//maximumLong(((findIndex+1)/2), 1);
-
+		long previousFindRange = findRange;
+		
 		//indexOfEntityNamesIterator = indexOfEntityNames->begin() + startingPoint;
 
 		//cout << "indexOfEntityNamesIterator = " << indexOfEntityNamesIterator << endl;
@@ -905,18 +906,35 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 		
 		while(searchOptionsAvailable == true)
 		{
+			nameTemp = indexOfEntityNames->at(findIndex);
+			/*
+			if(*entityNodeName == "ride")
+			{
+				cout << "vectorSize = "  << vectorSize << endl;
+				cout << "findIndex = " << findIndex << endl;
+				cout << "findRange = " << findRange << endl;		      
+				cout << "nameTemp = " << nameTemp << endl;
+				cout << "*entityNodeName = " << *entityNodeName << endl;		      
+			}
+			*/
+			
 			//cout << "vectorSize = "  << vectorSize << endl;
 			//cout << "findIndex = " << findIndex << endl;
-			//cout << "findRange = " << findRange << endl;
-			nameTemp = indexOfEntityNames->at(findIndex);
+			//cout << "findRange = " << findRange << endl;			
 			//cout << "nameTemp = " << nameTemp << endl;
 			//cout << "*entityNodeName = " << *entityNodeName << endl;
 			
 			if(nameTemp > *entityNodeName)
 			{
+				/*
+				if(*entityNodeName == "ride")
+				{
+					cout << nameTemp << ">" << *entityNodeName << endl;
+				}
+				*/
 				//cout << nameTemp << ">" << *entityNodeName << endl;
 				//cout << "previousTempName = " << previousTempName << endl;
-				if((previousTempName < *entityNodeName) || (vectorSize==1))	//&& (!first || (vectorSize==1))
+				if(((previousTempName < *entityNodeName) && (previousFindRange == 1)) || (vectorSize==1))	//&& (!first || (vectorSize==1))
 				{//optimum position lies inbetween
 					//cout << "as" <<endl;
 					searchOptionsAvailable = false;
@@ -942,14 +960,21 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 					}
 				}
 
+				previousFindRange = findRange;
 				findRange = maximumLong(findRange/2, 1);	//findRange = (findRange+1)/2;
 
 			}
 			else if(nameTemp < *entityNodeName)
 			{
+				/*
+				if(*entityNodeName == "ride")
+				{
+					cout << nameTemp << "<" << *entityNodeName << endl;
+				}
+				*/			
 				//cout << nameTemp << "<" << *entityNodeName << endl;	
 				
-				if((previousTempName > *entityNodeName) || (vectorSize==1))		//& (!first || (vectorSize==1))
+				if(((previousTempName > *entityNodeName) && (previousFindRange == 1)) || (vectorSize==1))		//& (!first || (vectorSize==1))
 				{//optimum position lies inbetween
 					searchOptionsAvailable = false;
 					*found = false;
@@ -975,6 +1000,7 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 					}
 				}
 
+				previousFindRange = findRange;
 				findRange = maximumLong(findRange/2, 1);	//findRange = (findRange+1)/2;
 
 			}
