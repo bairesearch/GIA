@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7b 29-June-2013
+ * Project Version: 1s7c 29-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -73,6 +73,8 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 		GIAentityNode * addLocationConditionToEntity(GIAentityNode * substanceNode, GIAentityNode * locationConditionEntity, GIAentityNode * conditionTypeConceptEntity, bool sameReferenceSet);  //Stanford Compatible
 		GIAentityNode * addReasonConditionToEntity(GIAentityNode * substanceNode, GIAentityNode * reasonConditionEntity, GIAentityNode * conditionTypeConceptEntity, bool sameReferenceSet);	   //Stanford Compatible
 		GIAentityNode * addGenericConditionToEntity(GIAentityNode * substanceNode, GIAentityNode * substanceConditionEntity, GIAentityNode * conditionTypeConceptEntity, bool sameReferenceSet);  //Stanford Compatible
+void linkPropertiesDependentActions(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[]);
+
 
 bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, string * prepositionName, int * indexOfPreposition);
 

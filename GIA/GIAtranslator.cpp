@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7b 29-June-2013
+ * Project Version: 1s7c 29-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1015,15 +1015,24 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 
 #ifdef GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "3f pass; define conjunction conditions; eg Either Tom and/or Max eat the cake...." << endl;
+	cout << "3f pass; link conjunction conditions; eg Either Tom and/or Max eat the cake...." << endl;
 	#endif
 	linkConjunctionConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts);
 #endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "3g pass; define conditions" << endl;
+	cout << "3g pass; link conditions" << endl;
 	#endif
 	linkConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
+
+	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
+	{
+		//stanford only
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "3h pass; link properties (dependent actions)" << endl;
+		#endif
+		linkPropertiesDependentActions(currentSentenceInList, GIAentityNodeArray);
+	}
 
 	//Stanford version has been shifted to after all substances have been generated (including actions)... [Upgrade translator - do not associate feature/grammatical info with concept entities; just leave them in the feature array until the concept instances have been generated]
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS

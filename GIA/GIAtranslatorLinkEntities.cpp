@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7b 29-June-2013
+ * Project Version: 1s7c 29-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -2125,3 +2125,44 @@ GIAentityNode * addGenericConditionToEntity(GIAentityNode * substanceNode, GIAen
 }
 
 
+//Stanford Only
+void linkPropertiesDependentActions(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+{
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+ 	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			if(currentRelationInList->relationType == RELATION_TYPE_DEPENDENT)	//check this implementation is not conficting with any stanford dependency relation reductions as defined in RELATION_TYPE_DEPENDENT
+			{
+				string ownerName = currentRelationInList->relationGovernor;
+				string substanceName = currentRelationInList->relationDependent;
+				int ownerIndex = currentRelationInList->relationGovernorIndex;
+				int substanceIndex = currentRelationInList->relationDependentIndex;
+
+				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
+				GIAentityNode * ownerEntity = GIAentityNodeArray[ownerIndex];
+				
+				#ifdef GIA_TRANSLATOR_DEBUG
+				//cout << "RELATION_TYPE_DEPENDENT" << endl;
+				//cout << "ownerName = " << ownerEntity->entityName << endl;								
+				//cout << "substanceName = " << substanceEntity->entityName << endl;
+				#endif
+				
+				#ifdef GIA_USE_ADVANCED_REFERENCING
+				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
+				#else
+				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+				#endif
+				GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(ownerEntity, substanceEntity, sameReferenceSet);
+				//GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(ownerEntity, substanceEntity, sameReferenceSet);	- check if this might ever be required instead
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}
+}	
+	
