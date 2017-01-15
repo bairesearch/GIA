@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s8e 03-July-2013
+ * Project Version: 1s8f 04-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -235,8 +235,11 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				GIAentityNode * definitionEntity = GIAentityNodeArray[definitionIndex];
 
 				#ifdef GIA_TRANSLATOR_DEBUG
+				cout << "linkEntityDefinitionsAppositiveOfNouns:" << endl;
 				cout << "thingName = " << thingEntity->entityName << endl;
 				cout << "definitionEntity = " << definitionEntity->entityName << endl;
+				cout << "thingEntity->isSubstance = " << thingEntity->isSubstance << endl;
+				cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;					
 				#endif
 
 				#ifdef GIA_USE_ADVANCED_REFERENCING
@@ -253,21 +256,21 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				{
 				#endif
 					//cout << "at1" << endl;
+					//cout << "thingEntity->isNameQuery = " << thingEntity->isNameQuery << endl;
+					//cout << "definitionEntity->isNameQuery = " << definitionEntity->isNameQuery << endl;										
 					if((thingEntity->isSubstance || thingEntity->isNameQuery) && (definitionEntity->isSubstance || definitionEntity->isNameQuery))
 					{//equality link found - add alias instead
-						//cout << "at2" << endl;
-						//cout << "(definitionEntity->isNameQuery) = " << (definitionEntity->isNameQuery) << endl;
-						//cout << "(thingEntity->isNameQuery) = " << (thingEntity->isNameQuery) << endl;
+						//cout << "at2" << endl;					
+						//cout << "thingEntity->isSubstanceConcept = " << thingEntity->isSubstance << endl;
+						//cout << "definitionEntity->isSubstanceConcept = " << definitionEntity->isSubstance << endl;
+						//cout << "definitionEntity->isName = " << definitionEntity->isName << endl;						
 						//cout << "((thingEntity->isSubstance || thingEntity->isNameQuery) && (definitionEntity->isSubstance || definitionEntity->isNameQuery))" << endl;
 						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 						if(!(thingEntity->isSubstanceConcept) && (!(definitionEntity->isSubstanceConcept) || (definitionEntity->isName)))
 						{
 						#endif
 							#ifdef GIA_TRANSLATOR_DEBUG
-							cout << "thingName = " << thingEntity->entityName << endl;
-							cout << "definitionEntity = " << definitionEntity->entityName << endl;						
-							cout << "thingEntity->isSubstance = " << thingEntity->isSubstance << endl;
-							cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;
+							cout << "treatDefinitionAsEquality" << endl;
 							#endif
 
 							#ifndef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS_ONLY_WORK_WITH_STANFORD
@@ -330,11 +333,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				if(treatDefinitionAsEquality)
 				{
 					#ifdef GIA_TRANSLATOR_DEBUG
-					cout << "adding equality:" << endl;
-					cout << "thingName = " << thingEntity->entityName << endl;
-					cout << "definitionEntity = " << definitionEntity->entityName << endl;						
-					cout << "thingEntity->isSubstance = " << thingEntity->isSubstance << endl;
-					cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;						
+					cout << "adding equality:" << endl;												
 					#endif
 					
 					if(definitionEntity->idActiveList == thingEntity->idActiveList)
@@ -370,11 +369,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				#endif
 					
 					#ifdef GIA_TRANSLATOR_DEBUG
-					cout << "adding definition:" << endl;
-					cout << "thingName = " << thingEntity->entityName << endl;
-					cout << "definitionEntity = " << definitionEntity->entityName << endl;						
-					cout << "thingEntity->isSubstance = " << thingEntity->isSubstance << endl;
-					cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;					
+					cout << "adding definition:" << endl;											
 					#endif
 					
 					addDefinitionToEntity(thingEntity, definitionEntity, sameReferenceSet);

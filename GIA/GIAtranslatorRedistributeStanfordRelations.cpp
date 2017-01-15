@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s8e 03-July-2013
+ * Project Version: 1s8f 04-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -3212,7 +3212,7 @@ void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSenten
 
 #ifdef GIA_SUPPORT_ALIASES_RELEX_COMPATIBILITY
 //required for aliasing to work
-void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
+void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[])
 {
 	/*
 	She is the one.		_subj(be[2], she[1]) + _obj(be[2], one[4]) -> appos(She-1, one-4)
@@ -3265,45 +3265,84 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 							if((currentRelationInList->relationGovernor == RELATION_ENTITY_BE) && (currentRelationInList2->relationGovernor == RELATION_ENTITY_BE))
 							{//found a matching preposition of object-subject relationship
 								
-								//deal with special case relex queries:
-								#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
-								if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
-								{		
-									/*
-									What is the time? _subj(be[2], _$qVar[1]) + _obj(be[2], time[4]) -> appos(time[4], $qVar[1])
-									Who is that?	_subj(be[2], _$qVar[1]) + _obj(be[2], that[3]) -> appos(that[3], _$qVar[1])	
-									*/	
-									
-									currentRelationInList2->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-									currentRelationInList2->relationGovernorIndex = currentRelationInList2->relationDependentIndex;
-									currentRelationInList2->relationGovernor = GIAentityNodeArray[currentRelationInList2->relationDependentIndex]->entityName;
-									currentRelationInList2->relationDependentIndex = currentRelationInList->relationDependentIndex;
-									currentRelationInList2->relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
-									
-									currentRelationInList->disabled =  true;
-									currentRelationInList->relationType = "dummyRelationCollapseSubjectAndObjectGenerateAppos";	//required to prevent use by GIA (when !GIA_DO_NOT_PARSE_DISABLED_RELATIONS)
-								
-								}
-								else
-								#endif
-								if(currentRelationInList2->relationDependent == RELATION_ENTITY_IT)
-								{
-									/*
-									What time is it?	_subj(be[3], time[2]) + _obj(be[3], it[4]) -> appos(time[2], $qVar[4])
-										note query comparison node used to be identified via identifyComparisonVariableAlternateMethod())
-									*/	
-									currentRelationInList2->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-									currentRelationInList2->relationGovernorIndex = currentRelationInList->relationDependentIndex;
-									currentRelationInList2->relationGovernor = GIAentityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
-
-									currentRelationInList2->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "it" -> "$qvar"
-									GIAentityNodeArray[currentRelationInList->relationDependentIndex]->entityName = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
-									
-									currentRelationInList->disabled =  true;
-									currentRelationInList->relationType = "dummyRelationCollapseSubjectAndObjectGenerateAppos";	//required to prevent use by GIA (when !GIA_DO_NOT_PARSE_DISABLED_RELATIONS)
+								bool foundSpecialCaseQuery = false;
 																
+								if(currentSentenceInList->isQuestion)
+								{
+									//deal with special case relex queries:
+									#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
+									if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+									{		
+										/*
+										What is the time? _subj(be[2], _$qVar[1]) + _obj(be[2], time[4]) -> appos(time[4], $qVar[1])
+										Who is that?	_subj(be[2], _$qVar[1]) + _obj(be[2], that[3]) -> appos(that[3], _$qVar[1])	
+										*/	
+
+										currentRelationInList2->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+										currentRelationInList2->relationGovernorIndex = currentRelationInList2->relationDependentIndex;
+										currentRelationInList2->relationGovernor = GIAentityNodeArray[currentRelationInList2->relationDependentIndex]->entityName;
+										currentRelationInList2->relationDependentIndex = currentRelationInList->relationDependentIndex;
+										currentRelationInList2->relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
+
+										currentRelationInList->disabled =  true;
+										currentRelationInList->relationType = "dummyRelationCollapseSubjectAndObjectGenerateAppos";	//required to prevent use by GIA (when !GIA_DO_NOT_PARSE_DISABLED_RELATIONS)
+
+										foundSpecialCaseQuery = true;		
+								
+										GIAentityNode * oldRedundantBeEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+										disableEntity(oldRedundantBeEntity);										
+									}
+									else
+									#endif
+									if(currentRelationInList2->relationDependent == RELATION_ENTITY_IT)
+									{	
+										bool whichOrWhatQueryFound = false;
+										for(int i=0; i<FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES; i++)
+										{
+											if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i])
+											{
+												whichOrWhatQueryFound = true;
+											}
+										}
+										if(whichOrWhatQueryFound)
+										{																		
+											/*
+											What time is it?	_subj(be[3], time[2]) + _obj(be[3], it[4]) -> appos(time[2], $qVar[3])		//NB appos has to use Be/$qVar[3] - it cannot use a) it/$qVar[4] for grammatical reasons [as "it" is tagged as a noun/definite], and cannot use b) What/$qVar[1] since it is not referenced by any relex dependency relation 
+												note query comparison node used to be identified via identifyComparisonVariableAlternateMethod())
+											*/
+											
+											GIAentityNode * oldRedundantItEntity = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
+											disableEntity(oldRedundantItEntity);
+																							
+											currentRelationInList2->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+											currentRelationInList2->relationGovernorIndex = currentRelationInList->relationDependentIndex;
+											currentRelationInList2->relationGovernor = GIAentityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
+											
+											
+											//NB appos has to use Be/$qVar[3] - it cannot use a) it/$qVar[4] for grammatical reasons [as "it" is definite, assigned as a noun, etc], and cannot use b) What/$qVar[1] since it is not referenced by any relex dependency relation 
+											/*
+											currentRelationInList2->relationDependentIndex = currentRelationInList2->relationDependentIndex;
+											currentRelationInList2->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;      //convert "it" -> "$qvar" 
+											featureArrayTemp[currentRelationInList2->relationDependentIndex]->grammaticalIsDefinite = false;
+											featureArrayTemp[currentRelationInList2->relationDependentIndex]->grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;	//"$qvar" cannot be a noun else it will be treated as a definite
+											*/
+											currentRelationInList2->relationDependentIndex = currentRelationInList->relationGovernorIndex;
+											currentRelationInList2->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "be" -> "$qvar"										      
+							
+											GIAentityNodeArray[currentRelationInList2->relationDependentIndex]->entityName = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+															
+											currentRelationInList->disabled =  true;
+											currentRelationInList->relationType = "dummyRelationCollapseSubjectAndObjectGenerateAppos";	//required to prevent use by GIA (when !GIA_DO_NOT_PARSE_DISABLED_RELATIONS)
+
+											featureArrayTemp[currentRelationInList2->relationGovernorIndex]->grammaticalIsDefinite = true;	//required such that "time" is treated the same way as when generated by "what is the time?" 
+										
+											foundSpecialCaseQuery = true;	
+																				
+										}							
+									}
 								}
-								else
+								
+								if(!foundSpecialCaseQuery)
 								{
 									/*
 									She is the one.		_subj(be[2], she[1]) + _obj(be[2], one[4]) -> appos(She-1, one-4)
@@ -3318,7 +3357,10 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 
 									currentRelationInList->disabled =  true;
 									currentRelationInList->relationType = "dummyRelationCollapseSubjectAndObjectGenerateAppos";	//required to prevent use by GIA (when !GIA_DO_NOT_PARSE_DISABLED_RELATIONS)
-								}
+								
+									GIAentityNode * oldRedundantBeEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+									disableEntity(oldRedundantBeEntity);								
+								}								
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -3341,20 +3383,23 @@ void redistributeRelexRelationsDetectNameQueries(Sentence * currentSentenceInLis
 {
 	bool firstWordOfSentenceIsWho = false;
 	
-	if(featureArrayTemp[1]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
+	if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
 	{
 		//cout << "found who" << endl;
 		firstWordOfSentenceIsWho = true;
 	}
 
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	if(firstWordOfSentenceIsWho)
 	{
-		if(GIAentityNodeArrayFilled[i])
+		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 		{
-			if(GIAentityNodeArray[i]->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+			if(GIAentityNodeArrayFilled[i])
 			{
-				//cout << "found who query variable" << endl;			
-				GIAentityNodeArray[i]->isNameQuery = true;
+				if(GIAentityNodeArray[i]->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+				{
+					//cout << "found who query variable" << endl;			
+					GIAentityNodeArray[i]->isNameQuery = true;
+				}
 			}
 		}
 	}

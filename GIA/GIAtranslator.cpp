@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s8e 03-July-2013
+ * Project Version: 1s8f 04-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -706,7 +706,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		cout << "That is Jim. 		_obj(be[2], Jim[3]) + _subj(be[2], that[1]) -> appos(that-1, Jim-3)" << endl;
 		cout << "The time is 06:45.	_obj(be[3], 06:45[4]) + _subj(be[3], time[2]) -> appos(time-2, 06:45-4)	" << endl;
 		#endif
-		redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPfeatureParser);
+		redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPfeatureParser, featureArrayTemp);
 	
 	
 		#ifdef GIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS

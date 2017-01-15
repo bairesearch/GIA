@@ -23,7 +23,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s8e 03-July-2013
+ * Project Version: 1s8f 04-July-2013
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -46,8 +46,6 @@ using namespace std;
 #include "GIAglobalDefs.h"
 #include "GIAsentenceClass.h"
 
-#define GIA_NLP_START_ENTITY_INDEX (1)
-#define GIA_NLP_START_SENTENCE_INDEX (1)
 //#define GIA_LRP_USE_OLD_PREPOSITION_SPECIFIC_CODE_NOT_REQUIRED
 
 #define GIA_LRP_PHRASALVERB_DATABASE_FILE_NAME "CambridgePhrasalVerbs.txt"
