@@ -41,7 +41,9 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *indexOfEntit
 	
 	Reference * currentReferenceInPrintList = firstReferenceInPrintList;
 	
-	//initiateMaxXAtAParticularY();
+	initiateMaxXAtAParticularY();
+	int xInitial = DRAW_X_INITIAL_OFFSET;
+	int yInitial = DRAW_Y_INITIAL_OFFSET;
 	
 	//first pass; determine maxXAtAParticularY	[and use these to centre each row {at a given y} respectively]
 	for (entityIter = indexOfEntityNodes->begin(); entityIter != indexOfEntityNodes->end(); entityIter++) 
@@ -50,9 +52,10 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *indexOfEntit
 		{
 			cout << "tracing..." << endl;
 				
-			initiateMaxXAtAParticularY();
-					
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), DRAW_X_INITIAL_OFFSET, DRAW_Y_INITIAL_OFFSET, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			//initiateMaxXAtAParticularY();
+			xInitial = maxXAtAParticularY[yInitial];
+								
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			//cout << "h2" << endl;
 		}	
         	else
@@ -192,16 +195,22 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		
 		//property connections	
 		vector<GIAEntityNode*>::iterator entityIter;
+		q = DRAW_Y_SPACE_BETWEEN_ENTITIES;
+		r = 0;		
 		for(entityIter = entityNode->firstPropertyNodeInList.begin(); entityIter != entityNode->firstPropertyNodeInList.end(); entityIter++) 
 		{//DRAW SHOULD NOT BE REQUIRED	
 			//cout << "a31" << endl;
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+DRAW_Y_SPACE_BETWEEN_ENTITIES, x, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES;
 		}
 		//go reverse also...
+		q = DRAW_Y_SPACE_BETWEEN_ENTITIES;
+		r = 0;			
 		for(entityIter = entityNode->firstPropertyNodeInReverseList.begin(); entityIter != entityNode->firstPropertyNodeInReverseList.end(); entityIter++) 
 		{//DRAW SHOULD NOT BE REQUIRED
 			//cout << "a32" << endl;	
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y-DRAW_Y_SPACE_BETWEEN_ENTITIES, x, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y-q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES;
 		}		
 		//go upwards also...
 		if(entityNode->entityNodeDefiningThisProperty != NULL)
@@ -239,10 +248,12 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 
 		
 		//cout << "a5" << endl;
-				
+		
+		q = DRAW_Y_SPACE_BETWEEN_ENTITIES;
+		r = 0;				
 		for(entityIter = entityNode->firstEntityNodeInDefinitionList.begin(); entityIter != entityNode->firstEntityNodeInDefinitionList.end(); entityIter++) 
 		{
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y-DRAW_Y_SPACE_BETWEEN_ENTITIES, x, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y-q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			if(initialiseOrPrint == DRAW_PRINT)
 			{	
 				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
@@ -251,29 +262,39 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				pos4.z = DRAW_CONNECTION_Z;
 				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_BASICENTITY_CONNECTION_COLOUR, writeFileObject);
 			}
+			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES;
 
 		}
 		//go reverse also...
+		q = DRAW_Y_SPACE_BETWEEN_ENTITIES;
+		r = 0;			
 		for(entityIter = entityNode->firstEntityNodeInDefinitionReverseList.begin(); entityIter != entityNode->firstEntityNodeInDefinitionReverseList.end(); entityIter++) 
 		{//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+DRAW_Y_SPACE_BETWEEN_ENTITIES, x, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES;
 		}
 		//cout << "a6" << endl;
 		
 				
 		//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
 		//associated actions and properties [ie does this entity also define an action/verb or a property/adjective? [ie, it is not just a thing/noun]]
+		q = DRAW_Y_SPACE_BETWEEN_ENTITIES;
+		r = 0;			
 		for(entityIter = entityNode->firstAssociatedPropertyNodeInList.begin(); entityIter != entityNode->firstAssociatedPropertyNodeInList.end(); entityIter++) 
 		{
 			//cout << "as0" << endl;
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+DRAW_Y_SPACE_BETWEEN_ENTITIES, x, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			//cout << "as1" << endl;
+			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES;
 		}	
+		q = DRAW_Y_SPACE_BETWEEN_ENTITIES;
+		r = 0;			
 		for(actionIter = entityNode->firstAssociatedActionNodeInList.begin(); actionIter != entityNode->firstAssociatedActionNodeInList.end(); actionIter++) 
 		{
 			//cout << "as2" << endl;
-			currentReferenceInPrintList = initialiseActionNodeForPrinting((*actionIter), y+DRAW_Y_SPACE_BETWEEN_ENTITIES, x, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			currentReferenceInPrintList = initialiseActionNodeForPrinting((*actionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			//cout << "as3" << endl;
+			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES;
 		}
 		
 		//cout << "a7" << endl;

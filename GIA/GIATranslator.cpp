@@ -27,6 +27,7 @@
 #define RELATION_FUNCTION_COMPOSITION_3 "has"						
 #define RELATION_TYPE_ADJECTIVE "_amod"		//eg x is happy
 #define RELATION_TYPE_ADJECTIVE_2 "_predadj"						
+#define RELATION_TYPE_ADJECTIVE_3 "_advmod"
 #define RELATION_TYPE_POSSESSIVE "_poss"	//eg his bike	[bike him]		/its bike
 
 //straight entities (concepts)					
@@ -445,7 +446,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{			
-			if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_2))
+			if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_2) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3))
 			{
 				//create a new property for the entity and assign a property definition entity if not already created
 				string thingName = currentRelationInList->relationFunction;
@@ -685,7 +686,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				else
 				{
 					//timeOrLocationConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
-					actionOrPropertyEntity = GIAEntityNodeArrayAssociatedProperty[relationArgumentIndex];
+					timeOrLocationConditionEntity = GIAEntityNodeArrayAssociatedProperty[relationArgumentIndex];
 				}				
 				
 				if(actionOrPropertyEntity->hasAssociatedAction)
@@ -714,9 +715,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						addLocationConditionToAction(actionNode, timeOrLocationConditionEntity);
 					}
 				}
-				else if(actionOrPropertyEntity->hasAssociatedProperty)
+				//else if(actionOrPropertyEntity->hasAssociatedProperty)
+				else if(actionOrPropertyEntity->isProperty)		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)		
 				{
-					GIAEntityNode * propertyNode = actionOrPropertyEntity->firstAssociatedPropertyNodeInList.back();
+					//GIAEntityNode * propertyNode = actionOrPropertyEntity->firstAssociatedPropertyNodeInList.back();
+					GIAEntityNode * propertyNode = actionOrPropertyEntity;		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)	
 					
 					if(timeOrLocationConditionEntity->hasAssociatedTime)
 					{
@@ -789,7 +792,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						addActionConditionToAction(actionNode, actionConditionActionNode);
 					}
 					//else if(actionOrPropertyConditionEntity->hasAssociatedProperty)
-					else if((actionOrPropertyConditionEntity->hasAssociatedProperty) || (actionOrPropertyConditionEntity->isProperty))	//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)
+					else if(actionOrPropertyConditionEntity->isProperty)	//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)
 					{//eg john rides his bike when joe is happy
 						string propertyConditionEntityName = currentRelationInList->relationArgument; 
 						
@@ -806,10 +809,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity << endl;
 					}
 				}
-				else if(actionOrPropertyEntity->hasAssociatedProperty)
+				//else if(actionOrPropertyEntity->hasAssociatedProperty)
+				else if(actionOrPropertyEntity->isProperty)	//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)	
 				{
-					GIAEntityNode * propertyNode = actionOrPropertyEntity->firstAssociatedPropertyNodeInList.back();
-
+					//GIAEntityNode * propertyNode = actionOrPropertyEntity->firstAssociatedPropertyNodeInList.back();
+					GIAEntityNode * propertyNode = actionOrPropertyEntity;		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)	
+					
 					if(actionOrPropertyConditionEntity->hasAssociatedAction)
 					{//eg the stars are bright when john rides his bike
 						string actionConditionEntityName = currentRelationInList->relationArgument; 
@@ -821,7 +826,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						addActionConditionToProperty(propertyNode, actionConditionActionNode);
 					}
 					//else if(actionOrPropertyConditionEntity->hasAssociatedProperty)
-					else if((actionOrPropertyConditionEntity->hasAssociatedProperty) || (actionOrPropertyConditionEntity->isProperty))	//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)
+					else if(actionOrPropertyConditionEntity->isProperty)		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)
 					{//eg the stars are bright when the sun is dim. 
 						string propertyConditionEntityName = currentRelationInList->relationArgument; 
 						
@@ -838,8 +843,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				}
 				else
 				{
+					 
 					cout << "error: actionOrPropertyEntity does not have associated Property or Action" << endl;
-					cout << "actionOrPropertyEntity = " << actionOrPropertyEntity << endl;				
+					cout << "actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;				
 				}					
 			}			
 						

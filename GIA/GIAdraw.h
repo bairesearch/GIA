@@ -70,8 +70,8 @@ using namespace std;
 #define DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITIONS_OF_SAME_NODE (30)	//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITIONS_OF_SAME_NODE (25)	//should not be used during initialiseForPrint
 
-#define DRAW_X_INITIAL_OFFSET (0)
-#define DRAW_Y_INITIAL_OFFSET (100)
+#define DRAW_X_INITIAL_OFFSET (100)
+#define DRAW_Y_INITIAL_OFFSET (0)
 
 #define SVG_SCALE_FACTOR (1)
 #define SVG_TEXT_SCALE_FACTOR (5)
