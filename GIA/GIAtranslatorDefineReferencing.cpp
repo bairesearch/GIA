@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u8a 02-October-2013
+ * Project Version: 1u9a 02-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1166,10 +1166,12 @@ bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode,
 
 void identifyReferenceSet(GIAentityNode * entityNode, int referenceSetID, int minimumEntityIndexOfReferenceSet)
 {
-	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+	//#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "identifyReferenceSet(): entityNode being traced = " << entityNode->entityName << endl;
 	cout << "identifyReferenceSet(): referenceSetID = " << referenceSetID << endl;
-	#endif
+	cout << "identifyReferenceSet(): isSubstanceConcept = " << entityNode->isSubstanceConcept << endl;	
+	cout << "identifyReferenceSet(): isConcept = " << entityNode->isConcept << endl;	
+	//#endif
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
 	cout << "identifyReferenceSet(): " << entityNode->entityName << endl;
 	#endif
@@ -1202,7 +1204,7 @@ void identifyReferenceSet(GIAentityNode * entityNode, int referenceSetID, int mi
 void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GIAentityNode*> * entityNodesActiveListComplete)
 {
 	//resetReferenceSets(entityNodesActiveListComplete);
-
+	cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts" << endl;
 	int referenceSetID = 0;
 
 	for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
@@ -1253,12 +1255,12 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 
 						if(!(entityNode->disabled))
 						{
-							GIAreferenceTraceParameters referenceTraceParameters;	//still used?
-							GIAqueryTraceParameters queryTraceParameters;		//still used?
+							GIAqueryTraceParameters queryTraceParameters;		//not used
 
 							int numberOfMatchedNodesTemp = 0;
 							int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
-							bool exactMatch = testEntityNodeForQueryOrReferenceSet2(currentSpecificConcept, entityNode, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParameters, &referenceTraceParameters);
+							//bool exactMatch = testEntityNodeForQueryOrReferenceSet2(currentSpecificConcept, entityNode, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParameters, &referenceTraceParameters);
+							bool exactMatch = testReferencedEntityNodeForExactNameMatch2(currentSpecificConcept, entityNode, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParameters, &referenceTraceParameters);
 
 							if(exactMatch)
 							{

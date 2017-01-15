@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u8a 02-October-2013
+ * Project Version: 1u9a 02-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -424,6 +424,7 @@ GIAentityNode * addSubstance(GIAentityNode * entity)
 	entity->hasAssociatedInstanceTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 	newSubstance->isSubstanceConcept = entity->isSubstanceConcept;
+	entity->isSubstanceConcept = false;
 	#endif
 	forwardInfoToNewSubstance(entity, newSubstance);
 
