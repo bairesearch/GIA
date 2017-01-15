@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o1a 10-October-2016
+ * Project Version: 2o2a 12-October-2016
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -2623,8 +2623,8 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 							if(passSpecificConcepts)
 							{
 							#endif
-								#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
 								bool passPluralityMatch = true;
+								#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
 								if(((queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)) ||
 								((entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)))
 								{
@@ -2639,9 +2639,35 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 									passPluralityMatch = true;
 								}
 								#endif
+								#endif
+								#ifdef GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES
+								#ifdef GIA_SUPPORT_NUMBER_OF
+								if(queryEntityNode->isNumberOf || entityNode->isNumberOf)
+								{
+									passPluralityMatch = false;
+								}
+								#endif
+								if(queryEntityNode->hasQuantity)
+								{
+									if(entityNode->hasQuantity)
+									{
+										if(queryEntityNode->quantityNumber != entityNode->quantityNumber)
+										{
+											passPluralityMatch = false;
+										}
+									}
+									else
+									{
+										passPluralityMatch = false;
+									}
+								}
+								else if(entityNode->hasQuantity)
+								{
+									passPluralityMatch = false;
+								}
+								#endif
 								if(passPluralityMatch)
 								{
-								#endif
 									#ifdef GIA_DEBUG
 									//cout << "\tpassed isConcept tests" << endl;
 									#endif
@@ -2736,7 +2762,6 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 									#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 									}
 									#endif
-								#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
 								}
 								else
 								{
@@ -2744,7 +2769,6 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 									//cout << "!passPluralityMatch" << endl;
 									#endif
 								}
-								#endif
 							#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 							}
 							else
