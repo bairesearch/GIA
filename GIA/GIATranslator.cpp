@@ -81,7 +81,7 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 {
-	if(propertyEntity->hasAssociatedPropertyTemp)
+	if(propertyEntity->hasAssociatedPropertyTemp && (GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_TO_DEFINITIVE_NOUNS != 1) && (propertyEntity->entityAlreadyDeclaredInThisContext))
 	{
 		propertyEntity = propertyEntity->firstAssociatedPropertyNodeInList.back();	//added 4 May 11a
 	}
@@ -108,6 +108,8 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 
 		//configure property definition node
 		propertyEntity->firstAssociatedPropertyNodeInList.push_back(newProperty);	
+	
+		propertyEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
 	}	
 }
 
@@ -1199,6 +1201,15 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 	
 		currentSentenceInList = currentSentenceInList->next;
 	}
+	
+	//restore critical variables; temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
+	long vectorSize = indexOfEntityNames->size();
+	for(int entityIndex=0; entityIndex<vectorSize; entityIndex++)
+	{	
+		GIAEntityNode * entityNode = indexOfEntityNodes->at(entityIndex);
+		entityNode->entityAlreadyDeclaredInThisContext = false;
+	}
+			
 }
 
 long maximumLong(long a, long b)

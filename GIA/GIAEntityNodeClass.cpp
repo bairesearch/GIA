@@ -29,6 +29,8 @@ GIAEntityNode::GIAEntityNode(void)
 	isObjectTemp = false;
 	hasPropertyTemp = false;
 	
+	entityAlreadyDeclaredInThisContext = false;
+	
 	hasAssociatedPropertyTemp = false;
 	hasAssociatedActionTemp = false;
 	
