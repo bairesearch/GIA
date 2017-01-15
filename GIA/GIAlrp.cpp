@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p11e 24-September-2012
+ * Project Version: 1p11f 24-September-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -36,6 +36,10 @@
 #include <cmath>
 
 #include "GIAlrp.h"
+
+#ifndef LINUX
+	#include <windows.h>
+#endif
 
 static string lrpDataFolderName;
 static bool useLRP; 
@@ -277,6 +281,8 @@ bool loadIrregularVerbList(string irregularVerbListFileName, GIALRPtag * firstTa
 		}
 		parseFileObject.close();
 	}
+	
+	return result;
 }
 
 

@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p11e 24-September-2012
+ * Project Version: 1p11f 24-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -628,7 +628,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1p11e 24-September-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1p11f 24-September-2012" << endl;
 			exit(1);
 		}
 
@@ -1032,6 +1032,12 @@ int main(int argc,char **argv)
 				}
 				useInputTextNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
 
+				#ifdef LINUX
+				chdir(tempFolderCharStar);
+				#else
+				::SetCurrentDirectory(tempFolderCharStar);
+				#endif
+	
 				/*
 				#ifdef GIA_USE_LRP
 				convertRevertNLPtagNamesToOfficialLRPOutput(NLPdependencyRelationsParser, NLPfeatureParser, LRPTextForNLPonlyPlainTXTFileName, LRPTextPlainTXTFileName, inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName);
@@ -1168,6 +1174,12 @@ int main(int argc,char **argv)
 			}
 			useInputQueryNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
 
+			#ifdef LINUX
+			chdir(tempFolderCharStar);
+			#else
+			::SetCurrentDirectory(tempFolderCharStar);
+			#endif
+				
 			/*
 			#ifdef GIA_USE_LRP
 			convertRevertNLPtagNamesToOfficialLRPOutput(queryNLPdependencyRelationsParser, queryNLPfeatureParser, outputQueryLRPTextForNLPonlyPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, inputQueryTextNLPrelationXMLFileName, inputQueryTextNLPfeatureXMLFileName);
