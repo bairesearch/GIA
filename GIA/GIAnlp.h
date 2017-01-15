@@ -56,7 +56,13 @@
 					#define StanfordCoreNLP_XML_TAG_head ((string)"head")		//sentence entity ID of reference
 
 #define StanfordCoreNLP_numberOfDependencySetsPerSentence (3)
+#define StanfordCoreNLP_dependencySet_basicdependencies (0)
+#define StanfordCoreNLP_dependencySet_collapseddependencies (1)
+#define StanfordCoreNLP_dependencySet_collapsedccprocesseddependencies (2)
+#define StanfordCoreNLP_dependencySet_usedByGIA (StanfordCoreNLP_dependencySet_collapsedccprocesseddependencies)
+
 #define StanfordCoreNLPdefaultOutputFileExtensionAppend ".xml"
+
 static string StanfordCoreNLP_relationSetNameArray[StanfordCoreNLP_numberOfDependencySetsPerSentence] = {StanfordCoreNLP_XML_TAG_basicdependencies, StanfordCoreNLP_XML_TAG_collapseddependencies, StanfordCoreNLP_XML_TAG_collapsedccprocesseddependencies};
 
 				

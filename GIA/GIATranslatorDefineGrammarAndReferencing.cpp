@@ -569,10 +569,86 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 
 
 #ifdef GIA_USE_STANFORD_CORENLP
-void linkReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)	//Stanford Compatible [NOT YET CODED]
+void linkReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, StanfordCoreNLPCoreference * firstCoreferenceInList, bool GIAEntityNodeIsAReference[])
 {
 	cout << "linkReferencesStanfordCoreNLP(): error - function not yet coded" << endl;
-	exit(0); 
+	//exit(0); 
+	StanfordCoreNLPCoreference * currentCoreferenceInList = firstCoreferenceInList;
+	while(currentCoreferenceInList->next != NULL)
+	{	
+		StanfordCoreNLPMention * firstMentionInList = currentCoreferenceInList->firstMentionInList;
+		StanfordCoreNLPMention * currentMentionInList = firstMentionInList;
+		GIAEntityNode * referenceSource = NULL;
+		bool foundReferenceSource = false;
+		while(currentMentionInList->next != NULL)
+		{
+			if(!foundReferenceSource)
+			{
+				if(currentMentionInList->representative = true)
+				{
+					int referenceSourceSentenceIndex = currentMentionInList->sentence;			
+					int referenceSourceEntityNodeIndex = currentMentionInList->head;
+
+					if(referenceSourceSentenceIndex < currentSentenceInList->sentenceIndex)
+					{
+						Sentence * currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInList;
+						while(currentSentenceInWhichReferenceSourceIsBeingSearchedFor->previous != NULL)
+						{
+							if(currentSentenceInWhichReferenceSourceIsBeingSearchedFor->sentenceIndex == referenceSourceSentenceIndex)
+							{
+								Relation * currentRelationInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->firstRelationInList;
+								while(currentRelationInWhichReferenceSourceIsBeingSearchedFor->next != NULL)
+								{
+									long entityIndex = -1;
+									bool entityAlreadyExistant = false;
+									string entityName = currentRelationInWhichReferenceSourceIsBeingSearchedFor->relationArgument;	//CHECK THIS; assumes [at least one instance of] the reference source will always occur as a relation argument/dependent (ie, will not find the reference source if it only occurs as a relation function/governer)					
+									vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+									long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+									long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();								
+									GIAEntityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &entityName, &entityAlreadyExistant, &entityIndex, false, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
+
+									if(entityAlreadyExistant)
+									{
+										referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
+										foundReferenceSource = true;
+									}
+																	
+									currentRelationInWhichReferenceSourceIsBeingSearchedFor = currentRelationInWhichReferenceSourceIsBeingSearchedFor->next;
+								}
+							}
+							currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->previous;
+						}
+					}
+				}
+			}
+			
+			if(foundReferenceSource)
+			{
+				if(currentMentionInList->representative == false)
+				{//continue only for references, eg pronoun (not for their source, eg name)			
+					if(currentMentionInList->sentence == currentSentenceInList->sentenceIndex)
+					{
+						int currentSentenceEntityNodeIndex = currentMentionInList->head;
+						if(GIAEntityNodeArrayFilled[currentSentenceEntityNodeIndex])
+						{
+							#ifdef GIA_TRANSLATOR_DEBUG
+							cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
+							#endif
+							//referenceSource->isReferenceEntityInThisSentence = true;
+							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+							GIAEntityNodeArray[currentSentenceEntityNodeIndex]->disabled = true;
+							#endif
+							GIAEntityNodeArray[currentSentenceEntityNodeIndex] = referenceSource;
+							GIAEntityNodeIsAReference[currentSentenceEntityNodeIndex] = true;
+						}
+					}
+				}
+			}
+			
+			currentMentionInList = currentMentionInList->next;
+		}
+		currentCoreferenceInList = currentCoreferenceInList->next;
+	}
 }
 #endif
 			
