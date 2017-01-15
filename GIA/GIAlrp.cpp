@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k1a 09-July-2015
+ * Project Version: 2k2a 10-July-2015
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -241,7 +241,7 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 		result = false;
 	}
 	
-	setCurrentDirectory(tempFolderCharStar);
+	setCurrentDirectory(tempFolder);
 
 	GIALRPtagTextCorrespondenceInfo* currentGIALRPtagCorrespondenceInfo = getCurrentGIALRPtagTextCorrespondenceInfo();
 	if(!searchAndReplacePhrasalVerbs(firstTagInPlainText, firstTagInPhrasalVerbList, currentGIALRPtagCorrespondenceInfo))

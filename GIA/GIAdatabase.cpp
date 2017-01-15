@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k1a 09-July-2015
+ * Project Version: 2k2a 10-July-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -304,7 +304,7 @@ long maximumLong(long a, long b)
 
 bool DBdirectoryExists(string* folderName)
 {
-	bool folderExists = directoryExists(folderName->c_str());
+	bool folderExists = directoryExists(folderName);
 	if(folderExists)
 	{
 		#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
@@ -322,7 +322,7 @@ bool DBcreateDirectory(string* folderName)
 	#endif
 	bool result = true;
 
-	createDirectory(folderName->c_str());
+	createDirectory(folderName);
 	/*removed debug support for Windows;
 	#ifndef LINUX
 	if(CreateDirectory(folderName->c_str(), 0) == 0)	//if( _mkdir(folderName->c_str()) != 0)	//
@@ -341,7 +341,7 @@ bool DBsetCurrentDirectory(string* folderName)
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "\tDBsetCurrentDirectory: folderName = " <<* folderName << endl;
 	#endif
-	setCurrentDirectory(folderName->c_str());
+	setCurrentDirectory(folderName);
 	/*removed debug support for Windows;
 	#ifndef LINUX
 	if(SetCurrentDirectory(folderName->c_str()) == 0)

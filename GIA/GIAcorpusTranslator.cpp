@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k1a 09-July-2015
+ * Project Version: 2k2a 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -1162,7 +1162,7 @@ bool generateAllPermutationsFromSemanticRelationsFile(string corpusFileName, int
 
 					//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
 
-					string sentenceText = regenerateSentenceText(firstFeatureInSentenceSubset, true, NLPfeatureParser);
+					string sentenceText = generateCorpusFileHeaderText(firstFeatureInSentenceSubset, true, NLPfeatureParser);
 					sentenceText = sentenceText + STRING_NEW_LINE;	//required to add new line at end of parsingWordsAndTags as per Stanford Parser specification (see parseStanfordParserFile)
 					sentenceText = sentenceText + STRING_NEW_LINE;
 
@@ -1177,6 +1177,7 @@ bool generateAllPermutationsFromSemanticRelationsFile(string corpusFileName, int
 							string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationSimple(currentSemanticRelationInList->relationGovernor, currentSemanticRelationInList->relationDependent, currentSemanticRelationInList->relationType, currentSemanticRelationInList->relationGovernorIndex, currentSemanticRelationInList->relationDependentIndex, currentSemanticRelationInList->sameReferenceSet, currentSemanticRelationInList->rcmodIndicatesSameReferenceSet);
 							GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + STRING_NEW_LINE;
 							sentenceText = sentenceText + GIA2semanticDependencyRelation;
+							
 							foundAtLeastOneRelation = true;
 						}
 						currentSemanticRelationInList = currentSemanticRelationInList->next;
@@ -1186,7 +1187,7 @@ bool generateAllPermutationsFromSemanticRelationsFile(string corpusFileName, int
 					if(foundAtLeastOneRelation)
 					{
 						string corpusSubsetFileName = prepareNewCorpusFileTextForWriting(firstFeatureInSentenceSubset);
-						saveTextToCurrentCorpusFile(sentenceText);
+						saveTextToCorpusFileString(sentenceText);
 						writeCorpusFile(corpusSubsetFileName);
 					}
 					

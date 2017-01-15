@@ -26,7 +26,7 @@
  * File Name: GIAcorpusOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k1a 09-July-2015
+ * Project Version: 2k2a 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -48,7 +48,7 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 			#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
 			string createRcmodIndicatesSameReferenceSetRecord(bool rcmodIndicatesSameReferenceSet);
 			#endif
-string regenerateSentenceText(GIAfeature* firstFeatureInSentence, bool addPOSinfo, int NLPfeatureParser);
+string generateCorpusFileHeaderText(GIAfeature* firstFeatureInSentence, bool addPOSinfo, int NLPfeatureParser);
 void determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList, int NLPfeatureParser);
 	void determineGIAconnectionistNetworkPOStypeNameStanford(GIAfeature* currentFeatureInSentence);
 	void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeatureInSentence);

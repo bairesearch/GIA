@@ -26,7 +26,7 @@
  * File Name: GIAcorpusOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k1a 09-July-2015
+ * Project Version: 2k2a 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -46,7 +46,7 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 {
 	//cout << "GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain: " << endl;
 	string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelation(GIAentityNodeArray, connectionType, entityIndex1, entityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-	saveTextLineToCurrentCorpusFile(GIA2semanticDependencyRelation);
+	saveTextLineToCorpusFileString(GIA2semanticDependencyRelation);
 	cout << GIA2semanticDependencyRelation << endl;
 }
 
@@ -54,7 +54,7 @@ void GIA2nonHeuristicImplementationRemoveExperiencesForConnectionistNetworkTrain
 {
 	//cout << "GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain: " << endl;
 	string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelation(GIAentityNodeArray, connectionType, entityIndex1, entityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-	removeTextLineFromCurrentCorpusFile(GIA2semanticDependencyRelation);
+	removeTextLineFromCorpusFileString(GIA2semanticDependencyRelation);
 	cout << GIA2semanticDependencyRelation << endl;
 }
 
@@ -224,9 +224,9 @@ string createRcmodIndicatesSameReferenceSetRecord(bool rcmodIndicatesSameReferen
 #endif
 
 //preconditions: determineGIAconnectionistNetworkPOStypeNames() has been executed
-string regenerateSentenceText(GIAfeature* firstFeatureInSentence, bool addPOSinfo, int NLPfeatureParser)
+string generateCorpusFileHeaderText(GIAfeature* firstFeatureInSentence, bool addPOSinfo, int NLPfeatureParser)
 {
-	//cout << "regenerateSentenceText1" << endl;
+	//cout << "generateCorupusFileHeaderText1" << endl;
 	string sentenceText = "";
 	GIAfeature* currentFeatureInSentence = firstFeatureInSentence;
 	while(currentFeatureInSentence->next != NULL)
@@ -248,7 +248,7 @@ string regenerateSentenceText(GIAfeature* firstFeatureInSentence, bool addPOSinf
 		}
 		currentFeatureInSentence = currentFeatureInSentence->next;
 	}
-	//cout << "regenerateSentenceText2" << endl;
+	//cout << "generateCorupusFileHeaderText2" << endl;
 	return sentenceText;
 }
 

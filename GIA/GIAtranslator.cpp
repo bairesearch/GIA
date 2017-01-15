@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k1a 09-July-2015
+ * Project Version: 2k2a 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -130,7 +130,7 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 		result = false;
 	}
 
-	setCurrentDirectory(tempFolderCharStar);
+	setCurrentDirectory(tempFolder);
 
 	if(!parseGIA2file)
 	{
@@ -646,9 +646,9 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	{
 		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 		corpusFileName = prepareNewCorpusFileTextForWriting(currentSentenceInList->firstFeatureInList);
-		string sentenceText = regenerateSentenceText(currentSentenceInList->firstFeatureInList, true, NLPfeatureParser);
+		string sentenceText = generateCorpusFileHeaderText(currentSentenceInList->firstFeatureInList, true, NLPfeatureParser);
 		sentenceText = sentenceText + STRING_NEW_LINE;	//required to add new line at end of parsingWordsAndTags as per Stanford Parser specification (see parseStanfordParserFile)
-		saveTextLineToCurrentCorpusFile(sentenceText);
+		saveTextLineToCorpusFileString(sentenceText);
 		cout << sentenceText << endl;
 	}
 	#endif
@@ -1223,7 +1223,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	if(!linkPreestablishedReferencesGIA)
 	{
 		string sentenceText = "";	//required to add new line at end of parsingTypedDependencies as per Stanford Parser specification (see parseStanfordParserFile)
-		saveTextLineToCurrentCorpusFile(sentenceText);
+		saveTextLineToCorpusFileString(sentenceText);
 		writeCorpusFile(corpusFileName);
 		#ifdef GIA2_CONNECTIONIST_NETWORK
 		if(!generateAllPermutationsFromSemanticRelationsFile(corpusFileName, NLPfeatureParser))

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k1a 09-July-2015
+ * Project Version: 2k2a 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1271,18 +1271,24 @@ static string relationAuxiliaryFutureTenseNameArray[RELATION_AUXILIARY_FUTURE_TE
 #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_COMPOSITION_AUXILIARY (17)
 #endif
-#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
-	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_ENTITY_NODES_ADD_ALIAS (18)
+#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_MARK_CONNECTION_AS_ALIAS (18)
+	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_OR_ALIAS_NAME "alias"
+#else
+	#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
+		#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_ENTITY_NODES_ADD_ALIAS (18)
+	#endif
+	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_OR_ALIAS_NAME "merge"
 #endif
 #ifdef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
 	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_PRENOMINAL_MODIFIER (19)
 #endif
-#define GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 6)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
-	
-#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_MARK_CONNECTION_AS_ALIAS (18)
+#ifdef GIA2_CONNECTIONIST_NETWORK_NEURAL_NETWORK_SEMANTIC_PARSER
+	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_NONE (20)
 #endif
-static string GIA2semanticDependencyRelationNameArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"actionSubject", "actionObject", "conditionSubject", "conditionObject", "property", "property", "definition", "definition", "instance", "actionSubject", "actionObject", "conditionSubject", "conditionObject", "instance", "determiner", "modalAuxiliaryOrCopula", "quantity", "compositionAuxiliary", "merge", "prenominalModifier"};	
+#define GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 7)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
+	
+static string GIA2semanticDependencyRelationNameArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"actionSubject", "actionObject", "conditionSubject", "conditionObject", "property", "property", "definition", "definition", "instance", "actionSubject", "actionObject", "conditionSubject", "conditionObject", "instance", "determiner", "modalAuxiliaryOrCopula", "quantity", "compositionAuxiliary", GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_OR_ALIAS_NAME, "prenominalModifier", "none"};	
 
 #define GIA2_SYNTACTIC_DEPENDENCY_RELATION_SECONDARY_NUMBER_OF_TYPES (4)
 static string GIA2syntacticDependencyRelationSecondaryNameArray[GIA2_SYNTACTIC_DEPENDENCY_RELATION_SECONDARY_NUMBER_OF_TYPES] = {RELATION_TYPE_MODAL_AUX, RELATION_TYPE_PASSIVE_AUX, RELATION_TYPE_COPULA, RELATION_TYPE_DETERMINER};		//is RELATION_TYPE_PRENOMIAL_MODIFIER required to be added to this list?

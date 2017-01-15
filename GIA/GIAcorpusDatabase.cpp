@@ -26,7 +26,7 @@
  * File Name: GIAcorpusDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k1a 09-July-2015
+ * Project Version: 2k2a 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -44,12 +44,13 @@
 #ifdef GIA_USE_CORPUS_DATABASE
 
 static string corpusDatabaseFolderName;
-string corpusWriteFileString;
 
 void initialiseCorpusDatabase(string newCorpusDatabaseFolderName)
 {
 	corpusDatabaseFolderName = newCorpusDatabaseFolderName;
 }
+
+string corpusWriteFileString;
 
 //preconditions: determineGIAconnectionistNetworkPOStypeNames has been executed
 string prepareNewCorpusFileTextForWriting(GIAfeature* firstFeatureInSentence)
@@ -67,23 +68,23 @@ void writeCorpusFile(string corpusFileName)
 	corpusWriteFileObjectStream.close();
 }
 
-void saveTextLineToCurrentCorpusFile(string sentenceText)
+void saveTextLineToCorpusFileString(string sentenceText)
 {
 	corpusWriteFileString = corpusWriteFileString + sentenceText;
 	corpusWriteFileString = corpusWriteFileString + STRING_NEW_LINE;
 }
 
-void saveTextToCurrentCorpusFile(string sentenceText)
+void saveTextToCorpusFileString(string sentenceText)
 {
 	corpusWriteFileString = corpusWriteFileString + sentenceText;
 }
 
-void removeTextFromCurrentCorpusFile(string sentenceText)
+void removeTextFromCorpusFileString(string sentenceText)
 {
 	corpusWriteFileString = replaceAllOccurancesOfString(&corpusWriteFileString, sentenceText, "");	//not currently used
 }
 
-void removeTextLineFromCurrentCorpusFile(string sentenceText)
+void removeTextLineFromCorpusFileString(string sentenceText)
 {
 	corpusWriteFileString = replaceAllOccurancesOfString(&corpusWriteFileString, (sentenceText+STRING_NEW_LINE), "");	//not currently used
 }
@@ -153,7 +154,6 @@ string corpusDBgenerateFileName(GIAfeature* firstFeatureInList)
 
 	return fileName;
 }
-
 
 #endif
 

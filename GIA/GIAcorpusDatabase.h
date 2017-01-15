@@ -26,7 +26,7 @@
  * File Name: GIAcorpusDatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k1a 09-July-2015
+ * Project Version: 2k2a 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -37,6 +37,10 @@
 
 #include "GIAglobalDefs.h"
 #include "GIAsentenceClass.h"
+
+#ifdef GIA_USE_CORPUS_DATABASE
+
+void initialiseCorpusDatabase(string newCorpusDatabaseFolderName);
 
 #define GIA_CORPUS_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME ((string)"GIAcorpusdatabase/")
 #define GIA_CORPUS_DATABASE_FILESYSTEM_DEFAULT_FILE_NAME ((string)"corpus.txt")
@@ -49,15 +53,12 @@
 	static string GIAconnectionistNetworkPOStypeNameAbbreviationArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"Un", "Cc", "Nu", "De", "Uk", "Po", "Mo", "Pr", "Aj", "No", "Av", "Pp", "Ps", "In", "Ve", "Wh", "Pd", "Pq", "Ab", "Ah", "Ad"};
 #endif
 
-#ifdef GIA_USE_CORPUS_DATABASE
-
-void initialiseCorpusDatabase(string newCorpusDatabaseFolderName);
 string prepareNewCorpusFileTextForWriting(GIAfeature* firstFeatureInSentence);
 void writeCorpusFile(string corpusFileName);
-void saveTextLineToCurrentCorpusFile(string sentenceText);
-void saveTextToCurrentCorpusFile(string sentenceText);
-void removeTextFromCurrentCorpusFile(string sentenceText);
-void removeTextLineFromCurrentCorpusFile(string sentenceText);
+void saveTextLineToCorpusFileString(string sentenceText);
+void saveTextToCorpusFileString(string sentenceText);
+void removeTextFromCorpusFileString(string sentenceText);
+void removeTextLineFromCorpusFileString(string sentenceText);
 bool loadCorpusFileSemanticDependencyRelations(GIAsentence* currentSentenceInList, GIAfeature* firstFeatureInListorSubset);
 
 string corpusDBgenerateFileName(GIAfeature* firstFeatureInList);
