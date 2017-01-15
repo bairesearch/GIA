@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e3a 16-April-2014
+ * Project Version: 2e4a 17-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1015,6 +1015,8 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	*/
 	//for queries only (1j6g)
 
+//Supports Stanford Parser/CoreNLP version 2+ e.g. 2013-04-04
+//FUTURE (get from XML): Supports Stanford Parser/CoreNLP version 3+ e.g. 2014-01-04
 #ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_WITH_BE
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
@@ -2594,8 +2596,8 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			nsubjpass(rowed-6, boat-2)	[already interpreted as obj in GIA]
 			*/
 			GIAgenericDepRelInterpretationParameters paramC = param;
-			//paramC.useRelationTest[REL1][REL_ENT1] = true; paramC.relationTest[REL1][REL_ENT1] = FEATURE_POS_TAG_VBN; paramC.relationTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
-			EntityCharacteristic relationTestSpecialCasePOStemp("stanfordPOStemp", FEATURE_POS_TAG_VBN);
+			//paramC.useRelationTest[REL1][REL_ENT1] = true; paramC.relationTest[REL1][REL_ENT1] = FEATURE_POS_TAG_VERB_VBN; paramC.relationTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
+			EntityCharacteristic relationTestSpecialCasePOStemp("stanfordPOStemp", FEATURE_POS_TAG_VERB_VBN);
 			param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCasePOStemp);
 			paramC.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramC.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_OBJECT;
 			if(genericDependecyRelationInterpretation(&paramC, REL1))
