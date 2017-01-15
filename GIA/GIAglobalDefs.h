@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7f 09-May-2012
+ * Project Version: 1j8b 10-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific version of shared globals (replace if compiling other projects)
  *
@@ -15,8 +15,12 @@
 #include "SHAREDglobalDefs.h"
 
 //variables currently under attention for testing purposes
-#define WORDNET_SEARCH_RELATED_SYNSETS
 //#define GIA_DISABLE_REFERENCING		//default: off	{this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}
+//#define GIA_STANFORD_CORE_NLP_DO_NOT_USE_CODEPENDENCIES	//default: off
+#ifndef GIA_STANFORD_CORE_NLP_DO_NOT_USE_CODEPENDENCIES
+	//#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL	//need to test enabling this
+#endif
+#define WORDNET_SEARCH_RELATED_SYNSETS
 //#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		//{//this should only be enabled with Relex??} 	//this was (effectively) disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
 #define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 
@@ -87,7 +91,7 @@
 #define GIA_NLP_DEPENDENCY_RELATIONS_PARSER_RELEX_DEFAULT_DEPENDENCY_RELATIONS_TYPE (GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 #define GIA_NLP_DEPENDENCY_RELATIONS_PARSER_STANFORD_CORENLP_DEFAULT_DEPENDENCY_RELATIONS_TYPE (GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 #define GIA_NLP_DEPENDENCY_RELATIONS_PARSER_STANFORD_PARSER_DEFAULT_DEPENDENCY_RELATIONS_TYPE (GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
-//#define GIA_STANFORD_CORE_NLP_DO_NOT_USE_CODEPENDENCIES
+
 #define GIA_NLP_PARSER_TYPE_RELATIONS (0)
 #define GIA_NLP_PARSER_TYPE_FEATURES (1)
 

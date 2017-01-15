@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7f 09-May-2012
+ * Project Version: 1j8b 10-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -295,7 +295,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 				GIAEntityNode * ownerEntity = GIAEntityNodeArray[relationDependentIndex];
 				ownerEntity->hasPropertyTemp = true;
 				#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-				ownerEntity->hasProperty = true;	//only required for linkReferences(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
+				ownerEntity->hasPropertyTemp2 = true;	//only required for linkPronounReferencesRelex(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
 				#endif
 			}
 
@@ -322,7 +322,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 					GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
 					thingEntity->hasPropertyTemp = true;
 					#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-					ownerEntity->hasProperty = true;	//only required for linkReferences(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
+					ownerEntity->hasPropertyTemp2 = true;	//only required for linkPronounReferencesRelex(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
 					#endif
 					//propertyEntity->hasQualityTemp = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]				
 				}
@@ -345,7 +345,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 				GIAEntityNode * subjectEntity = GIAEntityNodeArray[relationDependentIndex];
 				subjectEntity->isSubjectTemp = true;
 				#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-				ownerEntity->isSubject = true;	//only required for linkReferences(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
+				ownerEntity->isSubjectTemp2 = true;	//only required for linkPronounReferencesRelex(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
 				#endif
 			}
 
@@ -366,7 +366,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 				GIAEntityNode * objectEntity = GIAEntityNodeArray[relationDependentIndex];
 				objectEntity->isObjectTemp = true; 
 				#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-				ownerEntity->isObject = true;	//only required for linkReferences(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
+				ownerEntity->isObjectTemp2 = true;	//only required for linkPronounReferencesRelex(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
 				#endif
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -378,10 +378,9 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 
 
 #ifdef GIA_USE_STANFORD_CORENLP
-void linkReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, StanfordCoreNLPCoreference * firstCoreferenceInList, Feature * featureArrayTemp[])
+void linkAllReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAConceptNodeArray[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, StanfordCoreNLPCoreference * firstCoreferenceInList, Feature * featureArrayTemp[])
 {
-	
-	//cout << "linkReferencesStanfordCoreNLP(): error - function not yet coded" << endl;
+	//cout << "linkAllReferencesStanfordCoreNLP(): error - function not yet coded" << endl;
 	//exit(0); 
 	StanfordCoreNLPCoreference * currentCoreferenceInList = firstCoreferenceInList;
 	while(currentCoreferenceInList->next != NULL)
@@ -392,12 +391,15 @@ void linkReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEnt
 		bool foundReferenceSource = false;
 		while(currentMentionInList->next != NULL)
 		{
+			int referenceSourceSentenceIndex;			
+			int referenceSourceEntityNodeIndex;
+							
 			if(!foundReferenceSource)
 			{
 				if(currentMentionInList->representative)
 				{
-					int referenceSourceSentenceIndex = currentMentionInList->sentence;			
-					int referenceSourceEntityNodeIndex = currentMentionInList->head;
+					referenceSourceSentenceIndex = currentMentionInList->sentence;  		    
+					referenceSourceEntityNodeIndex = currentMentionInList->head;
 					
 					//cout << "referenceSourceSentenceIndex = " << referenceSourceSentenceIndex << endl;
 					//cout << "\treferenceSourceEntityNodeIndex = " << referenceSourceEntityNodeIndex << endl;
@@ -469,35 +471,54 @@ void linkReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEnt
 						int currentSentenceEntityNodeIndex = currentMentionInList->head;
 						if(GIAEntityNodeArrayFilled[currentSentenceEntityNodeIndex])
 						{
-							GIAEntityNode * reference = GIAEntityNodeArray[currentSentenceEntityNodeIndex];
+							GIAEntityNode * reference = GIAConceptNodeArray[currentSentenceEntityNodeIndex];
 							
-							bool passedCoreferenceTypeRequirements = false;
-							#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
+							bool coreferenceIsPronoun = false;
 							//use stanfordPOS information to ensure that the reference is a pronoun - NB alternatively, could use referenceTypePersonNameArray and referenceTypePossessiveNameArray (as there is only a limited set of pronouns in english)
 							for(int i=0; i<FEATURE_POS_TAG_INDICATES_PRONOUN_NUMBER_TYPES; i++)
 							{
 								if(reference->stanfordPOSTemp == featurePOSindicatesPronounTypeArray[i])
 								{
-									passedCoreferenceTypeRequirements = true;
+									coreferenceIsPronoun = true;
 								}
 							}
-							#else
-							passedCoreferenceTypeRequirements = true;
-							#endif
 							
-							if(passedCoreferenceTypeRequirements)
+							if(coreferenceIsPronoun)
 							{
 								#ifdef GIA_TRANSLATOR_DEBUG
 								cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
 								#endif
 								//referenceSource->isReferenceEntityInThisSentence = true;
-								disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentSentenceEntityNodeIndex]);
+								disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAConceptNodeArray[currentSentenceEntityNodeIndex]);
 
-								GIAEntityNodeArray[currentSentenceEntityNodeIndex] = referenceSource;
-								featureArrayTemp[currentSentenceEntityNodeIndex]->isReference = true;
+								GIAEntityNodeArray[currentSentenceEntityNodeIndex] = referenceSource;		//GIAConceptNodeArray[currentSentenceEntityNodeIndex] = referenceSource;
+								featureArrayTemp[currentSentenceEntityNodeIndex]->isPronounReference = true;
 
 								applyEntityAlreadyExistsFunction(referenceSource);
-							}									
+							}
+							#ifndef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
+							else
+							{
+								//now find the property in the referenceSource concept entity that matches the referenceSource sentence/entity index
+								for(vector<GIAEntityNode*>::iterator entityIter = referenceSource->AssociatedInstanceNodeList.begin(); entityIter != referenceSource->AssociatedInstanceNodeList.end(); entityIter++) 
+								{
+									GIAEntityNode * property = *entityIter;
+									if((property->sentenceIndexTemp == referenceSourceSentenceIndex) && (property->entityIndexTemp == referenceSourceEntityNodeIndex))
+									{
+										//found the property in the referenceSource concept entity that matches the referenceSource sentence/entity index 
+										//now only link them
+										#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
+										if(reference->grammaticalDefiniteTemp || reference->grammaticalRelexPersonOrStanfordProperNounTemp)
+										{
+											GIAEntityNodeArray[currentSentenceEntityNodeIndex] = property;
+										}
+										#else
+										GIAEntityNodeArray[currentSentenceEntityNodeIndex] = property;
+										#endif
+									}	
+								}
+							}	
+							#endif							
 						}
 					}
 				}
@@ -510,7 +531,7 @@ void linkReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEnt
 }
 #endif
 			
-void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, Feature * featureArrayTemp[])
+void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, Feature * featureArrayTemp[])
 {		
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{	
@@ -635,32 +656,32 @@ void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 										//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalRelexPersonOrStanfordProperNounTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalRelexPersonOrStanfordProperNounTemp << endl;
 
 										#ifndef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-										if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubject) || (currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp))
+										if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp2) || (currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp))
 										#else
-										if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubject)																				
+										if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp2)																				
 										#endif
 										{
-											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubject = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp << endl;
+											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp << endl;
 											referenceSourceHasBeenFound = true;
 											referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
 										}
 										#ifndef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-										else if(((currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObject) || (currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp)) && (s2 > 0))	//NB (currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp) check is redundant as (s2 > 0)										
+										else if(((currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp2) || (currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp)) && (s2 > 0))	//NB (currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp) check is redundant as (s2 > 0)										
 										#else	
-										else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObject) && (s2 > 0))
+										else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp2) && (s2 > 0))
 										#endif
 										{
-											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObject = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp << endl;
+											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp << endl;
 											referenceSourceHasBeenFound = true;
 											referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
 										}
 										#ifndef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-										else if(((currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasProperty) || (currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp)) && (s2 > 0))		//NB (currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp) check is redundant as (s2 > 0)										
+										else if(((currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp2) || (currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp)) && (s2 > 0))		//NB (currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp) check is redundant as (s2 > 0)										
 										#else										
-										else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasProperty) && (s2 > 0))
+										else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp2) && (s2 > 0))
 										#endif
 										{
-											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasProperty = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp << endl;
+											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp << endl;
 											referenceSourceHasBeenFound = true;
 											referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
 										}
@@ -697,8 +718,8 @@ void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 						//referenceSource->isReferenceEntityInThisSentence = true;
 						disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[w]);
 
-						GIAEntityNodeArray[w] =	referenceSource;
-						featureArrayTemp[w]->isReference = true;
+						GIAEntityNodeArray[w] = referenceSource;
+						featureArrayTemp[w]->isPronounReference = true;
 						
 						applyEntityAlreadyExistsFunction(referenceSource);
 					}			
