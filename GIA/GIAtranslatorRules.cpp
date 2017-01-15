@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h10a 20-January-2015
+ * Project Version: 2h11a 20-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -124,7 +124,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 													cout << "applyGIATranslatorGenericXMLfunctions() error: illegal currentParamTag->firstAttribute->value = " << currentParamTag->firstAttribute->value << endl;
 												}
 											}
-
+											
 											/*
 											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "():" << endl;
 											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -266,12 +266,36 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 												}
 											}
 											*/
-										
+
 											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation
 											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))
 											{
 												result = false;
 											}
+											
+											/*
+											if(functionName == "defineSubstanceConcepts")
+											{
+												cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "():" << endl;
+												for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+												{
+													if(GIAentityNodeArrayFilled[w])
+													{
+														if(GIAentityNodeArray[w]->entityName == "chess")
+														{
+															cout << "GIAentityNodeArray[w]->grammaticalWordTypeTemp" << GIAentityNodeArray[w]->grammaticalWordTypeTemp << endl;
+															//cout << "GIAentityNodeArray[w]->wasReference" << GIAentityNodeArray[w]->wasReference << endl;
+															cout << "GIAentityNodeArray[w]->grammaticalPronounTemp" << GIAentityNodeArray[w]->grammaticalPronounTemp << endl;
+															cout << "GIAentityNodeArray[w]->grammaticalNumber" << GIAentityNodeArray[w]->grammaticalNumber << endl;
+															cout << "GIAentityNodeArray[w]->grammaticalDefiniteTemp" << GIAentityNodeArray[w]->grammaticalDefiniteTemp << endl;
+															cout << "GIAentityNodeArray[w]->grammaticalIndefinitePluralTemp" << GIAentityNodeArray[w]->grammaticalIndefinitePluralTemp << endl;
+															cout << "GIAentityNodeArray[w]->grammaticalProperNounTemp" << GIAentityNodeArray[w]->grammaticalProperNounTemp << endl;
+															cout << "GIAentityNodeArray[w]->isSubstanceConcept" << GIAentityNodeArray[w]->isSubstanceConcept << endl;
+														}
+													}
+												}
+											}
+											*/
 
 											/*
 											if(functionName == "redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs")
