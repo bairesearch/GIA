@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b5b 08-January-2014
+ * Project Version: 2b5c 08-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -581,14 +581,16 @@ void defineConnectionsBasedOnSemanticRelations(Sentence * currentSentenceInList,
 				{
 					int entity2Index2 = currentRelationInList2->relationDependentIndex;
 					bool sameReferenceSet2 = currentRelationInList2->sameReferenceSet; 
-					if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT])
+					if(currentRelationInList2->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT])
 					{
 						if(entity2Index == entity2Index2) 
 						{//found matching conditionType pair
 							int entity3Index = currentRelationInList2->relationDependentIndex;			
 							GIAentityNode * entity3 = GIAentityNodeArray[entity3Index];
-
-							GIAentityNodeArray[entity3Index] = addOrConnectActionToEntity(entity1, entity3, entity2, sameReferenceSet, sameReferenceSet2);
+							int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
+							GIAentityNode * entity2relation2 = GIAentityNodeArray[entity2IndexRelation2];
+			
+							GIAentityNodeArray[entity3Index] = addOrConnectActionToEntity(entity1, entity2relation2, entity3, sameReferenceSet, sameReferenceSet2);
 							foundMatchingObject = true;
 							currentRelationInList2->disabled = true;
 						}
@@ -613,13 +615,16 @@ void defineConnectionsBasedOnSemanticRelations(Sentence * currentSentenceInList,
  				while(currentRelationInList2->next != NULL)
 				{
 					int entity2Index2 = currentRelationInList2->relationDependentIndex;
-					if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT])
+					if(currentRelationInList2->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT])
 					{
 						if(entity2Index == entity2Index2) 
 						{//found matching conditionType pair
 							int entity3Index = currentRelationInList2->relationDependentIndex;			
 							GIAentityNode * entity3 = GIAentityNodeArray[entity3Index];
-							GIAentityNodeArray[entity3Index] = addOrConnectConditionToEntity(entity1, entity3, entity2, sameReferenceSet);
+							int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
+							GIAentityNode * entity2relation2 = GIAentityNodeArray[entity2IndexRelation2];
+							
+							GIAentityNodeArray[entity3Index] = addOrConnectConditionToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
 							currentRelationInList->disabled = true;		
 							currentRelationInList2->disabled = true;
 						}

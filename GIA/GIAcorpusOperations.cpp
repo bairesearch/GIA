@@ -23,7 +23,7 @@
  * File Name: GIAcorpusOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b5b 08-January-2014
+ * Project Version: 2b5c 08-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -121,7 +121,7 @@ string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArra
 	string entityWord2 = GIAentityNodeArray[entityIndex2]->wordOrig;
 	//cout << "entityWord1 = " << entityWord1 << endl;
 	//cout << "entityWord2 = " << entityWord2 << endl;
-	/*//lemmas not recorded; as they are irrelevant (wordOrig is only recorded for debugging purposes and internal/manual/inhouse development of the corpus); only the entity indicies require recording 
+	//lemmas are in general not recorded as they are irrelevant (wordOrig is only recorded for debugging purposes and internal/manual/inhouse development of the corpus); only the entity indicies require recording 
 	if(entityWord1 == "")
 	{//why does GIAentityNodes in GIAentityNodeArray that correspond to prepositions not have a "wordOrig" but only have an entityName? (is it related to LRP?) 
 		entityWord1 = GIAentityNodeArray[entityIndex1]->entityName;
@@ -130,7 +130,6 @@ string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArra
 	{//why does GIAentityNodes in GIAentityNodeArray that correspond to prepositions not have a "wordOrig" but only have an entityName? (is it related to LRP?) 
 		entityWord2 = GIAentityNodeArray[entityIndex2]->entityName;
 	}
-	*/
 		
 	string GIA2semanticDependencyRelation = "";
 	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + GIA2semanticDependencyRelationNameArray[connectionType] + "(" + entityWord1 + "-" + convertIntToString(entityIndex1) + ", " + entityWord2 + "-" + convertIntToString(entityIndex2) + ") " + createSameReferenceSetRecord(sameReferenceSet);
