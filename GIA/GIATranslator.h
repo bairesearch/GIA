@@ -136,30 +136,48 @@ using namespace std;
 #define RELATION_TYPE_ADJECTIVE_1 "_amod"		//eg x is happy
 #define RELATION_TYPE_ADJECTIVE_2 "_predadj"						
 #define RELATION_TYPE_ADJECTIVE_3 "_advmod"
+#define RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES (3)
+#define RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES (2)
 //properties (possessive relationships)
 #define RELATION_TYPE_POSSESSIVE "_poss"	//eg his bike	[bike him]		/its bike
 #define RELATION_TYPE_PRENOMIAL_MODIFIER "_nn"
-
+#define RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES (2)
+#define RELATION_TYPE_INDIRECT_OBJECT "_iobj"
 #define RELATION_TYPE_PARATAXIS "_parataxis"	//eg "The guy, Akari said, left..." //added 13 February 2011
 
-//entities (concepts);					
+//concepts:					
 #define RELATION_FUNCTION_DEFINITION_1 "be"	//eg x is y
+#define RELATION_FUNCTION_DEFINITION_NUMBER_OF_TYPES (1)
 #define RELATION_TYPE_APPOSITIVE_OF_NOUN "_appo"
 
-//actions (obj/subj relationships)
+//actions (obj/subj relationships):
 #define RELATION_TYPE_OBJECT "_obj"			//eg eats y	[? be y]
 #define RELATION_TYPE_OBJECT_THAT "_that"		//there is a place that we go
-#define RELATION_TYPE_INDIRECT_OBJECT "_iobj"
+#define RELATION_TYPE_OBJECT_NUMBER_OF_TYPES (2)
+#define RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES (1)
+
 #define RELATION_TYPE_SUBJECT "_subj"	//eg x eats 	[? be x]
 #define RELATION_TYPE_SUBJECT_EXPLETIVE "_expl"		//eg goes there	//NB "there" is currently interpreted as a subject of an action
+#define RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES (2)
 
+//negations;
 #define RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES (1)
 #define RELATION_TYPE_NEGATIVE_CONTEXT_1 "not"
 
-//
+//conjugations;
+#define GIA_USE_RELEX_1.4.0
+#ifdef GIA_USE_RELEX_1.4.0
+	#define RELATION_TYPE_CONJUGATION_AND "conj_and"
+	#define RELATION_TYPE_CONJUGATION_OR "conj_or"
+	#define RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES (2)
+#endif
+
+//tobe/todo (properties/conditions);
 #define RELATION_TYPE_COMPLIMENT_TO_BE "_to-be"		//eg grows tired / The rose smelled sweet / _to-be(smell, sweet) - CHECK THIS
 #define RELATION_TYPE_COMPLIMENT_TO_DO "_to-do"		//eg Linas likes to row / _to-do(like, row) - CHECK THIS
 #define RELATION_TYPE_COMPLEMENTS_NUMBER_OF_TYPES (2)
+#define RELATION_TYPE_OBJECT_SPECIAL_TO_DO_PROPERTY_NUMBER_OF_TYPES (1)
+#define RELATION_TYPE_OBJECT_SPECIAL_TO_BE_PROPERTY_NUMBER_OF_TYPES (1)
 
 //dates, measures, quantities
 #define RELATION_TYPE_DATE_DAY "_date_day" 
@@ -173,13 +191,14 @@ using namespace std;
 #define RELATION_TYPE_QUANTITY_MULT "_quantity_mult"
 	//? DOING NOW: references: yet to integrate - see http://wiki.opencog.org/w/Ideas#Improved_reference_resolution for integration (also check for the existence of the "person" tag in the feature "tense" data block)
 	//? #define RELATION_TYPE_QUANTITY "_quantity"	//eg his bike	[bike him]		/its bike
-
-
 #define RELATION_TYPE_OBJECT_SPECIAL_CONDITION_MEASURE_DISTANCE_NUMBER_OF_TYPES (1)
-#define RELATION_TYPE_OBJECT_SPECIAL_TO_DO_PROPERTY_NUMBER_OF_TYPES (1)
-#define RELATION_TYPE_OBJECT_SPECIAL_TO_BE_PROPERTY_NUMBER_OF_TYPES (1)
+#define RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES (4)
+#define RELATION_TYPE_QUANTITY_OR_MEASURE_SWITCHED_NUMBER_OF_TYPES (2)
+#define RELATION_TYPE_MEASURE_NUMBER_OF_TYPES (4)
+#define RELATION_TYPE_QUANTITY_ARGUMENT_IMPLY_MEASURE_PER_NUMBER_OF_TYPES (1)
 
-//action/property conditions: prepositions [predicates????]
+
+//conditions: prepositions [predicates????]
 #define RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES (18)
 #define RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES (35)
 #define RELATION_TYPE_PREPOSITION_REASON_OR_CIRCUMSTANCE_NUMBER_OF_TYPES (6)
@@ -207,31 +226,16 @@ using namespace std;
 
 #define RELATION_TYPE_OF "of"		//eg [she grew tired] of it	 "She grew tired of the pie."  / "The house of Kriton is blue."	//detect if function and argument are both nouns/property entities; if so then create a property connection. if a function is a verb/action, then create a condition connection.
 
-//action/property reasons [???]
+//action/property reasons [NOT YET IMPLEMENTED ???]
 #define RELATION_TYPE_PREPOSITION_SUCH_THAT "such"
 #define RELATION_TYPE_PREPOSITION_SO "so"
 #define RELATION_TYPE_PREPOSITION_REASON_NUMBER_OF_TYPES (2)
+	//because?
+	
 
-#define RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES (4)
-#define RELATION_TYPE_QUANTITY_OR_MEASURE_SWITCHED_NUMBER_OF_TYPES (2)
-#define RELATION_TYPE_MEASURE_NUMBER_OF_TYPES (4)
-#define RELATION_TYPE_QUANTITY_ARGUMENT_IMPLY_MEASURE_PER_NUMBER_OF_TYPES (1)
-
-#define RELATION_TYPE_OBJECT_NUMBER_OF_TYPES (2)
-#define RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES (2)
-#define RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES (3)
-#define RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES (2)
-/* ORIGINAL v1a;
-#define RELATION_TYPE_OBJECT_NUMBER_OF_TYPES (2)
-#define RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES (1)
-#define RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES (3)
-#define RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES (1)
-*/
-
-#define RELATION_FUNCTION_DEFINITION_NUMBER_OF_TYPES (1)
 #define GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES (1)
-#define RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES (2)
-#define RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES (1)
+
+
 
 #define REFERENCE_TYPE_LOCATION "there"				//_advmod
 	//pronouns
