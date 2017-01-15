@@ -2047,9 +2047,6 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 {
 	bool foundIndefiniteEntity = false;
 
-	//assume plurality tests already performed;
-	//if(((indefiniteEntity->grammaticalNumber == GRAMMATICAL_NUMBER_SINGULAR) && (definiteEntity->grammaticalNumber == GRAMMATICAL_NUMBER_SINGULAR)) || (indefiniteEntity->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL))
-	//{
 	if(indefiniteEntity->sentenceIndexTemp < definiteEntity->sentenceIndexTemp)
 	{
 		NLCsentence* currentNLCsentenceInList = firstNLCsentenceInListLocal;
@@ -2124,7 +2121,6 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 			#endif
 		}
 	}
-	//}
 
 	return foundIndefiniteEntity;
 }
