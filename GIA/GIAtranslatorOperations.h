@@ -20,7 +20,7 @@
 
 /*******************************************************************************
  *
- * File Name: GIATranslatorOperations.h
+ * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1r7a 14-November-2012
@@ -45,10 +45,10 @@ using namespace std;
 
 
 #include "GIAglobalDefs.h"
-#include "GIASentenceClass.h"
-#include "GIAEntityNodeClass.h"
-#include "GIAEntityConnectionClass.h"
-#include "GIAConditionNodeClass.h"
+#include "GIAsentenceClass.h"
+#include "GIAentityNodeClass.h"
+#include "GIAentityConnectionClass.h"
+#include "GIAconditionNodeClass.h"
 
 #define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES	//added 11 August 2012	[this is designed to work with GIA_SUPPORT_ALIASES]
 	//#define GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES	//added 8 August 2012		//Not used - already coded - reuse Relex code in linkConditions instead (GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES)
@@ -106,7 +106,7 @@ using namespace std;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 		#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY	//this is required considering reference look up of non definite sets is never desired
 		#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
-			//#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY	//removed 12 August 2012 (NB original isObjectTemp/isSubjectTemp values are not retained currently - especially after advanced referencing update [GIA1n] - only derived isObjectTemp/isSubjectTemp values are retained [where as original values are left inside GIAFeatureTempEntityNodeArray], which do not include subjects/objects not involved in actions - eg property relationships as opposed to action relationships)
+			//#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY	//removed 12 August 2012 (NB original isObjectTemp/isSubjectTemp values are not retained currently - especially after advanced referencing update [GIA1n] - only derived isObjectTemp/isSubjectTemp values are retained [where as original values are left inside GIAfeatureTempEntityNodeArray], which do not include subjects/objects not involved in actions - eg property relationships as opposed to action relationships)
 			#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY_ACCEPT_PROPERNOUNS 	//added 12 August 2012
 		#endif
 		#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
@@ -810,7 +810,7 @@ static string featureQueryWordHowWhenWhereWhySpecialCaseCrossReferenceQueryVaria
 #define FEATURE_QUERY_WORD_WHAT_NUMBER_OF_TYPES (1)
 static string featureQueryWordWhatNameArray[FEATURE_QUERY_WORD_WHAT_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_WHAT};
 #define RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES (4)
-static string relationTypeQVariableNameArray[RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW};	//had to add REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW here - need to check execution with relex parser is not affected
+static string relationTypeQueryVariableNameArray[RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW};	//had to add REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW here - need to check execution with relex parser is not affected
 
 #define FEATURE_QUERY_WHAT_IS_THE_NAME_NUMBER_OF_NUMBER_OF_TYPES (1)
 static string featureQueryWhatIsTheNameNumberOfNameArray[FEATURE_QUERY_WHAT_IS_THE_NAME_NUMBER_OF_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_WHAT};
@@ -841,7 +841,7 @@ static string relationTypeConjugationNameArray[RELATION_TYPE_CONJUGATION_NUMBER_
 static string relationTypeConjugationBasicNameArray[RELATION_TYPE_CONJUGATION_BASIC_NUMBER_OF_TYPES] = {RELATION_TYPE_CONJUGATION_AND_BASIC, RELATION_TYPE_CONJUGATION_OR_BASIC};
 #endif
 
-static string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_THAT_RELEX};	//removed RELATION_TYPE_PARTICIPIAL_MODIFIER 9 May 2012 (this is now dealt with in GIATranslatorRedistributeStanfordRelations.cpp)
+static string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_THAT_RELEX};	//removed RELATION_TYPE_PARTICIPIAL_MODIFIER 9 May 2012 (this is now dealt with in GIAtranslatorRedistributeStanfordRelations.cpp)
 #ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
 static string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_SUBJECT_EXPLETIVE};
 #else
@@ -949,12 +949,12 @@ static string posTagPluralNounArray[FEATURE_POS_TAG_PLURAL_NOUN_NUMBER_OF_TYPES]
 
 static string relationAuxillaryGovernerIndicatesFutureTenseArray[RELATION_TYPE_AUXILLARY_GOVERNER_INDICATES_FUTURE_TENSE_NUMBER_OF_TYPES] = {"will"};
 
-static int featureRelexPOSTypeCrossReferenceWordnetWordTypeArray[FEATURE_RELEX_POS_NUMBER_OF_TYPES] = {GRAMMATICAL_WORD_TYPE_UNDEFINED, GRAMMATICAL_WORD_TYPE_ADJ, GRAMMATICAL_WORD_TYPE_ADV, GRAMMATICAL_WORD_TYPE_UNDEFINED, GRAMMATICAL_WORD_TYPE_UNDEFINED, GRAMMATICAL_WORD_TYPE_NOUN, GRAMMATICAL_WORD_TYPE_UNDEFINED, GRAMMATICAL_WORD_TYPE_UNDEFINED, GRAMMATICAL_WORD_TYPE_UNDEFINED, GRAMMATICAL_WORD_TYPE_VERB, GRAMMATICAL_WORD_TYPE_UNDEFINED};
+static int featureRelexPOStypeCrossReferenceWordnetWordTypeArray[FEATURE_RELEX_POS_NUMBER_OF_TYPES] = {GRAMMATICAL_WORD_TYPE_UNDEFINED, GRAMMATICAL_WORD_TYPE_ADJ, GRAMMATICAL_WORD_TYPE_ADV, GRAMMATICAL_WORD_TYPE_UNDEFINED, GRAMMATICAL_WORD_TYPE_UNDEFINED, GRAMMATICAL_WORD_TYPE_NOUN, GRAMMATICAL_WORD_TYPE_UNDEFINED, GRAMMATICAL_WORD_TYPE_UNDEFINED, GRAMMATICAL_WORD_TYPE_UNDEFINED, GRAMMATICAL_WORD_TYPE_VERB, GRAMMATICAL_WORD_TYPE_UNDEFINED};
 
-static string featurePOSTagMinimalArray[FEATURE_POS_TAG_NUMBER_OF_TYPES_MINIMAL] = {FEATURE_POS_TAG_VB, FEATURE_POS_TAG_VBD, FEATURE_POS_TAG_VBG, FEATURE_POS_TAG_VBN, FEATURE_POS_TAG_VBP, FEATURE_POS_TAG_VBZ, FEATURE_POS_TAG_NN, FEATURE_POS_TAG_NNS, FEATURE_POS_TAG_NNP, FEATURE_POS_TAG_NNPS, FEATURE_POS_TAG_ADJECTIVE, FEATURE_POS_TAG_ADJECTIVE_COMPARATIVE, FEATURE_POS_TAG_ADJECTIVE_SUPERLATIVE, FEATURE_POS_TAG_ADVERB, FEATURE_POS_TAG_ADVERB_COMPARATIVE, FEATURE_POS_TAG_ADVERB_SUPERLATIVE, FEATURE_POS_TAG_PERSONAL_PRONOUN, FEATURE_POS_TAG_POSSESSIVE_PRONOUN};
-static string featurePOSTagCrossReferenceRelexPOSTypeArray[FEATURE_POS_TAG_NUMBER_OF_TYPES_MINIMAL] = {FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME};
+static string featurePOStagMinimalArray[FEATURE_POS_TAG_NUMBER_OF_TYPES_MINIMAL] = {FEATURE_POS_TAG_VB, FEATURE_POS_TAG_VBD, FEATURE_POS_TAG_VBG, FEATURE_POS_TAG_VBN, FEATURE_POS_TAG_VBP, FEATURE_POS_TAG_VBZ, FEATURE_POS_TAG_NN, FEATURE_POS_TAG_NNS, FEATURE_POS_TAG_NNP, FEATURE_POS_TAG_NNPS, FEATURE_POS_TAG_ADJECTIVE, FEATURE_POS_TAG_ADJECTIVE_COMPARATIVE, FEATURE_POS_TAG_ADJECTIVE_SUPERLATIVE, FEATURE_POS_TAG_ADVERB, FEATURE_POS_TAG_ADVERB_COMPARATIVE, FEATURE_POS_TAG_ADVERB_SUPERLATIVE, FEATURE_POS_TAG_PERSONAL_PRONOUN, FEATURE_POS_TAG_POSSESSIVE_PRONOUN};
+static string featurePOStagCrossReferenceRelexPOStypeArray[FEATURE_POS_TAG_NUMBER_OF_TYPES_MINIMAL] = {FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME};
 
-static string featureNERTypeArray[FEATURE_NER_NUMBER_TYPES] = {FEATURE_NER_UNDEFINED_NAME, FEATURE_NER_DATE_NAME, FEATURE_NER_TIME_NAME, FEATURE_NER_MONEY_NAME, FEATURE_NER_NUMBER_NAME, FEATURE_NER_PERSON_NAME, FEATURE_NER_LOCATION_NAME, FEATURE_NER_ORGANIZATION_NAME, FEATURE_NER_MISC_NAME, FEATURE_NER_DURATION_NAME};
+static string featureNERtypeArray[FEATURE_NER_NUMBER_TYPES] = {FEATURE_NER_UNDEFINED_NAME, FEATURE_NER_DATE_NAME, FEATURE_NER_TIME_NAME, FEATURE_NER_MONEY_NAME, FEATURE_NER_NUMBER_NAME, FEATURE_NER_PERSON_NAME, FEATURE_NER_LOCATION_NAME, FEATURE_NER_ORGANIZATION_NAME, FEATURE_NER_MISC_NAME, FEATURE_NER_DURATION_NAME};
 static string featureRelexFlagTypeArray[FEATURE_RELEX_FLAG_NUMBER_TYPES] = {FEATURE_RELEX_FLAG_UNDEFINED_NAME, FEATURE_RELEX_FLAG_DATE_NAME, FEATURE_RELEX_FLAG_TIME_NAME, FEATURE_RELEX_FLAG_MONEY_NAME, FEATURE_RELEX_FLAG_NUMBER_NAME, FEATURE_RELEX_FLAG_PERSON_NAME, FEATURE_RELEX_FLAG_LOCATION_NAME, FEATURE_RELEX_FLAG_ORGANIZATION_NAME, FEATURE_RELEX_FLAG_MISC_NAME, FEATURE_RELEX_FLAG_DURATION_NAME};
 static int featureNERexplicitTypeArray[FEATURE_NER_EXPLICIT_NUMBER_TYPES] = {FEATURE_NER_DATE, FEATURE_NER_TIME, FEATURE_NER_MONEY, FEATURE_NER_NUMBER, FEATURE_NER_PERSON, FEATURE_NER_LOCATION, FEATURE_NER_ORGANIZATION, FEATURE_NER_MISC, FEATURE_NER_DURATION};
 static int featureNERindicatesProperNounTypeArray[FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_TYPES] = {FEATURE_NER_PERSON, FEATURE_NER_LOCATION, FEATURE_NER_ORGANIZATION};	//this array is not used by stanford parser as Standford Core NLP explicitly marks entities as 'proper noun' within their stanfordPOS tag (it is used by the Relex parser however to determine proper nouns)
@@ -980,118 +980,118 @@ adjective = happy
 
 void initialiseGIATranslatorForTexualContextOperations();
 
-bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation * currentRelationInList, GIAEntityNode * GIAEntityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType);
+bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation * currentRelationInList, GIAentityNode * GIAentityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType);
 bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, Relation * currentRelationInList, int NLPdependencyRelationsType);								//Stanford Compatible
 
-GIAEntityNode * addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet);
-	GIAEntityNode * connectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet);
-	GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet);	//Not used anymore
-GIAEntityNode * addSubstanceToSubstanceDefinition(GIAEntityNode * substanceEntity);
-	GIAEntityNode * addSubstance(GIAEntityNode * entity);
+GIAentityNode * addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAentityNode * thingEntity, GIAentityNode * propertyEntity, bool sameReferenceSet);
+	GIAentityNode * connectPropertyToEntity(GIAentityNode * thingEntity, GIAentityNode * propertyEntity, bool sameReferenceSet);
+	GIAentityNode * addOrConnectPropertyToEntity(GIAentityNode * thingEntity, GIAentityNode * propertyEntity, bool sameReferenceSet);	//Not used anymore
+GIAentityNode * addSubstanceToSubstanceDefinition(GIAentityNode * substanceEntity);
+	GIAentityNode * addSubstance(GIAentityNode * entity);
 
-void addTenseOnlyTimeConditionToSubstance(GIAEntityNode * substanceNode, int tense, bool isProgressive);
+void addTenseOnlyTimeConditionToSubstance(GIAentityNode * substanceNode, int tense, bool isProgressive);
 
-void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity, bool sameReferenceSet);
+void addDefinitionToEntity(GIAentityNode * thingEntity, GIAentityNode * definitionEntity, bool sameReferenceSet);
 
-GIAEntityNode * addOrConnectActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity, bool sameReferenceSetSubject, bool sameReferenceSetObject);
-GIAEntityNode * addOrConnectActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet);
-GIAEntityNode * addOrConnectActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet);
-	GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity);	
-	void connectActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet);
-	void connectActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet);
-GIAEntityNode * addActionToActionDefinitionDefineSubstances(GIAEntityNode * actionEntity);
-		void upgradeSubstanceToAction(GIAEntityNode * substance);
-		GIAEntityNode * addAction(GIAEntityNode * actionEntity);
+GIAentityNode * addOrConnectActionToEntity(GIAentityNode * subjectEntity, GIAentityNode * objectEntity, GIAentityNode * actionEntity, bool sameReferenceSetSubject, bool sameReferenceSetObject);
+GIAentityNode * addOrConnectActionToSubject(GIAentityNode * subjectEntity, GIAentityNode * actionEntity, bool sameReferenceSet);
+GIAentityNode * addOrConnectActionToObject(GIAentityNode * objectEntity, GIAentityNode * actionEntity, bool sameReferenceSet);
+	GIAentityNode * addActionToActionDefinition(GIAentityNode * actionEntity);	
+	void connectActionInstanceToSubject(GIAentityNode * subjectEntity, GIAentityNode * newOrExistingAction, bool sameReferenceSet);
+	void connectActionInstanceToObject(GIAentityNode * objectEntity, GIAentityNode * newOrExistingAction, bool sameReferenceSet);
+GIAentityNode * addActionToActionDefinitionDefineSubstances(GIAentityNode * actionEntity);
+		void upgradeSubstanceToAction(GIAentityNode * substance);
+		GIAentityNode * addAction(GIAentityNode * actionEntity);
 	
-GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, GIAEntityNode * conditionTypeEntity, bool sameReferenceSet);
-	GIAEntityNode * addConditionToConditionDefinition(GIAEntityNode * conditionTypeEntity);
-	void connectConditionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingCondition, bool sameReferenceSet);
-	void connectConditionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingCondition, bool sameReferenceSet);
-GIAEntityNode * addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionDefinitionNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
-GIAEntityNode * addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionSubstanceNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
-		GIAEntityNode * addCondition(GIAEntityNode * conditionEntity);
+GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionEntityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet);
+	GIAentityNode * addConditionToConditionDefinition(GIAentityNode * conditionTypeEntity);
+	void connectConditionInstanceToSubject(GIAentityNode * subjectEntity, GIAentityNode * newOrExistingCondition, bool sameReferenceSet);
+	void connectConditionInstanceToObject(GIAentityNode * objectEntity, GIAentityNode * newOrExistingCondition, bool sameReferenceSet);
+GIAentityNode * addOrConnectBeingDefinitionConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionDefinitionNode, GIAentityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
+GIAentityNode * addOrConnectHavingPropertyConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionSubstanceNode, GIAentityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
+		GIAentityNode * addCondition(GIAentityNode * conditionEntity);
 
 string convertStanfordPrepositionToRelex(string * preposition, int NLPdependencyRelationsType, bool * stanfordPrepositionFound);				//Stanford Compatible
 
 
 
-void setTranslatorEntityNodesCompleteList(vector<GIAEntityNode*> * newEntityNodesCompleteList);
-//void setTranslatorConceptEntityNodesList(vector<GIAEntityNode*> * newConceptEntityNodesList);
-void setTranslatorSubstanceEntityNodesList(vector<GIAEntityNode*> * newSubstanceEntityNodesList);
-void setTranslatorActionEntityNodesList(vector<GIAEntityNode*> * newActionEntityNodesList);
-void setTranslatorConditionEntityNodesList(vector<GIAEntityNode*> * newConditionEntityNodesList);
+void setTranslatorEntityNodesCompleteList(vector<GIAentityNode*> * newEntityNodesCompleteList);
+//void setTranslatorConceptEntityNodesList(vector<GIAentityNode*> * newConceptEntityNodesList);
+void setTranslatorSubstanceEntityNodesList(vector<GIAentityNode*> * newSubstanceEntityNodesList);
+void setTranslatorActionEntityNodesList(vector<GIAentityNode*> * newActionEntityNodesList);
+void setTranslatorConditionEntityNodesList(vector<GIAentityNode*> * newConditionEntityNodesList);
 
-vector<GIAEntityNode*> * getTranslatorEntityNodesCompleteList();
-//vector<GIAEntityNode*> * getTranslatorConceptEntityNodesList();
-vector<GIAEntityNode*> * getTranslatorSubstanceEntityNodesList();
-vector<GIAEntityNode*> * getTranslatorActionEntityNodesList();
-vector<GIAEntityNode*> * getTranslatorConditionEntityNodesList();
+vector<GIAentityNode*> * getTranslatorEntityNodesCompleteList();
+//vector<GIAentityNode*> * getTranslatorConceptEntityNodesList();
+vector<GIAentityNode*> * getTranslatorSubstanceEntityNodesList();
+vector<GIAentityNode*> * getTranslatorActionEntityNodesList();
+vector<GIAentityNode*> * getTranslatorConditionEntityNodesList();
 
 void setSaveNetwork(bool val);
 bool getSaveNetwork();
 
 bool getFoundComparisonVariable();
-GIAEntityNode* getComparisonVariableNode();
+GIAentityNode* getComparisonVariableNode();
 void setFoundComparisonVariable(bool value);
-void setComparisonVariableNode(GIAEntityNode* newComparisonVariableNode);
+void setComparisonVariableNode(GIAentityNode* newComparisonVariableNode);
 
-long * getCurrentEntityNodeIDInCompleteList();
-long * getCurrentEntityNodeIDInConceptEntityNodesList();
-long * getCurrentEntityNodeIDInSubstanceEntityNodesList();
-long * getCurrentEntityNodeIDInActionEntityNodesList();
-long * getCurrentEntityNodeIDInConditionEntityNodesList();
+long * getCurrentEntityNodeIDinCompleteList();
+long * getCurrentEntityNodeIDinConceptEntityNodesList();
+long * getCurrentEntityNodeIDinSubstanceEntityNodesList();
+long * getCurrentEntityNodeIDinActionEntityNodesList();
+long * getCurrentEntityNodeIDinConditionEntityNodesList();
 
-long * getCurrentEntityNodeIDInSentenceCompleteList();
-long * getCurrentEntityNodeIDInSentenceConceptEntityNodesList();
+long * getCurrentEntityNodeIDinSentenceCompleteList();
+long * getCurrentEntityNodeIDinSentenceConceptEntityNodesList();
 
-void applyConceptEntityAlreadyExistsFunction(GIAEntityNode * entity, bool entityAlreadyExistant);
-void disableConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity);
-void disableEntity(GIAEntityNode * entity);
-void disableConceptEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity);	//not used
-void disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity);	//not used
+void applyConceptEntityAlreadyExistsFunction(GIAentityNode * entity, bool entityAlreadyExistant);
+void disableConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNode * entity);
+void disableEntity(GIAentityNode * entity);
+void disableConceptEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAentityNode * entity);	//not used
+void disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNode * entity);	//not used
 
-void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap);
-void recordConceptNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap);
-void recordConceptNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap);
+void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(unordered_map<string, GIAentityNode*> *conceptEntityNodesListMap);
+void recordConceptNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string, GIAentityNode*> *conceptEntityNodesListMap);
+void recordConceptNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIAentityNode*> *conceptEntityNodesListMap);
 
-void convertRelexPOSTypeToWordnetWordType(string * relexPOStype, int * wordNetPOS);
-void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, string * relexPOStype, int * wordNetPOS);
+void convertRelexPOStypeToWordnetWordType(string * relexPOStype, int * wordNetPOS);
+void convertStanfordPOStagToRelexPOStypeAndWordnetWordType(string * POStag, string * relexPOStype, int * wordNetPOS);
 
 void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArrayTemp[]);	//used for intrafunction memory allocation purposes only
 
 #ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-//bool checkEntityHasSubstanceThatWasDeclaredInContextAndIsUnique(GIAEntityNode * entityNode, int entityIndexTemp, int sentenceIndexTemp);		//NOT REQUIRED: redundant: this unique check is redundant considering if a concept entity has a substance that was declared in the immediate context, ie sentence, then the entity node being queried will be the substance itself (and not its concept)	//added 1j8a 10 May 2012
-bool checkEntityHasSubstanceThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7d 9 May 2012
-GIAEntityNode * getEntitySubstanceThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7g 9 May 2012
+//bool checkEntityHasSubstanceThatWasDeclaredInContextAndIsUnique(GIAentityNode * entityNode, int entityIndexTemp, int sentenceIndexTemp);		//NOT REQUIRED: redundant: this unique check is redundant considering if a concept entity has a substance that was declared in the immediate context, ie sentence, then the entity node being queried will be the substance itself (and not its concept)	//added 1j8a 10 May 2012
+bool checkEntityHasSubstanceThatWasDeclaredInContext(GIAentityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7d 9 May 2012
+GIAentityNode * getEntitySubstanceThatWasDeclaredInContext(GIAentityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7g 9 May 2012
 #endif
 
-void forwardTimeInfoToNewSubstance(GIAEntityNode * entity, GIAEntityNode * newSubstance);
+void forwardTimeInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubstance);
 
 #ifdef GIA_USE_ADVANCED_REFERENCING
 bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relation * relation);
 #endif
 
-GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int featureIndex, string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts);
-GIAEntityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts);
+GIAentityNode * findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int featureIndex, string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts);
+GIAentityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts);
 
-void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet);
+void writeVectorConnection(GIAentityNode * entityNode, GIAentityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet);
 	#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
-	GIAEntityConnection * findEntityNodePointerInVector(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToFind, int connectionType, bool * foundNode);
-	GIAEntityConnection * findEntityNodeNameInVector(GIAEntityNode * entityNode, string * entityNodeNameToFind, int connectionType, bool * foundNode);
+	GIAentityConnection * findEntityNodePointerInVector(GIAentityNode * entityNode, GIAentityNode * entityNodeToFind, int connectionType, bool * foundNode);
+	GIAentityConnection * findEntityNodeNameInVector(GIAentityNode * entityNode, string * entityNodeNameToFind, int connectionType, bool * foundNode);
 	#endif
 	
-long determineNextIdInstance(GIAEntityNode * entity);
+long determineNextIdInstance(GIAentityNode * entity);
 
 #ifdef GIA_USE_DATABASE
 /*//replaced with optimised function findEntityNodesActiveListCompleteFastIndexDBactive()
 bool entityInActiveListComplete(string * entityName, long idInstance);
-bool entityInActiveListComplete(GIAEntityNode * entity);
+bool entityInActiveListComplete(GIAentityNode * entity);
 */
-void addInstanceEntityNodeToActiveLists(GIAEntityNode * entity);
+void addInstanceEntityNodeToActiveLists(GIAentityNode * entity);
 #endif
 
 #ifdef GIA_SUPPORT_ALIASES
-void mergeEntityNodesAddAlias(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToMerge);
+void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entityNodeToMerge);
 #endif
 
 #endif

@@ -20,24 +20,24 @@
 
 /*******************************************************************************
  *
- * File Name: GIATranslatorDefineGrammar.cpp
+ * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1r7a 14-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
- * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
+ * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
  * TO DO: extract date information of entities from relex <features> tag area
  *******************************************************************************/
 
 
-#include "GIATranslatorDefineGrammar.h"
-#include "GIATranslatorOperations.h"
+#include "GIAtranslatorDefineGrammar.h"
+#include "GIAtranslatorOperations.h"
 #include "GIAdatabase.h"
 
 
 
-void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAFeatureTempEntityNodeArray[], int NLPdependencyRelationsType, int NLPfeatureParser)
+void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAfeatureTempEntityNodeArray[], int NLPdependencyRelationsType, int NLPfeatureParser)
 {
 	if(currentSentenceInList->isQuestion)
 	{
@@ -107,13 +107,13 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 
 		for(int i=0; i<2; i++)
 		{
-			if(!GIAEntityNodeArrayFilled[relationIndex[i]])
+			if(!GIAentityNodeArrayFilled[relationIndex[i]])
 			{
-				GIAEntityNodeArrayFilled[relationIndex[i]] = true;
+				GIAentityNodeArrayFilled[relationIndex[i]] = true;
 
-				GIAEntityNode * featureTempEntity = new GIAEntityNode();
+				GIAentityNode * featureTempEntity = new GIAentityNode();
 				featureTempEntity->entityName = name[i];
-				GIAFeatureTempEntityNodeArray[relationIndex[i]] = featureTempEntity;
+				GIAfeatureTempEntityNodeArray[relationIndex[i]] = featureTempEntity;
 
 				#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 				if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
@@ -122,20 +122,20 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 					{//argument index only
 						if(argumentIsQuery)
 						{
-							GIAFeatureTempEntityNodeArray[relationIndex[i]]->isQuery = true;
+							GIAfeatureTempEntityNodeArray[relationIndex[i]]->isQuery = true;
 						}
 					}
 				}
 				#endif
 
 
-				GIAFeatureTempEntityNodeArray[relationIndex[i]]->isObjectTemp = false;
-				GIAFeatureTempEntityNodeArray[relationIndex[i]]->isSubjectTemp = false;
-				GIAFeatureTempEntityNodeArray[relationIndex[i]]->hasSubstanceTemp = false;
+				GIAfeatureTempEntityNodeArray[relationIndex[i]]->isObjectTemp = false;
+				GIAfeatureTempEntityNodeArray[relationIndex[i]]->isSubjectTemp = false;
+				GIAfeatureTempEntityNodeArray[relationIndex[i]]->hasSubstanceTemp = false;
 				#ifdef GIA_USE_ADVANCED_REFERENCING
 				//this is required for fillGrammaticalArraysStanford findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet()	[nb these values are applied to concept entities only]
-				GIAFeatureTempEntityNodeArray[relationIndex[i]]->entityIndexTemp = relationIndex[i];
-				GIAFeatureTempEntityNodeArray[relationIndex[i]]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
+				GIAfeatureTempEntityNodeArray[relationIndex[i]]->entityIndexTemp = relationIndex[i];
+				GIAfeatureTempEntityNodeArray[relationIndex[i]]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
 				#endif
 
 
@@ -150,9 +150,9 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
-		if(GIAEntityNodeArrayFilled[w])
+		if(GIAentityNodeArrayFilled[w])
 		{
-			GIAEntityNode * entity = GIAFeatureTempEntityNodeArray[w];
+			GIAentityNode * entity = GIAfeatureTempEntityNodeArray[w];
 			cout << "entity->entityName = " << entity->entityName << endl;
 		}
 	}
@@ -161,8 +161,8 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 	while(currentRelationInList->next != NULL)
 	{
 		string relationType = currentRelationInList->relationType;
-		GIAEntityNode * relationGoverner = GIAFeatureTempEntityNodeArray[currentRelationInList->relationGovernorIndex];
-		GIAEntityNode * relationDependent = GIAFeatureTempEntityNodeArray[currentRelationInList->relationDependentIndex];
+		GIAentityNode * relationGoverner = GIAfeatureTempEntityNodeArray[currentRelationInList->relationGovernorIndex];
+		GIAentityNode * relationDependent = GIAfeatureTempEntityNodeArray[currentRelationInList->relationDependentIndex];
 
 		cout << "relationType = " << currentRelationInList->relationType << endl;
 		cout << "relationGoverner = " << relationGoverner->entityName << endl;
@@ -175,41 +175,41 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 }
 
 
-void locateAndAddAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType, int NLPfeatureParser, GIAEntityNode * GIAFeatureTempEntityNodeArray[])
+void locateAndAddAllConceptEntities(bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType, int NLPfeatureParser, GIAentityNode * GIAfeatureTempEntityNodeArray[])
 {
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
-		if(GIAEntityNodeArrayFilled[w])
+		if(GIAentityNodeArrayFilled[w])
 		{
-			GIAEntityNode * featureTempEntityNode = GIAFeatureTempEntityNodeArray[w];
+			GIAentityNode * featureTempEntityNode = GIAfeatureTempEntityNodeArray[w];
 
 			bool entityAlreadyExistant = false;
-			GIAEntityNode * entity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(featureTempEntityNode->entityName), &entityAlreadyExistant, entityNodesActiveListConcepts);
+			GIAentityNode * entity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(featureTempEntityNode->entityName), &entityAlreadyExistant, entityNodesActiveListConcepts);
 			#ifdef GIA_TRANSLATOR_DEBUG
 			//cout << "entity->entityName = " << entity->entityName << endl;
 			#endif
 
-			GIAEntityNodeArray[w] = entity;
+			GIAentityNodeArray[w] = entity;
 
-			GIAEntityNodeArray[w]->hasAssociatedInstanceTemp = false;
+			GIAentityNodeArray[w]->hasAssociatedInstanceTemp = false;
 
 			sentenceConceptEntityNodesList->push_back(entity);
 
 			#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 			if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
 			{
-				if(GIAFeatureTempEntityNodeArray[w]->isQuery)
+				if(GIAfeatureTempEntityNodeArray[w]->isQuery)
 				{
-					GIAEntityNodeArray[w]->isQuery = true;
+					GIAentityNodeArray[w]->isQuery = true;
 					setFoundComparisonVariable(true);
-					setComparisonVariableNode(GIAEntityNodeArray[w]);
+					setComparisonVariableNode(GIAentityNodeArray[w]);
 				}
 			}
 			#endif
 			#ifdef GIA_SUPPORT_ALIASES
-			if(GIAFeatureTempEntityNodeArray[w]->isNameQuery)
+			if(GIAfeatureTempEntityNodeArray[w]->isNameQuery)
 			{
-				GIAEntityNodeArray[w]->isNameQuery = true;
+				GIAentityNodeArray[w]->isNameQuery = true;
 			}
 			#endif
 		}
@@ -332,7 +332,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 
 		//fill wordNetPOS array for wordnet - added 26 April 2012
 		int wordNetPOS = GRAMMATICAL_WORD_TYPE_UNDEFINED;
-		convertRelexPOSTypeToWordnetWordType(&(currentFeatureInList->type), &wordNetPOS);
+		convertRelexPOStypeToWordnetWordType(&(currentFeatureInList->type), &wordNetPOS);
 		currentFeatureInList->grammaticalWordType = wordNetPOS;
 
 		#ifdef FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION
@@ -483,7 +483,7 @@ void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLP
 			extractGrammaticalInformationFromPOStag(&(currentFeatureInList->stanfordPOS), currentFeatureInList);
 
 			int wordNetPOS = GRAMMATICAL_WORD_TYPE_UNDEFINED;
-			convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(&(currentFeatureInList->stanfordPOS), &(currentFeatureInList->type), &wordNetPOS);
+			convertStanfordPOStagToRelexPOStypeAndWordnetWordType(&(currentFeatureInList->stanfordPOS), &(currentFeatureInList->type), &wordNetPOS);
 			
 			currentFeatureInList->grammaticalWordType = wordNetPOS;
 
@@ -592,7 +592,7 @@ void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * cu
 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 //NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford()
-void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAFeatureTempEntityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[])
+void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAentityNodeArrayFilled[], GIAentityNode * GIAfeatureTempEntityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[])
 {
 	//uses Stanford specific relations (grammar related)
 
@@ -617,11 +617,11 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAEn
 				int entityIndexOfAuxillary = currentRelationInList->relationDependentIndex;
 				int entityIndexOfVerb = currentRelationInList->relationGovernorIndex;
 				featureArrayTemp[entityIndexOfVerb]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PERFECT] = true;
-				GIAFeatureTempEntityNodeArray[entityIndexOfAuxillary]->disabled = true;
+				GIAfeatureTempEntityNodeArray[entityIndexOfAuxillary]->disabled = true;
 
 				/*//this shouldnt be required, as verbs are automatically assumed not to be part of same reference set [see DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS]
 				#ifdef GIA_USE_ADVANCED_REFERENCING
-				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, GIAEntityNodeArray[entityIndexOfVerb]);
+				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, GIAentityNodeArray[entityIndexOfVerb]);
 				#endif
 				*/
 
@@ -642,11 +642,11 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAEn
 				int entityIndexOfAuxillary = currentRelationInList->relationDependentIndex;
 				int entityIndexOfVerb = currentRelationInList->relationGovernorIndex;
 				featureArrayTemp[entityIndexOfVerb]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PASSIVE] = true;
-				GIAFeatureTempEntityNodeArray[entityIndexOfAuxillary]->disabled = true;
+				GIAfeatureTempEntityNodeArray[entityIndexOfAuxillary]->disabled = true;
 
 				/*//this shouldnt be required, as verbs are automatically assumed not to be part of same reference set [see DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS]
 				#ifdef GIA_USE_ADVANCED_REFERENCING
-				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, GIAEntityNodeArray[entityIndexOfVerb]);
+				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, GIAentityNodeArray[entityIndexOfVerb]);
 				#endif
 				*/
 
@@ -671,7 +671,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAEn
 				int entityIndexOfNoun = currentRelationInList->relationGovernorIndex;
 				string entityNameOfNoun = currentRelationInList->relationGovernor;
 
-				GIAFeatureTempEntityNodeArray[entityIndexOfCopula]->disabled = true;
+				GIAfeatureTempEntityNodeArray[entityIndexOfCopula]->disabled = true;
 
 				#ifdef GIA_USE_ADVANCED_REFERENCING
 				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, entityIndexOfNoun, &entityNameOfNoun);
@@ -721,7 +721,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAEn
 				#endif				
 				int entityIndexOfDeterminier = currentRelationInList->relationDependentIndex;
 				int entityIndexOfNoun = currentRelationInList->relationGovernorIndex;
-				GIAFeatureTempEntityNodeArray[entityIndexOfDeterminier]->disabled = true;
+				GIAfeatureTempEntityNodeArray[entityIndexOfDeterminier]->disabled = true;
 
 				if((determiner == GRAMMATICAL_DETERMINER_DEFINITE) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL))
 				{
@@ -732,8 +732,8 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAEn
 
 					#ifdef GIA_TRANSLATOR_DEBUG
 					//cout << "(determiner == GRAMMATICAL_DETERMINER_DEFINITE)" << endl;
-					//cout << "GIAEntityNodeArray[entityIndexOfDeterminier]->entityName = " << GIAEntityNodeArray[entityIndexOfDeterminier]->entityName << endl;
-					//cout << "GIAEntityNodeArray[entityIndexOfNoun]->entityName = " << GIAEntityNodeArray[entityIndexOfNoun]->entityName << endl;
+					//cout << "GIAentityNodeArray[entityIndexOfDeterminier]->entityName = " << GIAentityNodeArray[entityIndexOfDeterminier]->entityName << endl;
+					//cout << "GIAentityNodeArray[entityIndexOfNoun]->entityName = " << GIAentityNodeArray[entityIndexOfNoun]->entityName << endl;
 					#endif
 				}
 				/*
@@ -759,15 +759,15 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAEn
 
 
 
-void applyGrammaticalInfoToAllEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], Feature * firstFeatureInSentence)
+void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * firstFeatureInSentence)
 {
 	int w = 1;
 	Feature * currentFeatureInList = firstFeatureInSentence;
 	while(currentFeatureInList->next != NULL)
 	{
-		if(GIAEntityNodeArrayFilled[w])
+		if(GIAentityNodeArrayFilled[w])
 		{
-			GIAEntityNode * entity = GIAEntityNodeArray[w];
+			GIAentityNode * entity = GIAentityNodeArray[w];
 			#ifdef GIA_TRANSLATOR_DEBUG
 			//cout << "entity->entityName = " << entity->entityName << endl;
 			#endif
@@ -801,8 +801,8 @@ void applyGrammaticalInfoToAllEntities(bool GIAEntityNodeArrayFilled[], GIAEntit
 
 			entity->NERTemp = currentFeatureInList->NER;
 			#ifdef GIA_USE_STANFORD_CORENLP
-			entity->stanfordPOSTemp = currentFeatureInList->stanfordPOS;
-			entity->NormalizedNERTemp = currentFeatureInList->NormalizedNER;
+			entity->stanfordPOStemp = currentFeatureInList->stanfordPOS;
+			entity->NormalizedNERtemp = currentFeatureInList->NormalizedNER;
 			entity->TimexTemp = currentFeatureInList->Timex;
 			#endif
 

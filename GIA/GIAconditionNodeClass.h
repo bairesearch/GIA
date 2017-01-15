@@ -20,7 +20,7 @@
 
 /*******************************************************************************
  *
- * File Name: GIAConditionNodeClass.h
+ * File Name: GIAconditionNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1r7a 14-November-2012
@@ -45,7 +45,7 @@ using namespace std;
 
 
 
-//class GIATimeConditionNode;
+//class GIAtimeConditionNode;
 
 
 #define CONDITION_NODE_NUMBER_OF_TYPES (4)
@@ -84,12 +84,12 @@ using namespace std;
 #define TIME_MONTH_UNDEFINED (-1)	//OLD: 13th month
 
 
-class GIATimeConditionNode
+class GIAtimeConditionNode
 {
 public:
 
-	GIATimeConditionNode(void);
-	~GIATimeConditionNode(void);
+	GIAtimeConditionNode(void);
+	~GIAtimeConditionNode(void);
 
 	string conditionName;
 

@@ -20,7 +20,7 @@
 
 /*******************************************************************************
  *
- * File Name: GIASentenceClass.h
+ * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1r7a 14-November-2012
@@ -42,8 +42,8 @@
 using namespace std;
 
 #include "GIAglobalDefs.h"
-#include "GIAEntityNodeClass.h"
-#include "GIAEntityConnectionClass.h"
+#include "GIAentityNodeClass.h"
+#include "GIAentityConnectionClass.h"
 
 //#define FEATURE_GRAMMATICAL_TENSE_DATE "date"
 #define FEATURE_WORD_QUESTIONMARK "?"
@@ -75,7 +75,7 @@ add this "abbr" to POS types (eg Mr. -> wordnet noun)?
 see relex/relex-1.4.0/data/relex-tagging-algs.txt
 NB pronouns are "already tagged as nouns"
 */
-static string featureRelexPOSTypeArray[FEATURE_RELEX_POS_NUMBER_OF_TYPES] = {FEATURE_RELEX_POS_TYPE_PUNCTUATION_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME, FEATURE_RELEX_POS_TYPE_CONJUNCTION_NAME, FEATURE_RELEX_POS_TYPE_DETERMINATE_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_PARTICLE_NAME, FEATURE_RELEX_POS_TYPE_PREP_NAME, FEATURE_RELEX_POS_TYPE_PUNCTUATION_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_WORD_NAME};
+static string featureRelexPOStypeArray[FEATURE_RELEX_POS_NUMBER_OF_TYPES] = {FEATURE_RELEX_POS_TYPE_PUNCTUATION_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME, FEATURE_RELEX_POS_TYPE_CONJUNCTION_NAME, FEATURE_RELEX_POS_TYPE_DETERMINATE_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_PARTICLE_NAME, FEATURE_RELEX_POS_TYPE_PREP_NAME, FEATURE_RELEX_POS_TYPE_PUNCTUATION_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_WORD_NAME};
 
 
 //#define FEATURE_GRAMMATICAL_COUNT ".c"
@@ -83,12 +83,12 @@ static string featureRelexPOSTypeArray[FEATURE_RELEX_POS_NUMBER_OF_TYPES] = {FEA
 
 
 #ifdef GIA_USE_STANFORD_CORENLP
-class StanfordCoreNLPMention
+class StanfordCoreNLPmention
 {
 public:
 
-	StanfordCoreNLPMention(void);
-	~StanfordCoreNLPMention(void);
+	StanfordCoreNLPmention(void);
+	~StanfordCoreNLPmention(void);
 
 	bool representative;
 	int sentence;
@@ -96,19 +96,19 @@ public:
 	int end;
 	int head;
 
-	StanfordCoreNLPMention * next;
+	StanfordCoreNLPmention * next;
 };
 
-class StanfordCoreNLPCoreference
+class StanfordCoreNLPcoreference
 {
 public:
 
-	StanfordCoreNLPCoreference(void);
-	~StanfordCoreNLPCoreference(void);
+	StanfordCoreNLPcoreference(void);
+	~StanfordCoreNLPcoreference(void);
 
-	StanfordCoreNLPMention * firstMentionInList;
+	StanfordCoreNLPmention * firstMentionInList;
 
-	StanfordCoreNLPCoreference * next;
+	StanfordCoreNLPcoreference * next;
 };
 
 #endif
@@ -258,7 +258,7 @@ public:
 	#endif
 
 	#ifdef GIA_USE_STANFORD_CORENLP
-	StanfordCoreNLPCoreference * firstCoreferenceInList;
+	StanfordCoreNLPcoreference * firstCoreferenceInList;
 	#endif
 
 	int maxNumberOfWordsInSentence;
@@ -289,8 +289,8 @@ void copySentences(Sentence * sentenceToCopy, Sentence * newSentence);
 void copyRelations(Relation * firstRelationInListToCopy, Relation * firstRelationInList);
 void copyFeatures(Feature * firstFeatureInListToCopy, Feature * firstFeatureInList);
 #ifdef GIA_USE_STANFORD_CORENLP
-void copyStanfordCoreferences(StanfordCoreNLPCoreference * firstCoreferenceInListToCopy, StanfordCoreNLPCoreference * firstCoreferenceInList);
-void copyStanfordMention(StanfordCoreNLPMention * firstMentionInListToCopy, StanfordCoreNLPMention * firstMentionInList);
+void copyStanfordCoreferences(StanfordCoreNLPcoreference * firstCoreferenceInListToCopy, StanfordCoreNLPcoreference * firstCoreferenceInList);
+void copyStanfordMention(StanfordCoreNLPmention * firstMentionInListToCopy, StanfordCoreNLPmention * firstMentionInList);
 #endif
 
 #endif

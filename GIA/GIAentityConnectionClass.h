@@ -20,7 +20,7 @@
 
 /*******************************************************************************
  *
- * File Name: GIAEntityConnectionClass.h
+ * File Name: GIAentityConnectionClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1r7a 14-November-2012
@@ -34,7 +34,7 @@
 
 
 
-#include "GIAEntityConnectionClass.h"
+#include "GIAentityConnectionClass.h"
 #include "GIAglobalDefs.h"
 
 
@@ -53,16 +53,16 @@ using namespace std;
 #define GIA_ENTITY_CONNECTION_CONFIDENCE_BASE (1.0)
 #define GIA_ENTITY_CONNECTION_CONFIDENCE_INCREMENT (1.0)
 
-class GIAEntityNode;
+class GIAentityNode;
 
-class GIAEntityConnection
+class GIAentityConnection
 {
 public:
-	GIAEntityConnection(void);
-	~GIAEntityConnection(void);
-	GIAEntityConnection(string * entityName, long idInstance);
+	GIAentityConnection(void);
+	~GIAentityConnection(void);
+	GIAentityConnection(string * entityName, long idInstance);
 
-	GIAEntityNode * entity;
+	GIAentityNode * entity;
 	double confidence;	
 	
 	#ifdef GIA_USE_ADVANCED_REFERENCING

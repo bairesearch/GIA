@@ -44,10 +44,10 @@
 static string lrpDataFolderName;
 static bool useLRP; 
 	
-void initialiseLRP(string newlrpDataFolderName, bool newUseLRP)
+void initialiseLRP(string newLRPDataFolderName, bool newUseLRP)
 {
 	useLRP = newUseLRP;
-	lrpDataFolderName = newlrpDataFolderName;
+	lrpDataFolderName = newLRPDataFolderName;
 }
 bool getUseLRP()
 {
@@ -149,15 +149,15 @@ void deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery)
 }
 
 
-bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainTextLRPOutputFileName, string plainTextLRPforNLPOutputFileName)
+bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName)
 {
 	bool result = true;
 	
 	#ifdef GIA_LRP_DEBUG
 	cout << "lrpDataFolderName= " << lrpDataFolderName << endl;
 	cout << "plainTextInputFileName = " << plainTextInputFileName << endl;
-	cout << "plainTextLRPOutputFileName = " << plainTextLRPOutputFileName << endl;
-	cout << "plainTextLRPforNLPOutputFileName = " << plainTextLRPforNLPOutputFileName << endl;	
+	cout << "plainTextLRPoutputFileName = " << plainTextLRPoutputFileName << endl;
+	cout << "plainTextLRPforNLPoutputFileName = " << plainTextLRPforNLPoutputFileName << endl;	
 	#endif
 	
 	string irregularVerbListFileName = lrpDataFolderName + GIA_LRP_IRREGULARVERB_DATABASE_FILE_NAME;
@@ -194,7 +194,7 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 	#endif	
 		
 	GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo = getCurrentGIALRPtagTextCorrespondenceInfo();
-	if(!searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(firstTagInPlainText, firstTagInPhrasalVerbList, firstTagInMultiwordPrepositionList, plainTextLRPOutputFileName, plainTextLRPforNLPOutputFileName, firstGIALRPtagCorrespondenceInfo))
+	if(!searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(firstTagInPlainText, firstTagInPhrasalVerbList, firstTagInMultiwordPrepositionList, plainTextLRPoutputFileName, plainTextLRPforNLPoutputFileName, firstGIALRPtagCorrespondenceInfo))
 	{
 		result = false;
 	}
@@ -630,7 +630,7 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagIn
 	/*
 	for(int i = 0; i<GIA_LRP_VERB_DOUBLE_CONSONANT_RULE1_LAST_LETTER_EXCEPTIONS_NUMBER_OF_TYPES; i++)
 	{
-		if(base[indexOfLastCharacterInBase] == lrpVerbDoubleConsonantRule1LastLetterExceptions[i])
+		if(base[indexOfLastCharacterInBase] == lrpVerbDoubleConsonantRuleOneLastLetterExceptions[i])
 		{
 			verbDoubleConsonantRule1LastLetterException = true;
 		}
@@ -1011,7 +1011,7 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlai
 
 
 //NB the collapsed phrasal verb contains precisely 2 entities: phrasalVerbCollapsed, entity2: thing/place/body (eg belong_to + sb/Tom) - thing/place/bodies are not currently being differentiated by the LRP as this information is only first generated at NLP/GIA parse stage
-bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTagInPlainText, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtag * firstTagInMultiwordPrepositionList, string plainTextLRPOutputFileName, string plainTextLRPforNLPOutputFileName, GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo)
+bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTagInPlainText, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtag * firstTagInMultiwordPrepositionList, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName, GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo)
 {
 	bool result = false;
 
@@ -1519,7 +1519,7 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 		currentTagInPlainText = currentTagInPlainText->nextSentence;
 	}
 
-	if(!writeTagListToFile(firstTagInPlainText, plainTextLRPOutputFileName, plainTextLRPforNLPOutputFileName))
+	if(!writeTagListToFile(firstTagInPlainText, plainTextLRPoutputFileName, plainTextLRPforNLPoutputFileName))
 	{
 		result = false;
 	}
@@ -1527,12 +1527,12 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 	return result;
 }
 
-bool writeTagListToFile(GIALRPtag * firstTagInPlainText, string plainTextLRPOutputFileName, string plainTextLRPforNLPOutputFileName)
+bool writeTagListToFile(GIALRPtag * firstTagInPlainText, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName)
 {
 	bool result = true;
 	
-	ofstream plainTextLRPOutput(plainTextLRPOutputFileName.c_str());
-	ofstream plainTextLRPforNLPOutput(plainTextLRPforNLPOutputFileName.c_str());
+	ofstream plainTextLRPOutput(plainTextLRPoutputFileName.c_str());
+	ofstream plainTextLRPforNLPOutput(plainTextLRPforNLPoutputFileName.c_str());
 	
 	bool firstCharacterInFile = true;
 	

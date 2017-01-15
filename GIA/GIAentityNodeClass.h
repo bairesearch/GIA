@@ -20,7 +20,7 @@
 
 /*******************************************************************************
  *
- * File Name: GIAEntityNodeClass.h
+ * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1r7a 14-November-2012
@@ -34,7 +34,7 @@
 
 
 
-#include "GIAConditionNodeClass.h"
+#include "GIAconditionNodeClass.h"
 #include "GIAglobalDefs.h"
 
 
@@ -191,7 +191,7 @@ static int entityVectorConnectionEqualitiesArray[GIA_ENTITY_NUMBER_OF_VECTOR_CON
 #define GIA_ENTITY_INDEX_UNDEFINED (-1)
 #define GIA_SENTENCE_INDEX_UNDEFINED (-1)
 
-class GIAEntityConnection;
+class GIAentityConnection;
 
 #ifdef GIA_USE_DATABASE
 #ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
@@ -207,12 +207,12 @@ public:
 #endif
 #endif
 
-class GIAEntityNode
+class GIAentityNode
 {
 public:
 
-	GIAEntityNode(void);
-	~GIAEntityNode(void);
+	GIAentityNode(void);
+	~GIAentityNode(void);
 
 	long idActiveList;
 	long idActiveEntityTypeList;
@@ -241,9 +241,9 @@ public:
 	
 	bool hasProgressiveTemp;	//PRECISE ORIGINALNAME: isActionOrSubstanceQualityState		//eg The cat is lying on the bed. / Mark is being happy.
 
-	vector<GIAEntityConnection*> entityVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];		//allows for generic coding
+	vector<GIAentityConnection*> entityVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];		//allows for generic coding
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	GIAEntityNode* entityCorrespondingBestMatch;	 //best match entity node corresponding to this assumed query entity node	//does not take into account multiple diversions/answers [assumes single matches only]
+	GIAentityNode* entityCorrespondingBestMatch;	 //best match entity node corresponding to this assumed query entity node	//does not take into account multiple diversions/answers [assumes single matches only]
 	#endif
 
 	#ifdef GIA_USE_DATABASE
@@ -255,45 +255,45 @@ public:
 
 	//action connections;
 		//non-actions only;
-	vector<GIAEntityConnection*> * ActionNodeList;	//where this entity is the subject of the action
-	vector<GIAEntityConnection*> * IncomingActionNodeList;	//where this entity is the object of the action
+	vector<GIAentityConnection*> * actionNodeList;	//where this entity is the subject of the action
+	vector<GIAentityConnection*> * incomingActionNodeList;	//where this entity is the object of the action
 
 		//actions only;
 	//NB actions can be performed by and on concepts, and by and on substances?
-	vector<GIAEntityConnection*> * actionSubjectEntity;	//record of entity that is the subject of this action instance
-	vector<GIAEntityConnection*> * actionObjectEntity;	//record of which entity that is the object of this action instance
+	vector<GIAentityConnection*> * actionSubjectEntity;	//record of entity that is the subject of this action instance
+	vector<GIAentityConnection*> * actionObjectEntity;	//record of which entity that is the object of this action instance
 
 	//condition connections;
 		//non-conditions only (?);
 	//conditions connections: conditions and reverse conditions (reason) lookups [condition and reason respectively]
-	vector<GIAEntityConnection*> * ConditionNodeList;		//this substance requires the following...
-	vector<GIAEntityConnection*> * IncomingConditionNodeList;	//this substance is required by the following... //aka reason
+	vector<GIAentityConnection*> * conditionNodeList;		//this substance requires the following...
+	vector<GIAentityConnection*> * incomingConditionNodeList;	//this substance is required by the following... //aka reason
 
 		//conditions only;
 	//NB conditions can be performed by and on concepts, and by and on substances?
-	vector<GIAEntityConnection*> * conditionSubjectEntity;		//record of entity that is the subject of this action instance
-	vector<GIAEntityConnection*> * conditionObjectEntity;		//record of which entity that is the object of this action instance
+	vector<GIAentityConnection*> * conditionSubjectEntity;		//record of entity that is the subject of this action instance
+	vector<GIAentityConnection*> * conditionObjectEntity;		//record of which entity that is the object of this action instance
 
 	//time condition connections;
 	int conditionType;	//added 25 Sept 11
-	GIATimeConditionNode * timeConditionNode;		//if conditionType == CONDITION_NODE_TYPE_TIME
+	GIAtimeConditionNode * timeConditionNode;		//if conditionType == CONDITION_NODE_TYPE_TIME
 
 	//substance connections;
 	//record list of all substances for this entity
-	vector<GIAEntityConnection*> * PropertyNodeList;
-	vector<GIAEntityConnection*> * PropertyNodeReverseList;			//if substance/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given substance [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for concept entities [substance entities may possibly only be contained by {ie, be a substance of} a single entity]
+	vector<GIAentityConnection*> * propertyNodeList;
+	vector<GIAentityConnection*> * propertyNodeReverseList;			//if substance/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given substance [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for concept entities [substance entities may possibly only be contained by {ie, be a substance of} a single entity]
 
 		//actions, substances, and conditions only
-	vector<GIAEntityConnection*> * entityNodeDefiningThisInstance;					//if substance/action/condition only:					//NB by definition, only 1 thing can contain any given substance [considering a substance is an instance of an entity] - therefore this is not a vector
+	vector<GIAentityConnection*> * entityNodeDefiningThisInstance;					//if substance/action/condition only:					//NB by definition, only 1 thing can contain any given substance [considering a substance is an instance of an entity] - therefore this is not a vector
 
 
 		//concepts only (not substances/"instances" of entities);
 	//entity connections;
 	//record parent and child entity definition nodes
-	vector<GIAEntityConnection*> * EntityNodeDefinitionList;			//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
-	vector<GIAEntityConnection*> * EntityNodeDefinitionReverseList;			//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
+	vector<GIAentityConnection*> * entityNodeDefinitionList;			//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
+	vector<GIAentityConnection*> * entityNodeDefinitionReverseList;			//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
 	//associated actions and substances [ie does this entity also define an action/verb or a substance/adjective? [ie, it is not just a thing/noun]]
-	vector<GIAEntityConnection*> * AssociatedInstanceNodeList;			//if this entity is not a substance/instance but defines one or more substances/instances
+	vector<GIAentityConnection*> * associatedInstanceNodeList;			//if this entity is not a substance/instance but defines one or more substances/instances
 
 	bool hasQuantity;
 	int quantityNumber;		//eg 6
@@ -337,8 +337,8 @@ public:
 	int CharacterOffsetBeginTemp;
 	int CharacterOffsetEndTemp;
 	*/
-	string stanfordPOSTemp;
-	string NormalizedNERTemp;
+	string stanfordPOStemp;
+	string NormalizedNERtemp;
 	string TimexTemp;
 	#endif
 	int NERTemp;
@@ -361,7 +361,7 @@ public:
 
 	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for substances and actions; but relex does not appear to output this information]
 
-	bool disableParsingAsAPrepositionRelationTemp;
+	bool disableParsingAsPrepositionRelationTemp;
 
 	bool queryEntityTraced;	//temporary for determining max confidence
 
@@ -408,26 +408,26 @@ public:
 
 
 #ifdef GIA_USE_DATABASE
-void DBsetEntityConnectionsReferenceListsLoaded(GIAEntityNode * entityNode, bool loaded);
+void DBsetEntityConnectionsReferenceListsLoaded(GIAentityNode * entityNode, bool loaded);
 #endif
 
-void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode);
+void disconnectNodeFromAllButDefinitions(GIAentityNode * entityNode);
 
 
 int calculateQuantityNumberInt(string quantityNumberString);
 int calculateQuantityModifierInt(string quantityModifierString);
 int calculateQuantityMultiplierInt(string quantityMultiplierString);
 
-string printQuantityNumberString(GIAEntityNode * entityNode);
+string printQuantityNumberString(GIAentityNode * entityNode);
 
 
 #ifdef GIA_SUPPORT_ALIASES
-void convertAliasesStringToAliases(GIAEntityNode * entityNode, string aliasesString);
-void convertAliasesToAliasesString(GIAEntityNode * entityNode, string * aliasesString);
+void convertAliasesStringToAliases(GIAentityNode * entityNode, string aliasesString);
+void convertAliasesToAliasesString(GIAentityNode * entityNode, string * aliasesString);
 vector<string> explode(const string& str, const char& ch);
 #endif
 
-void deleteEntitiesInEntityNodeList(vector<GIAEntityNode*> * entityNodesActiveListComplete);
+void deleteEntitiesInEntityNodeList(vector<GIAentityNode*> * entityNodesActiveListComplete);
 
 #endif
 

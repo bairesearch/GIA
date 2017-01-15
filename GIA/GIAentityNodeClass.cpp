@@ -20,7 +20,7 @@
 
 /*******************************************************************************
  *
- * File Name: GIAEntityNodeClass.cpp
+ * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1r7a 14-November-2012
@@ -28,7 +28,7 @@
  *******************************************************************************/
 
 
-#include "GIAEntityNodeClass.h"
+#include "GIAentityNodeClass.h"
 
 
 string quantityNumberLowNameArray[QUANTITY_NUMBER_LOW_NUMBER_OF_TYPES] = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"};
@@ -52,7 +52,7 @@ GIAconceptEntityLoaded::~GIAconceptEntityLoaded(void)
 #endif
 
 //~nouns
-GIAEntityNode::GIAEntityNode(void)
+GIAentityNode::GIAentityNode(void)
 {
 	idActiveList = 0;
 	idActiveEntityTypeList = 0;	//temporary ID reserved for specific entity types; concept, action, substance etc
@@ -129,15 +129,15 @@ GIAEntityNode::GIAEntityNode(void)
 	sentenceIndexTemp = GIA_SENTENCE_INDEX_UNDEFINED;	//was 0 before 11 October 2012
 
 	//to minimise query/referencing code
-	ActionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS]);
-	IncomingActionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS]);
-	ConditionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS]);
-	IncomingConditionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS]);
-	PropertyNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES]);
-	PropertyNodeReverseList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES]);
-	EntityNodeDefinitionList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS]);
-	EntityNodeDefinitionReverseList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS]);
-	AssociatedInstanceNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]);
+	actionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS]);
+	incomingActionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS]);
+	conditionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS]);
+	incomingConditionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS]);
+	propertyNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES]);
+	propertyNodeReverseList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES]);
+	entityNodeDefinitionList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS]);
+	entityNodeDefinitionReverseList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS]);
+	associatedInstanceNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]);
 	actionSubjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT]);
 	actionObjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT]);
 	conditionSubjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT]);
@@ -153,15 +153,15 @@ GIAEntityNode::GIAEntityNode(void)
 	#endif
 
 	/*
-	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_DEFINITIONS] = EntityNodeDefinitionList;
-	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_SUBSTANCES] = PropertyNodeList;
+	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_DEFINITIONS] = entityNodeDefinitionList;
+	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_SUBSTANCES] = propertyNodeList;
 	*/
 
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	/* initialisation shouldnt be necessary...
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 	{
-		entityVectorConnectionsParametersSameReferenceSetArray[i] = new vector<GIAEntityNode*>();
+		entityVectorConnectionsParametersSameReferenceSetArray[i] = new vector<GIAentityNode*>();
 	}
 	*/
 	#endif
@@ -172,9 +172,9 @@ GIAEntityNode::GIAEntityNode(void)
 	CharacterOffsetBeginTemp = -1;
 	CharacterOffsetEndTemp = -1;
 	*/
-	stanfordPOSTemp = "";
+	stanfordPOStemp = "";
 	NERTemp = FEATURE_NER_UNDEFINED;
-	NormalizedNERTemp = "";
+	NormalizedNERtemp = "";
 	TimexTemp = "";
 	#endif
 
@@ -195,7 +195,7 @@ GIAEntityNode::GIAEntityNode(void)
 
 	negative = false;
 
-	disableParsingAsAPrepositionRelationTemp = false;
+	disableParsingAsPrepositionRelationTemp = false;
 
 	queryEntityTraced = false;
 
@@ -236,12 +236,12 @@ GIAEntityNode::GIAEntityNode(void)
 	isName = false;
 	#endif
 }
-GIAEntityNode::~GIAEntityNode(void)
+GIAentityNode::~GIAentityNode(void)
 {
 	//delete all connections
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 	{
-		for(vector<GIAEntityConnection*>::iterator connectionIter = entityVectorConnectionsArray[i].begin(); connectionIter != entityVectorConnectionsArray[i].end(); connectionIter++)
+		for(vector<GIAentityConnection*>::iterator connectionIter = entityVectorConnectionsArray[i].begin(); connectionIter != entityVectorConnectionsArray[i].end(); connectionIter++)
 		{
 			#ifdef GIA_FREE_MEMORY_DEBUG
 			//cout << "deleting: vector connection: " << (*connectionIter)->entityName << endl;
@@ -258,11 +258,11 @@ GIAEntityNode::~GIAEntityNode(void)
 	#endif	
 }
 
-void deleteEntitiesInEntityNodeList(vector<GIAEntityNode*> * entityNodesActiveListComplete)
+void deleteEntitiesInEntityNodeList(vector<GIAentityNode*> * entityNodesActiveListComplete)
 {
-	for(vector<GIAEntityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
+	for(vector<GIAentityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 	{
-		GIAEntityNode * entityNode = *entityIter;
+		GIAentityNode * entityNode = *entityIter;
 		#ifdef GIA_FREE_MEMORY_DEBUG
 		cout << "deleting: entityNode: " << entityNode->entityName << endl;
 		#endif
@@ -273,7 +273,7 @@ void deleteEntitiesInEntityNodeList(vector<GIAEntityNode*> * entityNodesActiveLi
 
 
 #ifdef GIA_USE_DATABASE
-void DBsetEntityConnectionsReferenceListsLoaded(GIAEntityNode * entityNode, bool loaded)
+void DBsetEntityConnectionsReferenceListsLoaded(GIAentityNode * entityNode, bool loaded)
 {
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 	{
@@ -283,23 +283,23 @@ void DBsetEntityConnectionsReferenceListsLoaded(GIAEntityNode * entityNode, bool
 #endif
 
 
-void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode)
+void disconnectNodeFromAllButDefinitions(GIAentityNode * entityNode)
 {
 	cout << "warning: disconnectNodeFromAllButDefinitions() not yet coded" << endl;
 	/* need to delete its instance from the reverse lists of each node of each list of this entity...
-	ActionNodeList->clear();
-	IncomingActionNodeList->clear();
+	actionNodeList->clear();
+	incomingActionNodeList->clear();
 
-	IncomingActionNodeList->clear();
-	IncomingActionNodeList->clear();
-	IncomingActionNodeList->clear();
-	IncomingActionNodeList->clear();
-	IncomingActionNodeList->clear();
-	IncomingActionNodeList->clear();
-	IncomingActionNodeList->clear();
-	IncomingActionNodeList->clear();
-	IncomingActionNodeList->clear();
-	IncomingActionNodeList->clear();
+	incomingActionNodeList->clear();
+	incomingActionNodeList->clear();
+	incomingActionNodeList->clear();
+	incomingActionNodeList->clear();
+	incomingActionNodeList->clear();
+	incomingActionNodeList->clear();
+	incomingActionNodeList->clear();
+	incomingActionNodeList->clear();
+	incomingActionNodeList->clear();
+	incomingActionNodeList->clear();
 	*/
 }
 
@@ -407,7 +407,7 @@ int calculateQuantityModifierInt(string quantityModifierString)
 	return quantityModifierInt;
 }
 
-string printQuantityNumberString(GIAEntityNode * entityNode)
+string printQuantityNumberString(GIAentityNode * entityNode)
 {
 	string quantityNumberStringTemp;
 
@@ -427,12 +427,12 @@ string printQuantityNumberString(GIAEntityNode * entityNode)
 
 #ifdef GIA_SUPPORT_ALIASES
 
-void convertAliasesStringToAliases(GIAEntityNode * entityNode, string aliasesString)
+void convertAliasesStringToAliases(GIAentityNode * entityNode, string aliasesString)
 {
 	entityNode->aliasList = explode(aliasesString, GIA_ALIASES_CONVERT_TO_STRING_DELIMITER);
 }
 
-void convertAliasesToAliasesString(GIAEntityNode * entityNode, string * aliasesString)
+void convertAliasesToAliasesString(GIAentityNode * entityNode, string * aliasesString)
 {
 	*aliasesString = "";
 	for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter != entityNode->aliasList.end(); aliasIter++)
@@ -484,18 +484,18 @@ vector<string> explode(const string& str, const char& ch)
 
 
 /*
-void deleteAllEntitiesInConceptEntityNodeList(unordered_map<string, GIAEntityNode*> * conceptEntityNodesList);
+void deleteAllEntitiesInConceptEntityNodeList(unordered_map<string, GIAentityNode*> * conceptEntityNodesList);
 {
-	for(vector<GIAEntityNode*>::iterator conceptEntityNodesListIter = conceptEntityNodesList.begin(); conceptEntityNodesListIter != conceptEntityNodesList.end(); conceptEntityNodesListIter++)
+	for(vector<GIAentityNode*>::iterator conceptEntityNodesListIter = conceptEntityNodesList.begin(); conceptEntityNodesListIter != conceptEntityNodesList.end(); conceptEntityNodesListIter++)
 	{
-		GIAEntityNode * conceptEntityNode = sentenceConceptEntityNodesListTempNotUsedIter->second;
+		GIAentityNode * conceptEntityNode = sentenceConceptEntityNodesListTempNotUsedIter->second;
 		
-		for(vector<GIAEntityNode*>::iterator instanceEntityNodesListIter = conceptEntityNode->AssociatedInstanceNodeList.begin(); instanceEntityNodesListIter != conceptEntityNode->AssociatedInstanceNodeList.end(); )
+		for(vector<GIAentityNode*>::iterator instanceEntityNodesListIter = conceptEntityNode->associatedInstanceNodeList.begin(); instanceEntityNodesListIter != conceptEntityNode->associatedInstanceNodeList.end(); )
 		{
-			GIAEntityNode * instanceEntityNode = *instanceEntityNodesListIter;
+			GIAentityNode * instanceEntityNode = *instanceEntityNodesListIter;
 			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 			{
-				for(vector<GIAEntityConnection*>::iterator connectionIter = instanceEntityNode->entityVectorConnectionsArray[i].begin(); connectionIter != instanceEntityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
+				for(vector<GIAentityConnection*>::iterator connectionIter = instanceEntityNode->entityVectorConnectionsArray[i].begin(); connectionIter != instanceEntityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 				{
 					delete *connectionIter;
 				}
@@ -508,13 +508,13 @@ void deleteAllEntitiesInConceptEntityNodeList(unordered_map<string, GIAEntityNod
 			delete conceptEntityLoaded;
 			#endif
 				
-			instanceEntityNodesListIter = conceptEntityNode->AssociatedInstanceNodeList.erase(instanceEntityNodesListIter);		
+			instanceEntityNodesListIter = conceptEntityNode->associatedInstanceNodeList.erase(instanceEntityNodesListIter);		
 		}
 			
 		
-		GIAEntityNode * currentInstanceInConcept = conceptEntityNodeTemp-> 
+		GIAentityNode * currentInstanceInConcept = conceptEntityNodeTemp-> 
 		string entityNodeNameTemp = conceptEntityNodeTemp->entityName;
-		sentenceConceptEntityNodesListTempNotUsedMap.insert(pair<string, GIAEntityNode*>(entityNodeNameTemp, conceptEntityNodeTemp));
+		sentenceConceptEntityNodesListTempNotUsedMap.insert(pair<string, GIAentityNode*>(entityNodeNameTemp, conceptEntityNodeTemp));
 		
 		#ifdef GIA_SUPPORT_ALIASES
 		delete aliasList;

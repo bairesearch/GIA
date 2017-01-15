@@ -45,10 +45,10 @@ using namespace std;
 
 
 #include "GIAglobalDefs.h"
-#include "GIASentenceClass.h"
-#include "GIAEntityNodeClass.h"
-#include "GIAEntityConnectionClass.h"
-#include "GIAConditionNodeClass.h"
+#include "GIAsentenceClass.h"
+#include "GIAentityNodeClass.h"
+#include "GIAentityConnectionClass.h"
+#include "GIAconditionNodeClass.h"
 
 #define FEATURE_FIRST_PERSON_NUMBER_OF_TYPES (5)
 #define FEATURE_SECOND_PERSON_NUMBER_OF_TYPES (5)
@@ -56,7 +56,7 @@ static string featureSecondPersonNameArray[FEATURE_SECOND_PERSON_NUMBER_OF_TYPES
 static string featureFirstPersonNameArray[FEATURE_FIRST_PERSON_NUMBER_OF_TYPES] = {"i","me","my","mine","myself"};
 
 #ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
-void botSwitchFirstAndSecondPerson(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int NLPdependencyRelationsType);
+void botSwitchFirstAndSecondPerson(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType);
 #endif
 
 

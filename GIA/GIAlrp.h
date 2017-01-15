@@ -44,7 +44,7 @@
 using namespace std;
 
 #include "GIAglobalDefs.h"
-#include "GIASentenceClass.h"
+#include "GIAsentenceClass.h"
 
 #define GIA_NLP_START_ENTITY_INDEX (1)
 #define GIA_NLP_START_SENTENCE_INDEX (1)
@@ -91,7 +91,7 @@ static char englishVowelArray[GIA_LRP_NUMBER_OF_VOWELS] = {'a', 'e', 'i', 'o', '
 static char englishConsonantArray[GIA_LRP_NUMBER_OF_CONSTONANTS] = {'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'};
 /*
 #define GIA_LRP_VERB_DOUBLE_CONSONANT_RULE1_LAST_LETTER_EXCEPTIONS_NUMBER_OF_TYPES (4)
-static char lrpVerbDoubleConsonantRule1LastLetterExceptions[GIA_LRP_VERB_DOUBLE_CONSONANT_RULE1_LAST_LETTER_EXCEPTIONS_NUMBER_OF_TYPES] = {'w', 'x', 'y', 'z'};
+static char lrpVerbDoubleConsonantRuleOneLastLetterExceptions[GIA_LRP_VERB_DOUBLE_CONSONANT_RULE1_LAST_LETTER_EXCEPTIONS_NUMBER_OF_TYPES] = {'w', 'x', 'y', 'z'};
 */
 
 #define GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS (5)		//CHECKTHIS; need to location RelEx/Stanford dependency relation specification and match the exact same punction marks detected
@@ -120,7 +120,7 @@ string lrpDummyCollapsedMultiwordPrepositionLemmaNameForNLPArray[GIA_LRP_DUMMY_C
 */
 
 #define ENTITY_INDEX_UNDEFINED -1
-#define MAXIMUM_NUMBER_WORDS_PER_SENTENCE 1000	//same value from GIATranslatorOperations.h
+#define MAXIMUM_NUMBER_WORDS_PER_SENTENCE 1000	//same value from GIAtranslatorOperations.h
 
 class GIALRPtag
 {
@@ -176,7 +176,7 @@ public:
 	GIALRPtagTextCorrespondenceInfo * next;
 };
 
-void initialiseLRP(string newlrpDataFolderName, bool newUseLRP);
+void initialiseLRP(string newLRPDataFolderName, bool newUseLRP);
 bool getUseLRP();
 
 GIALRPtagTextCorrespondenceInfo * getCurrentGIALRPtagTextCorrespondenceInfo();
@@ -184,15 +184,15 @@ void setCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
 void initialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
 void deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
 
-bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainTextLRPOutputFileName, string plainTextLRPforNLPOutputFileName);
+bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName);
 	bool loadIrregularVerbList(string irregularVerbListFileName, GIALRPtag * firstTagInIrregularVerbList);
 	bool loadPhrasalVerbDataAndGenerateAllTenseVariants(string phrasalVerbDatabaseFileName, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtag * firstTagInIrregularVerbList);
 		bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagInIrregularVerbList);
 			void copyDefaultVerbTenseFormsToAlternateTenseForms(GIALRPtag * baseTag, bool irregularVerbFound);
 	bool loadMultiWordPrepositionData(string multiwordPrepositionListFileName, GIALRPtag * firstTagInMultiwordPrepositionList);
 	bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlainText);
-	bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTagInPlainText, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtag * firstTagInMultiwordPrepositionList, string plainTextLRPOutputFileName, string plainTextLRPforNLPOutputFileName, GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo);
-		bool writeTagListToFile(GIALRPtag * firstTagInPlainText, string plainTextLRPOutputFileName, string plainTextLRPforNLPOutputFileName);
+	bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTagInPlainText, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtag * firstTagInMultiwordPrepositionList, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName, GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo);
+		bool writeTagListToFile(GIALRPtag * firstTagInPlainText, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName);
 
 void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentSentenceInList, Relation * currentRelationInListForPrepositionsOnly, bool isPreposition, bool * foundOfficialLRPreplacementString);
 

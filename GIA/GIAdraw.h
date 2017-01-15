@@ -45,11 +45,11 @@
 using namespace std;
 
 #include "LDreferenceClass.h"
-#include "XMLParserClass.h"
+#include "XMLparserClass.h"
 #include "GIAglobalDefs.h"
-#include "GIAEntityNodeClass.h"
-#include "GIAEntityConnectionClass.h"
-#include "GIAConditionNodeClass.h"
+#include "GIAentityNodeClass.h"
+#include "GIAentityConnectionClass.h"
+#include "GIAconditionNodeClass.h"
 
 
 #ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
@@ -232,18 +232,18 @@ static bool entityVectorConnectionDrawConnectionArray[GIA_ENTITY_NUMBER_OF_VECTO
 //static bool entityVectorConnectionDrawConnectionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {true, true, true, true, true, true, true, true, false, true, true, true, true, true};
 
 
-void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile, bool useOutputSVGFile);
+void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile);
 
-void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, XMLParserTag ** currentTag);
+void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, XMLparserTag ** currentTag);
 
-void initiateMaxXAtAParticularY();
-Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLParserTag ** currentTag, int sentenceIndex);
-	Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAEntityNode * entityNodeToConnect, Reference * currentReferenceInPrintList, bool initialiseOrPrint[], string connectionName, int entityDefinitionConnectionColour, XMLParserTag ** currentTag);
-	Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeConditionNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLParserTag ** currentTag);
+void initiateMaxXAtParticularY();
+Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag, int sentenceIndex);
+	Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityNode * entityNodeToConnect, Reference * currentReferenceInPrintList, bool initialiseOrPrint[], string connectionName, int entityDefinitionConnectionColour, XMLparserTag ** currentTag);
+	Reference * initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode * timeConditionNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag);
 
-Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLParserTag ** currentTag, string connectionTypeName, bool initialiseOrPrint[]);
-	Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLParserTag ** currentTag, bool initialiseOrPrint[]);
-Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, XMLParserTag ** currentTag, int thickness, bool initialiseOrPrint[]);
+Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, string connectionTypeName, bool initialiseOrPrint[]);
+	Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, bool initialiseOrPrint[]);
+Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, XMLparserTag ** currentTag, int thickness, bool initialiseOrPrint[]);
 
 
 

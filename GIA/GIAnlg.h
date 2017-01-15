@@ -34,8 +34,8 @@
 #define HEADER_GIA_NLG
 
 #include "GIAglobalDefs.h"
-#include "GIAEntityNodeClass.h"
-#include "GIATranslatorOperations.h"
+#include "GIAentityNodeClass.h"
+#include "GIAtranslatorOperations.h"
 
 #include <iostream>
 #include <fstream>
@@ -129,22 +129,22 @@ static string nlgSentenceThreeEntitiesDependencyRelationVectorConnectionsArray[G
 static string grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES] = {"undefined", ".n", ".v", "adj", "adv", "prep", "satellite"};
 
 
-NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSentence * currentNLGsentence, bool isQueryAnswerContext, int isQueryAnswerContextRound);
-	void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, string * generatedText, int connectionType1, int connectionType2, int startEntityIndex, bool supportAdditionalLinks);
-	void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, GIAEntityConnection * entityConnection, string * generatedText, int connectionType, int startEntityIndex, bool additionalLink);
+NLGSentence * generateLanguageFromEntityNode(GIAentityNode * entityNode, NLGSentence * currentNLGsentence, bool isQueryAnswerContext, int isQueryAnswerContextRound);
+	void generateThreeEntitySentenceFromEntityNode(GIAentityNode * entityNode0, string * generatedText, int connectionType1, int connectionType2, int startEntityIndex, bool supportAdditionalLinks);
+	void generateTwoEntitySentenceFromEntityConnection(GIAentityNode * entityNode1, GIAentityConnection * entityConnection, string * generatedText, int connectionType, int startEntityIndex, bool additionalLink);
 		#ifdef GIA_USE_NLG2
-		void NLG2generateNLGInputViewFeatureTagsGenericPerSentence(string * generatedNLGInputViewTags);
-		void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNode, int entityIndex, string * generatedNLGInputViewTags);
-			string NLG2generateNLGInputViewLine(string type, string governor, string dependent);
+		void NLG2generateNLGinputViewFeatureTagsGenericPerSentence(string * generatedNLGinputViewTags);
+		void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode * entityNode, int entityIndex, string * generatedNLGinputViewTags);
+			string NLG2generateNLGinputViewLine(string type, string governor, string dependent);
 		#else
-		void addDeterminate(GIAEntityNode * entityNode, string * entityTextExpanded);
-			string calcDeterminate(GIAEntityNode * entityNode);
+		void addDeterminate(GIAentityNode * entityNode, string * entityTextExpanded);
+			string calcDeterminate(GIAentityNode * entityNode);
 		#endif
 
-string getWordOrig(GIAEntityNode * entityNode);
+string getWordOrig(GIAentityNode * entityNode);
 
-string determineNLGdefinitionText(GIAEntityNode * entityNode);
-string determineNLGpossessionText(GIAEntityNode * entityNode);
+string determineNLGdefinitionText(GIAentityNode * entityNode);
+string determineNLGpossessionText(GIAentityNode * entityNode);
 
 #endif
 

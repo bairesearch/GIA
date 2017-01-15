@@ -35,12 +35,12 @@
 #include <cmath>
 
 #include "GIAmain.h"
-#include "GIATranslator.h"
-#include "GIATranslatorOperations.h"
+#include "GIAtranslator.h"
+#include "GIAtranslatorOperations.h"
 #include "GIAdraw.h"
 #include "GIAquery.h"
-#include "GIAXMLconversion.h"
-#include "GIACXLconversion.h"
+#include "GIAxmlConversion.h"
+#include "GIAcxlConversion.h"
 #include "GIAdatabase.h"
 #include "GIAnlp.h"
 #include "XMLrulesClass.h"
@@ -166,7 +166,7 @@ int main(int argc,char **argv)
 	string NLPexeFolderArray[GIA_NLP_PARSER_NUMBER_OF_TYPES];
 
 	bool useInputTextPlainTXTFile = false;
-	string inputTextPlainTXTFileName = "inputText.txt";
+	string inputTextPlainTXTfileName = "inputText.txt";
 
 #ifdef USE_CE
 	bool useInputTextCodeextensionsTXTFileName = false;
@@ -174,9 +174,9 @@ int main(int argc,char **argv)
 #endif
 
 	bool useInputTextNLPrelationXMLFile = false;
-	string inputTextNLPrelationXMLFileName = "inputNLPrelation.xml";
+	string inputTextNLPrelationXMLfileName = "inputNLPrelation.xml";
 	bool useInputTextNLPfeatureXMLFile = false;
-	string inputTextNLPfeatureXMLFileName = "inputNLPfeature.xml";
+	string inputTextNLPfeatureXMLfileName = "inputNLPfeature.xml";
 	bool useOutputTextCFFFile = false;
 	string outputTextCFFFileName = "outputNLP.cff";
 	bool useInputTextXMLFile = false;
@@ -258,188 +258,188 @@ int main(int argc,char **argv)
 	//basic execution flow outline; if no dataset or xml inputText file is specified, just form network - do not train network
 
 	#ifdef USE_CE
-	if(exists_argument(argc,argv,"-icodeextensions"))
+	if(argumentExists(argc,argv,"-icodeextensions"))
 	#else
-	if(exists_argument(argc,argv,"-itxt") || exists_argument(argc,argv,"-ionlprel") || exists_argument(argc,argv,"-ixml"))
+	if(argumentExists(argc,argv,"-itxt") || argumentExists(argc,argv,"-ionlprel") || argumentExists(argc,argv,"-ixml"))
 	#endif
 	{
-		if(exists_argument(argc,argv,"-itxt"))
+		if(argumentExists(argc,argv,"-itxt"))
 		{
-			inputTextPlainTXTFileName=get_char_argument(argc,argv,"-itxt");
+			inputTextPlainTXTfileName=getCharArgument(argc,argv,"-itxt");
 			useInputTextPlainTXTFile = true;
 		}
 
 	#ifdef USE_CE
-		if(exists_argument(argc,argv,"-icodeextensions"))
+		if(argumentExists(argc,argv,"-icodeextensions"))
 		{
-			inputTextCodeextensionsTXTFileName=get_char_argument(argc,argv,"-icodeextensions");
+			inputTextCodeextensionsTXTFileName=getCharArgument(argc,argv,"-icodeextensions");
 			useInputTextCodeextensionsTXTFileName = true;
 			cout << "inputTextCodeextensionsTXTFileName = " << inputTextCodeextensionsTXTFileName << endl;	//print input file name required for diagnosis
 		}
 	#endif
 
-		if(exists_argument(argc,argv,"-ionlprel"))
+		if(argumentExists(argc,argv,"-ionlprel"))
 		{
-			inputTextNLPrelationXMLFileName=get_char_argument(argc,argv,"-ionlprel");
+			inputTextNLPrelationXMLfileName=getCharArgument(argc,argv,"-ionlprel");
 			useInputTextNLPrelationXMLFile = true;
 		}
-		if(exists_argument(argc,argv,"-ionlptag"))
+		if(argumentExists(argc,argv,"-ionlptag"))
 		{
-			inputTextNLPfeatureXMLFileName=get_char_argument(argc,argv,"-ionlptag");
+			inputTextNLPfeatureXMLfileName=getCharArgument(argc,argv,"-ionlptag");
 			useInputTextNLPfeatureXMLFile = true;
 		}
 
-		if(exists_argument(argc,argv,"-ixml"))
+		if(argumentExists(argc,argv,"-ixml"))
 		{
-			inputTextXMLFileName=get_char_argument(argc,argv,"-ixml");
+			inputTextXMLFileName=getCharArgument(argc,argv,"-ixml");
 			//train = true;
 			useInputTextXMLFile = true;
 		}
 
-		if(exists_argument(argc,argv,"-itxtq"))
+		if(argumentExists(argc,argv,"-itxtq"))
 		{
-			inputQueryPlainTXTFileName=get_char_argument(argc,argv,"-itxtq");
+			inputQueryPlainTXTFileName=getCharArgument(argc,argv,"-itxtq");
 			useInputQueryPlainTXTFile = true;
 			useInputQuery = true;
 		}
 
-		if(exists_argument(argc,argv,"-ionlprelq"))
+		if(argumentExists(argc,argv,"-ionlprelq"))
 		{
-			inputQueryNLPrelationXMLFileName=get_char_argument(argc,argv,"-ionlprelq");
+			inputQueryNLPrelationXMLFileName=getCharArgument(argc,argv,"-ionlprelq");
 			useInputQueryNLPrelationXMLFile = true;
 			useInputQuery = true;
 		}
-		if(exists_argument(argc,argv,"-ionlptagq"))
+		if(argumentExists(argc,argv,"-ionlptagq"))
 		{
-			inputQueryNLPfeatureXMLFileName=get_char_argument(argc,argv,"-ionlptagq");
+			inputQueryNLPfeatureXMLFileName=getCharArgument(argc,argv,"-ionlptagq");
 			useInputQueryNLPfeatureXMLFile = true;
 			useInputQuery = true;
 		}
 
-		if(exists_argument(argc,argv,"-ixmlq"))
+		if(argumentExists(argc,argv,"-ixmlq"))
 		{
-			inputQueryXMLFileName=get_char_argument(argc,argv,"-ixmlq");
+			inputQueryXMLFileName=getCharArgument(argc,argv,"-ixmlq");
 			useInputQueryXMLFile = true;
 			useInputQuery = true;
 		}
 		
 	#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
-		if(exists_argument(argc,argv,"-ilist"))
+		if(argumentExists(argc,argv,"-ilist"))
 		{
 			inputFileList = true;
 		}
 	#endif		
 
-		if(exists_argument(argc,argv,"-ocff"))
+		if(argumentExists(argc,argv,"-ocff"))
 		{
-			outputTextCFFFileName=get_char_argument(argc,argv,"-ocff");
+			outputTextCFFFileName=getCharArgument(argc,argv,"-ocff");
 			useOutputTextCFFFile = true;
 		}
 
-		if(exists_argument(argc,argv,"-oxml"))
+		if(argumentExists(argc,argv,"-oxml"))
 		{
-			outputTextXMLFileName=get_char_argument(argc,argv,"-oxml");
+			outputTextXMLFileName=getCharArgument(argc,argv,"-oxml");
 			useOutputTextXMLFile = true;
 		}
 
-		if(exists_argument(argc,argv,"-ocxl"))
+		if(argumentExists(argc,argv,"-ocxl"))
 		{
-			outputTextCXLFileName=get_char_argument(argc,argv,"-ocxl");
+			outputTextCXLFileName=getCharArgument(argc,argv,"-ocxl");
 			useOutputTextCXLFile = true;
 		}
 
-		if(exists_argument(argc,argv,"-oldr"))
+		if(argumentExists(argc,argv,"-oldr"))
 		{
-			outputTextLDRFileName=get_char_argument(argc,argv,"-oldr");
+			outputTextLDRFileName=getCharArgument(argc,argv,"-oldr");
 			useOutputTextLDRFile = true;
 			printOutput = true;
 		}
 
-		if(exists_argument(argc,argv,"-oppm"))
+		if(argumentExists(argc,argv,"-oppm"))
 		{
-			outputTextPPMFileName=get_char_argument(argc,argv,"-oppm");
+			outputTextPPMFileName=getCharArgument(argc,argv,"-oppm");
 			useOutputTextPPMFile = true;
 			printOutput = true;
 		}
 
-		if(exists_argument(argc,argv,"-osvg"))
+		if(argumentExists(argc,argv,"-osvg"))
 		{
-			outputTextSVGFileName=get_char_argument(argc,argv,"-osvg");
+			outputTextSVGFileName=getCharArgument(argc,argv,"-osvg");
 			useOutputTextSVGFile = true;
 			printOutput = true;
 		}
 
-		if(exists_argument(argc,argv,"-ocffq"))
+		if(argumentExists(argc,argv,"-ocffq"))
 		{
-			outputQueryCFFFileName=get_char_argument(argc,argv,"-ocffq");
+			outputQueryCFFFileName=getCharArgument(argc,argv,"-ocffq");
 			useOutputQueryCFFFile = true;
 		}
 
-		if(exists_argument(argc,argv,"-oxmlq"))
+		if(argumentExists(argc,argv,"-oxmlq"))
 		{
-			outputQueryXMLFileName=get_char_argument(argc,argv,"-oxmlq");
+			outputQueryXMLFileName=getCharArgument(argc,argv,"-oxmlq");
 			useOutputQueryXMLFile = true;
 		}
 
-		if(exists_argument(argc,argv,"-ocxlq"))
+		if(argumentExists(argc,argv,"-ocxlq"))
 		{
-			outputQueryCXLFileName=get_char_argument(argc,argv,"-ocxlq");
+			outputQueryCXLFileName=getCharArgument(argc,argv,"-ocxlq");
 			useOutputQueryCXLFile = true;
 		}
 
-		if(exists_argument(argc,argv,"-oldrq"))
+		if(argumentExists(argc,argv,"-oldrq"))
 		{
-			outputQueryLDRFileName=get_char_argument(argc,argv,"-oldrq");
+			outputQueryLDRFileName=getCharArgument(argc,argv,"-oldrq");
 			useOutputQueryLDRFile = true;
 			printOutputQuery = true;
 		}
 
-		if(exists_argument(argc,argv,"-oppmq"))
+		if(argumentExists(argc,argv,"-oppmq"))
 		{
-			outputQueryPPMFileName=get_char_argument(argc,argv,"-oppmq");
+			outputQueryPPMFileName=getCharArgument(argc,argv,"-oppmq");
 			useOutputQueryPPMFile = true;
 			printOutputQuery = true;
 		}
 
-		if(exists_argument(argc,argv,"-osvgq"))
+		if(argumentExists(argc,argv,"-osvgq"))
 		{
-			outputQuerySVGFileName=get_char_argument(argc,argv,"-osvgq");
+			outputQuerySVGFileName=getCharArgument(argc,argv,"-osvgq");
 			useOutputQuerySVGFile = true;
 			printOutputQuery = true;
 		}
 
-		if(exists_argument(argc,argv,"-oall"))
+		if(argumentExists(argc,argv,"-oall"))
 		{
-			outputTextAllFileName=get_char_argument(argc,argv,"-oall");
+			outputTextAllFileName=getCharArgument(argc,argv,"-oall");
 			useOutputTextAllFile = true;
 			printOutput = true;
 		}
 
-		if(exists_argument(argc,argv,"-oanswer"))
+		if(argumentExists(argc,argv,"-oanswer"))
 		{
-			outputTextAnswerPlainTXTFileName=get_char_argument(argc,argv,"-oanswer");
+			outputTextAnswerPlainTXTFileName=getCharArgument(argc,argv,"-oanswer");
 			useOutputTextAnswerPlainTXTFile = true;
 		}
 
 		/*
-		if(exists_argument(argc,argv,"-train"))
+		if(argumentExists(argc,argv,"-train"))
 		{
 			int trainInt
-			trainInt=get_float_argument(argc,argv,"-train");
+			trainInt=getFloatArgument(argc,argv,"-train");
 			train = (bool)trainInt;
 		}
 		*/
 
-		if (exists_argument(argc,argv,"-notshow"))
+		if (argumentExists(argc,argv,"-notshow"))
 		{
 			displayInOpenGLAndOutputScreenshot = false;
 		}
 
-		if (exists_argument(argc,argv,"-width"))
-		rasterImageWidth=get_float_argument(argc,argv,"-width");
+		if (argumentExists(argc,argv,"-width"))
+		rasterImageWidth=getFloatArgument(argc,argv,"-width");
 
-		if (exists_argument(argc,argv,"-height"))
-		rasterImageHeight=get_float_argument(argc,argv,"-height");
+		if (argumentExists(argc,argv,"-height"))
+		rasterImageHeight=getFloatArgument(argc,argv,"-height");
 
 		char currentFolder[EXE_FOLDER_PATH_MAX_LENGTH];
 		#ifdef LINUX
@@ -449,24 +449,24 @@ int main(int argc,char **argv)
 		#endif
 
 
-		if(exists_argument(argc,argv,"-nlprelation"))
+		if(argumentExists(argc,argv,"-nlprelation"))
 		{
-			NLPdependencyRelationsParser = int(get_float_argument(argc,argv,"-nlprelation"));
+			NLPdependencyRelationsParser = int(getFloatArgument(argc,argv,"-nlprelation"));
 		}
 
-		if(exists_argument(argc,argv,"-nlpfeature"))
+		if(argumentExists(argc,argv,"-nlpfeature"))
 		{
-			NLPfeatureParser = int(get_float_argument(argc,argv,"-nlpfeature"));
+			NLPfeatureParser = int(getFloatArgument(argc,argv,"-nlpfeature"));
 		}
 		else
 		{
 			NLPfeatureParser = NLPdependencyRelationsParser;
 		}
-		if(exists_argument(argc,argv,"-nlpcompmode"))
+		if(argumentExists(argc,argv,"-nlpcompmode"))
 		{
 			if(queryNLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
 			{
-				int nlpcompmode = int(get_float_argument(argc,argv,"-nlpcompmode"));
+				int nlpcompmode = int(getFloatArgument(argc,argv,"-nlpcompmode"));
 				if(nlpcompmode == 1)
 				{
 					NLPrelexCompatibilityMode = true;
@@ -484,24 +484,24 @@ int main(int argc,char **argv)
 			}
 		}
 
-		if(exists_argument(argc,argv,"-nlprelationq"))
+		if(argumentExists(argc,argv,"-nlprelationq"))
 		{
-			queryNLPdependencyRelationsParser = int(get_float_argument(argc,argv,"-nlprelationq"));
+			queryNLPdependencyRelationsParser = int(getFloatArgument(argc,argv,"-nlprelationq"));
 		}
 
-		if(exists_argument(argc,argv,"-nlpfeatureq"))
+		if(argumentExists(argc,argv,"-nlpfeatureq"))
 		{
-			queryNLPfeatureParser = int(get_float_argument(argc,argv,"-nlpfeatureq"));
+			queryNLPfeatureParser = int(getFloatArgument(argc,argv,"-nlpfeatureq"));
 		}
 		else
 		{
 			queryNLPfeatureParser = queryNLPdependencyRelationsParser;
 		}
-		if(exists_argument(argc,argv,"-nlpcompmodeq"))
+		if(argumentExists(argc,argv,"-nlpcompmodeq"))
 		{
 			if(queryNLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
 			{
-				int nlpcompmodeq = int(get_float_argument(argc,argv,"-nlpcompmodeq"));
+				int nlpcompmodeq = int(getFloatArgument(argc,argv,"-nlpcompmodeq"));
 				if(nlpcompmodeq == 1)
 				{
 					queryNLPrelexCompatibilityMode = true;
@@ -520,51 +520,51 @@ int main(int argc,char **argv)
 		}
 
 	#ifdef GIA_USE_DATABASE
-		if(exists_argument(argc,argv,"-dbread"))
+		if(argumentExists(argc,argv,"-dbread"))
 		{
 			readFromDatabase = true;
 			useDatabase = true;
 		}
-		if(exists_argument(argc,argv,"-dbwrite"))
+		if(argumentExists(argc,argv,"-dbwrite"))
 		{
 			writeToDatabase = true;
 			useDatabase = true;
 		}
-		if(exists_argument(argc,argv,"-dbfolder"))
+		if(argumentExists(argc,argv,"-dbfolder"))
 		{
-			databaseFolderName=get_char_argument(argc,argv,"-dbfolder");
+			databaseFolderName=getCharArgument(argc,argv,"-dbfolder");
 			databaseFolderName = databaseFolderName + '/';
 		}		
 	#endif
 
 	#ifdef GIA_USE_LRP
-		if(exists_argument(argc,argv,"-lrp"))
+		if(argumentExists(argc,argv,"-lrp"))
 		{
 			useLRP = true;
 		}
-		if(exists_argument(argc,argv,"-olrptxt"))
+		if(argumentExists(argc,argv,"-olrptxt"))
 		{
-			outputLRPTextPlainTXTFileName=get_char_argument(argc,argv,"-olrptxt");
+			outputLRPTextPlainTXTFileName=getCharArgument(argc,argv,"-olrptxt");
 			useOutputLRPTextPlainTXTFile = true;
 		}
-		if(exists_argument(argc,argv,"-olrptxtnlp"))
+		if(argumentExists(argc,argv,"-olrptxtnlp"))
 		{
-			outputLRPTextForNLPonlyPlainTXTFileName=get_char_argument(argc,argv,"-olrptxtnlp");
+			outputLRPTextForNLPonlyPlainTXTFileName=getCharArgument(argc,argv,"-olrptxtnlp");
 			useOutputLRPTextForNLPonlyPlainTXTFile = true;
 		}
-		if(exists_argument(argc,argv,"-olrptxtq"))
+		if(argumentExists(argc,argv,"-olrptxtq"))
 		{
-			outputQueryLRPTextPlainTXTFileName=get_char_argument(argc,argv,"-olrptxtq");
+			outputQueryLRPTextPlainTXTFileName=getCharArgument(argc,argv,"-olrptxtq");
 			useOutputQueryLRPTextPlainTXTFile = true;
 		}
-		if(exists_argument(argc,argv,"-olrptxtnlpq"))
+		if(argumentExists(argc,argv,"-olrptxtnlpq"))
 		{
-			outputQueryLRPTextForNLPonlyPlainTXTFileName=get_char_argument(argc,argv,"-olrptxtnlpq");
+			outputQueryLRPTextForNLPonlyPlainTXTFileName=getCharArgument(argc,argv,"-olrptxtnlpq");
 			useOutputQueryLRPTextForNLPonlyPlainTXTFile = true;
 		}
-		if(exists_argument(argc,argv,"-lrpfolder"))
+		if(argumentExists(argc,argv,"-lrpfolder"))
 		{
-			lrpDataFolderName=get_char_argument(argc,argv,"-lrpfolder");
+			lrpDataFolderName=getCharArgument(argc,argv,"-lrpfolder");
 			lrpDataFolderName = lrpDataFolderName + '/';
 		}
 		else
@@ -573,49 +573,49 @@ int main(int argc,char **argv)
 		}		
 	#endif
 	#ifdef USE_WORDNET
-		if(exists_argument(argc,argv,"-syndet"))
+		if(argumentExists(argc,argv,"-syndet"))
 		{
-			synonymnDetectionStatus = int(get_float_argument(argc,argv,"-syndet"));
+			synonymnDetectionStatus = int(getFloatArgument(argc,argv,"-syndet"));
 		}
 	#endif
 
-		if (exists_argument(argc,argv,"-workingfolder"))
+		if (argumentExists(argc,argv,"-workingfolder"))
 		{
-			workingFolderCharStar =get_char_argument(argc,argv,"-workingfolder");
+			workingFolderCharStar =getCharArgument(argc,argv,"-workingfolder");
 		}
 		else
 		{
 			workingFolderCharStar = currentFolder;
 		}
 
-		if (exists_argument(argc,argv,"-nlprelexfolder"))
+		if (argumentExists(argc,argv,"-nlprelexfolder"))
 		{
-			NLPexeFolderArray[GIA_NLP_PARSER_RELEX] =get_char_argument(argc,argv,"-nlprelexfolder");
+			NLPexeFolderArray[GIA_NLP_PARSER_RELEX] =getCharArgument(argc,argv,"-nlprelexfolder");
 		}
 		else
 		{
 			NLPexeFolderArray[GIA_NLP_PARSER_RELEX] = currentFolder;
 		}
-		if (exists_argument(argc,argv,"-nlpstanfordcorenlpfolder"))
+		if (argumentExists(argc,argv,"-nlpstanfordcorenlpfolder"))
 		{
-			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_CORENLP] =get_char_argument(argc,argv,"-nlpstanfordcorenlpfolder");
+			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_CORENLP] =getCharArgument(argc,argv,"-nlpstanfordcorenlpfolder");
 		}
 		else
 		{
 			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_CORENLP] = currentFolder;
 		}
-		if (exists_argument(argc,argv,"-nlpstanfordparserfolder"))
+		if (argumentExists(argc,argv,"-nlpstanfordparserfolder"))
 		{
-			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_PARSER] =get_char_argument(argc,argv,"-nlpstanfordparserfolder");
+			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_PARSER] =getCharArgument(argc,argv,"-nlpstanfordparserfolder");
 		}
 		else
 		{
 			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_PARSER] = currentFolder;
 		}
 
-		if (exists_argument(argc,argv,"-tempfolder"))
+		if (argumentExists(argc,argv,"-tempfolder"))
 		{
-			tempFolderCharStar=get_char_argument(argc,argv,"-tempfolder");
+			tempFolderCharStar=getCharArgument(argc,argv,"-tempfolder");
 		}
 		else
 		{
@@ -628,7 +628,7 @@ int main(int argc,char **argv)
 		::SetCurrentDirectory(workingFolderCharStar);
 		#endif
 
-		if (exists_argument(argc,argv,"-version"))
+		if (argumentExists(argc,argv,"-version"))
 		{
 			cout << "OpenGIA.exe - Project Version: 1r7a 14-November-2012" << endl;
 			exit(1);
@@ -650,28 +650,28 @@ int main(int argc,char **argv)
 	//cout << "NPLfeatureExeFolderCharStar = " << NPLfeatureExeFolderCharStar << endl;
 	#endif
 
-	if(!parseGIARulesXMLFile())
+	if(!parseGIArulesXMLfile())
 	{
 		cout << "error: no rules file detected" << endl;
 		exit(0);
 	}
-	fillInLDSpriteExternVariables();
+	fillInLDspriteExternVariables();
 	///GIA specific rules.xml file is not used at the moment	[once right variables have been decided upon they will be fed to xml]
 	//fillInGIARulesExternVariables();
 	
-	vector<GIAEntityNode*> * entityNodesActiveListComplete = new vector<GIAEntityNode*>;
-	unordered_map<string, GIAEntityNode*> * entityNodesActiveListConcepts = new unordered_map<string, GIAEntityNode*>;
-	vector<GIAEntityNode*> * entityNodesActiveListSubstances = new vector<GIAEntityNode*>;
-	vector<GIAEntityNode*> * entityNodesActiveListActions = new vector<GIAEntityNode*>;
-	vector<GIAEntityNode*> * entityNodesActiveListConditions = new vector<GIAEntityNode*>;
-	unordered_map<long, GIATimeConditionNode*> * timeConditionNodesActiveList = new unordered_map<long, GIATimeConditionNode*>;
+	vector<GIAentityNode*> * entityNodesActiveListComplete = new vector<GIAentityNode*>;
+	unordered_map<string, GIAentityNode*> * entityNodesActiveListConcepts = new unordered_map<string, GIAentityNode*>;
+	vector<GIAentityNode*> * entityNodesActiveListSubstances = new vector<GIAentityNode*>;
+	vector<GIAentityNode*> * entityNodesActiveListActions = new vector<GIAentityNode*>;
+	vector<GIAentityNode*> * entityNodesActiveListConditions = new vector<GIAentityNode*>;
+	unordered_map<long, GIAtimeConditionNode*> * timeConditionNodesActiveList = new unordered_map<long, GIAtimeConditionNode*>;
 
-	vector<GIAEntityNode*> * entityNodesActiveListCompleteQuery = new vector<GIAEntityNode*>;
-	unordered_map<string, GIAEntityNode*> * entityNodesActiveListConceptsQuery = new unordered_map<string, GIAEntityNode*>;
-	vector<GIAEntityNode*> * entityNodesActiveListSubstancesQuery = new  vector<GIAEntityNode*>;			//not required - declared for symmetry
-	vector<GIAEntityNode*> * entityNodesActiveListActionsQuery = new vector<GIAEntityNode*>;			//not required - declared for symmetry
-	vector<GIAEntityNode*> * entityNodesActiveListConditionsQuery = new vector<GIAEntityNode*>;			//not required - declared for symmetry
-	unordered_map<long, GIATimeConditionNode*> * timeConditionNodesActiveListQuery = new unordered_map<long, GIATimeConditionNode*>;
+	vector<GIAentityNode*> * entityNodesActiveListCompleteQuery = new vector<GIAentityNode*>;
+	unordered_map<string, GIAentityNode*> * entityNodesActiveListConceptsQuery = new unordered_map<string, GIAentityNode*>;
+	vector<GIAentityNode*> * entityNodesActiveListSubstancesQuery = new  vector<GIAentityNode*>;			//not required - declared for symmetry
+	vector<GIAentityNode*> * entityNodesActiveListActionsQuery = new vector<GIAentityNode*>;			//not required - declared for symmetry
+	vector<GIAentityNode*> * entityNodesActiveListConditionsQuery = new vector<GIAentityNode*>;			//not required - declared for symmetry
+	unordered_map<long, GIAtimeConditionNode*> * timeConditionNodesActiveListQuery = new unordered_map<long, GIAtimeConditionNode*>;
 
 	#ifdef GIA_USE_DATABASE
 	initialiseDatabase(readFromDatabase, databaseFolderName, useDatabase, entityNodesActiveListComplete, entityNodesActiveListConcepts);
@@ -834,9 +834,9 @@ int main(int argc,char **argv)
 	#ifdef GIA_MAIN_DEBUG
 	cout << errmessage << endl;
 	cout << "Parameters to be used:" << endl;
-	cout << "inputTextPlainTXTFileName = " << inputTextPlainTXTFileName << endl;
-	cout << "inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
-	cout << "inputTextNLPfeatureXMLFileName = " << inputTextNLPfeatureXMLFileName << endl;
+	cout << "inputTextPlainTXTfileName = " << inputTextPlainTXTfileName << endl;
+	cout << "inputTextNLPrelationXMLfileName = " << inputTextNLPrelationXMLfileName << endl;
+	cout << "inputTextNLPfeatureXMLfileName = " << inputTextNLPfeatureXMLfileName << endl;
 	cout << "inputTextXMLFileName = " << inputTextXMLFileName << endl;
 	cout << "outputTextXMLFileName = " << outputTextXMLFileName << endl;
 	cout << "outputTextCXLFileName = " << outputTextCXLFileName << endl;
@@ -878,7 +878,7 @@ int main(int argc,char **argv)
 	{
 		if(useInputTextPlainTXTFile)
 		{
-			numberOfInputFilesInList = getFilesFromFileList(inputTextPlainTXTFileName, inputTextPlainTXTFileNameArray);
+			numberOfInputFilesInList = getFilesFromFileList(inputTextPlainTXTfileName, inputTextPlainTXTFileNameArray);
 		}
 	#ifdef USE_CE
 		if(useInputTextCodeextensionsTXTFileName)
@@ -888,11 +888,11 @@ int main(int argc,char **argv)
 	#endif
 		if(useInputTextNLPrelationXMLFile)
 		{
-			numberOfInputFilesInList = getFilesFromFileList(inputTextNLPrelationXMLFileName, inputTextNLPrelationXMLFileNameArray);
+			numberOfInputFilesInList = getFilesFromFileList(inputTextNLPrelationXMLfileName, inputTextNLPrelationXMLFileNameArray);
 		}
 		if(useInputTextNLPfeatureXMLFile)
 		{
-			numberOfInputFilesInList = getFilesFromFileList(inputTextNLPfeatureXMLFileName, inputTextNLPfeatureXMLFileNameArray);
+			numberOfInputFilesInList = getFilesFromFileList(inputTextNLPfeatureXMLfileName, inputTextNLPfeatureXMLFileNameArray);
 		}
 
 		if(useInputTextXMLFile)
@@ -913,7 +913,7 @@ int main(int argc,char **argv)
 		{
 			if(useInputTextPlainTXTFile)
 			{
-				inputTextPlainTXTFileName = inputTextPlainTXTFileNameArray[inputFileNameIndex];
+				inputTextPlainTXTfileName = inputTextPlainTXTFileNameArray[inputFileNameIndex];
 			}
 			#ifdef USE_CE
 			if(useInputTextCodeextensionsTXTFileName)
@@ -923,11 +923,11 @@ int main(int argc,char **argv)
 			#endif
 			if(useInputTextNLPrelationXMLFile)
 			{
-				inputTextNLPrelationXMLFileName = inputTextNLPrelationXMLFileNameArray[inputFileNameIndex];
+				inputTextNLPrelationXMLfileName = inputTextNLPrelationXMLFileNameArray[inputFileNameIndex];
 			}
 			if(useInputTextNLPfeatureXMLFile)
 			{
-				inputTextNLPfeatureXMLFileName = inputTextNLPfeatureXMLFileNameArray[inputFileNameIndex];
+				inputTextNLPfeatureXMLfileName = inputTextNLPfeatureXMLFileNameArray[inputFileNameIndex];
 			}
 
 			if(useInputTextXMLFile)
@@ -948,11 +948,11 @@ int main(int argc,char **argv)
 		{
 			initialiseCurrentGIALRPtagTextCorrespondenceInfo(false);	
 			setCurrentGIALRPtagTextCorrespondenceInfo(false);	//required for local variable access
-			if(!parseTextFileAndReduceLanguage(inputTextPlainTXTFileName, outputLRPTextPlainTXTFileName, outputLRPTextForNLPonlyPlainTXTFileName))
+			if(!parseTextFileAndReduceLanguage(inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, outputLRPTextForNLPonlyPlainTXTFileName))
 			{
 				result = false;
 			}
-			inputTextPlainTXTFileName = outputLRPTextForNLPonlyPlainTXTFileName;	//now perform NLP using NLP specific (dummy) version of LRP output
+			inputTextPlainTXTfileName = outputLRPTextForNLPonlyPlainTXTFileName;	//now perform NLP using NLP specific (dummy) version of LRP output
 		}
 		#endif
 
@@ -969,7 +969,7 @@ int main(int argc,char **argv)
 			#endif
 
 			//generate codeextensions heirachy
-			//NB codeextensionLayoutFileName = inputTextPlainTXTFileName;
+			//NB codeextensionLayoutFileName = inputTextPlainTXTfileName;
 			//NB codeextensionEnumeratedFileName = inputTextCodeextensionsTXTFileName;
 			#ifdef GIA_WITH_CE_DERIVE_SCODEEXTENSION_PREPEND
 			bool deriveSubcodeextensionPrepend = true;
@@ -981,19 +981,19 @@ int main(int argc,char **argv)
 			firstCodeextensionInHeirachy = new CECodeextension();
 			codeextensionsList = new vector<CECodeextension*>;
 
-			if(!deriveScodeextensionPrependAndCreateCodeextensionsLayout(inputTextCodeextensionsTXTFileName, inputTextPlainTXTFileName, deriveSubcodeextensionPrepend, generateCodeextensionClassHeirachy, firstCodeextensionInHeirachy, codeextensionsList))
+			if(!deriveScodeextensionPrependAndCreateCodeextensionsLayout(inputTextCodeextensionsTXTFileName, inputTextPlainTXTfileName, deriveSubcodeextensionPrepend, generateCodeextensionClassHeirachy, firstCodeextensionInHeirachy, codeextensionsList))
 			{
 				result = false;
 			}
 
 			/*//need to explicitly state whether to use a plain text file, else will use NLP xml file
 			if(!useInputTextNLPrelationXMLFile)
-			{//if NLP parsed codeextensions not available, then execute NLP parser on generated codeextensions summary (inputTextPlainTXTFileName)
+			{//if NLP parsed codeextensions not available, then execute NLP parser on generated codeextensions summary (inputTextPlainTXTfileName)
 				useInputTextPlainTXTFile = true;
 			}
 			*/
 
-			if(useInputTextNLPrelationXMLFile && !(fileExists(&inputTextNLPrelationXMLFileName)))
+			if(useInputTextNLPrelationXMLFile && !(fileExists(&inputTextNLPrelationXMLfileName)))
 			{
 				useInputTextPlainTXTFile = true;
 			}
@@ -1002,9 +1002,9 @@ int main(int argc,char **argv)
 
 		if(inputFileList)
 		{
-			cout << "inputTextPlainTXTFileName = " << inputTextPlainTXTFileName << endl;
-			cout << "inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
-			cout << "inputTextNLPfeatureXMLFileName = " << inputTextNLPfeatureXMLFileName << endl;
+			cout << "inputTextPlainTXTfileName = " << inputTextPlainTXTfileName << endl;
+			cout << "inputTextNLPrelationXMLfileName = " << inputTextNLPrelationXMLfileName << endl;
+			cout << "inputTextNLPfeatureXMLfileName = " << inputTextNLPfeatureXMLfileName << endl;
 		}
 
 		if(useInputTextPlainTXTFile)
@@ -1027,10 +1027,10 @@ int main(int argc,char **argv)
 			}
 			else
 			{
-				executeNLPparser(inputTextPlainTXTFileName, inputTextNLPrelationXMLFileName, NLPdependencyRelationsParser, NLPexeFolderArray, true);
-				if(inputTextNLPfeatureXMLFileName != inputTextNLPrelationXMLFileName)
+				executeNLPparser(inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, NLPdependencyRelationsParser, NLPexeFolderArray, true);
+				if(inputTextNLPfeatureXMLfileName != inputTextNLPrelationXMLfileName)
 				{
-					executeNLPparser(inputTextPlainTXTFileName, inputTextNLPfeatureXMLFileName, NLPfeatureParser, NLPexeFolderArray, false);
+					executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, NLPfeatureParser, NLPexeFolderArray, false);
 				}
 				useInputTextNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
 
@@ -1042,7 +1042,7 @@ int main(int argc,char **argv)
 	
 				/*
 				#ifdef GIA_USE_LRP
-				convertRevertNLPtagNamesToOfficialLRPOutput(NLPdependencyRelationsParser, NLPfeatureParser, LRPTextForNLPonlyPlainTXTFileName, LRPTextPlainTXTFileName, inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName);
+				convertRevertNLPtagNamesToOfficialLRPOutput(NLPdependencyRelationsParser, NLPfeatureParser, LRPTextForNLPonlyPlainTXTFileName, LRPTextPlainTXTFileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName);
 				#endif
 				*/
 			}
@@ -1052,8 +1052,8 @@ int main(int argc,char **argv)
 		{
 			#ifdef GIA_MAIN_DEBUG
 			//cout << "useInputTextNLPrelationXMLFile" << endl;
-			//cout << "inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
-			//cout << "inputTextNLPfeatureXMLFileName = " << inputTextNLPfeatureXMLFileName << endl;
+			//cout << "inputTextNLPrelationXMLfileName = " << inputTextNLPrelationXMLfileName << endl;
+			//cout << "inputTextNLPfeatureXMLfileName = " << inputTextNLPfeatureXMLfileName << endl;
 			//cout << "outputTextCFFFileName = " << outputTextCFFFileName << endl;
 			#endif
 			if(useInputTextXMLFile)
@@ -1074,9 +1074,9 @@ int main(int argc,char **argv)
 				#endif
 				
 				#ifdef USE_CE
-				if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, firstCodeextensionInHeirachy, codeextensionsList, useCodeextensionsHeirachy))
+				if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, firstCodeextensionInHeirachy, codeextensionsList, useCodeextensionsHeirachy))
 				#else
-				if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations))
+				if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations))
 				#endif
 				{
 					result = false;
@@ -1101,7 +1101,7 @@ int main(int argc,char **argv)
 			}
 			else
 			{
-				if(!readSemanticNetXMLFileOptimised(inputTextXMLFileName, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
+				if(!readSemanticNetXMLfileOptimised(inputTextXMLFileName, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
 				{
 					result = false;
 				}
@@ -1203,9 +1203,9 @@ int main(int argc,char **argv)
 		else
 		{
 			#ifdef USE_CE
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, firstCodeextensionInHeirachy, codeextensionsList, false))
+			if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, firstCodeextensionInHeirachy, codeextensionsList, false))
 			#else
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations))
+			if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations))
 			#endif
 			{
 				result = false;
@@ -1240,8 +1240,8 @@ int main(int argc,char **argv)
 		}
 		else
 		{
-			entityNodesActiveListCompleteQuery = new vector<GIAEntityNode*>;
-			if(!readSemanticNetXMLFileOptimised(inputQueryXMLFileName, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery))
+			entityNodesActiveListCompleteQuery = new vector<GIAentityNode*>;
+			if(!readSemanticNetXMLfileOptimised(inputQueryXMLFileName, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery))
 			{
 				result = false;
 			}
@@ -1261,7 +1261,7 @@ int main(int argc,char **argv)
 		}
 		if(useOutputQueryCXLFile)	//moved here in version 1i8a
 		{
-			if(!writeCMapToolsCXLFileOptimised(outputQueryCXLFileName, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery))
+			if(!writeCmapToolsCXLFileOptimised(outputQueryCXLFileName, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery))
 			{
 				result = false;
 			}
@@ -1275,13 +1275,13 @@ int main(int argc,char **argv)
 		*/
 		
 		bool foundComparisonVariable = getFoundComparisonVariable();
-		GIAEntityNode* comparisonVariableNode = getComparisonVariableNode();
+		GIAentityNode* comparisonVariableNode = getComparisonVariableNode();
 		bool foundAnswer = false;
 		double confidence = 0.0;
 		char tempConfidenceStringCharStar[100];
 		char tempMaxConfidenceStringCharStar[100];
 		
-		GIAEntityNode* queryAnswerNode;
+		GIAentityNode* queryAnswerNode;
 		string queryAnswerContext = "";
 		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(entityNodesActiveListConcepts, entityNodesActiveListConceptsQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerContext);
 
@@ -1493,7 +1493,7 @@ int main(int argc,char **argv)
 	}
 	if(useOutputTextCXLFile)
 	{
-		if(!writeCMapToolsCXLFileOptimised(outputTextCXLFileName, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
+		if(!writeCmapToolsCXLFileOptimised(outputTextCXLFileName, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
 		{
 			result = false;
 		}
@@ -1502,9 +1502,9 @@ int main(int argc,char **argv)
 	NLGSentence * firstNLGsentence = new NLGSentence();
 	NLGSentence * currentNLGsentence = firstNLGsentence;
 	string generatedText = "";
-	for(unordered_map<string, GIAEntityNode*> ::iterator conceptEntityNodesListMapIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListMapIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListMapIter++)
+	for(unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListMapIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListMapIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListMapIter++)
 	{
-		GIAEntityNode * entityNode = conceptEntityNodesListMapIter->second;
+		GIAentityNode * entityNode = conceptEntityNodesListMapIter->second;
 		currentNLGsentence = generateLanguageFromEntityNode(entityNode, currentNLGsentence, false, 0);
 	}
 	#ifdef GIA_NLG_DEBUG
@@ -1553,9 +1553,9 @@ int main(int argc,char **argv)
 
 
 #ifdef USE_CE
-bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPrelationXMLFileName, string inputTextNLPfeatureXMLFileName, string outputCFFFileName, string NLPexeFolderArray[], vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *entityNodesActiveListSubstances, vector<GIAEntityNode*> *entityNodesActiveListActions, vector<GIAEntityNode*> *entityNodesActiveListConditions, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, CECodeextension * firstCodeextensionInHeirachy, vector<CECodeextension*> * codeextensionsList, bool useCodeextensionsHeirachy)
+bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, string outputCFFfileName, string NLPexeFolderArray[], vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, CECodeextension * firstCodeextensionInHeirachy, vector<CECodeextension*> * codeextensionsList, bool useCodeextensionsHeirachy)
 #else
-bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPrelationXMLFileName, string inputTextNLPfeatureXMLFileName, string outputCFFFileName, string NLPexeFolderArray[], vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *entityNodesActiveListSubstances, vector<GIAEntityNode*> *entityNodesActiveListActions, vector<GIAEntityNode*> *entityNodesActiveListConditions, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations)
+bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, string outputCFFfileName, string NLPexeFolderArray[], vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations)
 #endif
 {
 
@@ -1564,7 +1564,7 @@ bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 	Paragraph * firstParagraphInList = new Paragraph();
 
 	setCurrentGIALRPtagTextCorrespondenceInfo(isQuery);	//required for local variable access
-	if(!parseNLPParserFile(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, isQuery, firstParagraphInList, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode))
+	if(!parseNLPparserFile(inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode))
 	{
 		result = false;
 	}
@@ -1586,8 +1586,8 @@ bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 	
 	#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 	string originalInputFileName = "";
-	originalInputFileName = originalInputFileName + inputTextNLPrelationXMLFileName + " " + inputTextNLPfeatureXMLFileName;
-	outputInternalRelationsInRelexFormat(&outputCFFFileName, &originalInputFileName, firstParagraphInList, NLPdependencyRelationsParser, NLPfeatureParser, NLPexeFolderArray);
+	originalInputFileName = originalInputFileName + inputTextNLPrelationXMLfileName + " " + inputTextNLPfeatureXMLfileName;
+	outputInternalRelationsInRelexFormat(&outputCFFfileName, &originalInputFileName, firstParagraphInList, NLPdependencyRelationsParser, NLPfeatureParser, NLPexeFolderArray);
 	#endif
 
 	#ifdef GIA_FREE_MEMORY1
@@ -1599,9 +1599,9 @@ bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 
 
 #ifdef USE_CE
-bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *entityNodesActiveListSubstances, vector<GIAEntityNode*> *entityNodesActiveListActions, vector<GIAEntityNode*> *entityNodesActiveListConditions, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPassumePreCollapsedStanfordRelations, CECodeextension * firstCodeextensionInHeirachy, vector<CECodeextension*> * codeextensionsList, bool useCodeextensionsHeirachy)
+bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPassumePreCollapsedStanfordRelations, CECodeextension * firstCodeextensionInHeirachy, vector<CECodeextension*> * codeextensionsList, bool useCodeextensionsHeirachy)
 #else
-bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *entityNodesActiveListSubstances, vector<GIAEntityNode*> *entityNodesActiveListActions, vector<GIAEntityNode*> *entityNodesActiveListConditions, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPassumePreCollapsedStanfordRelations)
+bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPassumePreCollapsedStanfordRelations)
 #endif
 {
 	bool result = true;

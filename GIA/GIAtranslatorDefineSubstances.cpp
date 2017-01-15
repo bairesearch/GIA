@@ -20,19 +20,19 @@
 
 /*******************************************************************************
  *
- * File Name: GIATranslatorDefineSubstances.cpp
+ * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1r7a 14-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
- * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
+ * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
  * TO DO: extract date information of entities from relex <features> tag area
  *******************************************************************************/
 
 
-#include "GIATranslatorDefineSubstances.h"
-#include "GIATranslatorOperations.h"
+#include "GIAtranslatorDefineSubstances.h"
+#include "GIAtranslatorOperations.h"
 #include "GIAdatabase.h"
 
 
@@ -40,25 +40,25 @@
 
 
 /*
-void collapseRedundantRelationAndMakeNegative(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], int NLPdependencyRelationsType)
+void collapseRedundantRelationAndMakeNegative(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType)
 {
 	#ifdef GIA_USE_RELEX
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
-		collapseRedundantRelationAndMakeNegativeRelex(currentSentenceInList, GIAEntityNodeArray);
+		collapseRedundantRelationAndMakeNegativeRelex(currentSentenceInList, GIAentityNodeArray);
 	}
 	#endif
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
-		collapseRedundantRelationAndMakeNegativeStanford(currentSentenceInList, GIAEntityNodeArray);
+		collapseRedundantRelationAndMakeNegativeStanford(currentSentenceInList, GIAentityNodeArray);
 	}
 	#endif
 }
 */
 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
-void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -72,8 +72,8 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 				//eg The chicken has not eaten a pie.: neg(eaten-5, not-4)
 
 				currentRelationInList->disabled = true;
-				GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->negative = true;
-				disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationDependentIndex]);
+				GIAentityNodeArray[currentRelationInList->relationGovernorIndex]->negative = true;
+				disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
 			}
 
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -85,7 +85,7 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 #endif
 
 #ifdef GIA_USE_RELEX
-void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
 	//_subj(not[5], by[4]), _subj(have[6], not[5])
 
@@ -102,7 +102,7 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 				bool passed = false;
 				for(int j=0; j<RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES; j++)
 				{
-					if(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->entityName == relationContextNegativeNameArray[j])
+					if(GIAentityNodeArray[currentRelationInList->relationGovernorIndex]->entityName == relationContextNegativeNameArray[j])
 					{
 						passed = true;
 					}
@@ -125,18 +125,18 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 								bool passed2 = false;
 								for(int j=0; j<RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES; j++)
 								{
-									if(GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]->entityName == relationContextNegativeNameArray[j])
+									if(GIAentityNodeArray[currentRelationInList2->relationDependentIndex]->entityName == relationContextNegativeNameArray[j])
 									{
 										passed2 = true;
 									}
 								}
 								if(passed2)
 								{
-									disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]);
-									disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]);
+									disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList2->relationGovernorIndex]);
+									disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList2->relationDependentIndex]);
 
-									GIAEntityNodeArray[currentRelationInList2->relationDependentIndex] = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
-									GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->negative = true;
+									GIAentityNodeArray[currentRelationInList2->relationDependentIndex] = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+									GIAentityNodeArray[currentRelationInList2->relationGovernorIndex]->negative = true;
 									currentRelationInList->disabled = true;
 								}
 							}
@@ -155,26 +155,26 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 }
 #endif
 
-void defineSubstancesObjectsAndSubjectsWithSubstances(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], GIAEntityNode * GIAFeatureTempEntityNodeArray[])
+void defineSubstancesObjectsAndSubjectsWithSubstances(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], GIAentityNode * GIAfeatureTempEntityNodeArray[])
 {
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
-		if(GIAEntityNodeArrayFilled[i])
+		if(GIAentityNodeArrayFilled[i])
 		{
-			if(((GIAFeatureTempEntityNodeArray[i]->isObjectTemp) && (GIAFeatureTempEntityNodeArray[i]->hasSubstanceTemp)) || ((GIAFeatureTempEntityNodeArray[i]->isSubjectTemp) && (GIAFeatureTempEntityNodeArray[i]->hasSubstanceTemp)))
+			if(((GIAfeatureTempEntityNodeArray[i]->isObjectTemp) && (GIAfeatureTempEntityNodeArray[i]->hasSubstanceTemp)) || ((GIAfeatureTempEntityNodeArray[i]->isSubjectTemp) && (GIAfeatureTempEntityNodeArray[i]->hasSubstanceTemp)))
 			{
-				GIAEntityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAEntityNodeArray[i]);
+				GIAentityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAentityNodeArray[i]);
 			}
 		}
 	}
 }
 
-void defineSubstancesDefiniteNouns(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], Feature * featureArrayTemp[])
+void defineSubstancesDefiniteNouns(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
 {
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
-		if(GIAEntityNodeArrayFilled[i])
-		{ //condition required as GIAEntityNodeArrayFilled is not always true. With grammaticalIsDefinite, eg "Mr" of "Mr Smith" will still be interpreted as a definite
+		if(GIAentityNodeArrayFilled[i])
+		{ //condition required as GIAentityNodeArrayFilled is not always true. With grammaticalIsDefinite, eg "Mr" of "Mr Smith" will still be interpreted as a definite
 			if(!(featureArrayTemp[i]->isPronounReference))
 			{//do not define substances based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
 				#ifndef GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS
@@ -184,9 +184,9 @@ void defineSubstancesDefiniteNouns(Sentence * currentSentenceInList, bool GIAEnt
 					if(featureArrayTemp[i]->grammaticalIsDefinite)
 					{
 						#ifdef GIA_TRANSLATOR_DEBUG
-						//cout << "addSubstanceToSubstanceDefinition: GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;
+						//cout << "addSubstanceToSubstanceDefinition: GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
 						#endif
-						GIAEntityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAEntityNodeArray[i]);
+						GIAentityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAentityNodeArray[i]);
 					}
 				#ifndef GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS
 				}
@@ -199,7 +199,7 @@ void defineSubstancesDefiniteNouns(Sentence * currentSentenceInList, bool GIAEnt
 
 #ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 //Added 09 August 2012 [INCOMPLETE]
-void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[])
+void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[])
 {
 	/* Added 09 August 2012
 	The bat is an animal - (definition connection, bat = substance, animal = concept)	GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_1_GOVERNOR_DEFINITE_DEPENDENT_INDEFINITE [assumes defineSubstancesDefiniteNouns() executed]
@@ -233,7 +233,7 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 				bool thingFeatureHasDeterminate = false;
 				for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
 				{
-					if(featureArrayTemp[thingIndex]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAConceptNodeArray to featureArrayTemp 14 July 2012b
+					if(featureArrayTemp[thingIndex]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAconceptNodeArray to featureArrayTemp 14 July 2012b
 					{
 						thingFeatureHasDeterminate = true;
 					}
@@ -241,7 +241,7 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 				bool definitionFeatureHasDeterminate = false;
 				for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
 				{
-					if(featureArrayTemp[definitionIndex]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAConceptNodeArray to featureArrayTemp 14 July 2012b
+					if(featureArrayTemp[definitionIndex]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAconceptNodeArray to featureArrayTemp 14 July 2012b
 					{
 						definitionFeatureHasDeterminate = true;
 					}
@@ -253,8 +253,8 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 				bool thingIsDefinite =  featureArrayTemp[thingIndex]->grammaticalIsDefinite;
 				bool definitionIsDefinite = featureArrayTemp[definitionIndex]->grammaticalIsDefinite;
 
-				GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
-				GIAEntityNode * definitionEntity = GIAEntityNodeArray[definitionIndex];
+				GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
+				GIAentityNode * definitionEntity = GIAentityNodeArray[definitionIndex];
 				featureArrayTemp[thingIndex]->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = true;
 				featureArrayTemp[definitionIndex]->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = true;
 
@@ -426,11 +426,11 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 }
 #endif
 
-void defineSubstancesNounsWithDeterminates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[])
+void defineSubstancesNounsWithDeterminates(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[])
 {
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
-		if(GIAEntityNodeArrayFilled[i])
+		if(GIAentityNodeArrayFilled[i])
 		{
 			if(!(featureArrayTemp[i]->isPronounReference))
 			{//do not define substances based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
@@ -441,7 +441,7 @@ void defineSubstancesNounsWithDeterminates(Sentence * currentSentenceInList, boo
 					bool passed = false;
 					for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
 					{
-						if(featureArrayTemp[i]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAConceptNodeArray to featureArrayTemp 14 July 2012b
+						if(featureArrayTemp[i]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAconceptNodeArray to featureArrayTemp 14 July 2012b
 						{
 							passed = true;
 						}
@@ -453,9 +453,9 @@ void defineSubstancesNounsWithDeterminates(Sentence * currentSentenceInList, boo
 						{
 						#endif
 							#ifdef GIA_TRANSLATOR_DEBUG
-							//cout << "\t\taddSubstanceToSubstanceDefinition: GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;
+							//cout << "\t\taddSubstanceToSubstanceDefinition: GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
 							#endif
-							GIAEntityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAEntityNodeArray[i]);
+							GIAentityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAentityNodeArray[i]);
 						#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 						}
 						#endif
@@ -468,7 +468,7 @@ void defineSubstancesNounsWithDeterminates(Sentence * currentSentenceInList, boo
 	}
 }
 
-void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], int NLPdependencyRelationsType)
+void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -487,7 +487,7 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 			}
 			if(passed)
 			{
-				bool passed3 = isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(currentRelationInList, GIAEntityNodeArray, currentRelationInList->relationGovernorIndex, NLPdependencyRelationsType);
+				bool passed3 = isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(currentRelationInList, GIAentityNodeArray, currentRelationInList->relationGovernorIndex, NLPdependencyRelationsType);
 
 				if(passed3)
 				{					
@@ -497,10 +497,10 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 					int thingIndex = currentRelationInList->relationGovernorIndex;
 					int substanceIndex = currentRelationInList->relationDependentIndex;
 
-					GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
-					GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
+					GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
+					GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
 
-					GIAEntityNodeArray[thingIndex] = addSubstanceToSubstanceDefinition(thingEntity);
+					GIAentityNodeArray[thingIndex] = addSubstanceToSubstanceDefinition(thingEntity);
 				}
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -534,10 +534,10 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 				int thingIndex = currentRelationInList->relationGovernorIndex;
 				int substanceIndex = currentRelationInList->relationDependentIndex;
 
-				GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
-				GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
+				GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
+				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
 
-				GIAEntityNodeArray[thingIndex] = addSubstanceToSubstanceDefinition(thingEntity);
+				GIAentityNodeArray[thingIndex] = addSubstanceToSubstanceDefinition(thingEntity);
 				#else
 				//create a new substance for the entity and assign a substance definition entity if not already created
 				string thingName = currentRelationInList->relationDependent;
@@ -545,10 +545,10 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 				int thingIndex = currentRelationInList->relationDependentIndex;
 				int substanceIndex = currentRelationInList->relationGovernorIndex;
 
-				GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
-				GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
+				GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
+				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
 
-				GIAEntityNodeArray[thingIndex] = addSubstanceToSubstanceDefinition(thingEntity);				
+				GIAentityNodeArray[thingIndex] = addSubstanceToSubstanceDefinition(thingEntity);				
 				
 				#endif	
 			}
@@ -560,7 +560,7 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 	#endif	
 }
 
-void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -581,9 +581,9 @@ void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIA
 			{
 				//create a new substance for the entity and assign a substance definition entity if not already created
 				int substanceIndex = currentRelationInList->relationGovernorIndex;
-				GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
+				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
 
-				GIAEntityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
+				GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
@@ -593,7 +593,7 @@ void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIA
 	}
 }
 
-void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -614,9 +614,9 @@ void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAEnti
 			{
 				//create a new substance for the entity and assign a substance definition entity if not already created
 				int substanceIndex = currentRelationInList->relationDependentIndex;
-				GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
+				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
 
-				GIAEntityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
+				GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
@@ -626,7 +626,7 @@ void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAEnti
 	}
 }
 
-void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
 	//eg There is 	_expl(be[2], there[1]) [Relex]	/ expl(is-2, There-1) [stanford]
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -641,10 +641,10 @@ void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAEntityNode 
 			{
 				//create substance definition
 				int substanceIndex = currentRelationInList->relationDependentIndex;
-				GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
+				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
 
 				#ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
-				GIAEntityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
+				GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
 				#else
 				disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(substanceEntity);
 				#endif
@@ -656,11 +656,11 @@ void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAEntityNode 
 	}
 }
 
-void defineSubstancesPronouns(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], Feature * featureArrayTemp[])
+void defineSubstancesPronouns(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
 {
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
-		if(GIAEntityNodeArrayFilled[i])
+		if(GIAentityNodeArrayFilled[i])
 		{
 			if(!(featureArrayTemp[i]->isPronounReference))
 			{//do not define substances based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
@@ -668,9 +668,9 @@ void defineSubstancesPronouns(Sentence * currentSentenceInList, bool GIAEntityNo
 				if(featureArrayTemp[i]->grammaticalIsPronoun == GRAMMATICAL_PRONOUN)
 				{
 					#ifdef GIA_TRANSLATOR_DEBUG
-					//cout << "addSubstanceToSubstanceDefinition: GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;
+					//cout << "addSubstanceToSubstanceDefinition: GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
 					#endif
-					GIAEntityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAEntityNodeArray[i]);
+					GIAentityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAentityNodeArray[i]);
 				}
 			}
 		}
@@ -678,7 +678,7 @@ void defineSubstancesPronouns(Sentence * currentSentenceInList, bool GIAEntityNo
 }
 
 
-void defineSubstancesToBe(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void defineSubstancesToBe(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -692,9 +692,9 @@ void defineSubstancesToBe(Sentence * currentSentenceInList, GIAEntityNode * GIAE
 
 				//create a new substance for the entity and assign a substance definition entity if not already created
 				int substanceIndex = currentRelationInList->relationDependentIndex;
-				GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
+				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
 
-				GIAEntityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
+				GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
@@ -704,7 +704,7 @@ void defineSubstancesToBe(Sentence * currentSentenceInList, GIAEntityNode * GIAE
 	}
 }
 
-void defineActionsToDo(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void defineActionsToDo(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -718,9 +718,9 @@ void defineActionsToDo(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 
 				//create a new substance for the entity and assign a substance definition entity if not already created
 				int actionIndex = currentRelationInList->relationDependentIndex;
-				GIAEntityNode * actionEntity = GIAEntityNodeArray[actionIndex];
+				GIAentityNode * actionEntity = GIAentityNodeArray[actionIndex];
 
-				GIAEntityNodeArray[actionIndex] = addActionToActionDefinitionDefineSubstances(actionEntity);
+				GIAentityNodeArray[actionIndex] = addActionToActionDefinitionDefineSubstances(actionEntity);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
@@ -730,35 +730,35 @@ void defineActionsToDo(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 	}
 }
 
-void defineSubstancesHasTime(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], Feature * featureArrayTemp[])
+void defineSubstancesHasTime(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
 {
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
-		if(GIAEntityNodeArrayFilled[w])
+		if(GIAentityNodeArrayFilled[w])
 		{
 			if(featureArrayTemp[w]->grammaticalIsDateOrTime)
 			{
-				GIAEntityNode * currentGIAEntityNode = GIAEntityNodeArray[w];
+				GIAentityNode * currentGIAEntityNode = GIAentityNodeArray[w];
 				#ifdef GIA_TRANSLATOR_DEBUG
 				//cout << "grammaticalIsDateOrTime; currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
 				#endif
-				GIAEntityNodeArray[w] = addSubstanceToSubstanceDefinition(currentGIAEntityNode);
+				GIAentityNodeArray[w] = addSubstanceToSubstanceDefinition(currentGIAEntityNode);
 			}
 		}
 	}
 }
 
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE
-void defineSubstancesNonExplicitPronouns(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+void defineSubstancesNonExplicitPronouns(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
-		if(GIAEntityNodeArrayFilled[i])
+		if(GIAentityNodeArrayFilled[i])
 		{
 			bool passed = false;
 			for(int j=0; j<RELATION_TYPE_TREAT_AS_PRONOUN_IE_SUBSTANCE_NUMBER_OF_TYPES; j++)
 			{
-				if(GIAEntityNodeArray[i]->entityName == featureTypeTreatAsPronounIeSubstance[j])
+				if(GIAentityNodeArray[i]->entityName == featureTypeTreatAsPronounIeSubstance[j])
 				{
 					passed = true;
 				}
@@ -767,16 +767,16 @@ void defineSubstancesNonExplicitPronouns(Sentence * currentSentenceInList, bool 
 			if(passed)
 			{
 				#ifdef GIA_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE_ASSIGN_DETERMINATE_SINGULAR
-				GIAEntityNodeArray[i]->grammaticalNumber = GRAMMATICAL_NUMBER_SINGULAR;	//added 14 August 2012	(select any value from referenceTypeHasDeterminateCrossReferenceNumberArray[])
+				GIAentityNodeArray[i]->grammaticalNumber = GRAMMATICAL_NUMBER_SINGULAR;	//added 14 August 2012	(select any value from referenceTypeHasDeterminateCrossReferenceNumberArray[])
 				#endif
-				GIAEntityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAEntityNodeArray[i]);
+				GIAentityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAentityNodeArray[i]);
 			}
 		}
 	}
 }
 #endif
 
-void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -812,10 +812,10 @@ void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAEntity
 								int substanceIndex = currentRelationInList2->relationDependentIndex;
 								int thingIndex = currentRelationInList->relationDependentIndex;
 
-								GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
-								GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
+								GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
+								GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
 
-								GIAEntityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
+								GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -833,16 +833,16 @@ void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAEntity
 }
 
 #ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-void defineSubstanceConcepts(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[])
+void defineSubstanceConcepts(bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[])
 {
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
-		if(GIAEntityNodeArrayFilled[i])
+		if(GIAentityNodeArrayFilled[i])
 		{
 			int thingIndex = i;		
 			if(featureArrayTemp[thingIndex]->grammaticalWordType == GRAMMATICAL_WORD_TYPE_NOUN)
 			{
-				GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
+				GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
 			
 				#ifdef GIA_TRANSLATOR_DEBUG				
 				//cout << "defineSubstancesBasedOnDeterminatesOfDefinitionEntities(): RELATION_TYPE_APPOSITIVE_OF_NOUN" << endl;
@@ -851,7 +851,7 @@ void defineSubstanceConcepts(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GI
 				bool thingFeatureHasDeterminate = false;
 				for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
 				{
-					if(featureArrayTemp[thingIndex]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAConceptNodeArray to featureArrayTemp 14 July 2012b
+					if(featureArrayTemp[thingIndex]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAconceptNodeArray to featureArrayTemp 14 July 2012b
 					{
 						thingFeatureHasDeterminate = true;
 					}

@@ -20,7 +20,7 @@
 
 /*******************************************************************************
  *
- * File Name: GIAParser.cpp
+ * File Name: GIAparser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1r7a 14-November-2012
@@ -31,8 +31,8 @@
 
 
 
-#include "GIAParser.h"
-#include "GIATranslatorOperations.h"	//required for convertStanfordRelationToRelex
+#include "GIAparser.h"
+#include "GIAtranslatorOperations.h"	//required for convertStanfordRelationToRelex
 #ifdef GIA_USE_LRP
 #include "GIAlrp.h"
 #endif
@@ -310,7 +310,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 
 
 #ifdef STANFORD_PARSER_USE_POS_TAGS
-void GIATHparseStanfordParseWordsAndPOSTagsText(string * POStagsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence)
+void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence)
 {
 	Feature * firstFeatureInList = currentSentenceInList->firstFeatureInList;
 	Feature * currentFeatureInList = firstFeatureInList;
@@ -344,13 +344,13 @@ void GIATHparseStanfordParseWordsAndPOSTagsText(string * POStagsText, Sentence *
 		{
 			if(readingWord)
 			{
-				cout << "GIATHparseStanfordParseWordsAndPOSTagsText() error: (c == CHAR_NEWLINE) && readingWord" << endl;
+				cout << "GIATHparseStanfordParseWordsAndPOStagsText() error: (c == CHAR_NEWLINE) && readingWord" << endl;
 			}
 			else
 			{
 				currentFeatureInList->stanfordPOS = currentItemString;
 				#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-				cout << "DEBUG: GIATHparseStanfordParseWordsAndPOSTagsText(): currentFeatureInList->stanfordPOS = " << currentFeatureInList->stanfordPOS << endl;
+				cout << "DEBUG: GIATHparseStanfordParseWordsAndPOStagsText(): currentFeatureInList->stanfordPOS = " << currentFeatureInList->stanfordPOS << endl;
 				#endif
 				currentFeatureInList = currentFeatureInList->next;
 				readingWord = true;
@@ -660,7 +660,7 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 
-string generateRelexCFFFeatureTagContent(Feature * firstFeatureInList)
+string generateRelexCFFfeatureTagContent(Feature * firstFeatureInList)
 {
 	string relexCFFFeatureTagContent = "";
 
@@ -739,7 +739,7 @@ string generateRelexCFFFeatureTagContent(Feature * firstFeatureInList)
 
 }
 
-string generateRelexCFFRelationTagContent(Relation * firstRelationInList)
+string generateRelexCFFrelationTagContent(Relation * firstRelationInList)
 {
 	string relexCFFRelationTagContent = "";
 

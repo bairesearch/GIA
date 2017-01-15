@@ -20,7 +20,7 @@
 
 /*******************************************************************************
  *
- * File Name: GIAConditionNodeClass.cpp
+ * File Name: GIAconditionNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1r7a 14-November-2012
@@ -28,14 +28,14 @@
  *******************************************************************************/
 
 
-#include "GIAConditionNodeClass.h"
+#include "GIAconditionNodeClass.h"
 
 
 
 
 
 //~? [eg past, wednesday, etc]
-GIATimeConditionNode::GIATimeConditionNode(void)
+GIAtimeConditionNode::GIAtimeConditionNode(void)
 {
 	conditionName = "";
 	tenseOnlyTimeCondition = false;
@@ -57,7 +57,7 @@ GIATimeConditionNode::GIATimeConditionNode(void)
 	printX = 0;
 	printY = 0;
 }
-GIATimeConditionNode::~GIATimeConditionNode(void)
+GIAtimeConditionNode::~GIAtimeConditionNode(void)
 {
 }
 

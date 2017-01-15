@@ -20,7 +20,7 @@
 
 /*******************************************************************************
  *
- * File Name: GIACXLconversion.h
+ * File Name: GIAcxlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1r7a 14-November-2012
@@ -44,10 +44,10 @@
 #include <vector>
 using namespace std;
 
-#include "XMLParserClass.h"
-#include "GIAEntityNodeClass.h"
-#include "GIAEntityConnectionClass.h"
-#include "GIAConditionNodeClass.h"
+#include "XMLparserClass.h"
+#include "GIAentityNodeClass.h"
+#include "GIAentityConnectionClass.h"
+#include "GIAconditionNodeClass.h"
 
 #ifdef GIA_CMAP_CONVERSION_SANITISED
 	#define GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
@@ -95,23 +95,23 @@ using namespace std;
 
 static bool entityVectorConnectionCXLwriteArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false,false,false,false,false,true,true,false,false,true,true,true,true,true};
 
-bool writeCMapToolsCXLFileOptimised(string xmlFileName, vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap, vector<GIAEntityNode*> *entityNodesActiveListSubstances, vector<GIAEntityNode*> *entityNodesActiveListActions, vector<GIAEntityNode*> *entityNodesActiveListConditions);
-	bool writeCMapToolsCXLFile(string xmlFileName, vector<GIAEntityNode*> *entityNodesActiveListComplete, vector<GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *entityNodesActiveListSubstances, vector<GIAEntityNode*> *entityNodesActiveListActions, vector<GIAEntityNode*> *entityNodesActiveListConditions);
-		bool generateCXLEntityNodeTagList(XMLParserTag * firstTagInMap, vector<GIAEntityNode*> *entityNodesActiveListComplete, vector<GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *entityNodesActiveListSubstances, vector<GIAEntityNode*> *entityNodesActiveListActions, vector<GIAEntityNode*> *entityNodesActiveListConditions, long * currentCmapNodeIDInCmapNodeList, bool conceptOrLinkingPhraseList, bool appearanceList);
-			XMLParserTag * addToCXLEntityNodeTagList(XMLParserTag * currentTagL1, vector<GIAEntityNode*> *entityNodesList, long * currentCmapNodeIDInCmapNodeList, bool conceptOrLinkingPhraseList, bool appearanceList);
-				XMLParserTag * generateCXLEntityNodeTag(XMLParserTag * currentTagL1, string entityName, long entityID, int printX, int printY, bool conceptOrLinkingPhraseList, bool appearanceList);
-		bool generateCXLConnectionNodeTagList(XMLParserTag * firstTagInMap, vector<GIAEntityNode*> *entityNodesActiveListComplete, vector<GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *entityNodesActiveListSubstances, vector<GIAEntityNode*> *entityNodesActiveListActions, vector<GIAEntityNode*> *entityNodesActiveListConditions, long * currentCmapNodeIDInCmapNodeList, XMLParserTag * firstTagInLinkingPhraseList, XMLParserTag * firstTagInLinkingPhraseAppearanceList);
-			XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector<GIAEntityNode*> *entityNodesList, long * currentCmapNodeIDInCmapNodeList, XMLParserTag * firstTagL1, XMLParserTag ** currentTagInLinkingPhraseList, XMLParserTag ** currentTagInLinkingPhraseAppearanceList, XMLParserTag * firstTagInConnectionsList);
-				XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * currentTagL1, GIAEntityNode * entity1, GIAEntityNode * entity2, string connectionTypeName, long * currentCmapNodeIDInCmapNodeList, XMLParserTag ** currentTagInLinkingPhraseList, XMLParserTag ** currentTagInLinkingPhraseAppearanceList, XMLParserTag * firstTagInConnectionsList, bool alreadyMadeLinkingPhrase);
-					XMLParserTag * generateCXLConnectionNodeTag(XMLParserTag * currentTagL1, long fromID, long toID);
+bool writeCmapToolsCXLFileOptimised(string xmlFileName, vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *conceptEntityNodesListMap, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions);
+	bool writeCmapToolsCXLfile(string xmlFileName, vector<GIAentityNode*> *entityNodesActiveListComplete, vector<GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions);
+		bool generateCXLentityNodeTagList(XMLparserTag * firstTagInMap, vector<GIAentityNode*> *entityNodesActiveListComplete, vector<GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, long * currentCmapNodeIDinCmapNodeList, bool conceptOrLinkingPhraseList, bool appearanceList);
+			XMLparserTag * addToCXLentityNodeTagList(XMLparserTag * currentTagL1, vector<GIAentityNode*> *entityNodesList, long * currentCmapNodeIDinCmapNodeList, bool conceptOrLinkingPhraseList, bool appearanceList);
+				XMLparserTag * generateCXLentityNodeTag(XMLparserTag * currentTagL1, string entityName, long entityID, int printX, int printY, bool conceptOrLinkingPhraseList, bool appearanceList);
+		bool generateCXLconnectionNodeTagList(XMLparserTag * firstTagInMap, vector<GIAentityNode*> *entityNodesActiveListComplete, vector<GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, long * currentCmapNodeIDinCmapNodeList, XMLparserTag * firstTagInLinkingPhraseList, XMLparserTag * firstTagInLinkingPhraseAppearanceList);
+			XMLparserTag * addToCXLconnectionNodeTagList(XMLparserTag * currentTagL1, vector<GIAentityNode*> *entityNodesList, long * currentCmapNodeIDinCmapNodeList, XMLparserTag * firstTagL1, XMLparserTag ** currentTagInLinkingPhraseList, XMLparserTag ** currentTagInLinkingPhraseAppearanceList, XMLparserTag * firstTagInConnectionsList);
+				XMLparserTag * generateCXLconnectionNodeTagAndLinkingPhraseTags(XMLparserTag * currentTagL1, GIAentityNode * entity1, GIAentityNode * entity2, string connectionTypeName, long * currentCmapNodeIDinCmapNodeList, XMLparserTag ** currentTagInLinkingPhraseList, XMLparserTag ** currentTagInLinkingPhraseAppearanceList, XMLparserTag * firstTagInConnectionsList, bool alreadyMadeLinkingPhrase);
+					XMLparserTag * generateCXLconnectionNodeTag(XMLparserTag * currentTagL1, long fromID, long toID);
 
 		#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_OLD
-		void resetIDsForNodeList2(vector<GIAEntityNode*> *entityNodesList, long * currentEntityNodeIDInConceptEntityNodesList);
-		//void resetIDsForNodeMap(unordered_map<string, GIAEntityNode*> *entityNodesMap, long * currentEntityNodeIDInConceptEntityNodesList);
+		void resetIDsForNodeList2(vector<GIAentityNode*> *entityNodesList, long * currentEntityNodeIDinConceptEntityNodesList);
+		//void resetIDsForNodeMap(unordered_map<string, GIAentityNode*> *entityNodesMap, long * currentEntityNodeIDinConceptEntityNodesList);
 		#endif
 
 #ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
-bool checkIfPassedRedundantConceptNodeRemoval(GIAEntityNode * currentEntity);
+bool checkIfPassedRedundantConceptNodeRemoval(GIAentityNode * currentEntity);
 #endif
 
 #endif

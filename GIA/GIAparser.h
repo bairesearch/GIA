@@ -20,7 +20,7 @@
 
 /*******************************************************************************
  *
- * File Name: GIAParser.h
+ * File Name: GIAparser.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1r7a 14-November-2012
@@ -33,7 +33,7 @@
 #ifndef HEADER_GIA_PARSER
 #define HEADER_GIA_PARSER
 
-#include "GIASentenceClass.h"
+#include "GIAsentenceClass.h"
 #include "GIAglobalDefs.h"
 
 #include <iostream>
@@ -48,7 +48,7 @@ using namespace std;
 #define RELEX_DEPENDENCY_RELATION_PREPENDITION "_"
 
 #ifdef STANFORD_PARSER_USE_POS_TAGS
-void GIATHparseStanfordParseWordsAndPOSTagsText(string * POStagsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence);
+void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence);
 #endif
 void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence, bool featuresNotPreviouslyFilled);
 	void convertStanfordRelationToRelex(Relation * currentRelationInList, Sentence * currentSentenceInList);
@@ -57,8 +57,8 @@ void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSenten
 void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode);
 
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
-string generateRelexCFFFeatureTagContent(Feature * firstFeatureInList);
-string generateRelexCFFRelationTagContent(Relation * firstRelationInList);
+string generateRelexCFFfeatureTagContent(Feature * firstFeatureInList);
+string generateRelexCFFrelationTagContent(Relation * firstRelationInList);
 string convertBoolToString(bool boolean);
 #endif
 

@@ -33,7 +33,7 @@
 #define HEADER_GIA_NLP
 
 #include "GIAglobalDefs.h"
-#include "GIASentenceClass.h"
+#include "GIAsentenceClass.h"
 
 #define GIA_TM_STRUCT_YEAR_OFFSET 1900
 
@@ -100,17 +100,17 @@
 static string StanfordCoreNLP_relationSetNameArray[StanfordCoreNLP_numberOfDependencySetsPerSentence] = {StanfordCoreNLP_XML_TAG_basicdependencies, StanfordCoreNLP_XML_TAG_collapseddependencies, StanfordCoreNLP_XML_TAG_collapsedccprocesseddependencies};
 
 
-void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPXMLFileName, int NLPParser, string NLPexeFolderArray[], bool parseRelationsOrFeatures);
+void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfileName, int NLPParser, string NLPexeFolderArray[], bool parseRelationsOrFeatures);
 
-bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputTextNLPfeatureXMLFileName, bool isQuery, Paragraph * firstParagraphInList, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode);
+bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, bool isQuery, Paragraph * firstParagraphInList, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode);
 	#ifdef GIA_USE_RELEX
-	bool parseRelexFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragraph * firstParagraphInList, bool parseRelations, bool parseFeatures, bool NLPrelexCompatibilityMode, bool createNewSentences);
+	bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph * firstParagraphInList, bool parseRelations, bool parseFeatures, bool NLPrelexCompatibilityMode, bool createNewSentences);
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
-	bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragraph * firstParagraphInList, bool parseRelations, bool parseFeatures, bool createNewSentences);
+	bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph * firstParagraphInList, bool parseRelations, bool parseFeatures, bool createNewSentences);
 	#endif
 	#ifdef GIA_USE_STANFORD_PARSER
-	bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragraph * firstParagraphInList, bool createNewSentences);
+	bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph * firstParagraphInList, bool createNewSentences);
 	#endif
 		int countSubstring(const std::string& str, const std::string& sub);
 

@@ -26,7 +26,7 @@
  * Project Version: 1r7a 14-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
- * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
+ * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
  * TO DO: extract date information of entities from relex <features> tag area
  *******************************************************************************/
 
@@ -34,7 +34,7 @@
 #include "GIAbot.h"
 
 #ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
-void botSwitchFirstAndSecondPerson(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int NLPdependencyRelationsType)
+void botSwitchFirstAndSecondPerson(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -49,14 +49,14 @@ void botSwitchFirstAndSecondPerson(Sentence * currentSentenceInList, bool GIAEnt
 			{
 				if(currentRelationInList->relationGovernor == featureFirstPersonNameArray[i])
 				{
-					GIAEntityNode * firstPersonEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
+					GIAentityNode * firstPersonEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 					currentRelationInList->relationGovernor = featureSecondPersonNameArray[i];
 					firstPersonEntity->entityName = featureSecondPersonNameArray[i];
 					passedFirstPersonGovernor = true;
 				}
 				if(currentRelationInList->relationDependent == featureFirstPersonNameArray[i])
 				{
-					GIAEntityNode * firstPersonEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+					GIAentityNode * firstPersonEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 					currentRelationInList->relationDependent = featureSecondPersonNameArray[i];
 					firstPersonEntity->entityName = featureSecondPersonNameArray[i];
 					passedFirstPersonDependent = true;
@@ -68,7 +68,7 @@ void botSwitchFirstAndSecondPerson(Sentence * currentSentenceInList, bool GIAEnt
 				{		
 					if(currentRelationInList->relationGovernor == featureSecondPersonNameArray[i])
 					{
-						GIAEntityNode * secondPersonEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
+						GIAentityNode * secondPersonEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 						currentRelationInList->relationGovernor = featureFirstPersonNameArray[i];
 						secondPersonEntity->entityName = featureFirstPersonNameArray[i];
 					}
@@ -77,7 +77,7 @@ void botSwitchFirstAndSecondPerson(Sentence * currentSentenceInList, bool GIAEnt
 				{
 					if(currentRelationInList->relationDependent == featureSecondPersonNameArray[i])
 					{
-						GIAEntityNode * secondPersonEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+						GIAentityNode * secondPersonEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 						currentRelationInList->relationDependent = featureFirstPersonNameArray[i];
 						secondPersonEntity->entityName = featureFirstPersonNameArray[i];
 					}	

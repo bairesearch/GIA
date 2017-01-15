@@ -20,7 +20,7 @@
 
 /*******************************************************************************
  *
- * File Name: GIASentenceClass.cpp
+ * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1r7a 14-November-2012
@@ -30,7 +30,7 @@
 
 
 
-#include "GIASentenceClass.h"
+#include "GIAsentenceClass.h"
 
 
 
@@ -38,7 +38,7 @@
 #ifdef GIA_USE_STANFORD_CORENLP
 
 
-StanfordCoreNLPMention::StanfordCoreNLPMention(void)
+StanfordCoreNLPmention::StanfordCoreNLPmention(void)
 {
 	representative = false;
 	sentence = -1;
@@ -49,7 +49,7 @@ StanfordCoreNLPMention::StanfordCoreNLPMention(void)
 	next = NULL;
 }
 
-StanfordCoreNLPMention::~StanfordCoreNLPMention(void)
+StanfordCoreNLPmention::~StanfordCoreNLPmention(void)
 {
 	if(next != NULL)
 	{
@@ -57,14 +57,14 @@ StanfordCoreNLPMention::~StanfordCoreNLPMention(void)
 	}
 }
 
-StanfordCoreNLPCoreference::StanfordCoreNLPCoreference(void)
+StanfordCoreNLPcoreference::StanfordCoreNLPcoreference(void)
 {
-	firstMentionInList = new StanfordCoreNLPMention();
+	firstMentionInList = new StanfordCoreNLPmention();
 
 	next = NULL;
 }
 
-StanfordCoreNLPCoreference::~StanfordCoreNLPCoreference(void)
+StanfordCoreNLPcoreference::~StanfordCoreNLPcoreference(void)
 {
 	if(firstMentionInList != NULL)
 	{
@@ -236,7 +236,7 @@ Sentence::Sentence(void)
 
 	sentenceIndex = GIA_SENTENCE_INDEX_UNDEFINED;
 	#ifdef GIA_USE_STANFORD_CORENLP	
-	firstCoreferenceInList = new StanfordCoreNLPCoreference();
+	firstCoreferenceInList = new StanfordCoreNLPcoreference();
 	#endif
 
 	maxNumberOfWordsInSentence = 0;
@@ -397,13 +397,13 @@ void copyFeatures(Feature * firstFeatureInListToCopy, Feature * firstFeatureInLi
 
 
 #ifdef GIA_USE_STANFORD_CORENLP
-void copyStanfordCoreferences(StanfordCoreNLPCoreference * firstCoreferenceInListToCopy, StanfordCoreNLPCoreference * firstCoreferenceInList)
+void copyStanfordCoreferences(StanfordCoreNLPcoreference * firstCoreferenceInListToCopy, StanfordCoreNLPcoreference * firstCoreferenceInList)
 {
-	StanfordCoreNLPCoreference * currentCoreferenceInListToCopy = firstCoreferenceInListToCopy;
-	StanfordCoreNLPCoreference * currentCoreferenceInList = firstCoreferenceInList;
+	StanfordCoreNLPcoreference * currentCoreferenceInListToCopy = firstCoreferenceInListToCopy;
+	StanfordCoreNLPcoreference * currentCoreferenceInList = firstCoreferenceInList;
 	while(currentCoreferenceInListToCopy->next != NULL)
 	{
-		currentCoreferenceInList->firstMentionInList = new StanfordCoreNLPMention();
+		currentCoreferenceInList->firstMentionInList = new StanfordCoreNLPmention();
 		copyStanfordMention(currentCoreferenceInListToCopy->firstMentionInList, currentCoreferenceInList->firstMentionInList);
 
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -411,7 +411,7 @@ void copyStanfordCoreferences(StanfordCoreNLPCoreference * firstCoreferenceInLis
 		//cout << currentCoreferenceInList->head << endl;
 		#endif
 		
-		StanfordCoreNLPCoreference * newCoreference = new StanfordCoreNLPCoreference();
+		StanfordCoreNLPcoreference * newCoreference = new StanfordCoreNLPcoreference();
 		currentCoreferenceInList->next = newCoreference;
 
 		currentCoreferenceInListToCopy = currentCoreferenceInListToCopy->next;
@@ -419,10 +419,10 @@ void copyStanfordCoreferences(StanfordCoreNLPCoreference * firstCoreferenceInLis
 	}
 }
 
-void copyStanfordMention(StanfordCoreNLPMention * firstMentionInListToCopy, StanfordCoreNLPMention * firstMentionInList)
+void copyStanfordMention(StanfordCoreNLPmention * firstMentionInListToCopy, StanfordCoreNLPmention * firstMentionInList)
 {
-	StanfordCoreNLPMention * currentMentionInListToCopy = firstMentionInListToCopy;
-	StanfordCoreNLPMention * currentMentionInList = firstMentionInList;
+	StanfordCoreNLPmention * currentMentionInListToCopy = firstMentionInListToCopy;
+	StanfordCoreNLPmention * currentMentionInList = firstMentionInList;
 	while(currentMentionInListToCopy->next != NULL)
 	{
 		currentMentionInList->representative = currentMentionInListToCopy->representative;
@@ -436,7 +436,7 @@ void copyStanfordMention(StanfordCoreNLPMention * firstMentionInListToCopy, Stan
 		//cout << currentMentionInList->head << endl;
 		#endif
 		
-		StanfordCoreNLPMention * newMention = new StanfordCoreNLPMention();
+		StanfordCoreNLPmention * newMention = new StanfordCoreNLPmention();
 		currentMentionInList->next = newMention;
 
 		currentMentionInListToCopy = currentMentionInListToCopy->next;

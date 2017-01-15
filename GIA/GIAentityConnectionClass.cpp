@@ -20,7 +20,7 @@
 
 /*******************************************************************************
  *
- * File Name: GIAEntityConnectionClass.cpp
+ * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1r7a 14-November-2012
@@ -28,10 +28,10 @@
  *******************************************************************************/
 
 
-#include "GIAEntityConnectionClass.h"
+#include "GIAentityConnectionClass.h"
 
 
-GIAEntityConnection::GIAEntityConnection(void)
+GIAentityConnection::GIAentityConnection(void)
 {
 	confidence = GIA_ENTITY_CONNECTION_CONFIDENCE_BASE;
 	
@@ -54,10 +54,10 @@ GIAEntityConnection::GIAEntityConnection(void)
 	#endif
 	*/
 }
-GIAEntityConnection::~GIAEntityConnection(void)
+GIAentityConnection::~GIAentityConnection(void)
 {
 }
-GIAEntityConnection::GIAEntityConnection(string * startEntityName, long startIdInstance)
+GIAentityConnection::GIAentityConnection(string * startEntityName, long startIdInstance)
 {
 	confidence = GIA_ENTITY_CONNECTION_CONFIDENCE_BASE;
 	

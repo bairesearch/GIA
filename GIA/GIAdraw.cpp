@@ -45,7 +45,7 @@
 
 int maxXAtAParticularY[MAX_GIA_TREE_DEPTH];
 
-void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile, bool useOutputSVGFile)
+void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile)
 {//most of this is copied from CSexecFlow.cpp
 	bool result = true;
 	
@@ -53,19 +53,19 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 	char * displayFileNamePPMcharstar = const_cast<char*>(outputFileNamePPM.c_str());
 	char * outputFileNameSVGcharstar = const_cast<char*>(outputFileNameSVG.c_str());
 
-	XMLParserTag * firstTagInSVGFile = new XMLParserTag();
-	XMLParserTag * currentTagInSVGFile = firstTagInSVGFile;
+	XMLparserTag * firstTagInSVGFile = new XMLparserTag();
+	XMLparserTag * currentTagInSVGFile = firstTagInSVGFile;
 	
 	bool initialiseOrPrint[3];
 	initialiseOrPrint[DRAW_CREATE_LDR_REFERENCES] = false;
 	initialiseOrPrint[DRAW_CREATE_SVG_REFERENCES] = false;
 	initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = false;
-	if(useOutputLDRFile || display)
-	{// || useOutputPPMFile - implied
+	if(useOutputLDRfile || display)
+	{// || useOutputPPMfile - implied
 		initialiseOrPrint[DRAW_CREATE_LDR_REFERENCES] = true;
 		initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = true;
 	}
-	if(useOutputSVGFile)
+	if(useOutputSVGfile)
 	{
 		initialiseOrPrint[DRAW_CREATE_SVG_REFERENCES] = true;
 		initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = true;
@@ -79,9 +79,9 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 	*/
 
 
-	if(useOutputSVGFile)
+	if(useOutputSVGfile)
 	{	
-		if(!writeSVGFile(outputFileNameSVGcharstar, firstTagInSVGFile))
+		if(!writeSVGfile(outputFileNameSVGcharstar, firstTagInSVGFile))
 		{
 			result = false;
 		}
@@ -108,10 +108,10 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 			cout << "The file: " << topLevelSceneFileName << " does not exist in the directory" << endl;
 			exit(0);
 		}
-		write2DReferenceListCollapsedTo1DToFile(topLevelSceneFileNameCollapsed, initialReferenceInSceneFile);
+		write2DreferenceListCollapsedTo1DtoFile(topLevelSceneFileNameCollapsed, initialReferenceInSceneFile);
 		/* method2: why doesnt this work - "invalid dat file for conversion to rgb"
 		char * topLevelSceneFileNameCollapsed = "sceneCollapsedForRaytracing.ldr";
-		write2DReferenceListCollapsedTo1DToFile(topLevelSceneFileNameCollapsed, firstReferenceInPrintList);
+		write2DreferenceListCollapsedTo1DtoFile(topLevelSceneFileNameCollapsed, firstReferenceInPrintList);
 		*/
 		
 		#ifdef GIA_FREE_MEMORY1
@@ -122,8 +122,8 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 
 		unsigned char * rgbMap = new unsigned char[width*height*RGB_NUM];
 
-		//setViewPort2DOrtho(-100.0, 2000.0, -100.0, 2000.0);
-		setViewPort3DOrtho(-100.0, 2000, 2000.0, -100.0, 1.0, -1.0);
+		//setViewPort2Dortho(-100.0, 2000.0, -100.0, 2000.0);
+		setViewPort3Dortho(-100.0, 2000, 2000.0, -100.0, 1.0, -1.0);
 
 		//now reparse file
 		Reference * initialReferenceInCollapsedSceneFile = new Reference();
@@ -134,8 +134,8 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 			exit(0);
 		}
 
-		drawPrimitivesReferenceListToOpenGLAndCreateRGBMapBasic(initialReferenceInCollapsedSceneFile, width, height, rgbMap);
-		drawPrimitivesReferenceListToOpenGLAndCreateRGBMapBasic(initialReferenceInCollapsedSceneFile, width, height, rgbMap);
+		drawPrimitivesReferenceListToOpenGLandCreateRGBmapBasic(initialReferenceInCollapsedSceneFile, width, height, rgbMap);
+		drawPrimitivesReferenceListToOpenGLandCreateRGBmapBasic(initialReferenceInCollapsedSceneFile, width, height, rgbMap);
 			//due to opengl code bug, need to execute this function twice.
 
 		#ifdef GIA_FREE_MEMORY1
@@ -143,9 +143,9 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 		delete topLevelReferenceInCollapsedSceneFile;
 		#endif
 		
-		if(useOutputPPMFile)
+		if(useOutputPPMfile)
 		{
-			generatePixmapFromRGBMap(displayFileNamePPMcharstar, width, height, rgbMap);
+			generatePixmapFromRGBmap(displayFileNamePPMcharstar, width, height, rgbMap);
 		}
 
 		delete rgbMap;
@@ -163,7 +163,7 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 
 }
 
-void initiateMaxXAtAParticularY()
+void initiateMaxXAtParticularY()
 {
 	//now print based upon above lists;
 	for(int i=0; i<MAX_GIA_TREE_DEPTH; i++)
@@ -173,13 +173,13 @@ void initiateMaxXAtAParticularY()
 }
 
 
-void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, XMLParserTag ** currentTag)
+void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, XMLparserTag ** currentTag)
 {
-	vector<GIAEntityNode*>::iterator entityIter;
+	vector<GIAentityNode*>::iterator entityIter;
 
 	Reference * currentReferenceInPrintList = firstReferenceInPrintList;
 
-	initiateMaxXAtAParticularY();
+	initiateMaxXAtParticularY();
 	int xInitial = DRAW_X_INITIAL_OFFSET;
 	int yInitial = DRAW_Y_INITIAL_OFFSET;
 	maxXAtAParticularY[yInitial] = xInitial;
@@ -199,7 +199,7 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesA
 			#endif
 			#endif
 
-			//initiateMaxXAtAParticularY();
+			//initiateMaxXAtParticularY();
 			xInitial = maxXAtAParticularY[yInitial];
 
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, initialiseOrPrint, currentReferenceInPrintList, currentTag, sentenceIndex);		
@@ -209,7 +209,7 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesA
 	#endif	
 }
 
-Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAEntityNode * entityNodeToConnect, Reference * currentReferenceInPrintList, bool initialiseOrPrint[], string connectionName, int entityDefinitionConnectionColour, XMLParserTag ** currentTag)
+Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityNode * entityNodeToConnect, Reference * currentReferenceInPrintList, bool initialiseOrPrint[], string connectionName, int entityDefinitionConnectionColour, XMLparserTag ** currentTag)
 {
 	if(!(entityNodeToConnect->disabled))
 	{
@@ -225,7 +225,7 @@ Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAEntityNode * en
 }
 
 
-Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLParserTag ** currentTag, int sentenceIndex)
+Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag, int sentenceIndex)
 {
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	if((entityNode->sentenceIndexTemp == sentenceIndex) || (entityNode->wasReference))	//condition (entityNode->wasReference) added 12 October 2012 1q3b
@@ -327,7 +327,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			{
 				int q = entityVectorConnectionDrawPosYinitialArray[i];
 				int r = entityVectorConnectionDrawPosXinitialArray[i];
-				for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
+				for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 				{
 					currentReferenceInPrintList = initialiseEntityNodeForPrinting((*connectionIter)->entity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, currentTag, sentenceIndex);
 
@@ -575,7 +575,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 
 
 
-Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeConditionNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLParserTag ** currentTag)
+Reference * initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode * timeConditionNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag)
 {
 
 	int timeConditionNodePrintX = x;
@@ -618,7 +618,7 @@ Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeCo
 }
 
 
-Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLParserTag ** currentTag, string connectionTypeName, bool initialiseOrPrint[])
+Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, string connectionTypeName, bool initialiseOrPrint[])
 {
 	Reference * newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
@@ -646,14 +646,14 @@ Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrin
 			positionSVG.x = vect.x - GIA_DRAW_BASICENTITY_NODE_WIDTH/3;
 			positionSVG.y = vect.y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 			positionSVG.z = GIA_OUTPUT_Z_POSITION_CONNECTIONS;
-			writeSVGText(currentTag, connectionTypeName, &positionSVG, SVG_SCALE_FACTOR*SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
+			writeSVGtext(currentTag, connectionTypeName, &positionSVG, SVG_SCALE_FACTOR*SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
 		}
 	}
 
 	return newCurrentReferenceInPrintList;
 }
 
-Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLParserTag ** currentTag, bool initialiseOrPrint[])
+Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, bool initialiseOrPrint[])
 {
 	Reference * newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
@@ -700,7 +700,7 @@ Reference * createReferenceConnection(Reference * currentReferenceInPrintList, v
 	{
 		pos1->z = GIA_OUTPUT_Z_POSITION_CONNECTIONS;
 		pos2->z = GIA_OUTPUT_Z_POSITION_CONNECTIONS;
-		writeSVGLine(currentTag, pos1, pos2, colour);
+		writeSVGline(currentTag, pos1, pos2, colour);
 	}
 
 	return newCurrentReferenceInPrintList;
@@ -710,7 +710,7 @@ Reference * createReferenceConnection(Reference * currentReferenceInPrintList, v
 
 //consider using elipse instead; <ellipse cx="240" cy="100" rx="220" ry="30">
 
-Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, XMLParserTag ** currentTag, int thickness, bool initialiseOrPrint[])
+Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, XMLparserTag ** currentTag, int thickness, bool initialiseOrPrint[])
 {
 	Reference * newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
@@ -838,11 +838,11 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 		positionSVG.x = vect->x + GIA_DRAW_BASICENTITY_NODE_WIDTH/2;
 		positionSVG.y = vect->y;
 		positionSVG.z = GIA_OUTPUT_Z_POSITION_NODES;
-		writeSVGBox(currentTag, &positionSVG, width, height, colour, GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG*thickness, GIA_USE_SVG_ELLIPTICAL_BOXES);
+		writeSVGbox(currentTag, &positionSVG, width, height, colour, GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG*thickness, GIA_USE_SVG_ELLIPTICAL_BOXES);
 		positionSVG.x = vect->x - GIA_DRAW_BASICENTITY_NODE_WIDTH/3;
 		positionSVG.y = vect->y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 		positionSVG.z = GIA_OUTPUT_Z_POSITION_TEXT;
-		writeSVGText(currentTag, *text, &positionSVG, SVG_SCALE_FACTOR*SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
+		writeSVGtext(currentTag, *text, &positionSVG, SVG_SCALE_FACTOR*SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
 	}
 
 	return newCurrentReferenceInPrintList;

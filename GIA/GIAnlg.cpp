@@ -32,7 +32,7 @@
 
 
 #include "GIAnlg.h"
-#include "GIATranslatorDefineGrammar.h"
+#include "GIAtranslatorDefineGrammar.h"
 
 #ifdef GIA_USE_NLG
 
@@ -43,7 +43,7 @@ NLGSentence::NLGSentence(void)
 	next = NULL;
 }
 
-NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSentence * currentNLGsentence, bool isQueryAnswerContext, int isQueryAnswerContextRound)
+NLGSentence * generateLanguageFromEntityNode(GIAentityNode * entityNode, NLGSentence * currentNLGsentence, bool isQueryAnswerContext, int isQueryAnswerContextRound)
 {
 	NLGSentence * currentNLGsentenceUpdated = currentNLGsentence;
 	if(!(entityNode->parsedForLanguageGeneration) && !(entityNode->disabled))
@@ -104,7 +104,7 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 					#endif
 					generateThreeEntitySentenceFromEntityNode(entityNode, &(currentNLGsentenceUpdated->NLGInputViewText), GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, 1, supportAdditionalLinks);
 					#ifdef GIA_USE_NLG2
-					NLG2generateNLGInputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));
+					NLG2generateNLGinputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));
 					#endif
 					NLGSentence * newNLGsentence = new NLGSentence();
 					currentNLGsentenceUpdated->next = newNLGsentence;
@@ -120,7 +120,7 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 					#endif
 					generateThreeEntitySentenceFromEntityNode(entityNode, &(currentNLGsentenceUpdated->NLGInputViewText), GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, 1, supportAdditionalLinks);
 					#ifdef GIA_USE_NLG2
-					NLG2generateNLGInputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));
+					NLG2generateNLGinputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));
 					#endif
 					NLGSentence * newNLGsentence = new NLGSentence();
 					currentNLGsentenceUpdated->next = newNLGsentence;
@@ -133,7 +133,7 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 
 		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 		{
-			for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
+			for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 			{
 				if(nlgSentenceTwoEntitiesGenerateVectorConnectionsArray[i])
 				{
@@ -146,7 +146,7 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 							generateTwoEntitySentenceFromEntityConnection(entityNode, *connectionIter, &(currentNLGsentenceUpdated->NLGInputViewText), i, 1, false);
 
 							#ifdef GIA_USE_NLG2
-							NLG2generateNLGInputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));
+							NLG2generateNLGinputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));
 							#endif
 							NLGSentence * newNLGsentence = new NLGSentence();
 							currentNLGsentenceUpdated->next = newNLGsentence;
@@ -205,7 +205,7 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 
 
 //startEntityIndex should be 1 for first calcs...
-void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, string * generatedText, int connectionType1, int connectionType2, int startEntityIndex, bool supportAdditionalLinks)
+void generateThreeEntitySentenceFromEntityNode(GIAentityNode * entityNode0, string * generatedText, int connectionType1, int connectionType2, int startEntityIndex, bool supportAdditionalLinks)
 {
 	#ifdef GIA_NLG_DEBUG
 	cout << "\ngenerateThreeEntitySentenceFromEntityNode: " << entityNode0->entityName << endl;
@@ -221,8 +221,8 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 	cout << "\tconnectionType2 = " << connectionType2 << endl;
 	#endif
 
-	GIAEntityNode * entityNode1 = NULL;
-	GIAEntityNode * entityNode2 = NULL;
+	GIAentityNode * entityNode1 = NULL;
+	GIAentityNode * entityNode2 = NULL;
 	bool entityNodeAvailableArray[3];
 	entityNodeAvailableArray[0] = true;
 	entityNodeAvailableArray[1] = false;
@@ -292,14 +292,14 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 	string entityIndex1string = entityIndex1stringCharstar;
 	string entityIndex2string = entityIndex2stringCharstar;
 
-	NLG2generateNLGInputViewFeatureTagsFromEntityNode(entityNode0, entityIndex0, generatedText);
+	NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode0, entityIndex0, generatedText);
 	if(entityNodeAvailableArray[1])
 	{
-		NLG2generateNLGInputViewFeatureTagsFromEntityNode(entityNode1, entityIndex1, generatedText);
+		NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode1, entityIndex1, generatedText);
 	}
 	if(entityNodeAvailableArray[2])
 	{
-		NLG2generateNLGInputViewFeatureTagsFromEntityNode(entityNode2, entityIndex2, generatedText);
+		NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode2, entityIndex2, generatedText);
 	}
 #else
 	string entityTextExpandedArray[3];
@@ -323,7 +323,7 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 	{
 		//bool entityNodeHasAdditionalConnection[3][NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS];
 		//int entityNodeHasAdditionalConnectionIndex[3][NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS];
-		GIAEntityNode * entityNodeArray[3];
+		GIAentityNode * entityNodeArray[3];
 		entityNodeArray[0] = entityNode0;
 		entityNodeArray[1] = entityNode1;
 		entityNodeArray[2] = entityNode2;
@@ -351,8 +351,8 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 
 						if(entityNodeArray[entityNodeIndex]->entityVectorConnectionsArray[vectorConnectionIndex].size() == 1)
 						{//entity contains single substance or condition
-							GIAEntityConnection * entityConnectionAdditional = entityNodeArray[entityNodeIndex]->entityVectorConnectionsArray[vectorConnectionIndex].back();
-							GIAEntityNode * entityNodeAdditional = entityConnectionAdditional->entity;
+							GIAentityConnection * entityConnectionAdditional = entityNodeArray[entityNodeIndex]->entityVectorConnectionsArray[vectorConnectionIndex].back();
+							GIAentityNode * entityNodeAdditional = entityConnectionAdditional->entity;
 
 							bool passAdditionalExtraRequirements = false;
 							if(vectorConnectionIndex == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)
@@ -432,8 +432,8 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 	#endif
 
 #ifdef GIA_USE_NLG2
-	string nlgDependencyRelation1 = NLG2generateNLGInputViewLine(nlgSentenceThreeEntitiesDependencyRelationVectorConnectionsArray[connectionType1], entityIndex0string, entityIndex1string);
-	string nlgDependencyRelation2 = NLG2generateNLGInputViewLine(nlgSentenceThreeEntitiesDependencyRelationVectorConnectionsArray[connectionType2], entityIndex0string, entityIndex2string);
+	string nlgDependencyRelation1 = NLG2generateNLGinputViewLine(nlgSentenceThreeEntitiesDependencyRelationVectorConnectionsArray[connectionType1], entityIndex0string, entityIndex1string);
+	string nlgDependencyRelation2 = NLG2generateNLGinputViewLine(nlgSentenceThreeEntitiesDependencyRelationVectorConnectionsArray[connectionType2], entityIndex0string, entityIndex2string);
 
 	#ifdef GIA_NLG_DEBUG
 	cout << "generateThreeEntitySentenceFromEntityNode(): " << entityNode0->entityName << endl;
@@ -530,14 +530,14 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 	#endif
 }
 
-void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, GIAEntityConnection * entityConnection, string * generatedText, int connectionType, int startEntityIndex, bool additionalLink)
+void generateTwoEntitySentenceFromEntityConnection(GIAentityNode * entityNode1, GIAentityConnection * entityConnection, string * generatedText, int connectionType, int startEntityIndex, bool additionalLink)
 {
 	/*
 	if(!(entityConnection->parsedForLanguageGeneration))	//&& !(entityConnection->disabled)
 	{
 	*/
 	
-	GIAEntityNode * entityNode2 = entityConnection->entity;
+	GIAentityNode * entityNode2 = entityConnection->entity;
 
 	#ifdef GIA_NLG_DEBUG
 	cout << "generateTwoEntitySentenceFromEntityConnection: " << entityNode1->entityName << endl;
@@ -670,14 +670,14 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 #ifdef GIA_USE_NLG2
 	if(generateTwoDependencyRelations)
 	{
-		GIAEntityNode * entityNode0 = new GIAEntityNode();
+		GIAentityNode * entityNode0 = new GIAentityNode();
 		entityNode0->entityName = nlgDependencyRelationSharedArgument;
 		entityNode0->isAction = true;	//NB "have"/"be" are interpreted as actions/verbs by NLP/stanford/relex (but reduced by GIA)
-		NLG2generateNLGInputViewFeatureTagsFromEntityNode(entityNode0, entityIndex0, generatedText);
-		NLG2generateNLGInputViewFeatureTagsFromEntityNode(entityNode1, entityIndex1, generatedText);
-		NLG2generateNLGInputViewFeatureTagsFromEntityNode(entityNode2, entityIndex2, generatedText);
-		string nlgDependencyRelation1 = NLG2generateNLGInputViewLine(nlgDependencyRelationType1, entityIndex0string, entityIndex1string);
-		string nlgDependencyRelation2 = NLG2generateNLGInputViewLine(nlgDependencyRelationType2, entityIndex0string, entityIndex2string);
+		NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode0, entityIndex0, generatedText);
+		NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode1, entityIndex1, generatedText);
+		NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode2, entityIndex2, generatedText);
+		string nlgDependencyRelation1 = NLG2generateNLGinputViewLine(nlgDependencyRelationType1, entityIndex0string, entityIndex1string);
+		string nlgDependencyRelation2 = NLG2generateNLGinputViewLine(nlgDependencyRelationType2, entityIndex0string, entityIndex2string);
 
 		#ifdef GIA_NLG_DEBUG
 		cout << "generateTwoEntitySentenceFromEntityConnection():" << endl;
@@ -691,9 +691,9 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 	}
 	else
 	{
-		NLG2generateNLGInputViewFeatureTagsFromEntityNode(entityNode1, entityIndex1, generatedText);
-		NLG2generateNLGInputViewFeatureTagsFromEntityNode(entityNode2, entityIndex2, generatedText);
-		string nlgDependencyRelation1 = NLG2generateNLGInputViewLine(nlgDependencyRelationType1, entityIndex1string, entityIndex2string);
+		NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode1, entityIndex1, generatedText);
+		NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode2, entityIndex2, generatedText);
+		string nlgDependencyRelation1 = NLG2generateNLGinputViewLine(nlgDependencyRelationType1, entityIndex1string, entityIndex2string);
 
 		#ifdef GIA_NLG_DEBUG
 		cout << "generateTwoEntitySentenceFromEntityConnection():" << endl;
@@ -737,7 +737,7 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 
 		if(generateLinkingWord)
 		{
-			GIAEntityNode * entityNode0 = new GIAEntityNode();
+			GIAentityNode * entityNode0 = new GIAentityNode();
 			entityNode0->entityName = linkingWord;
 			entityNode0->isAction = true;	//NB "have"/"be" are interpreted as actions/verbs by NLP/stanford/relex (but reduced by GIA)
 			entityTextExpandedArray[0] = linkingWord;
@@ -794,39 +794,39 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 }
 
 #ifdef GIA_USE_NLG2
-void NLG2generateNLGInputViewFeatureTagsGenericPerSentence(string * generatedNLGInputViewTags)
+void NLG2generateNLGinputViewFeatureTagsGenericPerSentence(string * generatedNLGinputViewTags)
 {
-	string NLGInputViewFeatureTagPosDeterminateDefinite = NLG2generateNLGInputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_POS, NLG_INPUTVIEW_FEATURE_TAG_GOVERNOR_DEFINITE, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_DETERMINATE);
-	string NLGInputViewFeatureTagPosDeterminateIndefinite = NLG2generateNLGInputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_POS, NLG_INPUTVIEW_FEATURE_TAG_GOVERNOR_INDEFINITE, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_DETERMINATE);
-	string NLGInputViewFeatureTagPosPunctuationFullstop = NLG2generateNLGInputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_POS, NLG_INPUTVIEW_FEATURE_TAG_GOVERNOR_FULLSTOP, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_FULLSTOP);
+	string NLGInputViewFeatureTagPosDeterminateDefinite = NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_POS, NLG_INPUTVIEW_FEATURE_TAG_GOVERNOR_DEFINITE, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_DETERMINATE);
+	string NLGInputViewFeatureTagPosDeterminateIndefinite = NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_POS, NLG_INPUTVIEW_FEATURE_TAG_GOVERNOR_INDEFINITE, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_DETERMINATE);
+	string NLGInputViewFeatureTagPosPunctuationFullstop = NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_POS, NLG_INPUTVIEW_FEATURE_TAG_GOVERNOR_FULLSTOP, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_FULLSTOP);
 
 	#ifdef GIA_NLG_DEBUG
-	cout << "NLG2generateNLGInputViewFeatureTagsGenericPerSentence():" << endl;
+	cout << "NLG2generateNLGinputViewFeatureTagsGenericPerSentence():" << endl;
 	cout << "NLGInputViewFeatureTagPosDeterminateDefinite = " << NLGInputViewFeatureTagPosDeterminateDefinite << endl;
 	cout << "NLGInputViewFeatureTagPosDeterminateIndefinite = " << NLGInputViewFeatureTagPosDeterminateIndefinite << endl;
 	cout << "NLGInputViewFeatureTagPosPunctuationFullstop = " << NLGInputViewFeatureTagPosPunctuationFullstop << endl;
 	#endif
 
-	*generatedNLGInputViewTags = *generatedNLGInputViewTags + NLGInputViewFeatureTagPosDeterminateDefinite;
-	*generatedNLGInputViewTags = *generatedNLGInputViewTags + NLGInputViewFeatureTagPosDeterminateIndefinite;
-	*generatedNLGInputViewTags = *generatedNLGInputViewTags + NLGInputViewFeatureTagPosPunctuationFullstop;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagPosDeterminateDefinite;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagPosDeterminateIndefinite;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagPosPunctuationFullstop;
 }
 
-void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNode, int entityIndex, string * generatedNLGInputViewTags)
+void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode * entityNode, int entityIndex, string * generatedNLGinputViewTags)
 {
 	char entityIndexStringCharstar[10];
 	sprintf(entityIndexStringCharstar, "%d", entityIndex);
 	string entityIndexString = entityIndexStringCharstar;
 
 	//lemma
-	string NLGInputViewFeatureTagLemma = NLG2generateNLGInputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_LEMMA, entityIndexString, getWordOrig(entityNode));
+	string NLGInputViewFeatureTagLemma = NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_LEMMA, entityIndexString, getWordOrig(entityNode));
 
 	//tense
 	//string wordName = entityNode->entityName;
 	string NLGInputViewFeatureTagTense = "";
 	if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
 	{
-		GIATimeConditionNode * timeCondition = entityNode->timeConditionNode;
+		GIAtimeConditionNode * timeCondition = entityNode->timeConditionNode;
 
 		if(timeCondition->tenseOnlyTimeCondition)
 		{
@@ -848,7 +848,7 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 			*/
 
 			//eg tense(decide, past)
-			string NLGInputViewFeatureTagTense = NLG2generateNLGInputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_TENSE, entityIndexString, tenseString);
+			string NLGInputViewFeatureTagTense = NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_TENSE, entityIndexString, tenseString);
 		}
 		else
 		{
@@ -862,7 +862,7 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 	if((entityNode->grammaticalNumber != GRAMMATICAL_NUMBER_UNDEFINED) && (entityNode->grammaticalNumber != GRAMMATICAL_NUMBER_UNCOUNTABLE))
 	{
 		nounNumberString = grammaticalNumberNameArray[entityNode->grammaticalNumber];
-		NLGInputViewFeatureTagNounNumber = NLG2generateNLGInputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_NOUNNUMBER, entityIndexString, nounNumberString);
+		NLGInputViewFeatureTagNounNumber = NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_NOUNNUMBER, entityIndexString, nounNumberString);
 	}
 
 	//pos + inflection
@@ -889,7 +889,7 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 			bool substanceOwnerIsAction = false;
 			if(!(entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES].empty()))
 			{
-				GIAEntityNode * substanceOwner = entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES].back()->entity;
+				GIAentityNode * substanceOwner = entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES].back()->entity;
 				if(substanceOwner->isAction)
 				{
 					substanceOwnerIsAction = true;
@@ -921,14 +921,14 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 		inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_NOUN];
 		posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NOUN];
 	}
-	string NLGInputViewFeatureTagInflection = NLG2generateNLGInputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_INFLECTION, entityIndexString, inflectionString);
-	string NLGInputViewFeatureTagPos = NLG2generateNLGInputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_POS, entityIndexString, posString);
+	string NLGInputViewFeatureTagInflection = NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_INFLECTION, entityIndexString, inflectionString);
+	string NLGInputViewFeatureTagPos = NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_POS, entityIndexString, posString);
 
 	//flag definite
 	string NLGInputViewFeatureTagFlagDefinite = "";
 	if(isDefinite)
 	{
-		NLGInputViewFeatureTagFlagDefinite = NLG2generateNLGInputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_FLAG_DEFINITE, entityIndexString, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_FLAG_DEFINITE);
+		NLGInputViewFeatureTagFlagDefinite = NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_FLAG_DEFINITE, entityIndexString, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_FLAG_DEFINITE);
 	}
 
 	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
@@ -955,7 +955,7 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 	else
 	{
 		//stanford/relex compatible
-		//NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford()	[see GIATranslatorDefineGrammar.cpp]
+		//NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford()	[see GIAtranslatorDefineGrammar.cpp]
 		if(entityNode->grammaticalRelexPersonOrStanfordProperNounTemp)
 		{
 			isPerson = true;
@@ -964,17 +964,17 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 	}
 	if(hasGender)
 	{
-		NLGInputViewFeatureTagGender = NLG2generateNLGInputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_GENDER, entityIndexString, genderString);
+		NLGInputViewFeatureTagGender = NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_GENDER, entityIndexString, genderString);
 	}
 	else if(isPerson)
 	{
-		NLGInputViewFeatureTagFlagPerson = NLG2generateNLGInputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_FLAG_PERSON, entityIndexString, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_FLAG_PERSON);
+		NLGInputViewFeatureTagFlagPerson = NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_FLAG_PERSON, entityIndexString, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_FLAG_PERSON);
 	}
 	#endif
 
 
 	#ifdef GIA_NLG_DEBUG
-	cout << "NLG2generateNLGInputViewFeatureTagsFromEntityNode():" << endl;
+	cout << "NLG2generateNLGinputViewFeatureTagsFromEntityNode():" << endl;
 	cout << "NLGInputViewFeatureTagLemma = " << NLGInputViewFeatureTagLemma << endl;
 	cout << "NLGInputViewFeatureTagFlagDefinite = " << NLGInputViewFeatureTagFlagDefinite << endl;
 	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
@@ -988,25 +988,25 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 	#endif
 	cout << "NLGInputViewFeatureTagPos = " << NLGInputViewFeatureTagPos << endl;
 	#endif
-	*generatedNLGInputViewTags = *generatedNLGInputViewTags + NLGInputViewFeatureTagLemma;
-	*generatedNLGInputViewTags = *generatedNLGInputViewTags + NLGInputViewFeatureTagFlagDefinite;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagLemma;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagFlagDefinite;
 	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
-	*generatedNLGInputViewTags = *generatedNLGInputViewTags + NLGInputViewFeatureTagGender;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagGender;
 	#endif
-	*generatedNLGInputViewTags = *generatedNLGInputViewTags + NLGInputViewFeatureTagTense;
-	*generatedNLGInputViewTags = *generatedNLGInputViewTags + NLGInputViewFeatureTagNounNumber;
-	*generatedNLGInputViewTags = *generatedNLGInputViewTags + NLGInputViewFeatureTagInflection;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagTense;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagNounNumber;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagInflection;
 	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
-	*generatedNLGInputViewTags = *generatedNLGInputViewTags + NLGInputViewFeatureTagFlagPerson;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagFlagPerson;
 	#endif
-	*generatedNLGInputViewTags = *generatedNLGInputViewTags + NLGInputViewFeatureTagPos;
+	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagPos;
 
 }
 
 
 
 
-string NLG2generateNLGInputViewLine(string type, string governor, string dependent)
+string NLG2generateNLGinputViewLine(string type, string governor, string dependent)
 {
 	#ifdef GIA_NLG_DEBUG_MANUALLY_HARDCODE_INTO_NLG2
 	string NLGInputViewLine = "\"" + type + "(" + governor + ", " + dependent + ")" + "\\n\" +" + "\n";
@@ -1019,13 +1019,13 @@ string NLG2generateNLGInputViewLine(string type, string governor, string depende
 #else
 
 
-void addDeterminate(GIAEntityNode * entityNode, string * entityTextExpanded)
+void addDeterminate(GIAentityNode * entityNode, string * entityTextExpanded)
 {
 	string determinate = calcDeterminate(entityNode);
 	*entityTextExpanded = determinate + *entityTextExpanded;
 }
 
-string calcDeterminate(GIAEntityNode * entityNode)
+string calcDeterminate(GIAentityNode * entityNode)
 {
 
 	//first letter is vowel		//added 03 August 2012
@@ -1080,7 +1080,7 @@ string calcDeterminate(GIAEntityNode * entityNode)
 	else
 	{
 		//stanford/relex compatible
-		//NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford()	[see GIATranslatorDefineGrammar.cpp]
+		//NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford()	[see GIAtranslatorDefineGrammar.cpp]
 		if(entityNode->grammaticalRelexPersonOrStanfordProperNounTemp)
 		{
 			isPerson = true;
@@ -1187,7 +1187,7 @@ string calcDeterminate(GIAEntityNode * entityNode)
 
 #endif
 
-string getWordOrig(GIAEntityNode * entityNode)
+string getWordOrig(GIAentityNode * entityNode)
 {
 	string wordOrig = "";
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
@@ -1241,7 +1241,7 @@ string getWordOrig(GIAEntityNode * entityNode)
 }
 
 
-string determineNLGdefinitionText(GIAEntityNode * entityNode)
+string determineNLGdefinitionText(GIAentityNode * entityNode)
 {
 	string nlgDefinitionText = "";
 	bool isPlural = false;
@@ -1260,7 +1260,7 @@ string determineNLGdefinitionText(GIAEntityNode * entityNode)
 	return nlgDefinitionText;
 }
 
-string determineNLGpossessionText(GIAEntityNode * entityNode)
+string determineNLGpossessionText(GIAentityNode * entityNode)
 {
 	string nlgPossessionText = "";
 	bool isPlural = false;
