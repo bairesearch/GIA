@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1b10b 28-Sept-11
+ * Project Version: 1d4b 01-Nov-2011
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -224,6 +224,8 @@ public:
 	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for properties and actions; but relex does not appear to output this information]
 	
 	bool disableParsingAsAPrepositionRelationTemp;
+	
+	bool queryEntityTraced;	//temporary for determining max confifence
 };
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode);

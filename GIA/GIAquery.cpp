@@ -3,7 +3,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1b10b 28-Sept-11
+ * Project Version: 1d4b 01-Nov-2011
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
@@ -888,5 +888,187 @@ void generateTexualContextEntityString(string * texualContextEntityString, GIAEn
 
 
 
+
+double determineMaxConfidenceOfQuerySemanticNetwork(vector<GIAEntityNode*> *conceptEntityNodesListQuery)
+{
+	double bestConfidence = 0.0;
+				
+	vector<GIAEntityNode*>::iterator entityIterQuery;
+	for(entityIterQuery = conceptEntityNodesListQuery->begin(); entityIterQuery != conceptEntityNodesListQuery->end(); entityIterQuery++) 
+	{//for each node in query semantic net;
+		
+		GIAEntityNode* currentQueryEntityNode = *entityIterQuery;
+		
+		int numberOfMatchedNodes = 0;	
+		string queryAnswerContextTemp = "";
+		traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES, &numberOfMatchedNodes, &queryAnswerContextTemp);
+
+		double currentConfidence = (double)numberOfMatchedNodes;	//NB confidence value definition for query network structure matching is currently very simple; it is just equal to the number of matched nodes found 
+
+		if(currentConfidence > bestConfidence)
+		{
+			bestConfidence = currentConfidence;
+		}				
+	}
+	
+	return bestConfidence-1.0;
+
+}
+
+
+void traceEntityNodeDetermineNextCourseOfAction(string * printEntityNodeString, GIAEntityNode * entityNode, string context, int function, int * numberOfMatchedNodes)
+{
+	if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_PRINT)
+	{
+		#ifdef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
+		*printEntityNodeString = *printEntityNodeString + "\nContext: = " + entityNode->entityName;			
+		#else
+		*printEntityNodeString = *printEntityNodeString + "\nContext: " + context + " = " + entityNode->entityName;		
+		#endif	
+	}
+	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES)
+	{
+		traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString);
+	}
+	else
+	{
+		cout << "error: illegal trace entity nodes function" << endl;
+		exit(0);
+	}
+
+}
+void traceEntityNode(GIAEntityNode * entityNode, int function, int * numberOfMatchedNodes, string * printEntityNodeString)
+{
+	if(!(entityNode->queryEntityTraced))
+	{
+		//cout << "entityNode being traced = " << entityNode->entityName << endl;
+		//cout << "*numberOfMatchedNodes = " << *numberOfMatchedNodes << endl;
+		
+		entityNode->queryEntityTraced = true;
+		*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+	
+
+		//if(!(entityNode->hasAssociatedInstanceIsAction))
+		//{
+			if(entityNode->ActionNodeList.begin() != entityNode->ActionNodeList.end())
+			{
+				for(entityNode->ActionNodeListIterator = entityNode->ActionNodeList.begin(); entityNode->ActionNodeListIterator < entityNode->ActionNodeList.end(); entityNode->ActionNodeListIterator++)
+				{
+					traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*(entityNode->ActionNodeListIterator)), "outgoingAction(s)", function, numberOfMatchedNodes);
+				}				
+			}
+			if(entityNode->IncomingActionNodeList.begin() != entityNode->IncomingActionNodeList.end())
+			{
+				for(entityNode->IncomingActionNodeListIterator = entityNode->IncomingActionNodeList.begin(); entityNode->IncomingActionNodeListIterator < entityNode->IncomingActionNodeList.end(); entityNode->IncomingActionNodeListIterator++)
+				{
+					traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*(entityNode->IncomingActionNodeListIterator)), "incomingAction(s)", function, numberOfMatchedNodes);			
+				}				
+			}
+		//}
+		//if(entityNode->hasAssociatedInstanceIsAction)
+		//{
+			if(entityNode->actionSubjectEntity != NULL)
+			{
+				traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, entityNode->actionSubjectEntity, "actionSubjectEntity", function, numberOfMatchedNodes);
+			}
+			if(entityNode->actionObjectEntity != NULL)
+			{
+				traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, entityNode->actionObjectEntity, "actionObjectEntity", function, numberOfMatchedNodes);
+			}
+		//}
+
+		//if(!(entityNode->hasAssociatedInstanceIsCondition))	//CHECKTHIS; doesnt support recursive conditions at the moment (conditions of conditions)
+		//{
+			if(entityNode->ConditionNodeList.begin() != entityNode->ConditionNodeList.end())
+			{
+				for(entityNode->ConditionNodeListIterator = entityNode->ConditionNodeList.begin(); entityNode->ConditionNodeListIterator < entityNode->ConditionNodeList.end(); entityNode->ConditionNodeListIterator++)
+				{
+					traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*(entityNode->ConditionNodeListIterator)), "conditionNode(s)", function, numberOfMatchedNodes);
+				}				
+			}
+			if(entityNode->IncomingConditionNodeList.begin() != entityNode->IncomingConditionNodeList.end())
+			{
+				for(entityNode->IncomingConditionNodeListIterator = entityNode->IncomingConditionNodeList.begin(); entityNode->IncomingConditionNodeListIterator < entityNode->IncomingConditionNodeList.end(); entityNode->IncomingConditionNodeListIterator++)
+				{		
+					traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*(entityNode->IncomingConditionNodeListIterator)), "incomingConditionNode(s)", function, numberOfMatchedNodes);
+				}				
+			}
+		//}
+				
+		//if(entityNode->hasAssociatedInstanceIsCondition)
+		//{
+			if(entityNode->conditionSubjectEntity != NULL)
+			{
+				traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, entityNode->conditionSubjectEntity, "conditionSubjectEntity", function, numberOfMatchedNodes);
+			}
+			if(entityNode->conditionObjectEntity != NULL)
+			{
+				traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, entityNode->conditionObjectEntity, "conditionObjectEntity", function, numberOfMatchedNodes);
+			}
+		//} 
+		//if(entityNode->PropertyNodeList.begin() != entityNode->PropertyNodeList.end())
+		//{
+			for(entityNode->PropertyNodeListIterator = entityNode->PropertyNodeList.begin(); entityNode->PropertyNodeListIterator < entityNode->PropertyNodeList.end(); entityNode->PropertyNodeListIterator++)
+			{
+				traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*(entityNode->PropertyNodeListIterator)), "propertyNode(s)", function, numberOfMatchedNodes);	
+			}				
+		//}
+
+		#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
+		if(entityNode->entityNodeDefiningThisInstance != NULL)
+		{
+			traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, entityNode->entityNodeDefiningThisInstance, "entityNodeDefiningThisInstance", function, numberOfMatchedNodes);
+		}
+		#endif
+		//if(entityNode->isProperty)
+		//{
+			if(entityNode->entityNodeContainingThisProperty != NULL)
+			{
+				traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, entityNode->entityNodeContainingThisProperty, "entityNodeContainingThisProperty (parent)", function, numberOfMatchedNodes);
+			}	
+		//}
+				
+		//if(!(entityNode->isProperty))
+		//{
+			if(entityNode->EntityNodeDefinitionList.begin() != entityNode->EntityNodeDefinitionList.end())
+			{
+				for(entityNode->EntityNodeDefinitionListIterator = entityNode->EntityNodeDefinitionList.begin(); entityNode->EntityNodeDefinitionListIterator < entityNode->EntityNodeDefinitionList.end(); entityNode->EntityNodeDefinitionListIterator++)
+				{
+					traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*(entityNode->EntityNodeDefinitionListIterator)), "incomingEntityNodeDefinition", function, numberOfMatchedNodes);	
+				}				
+			}
+			if(entityNode->EntityNodeDefinitionReverseList.begin() != entityNode->EntityNodeDefinitionReverseList.end())
+			{
+				for(entityNode->EntityNodeDefinitionReverseListIterator = entityNode->EntityNodeDefinitionReverseList.begin(); entityNode->EntityNodeDefinitionReverseListIterator < entityNode->EntityNodeDefinitionReverseList.end(); entityNode->EntityNodeDefinitionReverseListIterator++)
+				{
+					traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*(entityNode->EntityNodeDefinitionReverseListIterator)), "incomingEntityNodeDefinition(s)", function, numberOfMatchedNodes);	
+				}				
+			}
+		//}
+		
+		if(entityNode->AssociatedInstanceNodeList.begin() != entityNode->AssociatedInstanceNodeList.end())
+		{	
+			for(entityNode->AssociatedInstanceNodeListIterator = entityNode->AssociatedInstanceNodeList.begin(); entityNode->AssociatedInstanceNodeListIterator < entityNode->AssociatedInstanceNodeList.end(); entityNode->AssociatedInstanceNodeListIterator++)
+			{			
+				traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*(entityNode->AssociatedInstanceNodeListIterator)), "associatedInstanceNodes(s)", function, numberOfMatchedNodes);	
+			}
+		}
+					
+
+		/*
+		//if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
+		//{
+			if(entityNode->timeConditionNode != NULL)
+			{
+				traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, entityNode->timeConditionNode->conditionName, "timeConditionNode", function, numberOfMatchedNodes);
+			}
+		//}
+		*/
+	}	
+
+}
+	
+	
+	
 
 

@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1b10b 28-Sept-11
+ * Project Version: 1d4b 01-Nov-2011
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
@@ -544,7 +544,7 @@ int main(int argc,char **argv)
 		string queryAnswerContext = "";
 		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(conceptEntityNodesList, conceptEntityNamesList, conceptEntityNodesListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerPreviousNode, &queryAnswerContext);
 		
-		double maxConfidence = entityNodesCompleteListQuery->size();
+		double maxConfidence = determineMaxConfidenceOfQuerySemanticNetwork(conceptEntityNodesListQuery);		//OLD [simple]: entityNodesCompleteListQuery->size();
 	
 		string answerString = "";
 				 
@@ -689,126 +689,7 @@ void executeRelex(string inputPlainTXTFileName, string inputRelexXMLFileName)
 			
 }
 
-void addToPrintEntityNodeString(string * printEntityNodeString, string entityName, string context)
-{
-	#ifdef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
-	*printEntityNodeString = *printEntityNodeString + "\nContext: = " + entityName;			
-	#else
-	*printEntityNodeString = *printEntityNodeString + "\nContext: " + context + " = " + entityName;		
-	#endif
-}
-string printEntityNode(GIAEntityNode * queryAnswerNode, GIAEntityNode* queryAnswerPreviousNode)
-{
-	string printEntityNodeString = "";
-	
-	if(queryAnswerNode->isProperty)
-	{
-		if(queryAnswerNode->entityNodeContainingThisProperty != NULL)
-		{
-			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->entityNodeContainingThisProperty->entityName, "entityNodeContainingThisProperty (parent)");
-		}	
-		if(queryAnswerNode->entityNodeDefiningThisInstance != NULL)
-		{
-			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->entityNodeDefiningThisInstance->entityName, "entityNodeDefiningThisInstance");
-		}
-	}	
-	if(queryAnswerNode->hasAssociatedInstanceIsAction)
-	{
-		if(queryAnswerNode->actionSubjectEntity != NULL)
-		{
-			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->actionSubjectEntity->entityName, "actionSubjectEntity");
-		}
-		if(queryAnswerNode->actionObjectEntity != NULL)
-		{
-			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->actionObjectEntity->entityName, "actionObjectEntity");
-		}
-	}
-	if(!(queryAnswerNode->hasAssociatedInstanceIsAction))
-	{
-		if(queryAnswerNode->ActionNodeList.begin() != queryAnswerNode->ActionNodeList.end())
-		{
-			for(queryAnswerNode->ActionNodeListIterator = queryAnswerNode->ActionNodeList.begin(); queryAnswerNode->ActionNodeListIterator < queryAnswerNode->ActionNodeList.end(); queryAnswerNode->ActionNodeListIterator++)
-			{
-				addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->ActionNodeListIterator))->entityName, "outgoingAction(s)");
-			}				
-		}
-		if(queryAnswerNode->IncomingActionNodeList.begin() != queryAnswerNode->IncomingActionNodeList.end())
-		{
-			for(queryAnswerNode->IncomingActionNodeListIterator = queryAnswerNode->IncomingActionNodeList.begin(); queryAnswerNode->IncomingActionNodeListIterator < queryAnswerNode->IncomingActionNodeList.end(); queryAnswerNode->IncomingActionNodeListIterator++)
-			{
-				addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->IncomingActionNodeListIterator))->entityName, "incomingAction(s)");			
-			}				
-		}
-	}
-	if(queryAnswerNode->hasAssociatedInstanceIsCondition)
-	{
-		if(queryAnswerNode->conditionSubjectEntity != NULL)
-		{
-			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->conditionSubjectEntity->entityName, "conditionSubjectEntity");
-		}
-		if(queryAnswerNode->conditionObjectEntity != NULL)
-		{
-			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->conditionObjectEntity->entityName, "conditionObjectEntity");
-		}
-	} 
-	if(!(queryAnswerNode->hasAssociatedInstanceIsCondition))	//CHECKTHIS; doesnt support recursive conditions at the moment (conditions of conditions)
-	{
-		if(queryAnswerNode->ConditionNodeList.begin() != queryAnswerNode->ConditionNodeList.end())
-		{
-			for(queryAnswerNode->ConditionNodeListIterator = queryAnswerNode->ConditionNodeList.begin(); queryAnswerNode->ConditionNodeListIterator < queryAnswerNode->ConditionNodeList.end(); queryAnswerNode->ConditionNodeListIterator++)
-			{
-				addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->ConditionNodeListIterator))->entityName, "conditionNode(s)");
-			}				
-		}
-		if(queryAnswerNode->IncomingConditionNodeList.begin() != queryAnswerNode->IncomingConditionNodeList.end())
-		{
-			for(queryAnswerNode->IncomingConditionNodeListIterator = queryAnswerNode->IncomingConditionNodeList.begin(); queryAnswerNode->IncomingConditionNodeListIterator < queryAnswerNode->IncomingConditionNodeList.end(); queryAnswerNode->IncomingConditionNodeListIterator++)
-			{		
-				addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->IncomingConditionNodeListIterator))->entityName, "incomingConditionNode(s)");
-			}				
-		}
-	}
-		
-	if(queryAnswerNode->PropertyNodeList.begin() != queryAnswerNode->PropertyNodeList.end())
-	{
-		for(queryAnswerNode->PropertyNodeListIterator = queryAnswerNode->PropertyNodeList.begin(); queryAnswerNode->PropertyNodeListIterator < queryAnswerNode->PropertyNodeList.end(); queryAnswerNode->PropertyNodeListIterator++)
-		{
-			addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->PropertyNodeListIterator))->entityName, "propertyNode(s)");	
-		}				
-	}
 
-	
-	if(!(queryAnswerNode->isProperty))
-	{
-		if(queryAnswerNode->EntityNodeDefinitionReverseList.begin() != queryAnswerNode->EntityNodeDefinitionReverseList.end())
-		{
-			for(queryAnswerNode->EntityNodeDefinitionReverseListIterator = queryAnswerNode->EntityNodeDefinitionReverseList.begin(); queryAnswerNode->EntityNodeDefinitionReverseListIterator < queryAnswerNode->EntityNodeDefinitionReverseList.end(); queryAnswerNode->EntityNodeDefinitionReverseListIterator++)
-			{
-				addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->EntityNodeDefinitionReverseListIterator))->entityName, "incomingEntityNodeDefinition");	
-			}				
-		}
-		if(queryAnswerNode->EntityNodeDefinitionReverseList.begin() != queryAnswerNode->EntityNodeDefinitionReverseList.end())
-		{
-			for(queryAnswerNode->EntityNodeDefinitionReverseListIterator = queryAnswerNode->EntityNodeDefinitionReverseList.begin(); queryAnswerNode->EntityNodeDefinitionReverseListIterator < queryAnswerNode->EntityNodeDefinitionReverseList.end(); queryAnswerNode->EntityNodeDefinitionReverseListIterator++)
-			{
-				addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->EntityNodeDefinitionReverseListIterator))->entityName, "incomingEntityNodeDefinition(s)");	
-			}				
-		}
-	}
-	
-	if(queryAnswerNode->conditionType == CONDITION_NODE_TYPE_TIME)
-	{
-		if(queryAnswerNode->timeConditionNode != NULL)
-		{
-			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->timeConditionNode->conditionName, "timeConditionNode");
-		}
-	}	
-			
-	return printEntityNodeString;
-
-
-}
-	
 	
 bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<string> * conceptEntityNamesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList)
 {
