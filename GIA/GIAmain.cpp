@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l3b 15-October-2015
+ * Project Version: 2l4a 09-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -133,17 +133,6 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 #ifndef USE_NLC
 int main(int argc, char** argv)
 {
-	#ifdef GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
-	initialiseWordNet();
-	string wordExample = "like";
-	bool wordIsFound = false;
-	string listOfSynonyms[WORDNET_FINDTHEINFO_OUTPUT_MAX_NUMBER_SYNONYMS];
-	int grammaticalWordTypeTemp = VERB;	//NOUN	VERB
-	checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(wordExample, &wordIsFound, grammaticalWordTypeTemp);
-	//findSynonymsOLD(wordExample, &wordIsFound, listOfSynonyms, grammaticalWordTypeTemp);
-	exit(0);
-	#endif
-
 	//print execution time
 	struct tm* current;
 	time_t now;
@@ -630,7 +619,7 @@ int main(int argc, char** argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 2l3b 15-October-2015" << endl;
+			cout << "OpenGIA.exe - Project Version: 2l4a 09-December-2015" << endl;
 			exit(1);
 		}
 
@@ -1351,7 +1340,7 @@ bool executeGIA2()
 			}
 			*/
 
-			if(useInputTextNLPrelationXMLFile && !(fileExists(&inputTextNLPrelationXMLfileName)))
+			if(useInputTextNLPrelationXMLFile && !(fileExists(inputTextNLPrelationXMLfileName)))
 			{
 				useInputTextPlainTXTFile = true;
 			}
@@ -1935,18 +1924,6 @@ bool executeGIA2()
 
 
 
-bool fileExists(string* fileName)
-{
-	bool result = false;
- 	FILE* pFile = NULL;
-	const char* fileNameCharStar = fileName->c_str();
-  	pFile = fopen(fileNameCharStar,"r");
-	if(pFile != NULL)
-	{
-		result = true;
-	}
-	return result;
-}
 
 #ifdef GIA_SUPPORT_INPUT_FILE_LISTS
 int getFilesFromFileList(string inputListFileName, string* inputFileNameArray)
