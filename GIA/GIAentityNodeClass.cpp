@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s3a 27-June-2013
+ * Project Version: 1s4a 28-June-2013
  *
  *******************************************************************************/
 
@@ -128,6 +128,7 @@ GIAentityNode::GIAentityNode(void)
 	isObjectTemp = false;
 	hasSubstanceTemp = false;
 	//hasQualityTemp = false;
+	isActionTemp = false;
 	entityIndexTemp = GIA_ENTITY_INDEX_UNDEFINED;	//was 0 before 11 October 2012
 	sentenceIndexTemp = GIA_SENTENCE_INDEX_UNDEFINED;	//was 0 before 11 October 2012
 

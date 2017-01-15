@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s3a 27-June-2013
+ * Project Version: 1s4a 28-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -164,6 +164,7 @@ void defineSubstancesObjectsAndSubjectsWithSubstances(Sentence * currentSentence
 			if(((GIAfeatureTempEntityNodeArray[i]->isObjectTemp) && (GIAfeatureTempEntityNodeArray[i]->hasSubstanceTemp)) || ((GIAfeatureTempEntityNodeArray[i]->isSubjectTemp) && (GIAfeatureTempEntityNodeArray[i]->hasSubstanceTemp)))
 			{
 				GIAentityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAentityNodeArray[i]);
+				cout << "defineSubstancesObjectsAndSubjectsWithSubstances: " << GIAentityNodeArray[i]->entityName << endl;
 			}
 		}
 	}
@@ -186,6 +187,9 @@ void defineSubstancesDefiniteNouns(Sentence * currentSentenceInList, bool GIAent
 						#ifdef GIA_TRANSLATOR_DEBUG
 						//cout << "addSubstanceToSubstanceDefinition: GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
 						#endif
+						#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+						cout << "defineSubstancesDefiniteNouns: " << GIAentityNodeArray[i]->entityName << endl;
+						#endif						
 						GIAentityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAentityNodeArray[i]);
 					}
 				#ifndef GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS
@@ -458,6 +462,9 @@ void defineSubstancesNounsWithDeterminates(Sentence * currentSentenceInList, boo
 							#ifdef GIA_TRANSLATOR_DEBUG
 							//cout << "\t\taddSubstanceToSubstanceDefinition: GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
 							#endif
+							#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+							cout << "defineSubstancesNounsWithDeterminates: " << GIAentityNodeArray[i]->entityName << endl;
+							#endif							
 							GIAentityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAentityNodeArray[i]);
 						#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 						}
@@ -504,6 +511,9 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 					GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
 
 					GIAentityNodeArray[thingIndex] = addSubstanceToSubstanceDefinition(thingEntity);
+					#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+					cout << "defineSubstancesNounsWithAdjectivesOrPrenominalModifiers: " << thingEntity->entityName << endl;
+					#endif
 				}
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -552,8 +562,10 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
 
 				GIAentityNodeArray[thingIndex] = addSubstanceToSubstanceDefinition(thingEntity);				
-				
 				#endif	
+				#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+				cout << "defineSubstancesNounsWithAdjectivesOrPrenominalModifiers: " << thingEntity->entityName << endl;
+				#endif				
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
@@ -587,6 +599,9 @@ void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIA
 				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
 
 				GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
+				#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+				cout << "defineSubstancesQuantitiesAndMeasures: " << substanceEntity->entityName << endl;
+				#endif
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
@@ -620,6 +635,9 @@ void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAenti
 				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
 
 				GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
+				#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+				cout << "defineSubstancesQuantityModifiers: " << substanceEntity->entityName << endl;
+				#endif
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
@@ -648,6 +666,9 @@ void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAentityNode 
 
 				#ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
 				GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
+				#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+				cout << "defineSubstancesExpletives: " << substanceEntity->entityName << endl;
+				#endif
 				#else
 				disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(substanceEntity);
 				#endif
@@ -673,6 +694,9 @@ void defineSubstancesPronouns(Sentence * currentSentenceInList, bool GIAentityNo
 					#ifdef GIA_TRANSLATOR_DEBUG
 					//cout << "addSubstanceToSubstanceDefinition: GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
 					#endif
+					#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+					cout << "defineSubstancesPronouns: " << GIAentityNodeArray[i]->entityName << endl;
+					#endif					
 					GIAentityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAentityNodeArray[i]);
 				}
 			}
@@ -698,6 +722,10 @@ void defineSubstancesToBe(Sentence * currentSentenceInList, GIAentityNode * GIAe
 				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
 
 				GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
+				
+				#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+				cout << "defineSubstancesToBe: " << substanceEntity->entityName << endl;
+				#endif
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
@@ -724,6 +752,10 @@ void defineActionsToDo(Sentence * currentSentenceInList, GIAentityNode * GIAenti
 				GIAentityNode * actionEntity = GIAentityNodeArray[actionIndex];
 
 				GIAentityNodeArray[actionIndex] = addActionToActionDefinitionDefineSubstances(actionEntity);
+				
+				#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+				cout << "defineActionsToDo: " << actionEntity->entityName << endl;
+				#endif
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
@@ -745,6 +777,9 @@ void defineSubstancesHasTime(Sentence * currentSentenceInList, bool GIAentityNod
 				#ifdef GIA_TRANSLATOR_DEBUG
 				//cout << "grammaticalIsDateOrTime; currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
 				#endif
+				#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+				cout << "defineSubstancesHasTime: " << currentGIAEntityNode->entityName << endl;
+				#endif				
 				GIAentityNodeArray[w] = addSubstanceToSubstanceDefinition(currentGIAEntityNode);
 			}
 		}
@@ -773,6 +808,10 @@ void defineSubstancesNonExplicitPronouns(Sentence * currentSentenceInList, bool 
 				GIAentityNodeArray[i]->grammaticalNumber = GRAMMATICAL_NUMBER_SINGULAR;	//added 14 August 2012	(select any value from referenceTypeHasDeterminateCrossReferenceNumberArray[])
 				#endif
 				GIAentityNodeArray[i] = addSubstanceToSubstanceDefinition(GIAentityNodeArray[i]);
+				
+				#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+				cout << "defineSubstancesNonExplicitPronouns: " << GIAentityNodeArray[i]->entityName << endl;
+				#endif
 			}
 		}
 	}
@@ -819,6 +858,10 @@ void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentity
 								GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
 
 								GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
+								
+								#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+								cout << "defineSubstancesIndirectObjects: " << substanceEntity->entityName << endl;
+								#endif
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -917,5 +960,73 @@ void defineSubstanceConcepts(bool GIAentityNodeArrayFilled[], GIAentityNode * GI
 #endif
 
 
+void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType)
+{
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+ 	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			bool foundPossessivePreposition = false;
+			for(int i=0; i<RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES; i++)
+			{
+				bool stanfordPrepositionFound = false;
+				if(convertStanfordPrepositionToRelex(&(currentRelationInList->relationType), NLPdependencyRelationsType, &stanfordPrepositionFound) == relationTypePossessivePrepositionsNameArray[i])
+				{
+					foundPossessivePreposition = true;
+				}
+			}
+			
+			if(foundPossessivePreposition)
+			{//make sure the parent is not an action
+			
+				bool foundAction = false;
+				int substanceIndex = currentRelationInList->relationGovernorIndex;		//eg 'grow' in prep_of(grew-2, pie-6)
+				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];									
+				if(substanceEntity->isActionTemp)
+				{
+					/*Relex:
+					NB not in this case "She grew tired of the pie."
+					of(tired[3], pie[6])
+					_to-be(grow[2], tired[3])
+					_subj(grow[2], she[1])
+					*/
+					/*Stanford:
+					prep_of(grew-2, pie-6)
+					acomp(grew-2, tired-3)
+					nsubj(grew-2, She-1)
+					*/
+									
+					foundAction = true;
+				}
+			
+				if(!foundAction)
+				{
+					/*
+					NB this case "The house of Kriton is blue." should create 2 substance connections (not just 1)
+					of(house[2], Kriton[4])
+					_predadj(house[2], blue[6])
+					eg2 'all' in 'all of the mice'
+					*/
+					
+					//eg 'all' in prep_of(all-x, mouse-y)
+						
+					GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
+
+					#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
+					cout << "defineSubstancesOfPossessivePrepositions: " << substanceEntity->entityName << endl;
+					#endif
+				}							
+			}
+					
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}
+}	
+	
 
 

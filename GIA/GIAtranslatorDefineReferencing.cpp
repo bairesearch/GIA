@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s3a 27-June-2013
+ * Project Version: 1s4a 28-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -433,6 +433,10 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 				int relationDependentIndex = currentRelationInList->relationDependentIndex;
 				GIAentityNode * subjectEntity = GIAentityNodeArray[relationDependentIndex];
 				subjectEntity->isSubjectTemp = true;
+				
+				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;				
+				GIAentityNode * actionEntity = GIAentityNodeArray[relationGovernorIndex];
+				actionEntity->isActionTemp = true;				
 			}
 
 			//has object:
@@ -451,6 +455,10 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 				int relationDependentIndex = currentRelationInList->relationDependentIndex;
 				GIAentityNode * objectEntity = GIAentityNodeArray[relationDependentIndex];
 				objectEntity->isObjectTemp = true;
+				
+				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;				
+				GIAentityNode * actionEntity = GIAentityNodeArray[relationGovernorIndex];
+				actionEntity->isActionTemp = true;
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
