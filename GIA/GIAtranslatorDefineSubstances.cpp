@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r12b 28-November-2012
+ * Project Version: 1r12c 28-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -844,53 +844,61 @@ void defineSubstanceConcepts(bool GIAentityNodeArrayFilled[], GIAentityNode * GI
 			{
 				GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
 			
-				#ifdef GIA_TRANSLATOR_DEBUG				
-				//cout << "defineSubstancesBasedOnDeterminatesOfDefinitionEntities(): RELATION_TYPE_APPOSITIVE_OF_NOUN" << endl;
-				#endif
-
-				bool thingFeatureHasDeterminate = false;
-				for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
+				#ifdef GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES
+				if(!(thingEntity->wasReference))
 				{
-					if(featureArrayTemp[thingIndex]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAconceptNodeArray to featureArrayTemp 14 July 2012b
+				#endif
+				
+					#ifdef GIA_TRANSLATOR_DEBUG				
+					//cout << "defineSubstancesBasedOnDeterminatesOfDefinitionEntities(): RELATION_TYPE_APPOSITIVE_OF_NOUN" << endl;
+					#endif
+
+					bool thingFeatureHasDeterminate = false;
+					for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
 					{
-						thingFeatureHasDeterminate = true;
+						if(featureArrayTemp[thingIndex]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAconceptNodeArray to featureArrayTemp 14 July 2012b
+						{
+							thingFeatureHasDeterminate = true;
+						}
+					}			
+
+					bool thingFeatureIsProperNoun = featureArrayTemp[thingIndex]->grammaticalIsProperNoun;
+					bool thingIsDefinite =  featureArrayTemp[thingIndex]->grammaticalIsDefinite;
+
+					if(!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)
+					{
+						//cout << "thingEntity->entityName = " << thingEntity->entityName << endl;			
+						//cout << "\t(!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)" << endl;
+						thingEntity->isSubstanceConcept = true;
 					}
-				}			
-
-				bool thingFeatureIsProperNoun = featureArrayTemp[thingIndex]->grammaticalIsProperNoun;
-				bool thingIsDefinite =  featureArrayTemp[thingIndex]->grammaticalIsDefinite;
-
-				if(!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)
-				{
-					//cout << "thingEntity->entityName = " << thingEntity->entityName << endl;			
-					//cout << "\t(!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)" << endl;
-					thingEntity->isSubstanceConcept = true;
+					if(featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation)
+					{
+						//cout << "thingEntity->entityName = " << thingEntity->entityName << endl;
+						//cout << "\t(featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation)" << endl;			
+						thingEntity->isSubstanceConcept = true;
+					}
+					#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS_AND_PROPERNOUNS
+					bool thingFeatureIsPronoun = false;
+					if(featureArrayTemp[thingIndex]->grammaticalIsPronoun == GRAMMATICAL_PRONOUN)
+					{
+						thingFeatureIsPronoun = true;	
+					}			
+					if(thingFeatureIsPronoun)
+					{
+						//cout << "thingEntity->entityName = " << thingEntity->entityName << endl;
+						//cout << "\tthingFeatureIsPronoun" << endl;
+						thingEntity->isSubstanceConcept = true;
+					}
+					if(thingFeatureIsProperNoun)
+					{
+						//cout << "thingEntity->entityName = " << thingEntity->entityName << endl;
+						//cout << "\tthingFeatureIsProperNoun" << endl;
+						thingEntity->isSubstanceConcept = true;
+					}	
+					#endif
+				#ifdef GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES
 				}
-				if(featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation)
-				{
-					//cout << "thingEntity->entityName = " << thingEntity->entityName << endl;
-					//cout << "\t(featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation)" << endl;			
-					thingEntity->isSubstanceConcept = true;
-				}
-				#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS_AND_PROPERNOUNS
-				bool thingFeatureIsPronoun = false;
-				if(featureArrayTemp[thingIndex]->grammaticalIsPronoun == GRAMMATICAL_PRONOUN)
-				{
-					thingFeatureIsPronoun = true;	
-				}			
-				if(thingFeatureIsPronoun)
-				{
-					//cout << "thingEntity->entityName = " << thingEntity->entityName << endl;
-					//cout << "\tthingFeatureIsPronoun" << endl;
-					thingEntity->isSubstanceConcept = true;
-				}
-				if(thingFeatureIsProperNoun)
-				{
-					//cout << "thingEntity->entityName = " << thingEntity->entityName << endl;
-					//cout << "\tthingFeatureIsProperNoun" << endl;
-					thingEntity->isSubstanceConcept = true;
-				}	
-				#endif
+				#endif					
 			}		
 		}
 	}

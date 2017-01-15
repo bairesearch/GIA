@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r12b 28-November-2012
+ * Project Version: 1r12c 28-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -603,7 +603,7 @@
 
 #define GIA_USE_DATABASE	//requires further testing
 #ifdef GIA_USE_DATABASE
-	//#define GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ	//enable this for debugging only - not required for GIA
+	#define GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ	//enable this for debugging only - not required for GIA
 	#define GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES	//added 29 Nov 2012
 	#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 		#define GIA_DATABASE_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES	//added 29 Nov 2012	
@@ -633,6 +633,7 @@
 	#define GIA_ADVANCED_REFERENCING_PREPOSITIONS
 	#define GIA_ADVANCED_REFERENCING_CONDITIONS		//all conditions; ie, not just preposition conditions
 	#define GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET	//added 1m5aTEMP11 [requires Stanford Parser - incompatible with Relex - because it requires record of the sentence entity index of the determiner "the"; grammaticalIsDefiniteIndexOfDeterminer/grammaticalDefiniteIndexOfDeterminerTemp]
+	#define GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES
 #endif
 
 //variables currently under attention for testing purposes
