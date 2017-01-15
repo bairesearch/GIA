@@ -48,6 +48,10 @@
  *			sudo apt-get install freeglut3 OR;
  *			sudo dpkg -i freeglut3_2.8.1-1_amd64.deb
  *
+ *			(Linux Ubuntu 16.04 Only)
+ *			sudo apt-get install freeglut3 OR;
+ *			sudo dpkg -i freeglut3_2.8.1-2_amd64.deb
+ *
  *			(Linux EL5 Only)
  *			yum install freeglut OR;
  *			rpm -i freeglut-2.4.0-7.1.el5.x86_64.rpm
@@ -55,6 +59,10 @@
  *			(Linux EL6 Only)
  *			yum install freeglut OR;
  *			rpm -i freeglut-2.6.0-1.el6.x86_64.rpm
+ *
+ *			(Linux EL7 Only)
+ *			yum install freeglut OR;
+ *			rpm -i freeglut-2.8.1-3.el7.x86_64.rpm
  *
  *			(Windows XP Only)
  *			unzip freeglut 2.4.0 (compiled).zip
@@ -87,6 +95,10 @@
  *		Install External Package 2 - Wordnet libraries
  *		--------------------------------------
  *
+ *			(Linux Ubuntu 16.04 Only)
+ *			sudo apt-get install wordnet [wordnet-sense-index] OR;
+ *			sudo dpkg -i wordnet_1%3a3.0-33_amd64.deb wordnet-base_1%3a3.0-33_all.deb wordnet-dev_1%3a3.0-33_amd64.deb  wordnet-gui_1%3a3.0-33_amd64.deb [wordnet-sense-index_1%3a3.0-32_all.deb]
+ *
  *			(Linux Ubuntu 14.04 Only)
  *			sudo apt-get install wordnet wordnet-sense-index OR;
  *			sudo dpkg -i wordnet_1%3a3.0-32_amd64.deb wordnet-base_1%3a3.0-32_all.deb wordnet-dev_1%3a3.0-32_amd64.deb wordnet-gui_1%3a3.0-32_amd64.deb wordnet-sense-index_1%3a3.0-32_all.deb
@@ -98,6 +110,10 @@
  *			(Linux EL6 Only)
  *			yum install wordnet OR;
  *			rpm -i wordnet-3.0-13.el5.x86_64.rpm
+ *
+ *			(Linux EL7 Only)
+ *			yum install wordnet OR;
+ *			rpm -i wordnet-3.0-13.el7.x86_64.rpm?
  *
  *			(Windows XP Only {UNTESTED})
  *			Install WordNet_3.0_win32-setup.exe (from Google Code)
@@ -389,6 +405,10 @@
  *
  *		Note Stanford Parser/CoreNLP requires Java Runtime Environment to be installed;
  *
+ *			(Linux Ubuntu 16.04 only);
+ *			Java 8 (1.8) installation:
+ *				sudo apt-get install openjdk-8-jdk
+ *
  *			(Linux Ubuntu 14.04 only);
  *			Java 7 (1.7) installation:
  *				sudo apt-get install openjdk-7-jdk
@@ -495,15 +515,15 @@
  *
  *		Install dos2unix (required for Stanford CoreNLP compatibility: this is executed by GIA):
  *
- *			(Linux Ubuntu Only)
+ *			(Linux Ubuntu 16.04 Only)
+ *			sudo apt-get install dos2unix
+ *			sudo dpkg -i dos2unix_6.0.4-1_amd64.deb
+ *
+ *			(Linux Ubuntu 14.04 Only)
  *			sudo apt-get install dos2unix
  *			sudo dpkg -i dos2unix_6.0.3-1_amd64.deb
  *
- *			(Linux EL5 Only)
- *			yum install dos2unix
- *			rpm -i dos2unixXXX.rpm
- *
- *			(Linux EL6 Only)
+ *			(Linux EL5/6/7 Only)
  *			yum install dos2unix
  *			rpm -i dos2unixXXX.rpm
  *
@@ -517,6 +537,10 @@
  *			(Linux Ubuntu 14.04 Only)
  *			sudo apt-get install freeglut3-dev OR;
  *			sudo dpkg -i freeglut3-dev_2.8.1-1_amd64.deb
+ *
+ *			(Linux Ubuntu 16.04 Only)
+ *			sudo apt-get install freeglut3-dev OR;
+ *			sudo dpkg -i freeglut3-dev_2.8.1-2_amd64.deb
  *
  *			(Linux EL5 Only)
  *			yum install freeglut-devel OR;
@@ -579,6 +603,10 @@
  *		Install External Package 2 - Wordnet development libraries
  *		--------------------------------------
  *
+ *			(Linux Ubuntu 16.04 Only)
+ *			sudo apt-get install wordnet [wordnet-sense-index] OR;
+ *			sudo dpkg -i wordnet_1%3a3.0-33_amd64.deb wordnet-base_1%3a3.0-33_all.deb wordnet-dev_1%3a3.0-33_amd64.deb  wordnet-gui_1%3a3.0-33_amd64.deb [wordnet-sense-index_1%3a3.0-32_all.deb]
+
  *			(Linux Ubuntu 14.04 Only)
  *			sudo apt-get install wordnet wordnet-dev wordnet-sense-index OR;
  *			sudo dpkg -i wordnet_1%3a3.0-31_amd64.deb wordnet-base_1%3a3.0-31_all.deb wordnet-dev_1%3a3.0-31_amd64.deb wordnet-gui_1%3a3.0-31_amd64.deb wordnet-sense-index_1%3a3.0-31_all.deb
@@ -591,13 +619,17 @@
  *			yum install wordnet-devel OR;
  *			rpm -i wordnet-devel-3.0-13.el5.x86_64.rpm
  *
+ *			(Linux EL7 Only)
+ *			yum install wordnet OR;
+ *			rpm -i wordnet-3.0-13.el7.x86_64.rpm?
+ *
  *			(Windows XP Only {UNTESTED})
  *			Install WordNet_3.0_win32-setup.exe (from Google Code)
  *			copy wn.lib from wn source project\Release to C:\Program Files\Microsoft Visual Studio 9.0\VC\lib\
  *			copy wn.h from wn source project to C:\Program Files\Microsoft Visual Studio 9.0\VC\Include\
  *			ensure wn.lib is added to MS Visual Studio OR project - Linker - additional dependencies
  *
- *			(Windows 7/8 x86_64 Only)
+ *			(Windows 7/8/10 x86_64 Only)
  *			Install WordNet_3.0_win32-setup.exe (from Google Code)
  *			copy wn.lib from wn source project\Release to C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib
  *			copy wn.h from wn source project to C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\Include\
