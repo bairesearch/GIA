@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1c 12-September-2016
+ * Project Version: 2n1d 12-September-2016
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -62,6 +62,13 @@ using namespace std;
 #define GIA_ENTITY_TYPE_TYPE_CONCEPT (4)
 #define GIA_ENTITY_TYPE_TYPE_QUALITY (5)
 #define GIA_ENTITY_NUMBER_OF_TYPES (6)
+#define GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX_STRING "0"
+#define GIA_ENTITY_TYPE_TYPE_SUBSTANCE_STRING "1"
+#define GIA_ENTITY_TYPE_TYPE_ACTION_STRING "2"
+#define GIA_ENTITY_TYPE_TYPE_CONDITION_STRING "3"
+#define GIA_ENTITY_TYPE_TYPE_CONCEPT_STRING "4"
+#define GIA_ENTITY_TYPE_TYPE_QUALITY_STRING "5"
+
 
 //#ifdef GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION (0)
@@ -317,7 +324,6 @@ public:
 
 	/*GIA Internal Entity Referencing*/
 	long idActiveList;
-	long idActiveEntityTypeList;
 	long idActiveListReorderdIDforXMLsave;	//for CXL output only
 	long idInstance; 		//not for networkIndexes (this instance idActiveList of the networkIndex entityName)
 

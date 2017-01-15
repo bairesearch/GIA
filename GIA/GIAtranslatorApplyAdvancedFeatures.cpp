@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1c 12-September-2016
+ * Project Version: 2n1d 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -770,21 +770,18 @@ void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNo
 						if(getSaveNetwork())
 						{
 							long* currentEntityNodeIDinCompleteList = getCurrentEntityNodeIDinCompleteList();
-							long* currentEntityNodeIDInSubstanceEntityNodesList = getCurrentEntityNodeIDinSubstanceEntityNodesList();
 							newQuantityTimesEntity->idActiveList = *currentEntityNodeIDinCompleteList;
-							newQuantityTimesEntity->idActiveEntityTypeList = *currentEntityNodeIDInSubstanceEntityNodesList;
 
 							vector<GIAentityNode*>* entityNodesActiveListComplete = getTranslatorEntityNodesCompleteList();
 							entityNodesActiveListComplete->push_back(newQuantityTimesEntity);
+							
 							(*currentEntityNodeIDinCompleteList)++;
-							vector<GIAentityNode*>* entityNodesActiveListSubstances = getTranslatorSubstanceEntityNodesList();
-							entityNodesActiveListSubstances->push_back(newQuantityTimesEntity);
-							(*currentEntityNodeIDInSubstanceEntityNodesList)++;
 						}
 						else
 						{
 							long* currentEntityNodeIDinCompleteList = getCurrentEntityNodeIDinSentenceCompleteList();
 							newQuantityTimesEntity->idActiveList = *currentEntityNodeIDinCompleteList;
+							
 							(*currentEntityNodeIDinCompleteList)++;
 						}
 
@@ -1314,9 +1311,9 @@ void defineActionConcepts1(GIAsentence* currentSentenceInList, bool GIAentityNod
 	param.parseDisabledRelation[REL1] = true;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_MODAL_AUX;
 	param.useRelationTest[REL1][REL_ENT2] = true; param.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_CAN;
-	GIAentityCharacteristic entityCharacteristicsTest("isAction", "true");
+	GIAentityCharacteristic entityCharacteristicsTest("entityType", GIA_ENTITY_TYPE_TYPE_ACTION_STRING);
 	param.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest);
-	GIAentityCharacteristic useRedistributeSpecialCaseAssignment1("isConcept", "true");
+	GIAentityCharacteristic useRedistributeSpecialCaseAssignment1("entityType", GIA_ENTITY_TYPE_TYPE_CONCEPT_STRING);
 	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&useRedistributeSpecialCaseAssignment1);
 	GIAentityCharacteristic useRedistributeSpecialCaseAssignment2("isActionConcept", "true");
 	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&useRedistributeSpecialCaseAssignment2);

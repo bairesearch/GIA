@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1c 12-September-2016
+ * Project Version: 2n1d 12-September-2016
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -291,7 +291,7 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAen
 					{
 					#endif
 						#ifdef GIA_QUERY_DEBUG
-						cout << "\n\nconnectionIterQuery = " << (*connectionIterQuery)->entity->entityName << ", isNetworkIndex = " << (*connectionIterQuery)->entity->isNetworkIndex << endl;
+						cout << "\n\nconnectionIterQuery = " << (*connectionIterQuery)->entity->entityName << ", entityType = " << (*connectionIterQuery)->entity->entityType << endl;
 						cout << "connectionIterQuery idInstance = " << (*connectionIterQuery)->entity->idInstance << endl;
 						cout << "connectionIterQuery entityIndexTemp = " << (*connectionIterQuery)->entity->entityIndexTemp << endl;
 						#endif
@@ -301,8 +301,7 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAen
 						if(getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE)
 						{
 							#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-							cout << "GIAquery; entityNode->isNetworkIndex = " << entityNode->isNetworkIndex << endl;
-							cout << "GIAquery; entityNode->isSubstance = " << entityNode->isSubstance << endl;
+							cout << "GIAquery; entityNode->entityType = " << entityNode->entityType << endl;
 							//cout << "DBreadVectorConnections: " << entityNode->entityName << ", " << entityNode->idInstance << ", i=" << i << endl;
 							#endif
 							DBreadVectorConnections(entityNode, i);		//this is important, as it will read all of the vector connections from the database for this node (conferred 25 May 2012)
@@ -333,7 +332,7 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAen
 							{
 							#endif
 								#ifdef GIA_QUERY_DEBUG
-								cout << "connectionIter = " << (*connectionIter)->entity->entityName << ", isNetworkIndex = " << (*connectionIter)->entity->isNetworkIndex << endl;
+								cout << "connectionIter = " << (*connectionIter)->entity->entityName << ", entityType = " << (*connectionIter)->entity->entityType << endl;
 								cout << "connectionIter idInstance = " << (*connectionIter)->entity->idInstance << endl;
 								cout << "connectionIter entityIndexTemp = " << (*connectionIter)->entity->entityIndexTemp << endl;
 								#endif
@@ -2589,10 +2588,8 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 							cout << "compareEntityNamesResult: queryEntityNode->entityName = " << queryEntityNode->entityName << ", entityNode->entityName = " << entityNode->entityName << endl;
 
-							cout << "queryEntityNode->isSubstance = " << queryEntityNode->isSubstance << endl;
-							cout << "queryEntityNode->isConcept = " << queryEntityNode->isConcept << endl;
-							cout << "entityNode->isSubstance = " << entityNode->isSubstance << endl;
-							cout << "entityNode->isConcept = " << entityNode->isConcept << endl;
+							cout << "queryEntityNode->entityType = " << queryEntityNode->entityType << endl;
+							cout << "entityNode->entityType = " << entityNode->entityType << endl;
 							#endif
 
 							#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS

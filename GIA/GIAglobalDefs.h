@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1c 12-September-2016
+ * Project Version: 2n1d 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -705,6 +705,8 @@
 //#define GIA_DISABLE_2k_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2l_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2m_CODE_FOR_DEBUG
+//#define GIA_DISABLE_2n_CODE_FOR_DEBUG
+
 #ifndef GIA_DISABLE_2m_CODE_FOR_DEBUG
 	#define GIA_USE_SYNONYMN_DETECTION_DISABLE_DURING_SPECIFIC_CONCEPT_ACTION_LINKING	//2m3a
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES	//2m2a
@@ -1295,7 +1297,7 @@
 //#define GIA_QUERY_MULTIPLE_ANSWERS_DEBUG      //finished first debug using this (1l2a)
 //#define GIA_STANFORD_CORENLP_CODEPENDENCY_PRONOMINAL_REFERENCING_DEBUG
 //#define GIA_DATABASE_DEBUG_FILESYSTEM_IO
-//#define GIA_DATABASE_DEBUG	    //this needs to be debugged (not yet tested)
+//#define GIA_DATABASE_DEBUG	  //this needs to be debugged (not yet tested)
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 //#define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG

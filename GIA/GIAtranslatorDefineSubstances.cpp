@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1c 12-September-2016
+ * Project Version: 2n1d 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -594,7 +594,7 @@ void defineConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 	GIAentityCharacteristic entityCharacteristicsTestA8("mustNotSetIsConceptBasedOnPrenomonalModifierRelation", "false");
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA8);
 	#endif
-	GIAentityCharacteristic entityCharacteristicsSetA("isConcept", "true");
+	GIAentityCharacteristic entityCharacteristicsSetA("entityType", GIA_ENTITY_TYPE_TYPE_CONCEPT_STRING);
 	paramA.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetA);
 	genericEntityInterpretation(&paramA);
 
@@ -611,7 +611,7 @@ void defineConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 	#endif
 	GIAentityCharacteristic entityCharacteristicsTestB4("mustSetIsConceptBasedOnApposRelation", "true");
 	paramB.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestB4);
-	GIAentityCharacteristic entityCharacteristicsSetB("isConcept", "true");
+	GIAentityCharacteristic entityCharacteristicsSetB("entityType", GIA_ENTITY_TYPE_TYPE_CONCEPT_STRING);
 	paramB.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetB);
 	genericEntityInterpretation(&paramB);
 
@@ -625,7 +625,7 @@ void defineConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 	#endif
 	GIAentityCharacteristic entityCharacteristicsTestC3("grammaticalPronounTemp", "true");
 	paramC.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestC3);
-	GIAentityCharacteristic entityCharacteristicsSetC("isConcept", "true");
+	GIAentityCharacteristic entityCharacteristicsSetC("entityType", GIA_ENTITY_TYPE_TYPE_CONCEPT_STRING);
 	paramC.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetC);
 	genericEntityInterpretation(&paramC);
 	#endif
@@ -640,7 +640,7 @@ void defineConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 	#endif
 	GIAentityCharacteristic entityCharacteristicsTestD3("grammaticalProperNounTemp", "true");
 	paramD.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestD3);
-	GIAentityCharacteristic entityCharacteristicsSetD("isConcept", "true");
+	GIAentityCharacteristic entityCharacteristicsSetD("entityType", GIA_ENTITY_TYPE_TYPE_CONCEPT_STRING);
 	paramD.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetD);
 	genericEntityInterpretation(&paramD);
 	#endif
@@ -694,7 +694,7 @@ void defineConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 							cout << "thingEntity->entityName = " << i << ", " << thingEntity->entityName << endl;
 							cout << "\t(!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)" << endl;
 							*/
-							upgradeSubstanceToConcept(thingEntity);
+							thingEntity->entityType = GIA_ENTITY_TYPE_TYPE_CONCEPT;
 						}
 						if(featureArrayTemp[thingIndex]->mustSetIsConceptBasedOnApposRelation)
 						{
@@ -702,7 +702,7 @@ void defineConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 							cout << "thingEntity->entityName = " << i << ", " << thingEntity->entityName << endl;
 							cout << "\t(featureArrayTemp[thingIndex]->mustSetIsConceptBasedOnApposRelation)" << endl;
 							*/
-							upgradeSubstanceToConcept(thingEntity);
+							thingEntity->entityType = GIA_ENTITY_TYPE_TYPE_CONCEPT;
 						}
 					#ifndef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS
 					}
@@ -714,7 +714,7 @@ void defineConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 						cout << "thingEntity->entityName = " << i << ", " << thingEntity->entityName << endl;
 						cout << "\tthingFeatureIsPronoun" << endl;
 						*/
-						upgradeSubstanceToConcept(thingEntity);
+						thingEntity->entityType = GIA_ENTITY_TYPE_TYPE_CONCEPT;
 					}
 					#endif
 					#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS
@@ -724,7 +724,7 @@ void defineConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 						cout << "thingEntity->entityName = " << i << ", " << thingEntity->entityName << endl;
 						cout << "\tthingFeatureIsProperNoun" << endl;
 						*/
-						upgradeSubstanceToConcept(thingEntity);
+						thingEntity->entityType = GIA_ENTITY_TYPE_TYPE_CONCEPT;
 					}
 					#endif
 				#ifdef GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_CONCEPT_TO_REFERENCES
@@ -1480,7 +1480,7 @@ void defineSubstancesAllNodes(GIAsentence* currentSentenceInList, bool GIAentity
 	#ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
 	param.useEntityTest = true; param.entityTest = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE; param.entityTestIsNegative = true;
-	GIAentityCharacteristic entityCharacteristicsTest1("isNetworkIndex", "true");
+	GIAentityCharacteristic entityCharacteristicsTest1("entityType", GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX_STRING);
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
 	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	genericEntityInterpretation(&param);

@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParserTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1c 12-September-2016
+ * Project Version: 2n1d 12-September-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -715,7 +715,7 @@ void defineSubstancesBasedOnSemanticRelations(GIAsentence* currentSentenceInList
 				#ifdef GIA_DEBUG
 				//cout << "isNetworkIndex" << endl;
 				#endif
-				upgradeSubstanceToConcept(GIAentityNodeArray[i]);
+				GIAentityNodeArray[i]->entityType = GIA_ENTITY_TYPE_TYPE_CONCEPT;
 			}
 
 			#ifndef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES

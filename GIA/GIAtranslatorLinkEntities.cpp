@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1c 12-September-2016
+ * Project Version: 2n1d 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -442,17 +442,12 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 		GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, true);
 		paramA.numberOfRelations = 1;
 		paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-		GIAentityCharacteristic entityCharacteristicsTest1("isSubstance", "true");
+		GIAentityCharacteristic entityCharacteristicsTest1("entityType", GIA_ENTITY_TYPE_TYPE_SUBSTANCE_STRING);	//#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS must assert !isConcept
 		GIAentityCharacteristic entityCharacteristicsTest2("isNameQuery", "true");
 		paramA.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1);
 		paramA.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest2);
 		paramA.specialCaseCharacteristicsTestOr2Vector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest1);
 		paramA.specialCaseCharacteristicsTestOr2Vector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest2);
-		#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-		GIAentityCharacteristic entityCharacteristicsTest3("isConcept", "false");
-		paramA.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest3);
-		paramA.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest3);
-		#endif
 		GIAentityCharacteristic entityCharacteristicsTest4("hasAssociatedTime", "false");
 		paramA.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest4);
 		GIAentityCharacteristic entityCharacteristicsTest5("grammaticalProperNounTemp", "true");
@@ -475,17 +470,12 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 		GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, NULL, GIAentityNodeArray, true);
 		paramB.numberOfRelations = 1;
 		paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-		//GIAentityCharacteristic entityCharacteristicsTest1("isSubstance", "true");
+		//GIAentityCharacteristic entityCharacteristicsTest1("entityType", GIA_ENTITY_TYPE_TYPE_SUBSTANCE_STRING);
 		//GIAentityCharacteristic entityCharacteristicsTest2("isNameQuery", "true");
 		paramB.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1);
 		paramB.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest2);
 		paramB.specialCaseCharacteristicsTestOr2Vector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest1);
 		paramB.specialCaseCharacteristicsTestOr2Vector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest2);
-		#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-		//GIAentityCharacteristic entityCharacteristicsTest3("isConcept", "false");
-		paramB.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest3);
-		paramB.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest3);
-		#endif
 		//GIAentityCharacteristic entityCharacteristicsTest4("hasAssociatedTime", "false");
 		paramB.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest4);
 		paramB.disableRelationDuringLink[REL1] = true;
@@ -540,8 +530,8 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 				cout << "linkEntityDefinitionsAppositiveOfNouns:" << endl;
 				cout << "thingName = " << thingEntity->entityName << endl;
 				cout << "definitionEntity = " << definitionEntity->entityName << endl;
-				cout << "thingEntity->isSubstance = " << thingEntity->isSubstance << endl;
-				cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;
+				cout << "thingEntity->entityType = " << thingEntity->entityType << endl;
+				cout << "definitionEntity->entityType = " << definitionEntity->entityType << endl;
 				#endif
 
 				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
@@ -562,14 +552,14 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 					#ifdef GIA_DEBUG
 					//cout << "thingEntity->isNameQuery = " << thingEntity->isNameQuery << endl;
 					//cout << "definitionEntity->isNameQuery = " << definitionEntity->isNameQuery << endl;
-					//cout << "thingEntity->isSubstance = " << thingEntity->isSubstance << endl;
-					//cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;
+					//cout << "thingEntity->entityType = " << thingEntity->entityType << endl;
+					//cout << "definitionEntity->entityType = " << definitionEntity->entityType << endl;
 					#endif
 					if((thingEntity->isSubstance || thingEntity->isNameQuery) && (definitionEntity->isSubstance || definitionEntity->isNameQuery))
 					{//equality link found - add alias instead
 						#ifdef GIA_DEBUG
-						//cout << "thingEntity->isConcept = " << thingEntity->isSubstance << endl;
-						//cout << "definitionEntity->isConcept = " << definitionEntity->isSubstance << endl;
+						//cout << "thingEntity->entityType = " << thingEntity->entityType << endl;
+						//cout << "definitionEntity->entityType = " << definitionEntity->entityType << endl;
 						#endif
 						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 						if(!(thingEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT) && (!(definitionEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))) 	//only required with GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS: || (definitionEntity->isName)))
@@ -2482,7 +2472,7 @@ void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&relationTestGrammaticalNumberB);	//not plural: added 2i7e
 	//paramB.relationTestSpecialCaseIsNotAction[REL1][REL_ENT1] = true;	//Stanford Condition
 	//paramB.relationTestSpecialCaseIsNotToBeComplimentOfAction[REL1][REL_ENT1] = true;	//Relex Condition
-	GIAentityCharacteristic relationTestSpecialCaseIsNotAction("isAction", "false");								//Stanford Condition
+	GIAentityCharacteristic relationTestSpecialCaseIsNotAction("entityType", GIA_ENTITY_TYPE_TYPE_ACTION_STRING, true);			//Stanford Condition
 	paramB.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCaseIsNotAction);			//Stanford Condition
 	GIAentityCharacteristic relationTestSpecialCaseIsNotToBeComplimentOfAction("isToBeComplimentOfActionTemp", "false");			//Relex Condition
 	paramB.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCaseIsNotToBeComplimentOfAction);	//Relex Condition
@@ -2990,7 +2980,7 @@ void linkDependentActionsType2(GIAsentence* currentSentenceInList, bool GIAentit
 	param.functionEntityRelationID[FUNC_ENT2] = REL1; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
 	//param.relationTestSpecialCaseIsAction[REL1][REL_ENT1] = true;	//added 28 July 2013
 	//param.relationTestSpecialCaseIsAction[REL1][REL_ENT2] = true;	//added 28 July 2013
-	GIAentityCharacteristic relationTestSpecialCaseIsAction("isAction", "true");
+	GIAentityCharacteristic relationTestSpecialCaseIsAction("entityType", GIA_ENTITY_TYPE_TYPE_ACTION_STRING);
 	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCaseIsAction);
 	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&relationTestSpecialCaseIsAction);
 	param.mustGenerateConditionName = true; param.conditionEntityDefaultName = GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_DEFAULT_CONDITION_NAME;

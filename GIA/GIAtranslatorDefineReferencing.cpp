@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1c 12-September-2016
+ * Project Version: 2n1d 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -2091,7 +2091,7 @@ bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode* entityNode, 
 		//{
 			cout << "\nentityNode->entityName = " << entityNode->entityName << endl;
 			cout << "entityNode->referenceSetID = " << entityNode->referenceSetID << "(" << referenceSetAlreadyAssigned << ")" << endl;
-			cout << "entityNode->isNetworkIndex = " << entityNode->isNetworkIndex << endl;
+			cout << "entityNode->entityType = " << entityNode->entityType << endl;
 			cout << "minimumEntityIndexOfReferenceSet = " << minimumEntityIndexOfReferenceSet << endl;
 			cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
 			cout << "entityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
@@ -2135,8 +2135,7 @@ void identifyReferenceSet(GIAentityNode* entityNode, int referenceSetID, int min
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "identifyReferenceSet{}: entityNode being traced = " << entityNode->entityName << endl;
 	cout << "identifyReferenceSet{}: referenceSetID = " << referenceSetID << endl;
-	cout << "identifyReferenceSet{}: isConcept = " << entityNode->isConcept << endl;
-	cout << "identifyReferenceSet{}: isNetworkIndex = " << entityNode->isNetworkIndex << endl;
+	cout << "identifyReferenceSet{}: entityType = " << entityNode->entityType << endl;
 	#endif
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
 	cout << "identifyReferenceSet{}: " << entityNode->entityName << endl;

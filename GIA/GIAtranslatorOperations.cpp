@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1c 12-September-2016
+ * Project Version: 2n1d 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -51,17 +51,9 @@ NLCsentence* firstNLCsentenceInListLocal;
 
 static long currentEntityNodeIDinCompleteList;				//For GIA XML generation only
 static long currentEntityNodeIDinNetworkIndexEntityNodesList;		//For GIA XML generation only
-static long currentEntityNodeIDInSubstanceEntityNodesList;		//For GIA XML generation only
-static long currentEntityNodeIDInActionEntityNodesList;			//For GIA XML generation only
-static long currentEntityNodeIDInConditionEntityNodesList;		//For GIA XML generation only
-static long currentEntityNodeIDInConceptEntityNodesList;		//For GIA XML generation only
 
 static vector<GIAentityNode*>* entityNodesActiveListComplete;		//For GIA XML generation only
 //static vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes;
-static vector<GIAentityNode*>* entityNodesActiveListSubstances;		//For GIA XML generation only
-static vector<GIAentityNode*>* entityNodesActiveListActions;		//For GIA XML generation only
-static vector<GIAentityNode*>* entityNodesActiveListConditions;		//For GIA XML generation only
-static vector<GIAentityNode*>* entityNodesActiveListConcepts;		//For GIA XML generation only
 
 unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndex;
 
@@ -89,10 +81,6 @@ void initialiseGIATranslatorForTexualContextOperations()
 
 	currentEntityNodeIDinCompleteList = 0;
 	currentEntityNodeIDinNetworkIndexEntityNodesList = 0;
-	currentEntityNodeIDInSubstanceEntityNodesList = 0;
-	currentEntityNodeIDInActionEntityNodesList = 0;
-	currentEntityNodeIDInConditionEntityNodesList = 0;
-	currentEntityNodeIDInConceptEntityNodesList = 0;
 
 	/*
 	//initialise timeConditionNodesActiveList;		[should be moved elsewhere]
@@ -354,8 +342,7 @@ GIAentityNode* addInstanceToInstanceDefinition(GIAentityNode* entity, int instan
 }
 
 GIAentityNode* addInstance(GIAentityNode* entity, int instanceType)
-{
-
+{	
 	//configure substance node
 	GIAentityNode* newInstance = new GIAentityNode();
 	#ifdef GIA_USE_DATABASE
@@ -418,7 +405,7 @@ GIAentityNode* addInstance(GIAentityNode* entity, int instanceType)
 	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 	entity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
 	#endif
-
+	
 	return newInstance;
 }
 
@@ -775,38 +762,6 @@ void connectActionInstanceToObject(GIAentityNode* objectEntity, GIAentityNode* n
 
 
 
-/*
-void eraseActionFromActionList(GIAentityNode* existingAction)
-{
-	#ifdef GIA_TRANSLATOR_DEBUG
-	//cout << "existingEntity->idActiveEntityTypeList = " << existingEntity->idActiveEntityTypeList << endl;
-	#endif
-	int i=0;
-	bool actionEntityNodesListIteratorIsFound = false;
- 	vector<GIAentityNode*>::iterator actionEntityNodesListIteratorFound;
-	for(vector<GIAentityNode*>::iterator actionEntityNodesListIterator = entityNodesActiveListActions->begin(); actionEntityNodesListIterator != entityNodesActiveListActions->end(); actionEntityNodesListIterator++)
-	{
-		if((*actionEntityNodesListIterator)->idActiveEntityTypeList == existingEntity->idActiveEntityTypeList)
-		{
-			actionEntityNodesListIteratorFound = actionEntityNodesListIterator;
-			actionEntityNodesListIteratorIsFound = true;
-		}
-		#ifdef GIA_TRANSLATOR_DEBUG
-		//cout << "i = " << i << endl;
-		//cout << "(*actionEntityNodesListIterator)->entityName = " << (*actionEntityNodesListIterator)->entityName << endl;
-		#endif
-		i++;
-	}
-	if(!actionEntityNodesListIteratorIsFound)
-	{
-		cout << "error: !...EntityNodesListIteratorIsFound" << endl;
-		exit(0);
-	}
-	entityNodesActiveListActions->erase(actionEntityNodesListIteratorFound);
-}
-*/
-
-
 GIAentityNode* addOrConnectConditionToEntity(GIAentityNode* conditionSubjectEntity, GIAentityNode* conditionObjectEntity, GIAentityNode* conditionEntity, bool sameReferenceSet)
 {
 	GIAentityNode* newOrExistingCondition = conditionEntity;
@@ -1089,23 +1044,6 @@ void setTranslatorNetworkIndexEntityNodesList(vector<GIAentityNode*>* newNetwork
 	entityNodesActiveListNetworkIndexes = newNetworkIndexEntityNodesList;
 }
 */
-void setTranslatorSubstanceEntityNodesList(vector<GIAentityNode*>* newSubstanceEntityNodesList)
-{
-	entityNodesActiveListSubstances = newSubstanceEntityNodesList;
-}
-void setTranslatorActionEntityNodesList(vector<GIAentityNode*>* newActionEntityNodesList)
-{
-	entityNodesActiveListActions = newActionEntityNodesList;
-}
-void setTranslatorConditionEntityNodesList(vector<GIAentityNode*>* newConditionEntityNodesList)
-{
-	entityNodesActiveListConditions = newConditionEntityNodesList;
-}
-void setTranslatorConceptEntityNodesList(vector<GIAentityNode*>* newConceptEntityNodesList)
-{
-	entityNodesActiveListConcepts = newConceptEntityNodesList;
-}
-
 
 vector<GIAentityNode*>* getTranslatorEntityNodesCompleteList()
 {
@@ -1121,22 +1059,6 @@ vector<GIAentityNode*>* getTranslatorNetworkIndexEntityNodesList()
 	return entityNodesActiveListNetworkIndexes;
 }
 */
-vector<GIAentityNode*>* getTranslatorSubstanceEntityNodesList()
-{
-	return entityNodesActiveListSubstances;
-}
-vector<GIAentityNode*>* getTranslatorActionEntityNodesList()
-{
-	return entityNodesActiveListActions;
-}
-vector<GIAentityNode*>* getTranslatorConditionEntityNodesList()
-{
-	return entityNodesActiveListConditions;
-}
-vector<GIAentityNode*>* getTranslatorConceptEntityNodesList()
-{
-	return entityNodesActiveListConcepts;
-}
 
 void setSaveNetwork(bool val)
 {
@@ -1184,22 +1106,6 @@ long* getCurrentEntityNodeIDinCompleteList()
 long* getCurrentEntityNodeIDinNetworkIndexEntityNodesList()
 {
 	return &currentEntityNodeIDinNetworkIndexEntityNodesList;
-}
-long* getCurrentEntityNodeIDinSubstanceEntityNodesList()
-{
-	return &currentEntityNodeIDInSubstanceEntityNodesList;
-}
-long* getCurrentEntityNodeIDinActionEntityNodesList()
-{
-	return &currentEntityNodeIDInActionEntityNodesList;
-}
-long* getCurrentEntityNodeIDinConditionEntityNodesList()
-{
-	return &currentEntityNodeIDInConditionEntityNodesList;
-}
-long* getCurrentEntityNodeIDinConceptEntityNodesList()
-{
-	return &currentEntityNodeIDInConceptEntityNodesList;
 }
 
 
@@ -1824,10 +1730,6 @@ void addInstanceEntityNodeToActiveLists(GIAentityNode* entity)
 	/*already available locally...
 	long* currentEntityNodeIDinCompleteList = getCurrentEntityNodeIDinCompleteList();
 	long* currentEntityNodeIDinNetworkIndexEntityNodesList = getCurrentEntityNodeIDinNetworkIndexEntityNodesList();
-	long* currentEntityNodeIDInSubstanceEntityNodesList = getCurrentEntityNodeIDinSubstanceEntityNodesList();
-	long* currentEntityNodeIDInActionEntityNodesList = getCurrentEntityNodeIDinActionEntityNodesList();
-	long* currentEntityNodeIDInConditionEntityNodesList = getCurrentEntityNodeIDinConditionEntityNodesList();
-	long* currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDinConceptEntityNodesList();
 	*/
 
 	if(saveNetwork)
@@ -1835,30 +1737,6 @@ void addInstanceEntityNodeToActiveLists(GIAentityNode* entity)
 		if(entity->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX)
 		{
 			//addInstanceEntityNodeToActiveLists{} does not support networkIndex entities. NB when this function is executed via linkAdvancedReferencesGIA{}, the referenceSource networkIndex entity is already added to the networkIndex active list (ie, see GIAentityNode* referenceSourceNetworkIndexEntity = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper)
-		}
-		else if(entity->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
-		{
-			entity->idActiveEntityTypeList = currentEntityNodeIDInActionEntityNodesList;
-			entityNodesActiveListActions->push_back(entity);
-			currentEntityNodeIDInActionEntityNodesList++;
-		}
-		else if(entity->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
-		{
-			entity->idActiveEntityTypeList = currentEntityNodeIDInConditionEntityNodesList;
-			entityNodesActiveListConditions->push_back(entity);
-			currentEntityNodeIDInConditionEntityNodesList++;
-		}
-		else if(entity->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
-		{
-			entity->idActiveEntityTypeList = currentEntityNodeIDInSubstanceEntityNodesList;
-			entityNodesActiveListSubstances->push_back(entity);
-			currentEntityNodeIDInSubstanceEntityNodesList++;
-		}
-		else if(entity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
-		{
-			entity->idActiveEntityTypeList = currentEntityNodeIDInConceptEntityNodesList;
-			entityNodesActiveListConcepts->push_back(entity);
-			currentEntityNodeIDInConceptEntityNodesList++;
 		}
 
 		entity->idActiveList = currentEntityNodeIDinCompleteList;
@@ -1897,8 +1775,8 @@ void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNo
 		cout << "\n" << endl;
 		cout << "entityNode->entityName = " << entityNode->entityName << endl;
 		cout << "entityNodeToMerge->entityName = " << entityNodeToMerge->entityName << endl;
-		cout << "entityNode->isNetworkIndex = " << entityNode->isNetworkIndex << endl;
-		cout << "entityNodeToMerge->isNetworkIndex = " << entityNodeToMerge->isNetworkIndex << endl;
+		cout << "entityNode->entityType = " << entityNode->entityType << endl;
+		cout << "entityNodeToMerge->entityType = " << entityNodeToMerge->entityType << endl;
 		#endif
 
 		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
