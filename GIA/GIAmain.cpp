@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10a 10-October-2013
+ * Project Version: 1u10b 10-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -887,7 +887,11 @@ bool executeGIA(
 	int * maxNumberSentences	
 	)
 {
-
+#ifdef USE_CS_WORKAROUND
+}
+int main2(int argc,char **argv)
+{
+#endif
 	/*
 	cout << NLPfeatureParser << endl; 
 	cout << NLPdependencyRelationsParser << endl; 
