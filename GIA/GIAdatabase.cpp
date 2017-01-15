@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k6a 27-July-2015
+ * Project Version: 2k6b 27-July-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -98,7 +98,7 @@ GIAentityNode* DBfindOrAddConceptEntityNodeByName(vector<GIAentityNode*>* entity
 		GIAentityNode* conceptEntityNode;
 		if(conceptEntityNodeLoaded)
 		{
-			unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListIterator;
+			unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIterator;
 			conceptEntityNodesListIterator = entityNodesActiveListConcepts->find(*entityNodeName);
 			conceptEntityNode = conceptEntityNodesListIterator->second;
 			#ifdef GIA_DATABASE_DEBUG
@@ -198,7 +198,7 @@ GIAentityNode* LocalFindOrAddConceptEntityNodeByName(vector<GIAentityNode*>* ent
 {
 	GIAentityNode* entityNodeFound = NULL;
 
-	unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListIterator;
+	unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIterator;
 	conceptEntityNodesListIterator = entityNodesActiveListConcepts->find(*entityNodeName);
 
 
@@ -1812,7 +1812,7 @@ GIAentityNode* findEntityInActiveConceptList(string* entityName, long idInstance
 {
 	*alreadyInRAM = false;
 	GIAentityNode* entityNodeFoundInRAM = NULL;
-	unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListIterator = entityNodesActiveListConcepts->find(*entityName);
+	unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIterator = entityNodesActiveListConcepts->find(*entityName);
 	if(conceptEntityNodesListIterator != entityNodesActiveListConcepts->end())
 	{//concept entity found
 		#ifdef GIA_DATABASE_DEBUG

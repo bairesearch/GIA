@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k6a 27-July-2015
+ * Project Version: 2k6b 27-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1480,7 +1480,7 @@ void disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAe
 
 void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(unordered_map<string, GIAentityNode*>* conceptEntityNodesListMap)
 {
-	unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListMapIter;
+	unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListMapIter;
 	for(conceptEntityNodesListMapIter = conceptEntityNodesListMap->begin(); conceptEntityNodesListMapIter != conceptEntityNodesListMap->end(); conceptEntityNodesListMapIter++)
 	{
 		GIAentityNode* entityNode = conceptEntityNodesListMapIter->second;
@@ -1495,7 +1495,7 @@ void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(unordered_map<st
 //(used for printing/xml write purposes)
 void recordConceptNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string, GIAentityNode*>* conceptEntityNodesListMap)
 {
-	unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListMapIter;
+	unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListMapIter;
 	for(conceptEntityNodesListMapIter = conceptEntityNodesListMap->begin(); conceptEntityNodesListMapIter != conceptEntityNodesListMap->end(); conceptEntityNodesListMapIter++)
 	{
 		GIAentityNode* entityNode = conceptEntityNodesListMapIter->second;
@@ -1509,7 +1509,7 @@ void recordConceptNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string, GIA
 //(used for printing/xml write purposes)
 void recordConceptNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIAentityNode*>* conceptEntityNodesListMap)
 {
-	unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListMapIter;
+	unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListMapIter;
 	for(conceptEntityNodesListMapIter = conceptEntityNodesListMap->begin(); conceptEntityNodesListMapIter != conceptEntityNodesListMap->end(); conceptEntityNodesListMapIter++)
 	{
 		GIAentityNode* entityNode = conceptEntityNodesListMapIter->second;

@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k6a 27-July-2015
+ * Project Version: 2k6b 27-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -630,7 +630,7 @@ int main(int argc, char** argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 2k6a 27-July-2015" << endl;
+			cout << "OpenGIA.exe - Project Version: 2k6b 27-July-2015" << endl;
 			exit(1);
 		}
 
@@ -1874,7 +1874,7 @@ bool executeGIA2()
 	GIANLGSentence* firstNLGsentence = new GIANLGSentence();
 	GIANLGSentence* currentNLGsentence = firstNLGsentence;
 	string generatedText = "";
-	for(unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListMapIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListMapIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListMapIter++)
+	for(unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListMapIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListMapIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListMapIter++)
 	{
 		GIAentityNode* entityNode = conceptEntityNodesListMapIter->second;
 		currentNLGsentence = generateLanguageFromEntityNode(entityNode, currentNLGsentence, false, 0);
@@ -1901,7 +1901,7 @@ bool executeGIA2()
 	{
 		#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 		//set conceptEntityLoaded disabled values (used by DBwriteConceptEntityNodesLoadedList() to prevent the writing of disabled concept nodes...)
-		for(unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListMapIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListMapIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListMapIter++)
+		for(unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListMapIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListMapIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListMapIter++)
 		{
 			GIAentityNode* entityNode = conceptEntityNodesListMapIter->second;
 			if(entityNode->disabled)
