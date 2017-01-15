@@ -23,7 +23,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b3a 22-December-2013
+ * Project Version: 2b3b 22-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -1030,6 +1030,8 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 		bool newLineDetected = false;
 		while(parseFileObject.get(currentToken))
 		{
+			cout << currentToken;
+					
 			if(currentToken == CHAR_NEWLINE)
 			{
 				if(newLineDetected)
@@ -1042,6 +1044,7 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 						if(parseGIA2file)
 						{
 							parsingTypedDependencies = true;
+							//cout << "parsingTypedDependencies = true;" << endl;
 							/*//don't use GIAconnectionistNetworkPOStypes from GIA2 file (use posTags from nlp features file)
 							int maxNumberOfWordsInSentence = 0;
 							#ifdef GIA_NLP_DEBUG
@@ -1096,6 +1099,8 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 						#ifdef GIA_NLP_DEBUG
 						//cout << "GIATHparseStanfordParserRelationsText: currentStanfordParserOutputParagraphString = " << currentStanfordParserOutputParagraphString << endl;
 						#endif
+						cout << "GIATHparseStanfordParserRelationsText: currentStanfordParserOutputParagraphString = " << currentStanfordParserOutputParagraphString << endl;
+
 						int maxNumberOfWordsInSentence = 0;
 						bool featuresNotPreviouslyFilled = createNewSentences;
 						GIATHparseStanfordParserRelationsText(&currentStanfordParserOutputParagraphString, currentSentence, &maxNumberOfWordsInSentence, featuresNotPreviouslyFilled, parseGIA2file);

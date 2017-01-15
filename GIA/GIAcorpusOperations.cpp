@@ -23,7 +23,7 @@
  * File Name: GIAcorpusOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b3a 22-December-2013
+ * Project Version: 2b3b 22-December-2013
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -133,7 +133,7 @@ string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArra
 	*/
 		
 	string GIA2semanticDependencyRelation = "";
-	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + GIA2semanticDependencyRelationNameArray[connectionType] + "(" + convertIntToString(entityIndex1) + "-" + entityWord1 + ", " + convertIntToString(entityIndex2) + "-" + entityWord2 + ") " + createSameReferenceSetRecord(sameReferenceSet);
+	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + GIA2semanticDependencyRelationNameArray[connectionType] + "(" + entityWord1 + "-" + convertIntToString(entityIndex1) + ", " + entityWord2 + "-" + convertIntToString(entityIndex2) + ") " + createSameReferenceSetRecord(sameReferenceSet);
 	//cout << "GIA2semanticDependencyRelation = " << GIA2semanticDependencyRelation << endl;
 	return GIA2semanticDependencyRelation;
 }
@@ -170,6 +170,7 @@ void determineGIAconnectionistNetworkPOStypeNames(Feature * firstFeatureInList, 
 	Feature * currentFeatureInSentence = firstFeatureInList;
 	while(currentFeatureInSentence->next != NULL)
 	{
+		//cout << "currentFeatureInSentence->word = " << currentFeatureInSentence->word << endl;
 		if((NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP) || (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER))
 		{
 			determineGIAconnectionistNetworkPOStypeNameStanford(currentFeatureInSentence);

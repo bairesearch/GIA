@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b3a 22-December-2013
+ * Project Version: 2b3b 22-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -106,19 +106,23 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 	}
 	
 	#ifdef USE_CE
-	if(!createSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsParser, NLPassumePreCollapsedStanfordRelations, false, firstCodeextensionInHeirachy, codeextensionsList, useCodeextensionsHeirachy))
+	if(!createSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsParser, NLPassumePreCollapsedStanfordRelations, parseGIA2file, firstCodeextensionInHeirachy, codeextensionsList, useCodeextensionsHeirachy))
 	#else
-	if(!createSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsParser, NLPassumePreCollapsedStanfordRelations, false))
+	if(!createSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsParser, NLPassumePreCollapsedStanfordRelations, parseGIA2file))
 	#endif
 	{
 		result = false;
 	}
 
+	//cout << "ak3" << endl;
+	
 	#ifdef LINUX
 	chdir(tempFolderCharStar);
 	#else
 	::SetCurrentDirectory(tempFolderCharStar);
 	#endif
+
+	//cout << "ak4" << endl;
 
 	if(!parseGIA2file)
 	{
@@ -128,7 +132,9 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 		outputInternalRelationsInRelexFormat(&outputCFFfileName, &originalInputFileName, firstParagraphInList, NLPdependencyRelationsParser, NLPfeatureParser, NLPexeFolderArray);
 		#endif
 	}
-	
+
+	//cout << "ak5" << endl;
+
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	//count maxNumberSentences
 	Sentence * currentSentenceInList = firstParagraphInList->firstSentenceInList;
@@ -141,6 +147,8 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 		currentSentenceInList = currentSentenceInList->next;
 	}
 	#endif
+	
+	//cout << "ak6" << endl;
 
 	return result;
 }
@@ -203,12 +211,12 @@ bool createSemanticNetworkBasedUponDependencyParsedSentences(Paragraph * firstPa
 	#ifdef USE_CE
 	}
 	#endif
-
+	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "record concept nodes as disabled if they are not permanent (used for printing/xml write purposes)" << endl;
 	#endif
 	recordConceptNodesAsDisabledIfTheyAreNotPermanent(entityNodesActiveListConcepts);
-
+		
 	#ifdef GIA_USE_DATABASE
 	if(isQuery)
 	{
@@ -542,6 +550,8 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	}
 	#endif
 	
+	//cout << "ak1" << endl;
+	
 	#ifdef GIA_FREE_MEMORY1
 	//Clear temporary variables;
 	delete firstGIACoreferenceInList;
@@ -581,6 +591,8 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 			int numberReferenceSetsTemp = identifyReferenceSets(entityNodesActiveListConcepts, NLPdependencyRelationsType);
 		#endif
 	#endif
+	
+	//cout << "ak2" << endl;
 #else
 
 	vector<GIAentityNode*> sentenceConceptEntityNodesListTempNotUsed;
@@ -607,6 +619,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 		createNewCorpusFileAndOpenItForWriting(currentSentenceInList->firstFeatureInList);
 		string sentenceText = regenerateSentenceText(currentSentenceInList->firstFeatureInList, true, NLPfeatureParser);
+		sentenceText = sentenceText + STRING_NEW_LINE;	//required to add new line at end of parsingWordsAndTags as per Stanford Parser specification (see parseStanfordParserFile)
 		saveTextToCurrentCorpusFile(sentenceText);
 		cout << sentenceText << endl;
 	}
@@ -1129,6 +1142,8 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	if(!linkPreestablishedReferencesGIA)
 	{
+		string sentenceText = "";	//required to add new line at end of parsingTypedDependencies as per Stanford Parser specification (see parseStanfordParserFile)
+		saveTextToCurrentCorpusFile(sentenceText);
 		closeCorpusFile();
 	}
 	#endif

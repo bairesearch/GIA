@@ -23,7 +23,7 @@
  * File Name: GIAcorpusDatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b3a 22-December-2013
+ * Project Version: 2b3b 22-December-2013
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -40,7 +40,7 @@
 #define GIA_CORPUS_DATABASE_FILESYSTEM_DEFAULT_FILE_NAME ((string)"corpus.txt")
 
 #define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES (23)
-static string GIAconnectionistNetworkPOStypeNameAbbreviationArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"un", "cc", "nu", "de", "uk", "po", "mo", "pr", "aj", "no", "av", "pp", "ps", "in", "ve", "wh", "pd", "pq", "ab", "ah", "ad"};
+static string GIAconnectionistNetworkPOStypeNameAbbreviationArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"Un", "Cc", "Nu", "De", "Uk", "Po", "Mo", "Pr", "Aj", "No", "Av", "Pp", "Ps", "In", "Ve", "Wh", "Pd", "Pq", "Ab", "Ah", "Ad"};
 
 #ifdef GIA_USE_CORPUS_DATABASE
 

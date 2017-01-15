@@ -23,7 +23,7 @@
  * File Name: GIAcorpus.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b3a 22-December-2013
+ * Project Version: 2b3b 22-December-2013
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -127,11 +127,14 @@ bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser)
 	Sentence * currentSentenceInList = firstSentenceInList;
 	while(currentSentenceInList->next != NULL)
 	{
+		//cout << "here" << endl;
 		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
+		//cout << "here2" << endl;
 		if(!loadCorpusFileSemanticDependencyRelations(currentSentenceInList))
 		{
 			result = false;
 		}
+		//cout << "here3" << endl;
 		currentSentenceInList = currentSentenceInList->next;
 	}
 	return result;

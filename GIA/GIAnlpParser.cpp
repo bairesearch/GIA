@@ -23,7 +23,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b3a 22-December-2013
+ * Project Version: 2b3b 22-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -149,6 +149,8 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 
 	int currentRelationPart = 0;
 
+	//cout << "GIATHparseStanfordParserRelationsText = " << *relationsText << endl;
+	
 	while(characterIndex < numberOfCharactersInRelationsText)
 	{
 		char c = (*relationsText)[characterIndex];
@@ -160,7 +162,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			{	
 				//eg actionObject(6-cake, 4-eaten) [sameReferenceSet=false]
 				string sameReferenceSetString = currentItemString;
-				cout << "sameReferenceSetString = " << sameReferenceSetString << endl;
+				//cout << "sameReferenceSetString = " << sameReferenceSetString << endl;
 				if(sameReferenceSetString.find(createSameReferenceSetRecord(true)) != -1)
 				{
 					currentRelation->sameReferenceSet = true;
@@ -169,13 +171,15 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 				{
 					currentRelation->sameReferenceSet = false;
 				}
-				cout << "sameReferenceSetString = " << sameReferenceSetString << endl;
+				//cout << "currentRelation->sameReferenceSet = " << currentRelation->sameReferenceSet << endl;
 			}
 			#endif
 			
 			currentRelation->relationType = relationType;
 			currentRelation->relationGovernorIndex = relationGovernorIndex;
 			currentRelation->relationDependentIndex = relationDependentIndex;
+			//cout << "currentRelation->relationGovernorIndex = " << currentRelation->relationGovernorIndex << endl;
+			//cout << "currentRelation->relationDependentIndex = " << currentRelation->relationDependentIndex << endl;
 
 			#ifdef GIA_NLP_DEBUG
 			/*
@@ -196,30 +200,32 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			if(!parseGIA2file)
 			{
 				convertStanfordRelationToRelex(currentRelation, currentSentenceInList);
+			}
 			
-				#ifdef GIA_NLP_DEBUG
-				//cout << "finish: convertStanfordRelationToRelex" << endl;
-				#endif
-				if(!featuresNotPreviouslyFilled)
+			#ifdef GIA_NLP_DEBUG
+			//cout << "finish: convertStanfordRelationToRelex" << endl;
+			#endif
+			if(!featuresNotPreviouslyFilled)
+			{
+				/*
+				//don't use these, use lemmas instead (as per Stanford Core NLP/Relex dependency relation definitions)
+				currentRelation->relationGovernor = relationGovernor;
+				currentRelation->relationDependent = relationDependent;
+				*/
+				Feature * currentFeatureInList = firstFeatureInList;
+				for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationDependentIndex; f++)
 				{
-					/*
-					//don't use these, use lemmas instead (as per Stanford Core NLP/Relex dependency relation definitions)
-					currentRelation->relationGovernor = relationGovernor;
-					currentRelation->relationDependent = relationDependent;
-					*/
-					Feature * currentFeatureInList = firstFeatureInList;
-					for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationDependentIndex; f++)
-					{
-						currentFeatureInList = currentFeatureInList->next;
-					}
-					currentRelation->relationDependent = currentFeatureInList->lemma;
-					currentFeatureInList = firstFeatureInList;
-					for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationGovernorIndex; f++)
-					{
-						currentFeatureInList = currentFeatureInList->next;
-					}
-					currentRelation->relationGovernor = currentFeatureInList->lemma;
+					currentFeatureInList = currentFeatureInList->next;
 				}
+				currentRelation->relationDependent = currentFeatureInList->lemma;
+				//cout << "currentRelation->relationDependent = " << currentRelation->relationDependent << endl;
+				currentFeatureInList = firstFeatureInList;
+				for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationGovernorIndex; f++)
+				{
+					currentFeatureInList = currentFeatureInList->next;
+				}
+				currentRelation->relationGovernor = currentFeatureInList->lemma;
+				//cout << "currentRelation->relationGovernor = " << currentRelation->relationGovernor << endl;
 			}
 
 			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG

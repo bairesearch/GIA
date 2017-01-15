@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b3a 22-December-2013
+ * Project Version: 2b3b 22-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -1481,6 +1481,8 @@ int main2(int argc,char **argv)
 
 		if(useInputTextXMLFile)
 		{
+			cout << "SAFSF" << endl;
+			
 			#ifdef GIA_MAIN_DEBUG
 			//cout << "useInputTextXMLFile" << endl;
 			#endif
@@ -1883,10 +1885,14 @@ int main2(int argc,char **argv)
 	::SetCurrentDirectory(tempFolderCharStar);
 	#endif
 
+	//cout << "ak7" << endl;
+	
 	if(printOutput)
 	{
 		printGIAnetworkNodes(entityNodesActiveListComplete, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile, useOutputTextSVGFile, *maxNumberSentences);
 	}
+
+	//cout << "ak8" << endl;
 
 	#ifdef GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
 	if(!testReadSemanticNetXMLFile2(entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
@@ -1894,6 +1900,7 @@ int main2(int argc,char **argv)
 		result = false;
 	}
 	#else
+	//cout << "ak9" << endl;
 	if(useOutputTextXMLFile)
 	{
 		if(!writeSemanticNetXMLFileOptimised(outputTextXMLFileName, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
@@ -1901,6 +1908,7 @@ int main2(int argc,char **argv)
 			result = false;
 		}
 	}
+	//cout << "ak10" << endl;
 	if(useOutputTextCXLFile)
 	{
 		if(!writeCmapToolsCXLFileOptimised(outputTextCXLFileName, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
@@ -1908,6 +1916,8 @@ int main2(int argc,char **argv)
 			result = false;
 		}
 	}
+	//cout << "ak11" << endl;
+
 	#ifdef GIA_USE_NLG
 	NLGSentence * firstNLGsentence = new NLGSentence();
 	NLGSentence * currentNLGsentence = firstNLGsentence;
