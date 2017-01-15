@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4g 25-July-2012
+ * Project Version: 1n4h 26-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -219,6 +219,6 @@
 //~GIAdraw
 //#define GIA_DRAW_USE_PATENT			//modifies colours of nodes such that they print uniquely in black and white
 //#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. concept-list -> concepts or properties
-
+#define GIA_DRAW_DISPLAY_ANSWER_CONTEXTS
 
 #endif

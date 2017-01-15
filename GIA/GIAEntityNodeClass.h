@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4g 25-July-2012
+ * Project Version: 1n4h 26-July-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -336,7 +336,7 @@ public:
 	bool isAnswerToQuery;
 	bool testedForQueryComparison;
 	bool testedForQueryComparisonTemp; //added 17 May 2012 - support better trace routine
-
+	bool queryAnswerContext;
 
 	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for properties and actions; but relex does not appear to output this information]
 
@@ -375,7 +375,8 @@ public:
 	
 	#ifdef GIA_USE_NLG
 	bool parsedForLanguageGeneration;
-	bool definiteSourceAddedInLanguageGeneration;
+	bool sourceAddedInLanguageGeneration;
+	bool sourceReferencedInLanguageGeneration;	
 	#endif
 
 };

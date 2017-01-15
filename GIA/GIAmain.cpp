@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4g 25-July-2012
+ * Project Version: 1n4h 26-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -664,7 +664,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe - Project Version: 1n4g 25-July-2012" << endl;
+			cout << "GIA.exe - Project Version: 1n4h 26-July-2012" << endl;
 			exit(1);
 		}
 
@@ -1185,7 +1185,7 @@ int main(int argc,char **argv)
 
 		if(foundAnswer)
 		{
-			#ifdef GIA_COMPILE_PRINT_INEXACT_ANSWER_AMBIENT_CONTEXT
+		#ifdef GIA_COMPILE_PRINT_INEXACT_ANSWER_AMBIENT_CONTEXT
 			int irrelevant;
 			string printEntityNodeString = "";
 			#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
@@ -1195,7 +1195,7 @@ int main(int argc,char **argv)
 			#endif
 			traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_PRINT, &irrelevant, &printEntityNodeString, NULL, traceInstantiations);
 			answerString = answerString + printEntityNodeString;
-			#else
+		#else
 			string printEntityNodeQualitiesString = "";
 			printEntityNodeQualitiesOnly(queryAnswerNode, &printEntityNodeQualitiesString);
 			cout << printEntityNodeQualitiesString;
@@ -1205,12 +1205,42 @@ int main(int argc,char **argv)
 			printEntityTimeConditionNodeOnly(queryAnswerNode, &printEntityNodeTimeConditionString);
 			cout << printEntityNodeTimeConditionString;
 			answerString = answerString + printEntityNodeTimeConditionString;
-			#endif
+		#endif
 
 			//print AnswerPreviousNode relationship with answerNode
 			#ifndef GIA_DO_NOT_PRINT_RESULTS
 			answerString = answerString + "\nAnswer Context: " + queryAnswerContext;
 			cout << "Answer Context: " << queryAnswerContext << endl;
+			#endif
+			
+			#ifdef GIA_USE_NLG
+			NLGSentence * firstNLGsentence = new NLGSentence();
+			//look for action links
+			NLGSentence * currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 1);
+			int irrelevant;
+			string printEntityNodeString = "";
+			bool traceInstantiations = false;
+			traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);			
+			if(firstNLGsentence->NLGInputViewText == "")
+			{
+				//look for condition links
+				NLGSentence * currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 2);
+				traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);			
+				
+			}
+			if(firstNLGsentence->NLGInputViewText == "")
+			{
+				//look for property/definition links
+				NLGSentence * currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 3);
+				traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);		
+			}
+						
+			currentNLGsentence = firstNLGsentence;
+			while(currentNLGsentence->next != NULL)
+			{
+				cout << "Answer Context (NLG): " << currentNLGsentence->NLGInputViewText << endl;
+				currentNLGsentence = currentNLGsentence->next;
+			}			
 			#endif
 		}
 
@@ -1274,7 +1304,7 @@ int main(int argc,char **argv)
 	for(unordered_map<string, GIAEntityNode*> ::iterator conceptEntityNodesListMapIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListMapIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListMapIter++)
 	{
 		GIAEntityNode * entityNode = conceptEntityNodesListMapIter->second;
-		currentNLGsentence = generateLanguageFromEntityNode(entityNode, currentNLGsentence); 
+		currentNLGsentence = generateLanguageFromEntityNode(entityNode, currentNLGsentence, false, 0); 
 	}
 	#ifdef GIA_USE_NLG_OUTPUT_TO_COMMAND_LINE
 	cout << "DEBUG: NLG generated text = " << endl;	

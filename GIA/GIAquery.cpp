@@ -3,7 +3,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4g 25-July-2012
+ * Project Version: 1n4h 26-July-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -233,6 +233,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		cout << "numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
 		#endif
 
+		/*
 		#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
 		//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
 		int irrelevant;
@@ -241,6 +242,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		traceEntityNode(queryEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);		//is this required?	//added 13 July 2012
 		traceEntityNode(networkEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);				//added 13 July 2012
 		#endif
+		*/
 		
 		if(detectComparisonVariable)
 		{
@@ -256,12 +258,15 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 
 				#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS
 				#ifndef GIA_DO_NOT_PRINT_RESULTS
-				vector<string>::iterator entityAnswerContextsIter = queryTraceParameters.queryAnswerContexts.begin();
-				for(vector<GIAEntityNode*>::iterator entityAnswerIter = queryTraceParameters.queryAnswerNodes.begin(); entityAnswerIter != queryTraceParameters.queryAnswerNodes.end(); entityAnswerIter++)
-				{//for each node in answer list;
-					cout << "(Multiple) Answer: " << (*entityAnswerIter)->entityName << endl;
-					cout << "(Multiple) Answer Context: " << (*entityAnswerContextsIter) << endl;
-					entityAnswerContextsIter++;
+				if(queryTraceParameters.queryAnswerContexts.size() > 1)
+				{ 
+					vector<string>::iterator entityAnswerContextsIter = queryTraceParameters.queryAnswerContexts.begin();
+					for(vector<GIAEntityNode*>::iterator entityAnswerIter = queryTraceParameters.queryAnswerNodes.begin(); entityAnswerIter != queryTraceParameters.queryAnswerNodes.end(); entityAnswerIter++)
+					{//for each node in answer list;
+						cout << "(Multiple) Answer: " << (*entityAnswerIter)->entityName << endl;
+						cout << "(Multiple) Answer Context: " << (*entityAnswerContextsIter) << endl;
+						entityAnswerContextsIter++;
+					}
 				}
 				#endif
 				#endif
@@ -561,6 +566,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 					#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
 					cout << "queryTraceParameters->queryAnswerContext = " << queryTraceParameters->queryAnswerContext << endl;
 					#endif
+					entityNode->queryAnswerContext = true;
 				}
 
 				#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS
@@ -1729,6 +1735,10 @@ void traceEntityNodeDetermineNextCourseOfAction(string * printEntityNodeString, 
 	{
 		traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition, referenceSetID, traceInstantiations);
 	}
+	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION)
+	{
+		traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition, referenceSetID, traceInstantiations);
+	}	
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY)
 	{
@@ -1764,6 +1774,14 @@ void traceEntityNode(GIAEntityNode * entityNode, int function, int * numberOfMat
 			entityNode->testedForQueryComparisonTemp = false;
 		}
 	}
+	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION)
+	{
+		if((entityNode->parsedForLanguageGeneration))
+		{
+			pass = true;
+			entityNode->parsedForLanguageGeneration = false;
+		}
+	}	
 	else
 	{
 		if(!(entityNode->queryEntityTraced))

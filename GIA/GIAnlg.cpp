@@ -3,7 +3,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4g 25-July-2012
+ * Project Version: 1n4h 26-July-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -21,7 +21,7 @@ NLGSentence::NLGSentence(void)
 	next = NULL;
 }
 
-NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSentence * currentNLGsentence)
+NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSentence * currentNLGsentence, bool isQueryAnswerContext, int isQueryAnswerContextRound)
 {
 	NLGSentence * currentNLGsentenceUpdated = currentNLGsentence;
 	if(!(entityNode->parsedForLanguageGeneration) && !(entityNode->disabled))
@@ -72,30 +72,36 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 		entityNode->parsedForLanguageGeneration = true;
 
 		#ifdef NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN
-		if(!(entityNode->definiteSourceAddedInLanguageGeneration))
+		if(!(entityNode->sourceReferencedInLanguageGeneration))
 		{
 		#endif
  			bool supportAdditionalLinks = true;
 			if(entityNode->isAction)
 			{
-				generateThreeEntitySentenceFromEntityNode(entityNode, &(currentNLGsentenceUpdated->NLGInputViewText), GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, 1, supportAdditionalLinks);
-				#ifdef GIA_USE_NLG2
-				NLG2generateNLGInputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));	
-				#endif
-				NLGSentence * newNLGsentence = new NLGSentence();
-				currentNLGsentenceUpdated->next = newNLGsentence;	
-				currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;			
+				if(!isQueryAnswerContext || (isQueryAnswerContextRound == 1))
+				{			
+					generateThreeEntitySentenceFromEntityNode(entityNode, &(currentNLGsentenceUpdated->NLGInputViewText), GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, 1, supportAdditionalLinks);
+					#ifdef GIA_USE_NLG2
+					NLG2generateNLGInputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));	
+					#endif
+					NLGSentence * newNLGsentence = new NLGSentence();
+					currentNLGsentenceUpdated->next = newNLGsentence;	
+					currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;
+				}		
 			}
 			else if(entityNode->isCondition)
 			{
-				//cout << "a6" << endl;
-				generateThreeEntitySentenceFromEntityNode(entityNode, &(currentNLGsentenceUpdated->NLGInputViewText), GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, 1, supportAdditionalLinks);
-				#ifdef GIA_USE_NLG2
-				NLG2generateNLGInputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));		
-				#endif
-				NLGSentence * newNLGsentence = new NLGSentence();
-				currentNLGsentenceUpdated->next = newNLGsentence;	
-				currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;			
+				if(!isQueryAnswerContext || (isQueryAnswerContextRound == 2))
+				{
+					//cout << "a6" << endl;
+					generateThreeEntitySentenceFromEntityNode(entityNode, &(currentNLGsentenceUpdated->NLGInputViewText), GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, 1, supportAdditionalLinks);
+					#ifdef GIA_USE_NLG2
+					NLG2generateNLGInputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));		
+					#endif
+					NLGSentence * newNLGsentence = new NLGSentence();
+					currentNLGsentenceUpdated->next = newNLGsentence;	
+					currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;
+				}			
 			}	
 		#ifdef NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN
 		}
@@ -110,24 +116,36 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 				if(nlgSentenceTwoEntitiesGenerateVectorConnectionsArray[i])
 				{
 					#ifdef NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN
-					if(!((*connectionIter)->entity->definiteSourceAddedInLanguageGeneration))
+					if(!((*connectionIter)->entity->sourceReferencedInLanguageGeneration))
 					{
 					#endif
-						generateTwoEntitySentenceFromEntityConnection(entityNode, *connectionIter, &(currentNLGsentenceUpdated->NLGInputViewText), i, 1, false);
+						#ifdef NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3
+						if(!((*connectionIter)->entity->sourceAddedInLanguageGeneration))
+						{
+						#endif	
+							if(!isQueryAnswerContext || (isQueryAnswerContextRound == 3))
+							{										
+								generateTwoEntitySentenceFromEntityConnection(entityNode, *connectionIter, &(currentNLGsentenceUpdated->NLGInputViewText), i, 1, false);
 
-						#ifdef GIA_USE_NLG2
-						NLG2generateNLGInputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));
+								#ifdef GIA_USE_NLG2
+								NLG2generateNLGInputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));
+								#endif
+								NLGSentence * newNLGsentence = new NLGSentence();
+								currentNLGsentenceUpdated->next = newNLGsentence;	
+								currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;	
+							}
+						#ifdef NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3
+						}
 						#endif
-						NLGSentence * newNLGsentence = new NLGSentence();
-						currentNLGsentenceUpdated->next = newNLGsentence;	
-						currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;	
-					
 					#ifdef NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN
 					}
 					#endif								
 				}
-													
-				currentNLGsentenceUpdated = generateLanguageFromEntityNode((*connectionIter)->entity, currentNLGsentenceUpdated);
+				
+				if(!isQueryAnswerContext || (isQueryAnswerContext && ((*connectionIter)->entity->queryAnswerContext) || ((*connectionIter)->entity->isAnswerToQuery)))
+				{							
+					currentNLGsentenceUpdated = generateLanguageFromEntityNode((*connectionIter)->entity, currentNLGsentenceUpdated, isQueryAnswerContext, isQueryAnswerContextRound);
+				}
 			}
 		}
 
@@ -330,11 +348,18 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 									//cout << "vectorConnectionIndex = " << vectorConnectionIndex << endl;
 									//cout << "entityNodeAdditional->entityName = " << entityNodeAdditional->entityName << endl;
 									//cout << "af12" << endl;
-									#ifdef GIA_USE_NLG2
-									generateThreeEntitySentenceFromEntityNode(entityNodeAdditional, generatedText, nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityConnection[i], nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityConnection[i]+1, currentEntityIndexAdditional, false);
-									#else
-									generateThreeEntitySentenceFromEntityNode(entityNodeAdditional, &(entityTextExpandedArray[entityNodeIndex]), nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[0], nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[1], currentEntityIndexAdditional, false);
+									#ifdef NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN2
+									if(!(entityNodeAdditional->parsedForLanguageGeneration))
+									{
 									#endif
+										#ifdef GIA_USE_NLG2
+										generateThreeEntitySentenceFromEntityNode(entityNodeAdditional, generatedText, nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityConnection[i], nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityConnection[i]+1, currentEntityIndexAdditional, false);
+										#else
+										generateThreeEntitySentenceFromEntityNode(entityNodeAdditional, &(entityTextExpandedArray[entityNodeIndex]), nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[0], nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[1], currentEntityIndexAdditional, false);
+										#endif
+									#ifdef NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN2
+									}
+									#endif										
 								}
 								else
 								{
@@ -412,18 +437,21 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 		//cout << "generateThreeEntitySentenceFromEntityNode:" << endl;
 		if(entityNodeAvailableArray[0])
 		{
-			//cout << "entityNode0->definiteSourceAddedInLanguageGeneration: " << entityNode0->entityName << endl;		
-			entityNode0->definiteSourceAddedInLanguageGeneration = true;
+			//cout << "entityNode0->sourceReferencedInLanguageGeneration: " << entityNode0->entityName << endl;	
+			entityNode0->sourceReferencedInLanguageGeneration = true;
+			#ifdef NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3	
+			entityNode0->sourceAddedInLanguageGeneration = true;
+			#endif
 		}		
 		if(entityNodeAvailableArray[1])
 		{
-			//cout << "entityNode1->definiteSourceAddedInLanguageGeneration: " << entityNode1->entityName << endl;
-			entityNode1->definiteSourceAddedInLanguageGeneration = true;
+			//cout << "entityNode1->sourceReferencedInLanguageGeneration: " << entityNode1->entityName << endl;
+			entityNode1->sourceReferencedInLanguageGeneration = true;
 		}
 		if(entityNodeAvailableArray[2])
 		{
-			//cout << "entityNode2->definiteSourceAddedInLanguageGeneration: " << entityNode2->entityName << endl;		
-			entityNode2->definiteSourceAddedInLanguageGeneration = true;
+			//cout << "entityNode2->sourceReferencedInLanguageGeneration: " << entityNode2->entityName << endl;		
+			entityNode2->sourceReferencedInLanguageGeneration = true;
 		}		
 	//}
 	
@@ -650,10 +678,13 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 	//if(!additionalLink)
 	//{
 		//cout << "generateTwoEntitySentenceFromEntityNode:" << endl;
-		//cout << "entityNode1->definiteSourceAddedInLanguageGeneration: " << entityNode1->entityName << endl;
-		//cout << "entityNode2->definiteSourceAddedInLanguageGeneration: " << entityNode2->entityName << endl;
-		entityNode1->definiteSourceAddedInLanguageGeneration = true;
-		entityNode2->definiteSourceAddedInLanguageGeneration = true;
+		//cout << "entityNode1->sourceReferencedInLanguageGeneration: " << entityNode1->entityName << endl;
+		//cout << "entityNode2->sourceReferencedInLanguageGeneration: " << entityNode2->entityName << endl;
+		entityNode1->sourceReferencedInLanguageGeneration = true;
+		entityNode2->sourceReferencedInLanguageGeneration = true;
+		#ifdef NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3
+		entityNode1->sourceAddedInLanguageGeneration = true;
+		#endif
 	//}
 	
 	#ifdef GIA_NLG_DEBUG
@@ -778,7 +809,7 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 		#endif
 			inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_NOUN];		
 			posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NOUN];
-			if(!(entityNode->definiteSourceAddedInLanguageGeneration))
+			if(!(entityNode->sourceReferencedInLanguageGeneration))
 			{
 				isDefinite = true;
 			}
@@ -841,7 +872,6 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 		NLGInputViewFeatureTagFlagPerson = NLG2generateNLGInputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_FLAG_PERSON, entityIndexString, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_FLAG_PERSON);	
 	}
 	#endif
-	
 	
 	
 	#ifdef GIA_NLG_DEBUG
@@ -927,6 +957,12 @@ string calcDeterminate(GIAEntityNode * entityNode)
 		}
 		
 	}
+	
+	bool isPronoun = false;
+	if(entityNode->grammaticalPronounTemp == GRAMMATICAL_PRONOUN)
+	{
+		isPronoun = true;
+	}	
 	#endif
 
 	//determinate	
@@ -944,19 +980,21 @@ string calcDeterminate(GIAEntityNode * entityNode)
 	{
 		if(!(entityNode->hasQuality))
 		{
-			if(entityNode->definiteSourceAddedInLanguageGeneration)
+			if(entityNode->sourceReferencedInLanguageGeneration)
 			{	
 				if(entityNode->entityName == "cow")
 				{
-					cout << "cow; definiteSourceAddedInLanguageGeneration" << endl;
+					cout << "cow; sourceReferencedInLanguageGeneration" << endl;
 				}		
 				determinate = GRAMMATICAL_DETERMINER_DEFINITE;	//the
 				addDeterminate = true;
 			}
 			else
-			{	
-				determinate = GRAMMATICAL_DETERMINER_INDEFINITE;	//a
-				addDeterminate = true;
+			{	if(!(entityNode->hasQuantity))
+				{
+					determinate = GRAMMATICAL_DETERMINER_INDEFINITE;	//a
+					addDeterminate = true;
+				}
 			}
 		}
 	}	
@@ -971,9 +1009,13 @@ string calcDeterminate(GIAEntityNode * entityNode)
 		#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
 		if(!isPerson)
 		{
-		#endif		
-			determinateFinal = determinate + NLG_TEXT_SPACE;
+			if(!isPronoun)
+			{		
+		#endif	
+			
+				determinateFinal = determinate + NLG_TEXT_SPACE;
 		#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
+			}
 		}
 		#endif
 	}	
