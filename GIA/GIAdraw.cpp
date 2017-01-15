@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4a 01-September-2014
+ * Project Version: 2g4b 01-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -44,12 +44,14 @@
 #include "LDreferenceManipulation.h"
 #include "RTpixelMaps.h"
 
+#include <GL/freeglut.h>	//need to use freeglut as it contains extensions functions which glut does not have; glutMainLoopEvent()
+
 int maxXAtAParticularY[MAX_GIA_TREE_DEPTH];
 
 void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile, int maxNumberSentences)
 {//most of this is copied from CSexecFlow.cpp
 	bool result = true;
-
+	
 	XMLparserTag * firstTagInSVGFile = new XMLparserTag();
 	XMLparserTag * currentTagInSVGFile = firstTagInSVGFile;
 
@@ -80,7 +82,6 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 		delete firstTagInSVGFile;
 	}
 
-
 	if(printType[DRAW_CREATE_LDR_REFERENCES] == true)
 	{
 		writeReferencesToFile(outputFileNameLDR, firstReferenceInPrintList);
@@ -88,7 +89,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 
 	if(display)
 	{
-
+		
 		//re-parse, then re-write to create a collapsed referencelist file...
 		//method1:
 		string topLevelSceneFileName = outputFileNameLDR;
@@ -110,11 +111,11 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 		delete initialReferenceInSceneFile;
 		delete topLevelReferenceInSceneFile;
 		#endif
-
+		
 
 		unsigned char * rgbMap = new unsigned char[width*height*RGB_NUM];
 
-		setViewPort3Dortho(-100.0, width-100, height-100, -100.0, 1.0, -1.0);
+		setViewPort3Dortho(-100.0, width-100, height-100, -100.0, 1.0, -1.0);	//-100 is used to display the most left semantic network nodes
 
 		//now reparse file
 		Reference * initialReferenceInCollapsedSceneFile = new Reference();
@@ -146,12 +147,11 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 	{
 		//must use an external program to view the .ldr file (Eg LDView)
 	}
-
+	
+	
 	#ifdef GIA_FREE_MEMORY1
 	delete firstReferenceInPrintList;
 	#endif
-
-
 }
 
 void initiateMaxXAtParticularY()
