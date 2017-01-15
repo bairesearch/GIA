@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3b 12-October-2012
+ * Project Version: 1q3c 12-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -186,10 +186,10 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesA
 	//first pass; determine maxXAtAParticularY	[and use these to centre each row {at a given y} respectively]
 
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-	for(int sentenceIndex=0; sentenceIndex < MAXIMUM_NUMBER_OF_SENTENCES_IN_INPUT_TEXT; sentenceIndex++)
+	for(int sentenceIndex=1; sentenceIndex < MAXIMUM_NUMBER_OF_SENTENCES_IN_INPUT_TEXT; sentenceIndex++)
 	{
 	#else
-	int sentenceIndex = 0;
+	int sentenceIndex = 1;
 	#endif
 		for(entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 		{
@@ -226,12 +226,26 @@ Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAEntityNode * en
 Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLParserTag ** currentTag, int sentenceIndex)
 {
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-	if(entityNode->sentenceIndexTemp == sentenceIndex)
+	if((entityNode->sentenceIndexTemp == sentenceIndex) || (entityNode->wasReference))	//condition (entityNode->wasReference) added 12 October 2012 1q3b
 	{
 	#endif		
 		//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
 		if(!(entityNode->initialisedForPrinting) && !(entityNode->disabled))
 		{
+			/*
+			cout << "\nentityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp << endl;
+			cout << "entityNode->entityName = " << entityNode->entityName << endl;
+			cout << "entityNode->wasReference = " << entityNode->wasReference << endl;
+			if(entityNode->isConcept)
+			{
+				cout << "entityNode = " << entityNode->entityName << " (is concept)" << endl;
+			}
+			if(entityNode->wasReference)
+			{
+				cout << "entityNode = " << entityNode->entityName << " (wasReference)" << endl;
+			}	
+			*/		
+						
 			#ifdef GIA_DRAW_DEBUG
 			if(entityNode->isSubstance)
 			{

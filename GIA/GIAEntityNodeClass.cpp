@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3b 12-October-2012
+ * Project Version: 1q3c 12-October-2012
  *
  *******************************************************************************/
 
@@ -206,6 +206,12 @@ GIAEntityNode::GIAEntityNode(void)
 
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	referenceSetID = GIA_REFERENCE_SET_ID_UNDEFINED;
+	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
+	wasReferenceTemp = false;
+	#endif	
+	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	wasReference = false;
+	#endif		
 	#endif
 
 	#ifdef GIA_USE_DATABASE

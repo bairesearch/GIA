@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3b 12-October-2012
+ * Project Version: 1q3c 12-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -613,6 +613,10 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAEntity
 
 								featureArrayTemp[w]->isPronounReference = true;
 								GIAEntityNodeArray[w] = substance;
+								#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+								substance->wasReference = true;
+								referenceSource->wasReference = true;
+								#endif
 							}
 
 							conceptHasASubstance = true;
@@ -625,6 +629,9 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAEntity
 
 							featureArrayTemp[w]->isPronounReference = true;
 							GIAEntityNodeArray[w] = referenceSource;
+							#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+							referenceSource->wasReference = true;
+							#endif							
 							applyConceptEntityAlreadyExistsFunction(referenceSource, true);
 						}
 					#endif
@@ -783,16 +790,21 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 										#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
 										if(referenceFeature->grammaticalDefinite || referenceFeature->grammaticalRelexPersonOrStanfordProperNoun)
 										{
+										#endif
 											GIAEntityNodeArray[currentSentenceEntityNodeIndex] = substance;
+											#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+											substance->wasReference = true;
+											referenceSource->wasReference = true;							
+											#endif											
+											if(coreferenceIsPronoun) //shifted inside if statement "if(referenceFeature->grammaticalDefinite || referenceFeature->grammaticalRelexPersonOrStanfordProperNoun)" 12 October 2012
+											{
+												featureArrayTemp[currentSentenceEntityNodeIndex]->isPronounReference = true;
+											}											
+										#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN																							
 										}
-										#else
-										GIAEntityNodeArray[currentSentenceEntityNodeIndex] = substance;
 										#endif
 
-										if(coreferenceIsPronoun)
-										{
-											featureArrayTemp[currentSentenceEntityNodeIndex]->isPronounReference = true;
-										}
+
 									}
 									conceptHasASubstance = true;
 								}
@@ -810,7 +822,9 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 									}
 
 									GIAEntityNodeArray[currentSentenceEntityNodeIndex] = referenceSource;		//GIAConceptNodeArray[currentSentenceEntityNodeIndex] = referenceSource;
-
+									#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+									referenceSource->wasReference = true;
+									#endif									
 									applyConceptEntityAlreadyExistsFunction(referenceSource, true);
 
 								}
@@ -1539,6 +1553,9 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 
 			GIAMention * currentMentionInList = firstMentionInList;
 			GIAEntityNode * referenceSource = NULL;
+			#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
+			GIAEntityNode * referenceSourceConcept = NULL;
+			#endif
 			bool foundReferenceSource = false;
 			int intrasentenceReferenceSourceIndex = -1;
 			while(currentMentionInList->next != NULL)
@@ -1579,6 +1596,7 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 
 									#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 									cout << "\t\t referenceSource->entityIndexTemp = " << instance->entityIndexTemp << endl;
+									cout << "\t\t referenceSource->sentenceIndexTemp = " << instance->sentenceIndexTemp << endl;
 									#endif
 
 									if(instance->idActiveList == currentMentionInList->idActiveList)		//NB these activeList IDs [idActiveList] are not official - they are only used for referencing - and are overwritten
@@ -1588,6 +1606,9 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 										#endif
 
 										referenceSource = instance;
+										#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
+										referenceSourceConcept = referenceSourceConceptEntity;
+										#endif
 										foundReferenceSource = true;
 									}
 								}
@@ -1613,11 +1634,17 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 							int referenceEntityIndex = currentMentionInList->entityIndex;
 
 							//create a new substance and share it between the reference and the reference source
+							#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+							GIAEntityNodeArray[referenceEntityIndex]->wasReference = true;	//assign to concept
+							#endif							
 							GIAEntityNodeArray[referenceEntityIndex] = addSubstanceToSubstanceDefinition(GIAEntityNodeArray[referenceEntityIndex]);
 							GIAEntityNodeArray[intrasentenceReferenceSourceIndex] = GIAEntityNodeArray[referenceEntityIndex];
 							#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
-							GIAEntityNodeArray[intrasentenceReferenceSourceIndex]->wasReferenceTemp = true;
+							GIAEntityNodeArray[referenceEntityIndex]->wasReferenceTemp = true;
 							#endif
+							#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+							GIAEntityNodeArray[referenceEntityIndex]->wasReference = true;
+							#endif							
 
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 							cout << "!(currentMentionInList->representative): currentMentionInList->entityName = " << currentMentionInList->entityName << endl;
@@ -1660,12 +1687,23 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 
 							GIAEntityNodeArray[referenceEntityIndex] = referenceSource;
 							#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
-							GIAEntityNodeArray[referenceEntityIndex]->wasReferenceTemp = true;
+							referenceSource->wasReferenceTemp = true;
+							#endif
+							#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+							referenceSource->wasReference = true;
+							referenceSourceConcept->wasReference = true;							
 							#endif
 
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 							cout << "linkAdvancedReferencesGIA: referenceSource->entityName = " << referenceSource->entityName << endl;
 							cout << "linkAdvancedReferencesGIA: GIAEntityNodeArray[referenceEntityIndex]->entityName = " << GIAEntityNodeArray[referenceEntityIndex]->entityName << endl;
+							/*
+							cout << "GIAEntityNodeArray[referenceEntityIndex]->wasReferenceTemp = " << GIAEntityNodeArray[referenceEntityIndex]->wasReferenceTemp << endl;
+							if(GIAEntityNodeArray[referenceEntityIndex]->isSubstance)
+							{
+								cout << "GIAEntityNodeArray[referenceEntityIndex]->isSubstance" << endl;
+							}
+							*/
 							#endif
 
 
@@ -1674,7 +1712,6 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 							{
 								addEntityNodeToActiveLists(referenceSource, entityNodesActiveListConcepts);
 								//referenceSource->modified = true;	//used to re-write the node to the database (in case it has been updated)
-
 							}
 							#endif
 
