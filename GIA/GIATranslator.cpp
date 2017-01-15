@@ -105,25 +105,66 @@ GIAEntityNode* getComparisonVariableNode()
 
 
 	
-	
+GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
+{
+	//configure property node
+	GIAEntityNode * newProperty = new GIAEntityNode();
+	newProperty->id = currentEntityNodeIDInCompleteList;
+	newProperty->idSecondary = currentEntityNodeIDInPropertyEntityNodesList;
+
+	entityNodesCompleteList->push_back(newProperty);
+	currentEntityNodeIDInCompleteList++;
+	propertyEntityNodesList->push_back(newProperty);
+	currentEntityNodeIDInPropertyEntityNodesList++;
+
+	newProperty->entityName = propertyEntity->entityName;
+	newProperty->isProperty = true;
+	newProperty->entityNodeContainingThisProperty = NULL;
+	newProperty->entityNodeDefiningThisPropertyOrAction = propertyEntity;
+	propertyEntity->hasAssociatedProperty = true;
+	propertyEntity->hasAssociatedPropertyTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+
+	//if(propertyEntity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
+	//{
+	newProperty->grammaticalNumber = propertyEntity->grammaticalNumberTemp;
+	//}
+
+	if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
+	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
+		addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp);
+	}
+
+	//configure property definition node
+	propertyEntity->AssociatedPropertyNodeList.push_back(newProperty);
+
+	propertyEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
+		
+}
+
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity)
 {
-	if((propertyEntity->hasAssociatedPropertyTemp) || (propertyEntity->entityAlreadyDeclaredInThisContext))
+	if(propertyEntity->entityAlreadyDeclaredInThisContext)
 	{
 		if(!(propertyEntity->hasAssociatedPropertyTemp))
 		{
 			propertyEntity->hasAssociatedPropertyTemp = true;
-		}
-			
+		}	
+	}
+	
+	if(propertyEntity->hasAssociatedPropertyTemp)
+	{
 		GIAEntityNode * existingProperty  = propertyEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
 
-		if((thingEntity->hasAssociatedPropertyTemp) || (thingEntity->entityAlreadyDeclaredInThisContext))
+		if(thingEntity->entityAlreadyDeclaredInThisContext)
 		{
 			if(!(thingEntity->hasAssociatedPropertyTemp))
 			{
 				thingEntity->hasAssociatedPropertyTemp = true;
-			}
-					
+			}	
+		}
+		
+		if(thingEntity->hasAssociatedPropertyTemp)
+		{		
 			thingEntity = thingEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
 		}
 
@@ -137,47 +178,21 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 	}
 	else
 	{
-		if((thingEntity->hasAssociatedPropertyTemp) || (thingEntity->entityAlreadyDeclaredInThisContext))
+		if(thingEntity->entityAlreadyDeclaredInThisContext)
 		{
 			if(!(thingEntity->hasAssociatedPropertyTemp))
 			{
 				thingEntity->hasAssociatedPropertyTemp = true;
-			}
-					
+			}	
+		}
+		
+		if(thingEntity->hasAssociatedPropertyTemp)
+		{		
 			thingEntity = thingEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
 		}
 	
-		//configure property node
-		GIAEntityNode * newProperty = new GIAEntityNode();
-		newProperty->id = currentEntityNodeIDInCompleteList;
-		newProperty->idSecondary = currentEntityNodeIDInPropertyEntityNodesList;
-		
-		entityNodesCompleteList->push_back(newProperty);
-		currentEntityNodeIDInCompleteList++;
-		propertyEntityNodesList->push_back(newProperty);
-		currentEntityNodeIDInPropertyEntityNodesList++;
-		
-		newProperty->entityName = propertyEntity->entityName;
-		newProperty->isProperty = true;
+		GIAEntityNode * newProperty = addProperty(propertyEntity);		
 		newProperty->entityNodeContainingThisProperty = thingEntity;
-		newProperty->entityNodeDefiningThisPropertyOrAction = propertyEntity;
-		propertyEntity->hasAssociatedProperty = true;
-		propertyEntity->hasAssociatedPropertyTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-		
-		//if(propertyEntity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
-		//{
-		newProperty->grammaticalNumber = propertyEntity->grammaticalNumberTemp;
-		//}
-			
-		if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
-		{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
-			addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp);
-		}
-
-		//configure property definition node
-		propertyEntity->AssociatedPropertyNodeList.push_back(newProperty);
-		
-		propertyEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
 		
 		//configure entity node containing this property
 		thingEntity->PropertyNodeList.push_back(newProperty);		
@@ -189,57 +204,34 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 {
-	if((propertyEntity->hasAssociatedPropertyTemp) || (propertyEntity->entityAlreadyDeclaredInThisContext))
+	if(propertyEntity->entityAlreadyDeclaredInThisContext)
 	{
 		if(!(propertyEntity->hasAssociatedPropertyTemp))
 		{
 			propertyEntity->hasAssociatedPropertyTemp = true;
-		}
-			
+		}	
+	}
+	
+	if((propertyEntity->hasAssociatedPropertyTemp) || (propertyEntity->entityAlreadyDeclaredInThisContext))
+	{	
 		//cout << "break; propertyEntity->entityName = " << propertyEntity->entityName << endl;
 		propertyEntity = propertyEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
 		
 	}
 	else
 	{	
-		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "addPropertyToPropertyDefinition: propertyEntity->entityName = " << propertyEntity->entityName << endl;
-		#endif
-		//configure property node
-		GIAEntityNode * newProperty = new GIAEntityNode();
-		newProperty->id = currentEntityNodeIDInCompleteList;
-		newProperty->idSecondary = currentEntityNodeIDInPropertyEntityNodesList;
-		
-		entityNodesCompleteList->push_back(newProperty);
-		currentEntityNodeIDInCompleteList++;
-		propertyEntityNodesList->push_back(newProperty);
-		currentEntityNodeIDInPropertyEntityNodesList++;
-		
-		newProperty->entityName = propertyEntity->entityName;
-		newProperty->isProperty = true;
-		newProperty->entityNodeContainingThisProperty = NULL;
-		newProperty->entityNodeDefiningThisPropertyOrAction = propertyEntity;
-		propertyEntity->hasAssociatedProperty = true;
-		propertyEntity->hasAssociatedPropertyTemp = true;
-
-		//if(propertyEntity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
-		//{
-		newProperty->grammaticalNumber = propertyEntity->grammaticalNumberTemp;
-		//}				
-
-		if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
-		{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
-			addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp);
-		}
-
-		//configure property definition node
-		propertyEntity->AssociatedPropertyNodeList.push_back(newProperty);	
-		
-		propertyEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
+		GIAEntityNode * newProperty = addProperty(propertyEntity);
 	}	
 }
 
 
+#ifdef GIA_TRANSLATOR_ACTION_DEFINITION_CODE_SIMPLIFICATION
+void addActionToActionDefinition(GIAEntityNode * actionEntity)
+{
+	GIAEntityNode * newOrExistingAction;
+	newOrExistingAction = addAction(actionEntity);
+}
+#else
 void addActionToActionDefinition(GIAEntityNode * actionEntity)
 {
 	if((actionEntity->hasAssociatedPropertyTemp) || (actionEntity->entityAlreadyDeclaredInThisContext))
@@ -291,6 +283,87 @@ void addActionToActionDefinition(GIAEntityNode * actionEntity)
 		actionEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
 	}	
 }
+#endif
+
+
+	//conditions required to be added [eg when, where, how, why]
+GIAEntityNode * addAction(GIAEntityNode * actionEntity)
+{		
+	bool newAction = false;
+	
+	#ifdef GIA_TRANSLATOR_ACTION_DEFINITION_CODE_SIMPLIFICATION
+	if(actionEntity->entityAlreadyDeclaredInThisContext)
+	{//CHECK THIS; need to convert to action node here also? ie hasAssociatedPropertyIsAction->true? [must look at generated semanticNet.xml and see if any propertyNodeContainers contain action nodes..., or if any actionNodeContainers do not contain property nodes...]
+		if(!(actionEntity->hasAssociatedPropertyTemp))
+		{
+			actionEntity->hasAssociatedPropertyTemp = true;
+		}
+	}
+	#endif
+			
+	//configure action node	
+	GIAEntityNode * newOrExistingAction;
+	if(actionEntity->hasAssociatedPropertyTemp)
+	{
+		newOrExistingAction = actionEntity->AssociatedPropertyNodeList.back();	
+		
+		if(actionEntity->hasAssociatedPropertyIsAction == false)
+		{//upgrade associated property to action
+			//CHECK THIS; must remove from property list, and add to action list 
+			actionEntity->hasAssociatedPropertyIsAction = true;
+			newOrExistingAction->isProperty = false;
+			newOrExistingAction->isAction = true;
+			
+			vector<GIAEntityNode*>::iterator propertyEntityNodesListIterator = propertyEntityNodesList->begin();
+			advance(propertyEntityNodesListIterator,newOrExistingAction->idSecondary);
+			propertyEntityNodesList->erase(propertyEntityNodesListIterator);
+			currentEntityNodeIDInPropertyEntityNodesList--;
+			
+			actionEntityNodesList->push_back(newOrExistingAction);
+			currentEntityNodeIDInActionEntityNodesList++;
+		}
+	}
+	else
+	{		
+		newOrExistingAction = new GIAEntityNode();
+		newOrExistingAction->id = currentEntityNodeIDInCompleteList;
+		newOrExistingAction->idSecondary = currentEntityNodeIDInActionEntityNodesList;
+		
+		entityNodesCompleteList->push_back(newOrExistingAction);
+		currentEntityNodeIDInCompleteList++;
+		actionEntityNodesList->push_back(newOrExistingAction);
+		currentEntityNodeIDInActionEntityNodesList++;
+				
+		newOrExistingAction->entityName = actionEntity->entityName;		
+		newOrExistingAction->entityNodeDefiningThisPropertyOrAction = actionEntity;
+		
+		actionEntity->AssociatedPropertyNodeList.push_back(newOrExistingAction);
+		actionEntity->hasAssociatedProperty = true;
+		actionEntity->hasAssociatedPropertyIsAction = true;
+		actionEntity->hasAssociatedPropertyTemp = true;
+		newOrExistingAction->isAction = true;
+		//WHY WOULD THIS EVER BE REQURIED?; newAction->entityNodeContainingThisProperty = NULL;
+
+		//cout << "actionEntity->grammaticalTenseTemp = " << actionEntity->grammaticalTenseTemp << endl;
+		//cout << "actionEntity->entityName = " << actionEntity->entityName << endl;
+
+		if(actionEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
+		{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
+			//cout << "hello" << endl;
+			//exit(0);
+			addTenseOnlyTimeConditionToProperty(newOrExistingAction, actionEntity->grammaticalTenseTemp);
+		}	
+		
+		#ifdef GIA_TRANSLATOR_ACTION_DEFINITION_CODE_SIMPLIFICATION
+		actionEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
+		#endif	
+	}
+
+	return newOrExistingAction;
+}
+
+
+
 
 /*
 #ifdef GIA_USE_TIME_NODE_INDEXING
@@ -353,68 +426,6 @@ void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEnti
 
 }
 
-	//conditions required to be added [eg when, where, how, why]
-GIAEntityNode * addAction(GIAEntityNode * actionEntity)
-{		
-	bool newAction = false;
-	
-	//configure action node	
-	GIAEntityNode * newOrExistingAction;
-	if(actionEntity->hasAssociatedPropertyTemp)
-	{
-		newOrExistingAction = actionEntity->AssociatedPropertyNodeList.back();	
-		
-		if(actionEntity->hasAssociatedPropertyIsAction == false)
-		{//upgrade associated property to action
-			//CHECK THIS; must remove from property list, and add to action list 
-			actionEntity->hasAssociatedPropertyIsAction = true;
-			newOrExistingAction->isProperty = false;
-			newOrExistingAction->isAction = true;
-			
-			vector<GIAEntityNode*>::iterator propertyEntityNodesListIterator = propertyEntityNodesList->begin();
-			advance(propertyEntityNodesListIterator,newOrExistingAction->idSecondary);
-			propertyEntityNodesList->erase(propertyEntityNodesListIterator);
-			currentEntityNodeIDInPropertyEntityNodesList--;
-			
-			actionEntityNodesList->push_back(newOrExistingAction);
-			currentEntityNodeIDInActionEntityNodesList++;
-		}
-	}
-	else
-	{		
-		newOrExistingAction = new GIAEntityNode();
-		newOrExistingAction->id = currentEntityNodeIDInCompleteList;
-		newOrExistingAction->idSecondary = currentEntityNodeIDInActionEntityNodesList;
-		
-		entityNodesCompleteList->push_back(newOrExistingAction);
-		currentEntityNodeIDInCompleteList++;
-		actionEntityNodesList->push_back(newOrExistingAction);
-		currentEntityNodeIDInActionEntityNodesList++;
-				
-		newOrExistingAction->entityName = actionEntity->entityName;		
-		newOrExistingAction->entityNodeDefiningThisPropertyOrAction = actionEntity;
-		
-		actionEntity->AssociatedPropertyNodeList.push_back(newOrExistingAction);
-		actionEntity->hasAssociatedProperty = true;
-		actionEntity->hasAssociatedPropertyIsAction = true;
-		actionEntity->hasAssociatedPropertyTemp = true;
-		newOrExistingAction->isAction = true;
-
-		//cout << "actionEntity->grammaticalTenseTemp = " << actionEntity->grammaticalTenseTemp << endl;
-		//cout << "actionEntity->entityName = " << actionEntity->entityName << endl;
-
-		if(actionEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
-		{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
-			//cout << "hello" << endl;
-			//exit(0);
-			addTenseOnlyTimeConditionToProperty(newOrExistingAction, actionEntity->grammaticalTenseTemp);
-		}		
-	}
-	
-	
-
-	return newOrExistingAction;
-}
 
 void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity)
 {	
@@ -1711,45 +1722,48 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 								if(!foundPartner)
 								{//do not overwrite usage of subj/obj if a direct link [ie action] has been found (this condition probably mau not be required)
 								
-									//cout << "a" << endl;
-									Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
-									while(currentRelationInList3->next != NULL)
+									if(subjectObjectFunctionEntityArray[SUBJECT_INDEX]->entityName == RELATION_FUNCTION_DEFINITION_1)
 									{
-										if((subjectObjectFunctionEntityArray[SUBJECT_INDEX]->entityName == RELATION_FUNCTION_DEFINITION_1) && (currentRelationInList3->relationFunction == RELATION_FUNCTION_DEFINITION_1))
-										{											
-											//cout << "a2" << endl;
-											if((currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_3))	//OR if (currentRelationInList3->relationType == subjectObjectFunctionEntityArray[OBJECT_INDEX]->entityName)
-											{
-												//cout << "b" << endl;
-												if(currentRelationInList3->relationArgument == subjectObjectFunctionEntityArray[OBJECT_INDEX]->entityName)
-												{		
-													//cout << "c" << endl;
-													/*
-													Eg;									
-													_obj(on[6], _$qVar[1])
-													_advmod(be[2], on[6])
-													_subj(be[2], claim[5])
-													and/or;
-													_obj(on[6], _$qVar[1])
-													on(be[2], on[6])
-													_subj(be[2], claim[5])													
-													*/
+										//cout << "a" << endl;
+										Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+										while(currentRelationInList3->next != NULL)
+										{
+											if(currentRelationInList3->relationFunction == RELATION_FUNCTION_DEFINITION_1)
+											{											
+												//cout << "a2" << endl;
+												if((currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_3))	//OR if (currentRelationInList3->relationType == subjectObjectFunctionEntityArray[OBJECT_INDEX]->entityName)
+												{
+													//cout << "b" << endl;
+													if(currentRelationInList3->relationArgument == subjectObjectFunctionEntityArray[OBJECT_INDEX]->entityName)
+													{		
+														//cout << "c" << endl;
+														/*
+														Eg;									
+														_obj(on[6], _$qVar[1])
+														_advmod(be[2], on[6])
+														_subj(be[2], claim[5])
+														and/or;
+														_obj(on[6], _$qVar[1])
+														on(be[2], on[6])
+														_subj(be[2], claim[5])													
+														*/
 
-													//create a condition link between the object and subject, based upon RELATION_FUNCTION_DEFINITION_1
+														//create a condition link between the object and subject, based upon RELATION_FUNCTION_DEFINITION_1
 
-													GIAEntityNode * subjectEntityOrProperty = subjectObjectEntityArray[SUBJECT_INDEX];
-													GIAEntityNode * specialConditionNode = subjectObjectEntityArray[OBJECT_INDEX];
-													//cout << "subjectEntityOrProperty->entityName = " << subjectEntityOrProperty->entityName << endl;
-													//cout << "specialConditionNode->entityName = " << specialConditionNode->entityName << endl;			
-													addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, currentRelationInList3->relationArgument);
+														GIAEntityNode * subjectEntityOrProperty = subjectObjectEntityArray[SUBJECT_INDEX];
+														GIAEntityNode * specialConditionNode = subjectObjectEntityArray[OBJECT_INDEX];
+														//cout << "subjectEntityOrProperty->entityName = " << subjectEntityOrProperty->entityName << endl;
+														//cout << "specialConditionNode->entityName = " << specialConditionNode->entityName << endl;			
+														addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, currentRelationInList3->relationArgument);
 
-													foundPartner = true;
+														foundPartner = true;
+													}
 												}
 											}
-										}
 
-										//cout << "currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
-										currentRelationInList3 = currentRelationInList3->next;											
+											//cout << "currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
+											currentRelationInList3 = currentRelationInList3->next;											
+										}
 									}
 
 								}
@@ -1778,10 +1792,36 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 							if(firstIndex == SUBJECT_INDEX)
 							{//fired by joe..???? [is there a possible example of this?]
 							
-								//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-								GIAEntityNode * subjectEntityTemp = subjectObjectEntityArray[SUBJECT_INDEX];
+								//find out if the subject is connected to an _advmod, if so assign it as an action condition instead of a subject+action
+								bool subjectIsConnectedToAnAdvMod = false;
+								Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+								while(currentRelationInList3->next != NULL)
+								{
+									if(currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_3)
+									{
+										if(subjectObjectEntityArray[SUBJECT_INDEX]->entityName == currentRelationInList3->relationArgument)
+										{//subject is connected to an _advmod
+											subjectIsConnectedToAnAdvMod = true;
 
-								addActionToSubject(subjectEntityTemp, actionEntity);						
+											//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
+											GIAEntityNode * actionOrPropertyConditionEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
+											GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[currentRelationInList3->relationFunctionIndex];
+											string relationType = subjectObjectEntityArray[SUBJECT_INDEX]->entityName;
+											
+											addActionToActionDefinition(actionOrPropertyConditionEntity);
+											createConditionBasedUponPreposition(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType);								
+										}
+									}
+									currentRelationInList3 = currentRelationInList3->next;
+								}	
+															
+								if(!subjectIsConnectedToAnAdvMod)
+								{
+									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
+									GIAEntityNode * subjectEntityTemp = subjectObjectEntityArray[SUBJECT_INDEX];
+
+									addActionToSubject(subjectEntityTemp, actionEntity);	
+								}					
 							}
 							else if(firstIndex == OBJECT_INDEX)
 							{//eg the bow was fired

@@ -34,6 +34,8 @@ using namespace std;
 
 //#define GIA_TRANSLATOR_DEBUG
 
+#define GIA_TRANSLATOR_ACTION_DEFINITION_CODE_SIMPLIFICATION
+
 #define GIA_TRANSLATOR_DISABLE_OBJ_SUB_QVARIABLE_ANOMALY
 
 #define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS
@@ -216,6 +218,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity);
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
+	GIAEntityNode * addProperty(GIAEntityNode * propertyEntity);
+	
 void addActionToActionDefinition(GIAEntityNode * actionEntity);
 
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense);
@@ -223,10 +227,10 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity);
 
 void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
-	GIAEntityNode * addAction(GIAEntityNode * actionEntity);
 	void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity);
 	void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
-
+		GIAEntityNode * addAction(GIAEntityNode * actionEntity);
+		
 void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, string conditionName);
 	void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, string conditionName);
 	void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity, string conditionName);
