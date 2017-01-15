@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o7b 23-October-2016
+ * Project Version: 2o7c 23-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -740,11 +740,13 @@
 //#define GIA_DISABLE_2n_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2o_CODE_FOR_DEBUG
 #ifndef GIA_DISABLE_2o_CODE_FOR_DEBUG
-	#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
-		#define GIA_ADVANCED_REFERENCING_PREVENT_REFERENCING_OF_PLURAL_ENTITIES	//2o7b (assumes that the application built on GIA, eg NLC, can handle their referencing independently)	
-		//#ifdef GIA_SUPPORT_PREDETERMINERS	//has not yet been defined
-			#define GIA_ADVANCED_REFERENCING_PREVENT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS	//2o7b (assumes that the application built on GIA, eg NLC, can handle their referencing independently)
-		//#endif
+	#ifdef USE_NLC
+		#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
+			#define GIA_ADVANCED_REFERENCING_PREVENT_REFERENCING_OF_PLURAL_ENTITIES	//2o7b (assumes that the application built on GIA, eg NLC, can handle their referencing independently)	
+			//#ifdef GIA_SUPPORT_PREDETERMINERS	//has not yet been defined
+				#define GIA_ADVANCED_REFERENCING_PREVENT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS	//2o7b (assumes that the application built on GIA, eg NLC, can handle their referencing independently)
+			//#endif
+		#endif
 	#endif
 	#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC	//disabled 2c1a, reenabled 2o6a	//required for !GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//NB if modified, need to update GIArules.xml accordingly
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC			
