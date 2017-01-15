@@ -162,7 +162,24 @@ GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
 	propertyEntity->AssociatedInstanceNodeList.push_back(newProperty);
 
 	propertyEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
-		
+	
+	#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
+	//cout << "propertyEntity->entityName = " << propertyEntity->entityName << endl;
+	if(propertyEntity->isQuery)
+	{
+
+		propertyEntity->isQuery = false;
+		newProperty->isQuery = true;
+		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
+		if(propertyEntity->isWhichQuery)
+		{
+			propertyEntity->isWhichQuery = false;
+			newProperty->isWhichQuery = true;			
+		}
+		#endif
+	}
+	#endif	
+				
 	return newProperty;	
 }
 
@@ -263,22 +280,7 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 	}
 	else
 	{	
-		GIAEntityNode * newProperty = addProperty(propertyEntity);
-		
-		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
-		if(propertyEntity->isQuery)
-		{
-			propertyEntity->isQuery = false;
-			newProperty->isQuery = true;
-			#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
-			if(propertyEntity->isWhichQuery)
-			{
-				propertyEntity->isWhichQuery = false;
-				newProperty->isWhichQuery = true;			
-			}
-			#endif
-		}
-		#endif		
+		GIAEntityNode * newProperty = addProperty(propertyEntity);	
 	}	
 }
 
@@ -372,6 +374,21 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 			addTenseOnlyTimeConditionToProperty(newOrExistingAction, actionEntity->grammaticalTenseTemp, newOrExistingAction->hasProgressiveTemp);
 		}	
 		
+		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
+		if(actionEntity->isQuery)
+		{
+			actionEntity->isQuery = false;
+			newOrExistingAction->isQuery = true;
+			#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
+			if(actionEntity->isWhichQuery)
+			{
+				actionEntity->isWhichQuery = false;
+				newOrExistingAction->isWhichQuery = true;			
+			}
+			#endif
+		}
+		#endif	
+				
 		actionEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
 		
 		//cout << "as5" << endl;	
