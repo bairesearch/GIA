@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParserTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2e 12-December-2016
+ * Project Version: 2p2f 12-December-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -906,6 +906,14 @@ void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInLis
 				addDefinitionToEntity(entity1, entity2, sameReferenceSet);
 				currentRelationInList->disabled = true;
 			}
+			#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+			//FUTURE FIXTHIS
+			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_MARK_CONNECTION_AS_ALIAS])
+			{
+				addDefinitionToEntityMarkConnectionAsAlias(entity1, entity2, sameReferenceSet);
+				currentRelationInList->disabled = true;	//CHECKTHIS
+			}			
+			#else
 			#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_ENTITY_NODES_ADD_ALIAS])
 			{
@@ -913,6 +921,7 @@ void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInLis
 				GIAentityNodeArray[entity2Index] = GIAentityNodeArray[entity1Index];
 				currentRelationInList->disabled = true;
 			}
+			#endif
 			#endif
 			else
 			{
@@ -961,7 +970,7 @@ void invertOrDuplicateConditionsIfRequiredSemantic(GIAsentence* currentSentenceI
 		//cout << "inverseConditionTwoWay" << endl;
 		#endif
 		#endif
-		inverseConditionEntity->conditionTwoWay = true;
+		//inverseConditionEntity->conditionTwoWay = true;	//FUTURE FIXTHIS
 		#ifdef GIA_DEBUG
 		//cout << "conditionTwoWay" << endl;
 		#endif
