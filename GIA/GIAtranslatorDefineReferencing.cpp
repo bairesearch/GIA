@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l8b 15-August-2016
+ * Project Version: 2m1a 31-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -242,7 +242,7 @@ void identifyEntityTypes(GIAsentence* currentSentenceInList, GIAentityNode* GIAe
 				}
 			}
 			//if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
-			#ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR
+			#ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
 			for(int i=0; i<RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES; i++)
 			{
 				if(currentRelationInList->relationType == relationTypePrenominalModifierNameArray[i])
@@ -270,7 +270,7 @@ void identifyEntityTypes(GIAsentence* currentSentenceInList, GIAentityNode* GIAe
 					passed = true;
 				}
 			}
-			#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR
+			#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
 			for(int i=0; i<RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES; i++)
 			{
 				if(currentRelationInList->relationType == relationTypePrenominalModifierNameArray[i])
@@ -2236,7 +2236,7 @@ void identifyEntityTypesLocal(GIArelation* currentRelationInList, int NLPdepende
 		}
 	}
 	//if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
-	#ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR
+	#ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
 	for(int i=0; i<RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES; i++)
 	{
 		if(currentRelationInList->relationType == relationTypePrenominalModifierNameArray[i])
@@ -2263,7 +2263,7 @@ void identifyEntityTypesLocal(GIArelation* currentRelationInList, int NLPdepende
 			passed = true;
 		}
 	}
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
 	for(int i=0; i<RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES; i++)
 	{
 		if(currentRelationInList->relationType == relationTypePrenominalModifierNameArray[i])

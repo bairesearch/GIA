@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l8b 15-August-2016
+ * Project Version: 2m1a 31-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -445,21 +445,20 @@ static string relationTypeAdjectiveWhichImplyDifferentReferenceSetNameArray[RELA
 #define STANFORD_RELATION_TYPE_POSSESSIVE2 "nmod:poss"
 //#endif
 #define RELATION_TYPE_PRENOMIAL_MODIFIER "_nn"
-#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR
-	#define RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES 1
-	#define RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES 1
-#else
-	#define RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES 2
-#endif
+#define RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES 1
+#define RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES 1
 #define STANFORD_RELATION_TYPE_GENETIVE_MODIFIER_OF_NOUN "gen"				//gen(cookie, Alice)	Alice's cookie						[THIS APPEARS INCORRECT: stanford currently gives; poss(cookie, Alice)] 	Relex: Identical to RelEx output _poss.
 #define STANFORD_RELATION_TYPE_POSS2 (STANFORD_RELATION_TYPE_GENETIVE_MODIFIER_OF_NOUN)
-#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR
 static string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_POSSESSIVE};
 static string relationTypePrenominalModifierNameArray[RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES] = {RELATION_TYPE_PRENOMIAL_MODIFIER};
-#else
-static string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_POSSESSIVE, RELATION_TYPE_PRENOMIAL_MODIFIER};
-#endif
 
+#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY
+#define RELATION_TYPE_QUALITY_NUMBER_OF_TYPES 4
+static string relationTypeQualityNameArray[RELATION_TYPE_QUALITY_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_PREDADJ, RELATION_TYPE_ADJECTIVE_ADVMOD, RELATION_TYPE_PRENOMIAL_MODIFIER};
+#else
+#define RELATION_TYPE_QUALITY_NUMBER_OF_TYPES 3
+static string relationTypeQualityNameArray[RELATION_TYPE_QUALITY_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_PREDADJ, RELATION_TYPE_ADJECTIVE_ADVMOD};
+#endif
 
 //properties:	[NB properties are attached to either another substance or a straight entity);]
 //substances (derived from obj/subj relationships);

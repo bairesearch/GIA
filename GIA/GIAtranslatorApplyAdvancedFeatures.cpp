@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l8b 15-August-2016
+ * Project Version: 2m1a 31-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1105,7 +1105,7 @@ void extractQualities(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
-	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeAdjectiveNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES;
+	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeQualityNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_QUALITY_NUMBER_OF_TYPES;
 	//param.useRedistributeSpecialCaseQualityAssignment[REL1][REL_ENT2] = true;
 	GIAentityCharacteristic useRedistributeSpecialCaseQualityAssignment("isSubstanceQuality", "true");
 	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT2].push_back(&useRedistributeSpecialCaseQualityAssignment);
@@ -1121,12 +1121,11 @@ void extractQualities(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 			bool passed = false;
 			for(int i=0; i<RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES; i++)
 			{
-				if(currentRelationInList->relationType == relationTypeAdjectiveNameArray[i])
+				if(currentRelationInList->relationType == relationTypeQualityNameArray[i])
 				{
 					passed = true;
 				}
 			}
-			//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_AMOD) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_PREDADJ) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))
 			if(passed)
 			{
 				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION

@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l8b 15-August-2016
+ * Project Version: 2m1a 31-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -705,6 +705,9 @@
 //#define GIA_DISABLE_2k_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2l_CODE_FOR_DEBUG
 #ifndef GIA_DISABLE_2l_CODE_FOR_DEBUG
+	//#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
+		#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY	//added 2l9a
+	//#endif
 	#define GIA_REFERENCING_WILD_CARDS	//2l3a	//interpret something/anything entities as GIA wild card - affects both GIA advanced referencing and queries
 	#ifdef GIA_REFERENCING_WILD_CARDS
 		#define GIA_REFERENCING_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES (2)
@@ -826,14 +829,14 @@
 	#define GIA_TRANSLATOR_CONVERT_AMOD_WITH_NUMBERS_TO_QUANTITY_RELATION	//2i12a
 	#define GIA_TRANSLATOR_DO_NOT_CREATE_SUBSTANCE_CONCEPT_PROPERTIES_FOR_NON_SUBSTANCE_CONCEPT_PARENTS	//2i10a
 	#ifdef GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
-		#define GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS	//2i9a	//requires GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS (this is required such that only the instance list of a concept need be parsed when tracing both its definitions and properties/conditions)
+		//#define GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS	//disabled 2l9a	//2i9a	//requires GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS (this is required such that only the instance list of a concept need be parsed when tracing both its definitions and properties/conditions)
 		#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS
 			#define GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_SWITCH_DEFINITION_LINKS_IF_NON_MATCHING_SUBSTANCE_CONCEPTS	//2i10b - designed to enable compatibility with NLC
 			#define GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_ENSURE_PROPERTY_PARENT_IS_DEFINITE	//2i28a
 			#define GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_ENSURE_PROPERTY_PARENT_IS_SUBSTANCECONCEPT_IF_NECESSARY	//2i30a
 		#endif
 	#endif
-	#define GIA_TRANSLATOR_ADAPT_ENTITY_LINKING_FOR_SUBSTANCE_CONCEPTS	//2i7a
+	//#define GIA_TRANSLATOR_ADAPT_ENTITY_LINKING_FOR_SUBSTANCE_CONCEPTS	//disabled 2l9a	//2i7a
 	#define GIA_REFERENCING_QUERY_SUPPORT_SAME_REFERENCE_SET_TESTS		//2i6a
 	#define GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER	//2i5a
 	#define GIA_SUPPORT_EXTRA_DETERMINERS	//added 2i2a
@@ -1020,8 +1023,8 @@
 #define GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES
 #define GIA_TRANSLATOR_INTERPRET_CLAUSAL_COMPLEMENT_AS_ACTION_OBJECT_INSTEAD_OF_ACTION_PROPERTY	//added to bring Stanford back into line with Relex: eg He says that you like to swim / ccomp(say, like) -> obj(say, like), Moses knew I was angry. / ccomp(knew-2, angry-5) ->  obj(knew-2, angry-5
 
-#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR	//interpret "toy"/"red" as property of "shop"/"dog" (originally "shop"/"dog" was interpreted as property of "toy"/"red")
-#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR
+#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR	//interpret "toy"/"red" as property of "shop"/"dog" (originally "shop"/"dog" was interpreted as property of "toy"/"red")
+#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
 	#define GIA_TRANSLATOR_DEFINE_NOUNS_WITH_PRENOMINAL_MODIFIERS_AS_SUBSTANCES		//only enable this when "toy" is property of "shop" (ie do not enable this when "shop" is property of "toy")
 #endif
 
