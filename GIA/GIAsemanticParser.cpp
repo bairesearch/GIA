@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n5a 30-September-2016
+ * Project Version: 2n6a 02-October-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
