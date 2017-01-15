@@ -1710,15 +1710,15 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 								
 								if(!foundPartner)
 								{//do not overwrite usage of subj/obj if a direct link [ie action] has been found (this condition probably mau not be required)
-									
-									if(subjectObjectFunctionEntityArray[SUBJECT_INDEX]->entityName == RELATION_FUNCTION_DEFINITION_1)
-									{		
-										//cout << "a" << endl;
-																
-										Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
-										while(currentRelationInList3->next != NULL)
-										{
-											if(currentRelationInList3->relationFunction == RELATION_FUNCTION_DEFINITION_1) //|| currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_3)
+								
+									//cout << "a" << endl;
+									Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+									while(currentRelationInList3->next != NULL)
+									{
+										if((subjectObjectFunctionEntityArray[SUBJECT_INDEX]->entityName == RELATION_FUNCTION_DEFINITION_1) && (currentRelationInList3->relationFunction == RELATION_FUNCTION_DEFINITION_1))
+										{											
+											//cout << "a2" << endl;
+											if((currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_3))	//OR if (currentRelationInList3->relationType == subjectObjectFunctionEntityArray[OBJECT_INDEX]->entityName)
 											{
 												//cout << "b" << endl;
 												if(currentRelationInList3->relationArgument == subjectObjectFunctionEntityArray[OBJECT_INDEX]->entityName)
@@ -1732,9 +1732,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 													and/or;
 													_obj(on[6], _$qVar[1])
 													on(be[2], on[6])
-													_subj(be[2], claim[5])
+													_subj(be[2], claim[5])													
 													*/
-																																
+
 													//create a condition link between the object and subject, based upon RELATION_FUNCTION_DEFINITION_1
 
 													GIAEntityNode * subjectEntityOrProperty = subjectObjectEntityArray[SUBJECT_INDEX];
@@ -1746,11 +1746,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 													foundPartner = true;
 												}
 											}
-
-											//cout << "currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
-											currentRelationInList3 = currentRelationInList3->next;
 										}
+
+										//cout << "currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
+										currentRelationInList3 = currentRelationInList3->next;											
 									}
+
 								}
 							}
 						}
