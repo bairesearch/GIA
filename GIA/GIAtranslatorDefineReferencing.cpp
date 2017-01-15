@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f6a 04-July-2014
+ * Project Version: 2f7a 06-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -596,8 +596,11 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 								#endif
 								GIAentityNodeArray[w] = substance;
 								#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-								substance->wasReference = true;
-								referenceSource->wasReference = true;
+								if(referenceSource->sentenceIndexTemp != currentSentenceInList->sentenceIndex)
+								{//Added condition GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
+									substance->wasReference = true;
+									referenceSource->wasReference = true;
+								}
 								#endif
 							}
 
@@ -616,7 +619,10 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 							#endif
 							GIAentityNodeArray[w] = referenceSource;
 							#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-							referenceSource->wasReference = true;
+							if(referenceSource->sentenceIndexTemp != currentSentenceInList->sentenceIndex)
+							{//Added condition GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
+								referenceSource->wasReference = true;
+							}
 							#endif
 							applyConceptEntityAlreadyExistsFunction(referenceSource, true, true);
 						}
@@ -779,8 +785,11 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 										#endif
 											GIAentityNodeArray[currentSentenceEntityNodeIndex] = substance;
 											#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-											substance->wasReference = true;
-											referenceSource->wasReference = true;
+											if(referenceSourceSentenceIndex != currentSentenceInList->sentenceIndex)
+											{//Added condition GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
+												substance->wasReference = true;
+												referenceSource->wasReference = true;
+											}
 											#endif
 											if(coreferenceIsPronoun) //shifted inside if statement "if(referenceFeature->grammaticalDefinite || referenceFeature->grammaticalRelexPersonOrStanfordProperNoun)" 12 October 2012
 											{
@@ -818,7 +827,10 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 
 									GIAentityNodeArray[currentSentenceEntityNodeIndex] = referenceSource;		//GIAconceptNodeArray[currentSentenceEntityNodeIndex] = referenceSource;
 									#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-									referenceSource->wasReference = true;
+									if(referenceSourceSentenceIndex != currentSentenceInList->sentenceIndex)
+									{//Added condition GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
+										referenceSource->wasReference = true;
+									}
 									#endif
 									applyConceptEntityAlreadyExistsFunction(referenceSource, true, true);
 
@@ -1654,9 +1666,12 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 							*/
 							GIAentityNodeArray[referenceEntityIndex] = addSubstanceToSubstanceDefinition(GIAentityNodeArray[referenceEntityIndex]);
 							GIAentityNodeArray[intrasentenceReferenceSourceIndex] = GIAentityNodeArray[referenceEntityIndex];
+							
+							/*Removed GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
 							#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 							GIAentityNodeArray[intrasentenceReferenceSourceIndex]->wasReference = true;	//added 1 October 2013
 							#endif
+							*/
 							/*Removed 1 October 2013
 							#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 							GIAentityNodeArray[intrasentenceReferenceSourceIndex]->wasReferenceTemp = true;	//added 1 October 2013
