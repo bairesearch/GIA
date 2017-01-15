@@ -13,18 +13,11 @@
 #define HEADER_GIA_MAIN
 
 #include "GIAglobalDefs.h"
+#include "GIASentenceClass.h"
 #include "GIAEntityNodeClass.h"
 #ifdef USE_CE
 	#include "CEClaimClass.h"
 #endif
-
-
-#define CFF_XML_TAG_nlparse ((string)"nlparse")
-#define CFF_XML_TAG_paragraph ((string)"paragraph")
-#define CFF_XML_TAG_sentence ((string)"sentence")
-#define CFF_XML_TAG_parse ((string)"parse")
-#define CFF_XML_TAG_relations ((string)"relations")
-#define CFF_XML_TAG_features ((string)"features")
 
 #define GIA_TM_STRUCT_YEAR_OFFSET 1900
 
@@ -37,35 +30,15 @@
 
 
 int main(int argc,char **argv);
-bool parseNLPParserFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList);
-#ifdef GIA_USE_RELEX
-bool parseRelexFile(string inputTextNLPParserXMLFileName, bool isQuery, Paragraph * firstParagraphInList);
-#elif defined GIA_USE_STANFORD_PARSER
-bool parseStanfordParserFile(string inputTextNLPParserXMLFileName, bool isQuery, Paragraph * firstParagraphInList);
-#elif defined GIA_USE_STANFORD_CORENLP
-bool parseStanfordCoreNLPFile(string inputTextNLPParserXMLFileName, bool isQuery, Paragraph * firstParagraphInList);
-#endif
-
-void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPParsedXMLFileName);
-#ifdef GIA_USE_RELEX
-void executeRelex(string inputPlainTXTFileName, string inputNLPParserXMLFileName);
-#elif defined GIA_USE_STANFORD_PARSER
-bool executeStanfordParser(string inputTextNLPParserXMLFileName, bool isQuery, Paragraph * firstParagraphInList);
-#elif defined GIA_USE_STANFORD_CORENLP
-bool executeStanfordCoreNLP(string inputTextNLPParserXMLFileName, bool isQuery, Paragraph * firstParagraphInList);
-#endif
 
 #ifdef USE_CE	
-bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList);
+bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPParsedXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPparserType, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList);
 #else
-bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery);
+bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPParsedXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPparserType);
 #endif
-
-#ifdef USE_CE	
-bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList);
-#else
-bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery);
-#endif
-
-
+	#ifdef USE_CE	
+	bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList);
+	#else
+	bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery);
+	#endif
 #endif

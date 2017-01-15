@@ -4,7 +4,7 @@
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1i6a 4-Apr-2012
- * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
+ * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
  *******************************************************************************/
@@ -60,6 +60,12 @@ OR
 ./GIA.exe -itxt text.txt -oxml semanticNet.xml -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -exefolder "/home/rich/soft/BAISource/relex/relex-1.3.0"  -tempfolder '/tmp/baiappserver/BAIGIA' -workingfolder '/var/www/html/user/104' 
 
 */	
+
+/* Additional Dependencies: Stanford NLP Core
+
+
+*/
+
 	
 
 
@@ -76,9 +82,7 @@ OR
 #include <vector>
 using namespace std;
 
-
 #include "GIAmain.h"
-#include "GIAParser.h"
 #include "GIATranslator.h"
 #include "GIAEntityNodeClass.h"
 #include "GIAdraw.h"
@@ -86,8 +90,7 @@ using namespace std;
 #include "GIAXMLconversion.h"
 #include "GIACXLconversion.h"
 #include "GIAdatabase.h"
-#include "GIAglobalDefs.h"	//NEW
-#include "XMLParserClass.h"
+#include "GIAnlp.h"
 #include "XMLrulesClass.h"
 #include "LDsprite.h"
 #include "LDopengl.h"
@@ -121,6 +124,7 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-notshow           : do not display outputText in opengl"
 "\n\t-width [int]       : raster graphics width in pixels (def: 640)"
 "\n\t-height [int]      : raster graphics height in pixels (def: 480)"
+"\n\t-nlpparser [int]   : NLP parser to be executed by GIA (1 - Relex [def], 2 - Stanford Core NLP, 3 - Stanford Parser)"
 "\n"
 "\n\t-workingfolder [string] : working directory name for input files (def: same as exe)"
 "\n\t-exefolder [string]     : exe directory name for executables GIA.exe and (def: same as exe)"
@@ -144,6 +148,8 @@ int main(int argc,char **argv)
 		 
 	bool result = true;
 
+	int NLPparserType = GIA_DEFAULT_NLP_PARSER;
+	
 	bool useInputTextPlainTXTFile = false;
 	string inputTextPlainTXTFileName = "inputText.txt";
 
@@ -376,7 +382,13 @@ int main(int argc,char **argv)
 		#else
 		::GetCurrentDirectory(EXE_FOLDER_PATH_MAX_LENGTH, currentFolder);
 		#endif
-						
+
+		if(exists_argument(argc,argv,"-nlpparser"))
+		{
+			NLPparserType = int(get_float_argument(argc,argv,"-nlpparser"));
+		}
+		
+								
 		if (exists_argument(argc,argv,"-workingfolder"))
 		{
 			workingFolderCharStar=get_char_argument(argc,argv,"-workingfolder");
@@ -410,7 +422,7 @@ int main(int argc,char **argv)
 								
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe version: 1b10a" << endl;
+			cout << "GIA.exe version: 1i6a" << endl;
 			exit(1);
 		}
 
@@ -623,8 +635,8 @@ int main(int argc,char **argv)
 		}
 		else
 		{	
-			executeNLPparser(inputTextPlainTXTFileName, inputTextNLPParsedXMLFileName);			
-			useInputTextNLPParsedXMLFile = true;	//now will parse the relex file
+			executeNLPparser(inputTextPlainTXTFileName, inputTextNLPParsedXMLFileName, NLPparserType);			
+			useInputTextNLPParsedXMLFile = true;	//now will parse the NLP Parsed file
 		}
 	}		
 	
@@ -637,11 +649,12 @@ int main(int argc,char **argv)
 		}
 		else
 		{
+		
 			//cout << "as" << endl;
 			#ifdef USE_CE	
-			if(!parseNLPParserFile(inputTextNLPParsedXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, false, firstClaimInHeirachy, claimsList))
+			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPParsedXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, false, NLPparserType, firstClaimInHeirachy, claimsList))
 			#else
-			if(!parseNLPParserFile(inputTextNLPParsedXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, false))
+			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPParsedXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, false, NLPparserType))
 			#endif
 			{
 				result = false;
@@ -690,8 +703,8 @@ int main(int argc,char **argv)
 		}
 		else
 		{	
-			executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPParsedXMLFileName);			
-			useInputQueryNLPParsedXMLFile = true;	//now will parse the relex file
+			executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPParsedXMLFileName, NLPparserType);			
+			useInputQueryNLPParsedXMLFile = true;	//now will parse the NLP Parsed file
 		}
 	}
 			
@@ -705,9 +718,9 @@ int main(int argc,char **argv)
 		else
 		{
 			#ifdef USE_CE	
-			if(!parseNLPParserFile(inputQueryNLPParsedXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, firstClaimInHeirachy, claimsList))
+			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPParsedXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, NLPparserType, firstClaimInHeirachy, claimsList))
 			#else
-			if(!parseNLPParserFile(inputQueryNLPParsedXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true))			
+			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPParsedXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, NLPparserType))			
 			#endif
 			{
 				result = false;
@@ -944,221 +957,18 @@ int main(int argc,char **argv)
 	
 }
 
-void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPParsedXMLFileName)
-{
-	#ifdef GIA_USE_RELEX
-	executeRelex(inputTextPlainTXTFileName, inputTextNLPParsedXMLFileName);
-	#elif defined GIA_USE_STANFORD_PARSER
-	executeStanfordParser(inputTextPlainTXTFileName, inputTextNLPParsedXMLFileName);
-	#elif defined GIA_USE_STANFORD_CORENLP
-	executeStanfordCoreNLP(inputTextPlainTXTFileName, inputTextNLPParsedXMLFileName);
-	#endif		
-}
-
-#ifdef GIA_USE_RELEX
-void executeRelex(string inputTextPlainTXTFileName, string inputTextNLPParsedXMLFileName)
-{
-	//execute Relex on plain text
-	string executeRelexCommand = "";	
-	executeRelexCommand = executeRelexCommand + exeFolderCharStar + "/" + GIA_RELEX_EXECUTABLE_NAME + " " + inputTextPlainTXTFileName + " " + inputTextNLPParsedXMLFileName + " " + workingFolderCharStar + " " + tempFolderCharStar;
-
-	#ifdef LINUX
-	chdir(exeFolderCharStar);						
-	#else
-	::SetCurrentDirectory(exeFolderCharStar);
-	#endif	
-
-	#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
-	cout << "system(" << executeRelexCommand << ");" << endl;
-	#endif
-	system(executeRelexCommand.c_str());
-
-	#ifdef LINUX
-	chdir(tempFolderCharStar);						
-	#else
-	::SetCurrentDirectory(tempFolderCharStar);
-	#endif	
-}
-#elif defined GIA_USE_STANFORD_PARSER
-void executeStanfordParser(string inputTextPlainTXTFileName, string inputTextNLPParsedXMLFileName)
-{
-	//execute Relex on plain text
-	string executeRelexCommand = "";	
-	executeRelexCommand = executeRelexCommand + exeFolderCharStar + "/" + GIA_RELEX_EXECUTABLE_NAME + " " + inputTextPlainTXTFileName + " " + inputTextNLPParsedXMLFileName + " " + workingFolderCharStar + " " + tempFolderCharStar;
-
-	#ifdef LINUX
-	chdir(exeFolderCharStar);						
-	#else
-	::SetCurrentDirectory(exeFolderCharStar);
-	#endif	
-
-	#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
-	cout << "system(" << executeRelexCommand << ");" << endl;
-	#endif
-	system(executeRelexCommand.c_str());
-
-	#ifdef LINUX
-	chdir(tempFolderCharStar);						
-	#else
-	::SetCurrentDirectory(tempFolderCharStar);
-	#endif	
-}
-#elif defined GIA_USE_STANFORD_CORENLP
-void executeStanfordCoreNLP(string inputTextPlainTXTFileName, string inputTextNLPParsedXMLFileName)
-{
-	//execute Relex on plain text
-	string executeRelexCommand = "";	
-	executeRelexCommand = executeRelexCommand + exeFolderCharStar + "/" + GIA_RELEX_EXECUTABLE_NAME + " " + inputTextPlainTXTFileName + " " + inputTextNLPParsedXMLFileName + " " + workingFolderCharStar + " " + tempFolderCharStar;
-
-	#ifdef LINUX
-	chdir(exeFolderCharStar);						
-	#else
-	::SetCurrentDirectory(exeFolderCharStar);
-	#endif	
-
-	#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
-	cout << "system(" << executeRelexCommand << ");" << endl;
-	#endif
-	system(executeRelexCommand.c_str());
-
-	#ifdef LINUX
-	chdir(tempFolderCharStar);						
-	#else
-	::SetCurrentDirectory(tempFolderCharStar);
-	#endif	
-}
-#endif
-
-bool parseNLPParserFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList)
-{
-	bool result = true;
-	#ifdef GIA_USE_RELEX
-	if(!parseRelexFile(inputTextNLPParserXMLFileName, isQuery, firstParagraphInList))
-	#elif defined GIA_USE_STANFORD_PARSER
-	if(!parseStanfordParserFile(inputTextNLPParserXMLFileName, isQuery, firstParagraphInList))
-	#elif defined GIA_USE_STANFORD_CORENLP
-	if(!parseStanfordCoreNLPFile(inputTextNLPParserXMLFileName, isQuery, firstParagraphInList))
-	#endif	
-	{
-		result = false;
-	}
-
-	return result;
-}
-
-#ifdef GIA_USE_RELEX
-bool parseRelexFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList)
-{
-	bool result = true;
-	
-	Paragraph * currentParagraph = firstParagraphInList;
-	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;	
-	Sentence * currentSentence = firstSentenceInList;
-
-	XMLParserTag * firstTagInXMLFile = new XMLParserTag();
-	readXMLFile(inputTextNLPParsedXMLFileName, firstTagInXMLFile);
-
-	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS	
-	XMLParserTag * currentTag2 = firstTagInXMLFile;
-	currentTag2 = parseTagDownALevel(currentTag2, CFF_XML_TAG_nlparse, &result);
-	if(result)
-	{
-		//now for every sentence;
-		while(currentTag2->nextTag != NULL)
-		{
-			if(currentTag2->name == CFF_XML_TAG_paragraph)
-			{
-				XMLParserTag * currentTag = currentTag2;
-				currentTag = parseTagDownALevel(currentTag, CFF_XML_TAG_paragraph, &result);
-	#else
-				XMLParserTag * currentTag = firstTagInXMLFile;
-				currentTag = parseTagDownALevel(currentTag, CFF_XML_TAG_nlparse, &result);
-	#endif
-				
-				if(result)
-				{
-					//now for every sentence;
-					while(currentTag->nextTag != NULL)
-					{
-						if(currentTag->name == CFF_XML_TAG_sentence)
-						{
-							XMLParserTag * firstTagInSentence;
-							firstTagInSentence = parseTagDownALevel(currentTag, CFF_XML_TAG_sentence, &result);	
-							XMLParserTag * firstTagInFirstParse;
-							firstTagInFirstParse = parseTagDownALevel(firstTagInSentence, CFF_XML_TAG_parse, &result);
-
-							if(result)
-							{
-								XMLParserTag * currentTagInParse = firstTagInFirstParse;
-								while(currentTagInParse->nextTag != NULL)
-								{
-
-									if(currentTagInParse->name == CFF_XML_TAG_relations)
-									{
-										//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
-										int maxNumberOfWordsInSentence = 0;
-										GIATHparseRelationsText(&(currentTagInParse->value), currentSentence->firstRelationInList, &maxNumberOfWordsInSentence);
-										currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
-									}
-									else if(currentTagInParse->name == CFF_XML_TAG_features)
-									{
-										//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
-										GIATHparseFeaturesText(&(currentTagInParse->value), currentSentence->firstFeatureInList, &(currentSentence->isQuestion));
-
-										if(isQuery)
-										{
-											if(!(currentSentence->isQuestion))
-											{
-												cout << "error: GIA query is not a question" << endl;
-												exit(0); 
-											}
-										}						
-										//cout << "fini" << endl;
-									}
-
-									currentTagInParse = currentTagInParse->nextTag;
-								}
-
-							}
-
-							Sentence * newSentence = new Sentence();
-							newSentence->previous = currentSentence;						
-							currentSentence->next = newSentence;
-							currentSentence = currentSentence->next;
-
-						}
-						currentTag = currentTag->nextTag;
-					}
-
-				}
-	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-				Paragraph * newParagraph = new Paragraph();		
-				newParagraph->previous = currentParagraph;
-				currentParagraph->next = newParagraph;
-				firstSentenceInList = newParagraph->firstSentenceInList;	
-				currentSentence = firstSentenceInList;				
-				currentParagraph = currentParagraph->next;
-			}
-			currentTag2 = currentTag2->nextTag;
-		}
-	}
-	#endif
-	
-	return result;
-}
-#endif
 
 #ifdef USE_CE	
-bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList)
+bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPParsedXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPparserType, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList)
 #else
-bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery)
+bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPParsedXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPparserType)
 #endif
 {
 	bool result = true;
 	
 	Paragraph * firstParagraphInList = new Paragraph();
 	
-	if(!parseNLPParserFile(inputTextNLPParserXMLFileName, isQuery, firstParagraphInList))	
+	if(!parseNLPParserFile(inputTextNLPParsedXMLFileName, isQuery, firstParagraphInList, NLPparserType))	
 	{
 		result = false;
 	}
@@ -1183,7 +993,6 @@ bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * 
 {
 	bool result = true;
 	
-	Paragraph * firstParagraphInList = new Paragraph();
 	Paragraph * currentParagraph = firstParagraphInList;
 	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;	
 

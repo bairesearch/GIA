@@ -14,6 +14,54 @@
 
 
 
+
+#ifdef GIA_USE_STANFORD_CORENLP
+
+
+StanfordCoreNLPMention::StanfordCoreNLPMention(void)
+{	
+	representative = -1;
+	sentence = -1;
+	start = -1;
+	end = -1;
+	head = -1;
+	
+	next = NULL;
+}
+
+StanfordCoreNLPMention::~StanfordCoreNLPMention(void)
+{
+	if(next != NULL)
+	{
+		delete next;
+	}
+}
+
+StanfordCoreNLPCoreference::StanfordCoreNLPCoreference(void)
+{	
+	firstMentionInList = new StanfordCoreNLPMention();
+	
+	next = NULL;
+}
+
+StanfordCoreNLPCoreference::~StanfordCoreNLPCoreference(void)
+{
+	if(firstMentionInList != NULL)
+	{
+		delete firstMentionInList;
+	}
+	
+	if(next != NULL)
+	{
+		delete next;
+	}
+}
+
+#endif
+
+
+
+
 Relation::Relation(void)
 {
 	relationType = "";
@@ -24,8 +72,10 @@ Relation::Relation(void)
 	
 	disabled = false;
 
+	#ifdef GIA_USE_RELEX
 	subjObjRelationAlreadyAdded = false;	
-		
+	#endif
+	
 	next = NULL;
 }
 
@@ -43,9 +93,21 @@ Feature::Feature(void)
 	entityIndex = 0;
 	word = "";
 	lemma = "";
+	
+	#ifdef GIA_USE_RELEX
 	type = "";
 	grammar = "";
+	#endif
 
+	#ifdef GIA_USE_STANFORD_CORENLP
+	CharacterOffsetBegin = -1;
+	CharacterOffsetEnd = -1;
+	POS = "";
+	NER = "";
+	NormalizedNER = "";
+	Timex = "";
+	#endif
+	
 	next = NULL;
 	previous = NULL;
 }
@@ -62,16 +124,23 @@ Feature::~Feature(void)
 
 Sentence::Sentence(void)
 {
+	#ifdef GIA_USE_RELEX
 	sentenceText = "";
 	constituentsText = "";
 	featuresText = "";
 	relationsText = "";
 	linksText = "";
+	#endif
+	
+	#ifdef GIA_USE_STANFORD_CORENLP
+	sentenceIndex = -1;
+	firstCoreferenceInList = new StanfordCoreNLPCoreference();
+	#endif
 	
 	maxNumberOfWordsInSentence = 0;
 	
-	firstRelationInList = new Relation();	//added 23 Feb 2012
-	firstFeatureInList = new Feature();	//added 23 Feb 2012
+	firstRelationInList = new Relation();	//auto constructor execution added 23 Feb 2012
+	firstFeatureInList = new Feature();	//auto constructor execution added 23 Feb 2012
 	
 	next = NULL;
 	previous = NULL;

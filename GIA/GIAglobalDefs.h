@@ -21,19 +21,39 @@
 //#define GIA_TRANSLATOR_DEBUG
 //#define GIA_QUERY_DEBUG
 //#define GIA_SEMANTIC_NET_XML_DEBUG
+#define GIA_NLP_DEBUG
 
-//~GIATranslator
-
+//~External NLP Parser
+#define GIA_USE_RELEX
+#define GIA_USE_STANFORD_CORENLP
 #define GIA_USE_STANFORD_PARSER
-#define GIA_USE_STANFORD_CORENLP	//a more advanced implementation of stanford parser (with lemma, entity name detection, etc: Stanford CoreNLP integrates all our NLP tools for the English language, including the part-of-speech (POS) tagger, the named entity recognizer (NER), the parser, and the coreference resolution system)
-//#define GIA_USE_RELEX
 #ifdef GIA_USE_RELEX
+	#define GIA_RELEX_EXECUTABLE_NAME "execute-relex.sh"
 	#define GIA_USE_RELEX_1.4.0	//default: enabled (otherwise use Relex 1.3.0)
 	#ifdef GIA_USE_RELEX_1.4.0
 		#define GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS		//BAI paragraph tag support has not yet been added to Relex 1.3.0
 	#endif
 #endif
+#ifdef GIA_USE_STANFORD_CORENLP		//a more advanced implementation of stanford parser (with lemma, entity name detection, etc: Stanford CoreNLP integrates all our NLP tools for the English language, including the part-of-speech (POS) tagger, the named entity recognizer (NER), the parser, and the coreference resolution system)
+	#define GIA_USE_STANFORD
+	#define GIA_STANFORD_NLP_EXECUTABLE_NAME "execute-stanfordCoreNLP.sh"
+#endif
+#ifdef GIA_USE_STANFORD_PARSER
+	#define GIA_USE_STANFORD
+	#define GIA_STANFORD_PARSER_EXECUTABLE_NAME "execute-stanford.sh"
+#endif
+#define GIA_NLP_PARSER_RELEX (1)
+#define GIA_NLP_PARSER_STANFORD_CORENLP (2)
+#define GIA_NLP_PARSER_STANFORD_PARSER (3)
+#ifdef GIA_USE_RELEX
+	#define GIA_DEFAULT_NLP_PARSER (GIA_NLP_PARSER_RELEX)
+#elif defined GIA_USE_STANFORD_CORENLP
+	#define GIA_DEFAULT_NLP_PARSER (GIA_NLP_PARSER_STANFORD_CORENLP)
+#elif defined GIA_USE_STANFORD_PARSER
+	#define GIA_DEFAULT_NLP_PARSER (GIA_NLP_PARSER_STANFORD_PARSER)
+#endif
 
+//~GIATranslator
 #define GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR	//this is required (the current set of code has had the alternative case removed - see GIATranslator.cpp.copyWithDataStructureOptions for an example set of code that supports disabling this feature)
 #define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE "_$qVar"
 #define GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
@@ -49,8 +69,6 @@
 //~GIAmain
 #define GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 //#define GIA_DO_NOT_PRINT_RESULTS
-#define GIA_RELEX_EXECUTABLE_NAME "execute-relex.sh"
-//OLD: #define GIA_RELEX_EXECUTABLE_RELATIVE_PATH_NAME "/relex-1.3.0/"	//gets added to executable path name
 #ifdef USE_CE
 	#define GIA_WITH_CE_DERIVE_SUBCLAIM_PREPEND
 #endif

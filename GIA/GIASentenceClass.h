@@ -24,7 +24,6 @@ using namespace std;
 #include "GIAglobalDefs.h"
 
 #define FEATURE_GRAMMATICAL_TENSE_DATE "date"
-#define FEATURE_GRAMMATICAL_TENSE_PAST "past"
 #define FEATURE_TYPE_PUNCTUATION "punctuation"
 #define FEATURE_TYPE_ADJECTIVE "adj"
 #define FEATURE_TYPE_NOUN "noun"
@@ -34,6 +33,39 @@ using namespace std;
 
 
 //#define FEATURE_GRAMMATICAL_COUNT ".c"
+
+
+
+#ifdef GIA_USE_STANFORD_CORENLP
+class StanfordCoreNLPMention
+{
+public:
+
+	StanfordCoreNLPMention(void);
+	~StanfordCoreNLPMention(void);
+
+	bool representative;
+	int sentence;
+	int start;
+	int end;
+	int head;
+	
+	StanfordCoreNLPMention * next;
+};
+
+class StanfordCoreNLPCoreference
+{
+public:
+
+	StanfordCoreNLPCoreference(void);
+	~StanfordCoreNLPCoreference(void);
+
+	StanfordCoreNLPMention * firstMentionInList;
+	
+	StanfordCoreNLPCoreference * next;
+};
+
+#endif
 
 
 class Relation
@@ -51,8 +83,10 @@ public:
 	
 	bool disabled;
 
-	bool subjObjRelationAlreadyAdded;
-		
+	#ifdef GIA_USE_RELEX
+	bool subjObjRelationAlreadyAdded;	//Relex Only
+	#endif
+	
 	Relation * next;
 };
 
@@ -67,8 +101,20 @@ public:
 	int entityIndex;
 	string word;
 	string lemma;
+	
+	#ifdef GIA_USE_RELEX
 	string type;
 	string grammar;
+	#endif
+	
+	#ifdef GIA_USE_STANFORD_CORENLP
+	int CharacterOffsetBegin;
+	int CharacterOffsetEnd;
+	string POS;
+	string NER;
+	string NormalizedNER;
+	string Timex;
+	#endif
 	
 	Feature * next;
 	Feature * previous;	//used for reference lookup
@@ -83,12 +129,19 @@ public:
 	Sentence(void);
 	~Sentence(void);
 	
+	#ifdef GIA_USE_RELEX
 	string sentenceText;		//not required - delete in future
 	string constituentsText;	//not required - delete in future
 	string featuresText;		//not required - delete in future
 	string relationsText;		//not required - delete in future
 	string linksText;		//not required - delete in future
-	
+	#endif
+
+	#ifdef GIA_USE_STANFORD_CORENLP
+	int sentenceIndex;
+	StanfordCoreNLPCoreference * firstCoreferenceInList;
+	#endif
+		
 	int maxNumberOfWordsInSentence;
 		
 	Relation * firstRelationInList;
@@ -112,5 +165,7 @@ public:
 	Paragraph * next;
 	Paragraph * previous;	//used for reference lookup
 };
+
+
 
 #endif
