@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p5c 21-September-2012
+ * Project Version: 1p6a 22-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -610,7 +610,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1p5c 21-September-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1p6a 22-September-2012" << endl;
 			exit(1);
 		}
 
@@ -1009,10 +1009,10 @@ int main(int argc,char **argv)
 			}
 			else
 			{
-				executeNLPparser(inputTextPlainTXTFileName, inputTextNLPrelationXMLFileName, NLPdependencyRelationsParser, NLPexeFolderArray);
+				executeNLPparser(inputTextPlainTXTFileName, inputTextNLPrelationXMLFileName, NLPdependencyRelationsParser, NLPexeFolderArray, true);
 				if(inputTextNLPfeatureXMLFileName != inputTextNLPrelationXMLFileName)
 				{
-					executeNLPparser(inputTextPlainTXTFileName, inputTextNLPfeatureXMLFileName, NLPfeatureParser, NLPexeFolderArray);
+					executeNLPparser(inputTextPlainTXTFileName, inputTextNLPfeatureXMLFileName, NLPfeatureParser, NLPexeFolderArray, false);
 				}
 				useInputTextNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
 
@@ -1106,10 +1106,10 @@ int main(int argc,char **argv)
 		}
 		else
 		{
-			executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, queryNLPdependencyRelationsParser, NLPexeFolderArray);
+			executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, queryNLPdependencyRelationsParser, NLPexeFolderArray, true);
 			if(inputQueryNLPfeatureXMLFileName != inputQueryNLPrelationXMLFileName)
 			{
-				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray);
+				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray, false);
 			}
 			useInputQueryNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
 

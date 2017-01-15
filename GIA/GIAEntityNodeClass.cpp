@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p5c 21-September-2012
+ * Project Version: 1p6a 22-September-2012
  *
  *******************************************************************************/
 
@@ -240,9 +240,11 @@ GIAEntityNode::~GIAEntityNode(void)
 
 	#ifdef GIA_SUPPORT_ALIASES
 	aliasList.clear();
-	#endif		
+	#endif	
+	#ifdef GIA_USE_DATABASE	
 	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 	delete conceptEntityLoaded;
+	#endif
 	#endif	
 }
 

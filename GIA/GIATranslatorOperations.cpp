@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p5c 21-September-2012
+ * Project Version: 1p6a 22-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1799,7 +1799,12 @@ void mergeEntityNodesAddAlias(GIAEntityNode * entityNode, GIAEntityNode * entity
 					#ifdef GIA_ALIASES_DEBUG
 					cout << "connect entityNode (" << entityNode->entityName << ") to entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (x)" << endl;
 					#endif
-					writeVectorConnection(entityNode, entityConnectedToEntityToMerge, i, (*connectionIter)->sameReferenceSet);
+					#ifdef GIA_USE_ADVANCED_REFERENCING
+					bool sameReferenceSet = (*connectionIter)->sameReferenceSet;
+					#else
+					bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+					#endif
+					writeVectorConnection(entityNode, entityConnectedToEntityToMerge, i, sameReferenceSet);
 				/*
 				}
 				*/

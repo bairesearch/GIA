@@ -23,7 +23,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p5c 21-September-2012
+ * Project Version: 1p6a 22-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -60,15 +60,15 @@ using namespace std;
 #endif
 
 
-void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelationXMLFileName, int NLPParser, string NLPexeFolderArray[])
+void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPXMLFileName, int NLPParser, string NLPexeFolderArray[], bool parseRelationsOrFeatures)
 {
 	/*
-	int inputTextNLPParsedXMLFileNameLength = inputTextNLPrelationXMLFileName.length();
-	int inputTextNLPParsedXMLFileNameIndexOfExtension = inputTextNLPrelationXMLFileName.rfind(".");		//find last occurance of "."
+	int inputTextNLPParsedXMLFileNameLength = inputTextNLPXMLFileName.length();
+	int inputTextNLPParsedXMLFileNameIndexOfExtension = inputTextNLPXMLFileName.rfind(".");		//find last occurance of "."
 	int inputTextNLPParsedXMLFileNameExtensionLength = inputTextNLPParsedXMLFileNameLength-inputTextNLPParsedXMLFileNameIndexOfExtension;
-	string inputTextNLPParsedXMLExtensionName = inputTextNLPrelationXMLFileName.substr(inputTextNLPParsedXMLFileNameIndexOfExtension, inputTextNLPParsedXMLFileNameExtensionLength);
+	string inputTextNLPParsedXMLExtensionName = inputTextNLPXMLFileName.substr(inputTextNLPParsedXMLFileNameIndexOfExtension, inputTextNLPParsedXMLFileNameExtensionLength);
 	string inputTextNLPParsedXMLFileNameWithout
-	inputTextNLPrelationXMLFileName.substr(inputTextNLPParsedXMLFileNameIndexOfExtension, inputTextNLPParsedXMLFileNameLength-inputTextNLPParsedXMLFileNameExtensionLength);
+	inputTextNLPXMLFileName.substr(inputTextNLPParsedXMLFileNameIndexOfExtension, inputTextNLPParsedXMLFileNameLength-inputTextNLPParsedXMLFileNameExtensionLength);
 	*/
 	string inputTextNLPParsedXMLFileNameTemp = inputTextPlainTXTFileName + StanfordCoreNLPdefaultOutputFileExtensionAppend;
 
@@ -85,7 +85,18 @@ void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelat
 	#ifdef GIA_USE_STANFORD_CORENLP
 	if(NLPParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
-		NLPParserExecutableName = GIA_STANFORD_NLP_EXECUTABLE_NAME;
+		#ifdef STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS
+		if(parseRelationsOrFeatures)
+		{
+			NLPParserExecutableName = GIA_STANFORD_NLP_EXECUTABLE_NAME_WITHOUT_INDEPENDENT_POS_TAGGER;
+		}
+		else
+		{
+		#endif
+			NLPParserExecutableName = GIA_STANFORD_NLP_EXECUTABLE_NAME;
+		#ifdef STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS
+		}
+		#endif
 		NLPexeFolder = NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_CORENLP];
 	}
 	#endif
@@ -100,7 +111,7 @@ void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelat
 
 	//execute NLP parser on plain text
 	string executeNLPCommand = "";
-	executeNLPCommand = executeNLPCommand + NLPexeFolder + "/" + NLPParserExecutableName + " " + inputTextPlainTXTFileName + " " + inputTextNLPrelationXMLFileName + " " + workingFolderCharStar + " " + tempFolderCharStar + " " + StanfordCoreNLPdefaultOutputFileExtensionAppend;
+	executeNLPCommand = executeNLPCommand + NLPexeFolder + "/" + NLPParserExecutableName + " " + inputTextPlainTXTFileName + " " + inputTextNLPXMLFileName + " " + workingFolderCharStar + " " + tempFolderCharStar + " " + StanfordCoreNLPdefaultOutputFileExtensionAppend;
 
 	#ifdef LINUX
 	chdir(NLPexeFolder.c_str());
@@ -127,13 +138,13 @@ void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelat
 		#endif
 
 		string commandCopyTemporaryFileToRealFile = "";
-		commandCopyTemporaryFileToRealFile = commandCopyTemporaryFileToRealFile + SYSTEM_MOVE_COMMAND + " " + inputTextNLPParsedXMLFileNameTemp + " " + inputTextNLPrelationXMLFileName;	//this is required because Stanford CoreNLP cannot output a file of a given name, it can only output a file with a modified extension
+		commandCopyTemporaryFileToRealFile = commandCopyTemporaryFileToRealFile + SYSTEM_MOVE_COMMAND + " " + inputTextNLPParsedXMLFileNameTemp + " " + inputTextNLPXMLFileName;	//this is required because Stanford CoreNLP cannot output a file of a given name, it can only output a file with a modified extension
 		system(commandCopyTemporaryFileToRealFile.c_str());
 
 		#ifdef LINUX
 		//this is required due to a bug in StanfordNLPcore in Linux, where it produces a Dos file instead of a Unix file (new lines identified by carrage return..)
 		string commandDos2Unix = "";
-		commandDos2Unix = commandDos2Unix + "dos2unix " + inputTextNLPrelationXMLFileName;
+		commandDos2Unix = commandDos2Unix + "dos2unix " + inputTextNLPXMLFileName;
 		system(commandDos2Unix.c_str());
 		#endif
 
@@ -191,6 +202,10 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 		{
 			cout << "error: parseNLPParserFile() does not support queries at present with (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER). Set feature parser to RelEx or Stanford Core NLP for queries" << endl;
 			exit(0);
+		}
+		else
+		{
+			cout << "warning: parseNLPParserFile() does not parse features when (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER). Feature extraction is not supported with GIA_NLP_PARSER_STANFORD_PARSER. Set feature parser to RelEx or Stanford Core NLP to extract features" << endl;		
 		}
 	}
 	#endif
@@ -438,21 +453,21 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 				bool invalidSentenceFoundIsolatedFullStop = false;
 				#endif
 
-				if(parseFeatures)
+				XMLParserTag * firstTagInTokens = parseTagDownALevel(currentTagInSentence, StanfordCoreNLP_XML_TAG_tokens, &result);
+				XMLParserTag * currentTagInTokens = firstTagInTokens;
+				bool isQuestion = false;
+
+				while(currentTagInTokens->nextTag != NULL)
 				{
-					XMLParserTag * firstTagInTokens = parseTagDownALevel(currentTagInSentence, StanfordCoreNLP_XML_TAG_tokens, &result);
-					XMLParserTag * currentTagInTokens = firstTagInTokens;
-					bool isQuestion = false;
+					string entityIndexString = currentTagInTokens->firstAttribute->value;
+					currentFeatureInList->entityIndex = atoi(entityIndexString.c_str());
 
-					while(currentTagInTokens->nextTag != NULL)
+					XMLParserTag * firstTagInToken = parseTagDownALevel(currentTagInTokens, StanfordCoreNLP_XML_TAG_token, &result);
+					XMLParserTag * currentTagInToken = firstTagInToken;
+					while(currentTagInToken->nextTag != NULL)
 					{
-						string entityIndexString = currentTagInTokens->firstAttribute->value;
-						currentFeatureInList->entityIndex = atoi(entityIndexString.c_str());
-
-						XMLParserTag * firstTagInToken = parseTagDownALevel(currentTagInTokens, StanfordCoreNLP_XML_TAG_token, &result);
-						XMLParserTag * currentTagInToken = firstTagInToken;
-						while(currentTagInToken->nextTag != NULL)
-						{
+						if(parseFeatures)
+						{					
 							if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_word)
 							{
 								string TagValue = currentTagInToken->value;
@@ -511,12 +526,24 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 							}
 							else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_Timex)
 							{
+
 								string TagValue = currentTagInToken->value;
 								currentFeatureInList->Timex = TagValue;
 							}
-							currentTagInToken = currentTagInToken->nextTag;
 						}
+						else
+						{//only interested in POS tags if not parsing features (as POS tags in GIA must always match dependency relation POS tags)
+							if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_POS)	//overwrite pos tag values if necessary...
+							{
+								string TagValue = currentTagInToken->value;
+								currentFeatureInList->stanfordPOS = TagValue;
+							}						
+						}
+						currentTagInToken = currentTagInToken->nextTag;
+					}
 
+					if(parseFeatures)
+					{//process lemma only if parsing features
 						#ifdef GIA_USE_LRP
 						bool foundOfficialLRPreplacementString = false;
 						Relation * currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
@@ -538,16 +565,27 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 								invalidSentenceFoundIsolatedFullStop = true;
 							}
 						}
-						#endif
+						#endif						
+					}
 
 
+					if(parseFeatures)		//OR if(createNewSentences)
+					{//all sentences created must have feature list, as feature NLP file is always parsed first
 						Feature * newFeature = new Feature();
 						newFeature->previous = currentFeatureInList;
 						currentFeatureInList->next = newFeature;
 						currentFeatureInList = currentFeatureInList->next;
-
-						currentTagInTokens = currentTagInTokens->nextTag;
 					}
+					else
+					{
+						currentFeatureInList = currentFeatureInList->next;
+					}
+					
+					currentTagInTokens = currentTagInTokens->nextTag;
+				}
+				
+				if(parseFeatures)
+				{//calculate question only if parsing features
 					#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 					#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
 					if(isQuery)
@@ -567,7 +605,6 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 					}
 					#endif
 					#endif
-
 				}
 
 				currentTagInSentence = currentTagInSentence->nextTag;
