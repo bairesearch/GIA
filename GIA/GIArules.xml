@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h11a 20-January-2015
+ * Project Version: 2h11b 20-January-2015
  *
  *******************************************************************************/
 -->
@@ -3034,7 +3034,7 @@
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
 				<!-- <option relationTestSpecialCaseIsNotAction="true" REL="1" REL_ENT="1" />
-				<!-- <option relationTestSpecialCaseIsNotToBeComplimentOfAction="true" REL="1" REL_ENT="1" />
+				<!-- <option relationTestSpecialCaseIsNotToBeComplimentOfAction="true" REL="1" REL_ENT="1" /> -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
 				<option functionToExecuteUponFind="1" />
@@ -3722,7 +3722,7 @@
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
 				<!-- <option relationTestSpecialCaseIsNotAction="true" REL="1" REL_ENT="1" />
-				<!-- <option relationTestSpecialCaseIsNotToBeComplimentOfAction="true" REL="1" REL_ENT="1" />
+				<!-- <option relationTestSpecialCaseIsNotToBeComplimentOfAction="true" REL="1" REL_ENT="1" />-->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
 				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
