@@ -23,7 +23,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p1b 08-September-2012
+ * Project Version: 1p1c 08-September-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -145,8 +145,8 @@ public:
 	int grammaticalTenseFormDetected;
 
 //plain text only:
-	bool entityIndex;		//temp var
-	bool sentenceIndex;		//temp var
+	int entityIndex;		//temp var
+	int sentenceIndex;		//temp var
 	bool collapsedPhrasalVerbExactDefinedSection;	//temp var [aslwas true]
 	bool collapsedMultiwordPreposition;				//temp var
 
