@@ -10,8 +10,6 @@
 
 #include "GIAConditionNodeClass.h"
 
-string tenseNameArray[TENSE_NUMBER_OF_TYPES] = {"undefined", "present", "past", "future"};
-int tenseNameLengthsArray[TENSE_NUMBER_OF_TYPES] = {9, 7, 4, 6};
 
 
 	
@@ -58,7 +56,7 @@ GIATimeConditionNode::GIATimeConditionNode(void)
 {
 	sharedCondition = new GIASharedConditionNode(); 
 	
-	tense = TENSE_UNDEFINED;
+	tense = GRAMMATICAL_TENSE_UNDEFINED;
 	//tense = tenseundefined;
 	second = -1.0;
 	hour = -1;

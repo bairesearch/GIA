@@ -32,16 +32,9 @@ class GIAPropertyConditionNode;
 class GIAActionConditionNode;
 
 
-#define TENSE_UNDEFINED 0
-#define TENSE_PRESENT 1
-#define TENSE_PAST 2
-#define TENSE_FUTURE 3
-#define TENSE_NUMBER_OF_TYPES (4)
-extern string tenseNameArray[TENSE_NUMBER_OF_TYPES];
-extern int tenseNameLengthsArray[TENSE_NUMBER_OF_TYPES];
-//extern string * tenseNameArray;
-//extern int * tenseNameLengthsArray;
 
+
+#define GRAMMATICAL_TENSE_UNDEFINED (0)
 
 #define YEAR_UNDEFINED (-15000000000)	//before start of universe
 
@@ -96,7 +89,7 @@ public:
 	//temporal coordinate system here - this needs to be replaced with a system time (or added to) 
 	int tense;
 	/*
-	enum tense {tenseundefined=TENSE_UNDEFINED, present=TENSE_PRESENT, past=TENSE_PAST, future=TENSE_FUTURE};
+	enum tense {tenseundefined=GRAMMATICAL_TENSE_UNDEFINED, present=GRAMMATICAL_TENSE_PRESENT, past=GRAMMATICAL_TENSE_PAST, future=GRAMMATICAL_TENSE_FUTURE};
 	*/
 	/*
 	enum

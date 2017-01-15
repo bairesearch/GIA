@@ -10,13 +10,20 @@
 
 #include "GIAEntityNodeClass.h"
 
-
+string tenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES] = {"undefined", "present", "past", "future"};
+int tenseNameLengthsArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES] = {9, 7, 4, 6};
+string grammaticalNumberNameArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {"undefined", "uncountable", "singular", "plural"};
+int grammaticalNumberNameLengthsArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {9, 11, 8, 6};
 
 //~nouns
 GIAEntityNode::GIAEntityNode(void)
 {
-	tenseTemp = TENSE_UNDEFINED;
-	
+	grammaticalTenseTemp = GRAMMATICAL_TENSE_UNDEFINED;
+	grammaticalNumberTemp = GRAMMATICAL_NUMBER_UNDEFINED;
+	definiteTemp = GRAMMATICAL_DEFINITE_UNDEFINED;
+	hasAssociatedPropertyTemp = false;
+	hasAssociatedActionTemp = false;
+		
 	initialisedForPrinting = false;
 	printed = false;
 	printX = 0;

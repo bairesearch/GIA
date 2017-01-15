@@ -89,8 +89,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityNodes, vector<string> *indexOfEntityNames, string * entityNodeName, bool * found, long * index, bool addIfNonexistant);
 GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *indexOfTimeNodes, vector<long> *indexOfTimeNumbers, long * timeNodeNumber, bool * found, long * index, bool addIfNonexistant);
 
-void addPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity);
+void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity);
+void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
+
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense);
+void addTenseOnlyTimeConditionToAction(GIAActionNode * actionNode, int tense);
 
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity);
 

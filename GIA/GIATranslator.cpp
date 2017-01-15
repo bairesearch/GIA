@@ -15,28 +15,82 @@
 
 
 
-void addPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity)
+void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity)
+{
+	if(propertyEntity->hasAssociatedPropertyTemp)
+	{
+		propertyEntity = propertyEntity->firstAssociatedPropertyNodeInList.back();	//added 4 May 11a
+
+		if(thingEntity->hasAssociatedPropertyTemp)
+		{
+			thingEntity = thingEntity->firstAssociatedPropertyNodeInList.back();	//added 4 May 11a
+		}
+
+		//configure entity node containing this property
+		thingEntity->firstPropertyNodeInList.push_back(propertyEntity);	
+	}
+	else
+	{
+		if(thingEntity->hasAssociatedPropertyTemp)
+		{
+			thingEntity = thingEntity->firstAssociatedPropertyNodeInList.back();	//added 4 May 11a
+		}
+	
+		//configure property node
+		GIAEntityNode * newProperty = new GIAEntityNode();
+		newProperty->entityName = propertyEntity->entityName;
+		newProperty->isProperty = true;
+		newProperty->entityNodeContainingThisProperty = thingEntity;
+		newProperty->entityNodeDefiningThisProperty = propertyEntity;
+		propertyEntity->hasAssociatedProperty = true;
+		propertyEntity->hasAssociatedPropertyTemp = true;
+		
+		if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
+		{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
+			addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp);
+		}
+
+		//configure property definition node
+		propertyEntity->firstAssociatedPropertyNodeInList.push_back(newProperty);
+		
+		//configure entity node containing this property
+		thingEntity->firstPropertyNodeInList.push_back(newProperty);		
+	}
+}
+
+void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 {
 	//configure property node
 	GIAEntityNode * newProperty = new GIAEntityNode();
 	newProperty->entityName = propertyEntity->entityName;
 	newProperty->isProperty = true;
-	newProperty->entityNodeContainingThisProperty = thingEntity;
+	newProperty->entityNodeContainingThisProperty = NULL;
 	newProperty->entityNodeDefiningThisProperty = propertyEntity;
 	propertyEntity->hasAssociatedProperty = true;
+	propertyEntity->hasAssociatedPropertyTemp = true;
 	
-	if(propertyEntity->tenseTemp > TENSE_PRESENT)
-	{//ie, tense = TENSE_FUTURE/TENSE_PAST
-		addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->tenseTemp);
+	if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
+	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
+		addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp);
 	}
 	
 	//configure property definition node
-	propertyEntity->firstAssociatedPropertyNodeInList.push_back(newProperty);
+	propertyEntity->firstAssociatedPropertyNodeInList.push_back(newProperty);		
+}
+
+/*not used
+void connnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntityAssociatedProperty)
+{
+	//configure property node
+	propertyEntityAssociatedProperty->entityNodeContainingThisProperty = thingEntity;
 	
 	//configure entity node containing this property
-	thingEntity->firstPropertyNodeInList.push_back(newProperty);
+	thingEntity->firstPropertyNodeInList.push_back(propertyEntityAssociatedProperty);
 		
 }
+*/
+
+
 
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense)
 {
@@ -94,7 +148,7 @@ void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definiti
 void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity)
 {
 	GIAActionNode * newOrExistingAction;
-	if(!(actionEntity->hasAssociatedAction))
+	if(!(actionEntity->hasAssociatedActionTemp))
 	{
 		newOrExistingAction = addAction(actionEntity);
 	}
@@ -126,15 +180,16 @@ GIAActionNode * addAction(GIAEntityNode * actionEntity)
 	newAction->entityNodeDefiningThisAction = actionEntity;
 	actionEntity->firstAssociatedActionNodeInList.push_back(newAction);
 	actionEntity->hasAssociatedAction = true;
+	actionEntity->hasAssociatedActionTemp = true;
 	
-	//cout << "actionEntity->tenseTemp = " << actionEntity->tenseTemp << endl;
+	//cout << "actionEntity->grammaticalTenseTemp = " << actionEntity->grammaticalTenseTemp << endl;
 	//cout << "actionEntity->entityName = " << actionEntity->entityName << endl;
 
-	if(actionEntity->tenseTemp > TENSE_PRESENT)
-	{//ie, tense = TENSE_FUTURE/TENSE_PAST
+	if(actionEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
+	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
 		//cout << "hello" << endl;
 		//exit(0);
-		addTenseOnlyTimeConditionToAction(newAction, actionEntity->tenseTemp);
+		addTenseOnlyTimeConditionToAction(newAction, actionEntity->grammaticalTenseTemp);
 	}
 		
 	
@@ -144,7 +199,7 @@ GIAActionNode * addAction(GIAEntityNode * actionEntity)
 void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity)
 {
 	GIAActionNode * newOrExistingAction;
-	if(!(actionEntity->hasAssociatedAction))
+	if(!(actionEntity->hasAssociatedActionTemp))
 	{
 		newOrExistingAction = addAction(actionEntity);
 	}
@@ -152,7 +207,12 @@ void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEnt
 	{
 		newOrExistingAction = actionEntity->firstAssociatedActionNodeInList.back();
 	}
-	
+
+	if(subjectEntity->hasAssociatedPropertyTemp)
+	{
+		subjectEntity = subjectEntity->firstAssociatedPropertyNodeInList.back();	//added 4 May 11a
+	}
+		
 	//configure subject entity node
 	subjectEntity->firstActionNodeInList.push_back(newOrExistingAction);
 	
@@ -162,9 +222,9 @@ void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEnt
 }
 
 void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity)
-{
+{	
 	GIAActionNode * newOrExistingAction;
-	if(!(actionEntity->hasAssociatedAction))
+	if(!(actionEntity->hasAssociatedActionTemp))
 	{
 		newOrExistingAction = addAction(actionEntity);
 	}
@@ -172,7 +232,12 @@ void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntit
 	{
 		newOrExistingAction = actionEntity->firstAssociatedActionNodeInList.back();
 	}
-	
+
+	if(objectEntity->hasAssociatedPropertyTemp)
+	{
+		objectEntity = objectEntity->firstAssociatedPropertyNodeInList.back();	//added 4 May 11a
+	}
+		
 	//configure object entity node
 	objectEntity->firstIncomingActionNodeInList.push_back(newOrExistingAction);
 	
@@ -349,25 +414,29 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		Relation * currentRelationInList;
 		
 		
-		bool GIAEntityNodeIsDate[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
-		int GIAEntityNodeTenseArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
+		bool GIAEntityNodeIsDate[MAX_NUMBER_OF_WORDS_PER_SENTENCE];	//not properly implemented yet
+		int GIAEntityNodeGrammaticalTenseArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
+		int GIAEntityNodeGrammaticalNumberArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
+		bool GIAEntityNodeGrammaticalIsDefiniteArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
+		
 		bool GIAEntityNodeArrayFilled[MAX_NUMBER_OF_WORDS_PER_SENTENCE];		//NB could also use currentSentence->maxNumberOfWordsInSentence
 		GIAEntityNode * GIAEntityNodeArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 
 		//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-		bool GIAEntityNodeArrayHasAssociatedProperty[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
-		GIAEntityNode * GIAEntityNodeArrayAssociatedProperty[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
+		//bool GIAEntityNodeArrayHasAssociatedProperty[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 
 	
 		for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-		{		
-			GIAEntityNodeArrayFilled[w] = false;
+		{					
 			GIAEntityNodeIsDate[w] = false;
-			GIAEntityNodeTenseArray[w] = TENSE_UNDEFINED;
-			
+			GIAEntityNodeGrammaticalTenseArray[w] = GRAMMATICAL_TENSE_UNDEFINED;
+			GIAEntityNodeGrammaticalNumberArray[w] = GRAMMATICAL_NUMBER_UNDEFINED;
+			GIAEntityNodeGrammaticalIsDefiniteArray[w] = false;
+
+			GIAEntityNodeArrayFilled[w] = false;
+
 			//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-			GIAEntityNodeArrayHasAssociatedProperty[w] = false;
-			GIAEntityNodeArrayAssociatedProperty[w] = NULL;
+			//GIAEntityNodeArrayHasAssociatedProperty[w] = false;
 			
 			//GIAActionNodeArrayFilled[w] = false;
 		}
@@ -377,23 +446,39 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			//cout << "currentFeatureInList->tense = " << currentFeatureInList->tense << endl;
 			
 			//this date code probably requires an update [there appear to be multiple ways in which dates are defined in relex...
-			if((currentFeatureInList->tense).find(FEATURE_TENSE_DATE) != -1)
+			if((currentFeatureInList->tense).find(FEATURE_GRAMMATICAL_TENSE_DATE) != -1)
 			{
 				GIAEntityNodeIsDate[currentFeatureInList->entityIndex] = true;
 				cout << "isDate currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 				
 			}
 			
-			for(int tenseIndex = 0; tenseIndex < TENSE_NUMBER_OF_TYPES; tenseIndex++)
+			for(int grammaticalTenseIndex = 0; grammaticalTenseIndex < GRAMMATICAL_TENSE_NUMBER_OF_TYPES; grammaticalTenseIndex++)
 			{
 				//NB only the first characters of currentFeatureInList->tense contain the tense type name 
-				if((currentFeatureInList->tense).substr(0, tenseNameLengthsArray[tenseIndex]) == tenseNameArray[tenseIndex]) 
+				if((currentFeatureInList->tense).find(tenseNameArray[grammaticalTenseIndex]) != -1) 
+				//if((currentFeatureInList->tense).substr(0, tenseNameLengthsArray[grammaticalTenseIndex]) == tenseNameArray[grammaticalTenseIndex]) 
 				{
-					GIAEntityNodeTenseArray[currentFeatureInList->entityIndex] = tenseIndex;
-					cout << "currentFeatureInList->entityIndex tenseIndex = " << tenseNameArray[tenseIndex] << endl;
+					GIAEntityNodeGrammaticalTenseArray[currentFeatureInList->entityIndex] = grammaticalTenseIndex;
+					cout << "currentFeatureInList->entityIndex grammaticalTenseIndex = " << tenseNameArray[grammaticalTenseIndex] << endl;
 				}			
 			}
-						 
+			for(int grammaticalNumberIndex = 0; grammaticalNumberIndex < GRAMMATICAL_NUMBER_NUMBER_OF_TYPES; grammaticalNumberIndex++)
+			{
+				//NB only the first characters of currentFeatureInList->tense contain the tense type name 
+				if((currentFeatureInList->tense).find(tenseNameArray[grammaticalNumberIndex]) != -1) 				
+				{
+					GIAEntityNodeGrammaticalNumberArray[currentFeatureInList->entityIndex] = grammaticalNumberIndex;
+					cout << "currentFeatureInList->entityIndex grammaticalNumberIndex = " << tenseNameArray[grammaticalNumberIndex] << endl;
+				}			
+			}
+			if((currentFeatureInList->tense).find(GRAMMATICAL_DEFINITE_NAME) != -1)
+			{
+				GIAEntityNodeGrammaticalIsDefiniteArray[currentFeatureInList->entityIndex] = GRAMMATICAL_DEFINITE;
+				cout << "isDate currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+				
+			}			
+									 
 			currentFeatureInList = currentFeatureInList->next;
 		}
 		//exit(0);
@@ -427,7 +512,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				//cout << "functionEntity->hasAssociatedTime = " << functionEntity->hasAssociatedTime << endl;
 				//cout << "relationFunctionIndex = " << relationFunctionIndex << endl;	
 				
-				GIAEntityNodeArray[relationFunctionIndex]->tenseTemp = GIAEntityNodeTenseArray[relationFunctionIndex];
+				GIAEntityNodeArray[relationFunctionIndex]->grammaticalTenseTemp = GIAEntityNodeGrammaticalTenseArray[relationFunctionIndex];
+				GIAEntityNodeArray[relationFunctionIndex]->grammaticalNumberTemp = GIAEntityNodeGrammaticalNumberArray[relationFunctionIndex];
+				GIAEntityNodeArray[relationFunctionIndex]->definiteTemp = GIAEntityNodeGrammaticalIsDefiniteArray[relationFunctionIndex];
+			
+				GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedPropertyTemp = false;
+				GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedActionTemp = false;
+				
 			}
 			if(!GIAEntityNodeArrayFilled[relationArgumentIndex])
 			{
@@ -438,7 +529,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				//cout << "argumentEntity->hasAssociatedTime = " << argumentEntity->hasAssociatedTime << endl;	
 				//cout << "relationArgumentIndex = " << relationArgumentIndex << endl;
 			
-				GIAEntityNodeArray[relationArgumentIndex]->tenseTemp = GIAEntityNodeTenseArray[relationArgumentIndex];
+				GIAEntityNodeArray[relationArgumentIndex]->grammaticalTenseTemp = GIAEntityNodeGrammaticalTenseArray[relationArgumentIndex];
+				GIAEntityNodeArray[relationArgumentIndex]->grammaticalNumberTemp = GIAEntityNodeGrammaticalNumberArray[relationArgumentIndex];
+				GIAEntityNodeArray[relationArgumentIndex]->definiteTemp = GIAEntityNodeGrammaticalIsDefiniteArray[relationArgumentIndex];
+				
+				GIAEntityNodeArray[relationArgumentIndex]->hasAssociatedPropertyTemp = false;	
+				GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedActionTemp = false;		
 			}
 			
 			currentRelationInList = currentRelationInList->next;
@@ -446,6 +542,16 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		//cout << "as2" <<endl;
 		
 		//pass B;	
+
+		//0 pass; define properties (definite nouns); eg the house
+		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+		{
+			if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
+			{
+				addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
+			}
+		}
+							
 		//1 pass; define properties (possessive relationships); eg joe's bike
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
@@ -461,11 +567,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				GIAEntityNode * ownerEntity = GIAEntityNodeArray[relationArgumentIndex];
 				cout << "propertyName = " << propertyEntity->entityName << endl;
 				cout << "ownerName = " << ownerEntity->entityName << endl;
-											
-				addPropertyToEntity(ownerEntity, propertyEntity);
-				
-				GIAEntityNodeArrayHasAssociatedProperty[relationFunctionIndex] = true;
-				GIAEntityNodeArrayAssociatedProperty[relationFunctionIndex] = propertyEntity->firstAssociatedPropertyNodeInList.back();
+													
+				addOrConnectPropertyToEntity(ownerEntity, propertyEntity);
 			}			
 			currentRelationInList = currentRelationInList->next;
 		}
@@ -486,14 +589,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				cout << "thingEntity = " << thingEntity->entityName << endl;
 				cout << "propertyEntity = " << propertyEntity->entityName << endl;
 												
-				addPropertyToEntity(thingEntity, propertyEntity);
-				
-				GIAEntityNodeArrayHasAssociatedProperty[relationArgumentIndex] = true;
-				GIAEntityNodeArrayAssociatedProperty[relationArgumentIndex] = propertyEntity->firstAssociatedPropertyNodeInList.back();							
+				addOrConnectPropertyToEntity(thingEntity, propertyEntity);					
 			}			
 			currentRelationInList = currentRelationInList->next;
 		}					
-		
+				
  		//3 pass; define dependent subject-object definition/composition/action relationships and independent subject/object action relationships
  		currentRelationInList = currentSentenceInList->firstRelationInList;
 		bool subjectObjectRelationshipAlreadyAdded[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
@@ -582,11 +682,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 								}
 								else if((currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_1) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_2) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_3))
 								{//subject-object relationship is a composition [property]
-									addPropertyToEntity(subjectObjectEntityArray[SUBJECT_INDEX], subjectObjectEntityArray[OBJECT_INDEX]);
-									
-									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-									GIAEntityNodeArrayHasAssociatedProperty[indexMapping[OBJECT_INDEX]] = true;
-									GIAEntityNodeArrayAssociatedProperty[indexMapping[OBJECT_INDEX]] = subjectObjectEntityArray[OBJECT_INDEX]->firstAssociatedPropertyNodeInList.back();																
+									addOrConnectPropertyToEntity(subjectObjectEntityArray[SUBJECT_INDEX], subjectObjectEntityArray[OBJECT_INDEX]);
 										//check can use properties for composition/comprises ; ie, does "tom is happy" = "tom comprises happiness" ?
 								}
 								else
@@ -596,25 +692,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 									GIAEntityNode * actionEntity = GIAEntityNodeArray[relationFunctionIndex];
 									
 									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-									GIAEntityNode * subjectEntityTemp;
-									if(!GIAEntityNodeArrayHasAssociatedProperty[indexMapping[SUBJECT_INDEX]])
-									{
-										subjectEntityTemp = subjectObjectEntityArray[SUBJECT_INDEX];
-									}
-									else
-									{
-										subjectEntityTemp = GIAEntityNodeArrayAssociatedProperty[indexMapping[SUBJECT_INDEX]];
-									}
-									GIAEntityNode * objectEntityTemp;
-									if(!GIAEntityNodeArrayHasAssociatedProperty[indexMapping[OBJECT_INDEX]])
-									{
-										objectEntityTemp = subjectObjectEntityArray[OBJECT_INDEX];
-									}
-									else
-									{
-										objectEntityTemp = GIAEntityNodeArrayAssociatedProperty[indexMapping[OBJECT_INDEX]];
-									}
-																		
+									GIAEntityNode * subjectEntityTemp = subjectObjectEntityArray[SUBJECT_INDEX];
+									GIAEntityNode * objectEntityTemp = subjectObjectEntityArray[OBJECT_INDEX];
+																										
 									addActionToEntity(subjectEntityTemp, objectEntityTemp, actionEntity);
 								}
 								foundPartner = true;	
@@ -644,31 +724,15 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 							{//fired by joe..???? [is there a possible example of this?]
 							
 								//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-								GIAEntityNode * subjectEntityTemp;
-								if(!GIAEntityNodeArrayHasAssociatedProperty[indexMapping[SUBJECT_INDEX]])
-								{
-									subjectEntityTemp = subjectObjectEntityArray[SUBJECT_INDEX];
-								}
-								else
-								{
-									subjectEntityTemp = GIAEntityNodeArrayAssociatedProperty[indexMapping[SUBJECT_INDEX]];
-								}
-								
+								GIAEntityNode * subjectEntityTemp = subjectObjectEntityArray[SUBJECT_INDEX];
+
 								addActionToSubject(subjectEntityTemp, actionEntity);						
 							}
 							else if(firstIndex == OBJECT_INDEX)
 							{//eg the bow was fired
 							
 								//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-								GIAEntityNode * objectEntityTemp;
-								if(!GIAEntityNodeArrayHasAssociatedProperty[indexMapping[OBJECT_INDEX]])
-								{
-									objectEntityTemp = subjectObjectEntityArray[OBJECT_INDEX];
-								}
-								else
-								{
-									objectEntityTemp = GIAEntityNodeArrayAssociatedProperty[indexMapping[OBJECT_INDEX]];
-								}
+								GIAEntityNode * objectEntityTemp = subjectObjectEntityArray[OBJECT_INDEX];
 															
 								addActionToObject(objectEntityTemp, actionEntity);
 							}	
@@ -694,30 +758,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				
 			if((currentRelationInList->relationType == RELATION_TYPE_AT) || (currentRelationInList->relationType == RELATION_TYPE_ON))
 			{
-				GIAEntityNode * actionOrPropertyEntity;					
-				GIAEntityNode * timeOrLocationConditionEntity;
+				GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[relationFunctionIndex];				
+				GIAEntityNode * timeOrLocationConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
 
-				//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)
-				if(!GIAEntityNodeArrayHasAssociatedProperty[relationFunctionIndex])
-				{
-					actionOrPropertyEntity = GIAEntityNodeArray[relationFunctionIndex];
-				}
-				else
-				{
-					//actionOrPropertyEntity = GIAEntityNodeArray[relationFunctionIndex];
-					actionOrPropertyEntity = GIAEntityNodeArrayAssociatedProperty[relationFunctionIndex];
-				}	
-				if(!GIAEntityNodeArrayHasAssociatedProperty[relationArgumentIndex])
-				{
-					timeOrLocationConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
-				}
-				else
-				{
-					//timeOrLocationConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
-					timeOrLocationConditionEntity = GIAEntityNodeArrayAssociatedProperty[relationArgumentIndex];
-				}				
-				
-				if(actionOrPropertyEntity->hasAssociatedAction)
+				if(actionOrPropertyEntity->hasAssociatedActionTemp)
 				{
 					GIAActionNode * actionNode = actionOrPropertyEntity->firstAssociatedActionNodeInList.back();
 					
@@ -740,14 +784,20 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						cout << "actionName = " << actionNode->actionName << endl;
 						cout << "locationConditionName = " << locationConditionName << endl;
 
+						if(timeOrLocationConditionEntity->hasAssociatedPropertyTemp)
+						{
+							timeOrLocationConditionEntity = timeOrLocationConditionEntity->firstAssociatedPropertyNodeInList.back();	//added 4 May 11a
+						}
+						
 						addLocationConditionToAction(actionNode, timeOrLocationConditionEntity);
 					}
 				}
+				else if(actionOrPropertyEntity->hasAssociatedPropertyTemp)
 				//else if(actionOrPropertyEntity->hasAssociatedProperty)
-				else if(actionOrPropertyEntity->isProperty)		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)		
+				//else if(actionOrPropertyEntity->isProperty)		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)		
 				{
-					//GIAEntityNode * propertyNode = actionOrPropertyEntity->firstAssociatedPropertyNodeInList.back();
-					GIAEntityNode * propertyNode = actionOrPropertyEntity;		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)	
+					GIAEntityNode * propertyNode = actionOrPropertyEntity->firstAssociatedPropertyNodeInList.back();
+					//GIAEntityNode * propertyNode = actionOrPropertyEntity;		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)	
 					
 					if(timeOrLocationConditionEntity->hasAssociatedTime)
 					{
@@ -766,6 +816,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						cout << "propertyName = " << propertyNode->entityName << endl;
 						cout << "locationConditionName = " << locationConditionName << endl;
 
+						if(timeOrLocationConditionEntity->hasAssociatedPropertyTemp)
+						{
+							timeOrLocationConditionEntity = timeOrLocationConditionEntity->firstAssociatedPropertyNodeInList.back();	//added 4 May 11a
+						}
+
 						addLocationConditionToProperty(propertyNode, timeOrLocationConditionEntity);
 					}				
 				}
@@ -779,36 +834,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			}		
 			else if((currentRelationInList->relationType == RELATION_TYPE_WHEN) || (currentRelationInList->relationType == RELATION_TYPE_BECAUSE))
 			{
-				GIAEntityNode * actionOrPropertyEntity;					
-				GIAEntityNode * actionOrPropertyConditionEntity;
-
-
-				//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)
-				if(!GIAEntityNodeArrayHasAssociatedProperty[relationFunctionIndex])
-				{
-					actionOrPropertyEntity = GIAEntityNodeArray[relationFunctionIndex];
-				}
-				else
-				{
-					//actionOrPropertyEntity = GIAEntityNodeArray[relationFunctionIndex];
-					actionOrPropertyEntity = GIAEntityNodeArrayAssociatedProperty[relationFunctionIndex];
-				}	
-				if(!GIAEntityNodeArrayHasAssociatedProperty[relationArgumentIndex])
-				{
-					actionOrPropertyConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
-				}
-				else
-				{
-					//cout << "here" << endl;
-					//actionOrPropertyConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
-					actionOrPropertyConditionEntity = GIAEntityNodeArrayAssociatedProperty[relationArgumentIndex];
-				}
+				GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[relationFunctionIndex];				
+				GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
 								
-				if(actionOrPropertyEntity->hasAssociatedAction)
+				if(actionOrPropertyEntity->hasAssociatedActionTemp)
 				{				
 					GIAActionNode * actionNode = actionOrPropertyEntity->firstAssociatedActionNodeInList.back();
 
-					if(actionOrPropertyConditionEntity->hasAssociatedAction)
+					if(actionOrPropertyConditionEntity->hasAssociatedActionTemp)
 					{//eg john rides his bike when joe plays with the table
 						string actionConditionEntityName = currentRelationInList->relationArgument; 
 						
@@ -819,16 +852,19 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						GIAActionNode * actionConditionActionNode = actionOrPropertyConditionEntity->firstAssociatedActionNodeInList.back();
 						addActionConditionToAction(actionNode, actionConditionActionNode);
 					}
+					else if(actionOrPropertyConditionEntity->hasAssociatedPropertyTemp)
 					//else if(actionOrPropertyConditionEntity->hasAssociatedProperty)
-					else if(actionOrPropertyConditionEntity->isProperty)	//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)
+					//else if(actionOrPropertyConditionEntity->isProperty)	//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)
 					{//eg john rides his bike when joe is happy
 						string propertyConditionEntityName = currentRelationInList->relationArgument; 
 						
 						//cout << "l4" << endl;
 						cout << "actionName = " << actionNode->actionName << endl;
 						cout << "propertyConditionEntityName = " << propertyConditionEntityName << endl;
+		
+						GIAEntityNode * propertyNode = actionOrPropertyConditionEntity->firstAssociatedPropertyNodeInList.back();	//added 4 May 11a
 
-						addPropertyConditionToAction(actionNode, actionOrPropertyConditionEntity);				
+						addPropertyConditionToAction(actionNode, propertyNode);				
 					}
 					else
 					{
@@ -837,13 +873,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity << endl;
 					}
 				}
+				else if(actionOrPropertyEntity->hasAssociatedPropertyTemp)
 				//else if(actionOrPropertyEntity->hasAssociatedProperty)
-				else if(actionOrPropertyEntity->isProperty)	//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)	
+				//else if(actionOrPropertyEntity->isProperty)	//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)	
 				{
-					//GIAEntityNode * propertyNode = actionOrPropertyEntity->firstAssociatedPropertyNodeInList.back();
-					GIAEntityNode * propertyNode = actionOrPropertyEntity;		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)	
+					GIAEntityNode * propertyNode = actionOrPropertyEntity->firstAssociatedPropertyNodeInList.back();
+					//GIAEntityNode * propertyNode = actionOrPropertyEntity;		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)	
 					
-					if(actionOrPropertyConditionEntity->hasAssociatedAction)
+					if(actionOrPropertyConditionEntity->hasAssociatedActionTemp)
 					{//eg the stars are bright when john rides his bike
 						string actionConditionEntityName = currentRelationInList->relationArgument; 
 						
@@ -853,15 +890,18 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						GIAActionNode * actionConditionActionNode = actionOrPropertyConditionEntity->firstAssociatedActionNodeInList.back();
 						addActionConditionToProperty(propertyNode, actionConditionActionNode);
 					}
+					else if(actionOrPropertyConditionEntity->hasAssociatedPropertyTemp)
 					//else if(actionOrPropertyConditionEntity->hasAssociatedProperty)
-					else if(actionOrPropertyConditionEntity->isProperty)		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)
+					//else if(actionOrPropertyConditionEntity->isProperty)		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)
 					{//eg the stars are bright when the sun is dim. 
 						string propertyConditionEntityName = currentRelationInList->relationArgument; 
 						
 						cout << "propertyName = " << propertyNode->entityName << endl;
 						cout << "propertyConditionEntityName = " << propertyConditionEntityName << endl;
 
-						addPropertyConditionToProperty(propertyNode, actionOrPropertyConditionEntity);				
+						GIAEntityNode * propertyConditionNode = actionOrPropertyConditionEntity->firstAssociatedPropertyNodeInList.back();	//added 4 May 11a
+						
+						addPropertyConditionToProperty(propertyNode, propertyConditionNode);				
 					}
 					else
 					{

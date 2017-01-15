@@ -30,7 +30,24 @@ class GIAPropertyConditionNode;
 class GIAActionConditionNode;
 class GIATimeConditionNode;
 
-#define TENSE_UNDEFINED (0)
+#define GRAMMATICAL_TENSE_UNDEFINED 0
+#define GRAMMATICAL_TENSE_PRESENT 1
+#define GRAMMATICAL_TENSE_PAST 2
+#define GRAMMATICAL_TENSE_FUTURE 3
+#define GRAMMATICAL_TENSE_NUMBER_OF_TYPES (4)
+#define GRAMMATICAL_NUMBER_UNDEFINED 0
+#define GRAMMATICAL_NUMBER_UNCOUNTABLE 1
+#define GRAMMATICAL_NUMBER_SINGULAR 2
+#define GRAMMATICAL_NUMBER_PLURAL 3
+#define GRAMMATICAL_NUMBER_NUMBER_OF_TYPES (4)
+#define GRAMMATICAL_DEFINITE_UNDEFINED false
+#define GRAMMATICAL_DEFINITE true
+#define GRAMMATICAL_DEFINITE_NAME "definite"
+
+extern string tenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
+extern int tenseNameLengthsArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
+extern string grammaticalNumberNameArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES];
+extern int grammaticalNumberNameLengthsArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES];
 
 class GIAEntityNode
 {
@@ -39,7 +56,11 @@ public:
 	GIAEntityNode(void);
 	~GIAEntityNode(void);
 
-	int tenseTemp; 	//temporary: used for GIA translator only
+	int grammaticalTenseTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+	int grammaticalNumberTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+	bool definiteTemp; 		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+	bool hasAssociatedPropertyTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+	bool hasAssociatedActionTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	
 	bool initialisedForPrinting;
 	bool printed;
