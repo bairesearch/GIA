@@ -95,7 +95,7 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-itxt [string]     : plain text .txt input filename to be parsed by Relex (def: inputText.txt)"
 "\n\t-iorelex [string]  : RelEx compact .xml intermediary input/output filename (def: inputRelex.xml)"
 "\n\t-ixml [string]     : semantic network definition .xml input filename (def: semanticNet.xml)"
-"\n\t-itxtq [string]    : query plain text .txt input filename to be parsed by Relex (def: inputQuery.txt)"
+"\n\t-itxtq [string]    : query plain text .txt input filename to be parsed by Relex (def: inputTextQuery.txt)"
 "\n\t-iorelexq [string] : query RelEx compact .xml intermediary input/output filename (def: inputRelexQuery.xml)"
 "\n\t-ixmlq [string]    : query semantic network definition .xml input filename (def: semanticNetQuery.xml)"
 "\n\t-oxml [string]     : semantic network definition .xml output filename (def: semanticNet.xml)"
