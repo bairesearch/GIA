@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f9b 11-July-2014
+ * Project Version: 2f9c 12-July-2014
  *
  *******************************************************************************/
 
@@ -253,7 +253,8 @@ GIAentityNode::GIAentityNode(void)
 	NLCisSingularArgument = false;
 	NLClocalListVariableHasBeenDeclared = false;
 	NLClocalListVariableHasBeenInitialised = false;
-	NLCconditionLogicalOperations = false;
+	NLClogicalConditionOperation = false;		//required as some logical condition operation conditions (prepositions) require sentence context for detection (eg "for each/all/every")
+	NLCparsedForlogicalConditionOperations = false;
 	NLCconjunctionCondition = false;
 	NLClogicalConditionConjunctionIndex = INT_DEFAULT_VALUE;
 	#endif
@@ -1065,6 +1066,27 @@ string convertBoolToString(bool boolean)
 		return "false";
 	}
 }
+
+bool textInTextArray(string text, string * textArray, int arraySize)
+{
+	int arrayIndexOfResultFound = INT_DEFAULT_VALUE;
+	return textInTextArray(text, textArray, arraySize, &arrayIndexOfResultFound);
+}
+
+bool textInTextArray(string text, string * textArray, int arraySize, int * arrayIndexOfResultFound)
+{
+	bool result = false;
+	for(int i=0; i<arraySize; i++)
+	{
+		if(text == textArray[i])
+		{
+			*arrayIndexOfResultFound = i;
+			result = true;
+		}
+	}
+	return result;
+}
+
 
 
 

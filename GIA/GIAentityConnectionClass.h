@@ -26,7 +26,7 @@
  * File Name: GIAentityConnectionClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f9b 11-July-2014
+ * Project Version: 2f9c 12-July-2014
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -87,7 +87,7 @@ public:
 
 	#ifdef USE_NLC
 	bool parsedForNLCcodeBlocks;
-	bool NLCconditionLogicalOperations;
+	bool NLCparsedForlogicalConditionOperations;
 	#endif
 	/*
 	#ifdef GIA_USE_NLG
