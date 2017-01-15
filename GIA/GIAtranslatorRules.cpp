@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h7a 19-January-2015
+ * Project Version: 2h7b 19-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -125,6 +125,20 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 												}
 											}
 
+											/*
+											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "():" << endl;
+											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+											{
+												if(GIAentityNodeArrayFilled[w])
+												{
+													if(GIAentityNodeArray[w]->entityName == "deliver")
+													{
+														cout << "GIAentityNodeArray[w]->stanfordPOStemp" << GIAentityNodeArray[w]->stanfordPOStemp << endl;
+													}
+												}
+											}
+											*/
+											
 											/*
 											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "():" << endl;
 											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
