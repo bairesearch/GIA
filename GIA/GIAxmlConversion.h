@@ -23,7 +23,7 @@
  * File Name: GIAxmlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a2a 27-October-2013
+ * Project Version: 2a3a 29-October-2013
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -193,6 +193,7 @@ using namespace std;
 //
 #ifdef USE_NLPI
 #define NET_XML_ATTRIBUTE_sentenceIndex ((string)"sentenceIndex")	//this is only used for NLPI
+#define NET_XML_ATTRIBUTE_isUnreferencedDefinite ((string)"isUnreferencedDefinite")	//this is only used for NLPI
 #endif
 
 static string entityVectorConnectionXMLtagNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {NET_XML_TAG_ActionNodeList, NET_XML_TAG_IncomingActionNodeList, NET_XML_TAG_ConditionNodeList, NET_XML_TAG_IncomingConditionNodeList, NET_XML_TAG_SubstanceNodeList, NET_XML_TAG_SubstanceNodeReverseList, NET_XML_TAG_EntityNodeDefinitionList, NET_XML_TAG_EntityNodeDefinitionReverseList, NET_XML_TAG_AssociatedSubstanceNodeList, NET_XML_TAG_actionSubjectEntity, NET_XML_TAG_actionObjectEntity, NET_XML_TAG_conditionSubjectEntity, NET_XML_TAG_conditionObjectEntity, NET_XML_TAG_entityNodeDefiningThisSubstance};
