@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelationsStanford.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n7a 03-October-2016
+ * Project Version: 2n7b 03-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -4351,22 +4351,23 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(GIAsente
 #ifdef GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES
 void redistributeStanfordRelationsExpletives(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
-	//eg 'There is a place that we go.' _expl(be[2], there[1]) + _subj(be[2], place[4]) + _subj(go[7], we[6]) [IRRELEVANT] + _obj(be[2], go[7]) -> _subj(go[7], we[6]) + _obj(go[7], place[4])
+	//eg 'There is a place that we go.' _expl(be[2], there[1]) + _subj(be[2], place[4])[*] + _subj(go[7], we[6]) + _obj(be[2], go[7]) -> _subj(go[7], we[6]) + _obj(go[7], place[4])
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
-	param.numberOfRelations = 3;
+	param.numberOfRelations = 4;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_EXPLETIVE;
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_OBJECT;
+	param.useRelationTest[REL4][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_OBJECT;
 	param.useRelationTest[REL1][REL_ENT1] = true; param.relationTest[REL1][REL_ENT1] = RELATION_ENTITY_BE;
 	param.useRelationIndexTest[REL1][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT1] = REL2; param.relationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT1;
-	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL3; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
-	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL3; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
+	param.useRelationIndexTest[REL1][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT1] = REL4; param.relationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT1;
+	param.useRelationIndexTest[REL3][REL_ENT1] = true; param.relationIndexTestRelationID[REL3][REL_ENT1] = REL4; param.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT2;
+	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL3; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT1;
 	param.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
-	param.disableRelation[REL1] = true;
-	param.disableRelation[REL3] = true;
-	param.disableEntity[REL1][REL_ENT1] = true;
-	param.disableEntity[REL1][REL_ENT2] = true;
+	GIAentityCharacteristic useRedistributeSpecialCaseIsExpletiveAssignment("isExpletive", "true");
+	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT2].push_back(&useRedistributeSpecialCaseIsExpletiveAssignment);	
+	param.disableRelation[REL4] = true;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;

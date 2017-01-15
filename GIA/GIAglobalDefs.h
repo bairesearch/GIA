@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n7a 03-October-2016
+ * Project Version: 2n7b 03-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -738,7 +738,15 @@
 //#define GIA_DISABLE_2l_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2m_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2n_CODE_FOR_DEBUG
-
+#ifndef GIA_DISABLE_2n_CODE_FOR_DEBUG
+	#define GIA_SUPPORT_EXPLETIVES	//2n7b
+	#ifdef GIA_SUPPORT_EXPLETIVES
+		#define GIA_SUPPORT_EXPLETIVES_WORKAROUND_STANFORD_ANOMALY_HAS_ASSIGNMENTS		//2n7b
+		#ifndef GIA_SUPPORT_EXPLETIVES_WORKAROUND_STANFORD_ANOMALY_HAS_ASSIGNMENTS
+			#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS_IN_SAME_SENTENCE	//2n7b	//this is only necessary due to faulty NLP relation assignments
+		#endif
+	#endif
+#endif
 #ifndef GIA_DISABLE_2m_CODE_FOR_DEBUG
 	#define GIA_USE_SYNONYMN_DETECTION_DISABLE_DURING_SPECIFIC_CONCEPT_ACTION_LINKING	//2m3a
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES	//2m2a

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n7a 03-October-2016
+ * Project Version: 2n7b 03-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -537,6 +537,15 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 	}
 	#endif
 	#endif
+	
+	#ifdef GIA_SUPPORT_EXPLETIVES
+	if(entity->isExpletive)
+	{
+		entity->isExpletive = false;
+		newSubstance->isExpletive = true;
+	}	
+	#endif
+	
 }
 
 
@@ -1490,79 +1499,86 @@ GIAentityConnection* writeVectorConnection(GIAentityNode* entityNode, GIAentityN
 	if(!(entityNode->wasReferenceTemp && entityNodeToAdd->wasReferenceTemp))
 	{
 	#endif
-		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_PROPERTIES_AND_DEFINITIONS
-		//see if link already exists between the two nodes, and if so increment the confidence
-		bool foundNode = false;
-		GIAentityConnection* connectionFound = findEntityNodePointerInVector(entityNode, entityNodeToAdd, connectionType, &foundNode);
-		if(foundNode)
-		{
-			connectionFound->confidence = connectionFound->confidence + GIA_ENTITY_CONNECTION_CONFIDENCE_INCREMENT;
-		}
-		else
+		#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS_IN_SAME_SENTENCE
+		bool foundNode2 = false;
+		if(!findSameSentenceEntityNodePointerInVector(entityNode, entityNodeToAdd, connectionType, &foundNode2, getCurrentSentenceIndex()))
 		{
 		#endif
-			vector<GIAentityConnection*>* vectorConnection = &(entityNode->entityVectorConnectionsArray[connectionType]);
-			#ifndef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
-			if(entityVectorConnectionIsBasicArray[connectionType])
+			#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_PROPERTIES_AND_DEFINITIONS
+			//see if link already exists between the two nodes, and if so increment the confidence
+			bool foundNode1 = false;
+			GIAentityConnection* connectionFound1 = findEntityNodePointerInVector(entityNode, entityNodeToAdd, connectionType, &foundNode1);
+			if(foundNode1)
 			{
-				#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
-				if(connectionType != GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
+				connectionFound1->confidence = connectionFound->confidence + GIA_ENTITY_CONNECTION_CONFIDENCE_INCREMENT;
+			}
+			else
+			{
+			#endif
+				vector<GIAentityConnection*>* vectorConnection = &(entityNode->entityVectorConnectionsArray[connectionType]);
+				#ifndef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
+				if(entityVectorConnectionIsBasicArray[connectionType])
 				{
-				#endif
-					vectorConnection->clear();	//clear the vector (basic connections only support 1 node)
-				#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+					#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+					if(connectionType != GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
+					{
+					#endif
+						vectorConnection->clear();	//clear the vector (basic connections only support 1 node)
+					#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+					}
+					#endif
 				}
 				#endif
-			}
-			#endif
 
-			newConnection = new GIAentityConnection();
-			newConnection->entity = entityNodeToAdd;
-			#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
-			bool foundNode = false;
-			findEntityNodePointerInVector(entityNode, entityNodeToAdd, connectionType, &foundNode);
-			if(foundNode)
-			{
-				newConnection->isReference = true;
-			}
-			#endif
-			vectorConnection->push_back(newConnection);
-
-			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-			newConnection->sameReferenceSet = sameReferenceSet;
-			/*
-			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-			cout << "writeVectorConnection: newConnection->sameReferenceSet = " << sameReferenceSet << endl;
-			#endif
-			*/
-			#endif
-
-			#ifdef GIA_USE_DATABASE
-			if((getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE) || (getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_INACTIVE))	//NB even if not accessing the database for new information (read), still prepare nodes for database write
-			{
-				//#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS		//why is this preprocessor check not required???
-				//required for database syncronisation with RAM
-				if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
+				newConnection = new GIAentityConnection();
+				newConnection->entity = entityNodeToAdd;
+				#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
+				bool foundNode3 = false;
+				findEntityNodePointerInVector(entityNode, entityNodeToAdd, connectionType, &foundNode3);
+				if(foundNode3)
 				{
-					cout << "error: writeVectorConnection called, but entityVectorConnectionsReferenceListLoadedArray set to false" << endl;
-					cout << "entityNode = " << entityNode->entityName << ", entityNodeToAdd = " << entityNodeToAdd->entityName << ", connectionType = " << connectionType << endl;
-					exit(0);
+					newConnection->isReference = true;
 				}
-				//#endif
+				#endif
+				vectorConnection->push_back(newConnection);
 
-				newConnection->entityName = entityNodeToAdd->entityName;
-				newConnection->idInstance = entityNodeToAdd->idInstance;
-				newConnection->loaded = true;
-				newConnection->modified = false;
-				newConnection->added = true;		//this allows for fast update of the DB (append reference connections)
+				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+				newConnection->sameReferenceSet = sameReferenceSet;
+				/*
+				#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+				cout << "writeVectorConnection: newConnection->sameReferenceSet = " << sameReferenceSet << endl;
+				#endif
+				*/
+				#endif
+
+				#ifdef GIA_USE_DATABASE
+				if((getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE) || (getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_INACTIVE))	//NB even if not accessing the database for new information (read), still prepare nodes for database write
+				{
+					//#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS		//why is this preprocessor check not required???
+					//required for database syncronisation with RAM
+					if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
+					{
+						cout << "error: writeVectorConnection called, but entityVectorConnectionsReferenceListLoadedArray set to false" << endl;
+						cout << "entityNode = " << entityNode->entityName << ", entityNodeToAdd = " << entityNodeToAdd->entityName << ", connectionType = " << connectionType << endl;
+						exit(0);
+					}
+					//#endif
+
+					newConnection->entityName = entityNodeToAdd->entityName;
+					newConnection->idInstance = entityNodeToAdd->idInstance;
+					newConnection->loaded = true;
+					newConnection->modified = false;
+					newConnection->added = true;		//this allows for fast update of the DB (append reference connections)
+				}
+				#endif
+
+				#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
+				newConnection->sentenceIndexTemp = getCurrentSentenceIndex();
+				#endif
+			#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_PROPERTIES_AND_DEFINITIONS
 			}
 			#endif
-
-			#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
-			newConnection->sentenceIndexTemp = getCurrentSentenceIndex();
-			#endif
-
-		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_PROPERTIES_AND_DEFINITIONS
+		#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS_IN_SAME_SENTENCE
 		}
 		#endif
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
@@ -1585,6 +1601,25 @@ GIAentityConnection* findEntityNodePointerInVector(GIAentityNode* entityNode, GI
 	}
 	return connectionFound;
 }
+
+#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS_IN_SAME_SENTENCE
+GIAentityConnection* findSameSentenceEntityNodePointerInVector(GIAentityNode* entityNode, GIAentityNode* entityNodeToFind, int connectionType, bool* foundNode, int sentenceIndex)
+{
+	GIAentityConnection* connectionFound = NULL;
+	for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entityNode->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
+	{
+		if((*connectionIter)->entity == entityNodeToFind)
+		{
+			if((*connectionIter)->sentenceIndexTemp == sentenceIndex)
+			{
+				*foundNode = true;
+				connectionFound = *connectionIter;
+			}
+		}
+	}
+	return connectionFound;
+}
+#endif
 
 GIAentityConnection* findEntityNodeNameInVector(GIAentityNode* entityNode, string* entityNodeNameToFind, int connectionType, bool* foundNode)
 {
