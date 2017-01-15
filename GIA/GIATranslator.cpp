@@ -33,7 +33,7 @@ string relationTypeAdjectiveWhichImplyEntityInstanceNameArray[RELATION_TYPE_ADJE
 string relationTypeRequireSwitchingNameArray[RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT_THAT};
 
 string relationTypeQuantityOrMeasureNameArray[RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES] = {RELATION_TYPE_QUANTITY, RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME};
-string relationTypeQuantityOrMeasureSwitchedNameArray[RELATION_TYPE_QUANTITY_OR_MEASURE_SWITCHED_NUMBER_OF_TYPES] = {RELATION_TYPE_QUANTITY_MOD};
+string relationTypeQuantityOrMeasureSwitchedNameArray[RELATION_TYPE_QUANTITY_OR_MEASURE_SWITCHED_NUMBER_OF_TYPES] = {RELATION_TYPE_QUANTITY_MOD, RELATION_TYPE_MEASURE_PER};
 string relationTypeMeasureNameArray[RELATION_TYPE_MEASURE_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME};
 
 
@@ -1069,7 +1069,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}				
 		
-		//cout << "0d pass; define properties (quantities [not quantity mods/multipiers] and measures);" << endl;
+		//cout << "0d pass; define properties (quantities [not quantity mods/multipiers, not measure pers] and measures);" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{			
@@ -1858,8 +1858,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 
 						if(currentRelationInList2->relationType == RELATION_TYPE_QUANTITY_MOD)
 						{	
-							if(currentRelationInList2->relationFunction == currentRelationInList->relationArgument)
+							if(currentRelationInList2->relationFunction == currentRelationInList->relationFunction)
 							{
+								//cout << "AAAA" << endl;
+								
 								/*
 								int quantityModifierInt = calculateQuantityModifierInt(currentRelationInList2->relationArgument);
 								quantityProperty->quantityModifier = quantityModifierInt;

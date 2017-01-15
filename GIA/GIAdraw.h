@@ -78,7 +78,7 @@ using namespace std;
 
 
 #define DRAW_Y_SPACE_BETWEEN_ENTITIES (0)				//OLD: should really be 1 for initialiseForPrint
-#define DRAW_X_SPACE_BETWEEN_ENTITIES (200)
+#define DRAW_X_SPACE_BETWEEN_ENTITIES (300)
 #define DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE (50)			//OLD: should really be 1 for initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE (0)
 
