@@ -3051,6 +3051,9 @@
 				<option functionToExecuteUponFind="3" />
 				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="0" />
 				<option functionEntityRelationID="0" FUNC_ENT="1" functionEntityRelationEntityID="1" />
+				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
+				<option disableEntity="true" REL="0" REL_ENT="2" />
+				<!-- #endif -->
 				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
 				<option defaultSameSetRelationID="0" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
