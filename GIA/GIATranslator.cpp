@@ -740,9 +740,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 		cout << "pass 1; locate/add all entities" << endl;
 		#endif
 		locateAndAddAllConceptEntities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, conceptEntityNamesList, GIAEntityNodeIsDate, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray);
-			
+
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1b; identify comparison variable" << endl;
+		#endif
+		identifyComparisonVariable(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+							
 		#ifdef GIA_TRANSLATOR_DEBUG	
-		cout << "pass 1b; switch argument/functions where necessary" << endl;
+		cout << "pass 1c; switch argument/functions where necessary" << endl;
 		#endif
 		switchArgumentsAndFunctionsWhereNecessary(currentSentenceInList);
 		
@@ -1205,14 +1210,6 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 		//cout << "relationFunctionIndex = " << relationFunctionIndex << endl;
 		//cout << "relationArgumentIndex = " << relationArgumentIndex << endl;
 
-		bool argumentIsQuery = false;
-		if(argumentName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
-		{//modify relation index [to prevent overlapping of comparison variable indicies with other indicies]
-			relationArgumentIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_ARGUMENT_INDEX;
-			currentRelationInList->relationArgumentIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_ARGUMENT_INDEX;
-			argumentIsQuery = true;
-		}
-
 		if(!GIAEntityNodeArrayFilled[relationFunctionIndex])
 		{
 			//cout << "wf2" <<endl;
@@ -1235,7 +1232,6 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 			GIAEntityNodeArray[relationFunctionIndex]->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[relationFunctionIndex];
 			GIAEntityNodeArray[relationFunctionIndex]->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[relationFunctionIndex];
 			
-
 			GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedInstanceTemp = false;
 
 		}
@@ -1260,19 +1256,72 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 			GIAEntityNodeArray[relationArgumentIndex]->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[relationArgumentIndex];
 			GIAEntityNodeArray[relationArgumentIndex]->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[relationArgumentIndex];
 
-			GIAEntityNodeArray[relationArgumentIndex]->hasAssociatedInstanceTemp = false;	
-
-			if(argumentIsQuery)
-			{
-				GIAEntityNodeArray[relationArgumentIndex]->isQuery = true;
-				foundComparisonVariable = true;
-				comparisonVariableNode = GIAEntityNodeArray[relationArgumentIndex];					
-			}
+			GIAEntityNodeArray[relationArgumentIndex]->hasAssociatedInstanceTemp = false;
 		}
 
 		currentRelationInList = currentRelationInList->next;
 	}
 }
+
+
+void identifyComparisonVariable(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+{	
+	bool expectToFindComparisonVariable = false;
+	if(currentSentenceInList->isQuestion)
+	{
+		expectToFindComparisonVariable = true;
+		cout << "expectToFindComparisonVariable" << endl;
+	}
+	
+	bool foundComparisonVariableTemp = false;
+	
+	cout << "here1" << endl;
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAEntityNodeArrayFilled[i])
+		{
+			GIAEntityNode * entityNode = GIAEntityNodeArray[i];
+			if(entityNode->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+			{
+				cout << "foundComparisonVariable" << endl;
+				entityNode->isQuery = true;
+				foundComparisonVariableTemp = true;
+				comparisonVariableNode = entityNode;					
+			}
+		}			
+	}
+
+	if(expectToFindComparisonVariable)
+	{
+		if(!foundComparisonVariableTemp)
+		{//define comparison variable; define required answer entity as the next noun after the question word/lemma eg "house/person" 
+			
+			bool foundComparisonVariableAlternateMethod = false;
+			if(foundComparisonVariableAlternateMethod)
+			{
+				foundComparisonVariable = true;
+			}
+			else
+			{
+				foundComparisonVariable = false;
+			}
+		}
+		else
+		{
+			foundComparisonVariable = true;
+		}
+	}
+	else
+	{
+		if(foundComparisonVariableTemp)
+		{
+			cout << "error: expectToFindComparisonVariable && foundComparisonVariable" << endl;
+			exit(0);
+		}
+	}
+}
+
+
 
 
 void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList)
