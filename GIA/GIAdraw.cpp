@@ -21,9 +21,9 @@
 /*******************************************************************************
  *
  * File Name: GIAdraw.h
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s1b 12-April-2013
+ * Project Version: 1s2a 24-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -202,6 +202,7 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesA
 
 			//initiateMaxXAtParticularY();
 			xInitial = maxXAtAParticularY[yInitial];
+			//xInitial = sentenceIndex*100;	//compact
 			
 			bool thisIsDefinitionAndPreviousNodeWasInstance = false;
 			

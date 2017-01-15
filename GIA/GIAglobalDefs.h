@@ -21,9 +21,9 @@
 /*******************************************************************************
  *
  * File Name: GIAglobalsDefs.h
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s1b 12-April-2013
+ * Project Version: 1s2a 24-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -547,7 +547,7 @@
 //variables currently being tested (1p1a+)
 
 #define STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS	//added 22 Sept to enable Stanford CoreNLP to be used to parse dependency relations with same accuracy as stanford parser (ie when stanford CoreNLP is set as both relation and feature parser)
-#define STANFORD_PARSER_USE_POS_TAGS	//added 23 July 2012 to support Stanford Parser POS tags (which are sometimes more accurate than stanford CoreNLP pos tags)
+//#define STANFORD_PARSER_USE_POS_TAGS	//added 23 July 2012 to support Stanford Parser POS tags (which are sometimes more accurate than stanford CoreNLP pos tags)
 
 #define GIA_APPLY_BUG_WORKAROUND_WHERE_A_CONCEPT_ENTITY_OF_INSTANCE_0_CAN_HAVE_NODE_DEFINING_INSTANCE
 #define GIA_FREE_MEMORY
@@ -649,12 +649,15 @@
 #define GIA_ID_INSTANCE_ALLOW_INSTANCE_DELETIONS
 #define GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILLARY_AND_SET_DIFFERENT_REFERENCE_SET
 
-#define GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_LEMMA_CASE_ASSIGNMENT_BUG_GENERATE_STRANGE_LEMMA
-#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_LEMMA_CASE_ASSIGNMENT_BUG_GENERATE_STRANGE_LEMMA
-	#define GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_LEMMA_CASE_ASSIGNMENT_BUG_USE_ORIGINAL_WORD
+#define GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
+#ifndef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
+	#define GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_LEMMA_CASE_ASSIGNMENT_BUG_GENERATE_STRANGE_LEMMA
+	#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_LEMMA_CASE_ASSIGNMENT_BUG_GENERATE_STRANGE_LEMMA
+		#define GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_LEMMA_CASE_ASSIGNMENT_BUG_USE_ORIGINAL_WORD
+	#endif
+	#define GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_ASSIGNMENT_BUG_USE_NER_VALUES	//CHECKTHIS; does this need to be reinstated for GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER?
 #endif
 #define GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_LEMMA_CASE_ASSIGNMENT_BUG_MAKE_ALL_LEMMAS_LOWER_CASE	//used to resolve the issue where 'time'/'freedom' and 'Time'/'Freedom' are not matched etc
-#define GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_ASSIGNMENT_BUG_USE_NER_VALUES
 
 //variables passed testing:
 #define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE

@@ -21,9 +21,9 @@
 /*******************************************************************************
  *
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s1b 12-April-2013
+ * Project Version: 1s2a 24-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * ?TO DO: extract date information of entities from relex <features> tag area

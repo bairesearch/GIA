@@ -21,9 +21,9 @@
 /*******************************************************************************
  *
  * File Name: GIAnlg.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s1b 12-April-2013
+ * Project Version: 1s2a 24-June-2013
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *

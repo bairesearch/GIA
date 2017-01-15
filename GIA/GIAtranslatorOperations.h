@@ -21,9 +21,9 @@
 /*******************************************************************************
  *
  * File Name: GIAtranslatorOperations.h
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s1b 12-April-2013
+ * Project Version: 1s2a 24-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -954,7 +954,7 @@ static string featurePOStagCrossReferenceRelexPOStypeArray[FEATURE_POS_TAG_NUMBE
 static string featureNERtypeArray[FEATURE_NER_NUMBER_TYPES] = {FEATURE_NER_UNDEFINED_NAME, FEATURE_NER_DATE_NAME, FEATURE_NER_TIME_NAME, FEATURE_NER_MONEY_NAME, FEATURE_NER_NUMBER_NAME, FEATURE_NER_PERSON_NAME, FEATURE_NER_LOCATION_NAME, FEATURE_NER_ORGANIZATION_NAME, FEATURE_NER_MISC_NAME, FEATURE_NER_DURATION_NAME};
 static string featureRelexFlagTypeArray[FEATURE_RELEX_FLAG_NUMBER_TYPES] = {FEATURE_RELEX_FLAG_UNDEFINED_NAME, FEATURE_RELEX_FLAG_DATE_NAME, FEATURE_RELEX_FLAG_TIME_NAME, FEATURE_RELEX_FLAG_MONEY_NAME, FEATURE_RELEX_FLAG_NUMBER_NAME, FEATURE_RELEX_FLAG_PERSON_NAME, FEATURE_RELEX_FLAG_LOCATION_NAME, FEATURE_RELEX_FLAG_ORGANIZATION_NAME, FEATURE_RELEX_FLAG_MISC_NAME, FEATURE_RELEX_FLAG_DURATION_NAME};
 static int featureNERexplicitTypeArray[FEATURE_NER_EXPLICIT_NUMBER_TYPES] = {FEATURE_NER_DATE, FEATURE_NER_TIME, FEATURE_NER_MONEY, FEATURE_NER_NUMBER, FEATURE_NER_PERSON, FEATURE_NER_LOCATION, FEATURE_NER_ORGANIZATION, FEATURE_NER_MISC, FEATURE_NER_DURATION};
-static int featureNERindicatesProperNounTypeArray[FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_TYPES] = {FEATURE_NER_PERSON, FEATURE_NER_LOCATION, FEATURE_NER_ORGANIZATION};	//this array is not used by stanford parser as Standford Core NLP explicitly marks entities as 'proper noun' within their stanfordPOS tag (it is used by the Relex parser however to determine proper nouns)
+static int featureNERindicatesProperNounTypeArray[FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_TYPES] = {FEATURE_NER_PERSON, FEATURE_NER_LOCATION, FEATURE_NER_ORGANIZATION};	//without bug this array should not be required to be used by stanford parser/CoreNLP as Standford Core NLP explicitly marks entities as 'proper noun' within their stanfordPOS tag (it is used by the Relex parser however to determine proper nouns)
 static int featureNERindicatesNameConcatenationRequiredTypeArray[FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_TYPES] = {FEATURE_NER_PERSON, FEATURE_NER_LOCATION, FEATURE_NER_ORGANIZATION, FEATURE_NER_MISC};
 static int featureNERindicatesNormalisedNERavailableTypeArray[FEATURE_NER_INDICATES_NORMALISED_NER_AVAILABLE_NUMBER_TYPES] = {FEATURE_NER_DATE, FEATURE_NER_TIME, FEATURE_NER_MONEY, FEATURE_NER_NUMBER};
 static string featurePOSindicatesAdjectiveOrAdverbTypeArray[FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_TYPES] = {FEATURE_POS_TAG_ADJECTIVE, FEATURE_POS_TAG_ADJECTIVE_COMPARATIVE, FEATURE_POS_TAG_ADJECTIVE_SUPERLATIVE, FEATURE_POS_TAG_ADVERB, FEATURE_POS_TAG_ADVERB_COMPARATIVE, FEATURE_POS_TAG_ADVERB_SUPERLATIVE};
