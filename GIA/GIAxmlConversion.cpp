@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h5a 13-January-2015
+ * Project Version: 2h5b 13-January-2015
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -654,19 +654,19 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 			entityNode->isCondition = attributeValue;
 			isConditionFound = true;
 		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedSubstance)
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedInstance)
 		{
 			bool attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->hasAssociatedInstance = attributeValue;
 			hasAssociatedSubstanceFound = true;
 		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedSubstanceIsAction)
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedInstanceIsAction)
 		{
 			bool attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->hasAssociatedInstanceIsAction = attributeValue;
 			hasAssociatedSubstanceIsActionFound = true;
 		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedSubstanceIsCondition)
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedInstanceIsCondition)
 		{
 			bool attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->hasAssociatedInstanceIsCondition = attributeValue;
@@ -1456,7 +1456,7 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
 
-	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedSubstance;
+	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedInstance;
 	sprintf(tempString, "%d", int(currentEntity->hasAssociatedInstance));
 	currentAttribute->value = tempString;
 
@@ -1464,7 +1464,7 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
 
-	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedSubstanceIsAction;
+	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedInstanceIsAction;
 	sprintf(tempString, "%d", int(currentEntity->hasAssociatedInstanceIsAction));
 	currentAttribute->value = tempString;
 
@@ -1472,7 +1472,7 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
 
-	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedSubstanceIsCondition;
+	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedInstanceIsCondition;
 	sprintf(tempString, "%d", int(currentEntity->hasAssociatedInstanceIsCondition));
 	currentAttribute->value = tempString;
 
