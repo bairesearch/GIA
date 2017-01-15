@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16a 27-January-2015
+ * Project Version: 2i16b 27-January-2015
  *
  *******************************************************************************/
 -->
@@ -2386,6 +2386,7 @@
 				<option useRelationArrayTest="true" REL="1" REL_ENT="2" relationArrayTest="each|every|all" relationArrayTestSize="3" />
 				<!--<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="grammaticalNumber" value="3" REL="1" REL_ENT="1" />-->	<!-- this method is only possible if redistributeStanfordRelationsSetPluralBasedOnPredeterminers() is executed during substance/link/advanced; it is not possible during redistribute --> <!-- required for NLC_USE_PREPROCESSOR+NLC_CATEGORIES_TEST_PLURALITY_ENFORCE -->
 				<assert variable="assignPluralAfterFinish" REL="1" REL_ENT="1" /> 			<!-- required for NLC_USE_PREPROCESSOR+NLC_CATEGORIES_TEST_PLURALITY_ENFORCE -->
+				<!-- <option disableEntity="true" REL="1" REL_ENT="2" /> --> <!-- not compatible with NLC_SUPPORT_LOGICAL_CONDITION_OPERATIONS_ADVANCED -->
 				</paramDepRel>
 			</function>
 		</file>
