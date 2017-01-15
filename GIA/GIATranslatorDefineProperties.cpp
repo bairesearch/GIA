@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineProperties.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7f 09-May-2012
+ * Project Version: 1j8a 10-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -145,7 +145,7 @@ void definePropertiesObjectsAndSubjectsWithProperties(bool GIAEntityNodeArrayFil
 		{
 			if(((GIAEntityNodeArray[i]->isObjectTemp) && (GIAEntityNodeArray[i]->hasPropertyTemp)) || ((GIAEntityNodeArray[i]->isSubjectTemp) && (GIAEntityNodeArray[i]->hasPropertyTemp)))
 			{
-				addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);	
+				GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);	
 			}
 		}
 	}
@@ -159,7 +159,7 @@ void definePropertiesDefiniteNouns(bool GIAEntityNodeArrayFilled[], GIAEntityNod
 		{
 			if(GIAEntityNodeArrayFilled[i])
 			{ //condition required as GIAEntityNodeArrayFilled is not always true. With GRAMMATICAL_DEFINITE, eg "Mr" of "Mr Smith" will still be interpreted as a definite
-				if(!(featureArrayTemp[i]->isReference))
+				if(!(featureArrayTemp[i]->isPronounReference))
 				{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
 					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS || !(featureArrayTemp[i]->grammaticalIsProperNoun))	//&& !GIAEntityNodeIsDateOrTime[i]
 					{
@@ -167,7 +167,7 @@ void definePropertiesDefiniteNouns(bool GIAEntityNodeArrayFilled[], GIAEntityNod
 						{
 							//cout << "as0" << endl;
 							//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
-							addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
+							GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
 						}
 					}
 				}
@@ -184,7 +184,7 @@ void definePropertiesNounsWithDeterminates(bool GIAEntityNodeArrayFilled[], GIAE
 		{	
 			if(GIAEntityNodeArrayFilled[i])
 			{
-				if(!(featureArrayTemp[i]->isReference))
+				if(!(featureArrayTemp[i]->isPronounReference))
 				{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
 					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS || !(featureArrayTemp[i]->grammaticalIsProperNoun))	//&& !GIAEntityNodeIsDateOrTime[i]
 					{
@@ -200,7 +200,7 @@ void definePropertiesNounsWithDeterminates(bool GIAEntityNodeArrayFilled[], GIAE
 						{
 							//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;
 							//cout << "as1" << endl;
-							addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
+							GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
 							//cout << "as2" << endl;
 						}
 					}
@@ -236,16 +236,16 @@ void definePropertiesNounsWithAdjectives(Sentence * currentSentenceInList, GIAEn
 					//create a new property for the entity and assign a property definition entity if not already created
 					string thingName = currentRelationInList->relationGovernor;
 					string propertyName = currentRelationInList->relationDependent; 
-					int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
-					int relationDependentIndex = currentRelationInList->relationDependentIndex;
+					int thingIndex = currentRelationInList->relationGovernorIndex;
+					int propertyIndex = currentRelationInList->relationDependentIndex;
 
 
-					GIAEntityNode * thingEntity = GIAEntityNodeArray[relationGovernorIndex];
-					GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
+					GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
+					GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 
 					//cout << "as2" << endl;
 
-					addPropertyToPropertyDefinition(thingEntity);			
+					GIAEntityNodeArray[thingIndex] = addPropertyToPropertyDefinition(thingEntity);			
 				}
 			}			
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -275,12 +275,12 @@ void definePropertiesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIA
 			if(passed)
 			{
 				//create a new property for the entity and assign a property definition entity if not already created
-				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
-				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationGovernorIndex];
+				int propertyIndex = currentRelationInList->relationGovernorIndex;
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 
 				//cout << "as3" << endl;
 
-				addPropertyToPropertyDefinition(propertyEntity);					
+				GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity);					
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
@@ -310,11 +310,11 @@ void definePropertiesQuantityModifiers(Sentence * currentSentenceInList, GIAEnti
 			if(passed)
 			{
 				//create a new property for the entity and assign a property definition entity if not already created
-				int relationDependentIndex = currentRelationInList->relationDependentIndex;
-				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
+				int propertyIndex = currentRelationInList->relationDependentIndex;
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 
 				//cout << "as3" << endl;
-				addPropertyToPropertyDefinition(propertyEntity);					
+				GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity);					
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
@@ -338,12 +338,12 @@ void definePropertiesExpletives(Sentence * currentSentenceInList, GIAEntityNode 
 			if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT_EXPLETIVE)
 			{
 				//create property definition
-				int relationDependentIndex = currentRelationInList->relationDependentIndex;
-				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
+				int propertyIndex = currentRelationInList->relationDependentIndex;
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 
 				#ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
 				//cout << "as4" << endl;
-				addPropertyToPropertyDefinition(propertyEntity);	
+				GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity);	
 				#else
 				disableEntityBasedUponFirstSentenceToAppearInNetwork(propertyEntity);
 				#endif				
@@ -363,7 +363,7 @@ void definePropertiesPronouns(bool GIAEntityNodeArrayFilled[], GIAEntityNode * G
 		{
 			if(GIAEntityNodeArrayFilled[i])
 			{
-				if(!(featureArrayTemp[i]->isReference))
+				if(!(featureArrayTemp[i]->isPronounReference))
 				{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
 
 					if(featureArrayTemp[i]->grammaticalIsPronoun == GRAMMATICAL_PRONOUN)
@@ -371,7 +371,7 @@ void definePropertiesPronouns(bool GIAEntityNodeArrayFilled[], GIAEntityNode * G
 						//cout << "as5" << endl;
 						//cout << "asd" << endl;
 						//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
-						addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
+						GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
 					}
 				}
 			}
@@ -400,7 +400,7 @@ void definePropertiesNonExplicitPronouns(bool GIAEntityNodeArrayFilled[], GIAEnt
 			
 			if(passed)
 			{
-				addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);	
+				GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);	
 			}
 		}
 	}
@@ -421,10 +421,10 @@ void definePropertiesToBe(Sentence * currentSentenceInList, GIAEntityNode * GIAE
 			{
 		
 				//create a new property for the entity and assign a property definition entity if not already created
-				int relationDependentIndex = currentRelationInList->relationDependentIndex;
-				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
+				int propertyIndex = currentRelationInList->relationDependentIndex;
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 
-				addPropertyToPropertyDefinition(propertyEntity);
+				GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
@@ -450,10 +450,10 @@ void definePropertiesToDo(Sentence * currentSentenceInList, GIAEntityNode * GIAE
 			{
 		
 				//create a new property for the entity and assign a property definition entity if not already created
-				int relationDependentIndex = currentRelationInList->relationDependentIndex;
-				GIAEntityNode * actionEntity = GIAEntityNodeArray[relationDependentIndex];
+				int actionIndex = currentRelationInList->relationDependentIndex;
+				GIAEntityNode * actionEntity = GIAEntityNodeArray[actionIndex];
 
-				addActionToActionDefinition(actionEntity);
+				GIAEntityNodeArray[actionIndex] = addActionToActionDefinition(actionEntity);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
@@ -477,7 +477,7 @@ void definePropertiesHasTime(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GI
 				GIAEntityNode * currentGIAEntityNode = GIAEntityNodeArray[w];
 				//cout << "currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
 
-				addPropertyToPropertyDefinition(currentGIAEntityNode);			
+				GIAEntityNodeArray[w] = addPropertyToPropertyDefinition(currentGIAEntityNode);			
 			}
 		}
 	}
@@ -519,10 +519,13 @@ void definePropertiesIndirectObjects(Sentence * currentSentenceInList, GIAEntity
 							{//found a matching object-indirectobject relationship
 								//cout << "partnerTypeRequiredFound: currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
 
-								GIAEntityNode * propertyEntity = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
-								GIAEntityNode * thingEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+								int propertyIndex = currentRelationInList2->relationDependentIndex;
+								int thingIndex = currentRelationInList->relationDependentIndex;
+								
+								GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
+								GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
 
-								addPropertyToPropertyDefinition(propertyEntity);			
+								GIAEntityNodeArray[propertyIndex] = addPropertyToPropertyDefinition(propertyEntity);			
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS

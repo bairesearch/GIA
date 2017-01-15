@@ -3,7 +3,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7f 09-May-2012
+ * Project Version: 1j8a 10-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -678,7 +678,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, GIAEntityNode * GI
 
 								newQuantityTimesEntity->entityName = "times";
 
-								//reconnect refreshed quanity (times) node;
+								//reconnect refreshed quantity (times) node;
 								addOrConnectPropertyToEntity(entityToConnectMeasurePerEntity, newQuantityTimesEntity);
 
 								if(newQuantityTimesEntity->hasAssociatedInstanceTemp)
@@ -879,10 +879,13 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode
 			{			
 				if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_BE)
 				{
-					GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
-					GIAEntityNode * propertyEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+					int entityIndex = currentRelationInList->relationGovernorIndex;
+					int propertyIndex = currentRelationInList->relationDependentIndex;
+					
+					GIAEntityNode * entityNode = GIAEntityNodeArray[entityIndex];
+					GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 
-					addOrConnectPropertyToEntity(entityNode, propertyEntity);				
+					GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(entityNode, propertyEntity);				
 				}
 				else if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO)
 				{
@@ -939,15 +942,15 @@ void linkPropertiesParataxis(Sentence * currentSentenceInList, GIAEntityNode * G
 
 				string propertyName = currentRelationInList->relationGovernor; 
 				string actionName = currentRelationInList->relationDependent; 
-				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
-				int relationDependentIndex = currentRelationInList->relationDependentIndex;				
+				int propertyIndex = currentRelationInList->relationGovernorIndex;
+				int actionIndex = currentRelationInList->relationDependentIndex;				
 
-				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationGovernorIndex];
-				GIAEntityNode * actionEntity = GIAEntityNodeArray[relationDependentIndex];
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
+				GIAEntityNode * actionEntity = GIAEntityNodeArray[actionIndex];
 				//cout << "propertyName = " << propertyEntity->entityName << endl;
 				//cout << "actionName = " << actionEntity->entityName << endl;
 
-				addOrConnectPropertyToEntity(actionEntity, propertyEntity);
+				GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(actionEntity, propertyEntity);
 			}	
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
@@ -988,18 +991,7 @@ void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode
 
 			if(passed)
 			{
-				//cout << "as1" << endl;
-
-				//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
-				actionOrPropertyEntity = getEntityPropertyThatWasDeclaredInImmediateContext(actionOrPropertyEntity);	
-
-				//cout << "as2" << endl;		
-
-				//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
-				actionOrPropertyConditionEntity = getEntityPropertyThatWasDeclaredInImmediateContext(actionOrPropertyConditionEntity);	
-
 				//cout << "as3" << endl;
-
 
 				string conditionTypeName = relationType;
 				long entityIndex = -1;
@@ -1048,15 +1040,15 @@ void defineClausalComplementProperties(Sentence * currentSentenceInList, bool GI
 				string actionName = currentRelationInList->relationGovernor; 
 				string propertyName = currentRelationInList->relationDependent; 
 
-				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
-				int relationDependentIndex = currentRelationInList->relationDependentIndex;				
+				int actionIndex = currentRelationInList->relationGovernorIndex;
+				int propertyIndex = currentRelationInList->relationDependentIndex;				
 
-				GIAEntityNode * actionEntity = GIAEntityNodeArray[relationGovernorIndex];
-				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
+				GIAEntityNode * actionEntity = GIAEntityNodeArray[actionIndex];
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
 				//cout << "actionName = " << actionEntity->entityName << endl;
 				//cout << "propertyName = " << propertyEntity->entityName << endl;
 
-				addOrConnectPropertyToEntity(actionEntity, propertyEntity);
+				GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(actionEntity, propertyEntity);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
