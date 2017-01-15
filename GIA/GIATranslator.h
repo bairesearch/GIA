@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1d4b 01-Nov-2011
+ * Project Version: 1f1c 23-Jan-2012
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -37,8 +37,8 @@ using namespace std;
 //#define GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_PROPERTY_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
 
 
-#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS
-//#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_CLEAR_REFERENCES_EVERY_SENTENCE
+#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS	//default: enabled
+//#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_CLEAR_REFERENCES_EVERY_SENTENCE	//default: disabled
 
 
 
@@ -313,7 +313,7 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
 	
 void addActionToActionDefinition(GIAEntityNode * actionEntity);
 
-void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, bool isState);
+void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, bool isProgressive);
 
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity);
 

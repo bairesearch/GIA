@@ -3,7 +3,7 @@
  * File Name: GIAConditionNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1d4b 01-Nov-2011
+ * Project Version: 1f1c 23-Jan-2012
  *
  *******************************************************************************/
 
@@ -110,7 +110,7 @@ public:
 	double period;	//in seconds
 	long totalTimeInSeconds;
 	
-	bool isState;
+	bool isProgressive;
 };
 
 #define TIME_DATE_DISPLAY_FORMAT_AMERICAN (1)

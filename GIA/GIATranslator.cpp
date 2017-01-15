@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1d4b 01-Nov-2011
+ * Project Version: 1f1c 23-Jan-2012
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -147,13 +147,13 @@ GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
 
 	if(propertyEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true)
 	{
-		newProperty->hasState = true;
-		//cout << "property is state" << endl;
+		newProperty->hasProgressiveTemp = true;
+		//cout << "property has progressive (eg lying/sitting/being happy)" << endl;
 	}
 		
-	if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newProperty->hasState)
+	if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newProperty->hasProgressiveTemp)
 	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
-		addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp, newProperty->hasState);
+		addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp, newProperty->hasProgressiveTemp);
 	}
 
 	//configure property definition node
@@ -339,18 +339,18 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 
 		if(actionEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true)
 		{
-			newOrExistingAction->hasState = true;
-			//cout << "action is state" << endl;			
+			newOrExistingAction->hasProgressiveTemp = true;
+			//cout << "property has progressive (eg lying/sitting/being happy)" << endl;			
 		}
 			
 		//cout << "actionEntity->grammaticalTenseTemp = " << actionEntity->grammaticalTenseTemp << endl;
 		//cout << "actionEntity->entityName = " << actionEntity->entityName << endl;
 
-		if(actionEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newOrExistingAction->hasState)
+		if(actionEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newOrExistingAction->hasProgressiveTemp)
 		{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
 			//cout << "hello" << endl;
 			//exit(0);
-			addTenseOnlyTimeConditionToProperty(newOrExistingAction, actionEntity->grammaticalTenseTemp, newOrExistingAction->hasState);
+			addTenseOnlyTimeConditionToProperty(newOrExistingAction, actionEntity->grammaticalTenseTemp, newOrExistingAction->hasProgressiveTemp);
 		}	
 		
 		actionEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
@@ -371,7 +371,7 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense)
 #endif
 */
-void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, bool isState)
+void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, bool isProgressive)
 {
 	propertyNode->conditionType = CONDITION_NODE_TYPE_TIME;
 	
@@ -390,9 +390,9 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense
 	
 	newTimeCondition->tense = tense;
 	newTimeCondition->conditionName = grammaticalTenseNameArray[tense];
-	if(isState)
+	if(isProgressive)
 	{
-		newTimeCondition->isState = true;
+		newTimeCondition->isProgressive = true;
 	}	
 	propertyNode->timeConditionNode = newTimeCondition;
 	

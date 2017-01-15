@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1d4b 01-Nov-2011
+ * Project Version: 1f1c 23-Jan-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -108,7 +108,7 @@ public:
 	bool hasAssociatedInstanceIsAction;
 	bool hasAssociatedInstanceIsCondition;
 	bool hasAssociatedTime;
-	bool hasState;			//PRECISE ORIGINALNAME: isActionOrPropertyState		//eg The cat is lying on the bed. / Mark is being happy.
+	bool hasProgressiveTemp;	//PRECISE ORIGINALNAME: isActionOrPropertyState		//eg The cat is lying on the bed. / Mark is being happy.
 	bool hasQuality;		//PRECISE ORIGINAL NAME: isPropertyQualityOrAffection	//eg 'the locked door..' / 'Jim runs quickly' / 'Mr. Smith is late' 	[Not: Tom has an arm'/'Tom's bike']
 		
 	/*
