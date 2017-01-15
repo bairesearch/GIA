@@ -700,6 +700,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode * queryEntityNode, G
 								((queryEntityNode->isSubstanceConcept) && !(entityNode->isSubstanceConcept)))
 								{
 									passSpecificConcepts = false;
+									cout << "\t\t\t !passSpecificConcepts" << endl;
 								}
 								if(passSpecificConcepts)
 								{

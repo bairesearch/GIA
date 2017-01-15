@@ -978,6 +978,8 @@ void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList)
 
 int identifyReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, bool NLPdependencyRelationsType)
 {
+	cout << "\n******************** identifyReferenceSets *******************\n" << endl;
+	
 	bool haveSentenceEntityIndexOfDeterminers = false;
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
@@ -1114,6 +1116,7 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 					cout << "grammaticalDefiniteTemp Found" << endl;
 					#endif
 
+					/*OLD:
 					int minimumEntityIndexOfReferenceSet;
 					if(haveSentenceEntityIndexOfDeterminers)
 					{
@@ -1125,6 +1128,8 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 						cout << "\n!haveSentenceEntityIndexOfDeterminers" << endl;
 						minimumEntityIndexOfReferenceSet = currentInstance->entityIndexTemp;
 					}
+					*/
+					int minimumEntityIndexOfReferenceSet = currentInstance->entityIndexTemp;
 					
 					//currentInstance->minimumEntityIndexOfReferenceSet = minimumEntityIndexOfReferenceSet;	//added 28 Sept 2013
 
@@ -1133,7 +1138,7 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 					cout << "minimumSentenceIndexOfReferenceSet2 = " << currentInstance->entityIndexTemp << endl;
 					#endif
 
-					if(identifyReferenceSetDetermineNextCourseOfAction(currentInstance, true, *referenceSetID, minimumEntityIndexOfReferenceSet))
+					if(identifyReferenceSetDetermineNextCourseOfAction(currentInstance, true, *referenceSetID, minimumEntityIndexOfReferenceSet, false))
 					{
 						*referenceSetID	= *referenceSetID + 1;
 						cout << "*referenceSetID++ = " << *referenceSetID << endl;
@@ -1151,7 +1156,7 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 	}
 }
 
-bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode, bool sameReferenceSet, int referenceSetID, int minimumEntityIndexOfReferenceSet)
+bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode, bool sameReferenceSet, int referenceSetID, int minimumEntityIndexOfReferenceSet, bool isProperty)
 {
 	bool result = false;
 	if(sameReferenceSet)
@@ -1177,24 +1182,16 @@ bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode,
 		//}
 		
 		#ifdef GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET
-		if((!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)) && (entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet))
+		if((!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)) && ((entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) || isProperty))
 		/*
 		NB1 entityNode->minimumEntityIndexOfReferenceSet is only assigned when referenceSetAlreadyAssigned (referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)
 		NB2 (!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)): only replace reference set id when definining an earlier (ie larger) reference set in the sentence
-		NB3 (entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet): all entities in reference set must occur after minimumEntityIndexOfReferenceSet in the sentence
+		NB3 (entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) || wasPropertyLink: all entities in reference set must occur after minimumEntityIndexOfReferenceSet in the sentence, unless it is a property eg "the blue cars"
 		word order must be used carefully, 
 		eg1; "placed in the book of the house". For reference set to be assigned: (the node must not already be assigned a reference set OR the minimumEntityIndexOfReferenceSet is less than that used during the node's previous reference set assignment) AND the node must occur after minimumEntityIndexOfReferenceSet
-		     if house was parsed first which it is not;
+		     imagine if house was parsed first by GIA which it is not;
 		     eg reference set 1 identification: the house (!referenceSetAlreadyAssigned  && entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) 
 		     eg reference set 1 reidentification: the book of the house (referenceSetAlreadyAssigned for "house", but; minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet && entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) {overwrites smaller reference set 'the house'}
-		GIA fix issue; identifyReferenceSetConceptEntityEntrance(): if !grammaticalDefiniteTemp (ie if sentence node is grammaticalProperNounTemp isSubstanceConcept), identifyReferenceSetConceptEntityEntrance() will not enforce minimumEntityIndexOfReferenceSet (as grammaticalDefiniteIndexOfDeterminerTemp/grammaticalIsDefiniteIndexOfDeterminer will be set to GIA_ENTITY_INDEX_UNDEFINED    
-			Blue oceans near red trees are bright.
-			Sarah likes blue oceans near red trees.
-		
-		
-				eg2 "the legs of Tom are blue"				
-					eg reference set 1 identification: Tom (!referenceSetAlreadyAssigned  && entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet [-1{GIA_ENTITY_INDEX_UNDEFINED}]) 
-					eg FAILS reference set 1 reidentification: the legs of Tom (referenceSetAlreadyAssigned for "house", but; minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet && entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet)	{overwrites smaller reference set 'the house'}
 		*/
 		
 		#else
@@ -1231,7 +1228,12 @@ void identifyReferenceSet(GIAentityNode * entityNode, int referenceSetID, int mi
 		{
 			for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter < entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 			{
-				identifyReferenceSetDetermineNextCourseOfAction((*connectionIter)->entity, ((*connectionIter)->sameReferenceSet), referenceSetID, minimumEntityIndexOfReferenceSet);
+				bool isProperty = false;
+				if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)
+				{
+					isProperty = true;
+				}
+				identifyReferenceSetDetermineNextCourseOfAction((*connectionIter)->entity, ((*connectionIter)->sameReferenceSet), referenceSetID, minimumEntityIndexOfReferenceSet, isProperty);
 			}
 		}
 	}
@@ -1282,25 +1284,14 @@ void identifyReferenceSetSpecificConceptEntityEntrance(GIAentityNode * entityNod
 			cout << "isSubstanceConcept || isActionConcept Found" << endl;
 			#endif
 
-			int minimumEntityIndexOfReferenceSet;
-			if(haveSentenceEntityIndexOfDeterminers)
-			{
-				minimumEntityIndexOfReferenceSet = currentInstance->grammaticalDefiniteIndexOfDeterminerTemp;
-			}
-			else
-			{
-				minimumEntityIndexOfReferenceSet = currentInstance->entityIndexTemp;
-			}
-			/*
-			Red cars are happy.
-			Red cars of the 
-			*/			
+			int minimumEntityIndexOfReferenceSet = currentInstance->entityIndexTemp;
+			
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
 			cout << "minimumSentenceIndexOfReferenceSet1 = " << currentInstance->grammaticalDefiniteIndexOfDeterminerTemp << endl;
 			cout << "minimumSentenceIndexOfReferenceSet2 = " << currentInstance->entityIndexTemp << endl;
 			#endif
 
-			if(identifyReferenceSetDetermineNextCourseOfAction(currentInstance, true, *referenceSetID, minimumEntityIndexOfReferenceSet))
+			if(identifyReferenceSetDetermineNextCourseOfAction(currentInstance, true, *referenceSetID, minimumEntityIndexOfReferenceSet, false))
 			{
 				*referenceSetID	= *referenceSetID + 1;
 			}
