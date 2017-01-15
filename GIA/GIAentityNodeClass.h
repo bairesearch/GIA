@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -76,7 +76,7 @@ using namespace std;
 #define GRAMMATICAL_WORD_TYPE_ADJ (3)
 #define GRAMMATICAL_WORD_TYPE_ADV (4)
 #define GRAMMATICAL_WORD_TYPE_PREP (5)
-#define GRAMMATICAL_WORD_TYPE_SATELLITE (6)	/* not really a part of speech */
+#define GRAMMATICAL_WORD_TYPE_SATELLITE (6)	/* not really a part of speech*/
 #define GRAMMATICAL_WORD_TYPE_ADJSAT (SATELLITE)
 #define GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES 7
 	//for xml interface:
@@ -86,7 +86,7 @@ using namespace std;
 #define GRAMMATICAL_WORD_TYPE_ADJ_STRING "3"
 #define GRAMMATICAL_WORD_TYPE_ADV_STRING "4"
 #define GRAMMATICAL_WORD_TYPE_PREP_STRING "5"
-#define GRAMMATICAL_WORD_TYPE_SATELLITE_STRING "6"	/* not really a part of speech */
+#define GRAMMATICAL_WORD_TYPE_SATELLITE_STRING "6"	/* not really a part of speech*/
 #define GRAMMATICAL_WORD_TYPE_ADJSAT_STRING "6"
 
 #define GRAMMATICAL_TENSE_PRESENT 1		//eg mow / ~VBP
@@ -310,37 +310,37 @@ public:
 	#endif
 		//action connections;
 	//non-actions only;
-	vector<GIAentityConnection*> * actionNodeList;	//where this entity is the subject of the action
-	vector<GIAentityConnection*> * incomingActionNodeList;	//where this entity is the object of the action
+	vector<GIAentityConnection*>* actionNodeList;	//where this entity is the subject of the action
+	vector<GIAentityConnection*>* incomingActionNodeList;	//where this entity is the object of the action
 	//actions only;
 	//NB actions can be performed by and on concepts, and by and on substances?
-	vector<GIAentityConnection*> * actionSubjectEntity;	//record of entity that is the subject of this action instance
-	vector<GIAentityConnection*> * actionObjectEntity;	//record of which entity that is the object of this action instance
+	vector<GIAentityConnection*>* actionSubjectEntity;	//record of entity that is the subject of this action instance
+	vector<GIAentityConnection*>* actionObjectEntity;	//record of which entity that is the object of this action instance
 		//condition connections;
 	//non-conditions only;
 	//conditions connections: conditions and reverse conditions (reason) lookups [condition and reason respectively]
-	vector<GIAentityConnection*> * conditionNodeList;		//this substance requires the following...
-	vector<GIAentityConnection*> * incomingConditionNodeList;	//this substance is required by the following... //aka reason
+	vector<GIAentityConnection*>* conditionNodeList;		//this substance requires the following...
+	vector<GIAentityConnection*>* incomingConditionNodeList;	//this substance is required by the following... //aka reason
 	//conditions only;
 	//NB conditions can be performed by and on concepts, and by and on substances?
-	vector<GIAentityConnection*> * conditionSubjectEntity;		//record of entity that is the subject of this action instance
-	vector<GIAentityConnection*> * conditionObjectEntity;		//record of which entity that is the object of this action instance
+	vector<GIAentityConnection*>* conditionSubjectEntity;		//record of entity that is the subject of this action instance
+	vector<GIAentityConnection*>* conditionObjectEntity;		//record of which entity that is the object of this action instance
 		//substance connections;
 	//record list of all substances for this entity
-	vector<GIAentityConnection*> * propertyNodeList;
-	vector<GIAentityConnection*> * propertyNodeReverseList;			//if substance/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given substance [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for concept entities [substance entities may possibly only be contained by {ie, be a substance of} a single entity]
+	vector<GIAentityConnection*>* propertyNodeList;
+	vector<GIAentityConnection*>* propertyNodeReverseList;			//if substance/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given substance [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for concept entities [substance entities may possibly only be contained by {ie, be a substance of} a single entity]
 	//actions, substances, and conditions only
-	vector<GIAentityConnection*> * entityNodeDefiningThisInstance;					//if substance/action/condition only:					//NB by definition, only 1 thing can contain any given substance [considering a substance is an instance of an entity] - therefore this is not a vector
+	vector<GIAentityConnection*>* entityNodeDefiningThisInstance;					//if substance/action/condition only:					//NB by definition, only 1 thing can contain any given substance [considering a substance is an instance of an entity] - therefore this is not a vector
 		//entity connections;
 	//record parent and child entity definition nodes
-	vector<GIAentityConnection*> * entityNodeDefinitionList;			//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
-	vector<GIAentityConnection*> * entityNodeDefinitionReverseList;			//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
+	vector<GIAentityConnection*>* entityNodeDefinitionList;			//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
+	vector<GIAentityConnection*>* entityNodeDefinitionReverseList;			//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
 	//concepts only (not substances/"instances" of entities);
 	//associated actions and substances [ie does this entity also define an action/verb or a substance/adjective? [ie, it is not just a thing/noun]]
-	vector<GIAentityConnection*> * associatedInstanceNodeList;			//if this entity is not a substance/instance but defines one or more substances/instances
+	vector<GIAentityConnection*>* associatedInstanceNodeList;			//if this entity is not a substance/instance but defines one or more substances/instances
 		//time condition connections;
 	int conditionType;	//added 25 Sept 11
-	GIAtimeConditionNode * timeConditionNode;		//if conditionType == CONDITION_NODE_TYPE_TIME
+	GIAtimeConditionNode* timeConditionNode;		//if conditionType == CONDITION_NODE_TYPE_TIME
 
 	/*GIA Special Variables (Quantities/Measures)*/
 	bool hasQuantity;
@@ -448,7 +448,7 @@ public:
 	bool added;	//implies database Update is Required
 	bool modified;	//implies database Update is Required
 	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
-	GIAconceptEntityLoaded * conceptEntityLoaded;
+	GIAconceptEntityLoaded* conceptEntityLoaded;
 	#endif
 	#endif
 		//nlg:
@@ -510,44 +510,44 @@ public:
 
 
 #ifdef GIA_USE_DATABASE
-void DBsetEntityConnectionsReferenceListsLoaded(GIAentityNode * entityNode, bool loaded);
+void DBsetEntityConnectionsReferenceListsLoaded(GIAentityNode* entityNode, bool loaded);
 #endif
 
-void disconnectNodeFromAllButDefinitions(GIAentityNode * entityNode);
+void disconnectNodeFromAllButDefinitions(GIAentityNode* entityNode);
 
 
 int calculateQuantityNumberInt(string quantityNumberString);
 int calculateQuantityModifierInt(string quantityModifierString);
 int calculateQuantityMultiplierInt(string quantityMultiplierString);
 
-string printQuantityNumberString(GIAentityNode * entityNode);
+string printQuantityNumberString(GIAentityNode* entityNode);
 
 
 #ifdef GIA_SUPPORT_ALIASES
-void convertAliasesStringToAliases(GIAentityNode * entityNode, string aliasesString);
-void convertAliasesToAliasesString(GIAentityNode * entityNode, string * aliasesString);
+void convertAliasesStringToAliases(GIAentityNode* entityNode, string aliasesString);
+void convertAliasesToAliasesString(GIAentityNode* entityNode, string* aliasesString);
 vector<string> explode(const string& str, const char& ch);
-string * convertDelimitedStringToArray(string str, char delimiter);
+string* convertDelimitedStringToArray(string str, char delimiter);
 #endif
 
-void deleteEntitiesInEntityNodeList(vector<GIAentityNode*> * entityNodesActiveListComplete);
+void deleteEntitiesInEntityNodeList(vector<GIAentityNode*>* entityNodesActiveListComplete);
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
-bool testEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristic*> * redistributeSpecialCasePropertiesTestVector, bool andOrOr);
-	bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic);
-		void testEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch);
-		void testEntityCharacteristicIterationint(int entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch);
-		void testEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch);
-void setEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristic*> * redistributeSpecialCasePropertiesAssignmentVector);
-	bool setEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic);
-		void setEntityCharacteristicIterationbool(bool * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch);
-		void setEntityCharacteristicIterationint(int * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch);
-		void setEntityCharacteristicIterationstring(string * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch);
+bool testEntityCharacteristics(GIAentityNode* entity, vector<EntityCharacteristic*>* redistributeSpecialCasePropertiesTestVector, bool andOrOr);
+	bool testEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entityCharacteristic);
+		void testEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch);
+		void testEntityCharacteristicIterationint(int entityVal, EntityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch);
+		void testEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch);
+void setEntityCharacteristics(GIAentityNode* entity, vector<EntityCharacteristic*>* redistributeSpecialCasePropertiesAssignmentVector);
+	bool setEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entityCharacteristic);
+		void setEntityCharacteristicIterationbool(bool* entityVal, EntityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch);
+		void setEntityCharacteristicIterationint(int* entityVal, EntityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch);
+		void setEntityCharacteristicIterationstring(string* entityVal, EntityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch);
 	#define ENTITY_CHARACTERISTIC_MAX_VALUE_SIZE (100)
-	bool getEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic);	//fills in entityCharacteristic->value based on entityCharacteristic->name
-		void getEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic * entityCharacteristicGet, string iterationVariable, bool *foundMatch);
-		void getEntityCharacteristicIterationint(int entityVal, EntityCharacteristic * entityCharacteristicGet, string iterationVariable, bool *foundMatch);
-		void getEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic * entityCharacteristicGet, string iterationVariable, bool *foundMatch);
+	bool getEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entityCharacteristic);	//fills in entityCharacteristic->value based on entityCharacteristic->name
+		void getEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch);
+		void getEntityCharacteristicIterationint(int entityVal, EntityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch);
+		void getEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch);
 #endif
 
 #endif

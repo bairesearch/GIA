@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -41,7 +41,7 @@
 
 
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
-void defineSubstances(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[], int NLPdependencyRelationsType)
+void defineSubstances(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature* featureArrayTemp[], int NLPdependencyRelationsType)
 {
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0a0 pass; define substances (objects/subjects with substances; eg 'Truffles which are picked are tasty.' - Truffle must be an instance/substance in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
@@ -180,7 +180,7 @@ void defineSubstances(Sentence * currentSentenceInList, bool GIAentityNodeArrayF
 	#endif
 }
 
-void defineSubstancesObjectsAndSubjectsWithSubstances(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], GIAentityNode * GIAfeatureTempEntityNodeArray[])
+void defineSubstancesObjectsAndSubjectsWithSubstances(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAentityNode* GIAfeatureTempEntityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
@@ -209,7 +209,7 @@ void defineSubstancesObjectsAndSubjectsWithSubstances(Sentence * currentSentence
 #endif
 }
 
-void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+void defineSubstancesExpletives(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 	//eg There is 	_expl(be[2], there[1]) [Relex]	/ expl(is-2, There-1) [stanford]
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
@@ -228,7 +228,7 @@ void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAentityNode 
 	genericDependecyRelationInterpretation(&param, REL1);
 	#endif
 #else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -240,7 +240,7 @@ void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAentityNode 
 			{
 				//create substance definition
 				int substanceIndex = currentRelationInList->relationDependentIndex;
-				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
+				GIAentityNode* substanceEntity = GIAentityNodeArray[substanceIndex];
 
 				#ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
 				GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
@@ -259,7 +259,7 @@ void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAentityNode 
 #endif
 }
 
-void defineSubstancesDefiniteNouns(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
+void defineSubstancesDefiniteNouns(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], Feature* featureArrayTemp[])
 {
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
@@ -311,7 +311,7 @@ void defineSubstancesDefiniteNouns(Sentence * currentSentenceInList, bool GIAent
 
 #ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 //Added 09 August 2012 [INCOMPLETE]
-void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[])
+void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature* featureArrayTemp[])
 {
 	/* Added 09 August 2012
 	The bat is an animal - (definition connection, bat = substance, animal = concept)	GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_1_GOVERNOR_DEFINITE_DEPENDENT_INDEFINITE [assumes defineSubstancesDefiniteNouns() executed]
@@ -389,7 +389,7 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 	}
 	#endif
 #else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD		//disabled nodes must be ignored, else disabled name definitions (eg name is Tom) will conflict (eg "The red dog's name is Tom.")
@@ -428,8 +428,8 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 				bool thingIsDefinite =  featureArrayTemp[thingIndex]->grammaticalIsDefinite || featureArrayTemp[thingIndex]->grammaticalIsIndefinitePlural;
 				bool definitionIsDefinite = featureArrayTemp[definitionIndex]->grammaticalIsDefinite || featureArrayTemp[definitionIndex]->grammaticalIsIndefinitePlural;
 
-				GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
-				GIAentityNode * definitionEntity = GIAentityNodeArray[definitionIndex];
+				GIAentityNode* thingEntity = GIAentityNodeArray[thingIndex];
+				GIAentityNode* definitionEntity = GIAentityNodeArray[definitionIndex];
 				featureArrayTemp[thingIndex]->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = true;
 				featureArrayTemp[definitionIndex]->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = true;
 
@@ -604,7 +604,7 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 }
 #endif
 
-void defineSubstancesNounsWithDeterminates(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[])
+void defineSubstancesNounsWithDeterminates(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature* featureArrayTemp[])
 {
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
@@ -667,7 +667,7 @@ void defineSubstancesNounsWithDeterminates(Sentence * currentSentenceInList, boo
 #endif
 }
 
-void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType)
+void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], int NLPdependencyRelationsType)
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, true);
@@ -690,7 +690,7 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 	genericDependecyRelationInterpretation(&paramB, REL1);
 	#endif
 #else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -719,8 +719,8 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 					int thingIndex = currentRelationInList->relationGovernorIndex;
 					int substanceIndex = currentRelationInList->relationDependentIndex;
 
-					GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
-					GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
+					GIAentityNode* thingEntity = GIAentityNodeArray[thingIndex];
+					GIAentityNode* substanceEntity = GIAentityNodeArray[substanceIndex];
 
 					GIAentityNodeArray[thingIndex] = addSubstanceToSubstanceDefinition(thingEntity);
 					#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
@@ -761,8 +761,8 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 				int thingIndex = currentRelationInList->relationGovernorIndex;
 				int substanceIndex = currentRelationInList->relationDependentIndex;
 
-				GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
-				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
+				GIAentityNode* thingEntity = GIAentityNodeArray[thingIndex];
+				GIAentityNode* substanceEntity = GIAentityNodeArray[substanceIndex];
 
 				GIAentityNodeArray[thingIndex] = addSubstanceToSubstanceDefinition(thingEntity);
 				#else
@@ -772,8 +772,8 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 				int thingIndex = currentRelationInList->relationDependentIndex;
 				int substanceIndex = currentRelationInList->relationGovernorIndex;
 
-				GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
-				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
+				GIAentityNode* thingEntity = GIAentityNodeArray[thingIndex];
+				GIAentityNode* substanceEntity = GIAentityNodeArray[substanceIndex];
 
 				GIAentityNodeArray[thingIndex] = addSubstanceToSubstanceDefinition(thingEntity);
 				#endif
@@ -790,7 +790,7 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 #endif
 }
 
-void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+void defineSubstancesQuantitiesAndMeasures(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
@@ -800,7 +800,7 @@ void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIA
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -819,7 +819,7 @@ void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIA
 			{
 				//create a new substance for the entity and assign a substance definition entity if not already created
 				int substanceIndex = currentRelationInList->relationGovernorIndex;
-				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
+				GIAentityNode* substanceEntity = GIAentityNodeArray[substanceIndex];
 
 				GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
 				#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
@@ -835,7 +835,7 @@ void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIA
 #endif
 }
 
-void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+void defineSubstancesQuantityModifiers(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
@@ -845,7 +845,7 @@ void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAenti
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -864,7 +864,7 @@ void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAenti
 			{
 				//create a new substance for the entity and assign a substance definition entity if not already created
 				int substanceIndex = currentRelationInList->relationDependentIndex;
-				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
+				GIAentityNode* substanceEntity = GIAentityNodeArray[substanceIndex];
 
 				GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
 				#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
@@ -880,7 +880,7 @@ void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAenti
 #endif
 }
 
-void defineSubstancesPronouns(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
+void defineSubstancesPronouns(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], Feature* featureArrayTemp[])
 {
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
@@ -915,7 +915,7 @@ void defineSubstancesPronouns(Sentence * currentSentenceInList, bool GIAentityNo
 }
 
 
-void defineSubstancesToBe(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+void defineSubstancesToBe(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
@@ -925,7 +925,7 @@ void defineSubstancesToBe(Sentence * currentSentenceInList, GIAentityNode * GIAe
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -937,7 +937,7 @@ void defineSubstancesToBe(Sentence * currentSentenceInList, GIAentityNode * GIAe
 
 				//create a new substance for the entity and assign a substance definition entity if not already created
 				int substanceIndex = currentRelationInList->relationDependentIndex;
-				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
+				GIAentityNode* substanceEntity = GIAentityNodeArray[substanceIndex];
 
 				GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
 
@@ -954,7 +954,7 @@ void defineSubstancesToBe(Sentence * currentSentenceInList, GIAentityNode * GIAe
 #endif
 }
 
-void defineActionsToDo(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+void defineActionsToDo(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
@@ -964,7 +964,7 @@ void defineActionsToDo(Sentence * currentSentenceInList, GIAentityNode * GIAenti
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -976,7 +976,7 @@ void defineActionsToDo(Sentence * currentSentenceInList, GIAentityNode * GIAenti
 
 				//create a new substance for the entity and assign a substance definition entity if not already created
 				int actionIndex = currentRelationInList->relationDependentIndex;
-				GIAentityNode * actionEntity = GIAentityNodeArray[actionIndex];
+				GIAentityNode* actionEntity = GIAentityNodeArray[actionIndex];
 
 				GIAentityNodeArray[actionIndex] = addActionToActionDefinitionDefineSubstances(actionEntity);
 
@@ -993,7 +993,7 @@ void defineActionsToDo(Sentence * currentSentenceInList, GIAentityNode * GIAenti
 #endif
 }
 
-void defineSubstancesHasTime(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
+void defineSubstancesHasTime(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], Feature* featureArrayTemp[])
 {
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
@@ -1008,7 +1008,7 @@ void defineSubstancesHasTime(Sentence * currentSentenceInList, bool GIAentityNod
 		{
 			if(featureArrayTemp[w]->grammaticalIsDateOrTime)
 			{
-				GIAentityNode * currentGIAEntityNode = GIAentityNodeArray[w];
+				GIAentityNode* currentGIAEntityNode = GIAentityNodeArray[w];
 				#ifdef GIA_TRANSLATOR_DEBUG
 				//cout << "grammaticalIsDateOrTime; currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
 				#endif
@@ -1023,7 +1023,7 @@ void defineSubstancesHasTime(Sentence * currentSentenceInList, bool GIAentityNod
 }
 
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE
-void defineSubstancesNonExplicitPronouns(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+void defineSubstancesNonExplicitPronouns(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
@@ -1065,7 +1065,7 @@ void defineSubstancesNonExplicitPronouns(Sentence * currentSentenceInList, bool 
 }
 #endif
 
-void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+void defineSubstancesIndirectObjects(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
@@ -1077,7 +1077,7 @@ void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentity
 	param.functionEntityRelationID[FUNC_ENT1] = REL2; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1087,7 +1087,7 @@ void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentity
 			if(currentRelationInList->relationType == RELATION_TYPE_INDIRECT_OBJECT)
 			{
 				//now find the associated object..
- 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+ 				Relation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1111,8 +1111,8 @@ void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentity
 								int substanceIndex = currentRelationInList2->relationDependentIndex;
 								int thingIndex = currentRelationInList->relationDependentIndex;
 
-								GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
-								GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
+								GIAentityNode* substanceEntity = GIAentityNodeArray[substanceIndex];
+								GIAentityNode* thingEntity = GIAentityNodeArray[thingIndex];
 
 								GIAentityNodeArray[substanceIndex] = addSubstanceToSubstanceDefinition(substanceEntity);
 
@@ -1137,7 +1137,7 @@ void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentity
 }
 
 #ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
-void defineSubstanceConcepts(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[])
+void defineSubstanceConcepts(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature* featureArrayTemp[])
 {
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 
@@ -1218,7 +1218,7 @@ void defineSubstanceConcepts(Sentence * currentSentenceInList, bool GIAentityNod
 			int thingIndex = i;
 			if(featureArrayTemp[thingIndex]->grammaticalWordType == GRAMMATICAL_WORD_TYPE_NOUN)
 			{
-				GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
+				GIAentityNode* thingEntity = GIAentityNodeArray[thingIndex];
 
 				#ifdef GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES
 				if(!(thingEntity->wasReference))
@@ -1302,7 +1302,7 @@ void defineSubstanceConcepts(Sentence * currentSentenceInList, bool GIAentityNod
 #endif
 
 
-void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+void defineSubstancesOfPossessivePrepositions(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	/*
@@ -1317,7 +1317,7 @@ void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, 
 	paramA.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT2].push_back(&useRedistributeSpecialCaseIsToBeComplimentOfActionTempAssignment);
 	genericDependecyRelationInterpretation(&paramA, REL1);
 	/*OLD:
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1349,7 +1349,7 @@ void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, 
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1389,7 +1389,7 @@ void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, 
 
 				bool foundAction = false;
 				int substanceIndex = currentRelationInList->relationGovernorIndex;		//eg 'grow' in prep_of(grew-2, pie-6)
-				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
+				GIAentityNode* substanceEntity = GIAentityNodeArray[substanceIndex];
 				if((substanceEntity->isActionTemp) || (substanceEntity->isToBeComplimentOfActionTemp))
 				{
 					/*Relex:
@@ -1436,7 +1436,7 @@ void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, 
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 //this function was developed after GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION and was designed for it
-void defineSubstancesActions(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+void defineSubstancesActions(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 	/*
 	eg 'run' in 'Tom runs' _subj(run[2], Tom[1])
@@ -1468,7 +1468,7 @@ void defineSubstancesActions(Sentence * currentSentenceInList, GIAentityNode * G
 #endif
 
 #ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
-void defineSubstancesActionConcepts(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
+void defineSubstancesActionConcepts(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], Feature* featureArrayTemp[])
 {
 	/*
 	eg 'swim' in 'To swim to the beach requires strength.'
@@ -1492,7 +1492,7 @@ void defineSubstancesActionConcepts(Sentence * currentSentenceInList, bool GIAen
 			{
 				if((featureArrayTemp[w]->grammaticalWordType == GRAMMATICAL_WORD_TYPE_VERB) && ((featureArrayTemp[w]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true) || (featureArrayTemp[w]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true)))
 				{
-					GIAentityNode * currentGIAEntityNode = GIAentityNodeArray[w];
+					GIAentityNode* currentGIAEntityNode = GIAentityNodeArray[w];
 					#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
 					cout << "defineSubstancesActionConcepts: " << currentGIAEntityNode->entityName << endl;
 					#endif
@@ -1505,7 +1505,7 @@ void defineSubstancesActionConcepts(Sentence * currentSentenceInList, bool GIAen
 }
 #endif
 
-void defineSubstancesAllNodes(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+void defineSubstancesAllNodes(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	#ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);

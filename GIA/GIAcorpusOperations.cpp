@@ -26,7 +26,7 @@
  * File Name: GIAcorpusOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -58,7 +58,7 @@ using namespace std;
 
 #ifdef GIA_USE_CORPUS_DATABASE
 
-void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNode ** GIAentityNodeArray, Sentence * currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet)
+void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNode** GIAentityNodeArray, Sentence* currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet)
 {
 	//cout << "GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain: " << endl;
 	string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelation(GIAentityNodeArray, connectionType, entityIndex1, entityIndex2, sameReferenceSet);
@@ -67,7 +67,7 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 }
 
 //this function [recording aux/cop/det syntatical dependency relations] is required to extract tense and perform instance/concept identification once GIA2 lookup has been performed: it is only currently supported by Stanford parser
-void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(GIAentityNode ** GIAentityNodeArray, Sentence * currentSentenceInList, bool linkPreestablishedReferencesGIA, int NLPdependencyRelationsType)
+void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(GIAentityNode** GIAentityNodeArray, Sentence* currentSentenceInList, bool linkPreestablishedReferencesGIA, int NLPdependencyRelationsType)
 {
 	#ifndef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
@@ -75,7 +75,7 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 	#endif
 		if(!linkPreestablishedReferencesGIA)
 		{
-			Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+			Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 
 			while(currentRelationInList->next != NULL)
 			{
@@ -124,7 +124,7 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 	#endif
 }
 
-string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet)
+string generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet)
 {
 	#ifdef GIA2_SUPPORT_QUERIES
 	string entityWord1 = GIAentityNodeArray[entityIndex1]->entityName;
@@ -212,11 +212,11 @@ string createSameReferenceSetRecord(bool sameReferenceSet)
 }
 
 //preconditions: determineGIAconnectionistNetworkPOStypeNames() has been executed
-string regenerateSentenceText(Feature * firstFeatureInSentence, bool addPOSinfo, int NLPfeatureParser)
+string regenerateSentenceText(Feature* firstFeatureInSentence, bool addPOSinfo, int NLPfeatureParser)
 {
 	//cout << "regenerateSentenceText1" << endl;
 	string sentenceText = "";
-	Feature * currentFeatureInSentence = firstFeatureInSentence;
+	Feature* currentFeatureInSentence = firstFeatureInSentence;
 	while(currentFeatureInSentence->next != NULL)
 	{
 		if(addPOSinfo)
@@ -234,9 +234,9 @@ string regenerateSentenceText(Feature * firstFeatureInSentence, bool addPOSinfo,
 	return sentenceText;
 }
 
-void determineGIAconnectionistNetworkPOStypeNames(Feature * firstFeatureInList, int NLPfeatureParser)
+void determineGIAconnectionistNetworkPOStypeNames(Feature* firstFeatureInList, int NLPfeatureParser)
 {
-	Feature * currentFeatureInSentence = firstFeatureInList;
+	Feature* currentFeatureInSentence = firstFeatureInList;
 	while(currentFeatureInSentence->next != NULL)
 	{
 		//cout << "currentFeatureInSentence->word = " << currentFeatureInSentence->word << endl;
@@ -256,7 +256,7 @@ void determineGIAconnectionistNetworkPOStypeNames(Feature * firstFeatureInList, 
 	}
 }
 
-void determineGIAconnectionistNetworkPOStypeNameStanford(Feature * currentFeatureInSentence)
+void determineGIAconnectionistNetworkPOStypeNameStanford(Feature* currentFeatureInSentence)
 {
 	int GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNDEFINED;
 	string GIAconnectionistNetworkPOStypeName = "";
@@ -456,7 +456,7 @@ void determineGIAconnectionistNetworkPOStypeNameStanford(Feature * currentFeatur
 }
 
 
-void determineGIAconnectionistNetworkPOStypeNameRelex(Feature * currentFeatureInSentence)
+void determineGIAconnectionistNetworkPOStypeNameRelex(Feature* currentFeatureInSentence)
 {
 	int GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNDEFINED;
 	//cout << "currentFeatureInSentence->type = " << currentFeatureInSentence->type << endl;

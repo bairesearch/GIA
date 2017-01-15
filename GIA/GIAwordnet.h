@@ -26,7 +26,7 @@
  * File Name: GIAwordnet.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -74,15 +74,15 @@ static int wordnetDataEntryPointersIndicatingSimilarSynsetsArray[WORDNET_DATA_EN
 void initialiseWordNet(int newSynonymnDetectionStatus);
 int getSynonymnDetectionStatus();
 
-bool checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(string * word, string * otherWord, int wordNetPOS);
-	bool checkIfWordIsContainedWithinAnotherWordsSynsets(string * word, string * otherWord, int wordNetPOS);
-SynsetPtr findMostPopularSynsets(string * word, bool * wordIsFound, int wordNetPOS);
-		SynsetPtr findSynsets(string * word, bool * wordIsFound, int wordNetPOS, int similarityType);
-		SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(SynsetPtr firstSenseInList, int wordNetPOS, int * maximumNumberOfTags, bool * entityNamesAreSynonymous, string * word, string * otherWord, bool compareEntityNames, bool * senseOutputWithHighestTagsPassedNewSynsetMustFree);
+bool checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(string* word, string* otherWord, int wordNetPOS);
+	bool checkIfWordIsContainedWithinAnotherWordsSynsets(string* word, string* otherWord, int wordNetPOS);
+SynsetPtr findMostPopularSynsets(string* word, bool* wordIsFound, int wordNetPOS);
+		SynsetPtr findSynsets(string* word, bool* wordIsFound, int wordNetPOS, int similarityType);
+		SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(SynsetPtr firstSenseInList, int wordNetPOS, int* maximumNumberOfTags, bool* entityNamesAreSynonymous, string* word, string* otherWord, bool compareEntityNames, bool* senseOutputWithHighestTagsPassedNewSynsetMustFree);
 
 
 
-void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], int wordNetPOS);
-bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char * output, int * newCharIndex, string * lineString, char characterToRecordUntil, char escapeCharacter);
+void findSynonymsOLD(string word, bool* wordIsFound, string listOfSynonyms[], int wordNetPOS);
+bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char* output, int* newCharIndex, string* lineString, char characterToRecordUntil, char escapeCharacter);
 
 #endif

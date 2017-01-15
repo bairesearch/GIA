@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -48,12 +48,12 @@
 
 int maxXAtAParticularY[MAX_GIA_TREE_DEPTH];
 
-void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile, int maxNumberSentences)
+void printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile, int maxNumberSentences)
 {//most of this is copied from CSexecFlow.cpp
 	bool result = true;
 	
-	XMLparserTag * firstTagInSVGFile = new XMLparserTag();
-	XMLparserTag * currentTagInSVGFile = firstTagInSVGFile;
+	XMLparserTag* firstTagInSVGFile = new XMLparserTag();
+	XMLparserTag* currentTagInSVGFile = firstTagInSVGFile;
 
 	bool printType[3];
 	printType[DRAW_CREATE_LDR_REFERENCES] = false;
@@ -70,7 +70,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 		printType[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = true;
 	}
 
-	Reference * firstReferenceInPrintList = new Reference();
+	Reference* firstReferenceInPrintList = new Reference();
 	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, printType, firstReferenceInPrintList, &currentTagInSVGFile, maxNumberSentences);
 
 	if(useOutputSVGfile)
@@ -94,8 +94,8 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 		//method1:
 		string topLevelSceneFileName = outputFileNameLDR;
 		string topLevelSceneFileNameCollapsed = "sceneCollapsedForOpenGLDisplay.ldr";
-		Reference * initialReferenceInSceneFile = new Reference();
-		Reference * topLevelReferenceInSceneFile = new Reference(topLevelSceneFileName, 1, true);	//The information in this object is not required or meaningful, but needs to be passed into the parseFile/parseReferenceList recursive function
+		Reference* initialReferenceInSceneFile = new Reference();
+		Reference* topLevelReferenceInSceneFile = new Reference(topLevelSceneFileName, 1, true);	//The information in this object is not required or meaningful, but needs to be passed into the parseFile/parseReferenceList recursive function
 		if(!parseFile(topLevelSceneFileName, initialReferenceInSceneFile, topLevelReferenceInSceneFile, true))
 		{//file does not exist
 			cout << "The file: " << topLevelSceneFileName << " does not exist in the directory" << endl;
@@ -103,7 +103,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 		}
 		write2DreferenceListCollapsedTo1DtoFile(topLevelSceneFileNameCollapsed, initialReferenceInSceneFile);
 		/* method2: why doesnt this work - "invalid dat file for conversion to rgb"
-		char * topLevelSceneFileNameCollapsed = "sceneCollapsedForRaytracing.ldr";
+		char* topLevelSceneFileNameCollapsed = "sceneCollapsedForRaytracing.ldr";
 		write2DreferenceListCollapsedTo1DtoFile(topLevelSceneFileNameCollapsed, firstReferenceInPrintList);
 		*/
 
@@ -113,13 +113,13 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 		#endif
 		
 
-		unsigned char * rgbMap = new unsigned char[width*height*RGB_NUM];
+		unsigned char* rgbMap = new unsigned char[width*height*RGB_NUM];
 
 		setViewPort3Dortho(-100.0, width-100, height-100, -100.0, 1.0, -1.0);	//-100 is used to display the most left semantic network nodes
 
 		//now reparse file
-		Reference * initialReferenceInCollapsedSceneFile = new Reference();
-		Reference * topLevelReferenceInCollapsedSceneFile = new Reference(topLevelSceneFileNameCollapsed, 1, true);	//The information in this object is not required or meaningful, but needs to be passed into the parseFile/parseReferenceList recursive function
+		Reference* initialReferenceInCollapsedSceneFile = new Reference();
+		Reference* topLevelReferenceInCollapsedSceneFile = new Reference(topLevelSceneFileNameCollapsed, 1, true);	//The information in this object is not required or meaningful, but needs to be passed into the parseFile/parseReferenceList recursive function
 		if(!parseFile(topLevelSceneFileNameCollapsed, initialReferenceInCollapsedSceneFile, topLevelReferenceInCollapsedSceneFile, true))
 		{//file does not exist
 			cout << "The file: " << topLevelSceneFileNameCollapsed << " does not exist in the directory" << endl;
@@ -164,11 +164,11 @@ void initiateMaxXAtParticularY()
 }
 
 
-void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, bool printType[], Reference * firstReferenceInPrintList, XMLparserTag ** currentTag, int maxNumberSentences)
+void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, bool printType[], Reference* firstReferenceInPrintList, XMLparserTag** currentTag, int maxNumberSentences)
 {
 	vector<GIAentityNode*>::iterator entityIter;
 
-	Reference * currentReferenceInPrintList = firstReferenceInPrintList;
+	Reference* currentReferenceInPrintList = firstReferenceInPrintList;
 
 	initiateMaxXAtParticularY();
 	int xInitial = DRAW_X_INITIAL_OFFSET;
@@ -208,9 +208,9 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesA
 	}
 }
 
-Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityConnection * entityConnection, Reference * currentReferenceInPrintList, bool printType[], string connectionName, int entityConnectionColour, XMLparserTag ** currentTag)
+Reference* initialiseEntityConnectionForPrinting(vec* pos1, GIAentityConnection* entityConnection, Reference* currentReferenceInPrintList, bool printType[], string connectionName, int entityConnectionColour, XMLparserTag** currentTag)
 {
-	GIAentityNode * entityNodeToConnect = entityConnection->entity;
+	GIAentityNode* entityNodeToConnect = entityConnection->entity;
 
 	//cout << "initialiseEntityConnectionForPrinting: entityNodeToConnect->entityName = " << entityNodeToConnect->entityName << endl;
 
@@ -240,7 +240,7 @@ Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityConnectio
 }
 
 
-Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, int x, bool printType[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance)
+Reference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, bool printType[], Reference* currentReferenceInPrintList, XMLparserTag** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance)
 {
 	//cout << "1 entityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp  << endl;
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
@@ -422,9 +422,9 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 							#ifdef GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDICES
 							//string connectionName = convertIntToString((*connectionIter)->sentenceIndexTemp);
 							string connectionName = string("s") + convertIntToString((*connectionIter)->sentenceIndexTemp) + entityVectorConnectionNameArray[i];
-							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, *connectionIter, currentReferenceInPrintList, printType, connectionName, entityConnectionColour, currentTag);	
+							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1,* connectionIter, currentReferenceInPrintList, printType, connectionName, entityConnectionColour, currentTag);	
 							#else
-							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, *connectionIter, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);	
+							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1,* connectionIter, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);	
 							#endif
 						}
 					}
@@ -660,7 +660,7 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 
 
 
-Reference * initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode * timeConditionNode, int y, int x, bool printType[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag)
+Reference* initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, int y, int x, bool printType[], Reference* currentReferenceInPrintList, XMLparserTag** currentTag)
 {
 
 	int timeConditionNodePrintX = x;
@@ -704,9 +704,9 @@ Reference * initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode * timeCo
 }
 
 
-Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, string connectionTypeName, bool printType[])
+Reference* createReferenceConnectionWithText(Reference* currentReferenceInPrintList, vec* pos1, vec* pos2, int colour, XMLparserTag** currentTag, string connectionTypeName, bool printType[])
 {
-	Reference * newCurrentReferenceInPrintList = currentReferenceInPrintList;
+	Reference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
 	newCurrentReferenceInPrintList = createReferenceConnection(newCurrentReferenceInPrintList, pos1, pos2, colour, currentTag, printType);
 
@@ -739,9 +739,9 @@ Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrin
 	return newCurrentReferenceInPrintList;
 }
 
-Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, bool printType[])
+Reference* createReferenceConnection(Reference* currentReferenceInPrintList, vec* pos1, vec* pos2, int colour, XMLparserTag** currentTag, bool printType[])
 {
-	Reference * newCurrentReferenceInPrintList = currentReferenceInPrintList;
+	Reference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
 	if(printType[DRAW_CREATE_LDR_REFERENCES] == true)
 	{
@@ -777,7 +777,7 @@ Reference * createReferenceConnection(Reference * currentReferenceInPrintList, v
 		*/
 		#endif
 
-		Reference * newDispayReference = new Reference();
+		Reference* newDispayReference = new Reference();
 		newCurrentReferenceInPrintList->next = newDispayReference;
 		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
 	}
@@ -796,9 +796,9 @@ Reference * createReferenceConnection(Reference * currentReferenceInPrintList, v
 
 //consider using elipse instead; <ellipse cx="240" cy="100" rx="220" ry="30">
 
-Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, XMLparserTag ** currentTag, int thickness, bool printType[])
+Reference* createBox(Reference* currentReferenceInPrintList, vec* vect, double width, double height, int colour, string* text, XMLparserTag** currentTag, int thickness, bool printType[])
 {
-	Reference * newCurrentReferenceInPrintList = currentReferenceInPrintList;
+	Reference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
 	if(printType[DRAW_CREATE_LDR_REFERENCES] == true)
 	{
@@ -843,7 +843,7 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 		*/
 		#endif
 
-		Reference * newDispayReference;
+		Reference* newDispayReference;
 
 		newDispayReference = new Reference();
 		newCurrentReferenceInPrintList->next = newDispayReference;
@@ -928,7 +928,7 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 		positionSVG.x = vect->x - GIA_DRAW_BASICENTITY_NODE_WIDTH/3;
 		positionSVG.y = vect->y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 		positionSVG.z = GIA_OUTPUT_Z_POSITION_TEXT;
-		writeSVGtext(currentTag, *text, &positionSVG, SVG_SCALE_FACTOR*SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
+		writeSVGtext(currentTag,* text, &positionSVG, SVG_SCALE_FACTOR*SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
 	}
 
 	return newCurrentReferenceInPrintList;
@@ -998,7 +998,7 @@ void fillInGIARulesExternVariables()
 {
 	//extract common sprite variables from either xml file (LRRC or ANN)
 
-	RulesClass * currentReferenceRulesClass = CSrulesDraw;
+	RulesClass* currentReferenceRulesClass = CSrulesDraw;
 
 	while(currentReferenceRulesClass->next != NULL)
 	{

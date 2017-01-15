@@ -26,7 +26,7 @@
  * File Name: GIAcorpus.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -57,7 +57,7 @@ using namespace std;
 
 #ifdef GIA_USE_CORPUS_DATABASE
 
-bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(Paragraph * firstParagraphInList, string inputPlainTXTFileName, string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, string outputCFFfileName, string NLPexeFolderArray[], vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, int * maxNumberSentences)
+bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(Paragraph* firstParagraphInList, string inputPlainTXTFileName, string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, string outputCFFfileName, string NLPexeFolderArray[], vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, int* maxNumberSentences)
 {
 	bool parseGIA2file = true;
 
@@ -140,13 +140,13 @@ bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParse
 
 }
 
-bool lookupCorpusFiles(Paragraph * firstParagraphInList, int NLPfeatureParser)
+bool lookupCorpusFiles(Paragraph* firstParagraphInList, int NLPfeatureParser)
 {
 	bool result = true;
-	Paragraph * currentParagraphInList = firstParagraphInList;
+	Paragraph* currentParagraphInList = firstParagraphInList;
 	while(currentParagraphInList->next != NULL)
 	{
-		Sentence * firstSentenceInList = currentParagraphInList->firstSentenceInList;
+		Sentence* firstSentenceInList = currentParagraphInList->firstSentenceInList;
 		if(!lookupCorpusFiles(firstSentenceInList, NLPfeatureParser))
 		{
 			result = false;
@@ -156,10 +156,10 @@ bool lookupCorpusFiles(Paragraph * firstParagraphInList, int NLPfeatureParser)
 	return result;
 }
 
-bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser)
+bool lookupCorpusFiles(Sentence* firstSentenceInList, int NLPfeatureParser)
 {
 	bool result = true;
-	Sentence * currentSentenceInList = firstSentenceInList;
+	Sentence* currentSentenceInList = firstSentenceInList;
 	while(currentSentenceInList->next != NULL)
 	{
 		//cout << "here" << endl;
@@ -174,9 +174,9 @@ bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser)
 			//DOING GIA 2d2a...
 			cout << "lookupCorpusFiles() GIA2_CONNECTIONIST_NETWORK case not yet tested" << endl;
 			//#endif
-			Feature * dummyBlankFeature = new Feature();
+			Feature* dummyBlankFeature = new Feature();
 			//now simulate GIA2 semantic relations for each subset of original sentence POS permutation
-			Feature * centralFeatureInSentence = currentSentenceInList->firstFeatureInList;
+			Feature* centralFeatureInSentence = currentSentenceInList->firstFeatureInList;
 			if(centralFeatureInSentence->next != NULL)
 			{
 				while(centralFeatureInSentence->next->next != NULL)	//set centralFeatureInSentence to last in sentence
@@ -198,10 +198,10 @@ bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser)
 						//#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
 						cout << "centralWord = " << centralWord << ", " << centralFeatureInSentence->lemma << endl;
 						//#endif
-						Feature * recordOfFeatureAfterCentralFeatureInSentence = centralFeatureInSentence->next;
+						Feature* recordOfFeatureAfterCentralFeatureInSentence = centralFeatureInSentence->next;
 						centralFeatureInSentence->next = dummyBlankFeature;	//temporarily disconnect node at end of sentence subset
 						bool foundACorpusSubsetForCentralWord = false;
-						Feature * firstFeatureInSentenceSubset = currentSentenceInList->firstFeatureInList;
+						Feature* firstFeatureInSentenceSubset = currentSentenceInList->firstFeatureInList;
 						for(int firstWord=1; firstWord<=centralWord-(GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1); firstWord++)	//firstWord in subset
 						{
 							if(!foundACorpusSubsetForCentralWord)
@@ -226,7 +226,7 @@ bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser)
 						}
 						if(!foundACorpusSubsetForCentralWord)
 						{
-							cout << "************************ warning: notFoundASubsetForAtLeastTwoWords ******************" << endl;
+							cout << "************************ warning: notFoundASubsetForAtLeastTwoWords* *****************" << endl;
 							notFoundASubsetForAtLeastTwoWords = true;
 						}
 						centralFeatureInSentence->next = recordOfFeatureAfterCentralFeatureInSentence;	//restore temporarily disconnected node at end of sentence subset

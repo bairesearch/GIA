@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -166,7 +166,7 @@ void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfi
 }
 
 
-bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, bool isQuery, Paragraph * firstParagraphInList, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode)
+bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, bool isQuery, Paragraph* firstParagraphInList, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode)
 {
 	bool result = true;
 
@@ -202,7 +202,7 @@ bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputText
 	return result;
 }
 
-bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQuery, Paragraph * firstParagraphInList, int NLPfeatureParser, bool * createNewSentences)
+bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQuery, Paragraph* firstParagraphInList, int NLPfeatureParser, bool* createNewSentences)
 {
 	bool result = true;
 
@@ -217,7 +217,7 @@ bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQu
 		#else
 		bool NLPrelexCompatibilityMode = false;		//irrelevant (not used) - only used when parsing syntatic dependency relations of a Relex file
 		#endif
-		if(!parseRelexFile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, false, true, NLPrelexCompatibilityMode, *createNewSentences, false))
+		if(!parseRelexFile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, false, true, NLPrelexCompatibilityMode,* createNewSentences, false))
 		{
 			result = false;
 		}
@@ -230,7 +230,7 @@ bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQu
 		#ifdef GIA_NLP_DEBUG
 		cout << "parseStanfordCoreNLPfile" << endl;
 		#endif
-		if(!parseStanfordCoreNLPfile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, false, true, *createNewSentences, false))
+		if(!parseStanfordCoreNLPfile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, false, true,* createNewSentences, false))
 		{
 			result = false;
 		}
@@ -261,7 +261,7 @@ bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQu
 	return result;
 }
 
-bool parseNLPparserRelationsFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph * firstParagraphInList, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
+bool parseNLPparserRelationsFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph* firstParagraphInList, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
@@ -309,15 +309,15 @@ bool parseNLPparserRelationsFile(string inputTextNLPrelationXMLfileName, bool is
 }
 
 #ifdef GIA_USE_RELEX
-bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph * firstParagraphInList, bool parseRelations, bool parseFeatures, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
+bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph* firstParagraphInList, bool parseRelations, bool parseFeatures, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
-	Paragraph * currentParagraph = firstParagraphInList;
-	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;
-	Sentence * currentSentence = firstSentenceInList;
+	Paragraph* currentParagraph = firstParagraphInList;
+	Sentence* firstSentenceInList = firstParagraphInList->firstSentenceInList;
+	Sentence* currentSentence = firstSentenceInList;
 
-	XMLparserTag * firstTagInXMLFile = new XMLparserTag();
+	XMLparserTag* firstTagInXMLFile = new XMLparserTag();
 	if(!readXMLfile(inputTextNLPrelationXMLfileName, firstTagInXMLFile))
 	{
 		result = false;
@@ -326,7 +326,7 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragr
 	if(result)
 	{
 		#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-		XMLparserTag * currentTag2 = firstTagInXMLFile;
+		XMLparserTag* currentTag2 = firstTagInXMLFile;
 		currentTag2 = parseTagDownALevel(currentTag2, Relex_CFF_XML_TAG_nlparse, &result);
 		if(result)
 		{
@@ -335,10 +335,10 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragr
 			{
 				if(currentTag2->name == Relex_CFF_XML_TAG_paragraph)
 				{
-					XMLparserTag * currentTag = currentTag2;
+					XMLparserTag* currentTag = currentTag2;
 					currentTag = parseTagDownALevel(currentTag, Relex_CFF_XML_TAG_paragraph, &result);
 		#else
-					XMLparserTag * currentTag = firstTagInXMLFile;
+					XMLparserTag* currentTag = firstTagInXMLFile;
 					currentTag = parseTagDownALevel(currentTag, Relex_CFF_XML_TAG_nlparse, &result);
 		#endif
 
@@ -352,8 +352,8 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragr
 								if(!onlyParseIfCorpusLookupFailed || !(currentSentence->corpusLookupSuccessful))
 								{
 									//locate and record sentence index
-									XMLParserAttribute * firstAttributeInSentenceTag = currentTag->firstAttribute;
-									XMLParserAttribute * currentAttributeInSentenceTag = firstAttributeInSentenceTag;
+									XMLParserAttribute* firstAttributeInSentenceTag = currentTag->firstAttribute;
+									XMLParserAttribute* currentAttributeInSentenceTag = firstAttributeInSentenceTag;
 									bool foundSentenceIndexAttribute = false;
 									while(currentAttributeInSentenceTag->nextAttribute != NULL)
 									{
@@ -371,14 +371,14 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragr
 										exit(0);
 									}
 
-									XMLparserTag * firstTagInSentence;
+									XMLparserTag* firstTagInSentence;
 									firstTagInSentence = parseTagDownALevel(currentTag, Relex_CFF_XML_TAG_sentence, &result);
-									XMLparserTag * firstTagInFirstParse;
+									XMLparserTag* firstTagInFirstParse;
 									firstTagInFirstParse = parseTagDownALevel(firstTagInSentence, Relex_CFF_XML_TAG_parse, &result);
 
 									if(result)
 									{
-										XMLparserTag * currentTagInParse = firstTagInFirstParse;
+										XMLparserTag* currentTagInParse = firstTagInFirstParse;
 										while(currentTagInParse->nextTag != NULL)
 										{
 
@@ -450,7 +450,7 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragr
 
 									if(createNewSentences)
 									{
-										Sentence * newSentence = new Sentence();
+										Sentence* newSentence = new Sentence();
 										newSentence->previous = currentSentence;
 										currentSentence->next = newSentence;
 									}
@@ -464,7 +464,7 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragr
 
 					}
 		#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-					Paragraph * newParagraph = new Paragraph();
+					Paragraph* newParagraph = new Paragraph();
 					newParagraph->previous = currentParagraph;
 					currentParagraph->next = newParagraph;
 					firstSentenceInList = newParagraph->firstSentenceInList;
@@ -487,7 +487,7 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragr
 
 
 #ifdef GIA_USE_STANFORD_CORENLP
-bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph * firstParagraphInList, bool parseRelations, bool parseFeatures, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
+bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph* firstParagraphInList, bool parseRelations, bool parseFeatures, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
@@ -495,15 +495,15 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 	//cout << "inputTextNLPrelationXMLfileName = " << inputTextNLPrelationXMLfileName << endl;
 	#endif
 
-	Paragraph * currentParagraph = firstParagraphInList;
-	Paragraph * newParagraph = new Paragraph();
+	Paragraph* currentParagraph = firstParagraphInList;
+	Paragraph* newParagraph = new Paragraph();
 	newParagraph->previous = currentParagraph;
 	currentParagraph->next = newParagraph;
 
-	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;
-	Sentence * currentSentence = firstSentenceInList;
+	Sentence* firstSentenceInList = firstParagraphInList->firstSentenceInList;
+	Sentence* currentSentence = firstSentenceInList;
 
-	XMLparserTag * firstTagInXMLFile = new XMLparserTag();
+	XMLparserTag* firstTagInXMLFile = new XMLparserTag();
 	if(!readXMLfile(inputTextNLPrelationXMLfileName, firstTagInXMLFile))
 	{
 		result = false;
@@ -512,14 +512,14 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 	if(result)
 	{
 
-		XMLparserTag * firstTagInRoot = parseTagDownALevel(firstTagInXMLFile, StanfordCoreNLP_XML_TAG_root, &result);
-		XMLparserTag * firstTagInDocument = parseTagDownALevel(firstTagInRoot, StanfordCoreNLP_XML_TAG_document, &result);
-		XMLparserTag * currentTagInDocument = firstTagInDocument;
+		XMLparserTag* firstTagInRoot = parseTagDownALevel(firstTagInXMLFile, StanfordCoreNLP_XML_TAG_root, &result);
+		XMLparserTag* firstTagInDocument = parseTagDownALevel(firstTagInRoot, StanfordCoreNLP_XML_TAG_document, &result);
+		XMLparserTag* currentTagInDocument = firstTagInDocument;
 
-		XMLparserTag * firstTagInSentences = parseTagDownALevel(currentTagInDocument, StanfordCoreNLP_XML_TAG_sentences, &result);
+		XMLparserTag* firstTagInSentences = parseTagDownALevel(currentTagInDocument, StanfordCoreNLP_XML_TAG_sentences, &result);
 		if(result && (firstTagInSentences != NULL))
 		{
-			XMLparserTag * currentTagInSentences = firstTagInSentences;
+			XMLparserTag* currentTagInSentences = firstTagInSentences;
 			while(currentTagInSentences->nextTag != NULL)
 			{
 				#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
@@ -534,15 +534,15 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 					//cout << "currentSentence->sentenceIndex = " << currentSentence->sentenceIndex << endl;
 					#endif
 
-					XMLparserTag * firstTagInSentence = parseTagDownALevel(currentTagInSentences, StanfordCoreNLP_XML_TAG_sentence, &result);
+					XMLparserTag* firstTagInSentence = parseTagDownALevel(currentTagInSentences, StanfordCoreNLP_XML_TAG_sentence, &result);
 
-					XMLparserTag * currentTagInSentence = firstTagInSentence;
+					XMLparserTag* currentTagInSentence = firstTagInSentence;
 
-					Feature * firstFeatureInList = currentSentence->firstFeatureInList;
-					Feature * currentFeatureInList = firstFeatureInList;
+					Feature* firstFeatureInList = currentSentence->firstFeatureInList;
+					Feature* currentFeatureInList = firstFeatureInList;
 
-					XMLparserTag * firstTagInTokens = parseTagDownALevel(currentTagInSentence, StanfordCoreNLP_XML_TAG_tokens, &result);
-					XMLparserTag * currentTagInTokens = firstTagInTokens;
+					XMLparserTag* firstTagInTokens = parseTagDownALevel(currentTagInSentence, StanfordCoreNLP_XML_TAG_tokens, &result);
+					XMLparserTag* currentTagInTokens = firstTagInTokens;
 					bool isQuestion = false;
 
 					#ifdef GIA_NLP_DEBUG
@@ -573,8 +573,8 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 						}
 						#endif
 
-						XMLparserTag * firstTagInToken = parseTagDownALevel(currentTagInTokens, StanfordCoreNLP_XML_TAG_token, &result);
-						XMLparserTag * currentTagInToken = firstTagInToken;
+						XMLparserTag* firstTagInToken = parseTagDownALevel(currentTagInTokens, StanfordCoreNLP_XML_TAG_token, &result);
+						XMLparserTag* currentTagInToken = firstTagInToken;
 						while(currentTagInToken->nextTag != NULL)
 						{
 							if(parseFeatures)
@@ -670,7 +670,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 							if(getUseLRP())
 							{
 								bool foundOfficialLRPreplacementString = false;
-								Relation * currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
+								Relation* currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
 								revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentence, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
 							}
 							#endif
@@ -709,7 +709,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 
 						if(parseFeatures)		//OR if(createNewSentences)
 						{//all sentences created must have feature list, as feature NLP file is always parsed first
-							Feature * newFeature = new Feature();
+							Feature* newFeature = new Feature();
 							newFeature->previous = currentFeatureInList;
 							currentFeatureInList->next = newFeature;
 							currentFeatureInList = currentFeatureInList->next;
@@ -752,7 +752,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 					}
 
 					currentTagInSentence = currentTagInSentence->nextTag;
-					XMLparserTag * firstTagInParse = parseTagDownALevel(currentTagInSentence, StanfordCoreNLP_XML_TAG_parse, &result);
+					XMLparserTag* firstTagInParse = parseTagDownALevel(currentTagInSentence, StanfordCoreNLP_XML_TAG_parse, &result);
 
 					if(parseRelations)
 					{
@@ -766,21 +766,21 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 						#endif
 						for(int dependenciesSetIndex=0; dependenciesSetIndex< StanfordCoreNLP_numberOfDependencySetsPerSentence; dependenciesSetIndex++)
 						{
-							Relation * firstRelationInList = currentSentence->firstRelationInList;
-							Relation * currentRelationInList = firstRelationInList;
+							Relation* firstRelationInList = currentSentence->firstRelationInList;
+							Relation* currentRelationInList = firstRelationInList;
 
 							currentTagInSentence = currentTagInSentence->nextTag;
 							if(dependenciesSetIndex == StanfordCoreNLP_dependencySet_usedByGIA)
 							{
-								XMLparserTag * firstTagInDependencies = parseTagDownALevel(currentTagInSentence, StanfordCoreNLP_relationSetNameArray[dependenciesSetIndex], &result);
+								XMLparserTag* firstTagInDependencies = parseTagDownALevel(currentTagInSentence, StanfordCoreNLP_relationSetNameArray[dependenciesSetIndex], &result);
 								if(firstTagInDependencies != NULL)
 								{
-									XMLparserTag * currentTagInDependencies = firstTagInDependencies;
+									XMLparserTag* currentTagInDependencies = firstTagInDependencies;
 									while(currentTagInDependencies->nextTag != NULL)
 									{
-										XMLparserTag * firstTagInDep = parseTagDownALevel(currentTagInDependencies, StanfordCoreNLP_XML_TAG_dep, &result);
-										XMLparserTag * governerTagInDep = firstTagInDep;
-										XMLparserTag * dependentTagInDep = firstTagInDep->nextTag;
+										XMLparserTag* firstTagInDep = parseTagDownALevel(currentTagInDependencies, StanfordCoreNLP_XML_TAG_dep, &result);
+										XMLparserTag* governerTagInDep = firstTagInDep;
+										XMLparserTag* dependentTagInDep = firstTagInDep->nextTag;
 
 										string relationGovernorIndexString = governerTagInDep->firstAttribute->value;
 										string relationDependentIndexString = dependentTagInDep->firstAttribute->value;
@@ -835,7 +835,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 										{
 										#endif
 										#endif
-											Relation * newRelation = new Relation();
+											Relation* newRelation = new Relation();
 											currentRelationInList->next = newRelation;
 											currentRelationInList = currentRelationInList->next;
 										#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
@@ -869,7 +869,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 				#endif
 					if(createNewSentences)
 					{
-						Sentence * newSentence = new Sentence();
+						Sentence* newSentence = new Sentence();
 						newSentence->previous = currentSentence;
 						currentSentence->next = newSentence;
 					}
@@ -883,24 +883,24 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 			}
 		}
 
-		StanfordCoreNLPcoreference * firstCoreferenceInList = firstSentenceInList->firstCoreferenceInList;
-		StanfordCoreNLPcoreference * currentCoreferenceInList = firstCoreferenceInList;
+		StanfordCoreNLPcoreference* firstCoreferenceInList = firstSentenceInList->firstCoreferenceInList;
+		StanfordCoreNLPcoreference* currentCoreferenceInList = firstCoreferenceInList;
 
 		if(parseFeatures)
 		{
 			currentTagInDocument = currentTagInDocument->nextTag;
 			bool hasCoreferences = false;
-			XMLparserTag * firstTagInCoreferences = parseTagDownALevel(currentTagInDocument, StanfordCoreNLP_XML_TAG_coreferences, &hasCoreferences);
+			XMLparserTag* firstTagInCoreferences = parseTagDownALevel(currentTagInDocument, StanfordCoreNLP_XML_TAG_coreferences, &hasCoreferences);
 			if(hasCoreferences)
 			{
-				XMLparserTag * currentTagInnCoreferences = firstTagInCoreferences;
+				XMLparserTag* currentTagInnCoreferences = firstTagInCoreferences;
 				while(currentTagInnCoreferences->nextTag != NULL)
 				{
-					XMLparserTag * firstTagInCoreference = parseTagDownALevel(currentTagInnCoreferences, StanfordCoreNLP_XML_TAG_coreference, &result);
-					XMLparserTag * currentTagInnCoreference = firstTagInCoreference;
+					XMLparserTag* firstTagInCoreference = parseTagDownALevel(currentTagInnCoreferences, StanfordCoreNLP_XML_TAG_coreference, &result);
+					XMLparserTag* currentTagInnCoreference = firstTagInCoreference;
 
-					StanfordCoreNLPmention * firstMentionInList = currentCoreferenceInList->firstMentionInList;
-					StanfordCoreNLPmention * currentMentionInList = firstMentionInList;
+					StanfordCoreNLPmention* firstMentionInList = currentCoreferenceInList->firstMentionInList;
+					StanfordCoreNLPmention* currentMentionInList = firstMentionInList;
 					while(currentTagInnCoreference->nextTag != NULL)
 					{
 						if(currentTagInnCoreference->firstAttribute->name == StanfordCoreNLP_XML_ATTRIBUTE_representative)
@@ -915,8 +915,8 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 							}
 						}
 
-						XMLparserTag * firstTagInMention = parseTagDownALevel(currentTagInnCoreference, StanfordCoreNLP_XML_TAG_mention, &result);
-						XMLparserTag * currentTagInMention = firstTagInMention;
+						XMLparserTag* firstTagInMention = parseTagDownALevel(currentTagInnCoreference, StanfordCoreNLP_XML_TAG_mention, &result);
+						XMLparserTag* currentTagInMention = firstTagInMention;
 						while(currentTagInMention->nextTag != NULL)
 						{
 							if(currentTagInMention->name == StanfordCoreNLP_XML_TAG_sentence)
@@ -943,14 +943,14 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 							currentTagInMention = currentTagInMention->nextTag;
 						}
 
-						StanfordCoreNLPmention * newMention = new StanfordCoreNLPmention();
+						StanfordCoreNLPmention* newMention = new StanfordCoreNLPmention();
 						currentMentionInList->next = newMention;
 						currentMentionInList = currentMentionInList->next;
 
 						currentTagInnCoreference = currentTagInnCoreference->nextTag;
 					}
 
-					StanfordCoreNLPcoreference * newCoreference = new StanfordCoreNLPcoreference();
+					StanfordCoreNLPcoreference* newCoreference = new StanfordCoreNLPcoreference();
 					currentCoreferenceInList->next = newCoreference;
 					currentCoreferenceInList = currentCoreferenceInList->next;
 
@@ -965,7 +965,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 		{
 			cout << "currentSentence->sentenceIndex = " << currentSentence->sentenceIndex << endl;
 
-			Relation * currentRelationInList = currentSentence->firstRelationInList;
+			Relation* currentRelationInList = currentSentence->firstRelationInList;
 			while(currentRelationInList->next != NULL)
 			{
 				cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
@@ -976,7 +976,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 
 				currentRelationInList = currentRelationInList->next;
 			}
-			Feature * currentFeatureInList = currentSentence->firstFeatureInList;
+			Feature* currentFeatureInList = currentSentence->firstFeatureInList;
 			while(currentFeatureInList->next != NULL)
 			{
 				cout << "currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
@@ -999,7 +999,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 		currentCoreferenceInList = firstParagraphInList->firstSentenceInList->firstCoreferenceInList;
 		while(currentCoreferenceInList->next != NULL)
 		{
-			StanfordCoreNLPmention * currentMentionInList = currentCoreferenceInList->firstMentionInList;
+			StanfordCoreNLPmention* currentMentionInList = currentCoreferenceInList->firstMentionInList;
 			while(currentMentionInList->next != NULL)
 			{
 				cout << "currentMentionInList->representative = " << int(currentMentionInList->representative) << endl;
@@ -1043,16 +1043,16 @@ int countSubstring(const std::string& str, const std::string& sub)
 }
 
 
-bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph * firstParagraphInList, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
+bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph* firstParagraphInList, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
-	Paragraph * currentParagraph = firstParagraphInList;
-	Paragraph * newParagraph = new Paragraph();
+	Paragraph* currentParagraph = firstParagraphInList;
+	Paragraph* newParagraph = new Paragraph();
 	newParagraph->previous = currentParagraph;
 	currentParagraph->next = newParagraph;
 
-	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;
+	Sentence* firstSentenceInList = firstParagraphInList->firstSentenceInList;
 	bool parseGIA2file = false;
 	if(!parseStanfordParserFile(inputTextNLPrelationXMLfileName, isQuery, firstSentenceInList, createNewSentences, parseGIA2file, onlyParseIfCorpusLookupFailed))
 	{
@@ -1061,11 +1061,11 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 	return result;
 }
 
-bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuery, Sentence * firstSentenceInList, bool createNewSentences, bool parseGIA2file, bool onlyParseIfCorpusLookupFailed)
+bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuery, Sentence* firstSentenceInList, bool createNewSentences, bool parseGIA2file, bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
-	Sentence * currentSentence = firstSentenceInList;
+	Sentence* currentSentence = firstSentenceInList;
 
 	string currentStanfordParserOutputParagraphString = "";
 
@@ -1119,7 +1119,7 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 								#endif
 								if(createNewSentences)
 								{
-									Sentence * newSentence = new Sentence();
+									Sentence* newSentence = new Sentence();
 									newSentence->previous = currentSentence;
 									currentSentence->next = newSentence;
 								}
@@ -1189,7 +1189,7 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 							#endif
 							if(createNewSentences)
 							{
-								Sentence * newSentence = new Sentence();
+								Sentence* newSentence = new Sentence();
 								newSentence->previous = currentSentence;
 								currentSentence->next = newSentence;
 								#ifdef GIA_RECORD_MAX_FEATURE_INDEX
@@ -1227,7 +1227,7 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 	{
 		cout << "currentSentence->sentenceIndex = " << currentSentence->sentenceIndex << endl;
 
-		Relation * currentRelationInList = currentSentence->firstRelationInList;
+		Relation* currentRelationInList = currentSentence->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{
 			cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
@@ -1251,36 +1251,36 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 
 
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
-void outputInternalRelationsInRelexFormat(string * nameOfRelexCompactFormatCFFfile, string * originalInputFileName, Paragraph * firstParagraphInList, int NLPdependencyRelationsParser, int NLPfeatureParser, string NLPexeFolderArray[])
+void outputInternalRelationsInRelexFormat(string* nameOfRelexCompactFormatCFFfile, string* originalInputFileName, Paragraph* firstParagraphInList, int NLPdependencyRelationsParser, int NLPfeatureParser, string NLPexeFolderArray[])
 {
 	bool result = true;
 
 	string parserTagValue = "";
 	parserTagValue = parserTagValue + "NLP Dependency Relations Parser: " + NLPexeFolderArray[NLPdependencyRelationsParser] + " | NLP Feature Tag Parser: " + NLPexeFolderArray[NLPfeatureParser];
 
-	struct tm *current;
+	struct tm* current;
 	time_t now;
 	time(&now);
 	current = localtime(&now);
 	char timeAndDateString[100];
 	sprintf(timeAndDateString, "%i-%.2i-%i %i:%i:%i +1000", (current->tm_year + TM_STRUCT_YEAR_OFFSET), (current->tm_mon + 1), current->tm_mday, current->tm_hour, current->tm_min, current->tm_sec);
 
- 	XMLparserTag * firstTagInXMLFile = new XMLparserTag();
+ 	XMLparserTag* firstTagInXMLFile = new XMLparserTag();
 
-	XMLparserTag * currentTagL0 = firstTagInXMLFile;
+	XMLparserTag* currentTagL0 = firstTagInXMLFile;
 	currentTagL0->name = Relex_CFF_XML_TAG_nlparse;
-	XMLparserTag * newTag0 = new XMLparserTag();	//had to add a null tag
+	XMLparserTag* newTag0 = new XMLparserTag();	//had to add a null tag
 	currentTagL0->nextTag = newTag0;
-	XMLParserAttribute * currentAttribute = currentTagL0->firstAttribute;
+	XMLParserAttribute* currentAttribute = currentTagL0->firstAttribute;
 	currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_xmlns;
 	currentAttribute->value = Relex_CFF_XML_ATTRIBUTE_xmlns_DEFAULT_VALUE;
-	XMLParserAttribute * newAttribute = new XMLParserAttribute();
+	XMLParserAttribute* newAttribute = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute;
 
-	XMLparserTag * firstTagL1 = new XMLparserTag();
+	XMLparserTag* firstTagL1 = new XMLparserTag();
 	currentTagL0->firstLowerLevelTag = firstTagL1;
-	XMLparserTag * currentTagL1 = currentTagL0->firstLowerLevelTag;
-	XMLparserTag * newTag1 = new XMLparserTag();
+	XMLparserTag* currentTagL1 = currentTagL0->firstLowerLevelTag;
+	XMLparserTag* newTag1 = new XMLparserTag();
 	currentTagL1->nextTag = newTag1;
 
 	currentTagL1->name = Relex_CFF_XML_TAG_parser;
@@ -1299,15 +1299,15 @@ void outputInternalRelationsInRelexFormat(string * nameOfRelexCompactFormatCFFfi
 	currentTagL1->value = "";
 	currentAttribute = currentTagL1->firstAttribute;
 	currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_url;
-	currentAttribute->value = *originalInputFileName;
+	currentAttribute->value =* originalInputFileName;
 	newAttribute = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute;
 	currentTagL1 = currentTagL1->nextTag;
 	newTag1 = new XMLparserTag();
 	currentTagL1->nextTag = newTag1;
 
-	Paragraph * currentParagraph = firstParagraphInList;
-	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;
+	Paragraph* currentParagraph = firstParagraphInList;
+	Sentence* firstSentenceInList = firstParagraphInList->firstSentenceInList;
 
 	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 	while(currentParagraph->next != NULL)
@@ -1315,21 +1315,21 @@ void outputInternalRelationsInRelexFormat(string * nameOfRelexCompactFormatCFFfi
 		firstSentenceInList = currentParagraph->firstSentenceInList;
 
 		currentTagL1->name = Relex_CFF_XML_TAG_paragraph;
-		XMLparserTag * firstTagL1b = new XMLparserTag();
+		XMLparserTag* firstTagL1b = new XMLparserTag();
 		currentTagL1->firstLowerLevelTag = firstTagL1b;
 	#else
-		XMLparserTag * firstTagL1b = currentTagL1;
+		XMLparserTag* firstTagL1b = currentTagL1;
 	#endif
 
-		XMLparserTag * currentTagL1b = firstTagL1b;
-		Sentence * currentSentence = firstSentenceInList;
+		XMLparserTag* currentTagL1b = firstTagL1b;
+		Sentence* currentSentence = firstSentenceInList;
 		while(currentSentence->next != NULL)
 		{
 			char sentenceIndexString[10];
 			sprintf(sentenceIndexString, "%d", currentSentence->sentenceIndex);
 
 			currentTagL1b->name = Relex_CFF_XML_TAG_sentence;
-			XMLparserTag * firstTagL2 = new XMLparserTag();
+			XMLparserTag* firstTagL2 = new XMLparserTag();
 			currentTagL1b->firstLowerLevelTag = firstTagL2;
 			currentAttribute = currentTagL1b->firstAttribute;
 			currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_index;
@@ -1342,9 +1342,9 @@ void outputInternalRelationsInRelexFormat(string * nameOfRelexCompactFormatCFFfi
 			newAttribute = new XMLParserAttribute();
 			currentAttribute->nextAttribute = newAttribute;
 
-			XMLparserTag * currentTagL2 = firstTagL2;
+			XMLparserTag* currentTagL2 = firstTagL2;
 			currentTagL2->name = Relex_CFF_XML_TAG_parse;
-			XMLparserTag * firstTagL3 = new XMLparserTag();
+			XMLparserTag* firstTagL3 = new XMLparserTag();
 			currentTagL2->firstLowerLevelTag = firstTagL3;
 			currentAttribute = currentTagL2->firstAttribute;
 			currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_id;
@@ -1352,10 +1352,10 @@ void outputInternalRelationsInRelexFormat(string * nameOfRelexCompactFormatCFFfi
 			newAttribute = new XMLParserAttribute();
 			currentAttribute->nextAttribute = newAttribute;
 
-			XMLparserTag * currentTagL3 = firstTagL3;
+			XMLparserTag* currentTagL3 = firstTagL3;
 			currentTagL3->name = Relex_CFF_XML_TAG_features;
 			currentTagL3->value = generateRelexCFFfeatureTagContent(currentSentence->firstFeatureInList);	//fill in currentTagL3->value with features
-			XMLparserTag * newTag3 = new XMLparserTag();
+			XMLparserTag* newTag3 = new XMLparserTag();
 			currentTagL3->nextTag = newTag3;
 			currentTagL3= currentTagL3->nextTag;
 
@@ -1365,10 +1365,10 @@ void outputInternalRelationsInRelexFormat(string * nameOfRelexCompactFormatCFFfi
 			currentTagL3->nextTag = newTag3;
 			currentTagL3= currentTagL3->nextTag;
 
-			XMLparserTag * newTag2 = new XMLparserTag();
+			XMLparserTag* newTag2 = new XMLparserTag();
 			currentTagL2->nextTag = newTag2;
 
-			XMLparserTag * newTag1b = new XMLparserTag();
+			XMLparserTag* newTag1b = new XMLparserTag();
 			currentTagL1b->nextTag = newTag1b;
 			currentTagL1b =	currentTagL1b->nextTag;
 			currentSentence = currentSentence->next;

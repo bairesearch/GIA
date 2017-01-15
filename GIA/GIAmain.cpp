@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -139,7 +139,7 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 "\n\n\tThis program performs GIA (General Intelligence Algorithm) operations - creates semantic network based upon NLP dependencies file (.xml) or GIA semantic network file (.xml); outputs semantic network to GIA semantic network file (.xml); displays semantic network (using opengl); prints semantic network to raster image (.ppm), 3D vector graphics (.ldr), or 2D vector graphics (.svg).\n\n";
 
 #ifndef USE_NLC
-int main(int argc,char **argv)
+int main(int argc,char* *argv)
 {
 	#ifdef GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
 	initialiseWordNet();
@@ -153,7 +153,7 @@ int main(int argc,char **argv)
 	#endif
 
 	//print execution time
-	struct tm *current;
+	struct tm* current;
 	time_t now;
 	time(&now);
 	current = localtime(&now);
@@ -639,7 +639,7 @@ int main(int argc,char **argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 2h16a 26-January-2015" << endl;
+			cout << "OpenGIA.exe - Project Version: 2h17a 27-January-2015" << endl;
 			exit(1);
 		}
 
@@ -652,12 +652,12 @@ int main(int argc,char **argv)
 		exit(1);
 	}
 
-	vector<GIAentityNode*> * entityNodesActiveListComplete = new vector<GIAentityNode*>;
-	unordered_map<string, GIAentityNode*> * entityNodesActiveListConcepts = new unordered_map<string, GIAentityNode*>;
-	vector<GIAentityNode*> * entityNodesActiveListSubstances = new vector<GIAentityNode*>;
-	vector<GIAentityNode*> * entityNodesActiveListActions = new vector<GIAentityNode*>;
-	vector<GIAentityNode*> * entityNodesActiveListConditions = new vector<GIAentityNode*>;
-	unordered_map<long, GIAtimeConditionNode*> * timeConditionNodesActiveList = new unordered_map<long, GIAtimeConditionNode*>;
+	vector<GIAentityNode*>* entityNodesActiveListComplete = new vector<GIAentityNode*>;
+	unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts = new unordered_map<string, GIAentityNode*>;
+	vector<GIAentityNode*>* entityNodesActiveListSubstances = new vector<GIAentityNode*>;
+	vector<GIAentityNode*>* entityNodesActiveListActions = new vector<GIAentityNode*>;
+	vector<GIAentityNode*>* entityNodesActiveListConditions = new vector<GIAentityNode*>;
+	unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList = new unordered_map<long, GIAtimeConditionNode*>;
 
 	int maxNumberSentences;
 
@@ -889,14 +889,14 @@ bool executeGIA(
 	int synonymnDetectionStatus,
 #endif
 
-	vector<GIAentityNode*> * entityNodesActiveListComplete,
-	unordered_map<string, GIAentityNode*> * entityNodesActiveListConcepts,
-	vector<GIAentityNode*> * entityNodesActiveListSubstances,
-	vector<GIAentityNode*> * entityNodesActiveListActions,
-	vector<GIAentityNode*> * entityNodesActiveListConditions,
-	unordered_map<long, GIAtimeConditionNode*> * timeConditionNodesActiveList,
+	vector<GIAentityNode*>* entityNodesActiveListComplete,
+	unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts,
+	vector<GIAentityNode*>* entityNodesActiveListSubstances,
+	vector<GIAentityNode*>* entityNodesActiveListActions,
+	vector<GIAentityNode*>* entityNodesActiveListConditions,
+	unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList,
 
-	int * maxNumberSentences
+	int* maxNumberSentences
 	)
 {
 #ifdef USE_CS_WORKAROUND
@@ -1029,12 +1029,12 @@ bool executeGIA2()
 	///GIA specific rules.xml file is not used at the moment	[once right variables have been decided upon they will be fed to xml]
 	//fillInGIARulesExternVariables();
 
-	vector<GIAentityNode*> * entityNodesActiveListCompleteQuery = new vector<GIAentityNode*>;
-	unordered_map<string, GIAentityNode*> * entityNodesActiveListConceptsQuery = new unordered_map<string, GIAentityNode*>;
-	vector<GIAentityNode*> * entityNodesActiveListSubstancesQuery = new  vector<GIAentityNode*>;			//not required - declared for symmetry
-	vector<GIAentityNode*> * entityNodesActiveListActionsQuery = new vector<GIAentityNode*>;			//not required - declared for symmetry
-	vector<GIAentityNode*> * entityNodesActiveListConditionsQuery = new vector<GIAentityNode*>;			//not required - declared for symmetry
-	unordered_map<long, GIAtimeConditionNode*> * timeConditionNodesActiveListQuery = new unordered_map<long, GIAtimeConditionNode*>;
+	vector<GIAentityNode*>* entityNodesActiveListCompleteQuery = new vector<GIAentityNode*>;
+	unordered_map<string, GIAentityNode*>* entityNodesActiveListConceptsQuery = new unordered_map<string, GIAentityNode*>;
+	vector<GIAentityNode*>* entityNodesActiveListSubstancesQuery = new  vector<GIAentityNode*>;			//not required - declared for symmetry
+	vector<GIAentityNode*>* entityNodesActiveListActionsQuery = new vector<GIAentityNode*>;			//not required - declared for symmetry
+	vector<GIAentityNode*>* entityNodesActiveListConditionsQuery = new vector<GIAentityNode*>;			//not required - declared for symmetry
+	unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveListQuery = new unordered_map<long, GIAtimeConditionNode*>;
 
 	#ifdef GIA_USE_DATABASE
 	initialiseDatabase(readFromDatabase, databaseFolderName, useDatabase, entityNodesActiveListComplete, entityNodesActiveListConcepts);
@@ -1232,13 +1232,13 @@ bool executeGIA2()
 
 #ifdef GIA_SUPPORT_INPUT_FILE_LISTS
 	int numberOfInputFilesInList = 1;
-	string * inputTextPlainTXTFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
+	string* inputTextPlainTXTFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
 	#ifdef USE_CE
-	string * inputTextCodeextensionsTXTFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
+	string* inputTextCodeextensionsTXTFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
 	#endif
-	string * inputTextNLPrelationXMLFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
-	string * inputTextNLPfeatureXMLFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
-	string * inputTextXMLFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
+	string* inputTextNLPrelationXMLFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
+	string* inputTextNLPfeatureXMLFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
+	string* inputTextXMLFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
 	string outputTextCFFFileNameBase = outputTextCFFFileName;
 	string outputLRPTextPlainTXTFileNameBase = outputLRPTextPlainTXTFileName;
 	string outputLRPTextForNLPonlyPlainTXTFileNameBase = outputLRPTextForNLPonlyPlainTXTFileName;
@@ -1322,8 +1322,8 @@ bool executeGIA2()
 
 		#ifdef USE_CE
 		bool useCodeextensionsHeirachy = false;
-		CECodeextension * firstCodeextensionInHeirachy = NULL;
-		vector<CECodeextension*> * codeextensionsList;
+		CECodeextension* firstCodeextensionInHeirachy = NULL;
+		vector<CECodeextension*>* codeextensionsList;
 		if(useInputTextCodeextensionsTXTFileName)
 		{
 			#ifdef GIA_WITH_CE_USE_CODEEXTENSION_HEIRACHY
@@ -1438,7 +1438,7 @@ bool executeGIA2()
 				//cout << "tempCurrentFolder = " << tempCurrentFolder << endl;
 				#endif
 
-				Paragraph * firstParagraphInList = new Paragraph();
+				Paragraph* firstParagraphInList = new Paragraph();
 				#ifdef USE_GIA2
 				if(!performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(firstParagraphInList, inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences))
 				{
@@ -1578,7 +1578,7 @@ bool executeGIA2()
 		}
 		else
 		{
-			Paragraph * firstParagraphInList = new Paragraph();
+			Paragraph* firstParagraphInList = new Paragraph();
 			#ifdef USE_GIA2
 			if(!performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(firstParagraphInList, inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences))
 			{
@@ -1586,8 +1586,8 @@ bool executeGIA2()
 			}
 			#else
 			#ifdef USE_CE
-			CECodeextension * firstCodeextensionInHeirachy;
-			vector<CECodeextension*> * codeextensionsList;
+			CECodeextension* firstCodeextensionInHeirachy;
+			vector<CECodeextension*>* codeextensionsList;
 			if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, false, firstCodeextensionInHeirachy, codeextensionsList, false))
 			#else
 			if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, false))
@@ -1645,7 +1645,7 @@ bool executeGIA2()
 	{
 		if(printOutputQuery)	//moved here in version 1i8a
 		{
-			printGIAnetworkNodes(entityNodesActiveListCompleteQuery, rasterImageWidth, rasterImageHeight, outputQueryLDRFileName, outputQuerySVGFileName, outputQueryPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputQueryLDRFile, useOutputQueryPPMFile, useOutputQuerySVGFile, *maxNumberSentences);
+			printGIAnetworkNodes(entityNodesActiveListCompleteQuery, rasterImageWidth, rasterImageHeight, outputQueryLDRFileName, outputQuerySVGFileName, outputQueryPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputQueryLDRFile, useOutputQueryPPMFile, useOutputQuerySVGFile,* maxNumberSentences);
 		}
 		if(useOutputQueryCXLFile)	//moved here in version 1i8a
 		{
@@ -1692,7 +1692,7 @@ bool executeGIA2()
 				{
 					for(vector<string>::iterator aliasIter = queryAnswerNode->aliasList.begin(); aliasIter != queryAnswerNode->aliasList.end(); aliasIter++)
 					{
-						cout << "Exact Found Answer (alias): " << *aliasIter << endl;		//CHECKTHIS; this is not working yet
+						cout << "Exact Found Answer (alias): " <<* aliasIter << endl;		//CHECKTHIS; this is not working yet
 					}
 				}
 				#endif
@@ -1794,9 +1794,9 @@ bool executeGIA2()
 			#endif
 
 			#ifdef GIA_USE_NLG
-			NLGSentence * firstNLGsentence = new NLGSentence();
+			NLGSentence* firstNLGsentence = new NLGSentence();
 			//look for action links
-			NLGSentence * currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 1);
+			NLGSentence* currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 1);
 			int irrelevant;
 			string printEntityNodeString = "";
 			bool traceInstantiations = false;
@@ -1804,14 +1804,14 @@ bool executeGIA2()
 			if(firstNLGsentence->NLGInputViewText == "")
 			{
 				//look for condition links
-				NLGSentence * currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 2);
+				NLGSentence* currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 2);
 				traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
 
 			}
 			if(firstNLGsentence->NLGInputViewText == "")
 			{
 				//look for substance/definition links
-				NLGSentence * currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 3);
+				NLGSentence* currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 3);
 				traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
 			}
 
@@ -1840,8 +1840,8 @@ bool executeGIA2()
 		setCurrentDirectory(tempFolderCharStar);
 
 		/*
-		char * fileByteArray = const_cast<char*>(answerString.c_str());
-		char * outputTextAnswerPlainTXTFileNameCharStar = const_cast<char*>(outputTextAnswerPlainTXTFileName.c_str());
+		char* fileByteArray = const_cast<char*>(answerString.c_str());
+		char* outputTextAnswerPlainTXTFileNameCharStar = const_cast<char*>(outputTextAnswerPlainTXTFileName.c_str());
 		writeByteArrayToFile(outputTextAnswerPlainTXTFileNameCharStar, fileByteArray, answerString.length());
 		*/
 	}
@@ -1857,7 +1857,7 @@ bool executeGIA2()
 
 	if(printOutput)
 	{
-		printGIAnetworkNodes(entityNodesActiveListComplete, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile, useOutputTextSVGFile, *maxNumberSentences);
+		printGIAnetworkNodes(entityNodesActiveListComplete, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile, useOutputTextSVGFile,* maxNumberSentences);
 	}
 
 	//cout << "ak8" << endl;
@@ -1887,12 +1887,12 @@ bool executeGIA2()
 	//cout << "ak11" << endl;
 
 	#ifdef GIA_USE_NLG
-	NLGSentence * firstNLGsentence = new NLGSentence();
-	NLGSentence * currentNLGsentence = firstNLGsentence;
+	NLGSentence* firstNLGsentence = new NLGSentence();
+	NLGSentence* currentNLGsentence = firstNLGsentence;
 	string generatedText = "";
 	for(unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListMapIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListMapIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListMapIter++)
 	{
-		GIAentityNode * entityNode = conceptEntityNodesListMapIter->second;
+		GIAentityNode* entityNode = conceptEntityNodesListMapIter->second;
 		currentNLGsentence = generateLanguageFromEntityNode(entityNode, currentNLGsentence, false, 0);
 	}
 	#ifdef GIA_NLG_DEBUG
@@ -1919,7 +1919,7 @@ bool executeGIA2()
 		//set conceptEntityLoaded disabled values (used by DBwriteConceptEntityNodesLoadedList() to prevent the writing of disabled concept nodes...)
 		for(unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListMapIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListMapIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListMapIter++)
 		{
-			GIAentityNode * entityNode = conceptEntityNodesListMapIter->second;
+			GIAentityNode* entityNode = conceptEntityNodesListMapIter->second;
 			if(entityNode->disabled)
 			{
 				(entityNode->conceptEntityLoaded)->disabled = true;
@@ -1951,11 +1951,11 @@ bool executeGIA2()
 
 
 
-bool fileExists(string * fileName)
+bool fileExists(string* fileName)
 {
 	bool result = false;
- 	FILE * pFile = NULL;
-	const char * fileNameCharStar = fileName->c_str();
+ 	FILE* pFile = NULL;
+	const char* fileNameCharStar = fileName->c_str();
   	pFile = fopen(fileNameCharStar,"r");
 	if(pFile != NULL)
 	{
@@ -1965,7 +1965,7 @@ bool fileExists(string * fileName)
 }
 
 #ifdef GIA_SUPPORT_INPUT_FILE_LISTS
-int getFilesFromFileList(string inputListFileName, string * inputFileNameArray)
+int getFilesFromFileList(string inputListFileName, string* inputFileNameArray)
 {
 	bool result = true;
 	int numberOfInputFilesInList = 0;

@@ -26,7 +26,7 @@
  * File Name: GIAmain.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -59,7 +59,7 @@ using namespace std;
 
 
 #ifndef USE_NLC
-int main(int argc,char **argv);
+int main(int argc,char* *argv);
 #endif
 
 bool executeGIA(
@@ -167,20 +167,20 @@ bool executeGIA(
 	int synonymnDetectionStatus,
 #endif
 
-	vector<GIAentityNode*> * entityNodesActiveListComplete,
-	unordered_map<string, GIAentityNode*> * entityNodesActiveListConcepts,
-	vector<GIAentityNode*> * entityNodesActiveListSubstances,
-	vector<GIAentityNode*> * entityNodesActiveListActions,
-	vector<GIAentityNode*> * entityNodesActiveListConditions,
-	unordered_map<long, GIAtimeConditionNode*> * timeConditionNodesActiveList,
+	vector<GIAentityNode*>* entityNodesActiveListComplete,
+	unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts,
+	vector<GIAentityNode*>* entityNodesActiveListSubstances,
+	vector<GIAentityNode*>* entityNodesActiveListActions,
+	vector<GIAentityNode*>* entityNodesActiveListConditions,
+	unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList,
 
-	int * maxNumberSentences
+	int* maxNumberSentences
 	);
 
-bool fileExists(string * fileName);
+bool fileExists(string* fileName);
 
 #ifdef GIA_SUPPORT_INPUT_FILE_LISTS
-int getFilesFromFileList(string inputListFileName, string * inputFileNameArray);
+int getFilesFromFileList(string inputListFileName, string* inputFileNameArray);
 #endif
 
 #ifdef USE_CS_WORKAROUND

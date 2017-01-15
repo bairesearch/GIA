@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -45,12 +45,12 @@
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 
 //NB Translator:fillGrammaticalArraysStanford():extractGrammaticalInformationStanford():extractPOSrelatedGrammaticalInformationStanford():extractGrammaticalInformationFromPOStag() performs initial infinitive/imperative determination based on NLP tags and previous word "to" (and sets previousWordInSentenceIsTo for redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs():extractPOSrelatedGrammaticalInformationStanford():extractGrammaticalInformationFromPOStag() to reperform infinitive/imperative determination in case Stanford parser/CoreNLP failed to tag the word correctly ie as VB);
-void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
+void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], Feature* featureArrayTemp[])
 {
 	//eg What is wood used in the delivering of?   interpret prep_of(xing, y) as obj(xing, y) )
 
 
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -60,8 +60,8 @@ void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(Sent
 
 			int governorIndex = currentRelationInList->relationGovernorIndex;
 			int dependentIndex = currentRelationInList->relationDependentIndex;
-			GIAentityNode * governorEntity = GIAentityNodeArray[governorIndex];
-			GIAentityNode * dependentEntity = GIAentityNodeArray[dependentIndex];
+			GIAentityNode* governorEntity = GIAentityNodeArray[governorIndex];
+			GIAentityNode* dependentEntity = GIAentityNodeArray[dependentIndex];
 
 			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 			//cout << "governorEntity->entityName = " << governorEntity->entityName << endl;
@@ -86,7 +86,7 @@ void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(Sent
 
 //note this function tags all "continuous verbs" as VBG (even those which perhaps should be left as NNP because they appear at the beginning at the sentence eg "Swimming is good exercise.")
 //note this function can perhaps only be strictly used in circumstances where the continuous verb appears at the end of the sentence eg GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION (because "-ing" cannot be used in itself to detect continuous verbs - as there are some which perhaps should be left as NNP when they appear at the beginning at the sentence eg "Swimming is good exercise.")
-bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature * currentFeature)
+bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, Feature* currentFeature)
 {
 	bool updatedLemma = false;
 	//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
@@ -298,7 +298,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 
 
 /*
-bool determineVerbCase(string * word)
+bool determineVerbCase(string* word)
 {
 
 	//detectContinuousVerbBasic Algorithm:
@@ -334,11 +334,11 @@ bool determineVerbCase(string * word)
 	return foundVerbContinuousCase;
 
 }
-bool determineVerbCase(string * word)
+bool determineVerbCase(string* word)
 {
 	bool foundVerbContinuousCase = false;
 	int wordStringLength = word->length();
-	//cout << "word = " << *word << endl;
+	//cout << "word = " <<* word << endl;
 	//cout << "wordStringLength = " << wordStringLength << endl;
 	if(wordStringLength > GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND)
 	{
@@ -361,7 +361,7 @@ bool determineVerbCase(string * word)
 
 
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
-void redistributeRelexRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[])
+void redistributeRelexRelations(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser, Feature* featureArrayTemp[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -444,7 +444,7 @@ void redistributeRelexRelations(Sentence * currentSentenceInList, bool GIAentity
 }
 
 
-void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+void collapseRedundantRelationAndMakeNegativeRelex(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 	/*
 	eg Space is saved by not having a bulky cart. _subj(not[5], by[4]), _subj(have[6], not[5])
@@ -465,7 +465,7 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 	param.disableRelation[REL1] = true;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -485,7 +485,7 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 				}
 				if(passed)
 				{
-					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+					Relation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
 					while(currentRelationInList2->next != NULL)
 					{
 						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -534,7 +534,7 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
-void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationAllWithADefinitionFunctionAsPropertyLinks(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationAllWithADefinitionFunctionAsPropertyLinks(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO
@@ -569,7 +569,7 @@ void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationAllWithADefini
 
 #ifdef GIA_SUPPORT_ALIASES_RELEX_COMPATIBILITY
 //required for aliasing to work
-void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[])
+void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser, Feature* featureArrayTemp[])
 {
 	/*
 	She is the one.		_subj(be[2], she[1]) + _obj(be[2], one[4]) -> appos(She-1, one-4)
@@ -677,7 +677,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 	paramC.disableEntity[REL1][REL_ENT1] = true;	//oldRedundantBeEntity
 	genericDependecyRelationInterpretation(&paramC, REL1);
 #else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -687,7 +687,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 			if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT)
 			{
 				//now find the associated object..
- 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+ 				Relation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -725,7 +725,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 
 										foundSpecialCaseQuery = true;
 
-										GIAentityNode * oldRedundantBeEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+										GIAentityNode* oldRedundantBeEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 										disableEntity(oldRedundantBeEntity);
 									}
 									else
@@ -750,7 +750,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 												note query comparison node used to be identified via identifyComparisonVariableAlternateMethod())
 											*/
 
-											GIAentityNode * oldRedundantItEntity = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
+											GIAentityNode* oldRedundantItEntity = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
 											disableEntity(oldRedundantItEntity);
 
 											currentRelationInList2->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
@@ -799,7 +799,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 									currentRelationInList->disabled =  true;
 									currentRelationInList->relationType = "dummyRelationCollapseSubjectAndObjectGenerateAppos";	//required to prevent use by GIA (when !GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD)
 
-									GIAentityNode * oldRedundantBeEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+									GIAentityNode* oldRedundantBeEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 									disableEntity(oldRedundantBeEntity);
 								}
 							}
@@ -821,7 +821,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 #endif
 #ifdef GIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS
 //required for aliasing to work
-void redistributeRelexRelationsDetectNameQueries(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
+void redistributeRelexRelationsDetectNameQueries(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], Feature* featureArrayTemp[])
 {
 	bool firstWordOfSentenceIsWho = false;
 
@@ -874,7 +874,7 @@ void redistributeRelexRelationsDetectNameQueries(Sentence * currentSentenceInLis
 
 #ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS
 //Added 28 October 2012b
-void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	//eg1 Yarn is used in the making of cloth.	of(making[6], cloth[8]) + in(use[3], making[6])  -> _obj(making[6], _cloth[8])
 	//eg2 What is yarn used in the making of?   interpret  of(making[7], of[8]) + _obj(of[8], _$qVar[1]) [+ ignore: in(use[4], making[7])  -> _obj(making[7], _$qVar[1])
@@ -916,7 +916,7 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 	genericDependecyRelationInterpretation(&paramC, REL1);
 	*/
 #else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -927,10 +927,10 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 			if(convertPrepositionToRelex(&(currentRelationInList->relationType), &prepositionFound) == RELATION_TYPE_PREPOSITION_OF)
 			{
 				int continuousVerbIndex = currentRelationInList->relationGovernorIndex;
-				GIAentityNode * continuousVerbEntity = GIAentityNodeArray[continuousVerbIndex];
+				GIAentityNode* continuousVerbEntity = GIAentityNodeArray[continuousVerbIndex];
 				if((continuousVerbEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && (continuousVerbEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true))
 				{
-					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+					Relation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
 					while(currentRelationInList2->next != NULL)
 					{
 						//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -970,7 +970,7 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 										currentRelationInList->disabled =  true;
 										currentRelationInList->relationType = "dummyRelationRedistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs";	//required to prevent use by GIA (when !GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD)
 
-										GIAentityNode * oldRedundantOfEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+										GIAentityNode* oldRedundantOfEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 										disableEntity(oldRedundantOfEntity);
 									}
 								}
@@ -997,7 +997,7 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
-void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
 
@@ -1037,7 +1037,7 @@ void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHas
 }
 #endif
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A_RELATIONS_DISREGARD_REDUNDANT_DEFINITION_RELATIONS
-void redistributeRelexRelationsDisregardRedundantDefinitionRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+void redistributeRelexRelationsDisregardRedundantDefinitionRelations(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	/*
 	Eg;	What are the patent claims on?	_subj(be[2], claim[5]) + _obj(on[6], _$qVar[1]) -> on(claim[5], _$qVar[1])
@@ -1066,7 +1066,7 @@ void redistributeRelexRelationsDisregardRedundantDefinitionRelations(Sentence * 
 }
 #endif
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_RELATION_AS_ACTION_CONDITION
-void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	/*eg 1 Space is saved by running fast.	_subj(run[5], by[4]) + _advmod(save[3], by[4]) -> by(save[3], run[5])
 	_subj(run[5], by[4])
@@ -1110,7 +1110,7 @@ void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(Senten
 #endif
 
 
-void switchArgumentsAndFunctionsWhereNecessaryRelex(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+void switchArgumentsAndFunctionsWhereNecessaryRelex(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, false);
@@ -1138,7 +1138,7 @@ void switchArgumentsAndFunctionsWhereNecessaryRelex(Sentence * currentSentenceIn
 	_subj(go[7], we[6])
 	that(place[4], go[7])
 
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1167,7 +1167,7 @@ void switchArgumentsAndFunctionsWhereNecessaryRelex(Sentence * currentSentenceIn
 	that(place[4], go[7])
 	*/
 
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1208,7 +1208,7 @@ void switchArgumentsAndFunctionsWhereNecessaryRelex(Sentence * currentSentenceIn
 
 				#ifdef GIA_PERFORM_RELATION_GOVERNOR_ARGUMENT_SWITCHING_ONLY_WHEN_REQUIRED
 				//now find the associated object..
- 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+ 				Relation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1264,10 +1264,10 @@ void switchArgumentsAndFunctionsWhereNecessaryRelex(Sentence * currentSentenceIn
 }
 
 
-/* **************************************************** START SCENARIOS NOT YET IMPLEMENTED FOR RELEX ****************************************************/
+/** *************************************************** START SCENARIOS NOT YET IMPLEMENTED FOR RELEX* ***************************************************/
 
 #ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_WHAT_IS_THE_NAME_NUMBER_OF_QUERIES
-void redistributeRelexRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+void redistributeRelexRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	/*interpret;
 		[given 'The name of the dog near the farm is Max.']
@@ -1288,7 +1288,7 @@ void redistributeRelexRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence * c
 #endif
 
 #ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
-void redistributeRelexRelationsInterpretNameOfAsDefinition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+void redistributeRelexRelationsInterpretNameOfAsDefinition(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	/*
 	eg interpret 'The red dog's name is Max.'		? -> appos(dog-3, Max-7)
@@ -1304,6 +1304,6 @@ void redistributeRelexRelationsInterpretNameOfAsDefinition(Sentence * currentSen
 }
 #endif
 
-/* **************************************************** END SCENARIOS NOT YET IMPLEMENTED FOR RELEX ****************************************************/
+/** *************************************************** END SCENARIOS NOT YET IMPLEMENTED FOR RELEX* ***************************************************/
 
 #endif

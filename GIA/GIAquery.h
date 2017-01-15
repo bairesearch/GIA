@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
@@ -113,14 +113,14 @@ class GIAqueryTraceParameters
 public:
 
 	GIAqueryTraceParameters(void);
-	GIAqueryTraceParameters(GIAqueryTraceParameters * queryTraceParametersToCopy);
+	GIAqueryTraceParameters(GIAqueryTraceParameters* queryTraceParametersToCopy);
 	~GIAqueryTraceParameters(void);
 
 	bool detectComparisonVariable;				//never changes
-	GIAentityNode * comparisonVariableNode;			//never changes
+	GIAentityNode* comparisonVariableNode;			//never changes
 
 	bool foundAnswer;
-	GIAentityNode * queryAnswerNode;			//record best answer found
+	GIAentityNode* queryAnswerNode;			//record best answer found
 	string queryAnswerContext;				//record the query answer context for best answer
 	#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS
 	int numberAnswersFound;					//record number of answers found (with equal number of matches to best answer node)
@@ -168,8 +168,8 @@ public:
 	
 	#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 	bool testReferenceSetContext;
-	GIAentityNode * referenceSetDefiniteEntity;
-	//Sentence * firstSentenceInList;
+	GIAentityNode* referenceSetDefiniteEntity;
+	//Sentence* firstSentenceInList;
 	#endif
 	
 	#ifdef GIA_REFERENCING_QUERY_SUPPORT_SAME_REFERENCE_SET_TESTS
@@ -178,35 +178,35 @@ public:
 };
 
 
-GIAentityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, unordered_map<string, GIAentityNode*> *entityNodesActiveListConceptsQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool * foundAnswer, GIAentityNode* queryAnswerNode, double * numberOfMatchedNodes, string * queryAnswerContext);
-	bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAentityNode * entityNode, int * numberOfMatchedNodes, bool knownBestMatch, int * numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAqueryTraceParameters * queryTraceParameters, GIAreferenceTraceParameters * referenceTraceParameters);
-		int testReferencedEntityNodeForExactNameMatch(GIAentityNode * queryEntityNode, GIAentityNode * entityNode, int * numberOfMatchedNodes, bool knownBestMatch, int * numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAqueryTraceParameters * queryTraceParameters, GIAreferenceTraceParameters * referenceTraceParameters);
-			bool verifyThatAnswerEntityIsDefinedByComparisonVariableNode(GIAentityNode * entityNode, string comparisonVariableNodeName);
-		bool determineMatchParameters(bool exactMatchFoundTemp, bool traceIsQuery, int referenceTraceParametersTraceMode, int numberOfMatchedNodesTempMax, bool * exactMatch);
+GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, unordered_map<string, GIAentityNode*>* entityNodesActiveListConceptsQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool* foundAnswer, GIAentityNode* queryAnswerNode, double* numberOfMatchedNodes, string* queryAnswerContext);
+	bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAentityNode* entityNode, int* numberOfMatchedNodes, bool knownBestMatch, int* numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAqueryTraceParameters* queryTraceParameters, GIAreferenceTraceParameters* referenceTraceParameters);
+		int testReferencedEntityNodeForExactNameMatch(GIAentityNode* queryEntityNode, GIAentityNode* entityNode, int* numberOfMatchedNodes, bool knownBestMatch, int* numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAqueryTraceParameters* queryTraceParameters, GIAreferenceTraceParameters* referenceTraceParameters);
+			bool verifyThatAnswerEntityIsDefinedByComparisonVariableNode(GIAentityNode* entityNode, string comparisonVariableNodeName);
+		bool determineMatchParameters(bool exactMatchFoundTemp, bool traceIsQuery, int referenceTraceParametersTraceMode, int numberOfMatchedNodesTempMax, bool* exactMatch);
 		bool determineIfBestAnswerCandidate(bool traceModeIsQuery, bool queryTraceParametersTempFoundAnswer, bool alreadyFoundAnAnswer, int numberOfMatchedNodesTemp, int numberOfMatchedNodesTempMax, int numberOfMatchedNodesRequiredSynonymnDetectionTemp, int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax, int referenceTraceParametersTraceMode, int exactMatchTemp);
 #ifdef GIA_QUERY_SIMPLIFIED_SEARCH
-GIAentityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork2(unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, unordered_map<string, GIAentityNode*> *entityNodesActiveListConceptsQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool * foundAnswer, GIAentityNode* queryAnswerNode, double * numberOfMatchedNodes, string * queryAnswerContext);
-	bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode * queryEntityNode, GIAentityNode * entityNode, int * numberOfMatchedNodes, bool knownBestMatch, int * numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAqueryTraceParameters * queryTraceParameters, GIAreferenceTraceParameters * referenceTraceParameters);
-		bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode * queryEntityNode, GIAentityNode * entityNode, int * numberOfMatchedNodes, bool knownBestMatch, int * numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAqueryTraceParameters * queryTraceParameters, GIAreferenceTraceParameters * referenceTraceParameters);
+GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork2(unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, unordered_map<string, GIAentityNode*>* entityNodesActiveListConceptsQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool* foundAnswer, GIAentityNode* queryAnswerNode, double* numberOfMatchedNodes, string* queryAnswerContext);
+	bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAentityNode* entityNode, int* numberOfMatchedNodes, bool knownBestMatch, int* numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAqueryTraceParameters* queryTraceParameters, GIAreferenceTraceParameters* referenceTraceParameters);
+		bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode* queryEntityNode, GIAentityNode* entityNode, int* numberOfMatchedNodes, bool knownBestMatch, int* numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAqueryTraceParameters* queryTraceParameters, GIAreferenceTraceParameters* referenceTraceParameters);
 #endif
 
 #ifdef GIA_USE_SYNONYMN_DETECTION
-bool compareEntitySynonyms(GIAentityNode * queryEntityNode, GIAentityNode * entityNode);
+bool compareEntitySynonyms(GIAentityNode* queryEntityNode, GIAentityNode* entityNode);
 #endif
-bool compareEntityAliases(GIAentityNode * queryEntityNode, GIAentityNode * entityNode);
-void generateTexualContextWithPreviousNodeForwards(string * queryAnswerContext, string sourceContext, GIAentityNode* entityNode, GIAentityNode* entityNodePrevious);
-	void generateTexualContextForwards(string * queryAnswerContext, string sourceContext, GIAentityNode* entityNode);
-	void generateTexualContextBackwards(string * queryAnswerContext, string sourceContext, GIAentityNode* entityNode);
-	void generateTexualContextEntityStringForwards(string * queryAnswerContext, GIAentityNode* entityNode);
-	void generateTexualContextEntityStringBackwards(string * queryAnswerContext, GIAentityNode* entityNode);
-		void generateTexualContextEntityString(string * texualContextEntityString, GIAentityNode* entityNode);
+bool compareEntityAliases(GIAentityNode* queryEntityNode, GIAentityNode* entityNode);
+void generateTexualContextWithPreviousNodeForwards(string* queryAnswerContext, string sourceContext, GIAentityNode* entityNode, GIAentityNode* entityNodePrevious);
+	void generateTexualContextForwards(string* queryAnswerContext, string sourceContext, GIAentityNode* entityNode);
+	void generateTexualContextBackwards(string* queryAnswerContext, string sourceContext, GIAentityNode* entityNode);
+	void generateTexualContextEntityStringForwards(string* queryAnswerContext, GIAentityNode* entityNode);
+	void generateTexualContextEntityStringBackwards(string* queryAnswerContext, GIAentityNode* entityNode);
+		void generateTexualContextEntityString(string* texualContextEntityString, GIAentityNode* entityNode);
 
-double determineMaxConfidenceOfQuerySemanticNetwork(unordered_map<string, GIAentityNode*> *entityNodesActiveListConceptsQuery);
-	void traceEntityNode(GIAentityNode * entityNode, int function, int * numberOfMatchedNodes, string * printEntityNodeString, bool thisIsInstanceAndPreviousNodeWasDefinition, int referenceSetID, bool traceInstantiations);
-		void traceEntityNodeDetermineNextCourseOfAction(string * printEntityNodeString, GIAentityNode * entityNode, string context, int function, int * numberOfMatchedNodes, bool thisIsInstanceAndPreviousNodeWasDefinition, int referenceSetID, bool traceInstantiations);
+double determineMaxConfidenceOfQuerySemanticNetwork(unordered_map<string, GIAentityNode*>* entityNodesActiveListConceptsQuery);
+	void traceEntityNode(GIAentityNode* entityNode, int function, int* numberOfMatchedNodes, string* printEntityNodeString, bool thisIsInstanceAndPreviousNodeWasDefinition, int referenceSetID, bool traceInstantiations);
+		void traceEntityNodeDetermineNextCourseOfAction(string* printEntityNodeString, GIAentityNode* entityNode, string context, int function, int* numberOfMatchedNodes, bool thisIsInstanceAndPreviousNodeWasDefinition, int referenceSetID, bool traceInstantiations);
 
-void printEntityNodeQualitiesOnly(GIAentityNode * entityNode, string * printEntityNodeString);
-void printEntityTimeConditionNodeOnly(GIAentityNode * entityNode, string * printEntityNodeString);
+void printEntityNodeQualitiesOnly(GIAentityNode* entityNode, string* printEntityNodeString);
+void printEntityTimeConditionNodeOnly(GIAentityNode* entityNode, string* printEntityNodeString);
 
 void queryDebugIndentOutputForLevel(int currentLevel);
 

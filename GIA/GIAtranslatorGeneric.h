@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -111,23 +111,23 @@ using namespace std;
 #define FUNCTION_ENTITY_RELATION_ID_NONEXISTANT_MUST_GENERATE (-9999)
 #define FUNCTION_ENTITY_RELATION_ENTITY_ID_NONEXISTANT_MUST_GENERATE (-9999)
 
-void initialiseBoolArray1D(bool * boolArray, int size, int value);
-void initialiseBoolArray2D(bool * boolArray, int size1, int size2, int value);
-void initialiseIntArray1D(int * intArray, int size, int value);
-void initialiseIntArray2D(int * intArray, int size1, int size2, int value);
-void initialiseIntArray3D(int * intArray, int size1, int size2, int size3, int value);
+void initialiseBoolArray1D(bool* boolArray, int size, int value);
+void initialiseBoolArray2D(bool* boolArray, int size1, int size2, int value);
+void initialiseIntArray1D(int* intArray, int size, int value);
+void initialiseIntArray2D(int* intArray, int size1, int size2, int value);
+void initialiseIntArray3D(int* intArray, int size1, int size2, int size3, int value);
 
 class GIAgenericDepRelInterpretationParameters
 {
 public:
-	GIAgenericDepRelInterpretationParameters(Sentence * newcurrentSentenceInList, bool newGIAentityNodeArrayFilled[], GIAentityNode * newGIAentityNodeArray[], bool executeOrReassign);
+	GIAgenericDepRelInterpretationParameters(Sentence* newcurrentSentenceInList, bool newGIAentityNodeArrayFilled[], GIAentityNode* newGIAentityNodeArray[], bool executeOrReassign);
 	~GIAgenericDepRelInterpretationParameters(void);
 
 		//general parameters
-	Sentence * currentSentenceInList;
-	bool * GIAentityNodeArrayFilled;
-	GIAentityNode ** GIAentityNodeArray;
-	unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts;
+	Sentence* currentSentenceInList;
+	bool* GIAentityNodeArrayFilled;
+	GIAentityNode** GIAentityNodeArray;
+	unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts;
 	int NLPdependencyRelationsType;
 
 		//execute function based on relations content or redistribute entities within relations
@@ -142,7 +142,7 @@ public:
 	bool parseDisabledRelationDuringLink[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
 
 		//found values
-	Relation * relation[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
+	Relation* relation[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
 	string relationEntity[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
 	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 	int relationEntityIndex[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
@@ -158,7 +158,7 @@ public:
 	int relationEntityIndexOriginal[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];
 	#endif
 		//for further manipulation of variables after successful (match found) recursive execution of genericDependecyRelationInterpretation:
-	Relation * relationFinalResult[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
+	Relation* relationFinalResult[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
 	string relationEntityFinalResult[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//warning: will contain latest match if multiple matches found
 	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 	int relationEntityIndexFinalResult[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//warning: will contain latest match if multiple matches found
@@ -171,7 +171,7 @@ public:
 	string relationTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
 	bool relationTestIsNegative[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
 	bool useRelationArrayTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//if !useRelationTest[x][REL_ENT0_TYPE_OR_INTERMEDIARY], then useRelationArrayTest[x][REL_ENT0_TYPE_OR_INTERMEDIARY] (as a relation type test must be applied for each parsed relation)
-	string * relationArrayTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	string* relationArrayTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
 	int relationArrayTestSize[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
 	bool relationArrayTestIsNegative[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
 	bool expectToFindPrepositionTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
@@ -242,7 +242,7 @@ public:
 	bool useRedistributeSpecialCaseNonExistantRelationCheck[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];	//non existant relations tests - added GIA 2f12a/13-July-2014
 };
 
-bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters * param, int currentRelationID);
+bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters* param, int currentRelationID);
 
 #endif
 
@@ -250,13 +250,13 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 class GIAgenericEntityInterpretationParameters
 {
 public:
-	GIAgenericEntityInterpretationParameters(Sentence * newcurrentSentenceInList, bool newGIAentityNodeArrayFilled[], GIAentityNode * newGIAentityNodeArray[], bool executeOrReassign);
+	GIAgenericEntityInterpretationParameters(Sentence* newcurrentSentenceInList, bool newGIAentityNodeArrayFilled[], GIAentityNode* newGIAentityNodeArray[], bool executeOrReassign);
 	~GIAgenericEntityInterpretationParameters(void);
 
 		//general parameters
-	Sentence * currentSentenceInList;
-	bool * GIAentityNodeArrayFilled;
-	GIAentityNode ** GIAentityNodeArray;
+	Sentence* currentSentenceInList;
+	bool* GIAentityNodeArrayFilled;
+	GIAentityNode** GIAentityNodeArray;
 
 		//execute function based on relations content or redistribute entities within relations
 	bool executeOrReassign;
@@ -269,7 +269,7 @@ public:
 	string entityTest;
 	bool entityTestIsNegative;
 	bool useEntityArrayTest;
-	string * entityArrayTest;
+	string* entityArrayTest;
 	int entityArrayTestSize;
 	bool entityArrayTestIsNegative;
 	vector<EntityCharacteristic*> specialCaseCharacteristicsTestAndVector;
@@ -287,11 +287,11 @@ public:
 	string functionName;
 };
 
-bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * param);
+bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters* param);
 
 #endif
 
-bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, Relation * prepositionRelation, int * indexOfPreposition);
+bool determineFeatureIndexOfPreposition(Sentence* currentSentenceInList, Relation* prepositionRelation, int* indexOfPreposition);
 
 
 #endif

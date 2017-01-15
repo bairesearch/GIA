@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -40,17 +40,17 @@
 
 #ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 
-bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA)
+bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, Feature* featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA)
 {
 	//int tempindex = 1;
 
 	bool result = true;
-	XMLparserTag * firstTagInRulesTag = parseTagDownALevel(GIAfirstTagInXMLfile, RULES_XML_TAG_rules, &result);
+	XMLparserTag* firstTagInRulesTag = parseTagDownALevel(GIAfirstTagInXMLfile, RULES_XML_TAG_rules, &result);
 	if(result)
 	{
-		XMLparserTag * currentTag = firstTagInRulesTag;
+		XMLparserTag* currentTag = firstTagInRulesTag;
 		bool foundTranslatorTag = false;
-		XMLparserTag * firstTagInTranslatorTag = NULL;
+		XMLparserTag* firstTagInTranslatorTag = NULL;
 		while((currentTag->nextTag != NULL) && !foundTranslatorTag)
 		{
 			if(currentTag->name == RULES_XML_TAG_translator)
@@ -62,7 +62,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 		}
 		if(foundTranslatorTag)
 		{
-			XMLparserTag * currentFileTag = firstTagInTranslatorTag;
+			XMLparserTag* currentFileTag = firstTagInTranslatorTag;
 			while(currentFileTag->nextTag != NULL)
 			{
 				if(currentFileTag->firstAttribute->name == RULES_XML_ATTRIBUTE_name)
@@ -79,10 +79,10 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 						}
 						*/
 
-						XMLparserTag * firstTagInFileTag = parseTagDownALevel(currentFileTag, RULES_XML_TAG_file, &result);
+						XMLparserTag* firstTagInFileTag = parseTagDownALevel(currentFileTag, RULES_XML_TAG_file, &result);
 						if(result)
 						{
-							XMLparserTag * currentFunctionTag = firstTagInFileTag;
+							XMLparserTag* currentFunctionTag = firstTagInFileTag;
 							while(currentFunctionTag->nextTag != NULL)
 							{
 								string functionName = "";
@@ -97,8 +97,8 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 
 								if(currentFunctionTag->firstLowerLevelTag != NULL)
 								{
-									XMLparserTag * firstTagInFunction = currentFunctionTag->firstLowerLevelTag;
-									XMLparserTag * currentParamTag = firstTagInFunction;
+									XMLparserTag* firstTagInFunction = currentFunctionTag->firstLowerLevelTag;
+									XMLparserTag* currentParamTag = firstTagInFunction;
 									while(currentParamTag->nextTag != NULL)
 									{
 										if((currentParamTag->name == RULES_XML_TAG_paramDepRel) || (currentParamTag->name == RULES_XML_TAG_paramEntity))
@@ -177,21 +177,21 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 												unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListIter2;
 												for(conceptEntityNodesListIter2 = entityNodesActiveListConcepts->begin(); conceptEntityNodesListIter2 != entityNodesActiveListConcepts->end(); conceptEntityNodesListIter2++)
 												{
-													GIAentityNode * entityNode = conceptEntityNodesListIter2->second;
+													GIAentityNode* entityNode = conceptEntityNodesListIter2->second;
 													cout << "entityNode->disabled = " << entityNode->entityName << ", " << int(entityNode->disabled) << endl;
 												}
 											}
 											*/
 											
 											/*
-											Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+											Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 											while(currentRelationInList->next != NULL)
 											{
 												if(!(currentRelationInList->disabled))
 												{
 													string relationType = currentRelationInList->relationType;
-													GIAentityNode * relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-													GIAentityNode * relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+													GIAentityNode* relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+													GIAentityNode* relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 
 													cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
 												}
@@ -202,7 +202,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 											/*
 											if(functionName == "defineSubstanceConcepts")	//defineSubstancesBasedOnDeterminatesOfDefinitionEntities //linkEntityDefinitionsAppositiveOfNouns
 											{
-												Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+												Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 												while(currentRelationInList->next != NULL)
 												{
 													if(!(currentRelationInList->disabled))
@@ -210,8 +210,8 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 														string relationType = currentRelationInList->relationType;
 														if(relationType == RELATION_TYPE_APPOSITIVE_OF_NOUN)
 														{
-															GIAentityNode * relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-															GIAentityNode * relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+															GIAentityNode* relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+															GIAentityNode* relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 
 															cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
 
@@ -302,14 +302,14 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 											{
 												cout << "\t\t" << tempindex << ": dependency relations: " << endl;
 												tempindex++;
-												Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+												Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 												while(currentRelationInList->next != NULL)
 												{
 													if(!(currentRelationInList->disabled))
 													{
 														string relationType = currentRelationInList->relationType;
-														GIAentityNode * relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-														GIAentityNode * relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+														GIAentityNode* relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+														GIAentityNode* relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 
 														cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
 													}
@@ -341,7 +341,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 	return result;
 }
 
-bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depRelOrEntity, bool executeOrReassign, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA, string functionName)
+bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRelOrEntity, bool executeOrReassign, Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, Feature* featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA, string functionName)
 {
 	bool result = true;
 	if(currentParamTag->firstLowerLevelTag != NULL)
@@ -365,8 +365,8 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 		int asssertPostProcessingREL = INT_DEFAULT_VALUE;
 		bool assertassignPluralAfterFinish = false;
 
-		XMLparserTag * firstConfigurationTag = currentParamTag->firstLowerLevelTag;
-		XMLparserTag * currentConfigurationTag = firstConfigurationTag;
+		XMLparserTag* firstConfigurationTag = currentParamTag->firstLowerLevelTag;
+		XMLparserTag* currentConfigurationTag = firstConfigurationTag;
 		while(currentConfigurationTag->nextTag != NULL)
 		{
 			#ifdef GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
@@ -416,7 +416,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 			else if(currentConfigurationTag->name == RULES_XML_TAG_specialCase)
 			{
 				string entityCharacteristicsType = "";
-				EntityCharacteristic * entityCharacteristics = new EntityCharacteristic();
+				EntityCharacteristic* entityCharacteristics = new EntityCharacteristic();
 				if(genericInterpretationGenerateSpecialCase(currentConfigurationTag, entityCharacteristics, &entityCharacteristicsType))
 				{
 					if(depRelOrEntity)
@@ -431,7 +431,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 			}
 			else if(currentConfigurationTag->name == RULES_XML_TAG_assert)
 			{//store especially defined conditions for pre/post processing of DepRel/Entity interpretation:
-				XMLParserAttribute * assertAttribute = currentConfigurationTag->firstAttribute;
+				XMLParserAttribute* assertAttribute = currentConfigurationTag->firstAttribute;
 				if(assertAttribute->name == RULES_XML_ATTRIBUTE_variable)
 				{
 					if(assertAttribute->value == "NLPfeatureParserStanfordCoreNLP")
@@ -596,7 +596,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 }
 
 
-bool genericInterpretationGenerateSpecialCase(XMLparserTag * xmlTag, EntityCharacteristic * entityCharacteristics, string * type)
+bool genericInterpretationGenerateSpecialCase(XMLparserTag* xmlTag, EntityCharacteristic* entityCharacteristics, string* type)
 {
 	bool result = false;
 
@@ -646,7 +646,7 @@ bool genericInterpretationGenerateSpecialCase(XMLparserTag * xmlTag, EntityChara
 	return result;
 }
 
-bool genericDepRelInterpretationApplySpecialCase(EntityCharacteristic * entityCharacteristics, GIAgenericDepRelInterpretationParameters * paramDepRel, int REL, int REL_ENT, string type)
+bool genericDepRelInterpretationApplySpecialCase(EntityCharacteristic* entityCharacteristics, GIAgenericDepRelInterpretationParameters* paramDepRel, int REL, int REL_ENT, string type)
 {
 	bool result = true;
 	if(type == "specialCaseCharacteristicsTestAndVector")
@@ -679,12 +679,12 @@ bool genericDepRelInterpretationApplySpecialCase(EntityCharacteristic * entityCh
 }
 
 
-//string * convertDelimitedStringToArray(string str, char delimiter)
+//string* convertDelimitedStringToArray(string str, char delimiter)
 
-bool genericDepRelInterpretationApplyOptions(GIAgenericDepRelInterpretationParameters * paramDepRel, XMLparserTag * xmlTag, int REL, int REL_ENT, int FUNC_ENT, int swapIndex)
+bool genericDepRelInterpretationApplyOptions(GIAgenericDepRelInterpretationParameters* paramDepRel, XMLparserTag* xmlTag, int REL, int REL_ENT, int FUNC_ENT, int swapIndex)
 {
 	bool result = true;
-	XMLParserAttribute * currentAttribute = xmlTag->firstAttribute;
+	XMLParserAttribute* currentAttribute = xmlTag->firstAttribute;
 	while(currentAttribute->nextAttribute != NULL)
 	{
 		if(!genericDepRelInterpretationApplyOption(paramDepRel, currentAttribute, REL, REL_ENT, FUNC_ENT, swapIndex))
@@ -696,7 +696,7 @@ bool genericDepRelInterpretationApplyOptions(GIAgenericDepRelInterpretationParam
 	return result;
 }
 
-bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParameters * paramDepRel, XMLParserAttribute * xmlAttribute, int REL, int REL_ENT, int FUNC_ENT, int swapIndex)
+bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParameters* paramDepRel, XMLParserAttribute* xmlAttribute, int REL, int REL_ENT, int FUNC_ENT, int swapIndex)
 {
 	bool foundMatch = false;
 
@@ -784,7 +784,7 @@ bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParame
 }
 
 
-bool genericEntityInterpretationApplySpecialCase(EntityCharacteristic * entityCharacteristics, GIAgenericEntityInterpretationParameters * paramEntity, string type)
+bool genericEntityInterpretationApplySpecialCase(EntityCharacteristic* entityCharacteristics, GIAgenericEntityInterpretationParameters* paramEntity, string type)
 {
 	bool result = true;
 	if(type == "specialCaseCharacteristicsTestAndVector")
@@ -807,10 +807,10 @@ bool genericEntityInterpretationApplySpecialCase(EntityCharacteristic * entityCh
 	return result;
 }
 
-bool genericEntityInterpretationApplyOptions(GIAgenericEntityInterpretationParameters * paramEntity, XMLparserTag * xmlTag)
+bool genericEntityInterpretationApplyOptions(GIAgenericEntityInterpretationParameters* paramEntity, XMLparserTag* xmlTag)
 {
 	bool result = true;
-	XMLParserAttribute * currentAttribute = xmlTag->firstAttribute;
+	XMLParserAttribute* currentAttribute = xmlTag->firstAttribute;
 	while(currentAttribute->nextAttribute != NULL)
 	{
 		if(!genericEntityInterpretationApplyOption(paramEntity, currentAttribute))
@@ -821,7 +821,7 @@ bool genericEntityInterpretationApplyOptions(GIAgenericEntityInterpretationParam
 	}
 	return result;
 }
-bool genericEntityInterpretationApplyOption(GIAgenericEntityInterpretationParameters * paramEntity, XMLParserAttribute * xmlAttribute)
+bool genericEntityInterpretationApplyOption(GIAgenericEntityInterpretationParameters* paramEntity, XMLParserAttribute* xmlAttribute)
 {
 	bool foundMatch = false;
 
@@ -843,7 +843,7 @@ bool genericEntityInterpretationApplyOption(GIAgenericEntityInterpretationParame
 }
 
 
-bool genericEntityInterpretationApplyOptionbool(bool * paramVal, XMLParserAttribute * xmlAttribute, string iterationVariable, bool *foundMatch)
+bool genericEntityInterpretationApplyOptionbool(bool* paramVal, XMLParserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch)
 {
 	bool result = false;
 	if(xmlAttribute->name == iterationVariable)
@@ -870,7 +870,7 @@ bool genericEntityInterpretationApplyOptionbool(bool * paramVal, XMLParserAttrib
 	}
 	return result;
 }
-bool genericEntityInterpretationApplyOptionint(int * paramVal, XMLParserAttribute * xmlAttribute, string iterationVariable, bool *foundMatch, bool subtractOne)
+bool genericEntityInterpretationApplyOptionint(int* paramVal, XMLParserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch, bool subtractOne)
 {
 	bool result = false;
 	if(xmlAttribute->name == iterationVariable)
@@ -888,7 +888,7 @@ bool genericEntityInterpretationApplyOptionint(int * paramVal, XMLParserAttribut
 	}
 	return result;
 }
-bool genericEntityInterpretationApplyOptionstring(string * paramVal, XMLParserAttribute * xmlAttribute, string iterationVariable, bool *foundMatch)
+bool genericEntityInterpretationApplyOptionstring(string* paramVal, XMLParserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch)
 {
 	bool result = false;
 	if(xmlAttribute->name == iterationVariable)
@@ -902,7 +902,7 @@ bool genericEntityInterpretationApplyOptionstring(string * paramVal, XMLParserAt
 	}
 	return result;
 }
-bool genericEntityInterpretationApplyOptionstringarray(string ** paramVal, XMLParserAttribute * xmlAttribute, string iterationVariable, bool *foundMatch)
+bool genericEntityInterpretationApplyOptionstringarray(string** paramVal, XMLParserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch)
 {
 	bool result = false;
 	if(xmlAttribute->name == iterationVariable)

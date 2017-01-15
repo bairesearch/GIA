@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -81,19 +81,19 @@ using namespace std;
 					#define RULES_XML_ATTRIBUTE_negative ((string)"negative")
 				#define RULES_XML_TAG_assert ((string)"assert")
 	#define GIA_TRANSLATOR_XML_INTERPRETATION_ARRAY_DELIMITER '|'
-bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA);
-	bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depRelOrEntity, bool executeOrReassign, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA, string functionName);
-		bool genericDepRelInterpretationApplyOptions(GIAgenericDepRelInterpretationParameters * paramDepRel, XMLparserTag * xmlTag, int REL, int REL_ENT, int FUNC_ENT, int swapIndex);
-			bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParameters * paramDepRel, XMLParserAttribute * xmlAttribute, int REL, int REL_ENT, int FUNC_ENT, int swapIndex);
-		bool genericEntityInterpretationApplyOptions(GIAgenericEntityInterpretationParameters * paramEntity, XMLparserTag * xmlTag);
-			bool genericEntityInterpretationApplyOption(GIAgenericEntityInterpretationParameters * paramEntity, XMLParserAttribute * xmlAttribute);
-				bool genericEntityInterpretationApplyOptionbool(bool * paramVal, XMLParserAttribute * xmlAttribute, string iterationVariable, bool *foundMatch);
-				bool genericEntityInterpretationApplyOptionint(int * paramVal, XMLParserAttribute * xmlAttribute, string iterationVariable, bool *foundMatch, bool subtractOne);
-				bool genericEntityInterpretationApplyOptionstring(string * paramVal, XMLParserAttribute * xmlAttribute, string iterationVariable, bool *foundMatch);
-				bool genericEntityInterpretationApplyOptionstringarray(string ** paramVal, XMLParserAttribute * xmlAttribute, string iterationVariable, bool *foundMatch);
-				bool genericInterpretationGenerateSpecialCase(XMLparserTag * xmlTag, EntityCharacteristic * entityCharacteristics, string * type);
-				bool genericDepRelInterpretationApplySpecialCase(EntityCharacteristic * entityCharacteristics, GIAgenericDepRelInterpretationParameters * paramDepRel, int REL, int REL_ENT, string type);
-				bool genericEntityInterpretationApplySpecialCase(EntityCharacteristic * entityCharacteristics, GIAgenericEntityInterpretationParameters * paramEntity, string type);
+bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, Feature* featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA);
+	bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRelOrEntity, bool executeOrReassign, Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, Feature* featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA, string functionName);
+		bool genericDepRelInterpretationApplyOptions(GIAgenericDepRelInterpretationParameters* paramDepRel, XMLparserTag* xmlTag, int REL, int REL_ENT, int FUNC_ENT, int swapIndex);
+			bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParameters* paramDepRel, XMLParserAttribute* xmlAttribute, int REL, int REL_ENT, int FUNC_ENT, int swapIndex);
+		bool genericEntityInterpretationApplyOptions(GIAgenericEntityInterpretationParameters* paramEntity, XMLparserTag* xmlTag);
+			bool genericEntityInterpretationApplyOption(GIAgenericEntityInterpretationParameters* paramEntity, XMLParserAttribute* xmlAttribute);
+				bool genericEntityInterpretationApplyOptionbool(bool* paramVal, XMLParserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch);
+				bool genericEntityInterpretationApplyOptionint(int* paramVal, XMLParserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch, bool subtractOne);
+				bool genericEntityInterpretationApplyOptionstring(string* paramVal, XMLParserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch);
+				bool genericEntityInterpretationApplyOptionstringarray(string** paramVal, XMLParserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch);
+				bool genericInterpretationGenerateSpecialCase(XMLparserTag* xmlTag, EntityCharacteristic* entityCharacteristics, string* type);
+				bool genericDepRelInterpretationApplySpecialCase(EntityCharacteristic* entityCharacteristics, GIAgenericDepRelInterpretationParameters* paramDepRel, int REL, int REL_ENT, string type);
+				bool genericEntityInterpretationApplySpecialCase(EntityCharacteristic* entityCharacteristics, GIAgenericEntityInterpretationParameters* paramEntity, string type);
 
 
 #endif

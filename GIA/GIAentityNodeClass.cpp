@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  *
  *******************************************************************************/
 
@@ -513,7 +513,7 @@ GIAentityNode::~GIAentityNode(void)
 			#ifdef GIA_FREE_MEMORY_DEBUG
 			//cout << "deleting: vector connection: " << (*connectionIter)->entityName << endl;
 			#endif
-			delete *connectionIter;
+			delete* connectionIter;
 		}
 		entityVectorConnectionsArray[i].clear();
 	}
@@ -525,11 +525,11 @@ GIAentityNode::~GIAentityNode(void)
 	#endif
 }
 
-void deleteEntitiesInEntityNodeList(vector<GIAentityNode*> * entityNodesActiveListComplete)
+void deleteEntitiesInEntityNodeList(vector<GIAentityNode*>* entityNodesActiveListComplete)
 {
 	for(vector<GIAentityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 	{
-		GIAentityNode * entityNode = *entityIter;
+		GIAentityNode* entityNode =* entityIter;
 		#ifdef GIA_FREE_MEMORY_DEBUG
 		cout << "deleting: entityNode: " << entityNode->entityName << endl;
 		#endif
@@ -540,7 +540,7 @@ void deleteEntitiesInEntityNodeList(vector<GIAentityNode*> * entityNodesActiveLi
 
 
 #ifdef GIA_USE_DATABASE
-void DBsetEntityConnectionsReferenceListsLoaded(GIAentityNode * entityNode, bool loaded)
+void DBsetEntityConnectionsReferenceListsLoaded(GIAentityNode* entityNode, bool loaded)
 {
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 	{
@@ -550,7 +550,7 @@ void DBsetEntityConnectionsReferenceListsLoaded(GIAentityNode * entityNode, bool
 #endif
 
 
-void disconnectNodeFromAllButDefinitions(GIAentityNode * entityNode)
+void disconnectNodeFromAllButDefinitions(GIAentityNode* entityNode)
 {
 	cout << "warning: disconnectNodeFromAllButDefinitions() not yet coded" << endl;
 	/* need to delete its instance from the reverse lists of each node of each list of this entity...
@@ -611,7 +611,7 @@ int calculateQuantityNumberInt(string quantityNumberString)
 	}
 	if(!found)
 	{//parse as simple number
-		char * quantityNumberStringcharstar = const_cast<char*>(quantityNumberString.c_str());
+		char* quantityNumberStringcharstar = const_cast<char*>(quantityNumberString.c_str());
 		quantityNumberInt = atoi(quantityNumberStringcharstar);
 	}
 
@@ -650,7 +650,7 @@ int calculateQuantityMultiplierInt(string quantityMultiplierString)
 	if(!found)
 	{//parse as simple number
 
-		char * quantityMultiplierStringcharstar = const_cast<char*>(quantityMultiplierString.c_str());
+		char* quantityMultiplierStringcharstar = const_cast<char*>(quantityMultiplierString.c_str());
 		quantityMultiplierInt = atoi(quantityMultiplierStringcharstar);
 	}
 
@@ -674,7 +674,7 @@ int calculateQuantityModifierInt(string quantityModifierString)
 	return quantityModifierInt;
 }
 
-string printQuantityNumberString(GIAentityNode * entityNode)
+string printQuantityNumberString(GIAentityNode* entityNode)
 {
 	string quantityNumberStringTemp;
 
@@ -694,19 +694,19 @@ string printQuantityNumberString(GIAentityNode * entityNode)
 
 #ifdef GIA_SUPPORT_ALIASES
 
-void convertAliasesStringToAliases(GIAentityNode * entityNode, string aliasesString)
+void convertAliasesStringToAliases(GIAentityNode* entityNode, string aliasesString)
 {
 	entityNode->aliasList = explode(aliasesString, GIA_ALIASES_CONVERT_TO_STRING_DELIMITER);
 }
 
-void convertAliasesToAliasesString(GIAentityNode * entityNode, string * aliasesString)
+void convertAliasesToAliasesString(GIAentityNode* entityNode, string* aliasesString)
 {
 	*aliasesString = "";
 	for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter != entityNode->aliasList.end(); aliasIter++)
 	{
-		*aliasesString = *aliasesString + *aliasIter + GIA_ALIASES_CONVERT_TO_STRING_DELIMITER;
+		*aliasesString =* aliasesString +* aliasIter + GIA_ALIASES_CONVERT_TO_STRING_DELIMITER;
 		#ifdef GIA_ALIASES_DEBUG
-		cout << "*aliasesString = " << *aliasesString << endl;
+		cout << "*aliasesString = " <<* aliasesString << endl;
 		#endif
 	}
 }
@@ -737,14 +737,14 @@ vector<string> explode(const string& str, const char& ch)
 		else
 		{
 			// Accumulate the next character into the sequence
-			next += *it;
+			next +=* it;
 		}
 	}
 
 	return result;
 }
 
-string * convertDelimitedStringToArray(string str, char delimiter)
+string* convertDelimitedStringToArray(string str, char delimiter)
 {
 	int delimiterCount = 0;
 
@@ -755,7 +755,7 @@ string * convertDelimitedStringToArray(string str, char delimiter)
 			delimiterCount++;
 		}
 	}
-	string * stringArray = new string[delimiterCount+1];
+	string* stringArray = new string[delimiterCount+1];
 	string currentString = "";
 	delimiterCount = 0;
 	for(int i=0; i<str.length(); i++)
@@ -825,7 +825,7 @@ EntityCharacteristic::~EntityCharacteristic(void)
 {
 }
 
-bool testEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristic*> * redistributeSpecialCasePropertiesTestVector, bool andOrOr)
+bool testEntityCharacteristics(GIAentityNode* entity, vector<EntityCharacteristic*>* redistributeSpecialCasePropertiesTestVector, bool andOrOr)
 {
 	bool passFound = false;
 	bool failureFound = false;
@@ -833,7 +833,7 @@ bool testEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacterist
 	for(vector<EntityCharacteristic*>::iterator entityCharacteristicIter = redistributeSpecialCasePropertiesTestVector->begin(); entityCharacteristicIter != redistributeSpecialCasePropertiesTestVector->end(); entityCharacteristicIter++)
 	{
 		vectorHasItems = true;
-		EntityCharacteristic * entityCharacteristic = *entityCharacteristicIter;
+		EntityCharacteristic* entityCharacteristic =* entityCharacteristicIter;
 		if(testEntityCharacteristic(entity, entityCharacteristic))
 		{
 			//cout << "passFound" << endl;
@@ -875,15 +875,15 @@ bool testEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacterist
 	}
 	return passedRelation;
 }
-void setEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristic*> * redistributeSpecialCasePropertiesAssignmentVector)
+void setEntityCharacteristics(GIAentityNode* entity, vector<EntityCharacteristic*>* redistributeSpecialCasePropertiesAssignmentVector)
 {
 	for(vector<EntityCharacteristic*>::iterator entityCharacteristicIter = redistributeSpecialCasePropertiesAssignmentVector->begin(); entityCharacteristicIter != redistributeSpecialCasePropertiesAssignmentVector->end(); entityCharacteristicIter++)
 	{
-		EntityCharacteristic * entityCharacteristic = *entityCharacteristicIter;
+		EntityCharacteristic* entityCharacteristic =* entityCharacteristicIter;
 		setEntityCharacteristic(entity, entityCharacteristic);
 	}
 }
-bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic)
+bool testEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entityCharacteristic)
 {
 	bool foundMatch = false;
 	bool illegalVariable = false;
@@ -1003,7 +1003,7 @@ bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * ent
 
 	return result;
 }
-void testEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch)
+void testEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicTest->name == iterationVariable)
 	{
@@ -1028,7 +1028,7 @@ void testEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic 
 		}
 	}
 }
-void testEntityCharacteristicIterationint(int entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch)
+void testEntityCharacteristicIterationint(int entityVal, EntityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicTest->name == iterationVariable)
 	{
@@ -1040,7 +1040,7 @@ void testEntityCharacteristicIterationint(int entityVal, EntityCharacteristic * 
 		}
 	}
 }
-void testEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch)
+void testEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicTest->name == iterationVariable)
 	{
@@ -1054,7 +1054,7 @@ void testEntityCharacteristicIterationstring(string entityVal, EntityCharacteris
 }
 
 
-bool setEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic)
+bool setEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entityCharacteristic)
 {
 	bool foundMatch = false;
 
@@ -1144,7 +1144,7 @@ bool setEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * enti
 	return foundMatch;
 }
 
-void setEntityCharacteristicIterationbool(bool * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch)
+void setEntityCharacteristicIterationbool(bool* entityVal, EntityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicSet->name == iterationVariable)
 	{
@@ -1167,7 +1167,7 @@ void setEntityCharacteristicIterationbool(bool * entityVal, EntityCharacteristic
 		*foundMatch = true;
 	}
 }
-void setEntityCharacteristicIterationint(int * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch)
+void setEntityCharacteristicIterationint(int* entityVal, EntityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicSet->name == iterationVariable)
 	{
@@ -1177,7 +1177,7 @@ void setEntityCharacteristicIterationint(int * entityVal, EntityCharacteristic *
 		*foundMatch = true;
 	}
 }
-void setEntityCharacteristicIterationstring(string * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch)
+void setEntityCharacteristicIterationstring(string* entityVal, EntityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicSet->name == iterationVariable)
 	{
@@ -1188,7 +1188,7 @@ void setEntityCharacteristicIterationstring(string * entityVal, EntityCharacteri
 	}
 }
 
-bool getEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic)
+bool getEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entityCharacteristic)
 {
 	bool foundMatch = false;
 	//cout << "testEntityCharacteristic():" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
@@ -1275,7 +1275,7 @@ bool getEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * enti
 	}
 	return foundMatch;
 }
-void getEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic * entityCharacteristicGet, string iterationVariable, bool *foundMatch)
+void getEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicGet->name == iterationVariable)
 	{
@@ -1292,7 +1292,7 @@ void getEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic *
 		*foundMatch = true;
 	}
 }
-void getEntityCharacteristicIterationint(int entityVal, EntityCharacteristic * entityCharacteristicGet, string iterationVariable, bool *foundMatch)
+void getEntityCharacteristicIterationint(int entityVal, EntityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicGet->name == iterationVariable)
 	{
@@ -1303,7 +1303,7 @@ void getEntityCharacteristicIterationint(int entityVal, EntityCharacteristic * e
 		*foundMatch = true;
 	}
 }
-void getEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic * entityCharacteristicGet, string iterationVariable, bool *foundMatch)
+void getEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicGet->name == iterationVariable)
 	{
@@ -1319,20 +1319,20 @@ void getEntityCharacteristicIterationstring(string entityVal, EntityCharacterist
 
 
 /*
-void deleteAllEntitiesInConceptEntityNodeList(unordered_map<string, GIAentityNode*> * conceptEntityNodesList);
+void deleteAllEntitiesInConceptEntityNodeList(unordered_map<string, GIAentityNode*>* conceptEntityNodesList);
 {
 	for(vector<GIAentityNode*>::iterator conceptEntityNodesListIter = conceptEntityNodesList.begin(); conceptEntityNodesListIter != conceptEntityNodesList.end(); conceptEntityNodesListIter++)
 	{
-		GIAentityNode * conceptEntityNode = sentenceConceptEntityNodesListTempNotUsedIter->second;
+		GIAentityNode* conceptEntityNode = sentenceConceptEntityNodesListTempNotUsedIter->second;
 
 		for(vector<GIAentityNode*>::iterator instanceEntityNodesListIter = conceptEntityNode->associatedInstanceNodeList.begin(); instanceEntityNodesListIter != conceptEntityNode->associatedInstanceNodeList.end(); )
 		{
-			GIAentityNode * instanceEntityNode = *instanceEntityNodesListIter;
+			GIAentityNode* instanceEntityNode =* instanceEntityNodesListIter;
 			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 			{
 				for(vector<GIAentityConnection*>::iterator connectionIter = instanceEntityNode->entityVectorConnectionsArray[i].begin(); connectionIter != instanceEntityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 				{
-					delete *connectionIter;
+					delete* connectionIter;
 				}
 				instanceEntityNode->entityVectorConnectionsArray[i].clear();
 			}
@@ -1347,7 +1347,7 @@ void deleteAllEntitiesInConceptEntityNodeList(unordered_map<string, GIAentityNod
 		}
 
 
-		GIAentityNode * currentInstanceInConcept = conceptEntityNodeTemp->
+		GIAentityNode* currentInstanceInConcept = conceptEntityNodeTemp->
 		string entityNodeNameTemp = conceptEntityNodeTemp->entityName;
 		sentenceConceptEntityNodesListTempNotUsedMap.insert(pair<string, GIAentityNode*>(entityNodeNameTemp, conceptEntityNodeTemp));
 

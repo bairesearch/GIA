@@ -26,7 +26,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -247,18 +247,18 @@ static bool entityVectorConnectionDrawConnectionArray[GIA_ENTITY_NUMBER_OF_VECTO
 //static bool entityVectorConnectionDrawConnectionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {true, true, true, true, true, true, true, true, false, true, true, true, true, true};
 
 
-void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile, int maxNumberSentences);
+void printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile, int maxNumberSentences);
 
-void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, bool printType[], Reference * firstReferenceInPrintList, XMLparserTag ** currentTag, int maxNumberSentences);
+void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, bool printType[], Reference* firstReferenceInPrintList, XMLparserTag** currentTag, int maxNumberSentences);
 
 void initiateMaxXAtParticularY();
-Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, int x, bool printType[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance);
-	Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityConnection * entityConnection, Reference * currentReferenceInPrintList, bool printType[], string connectionName, int entityConnectionColour, XMLparserTag ** currentTag);
-	Reference * initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode * timeConditionNode, int y, int x, bool printType[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag);
+Reference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, bool printType[], Reference* currentReferenceInPrintList, XMLparserTag** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance);
+	Reference* initialiseEntityConnectionForPrinting(vec* pos1, GIAentityConnection* entityConnection, Reference* currentReferenceInPrintList, bool printType[], string connectionName, int entityConnectionColour, XMLparserTag** currentTag);
+	Reference* initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, int y, int x, bool printType[], Reference* currentReferenceInPrintList, XMLparserTag** currentTag);
 
-Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, string connectionTypeName, bool printType[]);
-	Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, bool printType[]);
-Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, XMLparserTag ** currentTag, int thickness, bool printType[]);
+Reference* createReferenceConnectionWithText(Reference* currentReferenceInPrintList, vec* pos1, vec* pos2, int colour, XMLparserTag** currentTag, string connectionTypeName, bool printType[]);
+	Reference* createReferenceConnection(Reference* currentReferenceInPrintList, vec* pos1, vec* pos2, int colour, XMLparserTag** currentTag, bool printType[]);
+Reference* createBox(Reference* currentReferenceInPrintList, vec* vect, double width, double height, int colour, string* text, XMLparserTag** currentTag, int thickness, bool printType[]);
 
 
 

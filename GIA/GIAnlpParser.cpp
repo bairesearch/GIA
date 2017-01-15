@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -44,11 +44,11 @@
 
 
 //NB NLPrelexCompatibilityMode mode is only supported when !parseGIA2file; it is a special mode used when parsing Relex relations output with Stanford Compatibility Mode enabled
-void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence, bool featuresNotPreviouslyFilled, bool parseGIA2file, bool NLPrelexCompatibilityMode)
+void GIATHparseStanfordParserRelationsText(string* relationsText, Sentence* currentSentenceInList, int* maxNumberOfWordsInSentence, bool featuresNotPreviouslyFilled, bool parseGIA2file, bool NLPrelexCompatibilityMode)
 {
-	//cout << "relationsText = " << *relationsText << endl;
-	Relation * firstRelationInList = currentSentenceInList->firstRelationInList;
-	Feature * firstFeatureInList = currentSentenceInList->firstFeatureInList;
+	//cout << "relationsText = " <<* relationsText << endl;
+	Relation* firstRelationInList = currentSentenceInList->firstRelationInList;
+	Feature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
 
 	string relationType;
 	string relationGovernor;
@@ -70,7 +70,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 		nsubj(swam-7, fish-2)
 	*/
 
-	Relation * currentRelation = firstRelationInList;
+	Relation* currentRelation = firstRelationInList;
 	#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 	while(currentRelation->next != NULL)
 	{
@@ -83,7 +83,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 
 	int currentRelationPart = 0;
 
-	//cout << "GIATHparseStanfordParserRelationsText = " << *relationsText << endl;
+	//cout << "GIATHparseStanfordParserRelationsText = " <<* relationsText << endl;
 
 	while(characterIndex < numberOfCharactersInRelationsText)
 	{
@@ -119,7 +119,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 
 			#ifdef GIA_NLP_DEBUG
 			/*
-			Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
+			Feature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
 			while(currentFeatureInList->next != NULL)
 			{
 				cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
@@ -171,7 +171,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 				}
 				//cout << "h3" << endl;
 
-				Feature * currentFeatureInList = firstFeatureInList;
+				Feature* currentFeatureInList = firstFeatureInList;
 				//cout << "relationDependent = " << relationDependent << endl;
 				//cout << "relationDependentIndex = " << relationDependentIndex << endl;
 				if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
@@ -331,12 +331,12 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 					#ifdef GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
 					if(currentRelation->relationType != RELATION_TYPE_ROOT)
 					{
-						Relation * newRelation = new Relation();
+						Relation* newRelation = new Relation();
 						currentRelation->next = newRelation;
 						currentRelation = currentRelation->next;
 					}
 					#else
-					Relation * newRelation = new Relation();
+					Relation* newRelation = new Relation();
 					currentRelation->next = newRelation;
 					currentRelation = currentRelation->next;
 					#endif
@@ -405,11 +405,11 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 					relationDependentIndex = int(atof(currentItemString.c_str()));
 				}
 
-				if(currentRelation->relationGovernorIndex > *maxNumberOfWordsInSentence)
+				if(currentRelation->relationGovernorIndex >* maxNumberOfWordsInSentence)
 				{
 					*maxNumberOfWordsInSentence = currentRelation->relationGovernorIndex;	//added GIA 2d1a
 				}
-				if(currentRelation->relationDependentIndex > *maxNumberOfWordsInSentence)
+				if(currentRelation->relationDependentIndex >* maxNumberOfWordsInSentence)
 				{
 					*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;
 				}
@@ -428,10 +428,10 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 	}
 }
 
-bool findReplicateRelation(Sentence * currentSentenceInList, Relation * relation)
+bool findReplicateRelation(Sentence* currentSentenceInList, Relation* relation)
 {
 	bool foundReplicateRelation = false;
-	Relation * currentRelation = currentSentenceInList->firstRelationInList;
+	Relation* currentRelation = currentSentenceInList->firstRelationInList;
 	while(currentRelation->next != NULL)
 	{
 		if(currentRelation != relation)
@@ -447,7 +447,7 @@ bool findReplicateRelation(Sentence * currentSentenceInList, Relation * relation
 	return foundReplicateRelation;
 }
 
-bool compareRelations(Relation * relation1, Relation * relation2)
+bool compareRelations(Relation* relation1, Relation* relation2)
 {
 	bool result = false;
 	if((relation1->relationType == relation2->relationType) &&
@@ -481,10 +481,10 @@ string createSameReferenceSetRecord2(bool sameReferenceSet)
 }
 #endif
 
-void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence, bool createFeaturesGIA2only)
+void GIATHparseStanfordParseWordsAndPOStagsText(string* POStagsText, Sentence* currentSentenceInList, int* maxNumberOfWordsInSentence, bool createFeaturesGIA2only)
 {
-	Feature * firstFeatureInList = currentSentenceInList->firstFeatureInList;
-	Feature * currentFeatureInList = firstFeatureInList;
+	Feature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
+	Feature* currentFeatureInList = firstFeatureInList;
 
 	*maxNumberOfWordsInSentence = 0;
 
@@ -536,7 +536,7 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence *
 					currentFeatureInList->GIAconnectionistNetworkPOStype = GIAconnectionistNetworkPOStype;
 					currentFeatureInList->word = wordOrig;
 					currentFeatureInList->lemma = wordOrig; //NB for GIA2 semantic relations file lemmas are stored instead of wordOrigs (but these are not used by GIA2 anyway; just for debugging)
-					Feature * newFeature = new Feature();
+					Feature* newFeature = new Feature();
 					newFeature->previous = currentFeatureInList;
 					currentFeatureInList->next = newFeature;
 				}
@@ -554,7 +554,7 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence *
 				cout << "DEBUG: GIATHparseStanfordParseWordsAndPOStagsText(): currentFeatureInList->stanfordPOS = " << currentFeatureInList->stanfordPOS << endl;
 				#endif
 
-				*maxNumberOfWordsInSentence = *maxNumberOfWordsInSentence + 1;
+				*maxNumberOfWordsInSentence =* maxNumberOfWordsInSentence + 1;
 
 				currentFeatureInList = currentFeatureInList->next;
 				readingWord = true;
@@ -578,7 +578,7 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence *
 	}
 }
 
-void convertStanfordRelationToRelex(Relation * currentRelationInList, Sentence * currentSentenceInList)
+void convertStanfordRelationToRelex(Relation* currentRelationInList, Sentence* currentSentenceInList)
 {
 	string stanfordRelation = currentRelationInList->relationType;
 
@@ -614,7 +614,7 @@ void convertStanfordRelationToRelex(Relation * currentRelationInList, Sentence *
 	{
 		//if necessary revert temporary/dummy NLP multiword preposition to official LRP form
 		bool foundOfficialLRPreplacementString = false;
-		Feature * tempFeature = new Feature();
+		Feature* tempFeature = new Feature();
 		tempFeature->word = tempRelexPrepositionString;
 		revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, true, &foundOfficialLRPreplacementString);
 		if(foundOfficialLRPreplacementString)
@@ -651,10 +651,10 @@ void convertStanfordRelationToRelex(Relation * currentRelationInList, Sentence *
 }
 
 //assumes prepositions have previously been converted to stanford prep_preposition format during preprocessor (for robustness)
-string convertPrepositionToRelex2(string * preposition, bool * prepositionFound)
+string convertPrepositionToRelex2(string* preposition, bool* prepositionFound)
 {
 	*prepositionFound = false;
-	string relexPreposition = *preposition;
+	string relexPreposition =* preposition;
 	for(int i=0; i<REFERENCE_TYPE_STANFORD_PARSER_PREPOSITION_PREPEND_NUMBER_OF_TYPES; i++)
 	{
 		string currentStanfordPrepositionPrepend = referenceTypeStanfordParserPrepositionPrependNameArray[i];
@@ -672,9 +672,9 @@ string convertPrepositionToRelex2(string * preposition, bool * prepositionFound)
 	return relexPreposition;
 }
 
-void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence)
+void GIATHparseRelexFeaturesText(string* featuresText, Sentence* currentSentenceInList, int* maxNumberOfWordsInSentence)
 {
-	Feature * firstFeatureInList = currentSentenceInList->firstFeatureInList;
+	Feature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
 	*maxNumberOfWordsInSentence = 0;
 
 	int numberOfCharactersInRelationsText = featuresText->length();
@@ -692,7 +692,7 @@ void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSenten
 
 	*/
 
-	Feature * currentFeature = firstFeatureInList;
+	Feature* currentFeature = firstFeatureInList;
 
 	int featureIndex = 1;
 	int characterIndex = 0;
@@ -739,7 +739,7 @@ void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSenten
 				if(getUseLRP())
 				{
 					bool foundOfficialLRPreplacementString = false;
-					Relation * currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
+					Relation* currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
 					revertNLPtagNameToOfficialLRPtagName(currentFeature, currentSentenceInList, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
 				}
 				#endif
@@ -755,11 +755,11 @@ void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSenten
 				*/
 				#endif
 
-				Feature * newFeature = new Feature();
+				Feature* newFeature = new Feature();
 				newFeature->previous = currentFeature;
 				currentFeature->next = newFeature;
 				currentFeature = currentFeature->next;
-				*maxNumberOfWordsInSentence = *maxNumberOfWordsInSentence + 1;
+				*maxNumberOfWordsInSentence =* maxNumberOfWordsInSentence + 1;
 
 				currentFeaturePart = 0;
 				currentItemString = "";
@@ -819,9 +819,9 @@ void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSenten
 
 }
 
-void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode)
+void GIATHparseRelexRelationsText(string* relationsText, Sentence* currentSentenceInList, int* maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode)
 {
-	Relation * firstRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* firstRelationInList = currentSentenceInList->firstRelationInList;
 	int currentSentence = currentSentenceInList->sentenceIndex;
 
 	#ifndef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE_OR_MAX_FEATURE_INDEX
@@ -838,7 +838,7 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 		_poss(hand[3], John[1])
 	*/
 
-	Relation * currentRelation = firstRelationInList;
+	Relation* currentRelation = firstRelationInList;
 	#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 	while(currentRelation->next != NULL)
 	{
@@ -877,7 +877,7 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 				*/
 				#endif
 
-				Relation * newRelation = new Relation();
+				Relation* newRelation = new Relation();
 				currentRelation->next = newRelation;
 				currentRelation = currentRelation->next;
 
@@ -945,11 +945,11 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 					currentRelation->relationDependentIndex = int(atof(currentItemString.c_str()));
 				}
 
-				if(currentRelation->relationGovernorIndex > *maxNumberOfWordsInSentence)
+				if(currentRelation->relationGovernorIndex >* maxNumberOfWordsInSentence)
 				{
 					*maxNumberOfWordsInSentence = currentRelation->relationGovernorIndex;	//added GIA 2d1a
 				}
-				if(currentRelation->relationDependentIndex > *maxNumberOfWordsInSentence)
+				if(currentRelation->relationDependentIndex >* maxNumberOfWordsInSentence)
 				{
 					*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;
 				}
@@ -981,11 +981,11 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 
-string generateRelexCFFfeatureTagContent(Feature * firstFeatureInList)
+string generateRelexCFFfeatureTagContent(Feature* firstFeatureInList)
 {
 	string relexCFFFeatureTagContent = "";
 
-	Feature * currentFeatureInList = firstFeatureInList;
+	Feature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
 		/*
@@ -1060,11 +1060,11 @@ string generateRelexCFFfeatureTagContent(Feature * firstFeatureInList)
 
 }
 
-string generateRelexCFFrelationTagContent(Relation * firstRelationInList)
+string generateRelexCFFrelationTagContent(Relation* firstRelationInList)
 {
 	string relexCFFRelationTagContent = "";
 
-	Relation * currentRelationInList = firstRelationInList;
+	Relation* currentRelationInList = firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		if(!(currentRelationInList->disabled))

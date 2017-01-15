@@ -26,7 +26,7 @@
  * File Name: GIAcorpusDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -68,7 +68,7 @@ void initialiseCorpusDatabase(string newCorpusDatabaseFolderName)
 }
 
 //preconditions: determineGIAconnectionistNetworkPOStypeNames has been executed
-string createNewCorpusFileAndOpenItForWriting(Feature * firstFeatureInSentence)
+string createNewCorpusFileAndOpenItForWriting(Feature* firstFeatureInSentence)
 {
 	string corpusFileName = corpusDBgenerateFileName(firstFeatureInSentence);
 	corpusWriteFileObjectStream.open(corpusFileName);  //= new ofstream(corpusFileName);
@@ -94,7 +94,7 @@ void saveTextToCurrentCorpusFile(string sentenceText)
 
 
 //preconditions: determineGIAconnectionistNetworkPOStypeNames has been executed
-bool loadCorpusFileSemanticDependencyRelations(Sentence * currentSentenceInList, Feature * firstFeatureInListorSubset)
+bool loadCorpusFileSemanticDependencyRelations(Sentence* currentSentenceInList, Feature* firstFeatureInListorSubset)
 {
 	bool result = true;
 	string corpusFileName = corpusDBgenerateFileName(firstFeatureInListorSubset);
@@ -118,7 +118,7 @@ bool loadCorpusFileSemanticDependencyRelations(Sentence * currentSentenceInList,
 }
 
 //NB idInstance 0 corresponds to the concept entity (null instance)
-string corpusDBgenerateFileName(Feature * firstFeatureInList)
+string corpusDBgenerateFileName(Feature* firstFeatureInList)
 {
 	//eg network/server/GIAcorpusDatabase/de/no/ve/de/no/corpus.txt
 	int fileType = 0;	//irrelevant
@@ -132,7 +132,7 @@ string corpusDBgenerateFileName(Feature * firstFeatureInList)
 
 	string fileName = "";
 
-	Feature * currentFeatureInSentence = firstFeatureInList;
+	Feature* currentFeatureInSentence = firstFeatureInList;
 	while(currentFeatureInSentence->next != NULL)
 	{
 		string folderName = GIAconnectionistNetworkPOStypeNameAbbreviationArray[currentFeatureInSentence->GIAconnectionistNetworkPOStype];

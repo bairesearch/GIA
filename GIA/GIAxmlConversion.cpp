@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -44,11 +44,11 @@ bool testReadSemanticNetXMLFile1()
 {
 	bool result = true;
 
-	vector<GIAentityNode*> *entityNodesActiveListComplete;	//the entityNodesActiveListComplete object must be initialised here (in GIAxmlConversion.cpp scope). if it is initialised in another .cpp it will be come corrupted,
-	vector<GIAentityNode*> *entityNodesActiveListConcepts;
-	vector<GIAentityNode*> *entityNodesActiveListSubstances;
-	vector<GIAentityNode*> *entityNodesActiveListActions;
-	vector<GIAentityNode*> *entityNodesActiveListConditions;
+	vector<GIAentityNode*>* entityNodesActiveListComplete;	//the entityNodesActiveListComplete object must be initialised here (in GIAxmlConversion.cpp scope). if it is initialised in another .cpp it will be come corrupted,
+	vector<GIAentityNode*>* entityNodesActiveListConcepts;
+	vector<GIAentityNode*>* entityNodesActiveListSubstances;
+	vector<GIAentityNode*>* entityNodesActiveListActions;
+	vector<GIAentityNode*>* entityNodesActiveListConditions;
 
 	if(!readSemanticNetXMLfile(GIA_SEMANTIC_NET_XML_FILE_NAME, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
 	{
@@ -63,7 +63,7 @@ bool testReadSemanticNetXMLFile1()
 	return result;
 }
 
-bool testReadSemanticNetXMLFile2(vector<GIAentityNode*> *entityNodesActiveListComplete, vector<GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions)
+bool testReadSemanticNetXMLFile2(vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions)
 {
 	bool result = true;
 
@@ -91,18 +91,18 @@ bool testReadSemanticNetXMLFile2(vector<GIAentityNode*> *entityNodesActiveListCo
 }
 #endif
 
-bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *conceptEntityNodesListMap, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions)
+bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* conceptEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions)
 {
 	bool result = false;
 
-	vector<GIAentityNode*> *entityNodesActiveListConcepts = new vector<GIAentityNode*>;
+	vector<GIAentityNode*>* entityNodesActiveListConcepts = new vector<GIAentityNode*>;
 	readSemanticNetXMLfile(xmlFileName, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions);
 
 	//now convert entityNodesActiveListComplete to entityNodesCompleteListMap;
 	long vectorSize = entityNodesActiveListConcepts->size();
 	for(int entityIndex=0; entityIndex<vectorSize; entityIndex++)
 	{
-		GIAentityNode * entityNode = entityNodesActiveListConcepts->at(entityIndex);
+		GIAentityNode* entityNode = entityNodesActiveListConcepts->at(entityIndex);
 		//entityNodesActiveListConcepts[entityNodeName] = entityNodeFound;
 		conceptEntityNodesListMap->insert(pair<string, GIAentityNode*>(entityNode->entityName, entityNode));
 	}
@@ -114,11 +114,11 @@ bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*> 
 }
 
 
-bool readSemanticNetXMLfile(string xmlFileName, vector<GIAentityNode*> *entityNodesActiveListComplete, vector<GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions)
+bool readSemanticNetXMLfile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions)
 {
 	bool result = true;
 
- 	XMLparserTag * firstTagInXMLFile = new XMLparserTag();	//the firstTagInXMLFile object must be initialised here (in GIAxmlConversion.cpp scope). if it is initialised in XMLparserClass.cpp else it will be come corrupted,
+ 	XMLparserTag* firstTagInXMLFile = new XMLparserTag();	//the firstTagInXMLFile object must be initialised here (in GIAxmlConversion.cpp scope). if it is initialised in XMLparserClass.cpp else it will be come corrupted,
 
  	if(!readXMLfile(xmlFileName, firstTagInXMLFile))
  	{
@@ -143,11 +143,11 @@ bool readSemanticNetXMLfile(string xmlFileName, vector<GIAentityNode*> *entityNo
 }
 
 //Top Level
-bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*> *entityNodesActiveListComplete, vector<GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, bool linkConnections)
+bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, bool linkConnections)
 {
 	bool result = true;
 
-	XMLparserTag * currentTagUpdatedL1 = firstTagInNetwork;
+	XMLparserTag* currentTagUpdatedL1 = firstTagInNetwork;
 
 	if(currentTagUpdatedL1->name == NET_XML_TAG_semanticNetwork)
 	{
@@ -162,12 +162,12 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 	{
 		long currentEntityNodeIDinCompleteList = 0;
 
-		XMLparserTag * currentTagUpdatedL2 = currentTagUpdatedL1->firstLowerLevelTag;
+		XMLparserTag* currentTagUpdatedL2 = currentTagUpdatedL1->firstLowerLevelTag;
 		if(currentTagUpdatedL2->name == NET_XML_TAG_conceptEntityNodeContainer)
 		{
 			long currentEntityNodeIDinEntityNodesActiveCompleteList = 0;
 
-			XMLparserTag * currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
+			XMLparserTag* currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
 			while(currentTagUpdatedL3->nextTag != NULL)
 			{
 				if(currentTagUpdatedL3->name == NET_XML_TAG_entityNode)
@@ -185,7 +185,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 						//cout << "currentEntityNodeIDinCompleteList = " << currentEntityNodeIDinCompleteList << endl;
 						#endif
 
-						GIAentityNode * currentEntity = entityNodesActiveListComplete->at(currentEntityNodeIDinCompleteList);
+						GIAentityNode* currentEntity = entityNodesActiveListComplete->at(currentEntityNodeIDinCompleteList);
 						currentEntityNodeIDinCompleteList++;
 						if(!parseEntityNodeTag(currentTagUpdatedL3, currentEntity, entityNodesActiveListComplete))
 						{
@@ -194,7 +194,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 					}
 					else
 					{
-						GIAentityNode * newEntity = new GIAentityNode();
+						GIAentityNode* newEntity = new GIAentityNode();
 
 						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 						int attributeValue = atoi(currentTagUpdatedL3->firstAttribute->value.c_str());
@@ -211,7 +211,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 
 						/*
 						string conceptEntityName = currentTagUpdatedL3->firstAttribute->nextAttribute->value;
-						GIAentityNode * tempNode = findOrAddConceptEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListConcepts, &conceptEntityName, &foundTemp, &indexTemp, true, &currentEntityNodeIDinCompleteList, &currentEntityNodeIDinEntityNodesActiveCompleteList);
+						GIAentityNode* tempNode = findOrAddConceptEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListConcepts, &conceptEntityName, &foundTemp, &indexTemp, true, &currentEntityNodeIDinCompleteList, &currentEntityNodeIDinEntityNodesActiveCompleteList);
 						*/
 
 
@@ -262,7 +262,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 
 
 						/*
-						GIAentityNode * newEntity = new GIAentityNode();
+						GIAentityNode* newEntity = new GIAentityNode();
 						currentEntity->next = newEntity;
 						currentEntity = currentEntity->next;
 						*/
@@ -290,7 +290,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 		{
 			long currentEntityNodeIDInSubstanceEntityNodesList = 0;
 
-			XMLparserTag * currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
+			XMLparserTag* currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
 			while(currentTagUpdatedL3->nextTag != NULL)
 			{
 				if(currentTagUpdatedL3->name == NET_XML_TAG_entityNode)
@@ -307,7 +307,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 						//cout << "currentEntityNodeIDinCompleteList = " << currentEntityNodeIDinCompleteList << endl;
 						#endif
-						GIAentityNode * currentEntity = entityNodesActiveListComplete->at(currentEntityNodeIDinCompleteList);
+						GIAentityNode* currentEntity = entityNodesActiveListComplete->at(currentEntityNodeIDinCompleteList);
 						currentEntityNodeIDinCompleteList++;
 						if(!parseEntityNodeTag(currentTagUpdatedL3, currentEntity, entityNodesActiveListComplete))
 						{
@@ -316,7 +316,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 					}
 					else
 					{
-						GIAentityNode * newEntity = new GIAentityNode();
+						GIAentityNode* newEntity = new GIAentityNode();
 
 						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 						int attributeValue = atoi(currentTagUpdatedL3->firstAttribute->value.c_str());
@@ -334,7 +334,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 						cout << "Substance Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;
 						#endif
 						/*
-						GIAentityNode * newEntity = new GIAentityNode();
+						GIAentityNode* newEntity = new GIAentityNode();
 						currentEntity->next = newEntity;
 						currentEntity = currentEntity->next;
 						*/
@@ -362,7 +362,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 		{
 			long currentEntityNodeIDInActionEntityNodesList = 0;
 
-			XMLparserTag * currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
+			XMLparserTag* currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
 			while(currentTagUpdatedL3->nextTag != NULL)
 			{
 				if(currentTagUpdatedL3->name == NET_XML_TAG_entityNode)
@@ -380,7 +380,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 						//cout << "currentEntityNodeIDinCompleteList = " << currentEntityNodeIDinCompleteList << endl;
 						#endif
 
-						GIAentityNode * currentEntity = entityNodesActiveListComplete->at(currentEntityNodeIDinCompleteList);
+						GIAentityNode* currentEntity = entityNodesActiveListComplete->at(currentEntityNodeIDinCompleteList);
 						currentEntityNodeIDinCompleteList++;
 						if(!parseEntityNodeTag(currentTagUpdatedL3, currentEntity, entityNodesActiveListComplete))
 						{
@@ -389,7 +389,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 					}
 					else
 					{
-						GIAentityNode * newEntity = new GIAentityNode();
+						GIAentityNode* newEntity = new GIAentityNode();
 
 						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 						int attributeValue = atoi(currentTagUpdatedL3->firstAttribute->value.c_str());
@@ -408,7 +408,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 						#endif
 
 						/*
-						GIAentityNode * newEntity = new GIAentityNode();
+						GIAentityNode* newEntity = new GIAentityNode();
 						currentEntity->next = newEntity;
 						currentEntity = currentEntity->next;
 						*/
@@ -436,7 +436,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 		{
 			long currentEntityNodeIDInConditionEntityNodesList = 0;
 
-			XMLparserTag * currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
+			XMLparserTag* currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
 			while(currentTagUpdatedL3->nextTag != NULL)
 			{
 				if(currentTagUpdatedL3->name == NET_XML_TAG_entityNode)
@@ -453,7 +453,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 						//cout << "currentEntityNodeIDinCompleteList = " << currentEntityNodeIDinCompleteList << endl;
 						#endif
-						GIAentityNode * currentEntity = entityNodesActiveListComplete->at(currentEntityNodeIDinCompleteList);
+						GIAentityNode* currentEntity = entityNodesActiveListComplete->at(currentEntityNodeIDinCompleteList);
 						currentEntityNodeIDinCompleteList++;
 						if(!parseEntityNodeTag(currentTagUpdatedL3, currentEntity, entityNodesActiveListComplete))
 						{
@@ -462,7 +462,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 					}
 					else
 					{
-						GIAentityNode * newEntity = new GIAentityNode();
+						GIAentityNode* newEntity = new GIAentityNode();
 
 						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 						int attributeValue = atoi(currentTagUpdatedL3->firstAttribute->value.c_str());
@@ -479,7 +479,7 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 						#endif
 
 						/*
-						GIAentityNode * newEntity = new GIAentityNode();
+						GIAentityNode* newEntity = new GIAentityNode();
 						currentEntity->next = newEntity;
 						currentEntity = currentEntity->next;
 						*/
@@ -509,11 +509,11 @@ bool parseSemanticNetTag(XMLparserTag * firstTagInNetwork, vector<GIAentityNode*
 
 
 
-bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * entityNode, vector<GIAentityNode*> *entityNodesActiveListComplete)
+bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entityNode, vector<GIAentityNode*>* entityNodesActiveListComplete)
 {
 	bool result = true;
 
-	XMLParserAttribute * currentAttribute = firstTagInEntityNode->firstAttribute;
+	XMLParserAttribute* currentAttribute = firstTagInEntityNode->firstAttribute;
 
 	bool idFound = false;
 	bool entityNameFound = false;
@@ -898,7 +898,7 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 		currentAttribute = currentAttribute->nextAttribute;
 	}
 
-	XMLparserTag * currentTagUpdatedL3 = firstTagInEntityNode->firstLowerLevelTag;
+	XMLparserTag* currentTagUpdatedL3 = firstTagInEntityNode->firstLowerLevelTag;
 	while(currentTagUpdatedL3->nextTag != NULL)
 	{
 		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
@@ -961,10 +961,10 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 }
 
 
-bool parseEntityVectorConnectionNodeListTag(XMLparserTag * firstTagInEntityVectorConnectionNodeList, GIAentityNode * entityNode, vector<GIAentityNode*> *entityNodesActiveListComplete, int entityVectorConnectionIndex)
+bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVectorConnectionNodeList, GIAentityNode* entityNode, vector<GIAentityNode*>* entityNodesActiveListComplete, int entityVectorConnectionIndex)
 {
 	bool result = true;
-	XMLparserTag * currentTagUpdatedL1 = firstTagInEntityVectorConnectionNodeList;
+	XMLparserTag* currentTagUpdatedL1 = firstTagInEntityVectorConnectionNodeList;
 	while(currentTagUpdatedL1->nextTag != NULL)
 	{
 		if(currentTagUpdatedL1->name == entityVectorConnectionXMLtagNameCrossReferenceNodeTypeArray[entityVectorConnectionIndex])
@@ -972,10 +972,10 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag * firstTagInEntityVecto
 			#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 			//cout <<  entityVectorConnectionXMLtagNameCrossReferenceNodeTypeArray[entityVectorConnectionIndex] << " nodeReference: " << endl;
 			#endif
-			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
+			XMLParserAttribute* currentAttribute = currentTagUpdatedL1->firstAttribute;
 
 			long idActiveList = INT_DEFAULT_VALUE;
-			GIAentityConnection * newConnection = new GIAentityConnection();
+			GIAentityConnection* newConnection = new GIAentityConnection();
 
 			bool idFound = false;
 			#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
@@ -1063,7 +1063,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag * firstTagInEntityVecto
 			}
 			if(idFound)
 			{
-				GIAentityNode * entity = findActiveEntityNodeByID(idActiveList, entityNodesActiveListComplete);
+				GIAentityNode* entity = findActiveEntityNodeByID(idActiveList, entityNodesActiveListComplete);
 				newConnection->entity = entity;
 				#ifdef GIA_USE_DATABASE
 				newConnection->referenceLoaded = true;
@@ -1093,11 +1093,11 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag * firstTagInEntityVecto
 	return result;
 }
 
-bool parseTimeConditionNodeTag(XMLparserTag * firstTagInTimeConditionNode, GIAtimeConditionNode * timeConditionNode)
+bool parseTimeConditionNodeTag(XMLparserTag* firstTagInTimeConditionNode, GIAtimeConditionNode* timeConditionNode)
 {
 	bool result = true;
 
-	XMLParserAttribute * currentAttribute = firstTagInTimeConditionNode->firstAttribute;
+	XMLParserAttribute* currentAttribute = firstTagInTimeConditionNode->firstAttribute;
 
 	bool conditionName = false;
 	bool tenseFound = false;
@@ -1192,13 +1192,13 @@ bool parseTimeConditionNodeTag(XMLparserTag * firstTagInTimeConditionNode, GIAti
 
 
 
-bool writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *conceptEntityNodesListMap, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions)
+bool writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* conceptEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions)
 {
-	vector<GIAentityNode*> * entityNodesActiveListConcepts = new vector<GIAentityNode*>;
+	vector<GIAentityNode*>* entityNodesActiveListConcepts = new vector<GIAentityNode*>;
 	unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListMapIter;
 	for(conceptEntityNodesListMapIter = conceptEntityNodesListMap->begin(); conceptEntityNodesListMapIter != conceptEntityNodesListMap->end(); conceptEntityNodesListMapIter++)
 	{
-		GIAentityNode * entityNode = conceptEntityNodesListMapIter->second;
+		GIAentityNode* entityNode = conceptEntityNodesListMapIter->second;
 		entityNodesActiveListConcepts->push_back(entityNode);
 	}
 
@@ -1213,21 +1213,21 @@ bool writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAentityNode*>
 }
 
 
-bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*> *entityNodesActiveListComplete, vector<GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions)
+bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions)
 {
 	bool result = true;
 
- 	XMLparserTag * firstTagInXMLFile = new XMLparserTag();	//the firstTagInXMLFile object must be initialised here (in ANNXMLconversion.cpp scope). if it is initialised in XMLparserClass.cpp else it will be come corrupted,
+ 	XMLparserTag* firstTagInXMLFile = new XMLparserTag();	//the firstTagInXMLFile object must be initialised here (in ANNXMLconversion.cpp scope). if it is initialised in XMLparserClass.cpp else it will be come corrupted,
 
-	XMLparserTag * currentTagL0 = firstTagInXMLFile;
+	XMLparserTag* currentTagL0 = firstTagInXMLFile;
 	currentTagL0->name = NET_XML_TAG_semanticNetwork;
-	XMLparserTag * newTag0 = new XMLparserTag();	//had to add a null tag
+	XMLparserTag* newTag0 = new XMLparserTag();	//had to add a null tag
 	currentTagL0->nextTag = newTag0;
 
-	XMLparserTag * firstTagL1 = new XMLparserTag();
+	XMLparserTag* firstTagL1 = new XMLparserTag();
 	currentTagL0->firstLowerLevelTag = firstTagL1;
-	XMLparserTag * currentTagL1 = currentTagL0->firstLowerLevelTag;
-	XMLparserTag * newTag1 = new XMLparserTag();	//had to add a null tag
+	XMLparserTag* currentTagL1 = currentTagL0->firstLowerLevelTag;
+	XMLparserTag* newTag1 = new XMLparserTag();	//had to add a null tag
 	currentTagL1->nextTag = newTag1;
 
 
@@ -1257,7 +1257,7 @@ bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*> *entityN
 	#endif
 
 	currentTagL1 = currentTagL1->nextTag;
-	XMLparserTag * newTag2 = new XMLparserTag();	//had to add a null tag
+	XMLparserTag* newTag2 = new XMLparserTag();	//had to add a null tag
 	currentTagL1->nextTag = newTag2;
 
 	if(!generateXMLentityNodeTagList(currentTagL1, entityNodesActiveListSubstances, NET_XML_TAG_substanceEntityNodeContainer, &currentEntityNodeIDinEntityNodesActiveCompleteList))
@@ -1270,7 +1270,7 @@ bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*> *entityN
 	#endif
 
 	currentTagL1 = currentTagL1->nextTag;
-	XMLparserTag * newTag3 = new XMLparserTag();	//had to add a null tag
+	XMLparserTag* newTag3 = new XMLparserTag();	//had to add a null tag
 	currentTagL1->nextTag = newTag3;
 
 	if(!generateXMLentityNodeTagList(currentTagL1, entityNodesActiveListActions, NET_XML_TAG_actionEntityNodeContainer, &currentEntityNodeIDinEntityNodesActiveCompleteList))
@@ -1283,7 +1283,7 @@ bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*> *entityN
 	#endif
 
 	currentTagL1 = currentTagL1->nextTag;
-	XMLparserTag * newTag4 = new XMLparserTag();	//had to add a null tag
+	XMLparserTag* newTag4 = new XMLparserTag();	//had to add a null tag
 	currentTagL1->nextTag = newTag4;
 
 	if(!generateXMLentityNodeTagList(currentTagL1, entityNodesActiveListConditions, NET_XML_TAG_conditionEntityNodeContainer, &currentEntityNodeIDinEntityNodesActiveCompleteList))
@@ -1310,16 +1310,16 @@ bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*> *entityN
 
 
 #ifdef GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
-void resetIDsForNodeList(vector<GIAentityNode*> *entityNodesList, long * currentEntityNodeIDinEntityNodesActiveCompleteList)
+void resetIDsForNodeList(vector<GIAentityNode*>* entityNodesList, long* currentEntityNodeIDinEntityNodesActiveCompleteList)
 {
 	for(vector<GIAentityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesList->begin(); entityNodesActiveCompleteListIterator < entityNodesList->end(); entityNodesActiveCompleteListIterator++)
 	{
-		GIAentityNode * currentEntity = (*entityNodesActiveCompleteListIterator);
+		GIAentityNode* currentEntity = (*entityNodesActiveCompleteListIterator);
 		#ifdef GIA_SEMANTIC_NET_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 		if(!(currentEntity->disabled))
 		{
 		#endif
-			currentEntity->idActiveListReorderdIDforXMLsave = *currentEntityNodeIDinEntityNodesActiveCompleteList;
+			currentEntity->idActiveListReorderdIDforXMLsave =* currentEntityNodeIDinEntityNodesActiveCompleteList;
 			(*currentEntityNodeIDinEntityNodesActiveCompleteList) = (*currentEntityNodeIDinEntityNodesActiveCompleteList) + 1;
 		#ifdef GIA_SEMANTIC_NET_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 		}
@@ -1329,31 +1329,31 @@ void resetIDsForNodeList(vector<GIAentityNode*> *entityNodesList, long * current
 #endif
 
 
-bool generateXMLentityNodeTagList(XMLparserTag * firstTagInSemanticNet, vector<GIAentityNode*> *entityNodesList, string entityContainerTagName, long * currentEntityNodeIDinEntityNodesActiveCompleteList)
+bool generateXMLentityNodeTagList(XMLparserTag* firstTagInSemanticNet, vector<GIAentityNode*>* entityNodesList, string entityContainerTagName, long* currentEntityNodeIDinEntityNodesActiveCompleteList)
 {
 	bool result = true;
 
-	XMLparserTag * currentTagL0 = firstTagInSemanticNet;
+	XMLparserTag* currentTagL0 = firstTagInSemanticNet;
 	currentTagL0->name = entityContainerTagName;
-	XMLparserTag * newTag0 = new XMLparserTag();	//had to add a null tag
+	XMLparserTag* newTag0 = new XMLparserTag();	//had to add a null tag
 	currentTagL0->nextTag = newTag0;
 
-	XMLparserTag * firstTagL1 = new XMLparserTag();
+	XMLparserTag* firstTagL1 = new XMLparserTag();
 	currentTagL0->firstLowerLevelTag = firstTagL1;
-	XMLparserTag * currentTagL1 = currentTagL0->firstLowerLevelTag;
-	XMLparserTag * newTag1 = new XMLparserTag();	//had to add a null tag
+	XMLparserTag* currentTagL1 = currentTagL0->firstLowerLevelTag;
+	XMLparserTag* newTag1 = new XMLparserTag();	//had to add a null tag
 	currentTagL1->nextTag = newTag1;
 
 	for(vector<GIAentityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesList->begin(); entityNodesActiveCompleteListIterator < entityNodesList->end(); entityNodesActiveCompleteListIterator++)
 	{
-		GIAentityNode * currentEntity = *entityNodesActiveCompleteListIterator;
+		GIAentityNode* currentEntity =* entityNodesActiveCompleteListIterator;
 
 		#ifdef GIA_SEMANTIC_NET_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 		//tested 11 Feb 2012; failed
 		if(!(currentEntity->disabled))
 		{
 		#endif
-			currentTagL1 = generateXMLentityNodeTag(currentTagL1, currentEntity, *currentEntityNodeIDinEntityNodesActiveCompleteList);
+			currentTagL1 = generateXMLentityNodeTag(currentTagL1, currentEntity,* currentEntityNodeIDinEntityNodesActiveCompleteList);
 			(*currentEntityNodeIDinEntityNodesActiveCompleteList) = (*currentEntityNodeIDinEntityNodesActiveCompleteList) + 1;
 
 		#ifdef GIA_SEMANTIC_NET_DO_NOT_WRITE_DISABLED_ENTITY_NODES
@@ -1366,18 +1366,18 @@ bool generateXMLentityNodeTagList(XMLparserTag * firstTagInSemanticNet, vector<G
 
 
 
-XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNode * currentEntity, long currentEntityNodeIDinEntityNodesActiveCompleteList)
+XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode* currentEntity, long currentEntityNodeIDinEntityNodesActiveCompleteList)
 {
 	bool result = true;
 
 	char tempString[MAX_ATTRIBUTE_VALUE_SIZE];
 	//generate neuron connection tag
 	currentTagL1->name = NET_XML_TAG_entityNode;
-	XMLparserTag * firstTagL2 = new XMLparserTag();
+	XMLparserTag* firstTagL2 = new XMLparserTag();
 	currentTagL1->firstLowerLevelTag = firstTagL2;
-	XMLparserTag * currentTagL2 = currentTagL1->firstLowerLevelTag;
+	XMLparserTag* currentTagL2 = currentTagL1->firstLowerLevelTag;
 
-	XMLParserAttribute * currentAttribute = currentTagL1->firstAttribute;
+	XMLParserAttribute* currentAttribute = currentTagL1->firstAttribute;
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_id;
 	sprintf(tempString, "%ld", currentEntityNodeIDinEntityNodesActiveCompleteList);
@@ -1391,7 +1391,7 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 	*/
 	currentAttribute->value = tempString;
 
-	XMLParserAttribute * newAttribute = new XMLParserAttribute();
+	XMLParserAttribute* newAttribute = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
 
@@ -1661,7 +1661,7 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 		sprintf(tempString, "%d", (currentEntity->printTextX));
 		currentAttribute->value = tempString;
 
-		XMLParserAttribute * newAttribute13 = new XMLParserAttribute();
+		XMLParserAttribute* newAttribute13 = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute13;
 		currentAttribute = currentAttribute->nextAttribute;
 
@@ -1774,9 +1774,9 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 	#endif	
 		
 
-	XMLparserTag * firstTagL3;
-	XMLparserTag * currentTagL3;
-	XMLparserTag * newTag2;
+	XMLparserTag* firstTagL3;
+	XMLparserTag* currentTagL3;
+	XMLparserTag* newTag2;
 
 	#ifdef GIA_SEMANTIC_NET_DO_NOT_WRITE_CONNECTIONS_FROM_DISABLED_ENTITY_NODES
 	if(!(currentEntity->disabled))
@@ -1795,8 +1795,8 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 
 				for(vector<GIAentityConnection*>::iterator connectionIter = currentEntity->entityVectorConnectionsArray[i].begin(); connectionIter < currentEntity->entityVectorConnectionsArray[i].end(); connectionIter++)
 				{
-					GIAentityConnection * connection= (*connectionIter);
-					GIAentityNode * connectionEntityNode = (connection->entity);
+					GIAentityConnection* connection= (*connectionIter);
+					GIAentityNode* connectionEntityNode = (connection->entity);
 					#ifdef GIA_SEMANTIC_NET_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES
 					if(!(connectionEntityNode->disabled))
 					{
@@ -1809,7 +1809,7 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 						sprintf(tempString, "%ld", connectionEntityNode->idActiveListReorderdIDforXMLsave);
 						currentAttribute->value = tempString;
 
-						XMLParserAttribute * newAttribute = new XMLParserAttribute();
+						XMLParserAttribute* newAttribute = new XMLParserAttribute();
 						currentAttribute->nextAttribute = newAttribute;
 						currentAttribute = currentAttribute->nextAttribute;
 
@@ -1858,7 +1858,7 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 						
 						#endif
 
-						XMLparserTag * newTag3 = new XMLparserTag();	//had to add a null tag
+						XMLparserTag* newTag3 = new XMLparserTag();	//had to add a null tag
 						currentTagL3->nextTag = newTag3;
 						currentTagL3 = currentTagL3->nextTag;
 					#ifdef GIA_SEMANTIC_NET_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES
@@ -1881,9 +1881,9 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 		currentTagL2->name = NET_XML_TAG_timeConditionNode;
 
 		/*
-		XMLparserTag * firstTagL3 = new XMLparserTag();
+		XMLparserTag* firstTagL3 = new XMLparserTag();
 		currentTagL2->firstLowerLevelTag = firstTagL3;
-		XMLparserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
+		XMLparserTag* currentTagL3 = currentTagL2->firstLowerLevelTag;
 		*/
 
 		if(!generateXMLconditionTimeNodeTagList(currentTagL2, currentEntity->timeConditionNode))
@@ -1891,12 +1891,12 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 			result = false;
 		}
 
-		XMLparserTag * newTag2 = new XMLparserTag();	//had to add a null tag
+		XMLparserTag* newTag2 = new XMLparserTag();	//had to add a null tag
 		currentTagL2->nextTag = newTag2;
 		currentTagL2 = currentTagL2->nextTag;
 	}
 
-	XMLparserTag * newTag = new XMLparserTag();
+	XMLparserTag* newTag = new XMLparserTag();
 	currentTagL1->nextTag = newTag;
 	currentTagL1 = currentTagL1->nextTag;
 
@@ -1910,18 +1910,18 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 
 
 
-bool generateXMLconditionTimeNodeTagList(XMLparserTag * firstTagInConditionTimeNode, GIAtimeConditionNode * conditionTimeNode)
+bool generateXMLconditionTimeNodeTagList(XMLparserTag* firstTagInConditionTimeNode, GIAtimeConditionNode* conditionTimeNode)
 {
 	bool result = true;
 
 	char tempString[MAX_ATTRIBUTE_VALUE_SIZE];
 
-	XMLParserAttribute * currentAttribute = firstTagInConditionTimeNode->firstAttribute;
+	XMLParserAttribute* currentAttribute = firstTagInConditionTimeNode->firstAttribute;
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_conditionName;
 	currentAttribute->value = conditionTimeNode->conditionName;
 
-	XMLParserAttribute * newAttribute1 = new XMLParserAttribute();
+	XMLParserAttribute* newAttribute1 = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute1;
 	currentAttribute = currentAttribute->nextAttribute;
 
@@ -1929,7 +1929,7 @@ bool generateXMLconditionTimeNodeTagList(XMLparserTag * firstTagInConditionTimeN
 	sprintf(tempString, "%d", (conditionTimeNode->tense));
 	currentAttribute->value = tempString;
 
-	XMLParserAttribute * newAttribute1b = new XMLParserAttribute();
+	XMLParserAttribute* newAttribute1b = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute1b;
 	currentAttribute = currentAttribute->nextAttribute;
 
@@ -1937,7 +1937,7 @@ bool generateXMLconditionTimeNodeTagList(XMLparserTag * firstTagInConditionTimeN
 	sprintf(tempString, "%0.6f", (conditionTimeNode->second));
 	currentAttribute->value = tempString;
 
-	XMLParserAttribute * newAttribute2 = new XMLParserAttribute();
+	XMLParserAttribute* newAttribute2 = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute2;
 	currentAttribute = currentAttribute->nextAttribute;
 
@@ -1945,7 +1945,7 @@ bool generateXMLconditionTimeNodeTagList(XMLparserTag * firstTagInConditionTimeN
 	sprintf(tempString, "%d", conditionTimeNode->hour);
 	currentAttribute->value = tempString;
 
-	XMLParserAttribute * newAttribute3 = new XMLParserAttribute();
+	XMLParserAttribute* newAttribute3 = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute3;
 	currentAttribute = currentAttribute->nextAttribute;
 
@@ -1953,7 +1953,7 @@ bool generateXMLconditionTimeNodeTagList(XMLparserTag * firstTagInConditionTimeN
 	sprintf(tempString, "%d", conditionTimeNode->dayOfWeek);
 	currentAttribute->value = tempString;
 
-	XMLParserAttribute * newAttribute4 = new XMLParserAttribute();
+	XMLParserAttribute* newAttribute4 = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute4;
 	currentAttribute = currentAttribute->nextAttribute;
 
@@ -1961,7 +1961,7 @@ bool generateXMLconditionTimeNodeTagList(XMLparserTag * firstTagInConditionTimeN
 	sprintf(tempString, "%d", conditionTimeNode->month);
 	currentAttribute->value = tempString;
 
-	XMLParserAttribute * newAttribute5 = new XMLParserAttribute();
+	XMLParserAttribute* newAttribute5 = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute5;
 	currentAttribute = currentAttribute->nextAttribute;
 
@@ -1969,7 +1969,7 @@ bool generateXMLconditionTimeNodeTagList(XMLparserTag * firstTagInConditionTimeN
 	sprintf(tempString, "%d", conditionTimeNode->dayOfMonth);
 	currentAttribute->value = tempString;
 
-	XMLParserAttribute * newAttribute6 = new XMLParserAttribute();
+	XMLParserAttribute* newAttribute6 = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute6;
 	currentAttribute = currentAttribute->nextAttribute;
 
@@ -1977,7 +1977,7 @@ bool generateXMLconditionTimeNodeTagList(XMLparserTag * firstTagInConditionTimeN
 	sprintf(tempString, "%ld", conditionTimeNode->year);
 	currentAttribute->value = tempString;
 
-	XMLParserAttribute * newAttribute7 = new XMLParserAttribute();
+	XMLParserAttribute* newAttribute7 = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute7;
 	currentAttribute = currentAttribute->nextAttribute;
 
@@ -1985,7 +1985,7 @@ bool generateXMLconditionTimeNodeTagList(XMLparserTag * firstTagInConditionTimeN
 	sprintf(tempString, "%0.6f", conditionTimeNode->period);
 	currentAttribute->value = tempString;
 
-	XMLParserAttribute * newAttribute8 = new XMLParserAttribute();
+	XMLParserAttribute* newAttribute8 = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute8;
 	currentAttribute = currentAttribute->nextAttribute;
 
@@ -1993,7 +1993,7 @@ bool generateXMLconditionTimeNodeTagList(XMLparserTag * firstTagInConditionTimeN
 	sprintf(tempString, "%ld", conditionTimeNode->totalTimeInSeconds);
 	currentAttribute->value = tempString;
 
-	XMLParserAttribute * newAttribute9 = new XMLParserAttribute();
+	XMLParserAttribute* newAttribute9 = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute9;
 	currentAttribute = currentAttribute->nextAttribute;
 

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -43,12 +43,12 @@
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 
-GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParameters(Sentence * newcurrentSentenceInList, bool newGIAentityNodeArrayFilled[], GIAentityNode * newGIAentityNodeArray[], bool newexecuteOrReassign)
+GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParameters(Sentence* newcurrentSentenceInList, bool newGIAentityNodeArrayFilled[], GIAentityNode* newGIAentityNodeArray[], bool newexecuteOrReassign)
 {
 	currentSentenceInList = newcurrentSentenceInList;
 	GIAentityNodeArrayFilled = newGIAentityNodeArrayFilled;
 	GIAentityNodeArray = newGIAentityNodeArray;
-	unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts;
+	unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts;
 
 	executeOrReassign = newexecuteOrReassign;
 
@@ -154,14 +154,14 @@ GIAgenericDepRelInterpretationParameters::~GIAgenericDepRelInterpretationParamet
 {
 }
 
-void initialiseBoolArray1D(bool * boolArray, int size, int value)
+void initialiseBoolArray1D(bool* boolArray, int size, int value)
 {
 	for(int i=0; i<size; i++)
 	{
 		boolArray[i] = value;
 	}
 }
-void initialiseBoolArray2D(bool * boolArray, int size1, int size2, int value)
+void initialiseBoolArray2D(bool* boolArray, int size1, int size2, int value)
 {
 	for(int i=0; i<size1; i++)
 	{
@@ -171,14 +171,14 @@ void initialiseBoolArray2D(bool * boolArray, int size1, int size2, int value)
 		}
 	}
 }
-void initialiseIntArray1D(int * intArray, int size, int value)
+void initialiseIntArray1D(int* intArray, int size, int value)
 {
 	for(int i=0; i<size; i++)
 	{
 		intArray[i] = value;
 	}
 }
-void initialiseIntArray2D(int * intArray, int size1, int size2, int value)
+void initialiseIntArray2D(int* intArray, int size1, int size2, int value)
 {
 	for(int i=0; i<size1; i++)
 	{
@@ -188,7 +188,7 @@ void initialiseIntArray2D(int * intArray, int size1, int size2, int value)
 		}
 	}
 }
-void initialiseIntArray3D(int * intArray, int size1, int size2, int size3, int value)
+void initialiseIntArray3D(int* intArray, int size1, int size2, int size3, int value)
 {
 	for(int i=0; i<size1; i++)
 	{
@@ -202,7 +202,7 @@ void initialiseIntArray3D(int * intArray, int size1, int size2, int size3, int v
 	}
 }
 
-bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters * param, int currentRelationID)
+bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters* param, int currentRelationID)
 {
 	//cout << "START genericDependecyRelationInterpretation: " << currentRelationID << endl;
 	bool result = false;
@@ -211,7 +211,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 	int conjunctionRelationIndex = 0;
 	#endif
 
-	Relation * currentRelationInList = param->currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = param->currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		bool relationPreviouslyUsed = false;
@@ -364,7 +364,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 					#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 					cout << currentRelationID << ": " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
 					#endif
-					GIAgenericDepRelInterpretationParameters paramTemp = *param;	//this shouldnt be required anymore with relationFinalResult/relationEntityFinalResult/relationEntityIndexFinalResult... 	//only record parameters (eg relationEntity/relationEntityIndex) if successfully recused - this is required if additional commands are required to be executed based on the successful (result==true) recursion of genericDependecyRelationInterpretation (e.g. in GIAtranslatorRedistributeStanfordRelations.cpp)
+					GIAgenericDepRelInterpretationParameters paramTemp =* param;	//this shouldnt be required anymore with relationFinalResult/relationEntityFinalResult/relationEntityIndexFinalResult... 	//only record parameters (eg relationEntity/relationEntityIndex) if successfully recused - this is required if additional commands are required to be executed based on the successful (result==true) recursion of genericDependecyRelationInterpretation (e.g. in GIAtranslatorRedistributeStanfordRelations.cpp)
 					if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1)))
 					{
 						result = true;
@@ -442,9 +442,9 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 							{//not used often
 								//cout << "useSpecialCaseCharacteristicsRelationIndexTest" << endl;
 								passedEntityMatchTests = false;
-								GIAentityNode * currentEntity = param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]];
-								GIAentityNode * targetEntity = param->GIAentityNodeArray[param->relationEntityIndex[param->specialCaseCharacteristicsRelationIndexTestRelationID[relationID][relationEntityID]][param->specialCaseCharacteristicsRelationIndexTestEntityID[relationID][relationEntityID]]];
-								EntityCharacteristic * entityCharacteristic = &(param->specialCaseCharacteristicsRelationIndexTest[relationID][relationEntityID]);
+								GIAentityNode* currentEntity = param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]];
+								GIAentityNode* targetEntity = param->GIAentityNodeArray[param->relationEntityIndex[param->specialCaseCharacteristicsRelationIndexTestRelationID[relationID][relationEntityID]][param->specialCaseCharacteristicsRelationIndexTestEntityID[relationID][relationEntityID]]];
+								EntityCharacteristic* entityCharacteristic = &(param->specialCaseCharacteristicsRelationIndexTest[relationID][relationEntityID]);
 								getEntityCharacteristic(currentEntity, entityCharacteristic);
 								if(testEntityCharacteristic(targetEntity, entityCharacteristic))
 								{
@@ -459,7 +459,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 						cout << "trying to find non allowed relation:" << endl;
 						cout << currentRelationID << ": [SpecialCaseNonExistantRelationCheck]: " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
 						#endif
-						GIAgenericDepRelInterpretationParameters paramTemp = *param;
+						GIAgenericDepRelInterpretationParameters paramTemp =* param;
 						if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1)))
 						{
 							passedEntityMatchTests = false;
@@ -510,7 +510,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									#endif
 									bool auxiliaryIndicatesDifferentReferenceSet = true;
 									bool rcmodIndicatesSameReferenceSet = false;
-									GIAgenericDepRelInterpretationParameters paramTemp = *param;
+									GIAgenericDepRelInterpretationParameters paramTemp =* param;
 									if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1)))
 									{
 										rcmodIndicatesSameReferenceSet = true;
@@ -625,7 +625,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										//NB if concept type entity name has already been defined (GIAentityNodeArrayFilled[functionEntityIndex3]), then findOrAddEntityNodeByNameSimpleWrapperCondition will use it instead
 										bool entityAlreadyExistant = false;
 										param->GIAentityNodeArray[functionEntityIndex3] = findOrAddEntityNodeByNameSimpleWrapperCondition(param->GIAentityNodeArrayFilled, param->GIAentityNodeArray, functionEntityIndex3, &conditionEntityName, &entityAlreadyExistant, param->entityNodesActiveListConcepts);
-										//GIAentityNode * conditionConceptEntity = above
+										//GIAentityNode* conditionConceptEntity = above
 									}
 								}
 								#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
@@ -639,7 +639,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										param->currentSentenceInList->conditionEntityArtificialIndexCurrent = param->currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 										bool entityAlreadyExistant = false;
 										param->GIAentityNodeArray[functionEntityIndex3] = findOrAddEntityNodeByNameSimpleWrapperCondition(param->GIAentityNodeArrayFilled, param->GIAentityNodeArray, functionEntityIndex3, &conditionEntityName, &entityAlreadyExistant, param->entityNodesActiveListConcepts);
-										//GIAentityNode * conditionConceptEntity = above
+										//GIAentityNode* conditionConceptEntity = above
 									}
 								}
 								#endif
@@ -901,9 +901,9 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										}
 										if(param->useSpecialCaseCharacteristicsRelationEntityIndexReassignment[relationID][relationEntityID])
 										{//not used often
-											GIAentityNode * currentEntity = param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]];
-											GIAentityNode * targetEntity = param->GIAentityNodeArray[param->relationEntityIndex[param->specialCaseCharacteristicsRelationEntityIndexReassignmentRelationID[relationID][relationEntityID]][param->specialCaseCharacteristicsRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID]]];
-											EntityCharacteristic * entityCharacteristic = &(param->specialCaseCharacteristicsRelationEntityIndexReassignment[relationID][relationEntityID]);
+											GIAentityNode* currentEntity = param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]];
+											GIAentityNode* targetEntity = param->GIAentityNodeArray[param->relationEntityIndex[param->specialCaseCharacteristicsRelationEntityIndexReassignmentRelationID[relationID][relationEntityID]][param->specialCaseCharacteristicsRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID]]];
+											EntityCharacteristic* entityCharacteristic = &(param->specialCaseCharacteristicsRelationEntityIndexReassignment[relationID][relationEntityID]);
 											getEntityCharacteristic(targetEntity, entityCharacteristic);
 											setEntityCharacteristic(currentEntity, entityCharacteristic);
 										}
@@ -1004,7 +1004,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								{
 									if(param->disableEntity[relationID][relationEntityID])
 									{
-										GIAentityNode * oldRedundantEntity;
+										GIAentityNode* oldRedundantEntity;
 										#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 										if(param->relationEntityIndexOriginal[relationID][relationEntityID] != INT_DEFAULT_VALUE)	//check whether attempting to disable a non-preposition (and therefore non-existant) relationType entity
 										{
@@ -1031,7 +1031,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									}
 									if(param->enableEntity[relationID][relationEntityID])
 									{
-										GIAentityNode * entityToRenable;
+										GIAentityNode* entityToRenable;
 										#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 										if(param->relationEntityIndexOriginal[relationID][relationEntityID] != INT_DEFAULT_VALUE)	//check whether attempting to disable a non-preposition (and therefore non-existant) relationType entity
 										{
@@ -1069,7 +1069,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 
-GIAgenericEntityInterpretationParameters::GIAgenericEntityInterpretationParameters(Sentence * newcurrentSentenceInList, bool newGIAentityNodeArrayFilled[], GIAentityNode * newGIAentityNodeArray[], bool newexecuteOrReassign)
+GIAgenericEntityInterpretationParameters::GIAgenericEntityInterpretationParameters(Sentence* newcurrentSentenceInList, bool newGIAentityNodeArrayFilled[], GIAentityNode* newGIAentityNodeArray[], bool newexecuteOrReassign)
 {
 	currentSentenceInList = newcurrentSentenceInList;
 	GIAentityNodeArrayFilled = newGIAentityNodeArrayFilled;
@@ -1102,7 +1102,7 @@ GIAgenericEntityInterpretationParameters::~GIAgenericEntityInterpretationParamet
 {
 }
 
-bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * param)
+bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters* param)
 {
 	bool result = false;
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -1225,12 +1225,12 @@ bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * para
 
 #endif
 
-bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, Relation * prepositionRelation, int * indexOfPreposition)
+bool determineFeatureIndexOfPreposition(Sentence* currentSentenceInList, Relation* prepositionRelation, int* indexOfPreposition)
 {
 	string prepositionName = prepositionRelation->relationType;
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	//cout << "*prepositionName = " << *prepositionName << endl;
+	//cout << "*prepositionName = " <<* prepositionName << endl;
 	#endif
 
 	bool prepositionFeatureFound = false;
@@ -1241,7 +1241,7 @@ bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, Relati
 	int numberOfPrepositionFeaturesFound = 0;
 
 
-	Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
+	Feature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
 		string singleWordPreposition = prepositionName;

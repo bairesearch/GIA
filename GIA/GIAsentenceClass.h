@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -102,7 +102,7 @@ public:
 	int end;
 	int head;
 
-	StanfordCoreNLPmention * next;
+	StanfordCoreNLPmention* next;
 };
 
 class StanfordCoreNLPcoreference
@@ -112,9 +112,9 @@ public:
 	StanfordCoreNLPcoreference(void);
 	~StanfordCoreNLPcoreference(void);
 
-	StanfordCoreNLPmention * firstMentionInList;
+	StanfordCoreNLPmention* firstMentionInList;
 
-	StanfordCoreNLPcoreference * next;
+	StanfordCoreNLPcoreference* next;
 };
 
 #endif
@@ -134,7 +134,7 @@ public:
 	string entityName;
 	bool intrasentenceReference;
 
-	GIAMention * next;
+	GIAMention* next;
 };
 
 class GIACoreference
@@ -144,9 +144,9 @@ public:
 	GIACoreference(void);
 	~GIACoreference(void);
 
-	GIAMention * firstMentionInList;
+	GIAMention* firstMentionInList;
 
-	GIACoreference * next;
+	GIACoreference* next;
 };
 
 #endif
@@ -212,7 +212,7 @@ public:
 	#endif
 	#endif
 	
-	Relation * next;
+	Relation* next;
 };
 
 
@@ -276,8 +276,8 @@ public:
 	bool determinerPotentiallySingularDetected;
 	#endif
 
-	Feature * next;
-	Feature * previous;	//used for reference lookup
+	Feature* next;
+	Feature* previous;	//used for reference lookup
 };
 
 
@@ -300,16 +300,16 @@ public:
 	#endif
 
 	#ifdef GIA_USE_STANFORD_CORENLP
-	StanfordCoreNLPcoreference * firstCoreferenceInList;
+	StanfordCoreNLPcoreference* firstCoreferenceInList;
 	#endif
 
 	int maxNumberOfWordsInSentence;
 
-	Relation * firstRelationInList;
-	Feature * firstFeatureInList;
+	Relation* firstRelationInList;
+	Feature* firstFeatureInList;
 
-	Sentence * next;
-	Sentence * previous;	//used for reference lookup
+	Sentence* next;
+	Sentence* previous;	//used for reference lookup
 
 	bool isQuestion;
 
@@ -325,18 +325,18 @@ public:
 	Paragraph(void);
 	~Paragraph(void);
 
-	Sentence * firstSentenceInList;
+	Sentence* firstSentenceInList;
 
-	Paragraph * next;
-	Paragraph * previous;	//used for reference lookup
+	Paragraph* next;
+	Paragraph* previous;	//used for reference lookup
 };
 
-void copySentences(Sentence * sentenceToCopy, Sentence * newSentence);
-void copyRelations(Relation * firstRelationInListToCopy, Relation * firstRelationInList);
-void copyFeatures(Feature * firstFeatureInListToCopy, Feature * firstFeatureInList);
+void copySentences(Sentence* sentenceToCopy, Sentence* newSentence);
+void copyRelations(Relation* firstRelationInListToCopy, Relation* firstRelationInList);
+void copyFeatures(Feature* firstFeatureInListToCopy, Feature* firstFeatureInList);
 #ifdef GIA_USE_STANFORD_CORENLP
-void copyStanfordCoreferences(StanfordCoreNLPcoreference * firstCoreferenceInListToCopy, StanfordCoreNLPcoreference * firstCoreferenceInList);
-void copyStanfordMention(StanfordCoreNLPmention * firstMentionInListToCopy, StanfordCoreNLPmention * firstMentionInList);
+void copyStanfordCoreferences(StanfordCoreNLPcoreference* firstCoreferenceInListToCopy, StanfordCoreNLPcoreference* firstCoreferenceInList);
+void copyStanfordMention(StanfordCoreNLPmention* firstMentionInListToCopy, StanfordCoreNLPmention* firstMentionInList);
 #endif
 
 #endif

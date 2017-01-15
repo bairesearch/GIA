@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -343,7 +343,7 @@ Paragraph::~Paragraph(void)
 	}
 }
 
-void copySentences(Sentence * sentenceToCopy, Sentence * newSentence)
+void copySentences(Sentence* sentenceToCopy, Sentence* newSentence)
 {
 	newSentence->sentenceIndex = sentenceToCopy->sentenceIndex;
 
@@ -372,10 +372,10 @@ void copySentences(Sentence * sentenceToCopy, Sentence * newSentence)
 }
 
 
-void copyRelations(Relation * firstRelationInListToCopy, Relation * firstRelationInList)
+void copyRelations(Relation* firstRelationInListToCopy, Relation* firstRelationInList)
 {
-	Relation * currentRelationToCopy = firstRelationInListToCopy;
-	Relation * currentRelation = firstRelationInList;
+	Relation* currentRelationToCopy = firstRelationInListToCopy;
+	Relation* currentRelation = firstRelationInList;
 	while(currentRelationToCopy->next != NULL)
 	{
 
@@ -400,7 +400,7 @@ void copyRelations(Relation * firstRelationInListToCopy, Relation * firstRelatio
 		#endif
 		#endif
 
-		Relation * newRelation = new Relation();
+		Relation* newRelation = new Relation();
 		//newRelation->previous = currentRelation;
 		currentRelation->next = newRelation;
 
@@ -409,10 +409,10 @@ void copyRelations(Relation * firstRelationInListToCopy, Relation * firstRelatio
 	}
 }
 
-void copyFeatures(Feature * firstFeatureInListToCopy, Feature * firstFeatureInList)
+void copyFeatures(Feature* firstFeatureInListToCopy, Feature* firstFeatureInList)
 {
-	Feature * currentFeatureToCopy = firstFeatureInListToCopy;
-	Feature * currentFeature = firstFeatureInList;
+	Feature* currentFeatureToCopy = firstFeatureInListToCopy;
+	Feature* currentFeature = firstFeatureInList;
 	while(currentFeatureToCopy->next != NULL)
 	{
 
@@ -439,7 +439,7 @@ void copyFeatures(Feature * firstFeatureInListToCopy, Feature * firstFeatureInLi
 		//cout << currentFeature->lemma << endl;
 		#endif
 
-		Feature * newFeature = new Feature();
+		Feature* newFeature = new Feature();
 		newFeature->previous = currentFeature;
 		currentFeature->next = newFeature;
 
@@ -450,10 +450,10 @@ void copyFeatures(Feature * firstFeatureInListToCopy, Feature * firstFeatureInLi
 
 
 #ifdef GIA_USE_STANFORD_CORENLP
-void copyStanfordCoreferences(StanfordCoreNLPcoreference * firstCoreferenceInListToCopy, StanfordCoreNLPcoreference * firstCoreferenceInList)
+void copyStanfordCoreferences(StanfordCoreNLPcoreference* firstCoreferenceInListToCopy, StanfordCoreNLPcoreference* firstCoreferenceInList)
 {
-	StanfordCoreNLPcoreference * currentCoreferenceInListToCopy = firstCoreferenceInListToCopy;
-	StanfordCoreNLPcoreference * currentCoreferenceInList = firstCoreferenceInList;
+	StanfordCoreNLPcoreference* currentCoreferenceInListToCopy = firstCoreferenceInListToCopy;
+	StanfordCoreNLPcoreference* currentCoreferenceInList = firstCoreferenceInList;
 	while(currentCoreferenceInListToCopy->next != NULL)
 	{
 		currentCoreferenceInList->firstMentionInList = new StanfordCoreNLPmention();
@@ -464,7 +464,7 @@ void copyStanfordCoreferences(StanfordCoreNLPcoreference * firstCoreferenceInLis
 		//cout << currentCoreferenceInList->head << endl;
 		#endif
 
-		StanfordCoreNLPcoreference * newCoreference = new StanfordCoreNLPcoreference();
+		StanfordCoreNLPcoreference* newCoreference = new StanfordCoreNLPcoreference();
 		currentCoreferenceInList->next = newCoreference;
 
 		currentCoreferenceInListToCopy = currentCoreferenceInListToCopy->next;
@@ -472,10 +472,10 @@ void copyStanfordCoreferences(StanfordCoreNLPcoreference * firstCoreferenceInLis
 	}
 }
 
-void copyStanfordMention(StanfordCoreNLPmention * firstMentionInListToCopy, StanfordCoreNLPmention * firstMentionInList)
+void copyStanfordMention(StanfordCoreNLPmention* firstMentionInListToCopy, StanfordCoreNLPmention* firstMentionInList)
 {
-	StanfordCoreNLPmention * currentMentionInListToCopy = firstMentionInListToCopy;
-	StanfordCoreNLPmention * currentMentionInList = firstMentionInList;
+	StanfordCoreNLPmention* currentMentionInListToCopy = firstMentionInListToCopy;
+	StanfordCoreNLPmention* currentMentionInList = firstMentionInList;
 	while(currentMentionInListToCopy->next != NULL)
 	{
 		currentMentionInList->representative = currentMentionInListToCopy->representative;
@@ -489,7 +489,7 @@ void copyStanfordMention(StanfordCoreNLPmention * firstMentionInListToCopy, Stan
 		//cout << currentMentionInList->head << endl;
 		#endif
 
-		StanfordCoreNLPmention * newMention = new StanfordCoreNLPmention();
+		StanfordCoreNLPmention* newMention = new StanfordCoreNLPmention();
 		currentMentionInList->next = newMention;
 
 		currentMentionInListToCopy = currentMentionInListToCopy->next;

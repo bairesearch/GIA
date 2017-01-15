@@ -26,7 +26,7 @@
  * File Name: GIAcorpusOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -40,15 +40,15 @@
 
 #ifdef GIA_USE_CORPUS_DATABASE
 
-void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNode ** GIAentityNodeArray, Sentence * currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet);
-void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(GIAentityNode ** GIAentityNodeArray, Sentence * currentSentenceInList, bool linkPreestablishedReferencesGIA, int NLPdependencyRelationsType);
-	string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet);
+void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNode** GIAentityNodeArray, Sentence* currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet);
+void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(GIAentityNode** GIAentityNodeArray, Sentence* currentSentenceInList, bool linkPreestablishedReferencesGIA, int NLPdependencyRelationsType);
+	string generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet);
 		string generateGIA2semanticDependencyRelationSimple(string entityName1, string entityName2, string semanticRelation, int entityIndex1, int entityIndex2, bool sameReferenceSet);
 			string createSameReferenceSetRecord(bool sameReferenceSet);
-string regenerateSentenceText(Feature * firstFeatureInSentence, bool addPOSinfo, int NLPfeatureParser);
-void determineGIAconnectionistNetworkPOStypeNames(Feature * firstFeatureInList, int NLPfeatureParser);
-	void determineGIAconnectionistNetworkPOStypeNameStanford(Feature * currentFeatureInSentence);
-	void determineGIAconnectionistNetworkPOStypeNameRelex(Feature * currentFeatureInSentence);
+string regenerateSentenceText(Feature* firstFeatureInSentence, bool addPOSinfo, int NLPfeatureParser);
+void determineGIAconnectionistNetworkPOStypeNames(Feature* firstFeatureInList, int NLPfeatureParser);
+	void determineGIAconnectionistNetworkPOStypeNameStanford(Feature* currentFeatureInSentence);
+	void determineGIAconnectionistNetworkPOStypeNameRelex(Feature* currentFeatureInSentence);
 #endif
 
 #endif

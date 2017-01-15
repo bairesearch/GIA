@@ -26,7 +26,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  *
  *******************************************************************************/
 
@@ -82,7 +82,7 @@ GIAentityConnection::GIAentityConnection(void)
 GIAentityConnection::~GIAentityConnection(void)
 {
 }
-GIAentityConnection::GIAentityConnection(string * startEntityName, long startIdInstance)
+GIAentityConnection::GIAentityConnection(string* startEntityName, long startIdInstance)
 {
 	confidence = GIA_ENTITY_CONNECTION_CONFIDENCE_BASE;
 
@@ -92,7 +92,7 @@ GIAentityConnection::GIAentityConnection(string * startEntityName, long startIdI
 
 	#ifdef GIA_USE_DATABASE
 	referenceLoaded = false;
-	entityName = *startEntityName;
+	entityName =* startEntityName;
 	idInstance = startIdInstance;
 	loaded = false;
 	modified = false;

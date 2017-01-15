@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -36,8 +36,8 @@
 #include "GIAtranslatorDefineReferencing.h"
 #include "GIAdatabase.h"
 
-//unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts
-void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
+//unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts
+void identifyComparisonVariableAlternateMethod(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser)
 {
 	bool expectToFindComparisonVariable = false;
 	if(currentSentenceInList->isQuestion)
@@ -58,7 +58,7 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 			{
 				if(GIAentityNodeArrayFilled[i])
 				{
-					GIAentityNode * entityNode = GIAentityNodeArray[i];
+					GIAentityNode* entityNode = GIAentityNodeArray[i];
 					if(entityNode->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 					{
 						entityNode->isQuery = true;
@@ -80,7 +80,7 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 			bool foundComparisonVariableAlternateMethod = false;
 
 			bool foundQueryWordAcceptedByAlternateMethod = false;
-			Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
+			Feature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
 			while(currentFeatureInList->next != NULL)
 			{
 				bool passed = false;
@@ -95,7 +95,7 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 					}
 					else
 					{//ie if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
-						Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+						Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 						while(currentRelationInList->next != NULL)
 						{
 							if(currentRelationInList->relationType == RELATION_TYPE_DETERMINER)	//only supported by Stanford
@@ -176,12 +176,12 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 						/*
 						string queryComparisonVariableName = currentFeatureInList->word
 						bool entityAlreadyExistant = false;
-						GIAentityNode * queryComparisonVariableEntityNode = findOrAddConceptEntityNodeByNameSimpleWrapper(&queryComparisonVariableName, &entityAlreadyExistant);
+						GIAentityNode* queryComparisonVariableEntityNode = findOrAddConceptEntityNodeByNameSimpleWrapper(&queryComparisonVariableName, &entityAlreadyExistant);
 						//CHECK THIS; !applyConceptEntityAlreadyExistsFunction
 						*/
 						if(GIAentityNodeArrayFilled[currentFeatureInList->entityIndex])
 						{
-							GIAentityNode * queryComparisonVariableEntityNode = GIAentityNodeArray[currentFeatureInList->entityIndex];
+							GIAentityNode* queryComparisonVariableEntityNode = GIAentityNodeArray[currentFeatureInList->entityIndex];
 							queryComparisonVariableEntityNode->isQuery = true;
 							queryComparisonVariableEntityNode->isWhichOrEquivalentWhatQuery = true;
 							#ifdef GIA_SUPPORT_WHICH_QUERY_ALIAS_ANSWERS
@@ -220,9 +220,9 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 
 
 
-void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType)
+void identifyEntityTypes(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], int NLPdependencyRelationsType)
 {
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -255,8 +255,8 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 			{
 				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
 				int relationDependentIndex = currentRelationInList->relationDependentIndex;
-				GIAentityNode * substanceEntity = GIAentityNodeArray[relationGovernorIndex];
-				GIAentityNode * ownerEntity = GIAentityNodeArray[relationDependentIndex];
+				GIAentityNode* substanceEntity = GIAentityNodeArray[relationGovernorIndex];
+				GIAentityNode* ownerEntity = GIAentityNodeArray[relationDependentIndex];
 				ownerEntity->hasSubstanceTemp = true;
 			}
 
@@ -298,8 +298,8 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 				#endif
 					int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
 					int relationDependentIndex = currentRelationInList->relationDependentIndex;
-					GIAentityNode * thingEntity = GIAentityNodeArray[relationGovernorIndex];
-					GIAentityNode * substanceEntity = GIAentityNodeArray[relationDependentIndex];
+					GIAentityNode* thingEntity = GIAentityNodeArray[relationGovernorIndex];
+					GIAentityNode* substanceEntity = GIAentityNodeArray[relationDependentIndex];
 					thingEntity->hasSubstanceTemp = true;
 					//substanceEntity->hasQualityTemp = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
 				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
@@ -321,11 +321,11 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 			if(passed)
 			{
 				int relationDependentIndex = currentRelationInList->relationDependentIndex;
-				GIAentityNode * subjectEntity = GIAentityNodeArray[relationDependentIndex];
+				GIAentityNode* subjectEntity = GIAentityNodeArray[relationDependentIndex];
 				subjectEntity->isSubjectTemp = true;
 
 				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
-				GIAentityNode * actionEntity = GIAentityNodeArray[relationGovernorIndex];
+				GIAentityNode* actionEntity = GIAentityNodeArray[relationGovernorIndex];
 				actionEntity->isActionTemp = true;
 			}
 
@@ -343,11 +343,11 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 			if(passed)
 			{
 				int relationDependentIndex = currentRelationInList->relationDependentIndex;
-				GIAentityNode * objectEntity = GIAentityNodeArray[relationDependentIndex];
+				GIAentityNode* objectEntity = GIAentityNodeArray[relationDependentIndex];
 				objectEntity->isObjectTemp = true;
 
 				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
-				GIAentityNode * actionEntity = GIAentityNodeArray[relationGovernorIndex];
+				GIAentityNode* actionEntity = GIAentityNodeArray[relationGovernorIndex];
 				actionEntity->isActionTemp = true;
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -358,7 +358,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 }
 
 //updated 22 May 2012 with GIAconceptNodeArray+GIAentityNodeArray (and substances add)
-void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAfeatureTempEntityNodeArray[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[])
+void linkPronounReferencesRelex(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, Feature* featureArrayTemp[])
 {
 	#ifdef GIA_WARNINGS
 	cout << "warning: linkPronounReferencesRelex() is not robust - it requires further development" << endl;
@@ -368,7 +368,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 	{
 		if(GIAentityNodeArrayFilled[w])
 		{
-			GIAentityNode * currentGIAEntityNode = GIAfeatureTempEntityNodeArray[w];
+			GIAentityNode* currentGIAEntityNode = GIAfeatureTempEntityNodeArray[w];
 			#ifdef GIA_PRONOUN_REFERENCING_DEBUG
 			cout << "currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
 			#endif
@@ -382,17 +382,17 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 					//cout << "currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
 					//now go for a search in tree for given / this sentence + previous sentence until find candidate reference source
 
-					GIAentityNode * referenceSource = NULL;
+					GIAentityNode* referenceSource = NULL;
 					bool referenceSourceHasBeenFound = false;
 					bool stillSentencesToSearch = true;
-					Sentence * currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInList;
+					Sentence* currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInList;
 					int s2 = 0;
 					while(!referenceSourceHasBeenFound && stillSentencesToSearch)
 					{
 						#ifdef GIA_PRONOUN_REFERENCING_DEBUG
 						cout << "s2 = " << s2 << endl;
 						#endif
-						Relation * currentRelationInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->firstRelationInList;
+						Relation* currentRelationInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->firstRelationInList;
 						int maxWordLimit = 999999;
 						if(s2 == 0)
 						{
@@ -414,7 +414,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 							if(entityName != "")
 							{
 								bool entityAlreadyExistant = false;
-								GIAentityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddConceptEntityNodeByNameSimpleWrapper(&entityName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+								GIAentityNode* currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddConceptEntityNodeByNameSimpleWrapper(&entityName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 								//CHECK THIS; !applyConceptEntityAlreadyExistsFunction
 
 								if(entityAlreadyExistant)
@@ -571,7 +571,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 						//now find the substance in the referenceSource concept entity that matches the referenceSource sentence/entity index
 						for(vector<GIAentityConnection*>::iterator connectionIter = referenceSource->associatedInstanceNodeList->begin(); connectionIter != referenceSource->associatedInstanceNodeList->end(); connectionIter++)
 						{
-							GIAentityNode * substance = (*connectionIter)->entity;
+							GIAentityNode* substance = (*connectionIter)->entity;
 							#ifdef GIA_PRONOUN_REFERENCING_DEBUG
 							cout << "substance->sentenceIndexTemp = " << substance->sentenceIndexTemp << endl;
 							cout << "substance->entityIndexTemp = " << substance->entityIndexTemp << endl;
@@ -636,17 +636,17 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 
 
 #ifdef GIA_USE_STANFORD_CORENLP
-void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAfeatureTempEntityNodeArray[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, StanfordCoreNLPcoreference * firstCoreferenceInList, Feature * featureArrayTemp[])
+void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, StanfordCoreNLPcoreference* firstCoreferenceInList, Feature* featureArrayTemp[])
 {
 	#ifdef GIA_PRONOUN_REFERENCING_DEBUG
 	//cout << "linkPronounAndTextualContextReferencesStanfordCoreNLP()" << endl;
 	#endif
-	StanfordCoreNLPcoreference * currentCoreferenceInList = firstCoreferenceInList;
+	StanfordCoreNLPcoreference* currentCoreferenceInList = firstCoreferenceInList;
 	while(currentCoreferenceInList->next != NULL)
 	{
-		StanfordCoreNLPmention * firstMentionInList = currentCoreferenceInList->firstMentionInList;
-		StanfordCoreNLPmention * currentMentionInList = firstMentionInList;
-		GIAentityNode * referenceSource = NULL;
+		StanfordCoreNLPmention* firstMentionInList = currentCoreferenceInList->firstMentionInList;
+		StanfordCoreNLPmention* currentMentionInList = firstMentionInList;
+		GIAentityNode* referenceSource = NULL;
 		bool foundReferenceSource = false;
 		while(currentMentionInList->next != NULL)
 		{
@@ -671,7 +671,7 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 					if(referenceSourceSentenceIndex <= currentSentenceInList->sentenceIndex)
 					#endif
 					{
-						Sentence * currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInList;
+						Sentence* currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInList;
 						bool stillExistsPreviousSentence = true;
 						while(stillExistsPreviousSentence)
 						{
@@ -680,7 +680,7 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 							#endif
 							if(currentSentenceInWhichReferenceSourceIsBeingSearchedFor->sentenceIndex == referenceSourceSentenceIndex)
 							{
-								Feature * currentFeatureInList = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->firstFeatureInList;
+								Feature* currentFeatureInList = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->firstFeatureInList;
 								while(currentFeatureInList->next != NULL)
 								{
 									#ifdef GIA_PRONOUN_REFERENCING_DEBUG
@@ -691,7 +691,7 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 										string entityName = currentFeatureInList->lemma;	//CHECK THIS; assumes [at least one instance of] the reference source will always occur as a relation argument/dependent (ie, will not find the reference source if it only occurs as a relation function/governer)
 
 										bool entityAlreadyExistant = false;
-										GIAentityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddConceptEntityNodeByNameSimpleWrapper(&entityName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+										GIAentityNode* currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddConceptEntityNodeByNameSimpleWrapper(&entityName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 										//CHECK THIS; !applyConceptEntityAlreadyExistsFunction
 
 										#ifdef GIA_PRONOUN_REFERENCING_DEBUG
@@ -742,7 +742,7 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 						int currentSentenceEntityNodeIndex = currentMentionInList->head;
 						if(GIAentityNodeArrayFilled[currentSentenceEntityNodeIndex])
 						{
-							Feature * referenceFeature = featureArrayTemp[currentSentenceEntityNodeIndex];
+							Feature* referenceFeature = featureArrayTemp[currentSentenceEntityNodeIndex];
 
 							bool coreferenceIsPronoun = false;
 							//use stanfordPOS information to ensure that the reference is a pronoun - NB alternatively, could use referenceTypePersonNameArray and referenceTypePossessiveNameArray (as there is only a limited set of pronouns in english)
@@ -762,7 +762,7 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 								//now find the substance in the referenceSource concept entity that matches the referenceSource sentence/entity index
 								for(vector<GIAentityConnection*>::iterator connectionIter = referenceSource->associatedInstanceNodeList->begin(); connectionIter != referenceSource->associatedInstanceNodeList->end(); connectionIter++)
 								{
-									GIAentityNode * substance = (*connectionIter)->entity;
+									GIAentityNode* substance = (*connectionIter)->entity;
 									#ifdef GIA_PRONOUN_REFERENCING_DEBUG
 									/*
 									cout << "substance->sentenceIndexTemp = " << substance->sentenceIndexTemp << endl;
@@ -853,11 +853,11 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 
 #ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 
-void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList)
+void fillExplicitReferenceSameSetTags(Sentence* currentSentenceInList)
 {
 	//eg the chicken which ate a pie rowed the boat. rcmod(chicken-2, ate-4) / nsubj(ate-4, chicken-2)		 [OLD: + the blue chicken... amod(chicken-3, blue-2)]
 
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -866,7 +866,7 @@ void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList)
 		#endif
 			if(currentRelationInList->relationType == RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER)
 			{
-				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				Relation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
  				while(currentRelationInList2->next != NULL)
 				{
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -912,7 +912,7 @@ void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList)
 								}
 							}
 
-							Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+							Relation* currentRelationInList3 = currentSentenceInList->firstRelationInList;
  							while(currentRelationInList3->next != NULL)
 							{
 								if(currentRelationInList3->relationGovernorIndex == currentRelationInList2->relationGovernorIndex)
@@ -989,9 +989,9 @@ void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList)
 }
 
 
-int identifyReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, bool NLPdependencyRelationsType, vector<GIAentityNode*> * referenceSetDefiniteEntityList)
+int identifyReferenceSets(unordered_map<string, GIAentityNode*>* sentenceConceptEntityNodesList, bool NLPdependencyRelationsType, vector<GIAentityNode*>* referenceSetDefiniteEntityList)
 {
-	//cout << "\n******************** identifyReferenceSets *******************\n" << endl;
+	//cout << "\n******************** identifyReferenceSets* ******************\n" << endl;
 
 	bool haveSentenceEntityIndexOfDeterminers = false;
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
@@ -1007,7 +1007,7 @@ int identifyReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConcept
 
 	for(unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIter = sentenceConceptEntityNodesList->begin(); conceptEntityNodesListIter != sentenceConceptEntityNodesList->end(); conceptEntityNodesListIter++)
 	{
-		GIAentityNode * entityNode = conceptEntityNodesListIter->second;
+		GIAentityNode* entityNode = conceptEntityNodesListIter->second;
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		cout << "\t identifyDefiniteReferenceSets: " << entityNode->entityName << endl;
 		#endif
@@ -1020,20 +1020,20 @@ int identifyReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConcept
 
 }
 
-void resetReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList)
+void resetReferenceSets(unordered_map<string, GIAentityNode*>* sentenceConceptEntityNodesList)
 {
 	for(unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIter = sentenceConceptEntityNodesList->begin(); conceptEntityNodesListIter != sentenceConceptEntityNodesList->end(); conceptEntityNodesListIter++)
 	{
-		GIAentityNode * entityNode = conceptEntityNodesListIter->second;
+		GIAentityNode* entityNode = conceptEntityNodesListIter->second;
 		entityNode->referenceSetID = GIA_REFERENCE_SET_ID_UNDEFINED;
 	}
 }
 
-void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int * referenceSetID, bool haveSentenceEntityIndexOfDeterminers, vector<GIAentityNode*> * referenceSetDefiniteEntityList)
+void identifyReferenceSetConceptEntityEntrance(GIAentityNode* entityNode, int* referenceSetID, bool haveSentenceEntityIndexOfDeterminers, vector<GIAentityNode*>* referenceSetDefiniteEntityList)
 {
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "identifyReferenceSetEntrance(): entityNode being traced = " << entityNode->entityName << endl;
-	cout << "identifyReferenceSetEntrance(): referenceSetID = " << *referenceSetID << endl;
+	cout << "identifyReferenceSetEntrance(): referenceSetID = " <<* referenceSetID << endl;
 	#endif
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
 	cout << "identifyReferenceSetEntrance(): " << entityNode->entityName << endl;
@@ -1043,7 +1043,7 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 	{
 		for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].begin(); connectionIter < entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].end(); connectionIter++)
 		{
-			GIAentityNode * currentInstance = (*connectionIter)->entity;
+			GIAentityNode* currentInstance = (*connectionIter)->entity;
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 			//cout << "currentInstance->entityName = " << currentInstance->entityName << endl;
 			#endif
@@ -1115,11 +1115,11 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 					cout << "minimumSentenceIndexOfReferenceSet2 = " << currentInstance->entityIndexTemp << endl;
 					#endif
 
-					if(identifyReferenceSetDetermineNextCourseOfAction(currentInstance, true, *referenceSetID, minimumEntityIndexOfReferenceSet, false))
+					if(identifyReferenceSetDetermineNextCourseOfAction(currentInstance, true,* referenceSetID, minimumEntityIndexOfReferenceSet, false))
 					{
-						*referenceSetID	= *referenceSetID + 1;
+						*referenceSetID	=* referenceSetID + 1;
 						referenceSetDefiniteEntityList->push_back(currentInstance);
-						//cout << "*referenceSetID++ = " << *referenceSetID << endl;
+						//cout << "*referenceSetID++ = " <<* referenceSetID << endl;
 					}
 
 			#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
@@ -1139,7 +1139,7 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 #ifdef GIA_USE_ADVANCED_REFERENCING
 
 //based on answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork();
-void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, GIACoreference * firstGIACoreferenceInList, vector<GIAentityNode*> * referenceSetDefiniteEntityList)	//bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]
+void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAentityNode*>* sentenceConceptEntityNodesList, unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIACoreference* firstGIACoreferenceInList, vector<GIAentityNode*>* referenceSetDefiniteEntityList)	//bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]
 {
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "createGIAcoreferenceInListBasedUponIdentifiedReferenceSets()" << endl;
@@ -1155,15 +1155,15 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 	#endif
 	#endif
 
-	GIACoreference * currentGIAcoreferenceInList = firstGIACoreferenceInList;
+	GIACoreference* currentGIAcoreferenceInList = firstGIACoreferenceInList;
 
 	int referenceSetID = 0;
 	for(vector<GIAentityNode*>::iterator referenceSetDefiniteEntityIter = referenceSetDefiniteEntityList->begin(); referenceSetDefiniteEntityIter != referenceSetDefiniteEntityList->end(); referenceSetDefiniteEntityIter++)
 	{
-		GIAentityNode * referenceSetDefiniteEntity = *referenceSetDefiniteEntityIter;
+		GIAentityNode* referenceSetDefiniteEntity =* referenceSetDefiniteEntityIter;
 		
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
-		cout << "\n ****************************************** referenceSetID = " << referenceSetID << endl;
+		cout << "\n* ***************************************** referenceSetID = " << referenceSetID << endl;
 		#endif
 
 		GIAreferenceTraceParameters referenceTraceParameters;
@@ -1175,11 +1175,11 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		#endif
 
 		int maxNumberOfMatchedNodes = 0;
-		GIAentityNode * queryEntityWithMaxNumberNodesMatched = NULL;
-		GIAentityNode * networkEntityWithMaxNumberNodesMatched = NULL;
+		GIAentityNode* queryEntityWithMaxNumberNodesMatched = NULL;
+		GIAentityNode* networkEntityWithMaxNumberNodesMatched = NULL;
 		bool foundAtLeastOneMatch = false;
 
-		unordered_map<string, GIAentityNode*> * entityNodesActiveListConceptsQuery = sentenceConceptEntityNodesList;
+		unordered_map<string, GIAentityNode*>* entityNodesActiveListConceptsQuery = sentenceConceptEntityNodesList;
 
 		#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 		referenceTraceParameters.intrasentenceReference = false;
@@ -1294,7 +1294,7 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 			traceEntityNode(queryEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISON, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
 			#endif
 
-			//this routine should now record, for each query node, a corresponding (vector of) best match entity node [this 1-x mapping should be used in the final generation of GIACoreference * firstGIACoreferenceInList
+			//this routine should now record, for each query node, a corresponding (vector of) best match entity node [this 1-x mapping should be used in the final generation of GIACoreference* firstGIACoreferenceInList
 
 			#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 			currentGIAcoreferenceInList = generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(queryEntityWithMaxNumberNodesMatched, currentGIAcoreferenceInList, foundAtLeastOneMatchIntraSentence);
@@ -1322,7 +1322,7 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 }
 
 
-void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<string, GIAentityNode*> *entityNodesActiveListConceptsQuery, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, GIAreferenceTraceParameters *referenceTraceParameters, int *maxNumberOfMatchedNodes, GIAentityNode **queryEntityWithMaxNumberNodesMatched, GIAentityNode **networkEntityWithMaxNumberNodesMatched, bool *foundAtLeastOneMatch)
+void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<string, GIAentityNode*>* entityNodesActiveListConceptsQuery, unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIAreferenceTraceParameters* referenceTraceParameters, int* maxNumberOfMatchedNodes, GIAentityNode* *queryEntityWithMaxNumberNodesMatched, GIAentityNode* *networkEntityWithMaxNumberNodesMatched, bool* foundAtLeastOneMatch)
 {
 	int referenceSetID = referenceTraceParameters->referenceSetID;
 
@@ -1374,7 +1374,7 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 				cout << "referenceSetID = " << referenceSetID << endl;
 				#endif
 
-				GIAentityNode * conceptEntityMatchingCurrentQueryEntity = findOrAddConceptEntityNodeByName(NULL, entityNodesActiveListConcepts, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
+				GIAentityNode* conceptEntityMatchingCurrentQueryEntity = findOrAddConceptEntityNodeByName(NULL, entityNodesActiveListConcepts, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
 
 				if(foundQueryEntityNodeName)
 				{
@@ -1420,9 +1420,9 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 					if(matchFound)
 					{
 						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-						if((numberOfMatchedNodesTemp >= *maxNumberOfMatchedNodes) && (numberOfMatchedNodesTemp > 1))		//this is required		//NB need to match > 1 nodes (ie, not just match the concept node)
+						if((numberOfMatchedNodesTemp >=* maxNumberOfMatchedNodes) && (numberOfMatchedNodesTemp > 1))		//this is required		//NB need to match > 1 nodes (ie, not just match the concept node)
 						#else
-						if(numberOfMatchedNodesTemp > *maxNumberOfMatchedNodes)
+						if(numberOfMatchedNodesTemp >* maxNumberOfMatchedNodes)
 						#endif
 						{
 							#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
@@ -1466,9 +1466,9 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 }
 
 #ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIAentityNode * entityNode, GIACoreference * currentGIAcoreferenceInList, bool intrasentenceReference)
+GIACoreference* generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIAentityNode* entityNode, GIACoreference* currentGIAcoreferenceInList, bool intrasentenceReference)
 #else
-GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIAentityNode * entityNode, GIACoreference * currentGIAcoreferenceInList)
+GIACoreference* generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIAentityNode* entityNode, GIACoreference* currentGIAcoreferenceInList)
 #endif
 {
 	bool pass = false;
@@ -1493,7 +1493,7 @@ GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIA
 
 
 				//now add the GIAcoReference to the list...
-				GIAMention * sourceMention = currentGIAcoreferenceInList->firstMentionInList;
+				GIAMention* sourceMention = currentGIAcoreferenceInList->firstMentionInList;
 				sourceMention->representative = true;
 				sourceMention->idActiveList = entityNode->entityCorrespondingBestMatch->idActiveList;
 				sourceMention->entityIndex = entityNode->entityCorrespondingBestMatch->entityIndexTemp; 	//this is only used for intrasentence references
@@ -1509,7 +1509,7 @@ GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIA
 				#endif
 				
 
-				GIAMention * referenceMention = new GIAMention();
+				GIAMention* referenceMention = new GIAMention();
 				referenceMention->representative = false;
 				referenceMention->idActiveList = entityNode->idActiveList;
 				#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -1530,10 +1530,10 @@ GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIA
 				#endif
 				sourceMention->next = referenceMention;
 
-				GIAMention * newMention  = new GIAMention();
+				GIAMention* newMention  = new GIAMention();
 				referenceMention->next = newMention;
 
-				GIACoreference * newCoreference = new GIACoreference();
+				GIACoreference* newCoreference = new GIACoreference();
 				currentGIAcoreferenceInList->next = newCoreference;
 				currentGIAcoreferenceInList = currentGIAcoreferenceInList->next;
 			}
@@ -1565,12 +1565,12 @@ GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIA
 
 
 
-void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, GIACoreference * firstCoreferenceInList, Feature * featureArrayTemp[], GIAentityNode * GIAfeatureTempEntityNodeArray[], GIAentityNode * GIAconceptNodeArray[])
+void linkAdvancedReferencesGIA(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIACoreference* firstCoreferenceInList, Feature* featureArrayTemp[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAconceptNodeArray[])
 {
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "linkAdvancedReferencesGIA()" << endl;
 	#endif
-	GIACoreference * currentCoreferenceInList = firstCoreferenceInList;
+	GIACoreference* currentCoreferenceInList = firstCoreferenceInList;
 	while(currentCoreferenceInList->next != NULL)
 	{
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -1579,13 +1579,13 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 
 		if(currentCoreferenceInList->firstMentionInList != NULL)
 		{
-			GIAMention * firstMentionInList = currentCoreferenceInList->firstMentionInList;
+			GIAMention* firstMentionInList = currentCoreferenceInList->firstMentionInList;
 
-			GIAMention * currentMentionInList = firstMentionInList;
-			GIAMention * sourceMentionInList = NULL;
-			GIAentityNode * referenceSource = NULL;
+			GIAMention* currentMentionInList = firstMentionInList;
+			GIAMention* sourceMentionInList = NULL;
+			GIAentityNode* referenceSource = NULL;
 			#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
-			GIAentityNode * referenceSourceConcept = NULL;
+			GIAentityNode* referenceSourceConcept = NULL;
 			#endif
 			bool foundReferenceSource = false;
 			int intrasentenceReferenceSourceIndex = -1;
@@ -1623,7 +1623,7 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 							bool entityNameFound = false;
 							//cout << "findOrAddConceptEntityNodeByNameSimpleWrapper" << endl;
 
-							GIAentityNode * referenceSourceConceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(currentMentionInList->entityName), &entityNameFound, entityNodesActiveListConcepts);
+							GIAentityNode* referenceSourceConceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(currentMentionInList->entityName), &entityNameFound, entityNodesActiveListConcepts);
 							if(entityNameFound)
 							{
 								//cout << "entityNameFound" << endl;
@@ -1641,7 +1641,7 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 								//now find the substance in the referenceSource concept entity that matches the referenceSource idActiveList (there is no concept linking; as concept nodes are identical for reference and referenceSource)
 								for(vector<GIAentityConnection*>::iterator connectionIter = referenceSourceConceptEntity->associatedInstanceNodeList->begin(); connectionIter != referenceSourceConceptEntity->associatedInstanceNodeList->end(); connectionIter++)
 								{
-									GIAentityNode * instance = (*connectionIter)->entity;
+									GIAentityNode* instance = (*connectionIter)->entity;
 
 									#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 									cout << "\t\t referenceSource->entityIndexTemp = " << instance->entityIndexTemp << endl;
@@ -1753,7 +1753,7 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 							#ifndef GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA
 							//copy reference aliases to referenceSource
 							//required for; A red dog is fat. The name of the red dog is Tom.
-							GIAentityNode * reference = GIAentityNodeArray[referenceEntityIndex];
+							GIAentityNode* reference = GIAentityNodeArray[referenceEntityIndex];
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
 							cout << "reference->entityName = " << reference->entityName << endl;
 							#endif
@@ -1771,7 +1771,7 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 							//for(int i((reference->aliasList).size() > 0)	
 							for(vector<string>::iterator aliasIter = reference->aliasList.begin(); aliasIter != reference->aliasList.end(); aliasIter++)	//this will be required depending on which node was declared the primary (alias or non alias) when the  entities where merged during the temporary execution of convertSentenceSemanticRelationsIntoGIAnetworkNodes() on the sentence (sentenceConceptEntityNodesList) for the creation of GIA advanced referencing coreference sets
 							{//advanced referencing has found an alias for the reference, merge it with the referenceSource
-								string referenceAlias = *aliasIter;
+								string referenceAlias =* aliasIter;
 								#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
 								cout << "referenceAlias = " << referenceAlias << endl;
 								#endif
@@ -1833,7 +1833,7 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 							if(getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE)
 							{
 								bool foundReferenceSourceInActiveList = false;
-								GIAentityNode * tempNode = findEntityNodesActiveListCompleteFastIndexDBactive(&(referenceSource->entityName), referenceSource->idInstance, &foundReferenceSourceInActiveList);
+								GIAentityNode* tempNode = findEntityNodesActiveListCompleteFastIndexDBactive(&(referenceSource->entityName), referenceSource->idInstance, &foundReferenceSourceInActiveList);
 								if(!foundReferenceSourceInActiveList)	//OR findEntityNodesActiveListCompleteFastIndexDBactive(referenceSource) OR if(!entityInActiveListComplete(referenceSource->entityName, referenceSource->idInstance))
 								{
 									addInstanceEntityNodeToActiveLists(referenceSource);
@@ -1861,7 +1861,7 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 
 
 #ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GIAentityNode*> * entityNodesActiveListComplete)
+void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GIAentityNode*>* entityNodesActiveListComplete)
 {
 	#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 	cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts" << endl;
@@ -1870,7 +1870,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 
 	for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
 	{
-		GIAentityNode * currentSpecificConcept = *entityNodesActiveListCompleteIter;
+		GIAentityNode* currentSpecificConcept =* entityNodesActiveListCompleteIter;
 		#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 		cout << "\t identifyReferenceSetsSpecificConcepts currentSpecificConcept = : " << currentSpecificConcept->entityName << endl;
 		#endif
@@ -1909,7 +1909,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 
 					for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
 					{
-						GIAentityNode * entityNode = *entityNodesActiveListCompleteIter;
+						GIAentityNode* entityNode =* entityNodesActiveListCompleteIter;
 						#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 						cout << "\t identifyReferenceSetsSpecificConcepts: " << entityNode->entityName << endl;
 						#endif
@@ -1976,7 +1976,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 #endif
 
 #ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode, bool sameReferenceSet, int referenceSetID, int minimumEntityIndexOfReferenceSet, bool isProperty)
+bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode* entityNode, bool sameReferenceSet, int referenceSetID, int minimumEntityIndexOfReferenceSet, bool isProperty)
 {
 	bool result = false;
 	if(sameReferenceSet)
@@ -2035,7 +2035,7 @@ bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode,
 	return result;
 }
 
-void identifyReferenceSet(GIAentityNode * entityNode, int referenceSetID, int minimumEntityIndexOfReferenceSet)
+void identifyReferenceSet(GIAentityNode* entityNode, int referenceSetID, int minimumEntityIndexOfReferenceSet)
 {
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "identifyReferenceSet(): entityNode being traced = " << entityNode->entityName << endl;
@@ -2081,20 +2081,20 @@ void identifyReferenceSet(GIAentityNode * entityNode, int referenceSetID, int mi
 		{
 			if(GIAentityNodeArray[w]->wasReferenceTemp)
 			{
-				GIAentityNode * reference = GIAentityNodeArray[w];
+				GIAentityNode* reference = GIAentityNodeArray[w];
 				for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 				{
 					for(vector<GIAentityConnection*>::iterator connectionIter = reference->entityVectorConnectionsArray[i].begin(); connectionIter != reference->entityVectorConnectionsArray[i].end(); connectionIter++)
 					{
 						//connect reference ambient node to referenceSource
-						GIAentityNode * entityConnectedToReference = (*connectionIter)->entity;
+						GIAentityNode* entityConnectedToReference = (*connectionIter)->entity;
 						if(entityConnectedToReference->wasReferenceTemp)
 						{
 							//disconnect reference sources from each other, as their connection between each other will be redeclared in current context
 							int iInverted = inverseVectorConnectionsArray[i];
 							for(vector<GIAentityConnection*>::iterator connectionIter2 = entityConnectedToReference->entityVectorConnectionsArray[iInverted].begin(); connectionIter2 != entityConnectedToReference->entityVectorConnectionsArray[iInverted].end(); connectionIter2++)
 							{
-								GIAentityNode * entityConnectedToEntityConnectedToReference = (*connectionIter2)->entity;
+								GIAentityNode* entityConnectedToEntityConnectedToReference = (*connectionIter2)->entity;
 								if(reference->idActiveList == entityConnectedToEntityConnectedToReference->idActiveList)	//OR (reference == entityConnectedToEntityConnectedToReference)?
 								{
 									(*connectionIter2)->entity = referenceSource;
@@ -2134,7 +2134,7 @@ void identifyReferenceSet(GIAentityNode * entityNode, int referenceSetID, int mi
 
 
 /*
-void identifyEntityTypesLocal(Relation * currentRelationInList, int NLPdependencyRelationsType, GIAentityNode * governor, GIAentityNode * dependent)
+void identifyEntityTypesLocal(Relation* currentRelationInList, int NLPdependencyRelationsType, GIAentityNode* governor, GIAentityNode* dependent)
 {
 	//possessive of substances [NB plural/singular indicates definite noun - eg a robin, the robin, the robins - which is therefore a substance (entity instance):
 
@@ -2247,9 +2247,9 @@ void identifyEntityTypesLocal(Relation * currentRelationInList, int NLPdependenc
 
 }
 
-void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType)
+void identifyEntityTypes(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], int NLPdependencyRelationsType)
 {
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -2258,8 +2258,8 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 		#endif
 			int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
 			int relationDependentIndex = currentRelationInList->relationDependentIndex;
-			GIAentityNode * governorTemp = GIAentityNodeArray[relationGovernorIndex];
-			GIAentityNode * dependentTemp = GIAentityNodeArray[relationDependentIndex];
+			GIAentityNode* governorTemp = GIAentityNodeArray[relationGovernorIndex];
+			GIAentityNode* dependentTemp = GIAentityNodeArray[relationDependentIndex];
 			identifyEntityTypesLocal(currentRelationInList, NLPdependencyRelationsType, &governorTemp, &dependentTemp);
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}

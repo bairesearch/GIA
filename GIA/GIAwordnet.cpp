@@ -26,7 +26,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -53,8 +53,8 @@ void initialiseWordNet(int newSynonymnDetectionStatus)
 
 	#ifdef GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
   	string wordExample = "go";
-	char * wordExampleCharStar = const_cast<char*>(wordExample.c_str());
-	char * output = findtheinfo(wordExampleCharStar,1,5,0);
+	char* wordExampleCharStar = const_cast<char*>(wordExample.c_str());
+	char* output = findtheinfo(wordExampleCharStar,1,5,0);
 	cout << "wordnet output = " << output << endl;
 	//exit(0);
 	string wordExample = "pretty";
@@ -89,7 +89,7 @@ int similarityType =
 #define ANTPTR           1	// !
 #define HYPERPTR         2	// @
 #define HYPOPTR          3	// ~
-#define ENTAILPTR        4	// *
+#define ENTAILPTR        4	//* 
 #define SIMPTR           5	// &
 
 #define ISMEMBERPTR      6	// #m
@@ -128,7 +128,7 @@ int similarityType =
 
 
 //assumes word and otherWord have the same wordNetPOS
-bool checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(string * word, string * otherWord, int wordNetPOS)
+bool checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(string* word, string* otherWord, int wordNetPOS)
 {
 	bool entityNamesAreSynonymous = false;
 
@@ -165,7 +165,7 @@ bool checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(string * word, str
 	return entityNamesAreSynonymous;
 }
 
-bool checkIfWordIsContainedWithinAnotherWordsSynsets(string * word, string * otherWord, int wordNetPOS)
+bool checkIfWordIsContainedWithinAnotherWordsSynsets(string* word, string* otherWord, int wordNetPOS)
 {
 	bool entityNamesAreSynonymous = false;
 
@@ -177,8 +177,8 @@ bool checkIfWordIsContainedWithinAnotherWordsSynsets(string * word, string * oth
 
 		#ifdef GIA_WORDNET_DEBUG
 		/*
-		cout << "*word = " << *word << endl;
-		cout << "*otherWord = " << *otherWord << endl;
+		cout << "*word = " <<* word << endl;
+		cout << "*otherWord = " <<* otherWord << endl;
 		cout << "wordNetPOS = " << wordNetPOS << endl;
 		cout << "similarityType = " << similarityType << endl;
 		*/
@@ -208,7 +208,7 @@ bool checkIfWordIsContainedWithinAnotherWordsSynsets(string * word, string * oth
 }
 
 
-SynsetPtr findMostPopularSynsets(string * word, bool * wordIsFound, int wordNetPOS)
+SynsetPtr findMostPopularSynsets(string* word, bool* wordIsFound, int wordNetPOS)
 {
 	int maximumNumberOfTagsAcrossSimilarityTypes = 0;
 	SynsetPtr senseOutputWithHighestTagsAcrossSimilarityTypes = NULL;
@@ -263,9 +263,9 @@ SynsetPtr findMostPopularSynsets(string * word, bool * wordIsFound, int wordNetP
 	return senseOutputWithHighestTagsAcrossSimilarityTypes;
 }
 
-SynsetPtr findSynsets(string * word, bool * wordIsFound, int wordNetPOS, int similarityType)
+SynsetPtr findSynsets(string* word, bool* wordIsFound, int wordNetPOS, int similarityType)
 {
-	char * wordCharStar = const_cast<char*>(word->c_str());
+	char* wordCharStar = const_cast<char*>(word->c_str());
 
 	#ifdef GIA_WORDNET_DEBUG
 	/*
@@ -278,7 +278,7 @@ SynsetPtr findSynsets(string * word, bool * wordIsFound, int wordNetPOS, int sim
 	SynsetPtr firstSenseInList = findtheinfo_ds(wordCharStar, wordNetPOS, similarityType, 0);	//returns pointer to the first Synset struct in a Synset struct linked list containing word/searchStr
 
 	#ifdef GIA_WORDNET_DEBUG
-	//char * sensePrintedOutput = findtheinfo(wordCharStar, wordNetPOS, similarityType, 0);		//similarityType/OVERVIEW
+	//char* sensePrintedOutput = findtheinfo(wordCharStar, wordNetPOS, similarityType, 0);		//similarityType/OVERVIEW
 	//cout << "findtheinfo sensePrintedOutput = " << sensePrintedOutput << endl;
 	#endif
 
@@ -294,7 +294,7 @@ SynsetPtr findSynsets(string * word, bool * wordIsFound, int wordNetPOS, int sim
 	return firstSenseInList;
 }
 
-SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(SynsetPtr firstSenseInList, int wordNetPOS, int * maximumNumberOfTags, bool * entityNamesAreSynonymous, string * word, string * otherWord, bool compareEntityNames, bool * senseOutputWithHighestTagsPassedNewSynsetMustFree)
+SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(SynsetPtr firstSenseInList, int wordNetPOS, int* maximumNumberOfTags, bool* entityNamesAreSynonymous, string* word, string* otherWord, bool compareEntityNames, bool* senseOutputWithHighestTagsPassedNewSynsetMustFree)
 {
 
 	SynsetPtr currentSenseInList = firstSenseInList;
@@ -339,7 +339,7 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 						#endif
 						//if ptrtyp indicates related synset, then go to ptroff
 						passed = true;
-						char * wordInterestedIn = const_cast<char*>(word->c_str());
+						char* wordInterestedIn = const_cast<char*>(word->c_str());
 						currentRelatedSense = read_synset(wordNetPOS, currentSenseInList->ptroff[pointerIndex], wordInterestedIn);
 						passedNewSynsetMustFree = true;
 					}
@@ -360,19 +360,19 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 							#endif
 
 							string currentWord = currentRelatedSense->words[w];
-							if(currentWord == *otherWord)
+							if(currentWord ==* otherWord)
 							{
 								*entityNamesAreSynonymous = true;
 								#ifdef GIA_WORDNET_DEBUG
 								cout << "match found - entityNamesAreSynonymous:" << endl;
 								cout << "currentRelatedSense->words[w] = " << currentRelatedSense->words[w] << endl;
-								cout << "otherWord = " << *otherWord << endl;
+								cout << "otherWord = " <<* otherWord << endl;
 								#endif
 
 								/*
 								if(compareEntityNames)
 								{
-									if(tagCount > *maximumNumberOfTags)
+									if(tagCount >* maximumNumberOfTags)
 									{
 										*maximumNumberOfTags = tagCount;
 										senseOutputWithHighestTags = currentRelatedSense;
@@ -385,8 +385,8 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 					else
 					{
 
-						Index * idxOfFirstWordInWords = getindex(currentRelatedSense->words[0], wordNetPOS);	//returns pointer to Index struct representing first word in words[]
-						int senseNumber = *(currentRelatedSense->wnsns);
+						Index* idxOfFirstWordInWords = getindex(currentRelatedSense->words[0], wordNetPOS);	//returns pointer to Index struct representing first word in words[]
+						int senseNumber =* (currentRelatedSense->wnsns);
 						int tagCount = GetTagcnt(idxOfFirstWordInWords, senseNumber);
 
 						#ifdef GIA_WORDNET_DEBUG
@@ -405,7 +405,7 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 						#endif
 
 
-						if(tagCount > *maximumNumberOfTags)
+						if(tagCount >* maximumNumberOfTags)
 						{
 							*maximumNumberOfTags = tagCount;
 							#ifdef GIA_FREE_MEMORY3
@@ -443,7 +443,7 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 					cout << "wcount = " << currentRelatedSense->wcount << endl;
 					cout << "words = " << currentRelatedSense->words << endl;
 					cout << "lexid = " << currentRelatedSense->lexid << endl;
-					cout << "wnsns = " << *(currentRelatedSense->wnsns) << endl;			//sense number of the first word in words[] - corresponding to the sense of word/searchStr
+					cout << "wnsns = " <<* (currentRelatedSense->wnsns) << endl;			//sense number of the first word in words[] - corresponding to the sense of word/searchStr
 					cout << "whichword = " << currentRelatedSense->whichword << endl;		//which word in words[] corresponds to word/searchStr
 					cout << "ptrcount = " << currentRelatedSense->ptrcount << endl;
 					cout << "ptrtyp = " << currentRelatedSense->ptrtyp << endl;
@@ -491,14 +491,14 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 
 
 
-void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], int wordNetPOS)
+void findSynonymsOLD(string word, bool* wordIsFound, string listOfSynonyms[], int wordNetPOS)
 {
 	bool result = true;
 
 	int similarityType = SIMPTR;	//SIMPTR (similar) or SYNS (synonymn) - they both appear to give same output
-	char * wordCharStar = const_cast<char*>(word.c_str());
+	char* wordCharStar = const_cast<char*>(word.c_str());
 
-	char * output = findtheinfo(wordCharStar, wordNetPOS, similarityType, 0);
+	char* output = findtheinfo(wordCharStar, wordNetPOS, similarityType, 0);
 
 	string lineString = "";
 	string synonymString = "";
@@ -626,7 +626,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 	}
 }
 
-bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char * output, int * newCharIndex, string * lineString, char characterToRecordUntil, char escapeCharacter)
+bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char* output, int* newCharIndex, string* lineString, char characterToRecordUntil, char escapeCharacter)
 {
 	*lineString = "";
 	
@@ -644,7 +644,7 @@ bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char * output, int 
 		{
 			c = output[i+charIndex];
 
-			*lineString = *lineString + c;
+			*lineString =* lineString + c;
 			i++;
 		}
 	}

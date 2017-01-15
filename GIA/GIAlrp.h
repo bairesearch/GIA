@@ -26,7 +26,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h16a 26-January-2015
+ * Project Version: 2h17a 27-January-2015
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -204,10 +204,10 @@ public:
 	bool collapsedPhrasalVerbExactDefinedSection;	//temp var [aslwas true]
 	bool collapsedMultiwordPreposition;				//temp var
 
-	GIALRPtag * alternateTag;			//used to specify an alternate (but corresponding) tag name designated by "/" in the phrasal verb database
-	GIALRPtag * alternateSentence;		//used to specifiy an alternate (but corresponding) phrasal verb designated by "or" in the phrasal verb database
-	GIALRPtag * nextTag;				//next tag in phrasal verb
-	GIALRPtag * nextSentence;			//first tag in next phrasal verb
+	GIALRPtag* alternateTag;			//used to specify an alternate (but corresponding) tag name designated by "/" in the phrasal verb database
+	GIALRPtag* alternateSentence;		//used to specifiy an alternate (but corresponding) phrasal verb designated by "or" in the phrasal verb database
+	GIALRPtag* nextTag;				//next tag in phrasal verb
+	GIALRPtag* nextSentence;			//first tag in next phrasal verb
 
 };
 
@@ -225,53 +225,53 @@ public:
 	int entityIndex;	//used to map the NLP dummy replacement lemma to the official LRP generated lemma (for entity name reversion after NLP)
 	int sentenceIndex;	//used to map the NLP dummy replacement lemma to the official LRP generated lemma (for entity name reversion after NLP)
 
-	GIALRPtagTextCorrespondenceInfo * next;
+	GIALRPtagTextCorrespondenceInfo* next;
 };
 
 bool initialiseLRP(string newLRPDataFolderName, bool newUseLRP);
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
-	bool loadVerbList(string irregularVerbListFileName, GIALRPtag * firstTagInIrregularVerbList);
-		void testVerbCase(string tagName, string wordLowerCase, string baseTenseFormStart, string baseTenseFormAppend, int * numberOfCharactersInBaseTenseFormAppend, bool * foundVerbCase, string * baseNameFound, int * grammaticalTenseModifier, int grammaticalTenseModifierNew);
+	bool loadVerbList(string irregularVerbListFileName, GIALRPtag* firstTagInIrregularVerbList);
+		void testVerbCase(string tagName, string wordLowerCase, string baseTenseFormStart, string baseTenseFormAppend, int* numberOfCharactersInBaseTenseFormAppend, bool* foundVerbCase, string* baseNameFound, int* grammaticalTenseModifier, int grammaticalTenseModifierNew);
 	#endif
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-	bool loadPrepositionsInverseList(string prepositionsInverseListFileName, GIALRPtag * firstTagInPrepositionsInverseList);
+	bool loadPrepositionsInverseList(string prepositionsInverseListFileName, GIALRPtag* firstTagInPrepositionsInverseList);
 	#endif
 bool getUseLRP();
 
-GIALRPtagTextCorrespondenceInfo * getCurrentGIALRPtagTextCorrespondenceInfo();
+GIALRPtagTextCorrespondenceInfo* getCurrentGIALRPtagTextCorrespondenceInfo();
 void setCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
 void initialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
 void deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
 
 bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName);
-	bool loadIrregularVerbList(string irregularVerbListFileName, GIALRPtag * firstTagInIrregularVerbList);
-	bool loadPhrasalVerbDataAndGenerateAllTenseVariants(string phrasalVerbDatabaseFileName, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtag * firstTagInIrregularVerbList);
-		bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagInIrregularVerbList);
-			void copyDefaultVerbTenseFormsToAlternateTenseForms(GIALRPtag * baseTag, bool irregularVerbFound);
-	bool loadMultiWordPrepositionData(string multiwordPrepositionListFileName, GIALRPtag * firstTagInMultiwordPrepositionList);
-	bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlainText);
-	bool searchAndReplacePhrasalVerbs(GIALRPtag * firstTagInPlainText, GIALRPtag * firstTagInPhrasalVerbList, GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo);
-	bool searchAndReplaceMultiwordPrepositions(GIALRPtag * firstTagInPlainText, GIALRPtag * firstTagInMultiwordPrepositionList, GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo);
-	bool writeTagListToFile(GIALRPtag * firstTagInPlainText, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName);
+	bool loadIrregularVerbList(string irregularVerbListFileName, GIALRPtag* firstTagInIrregularVerbList);
+	bool loadPhrasalVerbDataAndGenerateAllTenseVariants(string phrasalVerbDatabaseFileName, GIALRPtag* firstTagInPhrasalVerbList, GIALRPtag* firstTagInIrregularVerbList);
+		bool generateTenseVariantsOfVerbBase(GIALRPtag* baseTag, GIALRPtag* firstTagInIrregularVerbList);
+			void copyDefaultVerbTenseFormsToAlternateTenseForms(GIALRPtag* baseTag, bool irregularVerbFound);
+	bool loadMultiWordPrepositionData(string multiwordPrepositionListFileName, GIALRPtag* firstTagInMultiwordPrepositionList);
+	bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag* firstTagInPlainText);
+	bool searchAndReplacePhrasalVerbs(GIALRPtag* firstTagInPlainText, GIALRPtag* firstTagInPhrasalVerbList, GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo);
+	bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, GIALRPtag* firstTagInMultiwordPrepositionList, GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo);
+	bool writeTagListToFile(GIALRPtag* firstTagInPlainText, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName);
 
-void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentSentenceInList, Relation * currentRelationInListForPrepositionsOnly, bool isPreposition, bool * foundOfficialLRPreplacementString);
+void revertNLPtagNameToOfficialLRPtagName(Feature* feature, Sentence* currentSentenceInList, Relation* currentRelationInListForPrepositionsOnly, bool isPreposition, bool* foundOfficialLRPreplacementString);
 
 
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
-bool determineVerbCaseWrapper(string word, string * baseNameFound, int * grammaticalTenseModifier);
-bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * baseNameFound, int * grammaticalTenseModifier);
+bool determineVerbCaseWrapper(string word, string* baseNameFound, int* grammaticalTenseModifier);
+bool determineVerbCase(string word, GIALRPtag* firstTagInVerbList, string* baseNameFound, int* grammaticalTenseModifier);
 #endif
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
-bool determineIfWordIsIrregularVerbContinuousCaseWrapper(string word, string * baseNameFound);
-bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * firstTagInIrregularVerbList, string * baseNameFound);
+bool determineIfWordIsIrregularVerbContinuousCaseWrapper(string word, string* baseNameFound);
+bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag* firstTagInIrregularVerbList, string* baseNameFound);
 #endif
 #endif
 
 #ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool * inverseConditionRequired, bool * twoWayConditionRequired, string * inverseConditionName);
+void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool* inverseConditionRequired, bool* twoWayConditionRequired, string* inverseConditionName);
 #ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
-bool identifyConditionType(GIAentityNode * conditionEntity);
+bool identifyConditionType(GIAentityNode* conditionEntity);
 #endif
 #endif
 
