@@ -175,8 +175,10 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 				if(!(GIAentityNodeArrayFilled[prepositionEntityIndex]))
 				{
 					GIAentityNodeArrayFilled[prepositionEntityIndex] = true;
+					/*
 					cout << "prepositionName = " << prepositionName << endl;
 					cout << "prepositionEntityIndex = " << prepositionEntityIndex << endl;
+					*/
 					/*
 					//NB if concept type entity name has already been defined (GIAentityNodeArrayFilled[functionEntityIndex3]), then findOrAddEntityNodeByNameSimpleWrapperCondition will use it instead
 					bool entityAlreadyExistant = false;
