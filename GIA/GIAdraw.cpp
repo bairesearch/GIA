@@ -462,7 +462,11 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 					boxThickness = GIA_DRAW_THICKNESS_THICK;
 				}
 				
-				if(entityNode->hasMeasure)
+				if(entityNode->hasQuality)
+				{
+					entityColour = GIA_DRAW_PROPERTY_QUALITY_NODE_COLOUR;
+				}				
+				else if(entityNode->hasMeasure)
 				{
 					entityColour = GIA_DRAW_PROPERTY_MEASURE_NODE_COLOUR;
 				}
@@ -470,10 +474,6 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				{
 					entityColour = GIA_DRAW_PROPERTY_QUANTITY_NODE_COLOUR;
 				}
-				else if(entityNode->hasQuality)
-				{
-					entityColour = GIA_DRAW_PROPERTY_QUALITY_NODE_COLOUR;
-				}				
 				else
 				{
 					entityColour = GIA_DRAW_PROPERTY_NODE_COLOUR;
@@ -597,22 +597,24 @@ Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeCo
 	
 	//may accidentially overwrite adjacent nodes/connections that have already been printed here; be careful...
 
-	/*
+	
 	int boxThickness = GIA_DRAW_THICKNESS_NORMAL;
 	if(timeConditionNode->isProgressive)
 	{
 		//cout << "box thickness is high" << endl;
 		boxThickness = GIA_DRAW_THICKNESS_THICK;
-	}
-	*/
+	}				
+	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_TIME_NODE_COLOUR, &(timeConditionNode->conditionName), writeFileObject, boxThickness);
+
+	/*
 	int timeConditionNodeColour = GIA_DRAW_CONDITION_TIME_NODE_COLOUR;
 	if(timeConditionNode->isProgressive)
 	{
 		timeConditionNodeColour = GIA_DRAW_CONDITION_TIME_STATE_NODE_COLOUR;
 	}
-				
 	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, timeConditionNodeColour, &(timeConditionNode->conditionName), writeFileObject, GIA_DRAW_THICKNESS_NORMAL);
-
+	*/
+	
 	#ifdef GIA_DRAW_DEBUG
 	cout << "Exiting: timeConditionNode = " << timeConditionNode->conditionName << endl;
 	#endif
