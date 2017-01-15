@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6c 10-June-2015
+ * Project Version: 2j6d 10-June-2015
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -243,13 +243,17 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 	
 	setCurrentDirectory(tempFolderCharStar);
 
-	GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo = getCurrentGIALRPtagTextCorrespondenceInfo();
-	if(!searchAndReplacePhrasalVerbs(firstTagInPlainText, firstTagInPhrasalVerbList, firstGIALRPtagCorrespondenceInfo))
+	GIALRPtagTextCorrespondenceInfo* currentGIALRPtagCorrespondenceInfo = getCurrentGIALRPtagTextCorrespondenceInfo();
+	if(!searchAndReplacePhrasalVerbs(firstTagInPlainText, firstTagInPhrasalVerbList, currentGIALRPtagCorrespondenceInfo))
 	{
 		result = false;
 	}
-
-	if(!searchAndReplaceMultiwordPrepositions(firstTagInPlainText, firstTagInMultiwordPrepositionList, firstGIALRPtagCorrespondenceInfo))
+	
+	while(currentGIALRPtagCorrespondenceInfo->next != NULL)
+	{
+		currentGIALRPtagCorrespondenceInfo = currentGIALRPtagCorrespondenceInfo->next;	//added 2j6d (add to end of list)
+	}
+	if(!searchAndReplaceMultiwordPrepositions(firstTagInPlainText, firstTagInMultiwordPrepositionList, currentGIALRPtagCorrespondenceInfo))
 	{
 		result = false;
 	}	
@@ -1796,7 +1800,13 @@ void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, GIAsentence* curr
 
 	//save original values for NLP only (required during a multiword preposition replacement with an adjacent multiword verb
 	feature->wordWithLRPforNLPonly = feature->word;
-
+	
+	/*
+	cout << "\n\nsentityIndexForNonPrepositionsOnly = " << entityIndexForNonPrepositionsOnly << endl;
+	cout << "feature->wordWithLRPforNLPonly = " << feature->wordWithLRPforNLPonly << endl;
+	cout << "currentSentenceInList->sentenceIndex = " <<  currentSentenceInList->sentenceIndex << endl;
+	*/
+	
 	string word = feature->word;
 	//string lemma = feature->lemma;	//only used for prepositions (dependency relation) calculations, where lemma has already been calculated via revertNLPtagNameToOfficialLRPtagName()
 
@@ -1809,7 +1819,7 @@ void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, GIAsentence* curr
 	while(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->next != NULL)
 	{
 		#ifdef GIA_LRP_DEBUG2
-		cout << "word = " << word << endl;
+		cout << "\tword = " << word << endl;
 		cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->lemmaWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->lemmaWithLRP << endl;
 		cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP << endl;
 		cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly << endl;
