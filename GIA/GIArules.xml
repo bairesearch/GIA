@@ -2409,7 +2409,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="by" />
 				<option expectToFindPrepositionTest="true" REL="1" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="stanfordPOStemp" value="VBDESCRIPTION" REL="1" REL_ENT="1" />
-				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="stanfordPOStemp" value="VBN" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="stanfordPOStemp" value="VBN" REL="1" REL_ENT="1" />	<!-- added 1i23a -->
 				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityReassignment="_subj" />
 				<option disableEntity="true" REL="1" REL_ENT="3" /> <!-- disable "by" entity -->
 				</paramDepRel>
