@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i17a 30-January-2015
+ * Project Version: 2i17b 30-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -115,6 +115,8 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	//redistributeRelationEntityReassignment = {{"", "", ""}, {"", "", ""}, {"", "", ""}, {"", "", ""}}; 	//internal compiler error: Segmentation fault		//for entity1, entity2, and entity3 - relationType, relationGovernorIndex, or relationDependentIndex - for renaming relation entities
 		//special cases for redistribution
 	initialiseBoolArray1D(useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, false);
+	initialiseBoolArray1D(useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSet, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, false);
+	initialiseBoolArray1D(useRedistributeSpecialCaseRcmodIndicatesSameReferenceSet, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, false);
 	initialiseBoolArray2D(&useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false);
 	initialiseIntArray3D(&redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[0][0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, 2, INT_DEFAULT_VALUE);
 	initialiseIntArray3D(&redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[0][0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, 2, INT_DEFAULT_VALUE);
@@ -506,7 +508,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								if(param->useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[relationID])
 								{
 									#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
-									cout << currentRelationID << ": [SpecialCaseAuxCheck]: " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
+									cout << currentRelationID << ": [useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck]: " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
 									#endif
 									bool auxiliaryIndicatesDifferentReferenceSet = true;
 									bool rcmodIndicatesSameReferenceSet = false;
@@ -520,6 +522,20 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									#endif
 									param->relation[relationID]->auxiliaryIndicatesDifferentReferenceSet = auxiliaryIndicatesDifferentReferenceSet;
 									param->relation[relationID]->rcmodIndicatesSameReferenceSet = rcmodIndicatesSameReferenceSet;
+								}
+								if(param->useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSet[relationID])
+								{
+									#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+									cout << currentRelationID << ": [useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSet]: " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
+									#endif
+									param->relation[relationID]->auxiliaryIndicatesDifferentReferenceSet = true;
+								}
+								if(param->useRedistributeSpecialCaseRcmodIndicatesSameReferenceSet[relationID])
+								{
+									#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+									cout << currentRelationID << ": [useRedistributeSpecialCaseRcmodIndicatesSameReferenceSet]: " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
+									#endif
+									param->relation[relationID]->rcmodIndicatesSameReferenceSet = true;
 								}
 								#endif
 							}

@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i17a 30-January-2015
+ * Project Version: 2i17b 30-January-2015
  *
  *******************************************************************************/
 -->
@@ -189,6 +189,123 @@
 				</paramDepRel>
 			</function>
 
+			<!-- XML only function (not hard coded) -->
+			<!-- #ifdefGIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF -->
+			<function name="redistributeStanfordRelationsInterpretNamedAsDefinition">
+			
+				<example><!--
+				eg interpret 'The piece called pawnBlack.png is happy.'			nsubj(called-3, piece-2) + nsubj(happy-6, pawnBlack.png-4) + ccomp(called-3, happy-6) -> appos(piece-2, pawnBlack.png-4) + nsubj(happy-6, piece-2)
+				eg interpret 'The piece called pawnBlack.png is a knight.'		nsubj(called-3, piece-2) + nsubj(knight-7, pawnBlack.png-4) + ccomp(called-3, knight-7)  -> appos(piece-2, pawnBlack.png-4) + nsubj(knight-7, piece-2)
+				FUTURE: The happy piece called pawnBlack.png...
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="3" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_obj" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="call|name" relationArrayTestSize="2" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="3" relationIndexTestEntityID="2" />
+				<option disableEntity="true" REL="1" REL_ENT="1" disableEntityUseOriginalValues="true" />	<!-- disable call -->
+				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_appo" />
+				<option useRedistributeSpecialCaseRcmodIndicatesSameReferenceSet="true" REL="2" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isName" value="true" REL="2" REL_ENT="2" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<option disableRelation="true" REL="3" />
+				</paramDepRel>
+				
+				<example><!--
+				eg interpret 'The piece called pawnBlack.png is next to the car.'	nsubj(called-3, piece-2) + nsubj(is-5, pawnBlack.png-4) + ccomp(called-3, is-5) + prep_near(is-5, car-8) -> appos(piece-2, pawnBlack.png-4) + prep_near(piece-2, car-8)
+				FUTURE: The piece called pawnBlack.png next to the car...
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="4" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_obj" />
+				<option expectToFindPrepositionTest="true" REL="4" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="call|name" relationArrayTestSize="2" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="3" relationIndexTestEntityID="2" />
+				<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="4" relationIndexTestEntityID="1" />
+				<option disableEntity="true" REL="1" REL_ENT="1" disableEntityUseOriginalValues="true" />	<!-- disable call -->
+				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_appo" />
+				<option useRedistributeSpecialCaseRcmodIndicatesSameReferenceSet="true" REL="2" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isName" value="true" REL="2" REL_ENT="2" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="4" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<option disableRelation="true" REL="1" />
+				<option disableRelation="true" REL="3" />
+				</paramDepRel>
+				
+				<example><!--
+				eg interpret 'The piece called pawnBlack.png rides the bike.'		nsubj(called-3, piece-2) + xcomp(called-3, pawnBlack.png-4) + nsubj(bike-7, rides-5) + xcomp(pawnBlack.png-4, bike-7) -> appos(piece-2, pawnBlack.png-4) + nsubj(rides-3, piece-2) + dobj(rides-3, bike-5)
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="4" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_to-do" />
+				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="4" REL_ENT="3" relationTest="_to-do" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="call|name" relationArrayTestSize="2" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="4" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="4" relationIndexTestEntityID="2" />
+				<option disableEntity="true" REL="1" REL_ENT="1" disableEntityUseOriginalValues="true" />	<!-- disable call -->
+				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_appo" />
+				<option useRedistributeSpecialCaseRcmodIndicatesSameReferenceSet="true" REL="2" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isName" value="true" REL="2" REL_ENT="2" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<option useRedistributeRelationEntityReassignment="true" REL="4" REL_ENT="3" redistributeRelationEntityReassignment="_obj" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="4" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<option disableRelation="true" REL="3" />
+				</paramDepRel>
+				
+				<example><!--
+				eg interpret 'The piece called pawnBlack.png rides.'			nsubj(called-3, piece-2) + xcomp(called-3, pawnBlack.png-4) + dobj(pawnBlack.png-4, rides-5) -> appos(piece-2, pawnBlack.png-4) + nsubj(rides-3, piece-2)
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="3" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_to-do" />
+				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_obj" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="call|name" relationArrayTestSize="2" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
+				<option disableEntity="true" REL="1" REL_ENT="1" disableEntityUseOriginalValues="true" />	<!-- disable call -->
+				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_appo" />
+				<option useRedistributeSpecialCaseRcmodIndicatesSameReferenceSet="true" REL="2" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isName" value="true" REL="2" REL_ENT="2" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<option disableRelation="true" REL="3" />
+				</paramDepRel>
+				
+				<example><!--
+				eg interpret 'The piece's image is called pawnBlack.png.'		nsubjpass(called-6, image-4) + xcomp(called-6, pawnBlack.png-7) -> appos(image-4, pawnBlack.png-7)
+				eg interpret 'The file is called people.xml.'				nsubjpass(called-4, file-2) + acomp(called-4, people.xml-5) -> appos(file-2, people.xml)
+				eg interpret 'Write the countries to the file called countries.xml.' 	vmod(file-6, called-7) + acomp(called-7, countries.xml-8) -> appos(file-2, people.xml)
+				--></example>
+				<!-- assume vmod has already been converted to obj redistributeStanfordRelationsPartmod -->
+				<!-- assume vmod nsubjpass already been converted to obj by GIA hard code -->
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="2" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_obj" />
+				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_to-be|_to-do" relationArrayTestSize="2" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="call|name" relationArrayTestSize="2" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option disableEntity="true" REL="1" REL_ENT="1" disableEntityUseOriginalValues="true" />	<!-- disable call -->
+				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_appo" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isName" value="true" REL="2" REL_ENT="2" />
+				<option disableRelation="true" REL="1" />
+				</paramDepRel>
+			
+			</function>
+			<!-- #endif -->
+			
 			<function name="redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction">
 				<!-- opt1a -->
 				<example><!--
@@ -1452,8 +1569,7 @@
 						<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_cop" />
 						<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="be" />
 						<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" /> <!-- redundant test -->
-						<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="2" />
-						<option useRelationTest="true" REL="3" REL_ENT="1" relationTest="impossibleEntityName" /> <!-- an impossible check which is therefore guaranteed to set auxiliaryIndicatesDifferentReferenceSet to true -->
+						<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSet="true" REL="2" />
 						<option numberOfRelations="2" />
 						<!-- <option useRelationTest="true" REL="1" REL_ENT="1" relationTest="VBN" relationTestSpecialCasePOStemp="true" /> -->
 						<specialCase type="specialCaseCharacteristicsTestAndVector" variable="stanfordPOStemp" value="VBN" REL="1" REL_ENT="1" />
@@ -2330,31 +2446,6 @@
 				<option disableEntity="true" REL="1" REL_ENT="2" /> <!-- disable "not" entity -->
 				</paramDepRel>
 				<!-- #endif -->	
-			</function>
-			<!-- #endif -->
-			
-			<!-- XML only function (not hard coded) -->
-			<!-- #ifdefGIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF -->
-			<function name="redistributeStanfordRelationsInterpretNamedAsDefinition">
-				<example><!--
-				eg interpret 'The piece's image is called pawnBlack.png.'	nsubjpass(called-6, image-4) + xcomp(called-6, pawnBlack.png-7) -> appos(image-4, pawnBlack.png-7)
-				eg interpret 'The file is called people.xml.'		nsubjpass(called-4, file-2) + acomp(called-4, people.xml-5) -> appos(file-2, people.xml)
-				eg interpret 'Write the countries to the file called countries.xml.' vmod(file-6, called-7) + acomp(called-7, countries.xml-8) -> appos(file-2, people.xml)
-				--></example>
-				<!-- assume vmod has already been converted to obj redistributeStanfordRelationsPartmod -->
-				<!-- assume vmod nsubjpass already been converted to obj by GIA hard code -->
-				<paramDepRel mode="redistribute">
-				<option numberOfRelations="2" />
-				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_obj" />
-				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_to-be|_to-do" relationArrayTestSize="2" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="call|name" relationArrayTestSize="2" />
-				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
-				<option disableRelation="true" REL="1" />
-				<option disableEntity="true" REL="1" REL_ENT="1" disableEntityUseOriginalValues="true" />	<!-- disable call -->
-				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_appo" />
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isName" value="true" REL="2" REL_ENT="2" />
-				</paramDepRel>
 			</function>
 			<!-- #endif -->
 			
