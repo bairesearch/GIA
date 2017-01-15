@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2d 20-July-2013
+ * Project Version: 1t2e 20-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1650,7 +1650,9 @@ long determineNextIdInstance(GIAentityNode * entity)
 	}
 	#endif
 
-#if defined(GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS) || !defined(GIA_USE_DATABASE)
+//#if defined(GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS) || !defined(GIA_USE_DATABASE)
+//check #elif !defined GIA_USE_DATABASE is OK instead of #elif !defined(GIA_USE_DATABASE)
+#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 	#ifdef GIA_ID_INSTANCE_ALLOW_INSTANCE_DELETIONS
 	if(!(conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].empty()))
 	{
@@ -1670,6 +1672,27 @@ long determineNextIdInstance(GIAentityNode * entity)
 	#else
 	long numberOfInstances =  conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].size();
 	nextIdInstance = numberOfInstances;
+	#endif
+#elif !defined GIA_USE_DATABASE
+	#ifdef GIA_ID_INSTANCE_ALLOW_INSTANCE_DELETIONS
+	if(!(conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].empty()))
+	{
+		long previousIdInstance = conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].back()->entity->idInstance;
+		nextIdInstance = previousIdInstance + 1;
+		#ifdef GIA_DATABASE_DEBUG
+		cout << "\t\tDEBUG: determineNextIdInstance(); 2a. nextIdInstance = " << nextIdInstance << endl;
+		#endif
+	}
+	else
+	{
+		nextIdInstance = GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE + 1;
+		#ifdef GIA_DATABASE_DEBUG
+		cout << "\t\tDEBUG: determineNextIdInstance(); 2b. nextIdInstance = " << nextIdInstance << endl;
+		#endif
+	}
+	#else
+	long numberOfInstances =  conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].size();
+	nextIdInstance = numberOfInstances;	
 	#endif
 #else
 	if(conceptEntity->conceptEntityLoaded == NULL)
