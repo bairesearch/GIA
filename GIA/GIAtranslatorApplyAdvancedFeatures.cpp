@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f4b 04-July-2014
+ * Project Version: 2f5a 04-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -498,20 +498,20 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 
 									//added 12 Oct 11; add quantity modifiers as conditions (eg "almost" lost)
 									GIAentityNode * entityNode = quantitySubstance;
-									GIAentityNode * conditionEntityNode = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
-									//GIAentityNode * conditionTypeEntity = quantitySubstance->quantityModifierString;
+									GIAentityNode * conditionObjectEntity = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
+									//GIAentityNode * conditionEntity = quantitySubstance->quantityModifierString;
 
-									string conditionTypeName = "quantityModifier";	//quantitySubstance->quantityModifierString //CHECKTHIS;
+									string conditionName = "quantityModifier";	//quantitySubstance->quantityModifierString //CHECKTHIS;
 
 									bool entityAlreadyExistant = false;
-									GIAentityNode * conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+									GIAentityNode * conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN, &conditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 									bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 
 									#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-									GIAentityNodeArray[FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN] = addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
+									GIAentityNodeArray[FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN] = addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet);
 									#else
-									addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
+									addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet);
 									#endif
 
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
@@ -645,19 +645,19 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 
 								//added 12 Oct 11; add quantity modifiers as conditions (eg "almost" lost)
 								GIAentityNode * entityNode = quantitySubstance;
-								GIAentityNode * conditionEntityNode = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
-								//GIAentityNode * conditionTypeEntity = quantitySubstance->quantityModifierString;
+								GIAentityNode * conditionObjectEntity = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
+								//GIAentityNode * conditionEntity = quantitySubstance->quantityModifierString;
 
-								string conditionTypeName = "quantityModifier";	//quantitySubstance->quantityModifierString //CHECKTHIS;
+								string conditionName = "quantityModifier";	//quantitySubstance->quantityModifierString //CHECKTHIS;
 
 								bool entityAlreadyExistant = false;
-								GIAentityNode * conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+								GIAentityNode * conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN, &conditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 								#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-								GIAentityNodeArray[FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN] = addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
+								GIAentityNodeArray[FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN] = addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet);
 								#else
-								addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
+								addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet);
 								#endif
 
 								#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
@@ -771,18 +771,18 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 						newQuantityTimesEntity->quantityNumber = 1;
 						newQuantityTimesEntity->quantityNumberString = "1";
 
-						string conditionTypeName = RELATION_TYPE_MEASURE_PER;
+						string conditionName = RELATION_TYPE_MEASURE_PER;
 
 						bool entityAlreadyExistant = false;
-						GIAentityNode * conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+						GIAentityNode * conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN, &conditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 						//now add measure_per condition node
 						sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 
 						#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-						GIAentityNodeArray[FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN] = addOrConnectConditionToEntity(newQuantityTimesEntity, measureSubstance, conditionTypeEntity, sameReferenceSet);
+						GIAentityNodeArray[FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN] = addOrConnectConditionToEntity(newQuantityTimesEntity, measureSubstance, conditionEntity, sameReferenceSet);
 						#else
-						addOrConnectConditionToEntity(newQuantityTimesEntity, measureSubstance, conditionTypeEntity, sameReferenceSet);
+						addOrConnectConditionToEntity(newQuantityTimesEntity, measureSubstance, conditionEntity, sameReferenceSet);
 						#endif
 
 						#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
@@ -820,12 +820,12 @@ void extractMeasures(Sentence * currentSentenceInList, bool GIAentityNodeArrayFi
 
 	GIAgenericDepRelInterpretationParameters paramA = param;
 	paramA.useRelationArrayTest[REL1][REL_ENT3] = true; paramA.relationArrayTest[REL1][REL_ENT3] = relationTypeMeasureDependencyNameArray; paramA.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_MEASURE_DEPENDENCY_NUMBER_OF_TYPES;
-	paramA.mustGenerateConditionTypeName = true; paramA.conditionTypeEntityDefaultName = RELATION_TYPE_MEASURE_DEPENDENCY_UNKNOWN; paramA.conditionTypeEntityDefaultIndex = FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN; //NB GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK does not support the full array of Relex measure/dependency types, and FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN is now used instead of FEATURE_INDEX_OF_MEASURE_UNKNOWN to allow both measure and measure per entities to be used in same sentence
+	paramA.mustGenerateConditionName = true; paramA.conditionEntityDefaultName = RELATION_TYPE_MEASURE_DEPENDENCY_UNKNOWN; paramA.conditionEntityDefaultIndex = FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN; //NB GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK does not support the full array of Relex measure/dependency types, and FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN is now used instead of FEATURE_INDEX_OF_MEASURE_UNKNOWN to allow both measure and measure per entities to be used in same sentence
 	genericDependecyRelationInterpretation(&paramA, REL1);
 
 	GIAgenericDepRelInterpretationParameters paramB = param;
 	paramB.useRelationArrayTest[REL1][REL_ENT3] = true; paramB.relationArrayTest[REL1][REL_ENT3] = relationTypeMeasureNotDependencyNameArray; paramB.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_MEASURE_NOT_DEPENDENCY_NUMBER_OF_TYPES;
-	paramB.mustGenerateConditionTypeName = true; paramB.conditionTypeEntityDefaultName = RELATION_TYPE_MEASURE_UNKNOWN; paramB.conditionTypeEntityDefaultIndex = FEATURE_INDEX_OF_MEASURE_UNKNOWN;	//NB GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK does not support the full array of Relex measure/dependency types
+	paramB.mustGenerateConditionName = true; paramB.conditionEntityDefaultName = RELATION_TYPE_MEASURE_UNKNOWN; paramB.conditionEntityDefaultIndex = FEATURE_INDEX_OF_MEASURE_UNKNOWN;	//NB GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK does not support the full array of Relex measure/dependency types
 	genericDependecyRelationInterpretation(&paramB, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -881,29 +881,29 @@ void extractMeasures(Sentence * currentSentenceInList, bool GIAentityNodeArrayFi
 				cout << "quantityEntityName = " << quantityEntity->entityName << endl;
 				#endif
 
-				string conditionTypeName = relationTypeMeasureNameArray[measureTypeIndex];
+				string conditionName = relationTypeMeasureNameArray[measureTypeIndex];
 				bool entityAlreadyExistant = false;
-				GIAentityNode * conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_MEASURE_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+				GIAentityNode * conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_MEASURE_UNKNOWN, &conditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 
 				#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 				if(measureDependencyFound)
 				{
-					GIAentityNodeArray[FEATURE_INDEX_OF_MEASURE_UNKNOWN] = addOrConnectConditionToEntity(quantityEntity, measureSubstanceEntity, conditionTypeEntity, sameReferenceSet);
+					GIAentityNodeArray[FEATURE_INDEX_OF_MEASURE_UNKNOWN] = addOrConnectConditionToEntity(quantityEntity, measureSubstanceEntity, conditionEntity, sameReferenceSet);
 				}
 				else
 				{
-					GIAentityNodeArray[FEATURE_INDEX_OF_MEASURE_UNKNOWN] = addOrConnectConditionToEntity(measureSubstanceEntity, quantityEntity, conditionTypeEntity, sameReferenceSet);
+					GIAentityNodeArray[FEATURE_INDEX_OF_MEASURE_UNKNOWN] = addOrConnectConditionToEntity(measureSubstanceEntity, quantityEntity, conditionEntity, sameReferenceSet);
 				}
 				#else
 				if(measureDependencyFound)
 				{
-					addOrConnectConditionToEntity(quantityEntity, measureSubstanceEntity, conditionTypeEntity, sameReferenceSet);
+					addOrConnectConditionToEntity(quantityEntity, measureSubstanceEntity, conditionEntity, sameReferenceSet);
 				}
 				else
 				{
-					addOrConnectConditionToEntity(measureSubstanceEntity, quantityEntity, conditionTypeEntity, sameReferenceSet);
+					addOrConnectConditionToEntity(measureSubstanceEntity, quantityEntity, conditionEntity, sameReferenceSet);
 				}
 				#endif
 			}
@@ -943,7 +943,7 @@ void defineToBeAndToDoConditions(Sentence * currentSentenceInList, bool GIAentit
 	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_BE;
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
 	paramA.functionEntityRelationID[FUNC_ENT3] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT3;
-	paramA.conditionTypeEntityDefaultIndex = FEATURE_INDEX_OF_TOBE_UNKNOWN;
+	paramA.conditionEntityDefaultIndex = FEATURE_INDEX_OF_TOBE_UNKNOWN;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//eg The chicken ate the pie that likes to draw.
 	#endif
@@ -968,7 +968,7 @@ void defineToBeAndToDoConditions(Sentence * currentSentenceInList, bool GIAentit
 	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
 	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
 	paramB.functionEntityRelationID[FUNC_ENT3] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT3;
-	paramB.conditionTypeEntityDefaultIndex = FEATURE_INDEX_OF_TODO_UNKNOWN;
+	paramB.conditionEntityDefaultIndex = FEATURE_INDEX_OF_TODO_UNKNOWN;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//eg The chicken ate the pie that likes to draw.
 	#endif
@@ -1020,18 +1020,18 @@ void defineToBeAndToDoConditions(Sentence * currentSentenceInList, bool GIAentit
 						}
 
 						GIAentityNode * entityNode = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-						GIAentityNode * conditionEntityNode = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
-						string conditionTypeEntityNodeName = currentRelationInList->relationType;
+						GIAentityNode * conditionObjectEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+						string conditionEntityNodeName = currentRelationInList->relationType;
 
 						bool entityAlreadyExistant = false;
-						GIAentityNode * conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexNewCondition, &conditionTypeEntityNodeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+						GIAentityNode * conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexNewCondition, &conditionEntityNodeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 						bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//eg The chicken ate the pie that likes to draw.
 
 						#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-						GIAentityNodeArray[featureIndexNewCondition] = addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
+						GIAentityNodeArray[featureIndexNewCondition] = addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet);
 						#else
-						addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
+						addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet);
 						#endif
 					#endif
 				}

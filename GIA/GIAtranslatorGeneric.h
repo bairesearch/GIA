@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f4b 04-July-2014
+ * Project Version: 2f5a 04-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -130,7 +130,7 @@ public:
 	bool executeOrReassign;
 
 	//for relation1, relation2, relation3, and relation4 [GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS]:
-		//for entity1 (eg substanceEntity), entity2 (eg conditionEntity, propertyEntity), and entity3/intermediaryEntity (eg conditionTypeEntity, actionEntity) [3]:
+		//for entity1 (eg substanceEntity), entity2 (eg conditionObjectEntity, propertyEntity), and entity3/intermediaryEntity (eg conditionEntity, actionEntity) [3]:
 
 		//relations to parse
 	int numberOfRelations;
@@ -217,9 +217,9 @@ public:
 	int functionEntityRelationEntityID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_FUNCTION];	//for entity1, entity2, and entity3 [and entity4 for special tests] - relationType, relationGovernorIndex, or relationDependentIndex
 	int functionToExecuteUponFind;
 		//special cases
-	bool mustGenerateConditionTypeName;
-	string conditionTypeEntityDefaultName;
-	int conditionTypeEntityDefaultIndex;
+	bool mustGenerateConditionName;
+	string conditionEntityDefaultName;
+	int conditionEntityDefaultIndex;
 
 		//for cleanup
 	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR

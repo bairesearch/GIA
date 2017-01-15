@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f4b 04-July-2014
+ * Project Version: 2f5a 04-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1048,7 +1048,15 @@ static string featurePOSindicatesNounTypeArray[FEATURE_POS_TAG_INDICATES_NOUN_NU
 
 
 
-
+#define ENTITY_COORDINATINGCONJUNCTION_ARRAY_NUMBER_OF_TYPES (7)
+static string entityCoordinatingConjunctionArray[ENTITY_COORDINATINGCONJUNCTION_ARRAY_NUMBER_OF_TYPES] = {"and", "but", "or", "yet", "nor"};	//removed "for" +  "so" as conj is not generated for these by Stanford //http://grammar.ccc.commnet.edu/grammar/conjunctions.htm
+	/*
+	Tom rides the bike so he can go to lunch.
+	Tom likes the chicken but prefers the apple.
+	The ball is neither blue nor red.
+	The ball is tall yet fast.
+	*/
+	
 #ifdef GIA_USE_CORPUS_DATABASE
 
 #define FEATURE_POS_TAG_COORDINATINGCONJUNCTION_ARRAY_NUMBER_OF_TYPES 1
@@ -1109,14 +1117,7 @@ static string entityAuxiliaryDoingArray[ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_T
 //additional cases not identified by [/mapped to existing] Relex Word Type:
 #define ENTITY_WH_ARRAY_NUMBER_OF_TYPES (9)
 static string entityWhArray[ENTITY_WH_ARRAY_NUMBER_OF_TYPES] = {"which", "what", "who", "whom", "whose","where","when","how","why"};	//http://courses.washington.edu/hypertxt/csar-v02/penntable.html + http://www.computing.dcu.ie/~acahill/tagset.html
-#define ENTITY_COORDINATINGCONJUNCTION_ARRAY_NUMBER_OF_TYPES (7)
-static string entityCoordinatingConjunctionArray[ENTITY_COORDINATINGCONJUNCTION_ARRAY_NUMBER_OF_TYPES] = {"and", "but", "or", "yet", "nor"};	//removed "for" +  "so" as conj is not generated for these by Stanford //http://grammar.ccc.commnet.edu/grammar/conjunctions.htm
-	/*
-	Tom rides the bike so he can go to lunch.
-	Tom likes the chicken but prefers the apple.
-	The ball is neither blue nor red.
-	The ball is tall yet fast.
-	*/
+
 #define ENTITY_POSSESSIVEENDING_NUMBER_OF_TYPES (2)
 static string entityPossessiveEndingArray[ENTITY_POSSESSIVEENDING_NUMBER_OF_TYPES] = {"'s", "'"};
 #define ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES (9)

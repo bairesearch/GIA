@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f4b 04-July-2014
+ * Project Version: 2f5a 04-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -100,17 +100,17 @@ GIAentityNode * addActionToActionDefinitionDefineSubstances(GIAentityNode * acti
 	void upgradeSubstanceToAction(GIAentityNode * substance);
 		void eraseSubstanceFromSubstanceList(GIAentityNode * existingEntity);
 
-GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionEntityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet);
-GIAentityNode * addOrConnectConditionToSubject(GIAentityNode * entityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet);
-GIAentityNode * addOrConnectConditionToObject(GIAentityNode * conditionEntityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet);
+GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * conditionSubjectEntity, GIAentityNode * conditionObjectEntity, GIAentityNode * conditionEntity, bool sameReferenceSet);
+GIAentityNode * addOrConnectConditionToSubject(GIAentityNode * conditionSubjectEntity, GIAentityNode * conditionEntity, bool sameReferenceSet);
+GIAentityNode * addOrConnectConditionToObject(GIAentityNode * conditionObjectEntity, GIAentityNode * conditionEntity, bool sameReferenceSet);
 	void connectConditionInstanceToSubject(GIAentityNode * subjectEntity, GIAentityNode * newOrExistingCondition, bool sameReferenceSet);
 	void connectConditionInstanceToObject(GIAentityNode * objectEntity, GIAentityNode * newOrExistingCondition, bool sameReferenceSet);
-GIAentityNode * addConditionToConditionDefinition(GIAentityNode * conditionTypeEntity);
+GIAentityNode * addConditionToConditionDefinition(GIAentityNode * conditionEntity);
 	GIAentityNode * addCondition(GIAentityNode * conditionEntity);
 
 #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-GIAentityNode * addOrConnectBeingDefinitionConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionDefinitionNode, GIAentityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
-GIAentityNode * addOrConnectHavingPropertyConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionSubstanceNode, GIAentityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
+GIAentityNode * addOrConnectBeingDefinitionConditionToEntity(GIAentityNode * conditionSubjectEntity, GIAentityNode * conditionDefinitionNode, GIAentityNode * conditionEntity, bool negative, bool sameReferenceSet);
+GIAentityNode * addOrConnectHavingPropertyConditionToEntity(GIAentityNode * conditionSubjectEntity, GIAentityNode * conditionSubstanceNode, GIAentityNode * conditionEntity, bool negative, bool sameReferenceSet);
 #endif
 
 string convertPrepositionToRelex(string * preposition, bool * prepositionFound);	//converts prep_preposition to preposition
@@ -198,6 +198,8 @@ void addInstanceEntityNodeToActiveLists(GIAentityNode * entity);
 #ifdef GIA_SUPPORT_ALIASES
 void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entityNodeToMerge);
 #endif
+
+bool textInTextArray(string text, string * textArray, int arraySize);
 
 
 #endif

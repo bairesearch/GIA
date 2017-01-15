@@ -345,7 +345,7 @@
 			</function>
 
 			<!-- NLC Only -->
-			<!-- #ifdefNLC_USE_NON_STANDARD_CONDITION_CONDITION_CONNECTIONS_CONNECT_CONJUNCTIONS_TO_THEIR_RELEVANT_PREPOSITIONS -->
+			<!-- #ifdefGIA_USE_NON_STANDARD_CONDITION_CONDITION_CONNECTIONS_CONNECT_CONJUNCTIONS_TO_THEIR_RELEVANT_PREPOSITIONS -->
 			<function name="redistributeStanfordRelationsConjunctionAndSubjectAndPreposition">
 				
 				<example><!--
@@ -2794,7 +2794,7 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
-				<option mustGenerateConditionTypeName="true" conditionTypeEntityDefaultName="have" conditionTypeEntityDefaultIndex="986" />
+				<option mustGenerateConditionName="true" conditionEntityDefaultName="have" conditionEntityDefaultIndex="986" />
 				<option functionToExecuteUponFind="5" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
@@ -2981,7 +2981,7 @@
 				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_obj" />
 				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="have" />
 				<option functionToExecuteUponFind="10" />
-				<option conditionTypeEntityDefaultIndex="997" />
+				<option conditionEntityDefaultIndex="997" />
 				//#ifdefGIA_USE_ADVANCED_REFERENCING
 				<option defaultSameSetRelationID="2" defaultSameSetReferenceValue="true" />
 				//#endif
@@ -3006,7 +3006,7 @@
 				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_obj" />
 				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="be" />
 				<option functionToExecuteUponFind="9" />
-				<option conditionTypeEntityDefaultIndex="996" />
+				<option conditionEntityDefaultIndex="996" />
 				//#ifdefGIA_USE_ADVANCED_REFERENCING
 				<option defaultSameSetRelationID="2" defaultSameSetReferenceValue="true" />
 				//#endif
@@ -3033,7 +3033,7 @@
 				<option parseDisabledRelation="true" REL="2" /> //copula will have been disabled, so must explicitly allow it to be parsed
 				<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="be" />
 				<option functionToExecuteUponFind="9" />
-				<option conditionTypeEntityDefaultIndex="996" />
+				<option conditionEntityDefaultIndex="996" />
 				//#ifdefGIA_USE_ADVANCED_REFERENCING
 				<option defaultSameSetRelationID="2" defaultSameSetReferenceValue="true" />
 				//#endif
@@ -3225,7 +3225,7 @@
 				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_psubj" />
 				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				<option functionToExecuteUponFind="8" />
-				<option conditionTypeEntityDefaultIndex="998" /> <!-- shouldn't be required as conditionType corresponds to a relation subject or relation governor (rather than a relation type)  -->
+				<option conditionEntityDefaultIndex="998" /> <!-- shouldn't be required as conditionType corresponds to a relation subject or relation governor (rather than a relation type)  -->
 				<option functionEntityRelationID="2" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="2" FUNC_ENT="3" functionEntityRelationEntityID="1" />
@@ -3242,7 +3242,7 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option functionToExecuteUponFind="8" />
-				<option conditionTypeEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
+				<option conditionEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
@@ -3250,13 +3250,13 @@
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_and" />
-				<option conditionTypeEntityDefaultName="and" /> <!-- change the conditionType name (_conj_and -> and) -->
+				<option conditionEntityDefaultName="and" /> <!-- change the conditionType name (_conj_and -> and) -->
 				</paramDepRel>
 
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option functionToExecuteUponFind="8" />
-				<option conditionTypeEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
+				<option conditionEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
@@ -3264,13 +3264,13 @@
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_or" />
-				<option conditionTypeEntityDefaultName="or" /> <!-- change the conditionType name (_conj_or -> or) -->
+				<option conditionEntityDefaultName="or" /> <!-- change the conditionType name (_conj_or -> or) -->
 				</paramDepRel>
 				
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option functionToExecuteUponFind="8" />
-				<option conditionTypeEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
+				<option conditionEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
@@ -3278,13 +3278,13 @@
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_but" />
-				<option conditionTypeEntityDefaultName="but" /> <!-- change the conditionType name (_conj_but -> but) -->
+				<option conditionEntityDefaultName="but" /> <!-- change the conditionType name (_conj_but -> but) -->
 				</paramDepRel>
 				
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option functionToExecuteUponFind="8" />
-				<option conditionTypeEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
+				<option conditionEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
@@ -3292,13 +3292,13 @@
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_yet" />
-				<option conditionTypeEntityDefaultName="yet" /> <!-- change the conditionType name (_conj_yet -> yet) -->
+				<option conditionEntityDefaultName="yet" /> <!-- change the conditionType name (_conj_yet -> yet) -->
 				</paramDepRel>
 				
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option functionToExecuteUponFind="8" />
-				<option conditionTypeEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
+				<option conditionEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
@@ -3306,7 +3306,7 @@
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_nor" />
-				<option conditionTypeEntityDefaultName="nor" /> <!-- change the conditionType name (_conj_nor -> nor) -->
+				<option conditionEntityDefaultName="nor" /> <!-- change the conditionType name (_conj_nor -> nor) -->
 				</paramDepRel>
 			</function>
 
@@ -3394,7 +3394,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<option conditionTypeEntityDefaultIndex="998" /> <!-- may be required as conditionType corresponds to a relation type (not relation subject or relation governor) [assuming a corresponding feature index for the relation type cannot be found in the feature array] -->
+				<option conditionEntityDefaultIndex="998" /> <!-- may be required as conditionType corresponds to a relation type (not relation subject or relation governor) [assuming a corresponding feature index for the relation type cannot be found in the feature array] -->
 				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
@@ -3409,7 +3409,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<option conditionTypeEntityDefaultIndex="998" /> <!-- may be required as conditionType corresponds to a relation type (not relation subject or relation governor) [assuming a corresponding feature index for the relation type cannot be found in the feature array] -->
+				<option conditionEntityDefaultIndex="998" /> <!-- may be required as conditionType corresponds to a relation type (not relation subject or relation governor) [assuming a corresponding feature index for the relation type cannot be found in the feature array] -->
 				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
@@ -3433,7 +3433,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="true" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="true" REL="1" REL_ENT="2" />
-				<option mustGenerateConditionTypeName="true" conditionTypeEntityDefaultName="involves" conditionTypeEntityDefaultIndex="990" />
+				<option mustGenerateConditionName="true" conditionEntityDefaultName="involves" conditionEntityDefaultIndex="990" />
 				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
 				<!-- #endif -->
@@ -3467,7 +3467,7 @@
 				<option defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_measure_per|_measure_dependency" relationArrayTestSize="2" />
-				<option mustGenerateConditionTypeName="true" conditionTypeEntityDefaultName="_measure_dependency" conditionTypeEntityDefaultIndex="994" /> <!-- NB does not support the full array of Relex measure/dependency types, and ((1000)-6) is now used instead of ((1000)-7) to allow both measure and measure per entities to be used in same sentence -->
+				<option mustGenerateConditionName="true" conditionEntityDefaultName="_measure_dependency" conditionEntityDefaultIndex="994" /> <!-- NB does not support the full array of Relex measure/dependency types, and ((1000)-6) is now used instead of ((1000)-7) to allow both measure and measure per entities to be used in same sentence -->
 				</paramDepRel>
 
 				<paramDepRel mode="execute">
@@ -3479,7 +3479,7 @@
 				<option defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_measure_distance|_measure_size|_measure_time|_measure" relationArrayTestSize="4" />
-				<option mustGenerateConditionTypeName="true" conditionTypeEntityDefaultName="_measure" conditionTypeEntityDefaultIndex="993" /> <!-- NB does not support the full array of Relex measure/dependency types -->
+				<option mustGenerateConditionName="true" conditionEntityDefaultName="_measure" conditionEntityDefaultIndex="993" /> <!-- NB does not support the full array of Relex measure/dependency types -->
 				</paramDepRel>
 			</function>
 
@@ -3513,7 +3513,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_to-be" />
 				<option functionToExecuteUponFind="8" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<option conditionTypeEntityDefaultIndex="988" />
+				<option conditionEntityDefaultIndex="988" />
 				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
 				<option defaultSameSetReferenceValue="true" /> <!-- eg The chicken ate the pie that likes to draw. -->
 				<!-- #endif -->
@@ -3548,7 +3548,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_to-do" />
 				<option functionToExecuteUponFind="8" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<option conditionTypeEntityDefaultIndex="992" />
+				<option conditionEntityDefaultIndex="992" />
 				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
 				<option defaultSameSetReferenceValue="true" /> <!-- eg The chicken ate the pie that likes to draw. -->
 				<!-- #endif -->
