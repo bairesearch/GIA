@@ -76,6 +76,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 						queryEntityNodeWhenSearchedResultsInBestConfidence = currentQueryEntityNode;
 					
 						#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
+						#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_OLD_TEXTUAL_OUTPUT
 						if(*foundAnswer)
 						{
 							//add first node to trace;
@@ -84,7 +85,9 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 							cout << "queryAnswerContext = " << *queryAnswerContext << endl;
 							#endif
 						}
+						#endif
 						#endif							
+						
 					}
 				}
 			}
@@ -677,7 +680,12 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 				#else
 				bool isSuitableNodeTypeForInexactAnswer = false;				
 				#endif
-				string sourceContext = "is ";
+				
+				#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_OLD_TEXTUAL_OUTPUT
+				string sourceContext = "is ";	
+				#else
+				string sourceContext = "";
+				#endif				
 				//cout << "a33" << endl;
 				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->entityNodeDefiningThisInstance, entityNode->entityNodeDefiningThisInstance, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, isSuitableNodeTypeForInexactAnswer, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 			}		
@@ -745,7 +753,11 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 				bool isSuitableNodeTypeForInexactAnswer = false;				
 				#endif
 				#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
-				string sourceContext = "is seen in ";	//is realised in/defines/is instantiated in
+					#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_OLD_TEXTUAL_OUTPUT
+					string sourceContext = "is seen in ";	//is realised in/defines/is instantiated in				
+					#else
+					string sourceContext = "";
+					#endif
 				#else
 				string sourceContext = "";
 				#endif
