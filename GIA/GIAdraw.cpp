@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g2c 29-August-2014
+ * Project Version: 2g3a 31-August-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -111,7 +111,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 		*/
 
 		#ifdef GIA_FREE_MEMORY1
-		delete initialReferenceInSceneFile;
+		//delete initialReferenceInSceneFile;
 		delete topLevelReferenceInSceneFile;
 		#endif
 
@@ -119,7 +119,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 		unsigned char * rgbMap = new unsigned char[width*height*RGB_NUM];
 
 		//setViewPort2Dortho(-100.0, 2000.0, -100.0, 2000.0);
-		setViewPort3Dortho(-100.0, 2000, 2000.0, -100.0, 1.0, -1.0);
+		setViewPort3Dortho(-100.0, 1000, 1000.0, -100.0, 1.0, -1.0);
 
 		//now reparse file
 		Reference * initialReferenceInCollapsedSceneFile = new Reference();
