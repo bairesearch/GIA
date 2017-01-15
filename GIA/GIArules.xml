@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h7c 19-January-2015
+ * Project Version: 2h8a 19-January-2015
  *
  *******************************************************************************/
 -->
@@ -2336,6 +2336,27 @@
 				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_appo" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isName" value="true" REL="2" REL_ENT="2" />
+				</paramDepRel>
+			</function>
+			<!-- #endif -->
+			
+			
+			<!-- Required for NLC -->
+			<!-- Supports Stanford Parser/CoreNLP version 3+ e.g. 2014-01-04 --> 
+			<function name="redistributeStanfordRelationsInterpretXcompAndNsubjAsXcomp">
+				<example><!--
+				The meaning of life is to learn to love.
+					nsubj(is-5, meaning-2) + xcomp(is-5, learn-7) -> xcomp(meaning-2, learn-7))
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="2" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_to-do" />
+				<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option disableRelation="true" REL="1" />
+				<option disableEntity="true" REL="1" REL_ENT="1" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 				</paramDepRel>
 			</function>
 			<!-- #endif -->
