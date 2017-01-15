@@ -493,16 +493,16 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			string nameOfBox = "";
 			if(entityNode->hasQuantity)
 			{
-				char quantityNumberStringcharstar[20];
+				string quantityNumberStringTemp;
 				if(entityNode->isQuery)
 				{
-					strcpy(quantityNumberStringcharstar, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_TEMP_FOR_DISPLAY_ONLY);
+					quantityNumberStringTemp = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_TEMP_FOR_DISPLAY_ONLY;
 				}
 				else
 				{
-					sprintf(quantityNumberStringcharstar, "%d", entityNode->quantityNumber);
+					quantityNumberStringTemp = printQuantityNumberString(entityNode);
 				}
-				nameOfBox = nameOfBox + quantityNumberStringcharstar + " " + entityNode->entityName;
+				nameOfBox = nameOfBox + quantityNumberStringTemp + " " + entityNode->entityName;
 				
 			}
 			else if(entityNode->negative)

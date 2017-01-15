@@ -199,7 +199,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 				{//exact match found [NB if a quantity, the queryEntityNode's entityName will not have the comparisonVariable name (_$qVar) specified, and therefore a matched entity node entityName is required]
 					foundMatch = true;
 					#ifdef GIA_QUERY_DEBUG
-					cout << "entityNode->quantityNumber = " << entityNode->quantityNumber << endl;
+					cout << "entityNode->quantityNumberString = " << entityNode->quantityNumberString << endl;
 					#endif
 				}
 				else
@@ -279,14 +279,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 		if(*foundAnswer)
 		{
 			*queryAnswerContext = *queryAnswerContext + queryAnswerContextTemp;
-			/*
-			if(entityNode->hasQuantity)
-			{
-				cout << "SFH" << endl;
-				cout << entityNode->quantityNumber << endl;
 				
-			}*/
-			
 			generateTexualContextBackwards(queryAnswerContext, sourceContext, entityNode);
 			/*
 			#ifndef GIA_QUERY_USE_EXTRA_LONG_CONTEXT_TRACE
@@ -768,18 +761,16 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 			string nameOfBox = "";
 			if(entityNode->hasQuantity)
 			{
-				char quantityNumberStringcharstar[20];
+				string quantityNumberStringTemp;
 				if(entityNode->isQuery)
 				{
-					strcpy(quantityNumberStringcharstar, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_TEMP_FOR_DISPLAY_ONLY);
+					quantityNumberStringTemp = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_TEMP_FOR_DISPLAY_ONLY;
 				}
 				else
-				{
-					
-					sprintf(quantityNumberStringcharstar, "%d", entityNode->quantityNumber);
-					
+				{						
+					quantityNumberStringTemp = printQuantityNumberString(entityNode);
 				}
-				nameOfBox = nameOfBox + quantityNumberStringcharstar + " " + entityNode->entityName;
+				nameOfBox = nameOfBox + quantityNumberStringTemp + " " + entityNode->entityName;
 				
 			}
 			else
@@ -900,9 +891,8 @@ void generateTexualContextEntityString(string * texualContextEntityString, GIAEn
 	
 	if(entityNode->hasQuantity)
 	{
-		char tempQuantityNumberStringCharStar[100]; 
-		sprintf(tempQuantityNumberStringCharStar, "%d", entityNode->quantityNumber);	
-		entityPretext = entityPretext + tempQuantityNumberStringCharStar + " ";
+		string quantityNumberStringTemp = printQuantityNumberString(entityNode);	
+		entityPretext = entityPretext + quantityNumberStringTemp + " ";
 	}	
 	else if(entityNode->isProperty)
 	{

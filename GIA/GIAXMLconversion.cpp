@@ -468,8 +468,10 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 	bool grammaticalNumberFound = false;
 	bool hasQuantityFound = false;
 	bool quantityNumberFound = false;
+	bool quantityNumberStringFound = false;
 	bool quantityModifierFound = false;
 	bool quantityModifierStringFound = false;
+	bool hasQuantityMultiplierFound = false;
 	bool hasMeasureFound = false;
 	bool measureTypeFound = false;
 
@@ -653,6 +655,12 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			entityNode->quantityNumber = attributeValue;
 			quantityNumberFound = true;
 		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityNumberString)
+		{
+			string attributeValue = currentAttribute->value.c_str();
+			entityNode->quantityNumberString = attributeValue;
+			quantityNumberStringFound = true;
+		}		
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityModifier)
 		{
 			int attributeValue = atoi(currentAttribute->value.c_str());
@@ -665,6 +673,12 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			entityNode->quantityModifierString = attributeValue;
 			quantityModifierStringFound = true;
 		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasQuantityMultiplier)
+		{
+			bool attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->hasQuantityMultiplier = attributeValue;
+			hasQuantityMultiplierFound = true;
+		}		
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasMeasure)
 		{
 			bool attributeValue = atoi(currentAttribute->value.c_str());
@@ -1516,6 +1530,13 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 		newAttribute = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute;
 		currentAttribute = currentAttribute->nextAttribute;
+		
+		currentAttribute->name = NET_XML_ATTRIBUTE_quantityNumberString;
+		currentAttribute->value = currentEntity->quantityNumberString;
+
+		newAttribute = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute;
+		currentAttribute = currentAttribute->nextAttribute;		
 
 		currentAttribute->name = NET_XML_ATTRIBUTE_quantityModifier;
 		sprintf(tempString, "%d", (currentEntity->quantityModifier));
@@ -1531,6 +1552,14 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 		newAttribute = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute;
 		currentAttribute = currentAttribute->nextAttribute;
+		
+		currentAttribute->name = NET_XML_ATTRIBUTE_hasQuantityMultiplier;
+		sprintf(tempString, "%d", int(currentEntity->hasQuantityMultiplier));
+		currentAttribute->value = tempString;
+
+		newAttribute = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute;
+		currentAttribute = currentAttribute->nextAttribute;		
 	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
 	}
 	#endif

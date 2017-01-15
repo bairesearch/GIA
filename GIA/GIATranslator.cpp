@@ -3024,7 +3024,8 @@ void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 			{
 				GIAEntityNode * quantityProperty = quantityEntity->AssociatedInstanceNodeList.back();
 				quantityProperty->hasQuantity = true;
-				int quantityNumberInt = calculateQuantityNumberInt(currentRelationInList->relationArgument);
+				quantityProperty->quantityNumberString = currentRelationInList->relationArgument;
+				int quantityNumberInt = calculateQuantityNumberInt(quantityProperty->quantityNumberString);
 				quantityProperty->quantityNumber = quantityNumberInt;
 
 				if(currentRelationInList->relationArgument == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
@@ -3075,6 +3076,7 @@ void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 						{
 							int quantityMultiplierInt = calculateQuantityMultiplierInt(currentRelationInList2->relationArgument);
 							quantityProperty->quantityNumber = quantityProperty->quantityNumber * quantityMultiplierInt;
+							quantityProperty->hasQuantityMultiplier = true;
 						}						
 					}						
 
@@ -3137,7 +3139,8 @@ void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 						}
 						newQuantityTimesEntity->hasQuantity = true;
 						newQuantityTimesEntity->quantityNumber = 1;
-
+						newQuantityTimesEntity->quantityNumberString = "1";
+						
 						string conditionTypeName = RELATION_TYPE_MEASURE_PER;
 						long entityIndex = -1;
 						bool entityAlreadyExistant = false;

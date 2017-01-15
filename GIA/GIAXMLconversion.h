@@ -124,8 +124,10 @@ using namespace std;
 #define NET_XML_ATTRIBUTE_grammaticalNumber ((string)"grammaticalNumber")
 #define NET_XML_ATTRIBUTE_hasQuantity ((string)"hasQuantity")
 #define NET_XML_ATTRIBUTE_quantityNumber ((string)"quantityNumber")
+#define NET_XML_ATTRIBUTE_quantityNumberString ((string)"quantityNumberString")
 #define NET_XML_ATTRIBUTE_quantityModifier ((string)"quantityModifier")
 #define NET_XML_ATTRIBUTE_quantityModifierString ((string)"quantityModifierString")
+#define NET_XML_ATTRIBUTE_hasQuantityMultiplier ((string)"hasQuantityMultiplier")
 #define NET_XML_ATTRIBUTE_hasMeasure ((string)"hasMeasure")
 #define NET_XML_ATTRIBUTE_measureType ((string)"measureType")
 //

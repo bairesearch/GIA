@@ -62,6 +62,7 @@ GIAEntityNode::GIAEntityNode(void)
 	quantityNumber = QUANTITY_NUMBER_UNDEFINED;
 	quantityModifier = QUANTITY_MODIFIER_UNDEFINED;	//not yet implemented
 	quantityModifierString = "";	//eg "almost"
+	hasQuantityMultiplier = false;
 	hasMeasure = false;
 	measureType = MEASURE_TYPE_UNDEFINED;
 
@@ -245,4 +246,26 @@ int calculateQuantityModifierInt(string quantityModifierString)
 	}
 	return quantityModifierInt;	
 }
+
+string printQuantityNumberString(GIAEntityNode * entityNode)
+{
+	string quantityNumberStringTemp;
+
+	if(entityNode->hasQuantityMultiplier)
+	{
+		char quantityNumberStringcharstar[20];
+		sprintf(quantityNumberStringcharstar, "%d", entityNode->quantityNumber);
+		quantityNumberStringTemp = quantityNumberStringcharstar;		
+	}
+	else
+	{
+		quantityNumberStringTemp = entityNode->quantityNumberString;
+	}
+
+	return quantityNumberStringTemp;	
+}
+
+
+
+
 

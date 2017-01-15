@@ -183,13 +183,14 @@ public:
 	int grammaticalNumber;
 	
 	bool hasQuantity;
-	int quantityNumber;
+	int quantityNumber;		//eg 6
+	string quantityNumberString;	//eg "6:45"
 	int quantityModifier;	//not yet implemented
 	string quantityModifierString;	//eg "almost"
+	bool hasQuantityMultiplier;
 	bool hasMeasure;
 	int measureType;
 	
-		
 	bool initialisedForPrinting;
 	//bool printed;
 	int printX;
@@ -250,6 +251,7 @@ int calculateQuantityNumberInt(string quantityNumberString);
 int calculateQuantityModifierInt(string quantityModifierString);
 int calculateQuantityMultiplierInt(string quantityMultiplierString);
 
+string printQuantityNumberString(GIAEntityNode * entityNode);
 
 
 
