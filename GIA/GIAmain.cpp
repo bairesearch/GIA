@@ -661,9 +661,9 @@ void executeRelex(string inputPlainTXTFileName, string inputRelexXMLFileName)
 void addToPrintEntityNodeString(string * printEntityNodeString, string entityName, string context)
 {
 	#ifdef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
-	*printEntityNodeString = *printEntityNodeString + "\nContext: " + context + " = " + entityName;			
-	#else
 	*printEntityNodeString = *printEntityNodeString + "\nContext: = " + entityName;			
+	#else
+	*printEntityNodeString = *printEntityNodeString + "\nContext: " + context + " = " + entityName;		
 	#endif
 }
 string printEntityNode(GIAEntityNode * queryAnswerNode)
