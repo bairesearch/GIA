@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q4f 14-October-2012
+ * Project Version: 1q5a 19-October-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -311,23 +311,23 @@ bool directoryExists(string * folderName)
 		folderExists = true;
 	}
 	#else
+	DWORD ftyp = GetFileAttributes(folderName->c_str());
+	if(ftyp != INVALID_FILE_ATTRIBUTES)
+	{
+		if(ftyp & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			folderExists = true;
+		}
+	}
 	/*
 	if((GetFileAttributes(folderName->c_str())) != INVALID_FILE_ATTRIBUTES)
 	{
 		folderExists = true;
 	}
 	*/
-	DIR * pDir = opendir(folderName->c_str());
-	if(pDir != NULL)
-	{
-		folderExists = true;
-		closedir(pDir);
-	}
 	#endif
 
 	return folderExists;
-
-
 }
 
 bool makeDirectory(string * folderName)
@@ -340,7 +340,7 @@ bool makeDirectory(string * folderName)
 	#ifdef LINUX
 	mkdir(folderName->c_str(), 0755);
 	#else
-	if( _mkdir(folderName->c_str()) != 0)	//CreateDirectory(folderName->c_str(), 0);
+	if(CreateDirectory(folderName->c_str(), 0) == 0)	//if( _mkdir(folderName->c_str()) != 0)	//
 	{
 		result = false;
 	}
@@ -351,18 +351,24 @@ bool makeDirectory(string * folderName)
 
 bool setCurrentDirectory(string * folderName)
 {
+	bool result = true;
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "\tsetCurrentDirectory: folderName = " << *folderName << endl;
 	#endif
 	#ifdef LINUX
 	chdir(folderName->c_str());
 	#else
-	::SetCurrentDirectory(folderName->c_str());
+	if(SetCurrentDirectory(folderName->c_str()) == 0)
+	{
+		result = false;
+	}
 	#endif
+	return result;
 }
 
 bool checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(string * folderName)
 {
+	bool result = true;
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "checkIfFolderExistsAndIfNotMakeAndSetAsCurrent: folderName = " << *folderName << endl;
 	#endif
@@ -371,6 +377,8 @@ bool checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(string * folderName)
 		makeDirectory(folderName);
 	}
 	setCurrentDirectory(folderName);
+
+	return result;
 }
 
 
