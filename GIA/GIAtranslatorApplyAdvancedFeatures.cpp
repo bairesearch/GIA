@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c2a 13-January-2014
+ * Project Version: 2c2b 14-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -471,7 +471,7 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 						#endif
 							if(currentRelationInList2->relationType == RELATION_TYPE_QUANTITY_MOD)
 							{
-								if(currentRelationInList2->relationGovernor == currentRelationInList->relationDependent)	//OLD before GIA 2b7d: if(currentRelationInList2->relationGovernor ==currentRelationInList->relationGovernor)
+								if((currentRelationInList2->relationGovernor == currentRelationInList->relationDependent) || (currentRelationInList2->relationGovernor == currentRelationInList->relationGovernor))	//OLD before GIA 2b7d/2c2b: if(currentRelationInList2->relationGovernor ==currentRelationInList->relationGovernor)
 								{
 									#ifdef GIA_TRANSLATOR_DEBUG
 									//cout << "add quantityModifier" << endl;
@@ -618,7 +618,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 					#endif
 						if(currentRelationInList2->relationType == RELATION_TYPE_QUANTITY_MOD)
 						{
-							if(currentRelationInList2->relationGovernor == currentRelationInList->relationGovernor)
+							if((currentRelationInList2->relationGovernor == currentRelationInList->relationDependent) || (currentRelationInList2->relationGovernor == currentRelationInList->relationGovernor))	//OLD before GIA 2c2b: if(currentRelationInList2->relationGovernor ==currentRelationInList->relationGovernor)
 							{
 								#ifdef GIA_TRANSLATOR_DEBUG
 								//cout << "add quantityModifier" << endl;
