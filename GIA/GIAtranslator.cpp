@@ -1482,14 +1482,18 @@ void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassConceptE
 			cout << "linkSubclassEntitiesWithParentClassEntities{}: entity->convertToSubClass - creating connection between subclass entity and parent" << endl;
 			#endif
 			bool sameReferenceSet = false;	//this is required for dreamModeLinkSpecificConceptsAndActions
+			#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 			if(linkAsAlias)
 			{
 				addDefinitionToEntityMarkConnectionAsAlias(subclassNonspecificSubstanceConcept, parentClassNonspecificSubstanceConcept, sameReferenceSet);
 			}
 			else
 			{
+			#endif
 				addDefinitionToEntity(subclassNonspecificSubstanceConcept, parentClassNonspecificSubstanceConcept, sameReferenceSet);
+			#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 			}
+			#endif
 		}
 	}		
 	#else
@@ -1511,14 +1515,18 @@ void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassConceptE
 		#ifdef GIA_DEBUG
 		cout << "linkSubclassEntitiesWithParentClassEntities{}: entity->convertToSubClass - creating connection between subclass entity and parent" << endl;
 		#endif
+		#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 		if(linkAsAlias)
 		{
 			addDefinitionToEntityMarkConnectionAsAlias(subclassConceptEntity, parentClassConceptEntity, true);
 		}
 		else
 		{
+		#endif
 			addDefinitionToEntity(subclassConceptEntity, parentClassConceptEntity, true);
+		#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 		}
+		#endif
 	}
 	#endif							
 
