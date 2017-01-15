@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r4a 13-November-2012
+ * Project Version: 1r5a 13-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -513,8 +513,13 @@
 
 #include "SHAREDglobalDefs.h"
 
-//variables currently being tested (1o1a+)
+//variables currently being tested (1r1a+)
 
+#define GIA_USE_BOT
+#ifdef GIA_USE_BOT
+	#define GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON	//Switch "you for I" (and vice versa)
+#endif
+ 
 #define GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES
 #define GIA_TRANSLATOR_INTERPRET_CLAUSAL_COMPLEMENT_AS_ACTION_OBJECT_INSTEAD_OF_ACTION_PROPERTY	//added to bring Stanford back into line with Relex: eg He says that you like to swim / ccomp(say, like) -> obj(say, like), Moses knew I was angry. / ccomp(knew-2, angry-5) ->  obj(knew-2, angry-5
 
@@ -522,6 +527,8 @@
 #ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
 	#define GIA_TRANSLATOR_DEFINE_NOUNS_WITH_PRENOMINAL_MODIFIERS_AS_SUBSTANCES		//only enable this when "toy" is property of "shop" (ie do not enable this when "shop" is property of "toy")
 #endif
+
+//variables currently being tested (1q1a+)
 
 #define GIA_SUPPORT_SPECIFIC_CONCEPTS	//added 1q4a to take into account specific concepts eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
 #ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
@@ -534,6 +541,8 @@
 	#define GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_PROPERTIES_AND_DEFINITIONS
 	#define GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
 #endif
+
+//variables currently being tested (1p1a+)
 
 #define STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS	//added 22 Sept to enable Stanford CoreNLP to be used to parse dependency relations with same accuracy as stanford parser (ie when stanford CoreNLP is set as both relation and feature parser)
 //#define STANFORD_PARSER_USE_POS_TAGS	//added 23 July 2012 to support Stanford Parser POS tags (which are sometimes more accurate than stanford CoreNLP pos tags)
@@ -549,6 +558,16 @@
 #define GIA_SUPPORT_INPUT_FILE_LISTS
 #define GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 
+//#define GIA_QUERIES_MUST_BE_QUESTIONS	//disabled 30 June 2012
+
+#define GIA_USE_LRP
+#ifdef GIA_USE_LRP
+	#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS	//added 28 October 2012b - requires GIA_USE_LRP
+	//#define GIA_LRP_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
+#endif
+
+//variables currently being tested (1o1a+)
+
 #ifdef USE_CE
 	#define GIA_WITH_CE_CONVERT_PUNCTUATION_MARK_CHARACTERS_TO_FULL_STOPS
 	#ifdef GIA_WITH_CE_CONVERT_PUNCTUATION_MARK_CHARACTERS_TO_FULL_STOPS
@@ -560,14 +579,6 @@
 	#define GIA_WITH_CE_DERIVE_SCODEEXTENSION_PREPEND
 	//#define GIA_WITH_CE_USE_ALL_CODEEXTENSION_COMBINATIONS	//else just use first
 	//#define GIA_WITH_CE_DEBUG
-#endif
-
-//#define GIA_QUERIES_MUST_BE_QUESTIONS	//disabled 30 June 2012
-
-#define GIA_USE_LRP
-#ifdef GIA_USE_LRP
-	#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS	//added 28 October 2012b - requires GIA_USE_LRP
-	//#define GIA_LRP_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
 #endif
 
 #define GIA_SUPPORT_ALIASES
@@ -582,6 +593,8 @@
 	#endif
 	#define GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR	//NB even NLG2 requires origWord not lemma, so a morphology generator is required in both
 #endif
+
+//variables currently being tested (1n1a+)
 
 #define GIA_USE_1N1ATEMP1TO8_CHANGES	//added 1n1aTEMP9
 

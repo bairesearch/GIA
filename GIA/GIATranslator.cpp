@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r4a 13-November-2012
+ * Project Version: 1r5a 13-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -42,6 +42,9 @@
 #include "GIAdatabase.h"
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG
 #include "GIAParser.h"
+#endif
+#ifdef GIA_USE_BOT
+#include "GIAbot.h"
 #endif
 
 static int referenceTypeHasDeterminateCrossReferenceNumberArray[GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES] = {GRAMMATICAL_NUMBER_SINGULAR};
@@ -649,6 +652,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		redistributeStanfordRelationsExpletives(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray, NLPdependencyRelationsType);
 		#endif
 	}
+	#endif
+	
+	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
+	botSwitchFirstAndSecondPerson(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray, NLPdependencyRelationsType);
 	#endif
 
 

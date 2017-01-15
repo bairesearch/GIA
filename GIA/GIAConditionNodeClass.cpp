@@ -23,7 +23,7 @@
  * File Name: GIAConditionNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r4a 13-November-2012
+ * Project Version: 1r5a 13-November-2012
  *
  *******************************************************************************/
 
