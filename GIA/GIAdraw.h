@@ -45,7 +45,7 @@ using namespace std;
 #define GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_BROWN)		//colour not defined in original GIA spec
 #define GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_BROWN)			//this was dark green to original GIA spec
 #define GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_MAGENTA)	//colour not defined in original GIA spec	
-//#define GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_CYAN)		//Not used	//this was cyan(?) in the original spec			
+#define GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_MAGENTA)		//Not used	//this was cyan(?) in the original spec			
 #define GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR (DAT_FILE_COLOUR_RED)		//this was red in the original spec			
 
 #define GIA_DRAW_CONDITION_NODE_HEIGHT (5)
@@ -66,6 +66,9 @@ using namespace std;
 
 #define DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (15)	//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (50)	//should not be used during initialiseForPrint
+
+#define DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITIONS_OF_SAME_NODE (30)	//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITIONS_OF_SAME_NODE (25)	//should not be used during initialiseForPrint
 
 #define DRAW_X_INITIAL_OFFSET (0)
 #define DRAW_Y_INITIAL_OFFSET (100)

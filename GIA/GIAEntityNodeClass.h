@@ -50,7 +50,7 @@ public:
 	double confidence;
 	
 	int isProperty;		//is this entity a property?
-	bool hasAssociatedProperty;
+	bool hasAssociatedProperty;	//this boolean appears to only represent whether this entity defines a child property node [and not whether it contains one]
 	bool hasAssociatedAction;
 	bool hasAssociatedTime;
 	

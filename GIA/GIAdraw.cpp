@@ -205,7 +205,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		if(entityNode->entityNodeDefiningThisProperty != NULL)
 		{
 			//cout << "a33" << endl;
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->entityNodeDefiningThisProperty, y-DRAW_Y_SPACE_BETWEEN_ENTITIES, x, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->entityNodeDefiningThisProperty, y-DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITIONS_OF_SAME_NODE, x+DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITIONS_OF_SAME_NODE, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			
 			if(initialiseOrPrint == DRAW_PRINT)
 			{	
@@ -302,8 +302,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			else if(entityNode->hasAssociatedProperty)
 			{//the original spec seemed to imply that entities that have associated properties (ie, that define properties) are special but they don't appear to be
 				if(!(entityNode->isProperty))
-				{//no colour modifier, just use basic entity colour
-					entityColour = GIA_DRAW_BASICENTITY_NODE_COLOUR;
+				{		
+					//added 2 May 11a (highlight entities which define property nodes)
+					entityColour = GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_BASICENTITY_NODE_COLOUR;
 				}
 			}					
 			else
