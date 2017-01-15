@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f15a 16-July-2014
+ * Project Version: 2f15b 16-July-2014
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -635,7 +635,7 @@ void DBreadDatabase(vector<GIAentityNode*> *entityNodesActiveListComplete, unord
 
 		//cout << "done reading concept connections" << endl;
 
-		#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+		#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 		conceptEntityNode->wasReference = true;	//required for node to be printed
 		#endif
 		for(vector<GIAentityConnection*>::iterator connectionIter = (conceptEntityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]).begin(); connectionIter != (conceptEntityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]).end(); connectionIter++)
@@ -647,7 +647,7 @@ void DBreadDatabase(vector<GIAentityNode*> *entityNodesActiveListComplete, unord
 			{
 			#endif
 				entityNodesActiveListComplete->push_back(entityNode);
-				#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+				#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 				entityNode->wasReference = true;	//required for node to be printed
 				#endif
 				for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)

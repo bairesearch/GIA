@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f15a 16-July-2014
+ * Project Version: 2f15b 16-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -639,7 +639,7 @@ int main(int argc,char **argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 2f15a 16-July-2014" << endl;
+			cout << "OpenGIA.exe - Project Version: 2f15b 16-July-2014" << endl;
 			exit(1);
 		}
 
@@ -1010,8 +1010,8 @@ bool executeGIA2()
 
 	bool result = true;
 
-	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-	*maxNumberSentences = 0;		//variable only used with GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
+	*maxNumberSentences = 0;		//variable only used with GIA_RECORD_WAS_REFERENCE_INFORMATION
 	#endif
 
 

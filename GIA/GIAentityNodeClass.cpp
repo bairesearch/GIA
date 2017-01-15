@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f15a 16-July-2014
+ * Project Version: 2f15b 16-July-2014
  *
  *******************************************************************************/
 
@@ -223,7 +223,7 @@ GIAentityNode::GIAentityNode(void)
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	wasReferenceTemp = false;
 	#endif
-	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 	wasReference = false;
 	#endif
 	#endif
@@ -714,7 +714,7 @@ bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * ent
 	#endif
 
 	/*GIA Miscellaneous Internal Variables*/
-	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 	testEntityCharacteristicIterationbool(entity->wasReference, entityCharacteristic, "wasReference", &foundMatch);
 	#endif
 	testEntityCharacteristicIterationbool(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp, entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
@@ -872,7 +872,7 @@ bool setEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * enti
 	#endif
 
 	/*GIA Miscellaneous Internal Variables*/
-	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 	setEntityCharacteristicIterationbool(&(entity->wasReference), entityCharacteristic, "wasReference", &foundMatch);
 	#endif
 	setEntityCharacteristicIterationbool(&(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp), entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
@@ -1001,7 +1001,7 @@ bool getEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * enti
 	#endif
 
 	/*GIA Miscellaneous Internal Variables*/
-	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 	getEntityCharacteristicIterationbool(entity->wasReference, entityCharacteristic, "wasReference", &foundMatch);
 	#endif
 	getEntityCharacteristicIterationbool(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp, entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
