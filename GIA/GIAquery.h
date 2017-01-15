@@ -171,6 +171,7 @@ public:
 	GIAentityNode* referenceSetDefiniteEntity;
 	//GIAsentence* firstSentenceInList;
 	#endif
+	bool traceFindIndefiniteEntityCorrelate;
 	
 	#ifdef GIA_REFERENCING_QUERY_SUPPORT_SAME_REFERENCE_SET_TESTS
 	bool sameReferenceSetTests;

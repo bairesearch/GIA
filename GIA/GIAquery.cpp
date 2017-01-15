@@ -127,6 +127,7 @@ GIAreferenceTraceParameters::GIAreferenceTraceParameters(void)
 	referenceSetDefiniteEntity = NULL;
 	//firstSentenceInList = NULL;
 	#endif
+	traceFindIndefiniteEntityCorrelate = false;
 	
 	#ifdef GIA_REFERENCING_QUERY_SUPPORT_SAME_REFERENCE_SET_TESTS
 	sameReferenceSetTests = false;
@@ -280,11 +281,14 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAen
 				#endif
 				for(vector<GIAentityConnection*>::iterator connectionIterQuery = queryEntityNode->entityVectorConnectionsArray[i].begin(); connectionIterQuery != queryEntityNode->entityVectorConnectionsArray[i].end(); connectionIterQuery++)
 				{			
-					#ifdef GIA_QUERY_DEBUG
-					cout << "\n\nconnectionIterQuery = " << (*connectionIterQuery)->entity->entityName << ", isConcept = " << (*connectionIterQuery)->entity->isConcept << endl;
-					cout << "connectionIterQuery idInstance = " << (*connectionIterQuery)->entity->idInstance << endl;
-					cout << "connectionIterQuery entityIndexTemp = " << (*connectionIterQuery)->entity->entityIndexTemp << endl;
-					#endif
+					//#ifdef GIA_QUERY_DEBUG
+					if(referenceTraceParameters->traceFindIndefiniteEntityCorrelate)
+					{
+						cout << "\n\nconnectionIterQuery = " << (*connectionIterQuery)->entity->entityName << ", isConcept = " << (*connectionIterQuery)->entity->isConcept << endl;
+						cout << "connectionIterQuery idInstance = " << (*connectionIterQuery)->entity->idInstance << endl;
+						cout << "connectionIterQuery entityIndexTemp = " << (*connectionIterQuery)->entity->entityIndexTemp << endl;
+					}
+					//#endif
 
 					#ifdef GIA_USE_DATABASE
 					#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
@@ -322,11 +326,14 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAen
 						if(sameReferenceSetTest)
 						{
 						#endif
-							#ifdef GIA_QUERY_DEBUG
-							cout << "connectionIter = " << (*connectionIter)->entity->entityName << ", isConcept = " << (*connectionIter)->entity->isConcept << endl;
-							cout << "connectionIter idInstance = " << (*connectionIter)->entity->idInstance << endl;
-							cout << "connectionIter entityIndexTemp = " << (*connectionIter)->entity->entityIndexTemp << endl;
-							#endif
+							//#ifdef GIA_QUERY_DEBUG
+							if(referenceTraceParameters->traceFindIndefiniteEntityCorrelate)
+							{
+								cout << "connectionIter = " << (*connectionIter)->entity->entityName << ", isConcept = " << (*connectionIter)->entity->isConcept << endl;
+								cout << "connectionIter idInstance = " << (*connectionIter)->entity->idInstance << endl;
+								cout << "connectionIter entityIndexTemp = " << (*connectionIter)->entity->entityIndexTemp << endl;
+							}
+							//#endif
 
 							int numberOfMatchedNodesTemp = 0;
 							int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
@@ -336,7 +343,11 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAen
 							//cout << "\t\tconnectionIter = " << (*connectionIter)->entity->entityName << endl;
 
 							bool exactMatchTemp = testReferencedEntityNodeForExactNameMatch2((*connectionIterQuery)->entity, (*connectionIter)->entity, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, queryTraceParameters, referenceTraceParameters);
-
+							if(referenceTraceParameters->traceFindIndefiniteEntityCorrelate)
+							{
+								cout << "exactMatchTemp = " << exactMatchTemp << endl;
+							}
+							
 							if(numberOfMatchedNodesTemp > maxNumberMatchedNodes)
 							{
 								if(traceModeIsQuery || exactMatchTemp)
@@ -401,7 +412,18 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAen
 						{
 							//for advanced referencing this should never be the case (it should always refind what was found originally)
 							exactMatch = false;
-							//cout << "!exactMatch1: (*connectionIterQuery)->entity->entityName = " << (*connectionIterQuery)->entity->entityName << endl;
+							if(referenceTraceParameters->traceFindIndefiniteEntityCorrelate)
+							{
+								cout << "!exactMatch1: (*connectionIterQuery)->entity->entityName = " << (*connectionIterQuery)->entity->entityName << endl;
+						
+							}
+						}
+						else
+						{
+							if(referenceTraceParameters->traceFindIndefiniteEntityCorrelate)
+							{
+								cout << "exactMatch1" << endl;
+							}
 						}
 						*numberOfMatchedNodes = numberOfMatchedNodesTemp;
 						*numberOfMatchedNodesRequiredSynonymnDetection = numberOfMatchedNodesRequiredSynonymnDetectionTemp;
