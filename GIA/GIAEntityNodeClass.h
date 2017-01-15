@@ -77,7 +77,7 @@ public:
 
 	GIAEntityNode(void);
 	~GIAEntityNode(void);
-
+	
 	int grammaticalTenseTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	int grammaticalNumberTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	bool grammaticalDefiniteTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
@@ -143,7 +143,7 @@ public:
 	vector<GIAActionNode*> IncomingActionNodeList;
 	vector<GIAActionNode*>::iterator IncomingActionNodeListIterator;
 	
-		//properties only
+		
 	//property connections;
 	//record list of all properties for this entity
 	vector<GIAEntityNode*> PropertyNodeList;
@@ -152,6 +152,7 @@ public:
 	vector<GIAEntityNode*> PropertyNodeReverseList;				//if property only: 
 	vector<GIAEntityNode*>::iterator PropertyNodeReverseListIterator;	//if property only:
 	*/
+		//properties only
 	GIAEntityNode * entityNodeContainingThisProperty;				//if property only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
 	GIAEntityNode * entityNodeDefiningThisProperty;					//if property only:					//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
 	
@@ -176,6 +177,7 @@ public:
 	
 	//flat tree structures are not used - this is only used for the semanticNet xml parse (read) process;		
 	GIAEntityNode * next;
+	long id;
 	
 };
 

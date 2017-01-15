@@ -83,7 +83,1057 @@ bool readSemanticNetXMLFile(string xmlFileName, GIAEntityNode * firstEntityNodeI
 	return result;
 }
 
-bool writeSemanticNetXMLFile(string xmlFileName, GIAEntityNode * firstEntityNodeInNetwork)
+//Top Level
+bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, GIAEntityNode * firstEntityNodeInNetwork, GIAActionNode * firstActionNodeInNetwork, GIAConditionNode * firstConditionNodeInNetwork, bool linkConnections)
+{
+	bool result = true;
+
+	XMLParserTag * currentTagUpdatedL1 = firstTagInNetwork;
+
+	if(currentTagUpdatedL1->name == NET_XML_TAG_semanticNetwork)
+	{
+	}
+	else
+	{
+		cout << "parseSemanticNetTag error: semanticNetwork tag not detected";
+		result = false;
+	}
+
+	if(result)
+	{
+		XMLParserTag * currentTagUpdatedL2 = currentTagUpdatedL1->firstLowerLevelTag;
+		if(currentTagUpdatedL2->name == NET_XML_TAG_entityNodeContainer)
+		{
+			GIAEntityNode * currentEntity = firstEntityNodeInNetwork;
+			XMLParserTag * currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
+			while(currentTagUpdatedL3->nextTag != NULL)
+			{
+				if(currentTagUpdatedL3->name == NET_XML_TAG_entityNode)
+				{
+					cout << "Entity Node ID: " << currentTagUpdatedL3->value << endl;
+					if(linkConnections)
+					{
+						if(!parseEntityNodeTag(currentTagUpdatedL3, currentEntity))
+						{
+							result = false;
+						}
+					}
+					GIAEntityNode * newEntity = new GIAEntityNode();
+					currentEntity->next = newEntity;
+					currentEntity = currentEntity->next; 
+				}
+				else
+				{
+					cout << "parseSemanticNetTag error: entity node tag not detected";
+				}
+				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
+			}
+			currentTagUpdatedL2=currentTagUpdatedL2->nextTag;
+		}
+		else
+		{
+			cout << "parseSemanticNetTag error: no entity container node tag detected";
+		}
+		currentTagUpdatedL2=currentTagUpdatedL2->nextTag;
+		if(currentTagUpdatedL2->name == NET_XML_TAG_actionNodeContainer)
+		{
+			GIAActionNode * currentAction = firstActionNodeInNetwork;
+			XMLParserTag * currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
+			while(currentTagUpdatedL3->nextTag != NULL)
+			{
+				if(currentTagUpdatedL3->name == NET_XML_TAG_actionNode)
+				{
+					cout << "Action Node ID: " << currentTagUpdatedL3->value << endl;
+					if(linkConnections)
+					{
+						if(!parseActionNodeTag(currentTagUpdatedL3, currentAction))
+						{
+							result = false;
+						}
+					}
+					GIAActionNode * newAction = new GIAActionNode();
+					currentAction->next = newAction;
+					currentAction = currentAction->next; 					
+				}
+				else
+				{
+					cout << "parseSemanticNetTag error: action node tag not detected";
+				}
+				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
+			}
+			currentTagUpdatedL2=currentTagUpdatedL2->nextTag;
+		}
+		else
+		{
+			//cout << "parseSemanticNetTag error: no action container node tag detected";
+		}
+		
+		if(currentTagUpdatedL2->name == NET_XML_TAG_conditionNodeContainer)
+		{
+			GIAConditionNode * currentCondition = firstConditionNodeInNetwork;
+			XMLParserTag * currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
+			while(currentTagUpdatedL3->nextTag != NULL)
+			{
+				if(currentTagUpdatedL3->name == NET_XML_TAG_conditionNode)
+				{
+					cout << "Condition Node ID: " << currentTagUpdatedL3->value << endl;
+					if(linkConnections)
+					{
+						if(!parseConditionNodeTag(currentTagUpdatedL3, currentCondition))
+						{
+							result = false;
+						}
+					}
+					GIAConditionNode * newCondition = new GIAConditionNode();
+					currentCondition->next = newCondition;
+					currentCondition = currentCondition->next; 					
+				}
+				else
+				{
+					cout << "parseSemanticNetTag error: condition node tag not detected";
+				}
+				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
+			}
+			currentTagUpdatedL2=currentTagUpdatedL2->nextTag;
+		}
+		else
+		{
+			//cout << "parseSemanticNetTag error: no condition node container tag detected";
+		}
+	}
+
+	return result;
+}
+
+
+bool parseActionNodeTag(XMLParserTag * firstTagInActionNode, GIAActionNode * actionNode)
+{
+	bool result = true;
+
+	//cout << "g1 error detected here" << endl;
+
+	XMLParserAttribute * currentAttribute = currentTag->firstAttribute;
+
+	bool printXFound = false;
+	bool printYFound = false;
+	bool printXIndexFound = false;
+	bool printYIndexFound = false;
+	bool printTextXFound = false;
+	bool printTextYFound = false;
+
+	bool actionNameFound = false;
+	bool ConditionNodeListFound = false;
+	bool ConditionNodeReverseListFound = false;
+	bool entityNodeDefiningThisActionFound = false;
+	bool actionSubjectEntityFound = false;
+	bool actionObjectEntityFound = false;
+	
+	while(currentAttribute->nextAttribute != NULL)
+	{
+		if(currentAttribute->name == NET_XML_ATTRIBUTE_actionName)
+		{
+			string attributeValue = currentAttribute->value.c_str();
+			actionNode->actionName = attributeValue;
+			actionNameFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityNodeDefiningThisAction)
+		{
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			actionNode->entityNodeDefiningThisAction = findEntityNodeByID(attributeValue, firstEntityNodeInNetwork);
+			entityNodeDefiningThisActionFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_actionSubjectEntity)
+		{
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			actionNode->actionSubjectEntity = findEntityNodeByID(attributeValue, firstEntityNodeInNetwork);
+			actionSubjectEntityFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_actionObjectEntity)
+		{
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			actionNode->actionObjectEntity = findEntityNodeByID(attributeValue, firstEntityNodeInNetwork);
+			actionObjectEntityFound = true;
+		}
+
+		
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printX)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			actionNode->printX = attributeValue;
+			printXFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printY)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			actionNode->printY = attributeValue;
+			printYFound = true;
+		}		
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printXIndex)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			actionNode->printXIndex = attributeValue;
+			printXIndexFound = true;
+		}		
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextY)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			actionNode->printYIndex = attributeValue;
+			printYIndexFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextX)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			actionNode->printTextX = attributeValue;
+			printTextXFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextY)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			actionNode->printTextY = attributeValue;
+			printTextYFound = true;
+		}
+	
+		currentAttribute = currentAttribute->nextAttribute;
+	}
+
+	XMLParserTag * currentTagUpdatedL3 = firstTagInEntityNode->firstLowerLevelTag;
+	while(currentTagUpdatedL3->nextTag != NULL)
+	{
+		if(currentTagUpdatedL3->name == NET_XML_TAG_ConditionNodeList)
+		{
+			cout << "ConditionNodeList: " << endl;
+			if(!parseConditionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, currentActionNode, firstConditionNodeInNetwork))
+			{
+				result = false;
+			}	
+			ConditionNodeListFound = true;				
+		}
+		if(currentTagUpdatedL3->name == NET_XML_TAG_ConditionNodeReverseList)
+		{
+			cout << "ConditionNodeReverseList: " << endl;
+			if(!parseConditionNodeReverseListTag(currentTagUpdatedL3->firstLowerLevelTag, currentActionNode, firstConditionNodeInNetwork))
+			{
+				result = false;
+			}
+			ConditionNodeReverseListFound = true;					
+		}																				
+		
+		currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
+	}
+			
+				
+	if(!entityNodeDefiningThisAction)
+	{	
+		cout << "parseActionNodeTag error: !entityNodeDefiningThisAction" << endl;
+		result = false;				
+	}
+	if(!actionSubjectEntityFound || !actionObjectEntityFound)
+	{	
+		cout << "parseActionNodeTag error: !actionSubjectEntityFound || !actionObjectEntityFound" << endl;
+		result = false;				
+	}
+
+
+	return result;	
+}
+
+bool parseConditionNodeListInActionTag(XMLParserTag * firstTagInConditionNodeList, GIAActionNode * actionNode, GIAConditionNode * firstConditionNodeInNetwork)
+{
+	XMLParserTag * currentTagUpdatedL1 = firstTagInConditionNodeList;
+	while(currentTagUpdatedL1->nextTag != NULL)
+	{
+		if(currentTagUpdatedL1->name == NET_XML_TAG_conditionNodeReference)
+		{
+			cout << "conditionNodeReference: " << endl;
+			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			actionNode->ConditionNodeList.push_back(findConditionNodeByID(attributeValue, firstConditionNodeInNetwork));
+		}
+		else
+		{
+			cout << "parseConditionNodeListTag error: conditionNodeReference tag not found" << endl;
+		}	
+		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
+	}
+}
+
+bool parseConditionNodeReverseListInActionTag(XMLParserTag * firstTagInConditionNodeReverseList, GIAActionNode * actionNode, GIAActionNode * firstConditionNodeInNetwork)
+{
+	XMLParserTag * currentTagUpdatedL1 = firstTagInConditionNodeReverseList;
+	while(currentTagUpdatedL1->nextTag != NULL)
+	{
+		if(currentTagUpdatedL1->name == NET_XML_TAG_conditionNodeReference)
+		{
+			cout << "conditionNodeReference: " << endl;
+			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			actionNode->ConditionNodeReverseList.push_back(findConditionNodeByID(attributeValue, firstConditionNodeInNetwork));
+		}
+		else
+		{
+			cout << "parseConditionNodeReverseListTag error: conditionNodeReference tag not found" << endl;
+		}	
+		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
+	}
+}
+
+
+bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionNode * conditionNode)
+{
+	bool result = true;
+
+	//cout << "g1 error detected here" << endl;
+
+	XMLParserAttribute * currentAttribute = currentTag->firstAttribute;
+
+	bool conditionNameFound = false;
+	bool conditionIsActionFound = false;
+	bool conditionActionFound = false;
+	bool conditionEntityFound = false;
+	bool parentIsActionFound = false;
+	bool parentActionFound = false;
+	bool parentPropertyFound = false;
+	bool conditionTypeFound = false;
+	bool timeConditionNodeFound = false;
+	
+	bool printXFound = false;
+	bool printYFound = false;
+	bool printXIndexFound = false;
+	bool printYIndexFound = false;
+	bool printTextXFound = false;
+	bool printTextYFound = false;
+	
+	while(currentAttribute->nextAttribute != NULL)
+	{
+		if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionName)
+		{
+			string attributeValue = currentAttribute->value.c_str();
+			conditionNode->conditionName = attributeValue;
+			conditionNameFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionIsAction)
+		{
+			bool attributeValue = atoi(currentAttribute->value.c_str());
+			conditionNode->conditionIsAction = attributeValue;
+			conditionIsActionFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionAction)
+		{
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			conditionNode->conditionAction = findActionNodeByID(attributeValue, firstActionNodeInNetwork);
+			conditionActionFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionEntity)
+		{
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			conditionNode->conditionEntity = findEntityNodeByID(attributeValue, firstEntityNodeInNetwork);
+			conditionEntityFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_parentIsAction)
+		{
+			bool attributeValue = atoi(currentAttribute->value.c_str());
+			conditionNode->parentIsAction = attributeValue;
+			parentIsActionFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_parentAction)
+		{
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			conditionNode->parentAction = findActionNodeByID(attributeValue, firstActionNodeInNetwork);
+			parentActionFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_parentProperty)
+		{
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			conditionNode->parentProperty = findEntityNodeByID(attributeValue, firstEntityNodeInNetwork);
+			parentPropertyFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionType)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			conditionNode->conditionType = attributeValue;
+			conditionTypeFound = true;
+		}
+		
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printX)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			conditionNode->printX = attributeValue;
+			printXFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printY)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			conditionNode->printY = attributeValue;
+			printYFound = true;
+		}		
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printXIndex)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			conditionNode->printXIndex = attributeValue;
+			printXIndexFound = true;
+		}		
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextY)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			conditionNode->printYIndex = attributeValue;
+			printYIndexFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextX)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			conditionNode->printTextX = attributeValue;
+			printTextXFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextY)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			conditionNode->printTextY = attributeValue;
+			printTextYFound = true;
+		}
+	
+		currentAttribute = currentAttribute->nextAttribute;
+	}
+		
+	if(conditionTypeFound && (conditionType == CONDITION_NODE_TYPE_TIME))
+	{	
+		XMLParserTag * currentTagUpdatedL3 = firstTagInConditionNode->firstLowerLevelTag;
+		while(currentTagUpdatedL3->nextTag != NULL)
+		{
+			if(currentTagUpdatedL3->name == NET_XML_TAG_timeConditionNode)
+			{
+				cout << "timeConditionNode: " << endl;
+				if(!parseTimeConditionNodeListTag(currentTagUpdatedL3, conditionNode->timeConditionNode))
+				{
+					result = false;
+				}	
+				timeConditionNodeFound = true;				
+			}																				
+
+			currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
+		}
+	}
+			
+				
+	if(parentIsActionFound)
+	{	
+		if(conditionNode->parentIsAction)
+		{
+			if(!parentActionFound)
+			{
+				cout << "parseConditionNodeTag error: parentIsActionFound && parentIsAction && !parentActionFound" << endl;
+			}
+			if(parentPropertyFound)
+			{
+				cout << "parseConditionNodeTag error: parentIsActionFound && parentIsAction && parentProperty" << endl;
+			}
+		}
+		else
+		{
+			if(parentActionFound)
+			{
+				cout << "parseConditionNodeTag error: parentIsActionFound && !parentIsAction && parentActionFound" << endl;
+			}
+			if(!parentPropertyFound)
+			{
+				cout << "parseConditionNodeTag error: parentIsActionFound && !parentIsAction && !parentPropertyFound" << endl;
+			}		
+		}		
+		result = false;				
+	}
+	else
+	{
+		cout << "parseConditionNodeTag error: !parentIsActionFound" << endl;
+	}
+	
+	if(conditionIsActionFound)
+	{	
+		if(conditionNode->conditionIsAction)
+		{
+			if(!conditionActionFound)
+			{
+				cout << "parseConditionNodeTag error: conditionIsActionFound && conditionIsAction && !conditionActionFound" << endl;
+			}
+			if(conditionEntityFound)
+			{
+				cout << "parseConditionNodeTag error: conditionIsActionFound && conditionIsAction && conditionEntityFound" << endl;
+			}
+		}
+		else
+		{
+			if(conditionActionFound)
+			{
+				cout << "parseConditionNodeTag error: conditionIsActionFound && !conditionIsAction && conditionActionFound" << endl;
+			}
+			if(!conditionEntityFound)
+			{
+				cout << "parseConditionNodeTag error: conditionIsActionFound && !conditionIsAction && !conditionEntityFound" << endl;
+			}		
+		}		
+		result = false;				
+	}
+	else
+	{
+		cout << "parseConditionNodeTag error: !conditionIsActionFound" << endl;
+	}
+
+	return result;		
+		
+}
+
+bool parseTimeConditionNodeTag(XMLParserTag * firstTagInTimeConditionNode, GIATimeConditionNode * timeConditionNode)
+{
+	bool result = true;
+
+	//cout << "g1 error detected here" << endl;
+
+	XMLParserAttribute * currentAttribute = currentTag->firstAttribute;
+
+	bool tenseFound = false;
+	bool secondFound = false;
+	bool hourFound = false;
+	bool dayOfWeekFound = false;
+	bool monthFound = false;
+	bool dayOfMonthFound = false;
+	bool yearFound = false;
+	bool periodFound = false;
+	bool totalTimeInSecondsFound = false;
+
+		
+}
+
+
+
+
+bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * entityNode, GIAEntityNode * firstEntityNodeInNetwork, GIAActionNode * firstActionNodeInNetwork, GIAConditionNode * firstConditionNodeInNetwork)
+{
+	bool result = true;
+
+	//cout << "g1 error detected here" << endl;
+
+	XMLParserAttribute * currentAttribute = firstTagInEntityNode->firstAttribute;
+
+	bool grammaticalNumberFound = false;
+	bool hasQuantityFound = false;
+	bool quantityNumberFound = false;
+	bool quantityModifierFound = false;
+	bool quantityModifierStringFound = false;
+	bool hasMeasureFound = false;
+	bool measureTypeFound = false;
+
+	bool printXFound = false;
+	bool printYFound = false;
+	bool printXIndexFound = false;
+	bool printYIndexFound = false;
+	bool printTextXFound = false;
+	bool printTextYFound = false;
+	
+	bool entityNameFound = false;
+	bool confidenceFound = false;
+	bool isPropertyFound = false;
+	bool hasAssociatedPropertyFound = false;
+	bool hasAssociatedActionFound = false;
+	bool hasAssociatedTimeFound = false;
+	
+	bool ActionNodeListFound = false;
+	bool IncomingActionNodeListFound = false;
+	
+	bool PropertyNodeListFound = false;
+	bool entityNodeContainingThisPropertyFound = false;
+	bool entityNodeDefiningThisPropertyFound = false;
+	
+	bool EntityNodeDefinitionListFound = false;
+	bool EntityNodeDefinitionReverseListFound = false;
+	bool AssociatedActionNodeListFound = false;
+	bool AssociatedPropertyNodeListFound = false;
+	
+	bool ConditionNodeListFound = false;
+	bool ConditionNodeReverseListFound = false;
+	
+	//incase network is never trained, but output for visualisation purposes, set these values to dummy values
+	//parseEntityNodeTag->... = 0;
+
+	while(currentAttribute->nextAttribute != NULL)
+	{
+		if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalNumber)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->grammaticalNumber = attributeValue;
+			grammaticalNumberFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasQuantity)
+		{
+			bool attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->hasQuantity = attributeValue;
+			hasQuantityFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityNumber)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->quantityNumber = attributeValue;
+			quantityNumberFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityModifier)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->quantityModifier = attributeValue;
+			quantityModifierFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityModifierString)
+		{
+			string attributeValue = currentAttribute->value.c_str();
+			entityNode->quantityModifierString = attributeValue;
+			quantityModifierStringFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasMeasure)
+		{
+			bool attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->hasMeasure = attributeValue;
+			hasMeasureFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_measureType)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->measureType = attributeValue;
+			measureTypeFound = true;
+		}
+		
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printX)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->printX = attributeValue;
+			printXFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printY)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->printY = attributeValue;
+			printYFound = true;
+		}		
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printXIndex)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->printXIndex = attributeValue;
+			printXIndexFound = true;
+		}		
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextY)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->printYIndex = attributeValue;
+			printYIndexFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextX)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->printTextX = attributeValue;
+			printTextXFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextY)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->printTextY = attributeValue;
+			printTextYFound = true;
+		}
+		
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityName)
+		{
+			string attributeValue = currentAttribute->value.c_str();
+			entityNode->entityName = attributeValue;
+			entityNameFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_confidence)
+		{
+			double attributeValue = atof(currentAttribute->value.c_str());
+			entityNode->confidence = attributeValue;
+			confidenceFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isProperty)
+		{
+			int attributeValue = atof(currentAttribute->value.c_str());
+			entityNode->isProperty = attributeValue;
+			isPropertyFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedProperty)
+		{
+			bool attributeValue = atof(currentAttribute->value.c_str());
+			entityNode->hasAssociatedProperty = attributeValue;
+			hasAssociatedPropertyFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedAction)
+		{
+			bool attributeValue = atof(currentAttribute->value.c_str());
+			entityNode->hasAssociatedAction = attributeValue;
+			hasAssociatedActionFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedTime)
+		{
+			bool attributeValue = atof(currentAttribute->value.c_str());
+			entityNode->hasAssociatedTime = attributeValue;
+			hasAssociatedTimeFound = true;
+		}
+		
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityNodeContainingThisProperty)
+		{
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->entityNodeContainingThisProperty = findEntityNodeByID(attributeValue, firstEntityNodeInNetwork);
+			entityNodeContainingThisPropertyFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityNodeDefiningThisProperty)
+		{
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->entityNodeDefiningThisProperty = findEntityNodeByID(attributeValue, firstEntityNodeInNetwork);
+			entityNodeDefiningThisPropertyFound = true;
+		}		
+		
+		currentAttribute = currentAttribute->nextAttribute;
+	}
+
+	XMLParserTag * currentTagUpdatedL3 = firstTagInEntityNode->firstLowerLevelTag;
+	while(currentTagUpdatedL3->nextTag != NULL)
+	{
+		if(currentTagUpdatedL3->name == NET_XML_TAG_ActionNodeList)
+		{
+			cout << "ActionNodeList: " << endl;
+			if(!parseActionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstActionNodeInNetwork))
+			{
+				result = false;
+			}
+			ActionNodeListFound = true;					
+		}
+		if(currentTagUpdatedL3->name == NET_XML_TAG_IncomingActionNodeList)
+		{
+			cout << "IncomingActionNodeList: " << endl;
+			if(!parseIncomingActionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstActionNodeInNetwork))
+			{
+				result = false;
+			}	
+			IncomingActionNodeListFound = true;				
+		}
+		
+		if(currentTagUpdatedL3->name == NET_XML_TAG_PropertyNodeList)
+		{
+			cout << "PropertyNodeList: " << endl;
+			if(!parsePropertyNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstEntityNodeInNetwork))
+			{
+				result = false;
+			}				
+			PropertyNodeListFound = true;	
+		}
+		
+		if(currentTagUpdatedL3->name == NET_XML_TAG_EntityNodeDefinitionList)
+		{
+			cout << "EntityNodeDefinitionList: " << endl;
+			if(!parseEntityNodeDefinitionListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstEntityNodeInNetwork))
+			{
+				result = false;
+			}				
+			EntityNodeDefinitionListFound = true;	
+		}
+		if(currentTagUpdatedL3->name == NET_XML_TAG_EntityNodeDefinitionReverseList)
+		{
+			cout << "EntityNodeDefinitionReverseList: " << endl;
+			if(!parseEntityNodeDefinitionReverseListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstEntityNodeInNetwork))
+			{
+				result = false;
+			}				
+			EntityNodeDefinitionReverseListFound = true;	
+		}
+		if(currentTagUpdatedL3->name == NET_XML_TAG_AssociatedActionNodeList)
+		{
+			cout << "AssociatedActionNodeList: " << endl;
+			if(!parseAssociatedActionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstActionNodeInNetwork))
+			{
+				result = false;
+			}				
+			AssociatedActionNodeListFound = true;	
+		}
+		if(currentTagUpdatedL3->name == NET_XML_TAG_AssociatedPropertyNodeList)
+		{
+			cout << "AssociatedPropertyNodeList: " << endl;
+			if(!parseAssociatedPropertyNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstEntityNodeInNetwork))
+			{
+				result = false;
+			}
+			AssociatedPropertyNodeListFound = true;						
+		}
+		
+		if(currentTagUpdatedL3->name == NET_XML_TAG_ConditionNodeList)
+		{
+			cout << "ConditionNodeList: " << endl;
+			if(!parseConditionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstConditionNodeInNetwork))
+			{
+				result = false;
+			}	
+			ConditionNodeListFound = true;				
+		}
+		if(currentTagUpdatedL3->name == NET_XML_TAG_ConditionNodeReverseList)
+		{
+			cout << "ConditionNodeReverseList: " << endl;
+			if(!parseConditionNodeReverseListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstConditionNodeInNetwork))
+			{
+				result = false;
+			}
+			ConditionNodeReverseListFound = true;					
+		}																				
+		
+		currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
+	}
+			
+				
+	if(isPropertyFound && entityNode->isProperty)
+	{
+		/*
+		if(!entityNodeContainingThisPropertyFound)
+		{
+			result = false;
+		}
+		*/
+		if(!entityNodeDefiningThisPropertyFound)
+		{
+			cout << "parseEntityNodeTag error: isPropertyFound && entityNode->isProperty && !entityNodeDefiningThisPropertyFound" << endl;
+			result = false;
+		}				
+	}
+	else
+	{
+	
+	}
+
+
+	return result;
+}
+
+
+
+bool parseActionNodeListTag(XMLParserTag * firstTagInActionNodeList, GIAActionNode * entityNode, GIAActionNode * firstActionNodeInNetwork)
+{
+	XMLParserTag * currentTagUpdatedL1 = firstTagInActionNodeList;
+	while(currentTagUpdatedL1->nextTag != NULL)
+	{
+		if(currentTagUpdatedL1->name == NET_XML_TAG_actionNodeReference)
+		{
+			cout << "actionNodeReference: " << endl;
+			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->ActionNodeList.push_back(findActionNodeByID(attributeValue, firstActionNodeInNetwork));
+		}
+		else
+		{
+			cout << "parseActionNodeListTag error: actionNodeReference tag not found" << endl;
+		}	
+		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
+	}	
+}
+
+bool parseIncomingActionNodeListTag(XMLParserTag * firstTagInIncomingActionNodeList, GIAEntityNode * entityNode, GIAActionNode * firstActionNodeInNetwork)
+{
+	XMLParserTag * currentTagUpdatedL1 = firstTagInIncomingActionNodeList;
+	while(currentTagUpdatedL1->nextTag != NULL)
+	{
+		if(currentTagUpdatedL1->name == NET_XML_TAG_actionNodeReference)
+		{
+			cout << "actionNodeReference: " << endl;
+			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->IncomingActionNodeList.push_back(findActionNodeByID(attributeValue, firstActionNodeInNetwork));
+		}
+		else
+		{
+			cout << "parseIncomingActionNodeListTag error: actionNodeReference tag not found" << endl;
+		}	
+		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
+	}
+}
+
+bool parsePropertyNodeListTag(XMLParserTag * firstTagInPropertyNodeList, GIAEntityNode * entityNode, GIAEntityNode * firstEntityNodeInNetwork)
+{
+	XMLParserTag * currentTagUpdatedL1 = firstTagInPropertyNodeList;
+	while(currentTagUpdatedL1->nextTag != NULL)
+	{
+		if(currentTagUpdatedL1->name == NET_XML_TAG_entityNodeReference)
+		{
+			cout << "entityNodeReference: " << endl;
+			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->PropertyNodeList.push_back(findEntityNodeByID(attributeValue, firstEntityNodeInNetwork));
+		}
+		else
+		{
+			cout << "parsePropertyNodeListTag error: entityNodeReference tag not found" << endl;
+		}	
+		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
+	}
+}
+
+bool parseEntityNodeDefinitionListTag(XMLParserTag * firstTagInEntityNodeDefinitionList, GIAEntityNode * entityNode, GIAEntityNode * firstEntityNodeInNetwork)
+{
+	XMLParserTag * currentTagUpdatedL1 = firstTagInEntityNodeDefinitionList;
+	while(currentTagUpdatedL1->nextTag != NULL)
+	{
+		if(currentTagUpdatedL1->name == NET_XML_TAG_entityNodeReference)
+		{
+			cout << "entityNodeReference: " << endl;
+			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->EntityNodeDefinitionList.push_back(findEntityNodeByID(attributeValue, firstEntityNodeInNetwork));
+		}
+		else
+		{
+			cout << "parseEntityNodeDefinitionListTag error: entityNodeReference tag not found" << endl;
+		}	
+		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
+	}
+}
+
+bool parseEntityNodeDefinitionReverseListTag(XMLParserTag * firstTagInEntityNodeDefinitionReverseList, GIAEntityNode * entityNode, GIAEntityNode * firstEntityNodeInNetwork)
+{
+	XMLParserTag * currentTagUpdatedL1 = firstTagInEntityNodeDefinitionReverseList;
+	while(currentTagUpdatedL1->nextTag != NULL)
+	{
+		if(currentTagUpdatedL1->name == NET_XML_TAG_entityNodeReference)
+		{
+			cout << "entityNodeReference: " << endl;
+			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->EntityNodeDefinitionReverseList.push_back(findEntityNodeByID(attributeValue, firstEntityNodeInNetwork));
+		}
+		else
+		{
+			cout << "parseEntityNodeDefinitionReverseListTag error: entityNodeReference tag not found" << endl;
+		}	
+		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
+	}
+}
+
+bool parseAssociatedActionNodeListTag(XMLParserTag * firstTagInAssociatedActionNodeList, GIAEntityNode * entityNode, GIAActionNode * firstActionNodeInNetwork)
+{
+	XMLParserTag * currentTagUpdatedL1 = firstTagInAssociatedActionNodeList;
+	while(currentTagUpdatedL1->nextTag != NULL)
+	{
+		if(currentTagUpdatedL1->name == NET_XML_TAG_actionNodeReference)
+		{
+			cout << "actionNodeReference: " << endl;
+			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->AssociatedActionNodeList.push_back(findActionNodeByID(attributeValue, firstActionNodeInNetwork));
+		}
+		else
+		{
+			cout << "parseAssociatedActionNodeListTag error: actionNodeReference tag not found" << endl;
+		}	
+		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
+	}
+}
+
+bool parseAssociatedPropertyNodeListTag(XMLParserTag * firstTagInAssociatedPropertyNodeList, GIAEntityNode * entityNode, GIAEntityNode * firstEntityNodeInNetwork)
+{
+	XMLParserTag * currentTagUpdatedL1 = firstTagInAssociatedPropertyNodeList;
+	while(currentTagUpdatedL1->nextTag != NULL)
+	{
+		if(currentTagUpdatedL1->name == NET_XML_TAG_entityNodeReference)
+		{
+			cout << "entityNodeReference: " << endl;
+			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->AssociatedPropertyNodeList.push_back(findEntityNodeByID(attributeValue, firstEntityNodeInNetwork));
+		}
+		else
+		{
+			cout << "parseAssociatedPropertyNodeListTag error: entityNodeReference tag not found" << endl;
+		}	
+		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
+	}
+}
+
+bool parseConditionNodeListTag(XMLParserTag * firstTagInConditionNodeList, GIAEntityNode * entityNode, GIAConditionNode * firstConditionNodeInNetwork)
+{
+	XMLParserTag * currentTagUpdatedL1 = firstTagInConditionNodeList;
+	while(currentTagUpdatedL1->nextTag != NULL)
+	{
+		if(currentTagUpdatedL1->name == NET_XML_TAG_conditionNodeReference)
+		{
+			cout << "conditionNodeReference: " << endl;
+			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->ConditionNodeList.push_back(findConditionNodeByID(attributeValue, firstConditionNodeInNetwork));
+		}
+		else
+		{
+			cout << "parseConditionNodeListTag error: conditionNodeReference tag not found" << endl;
+		}	
+		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
+	}
+}
+
+bool parseConditionNodeReverseListTag(XMLParserTag * firstTagInConditionNodeReverseList, GIAEntityNode * entityNode, GIAActionNode * firstConditionNodeInNetwork)
+{
+	XMLParserTag * currentTagUpdatedL1 = firstTagInConditionNodeReverseList;
+	while(currentTagUpdatedL1->nextTag != NULL)
+	{
+		if(currentTagUpdatedL1->name == NET_XML_TAG_conditionNodeReference)
+		{
+			cout << "conditionNodeReference: " << endl;
+			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
+			long attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->ConditionNodeReverseList.push_back(findConditionNodeByID(attributeValue, firstConditionNodeInNetwork));
+		}
+		else
+		{
+			cout << "parseConditionNodeReverseListTag error: conditionNodeReference tag not found" << endl;
+		}	
+		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
+	}
+}
+
+
+GIAEntityNode * findEntityNodeByID(long EntityNodeID, GIAEntityNode * firstEntityNodeInNetwork)
+{
+	GIAEntityNode * foundEntityNode = NULL;
+	GIAEntityNode * currentEntityNode = firstEntityNodeInNetwork;
+	while(currentEntityNode->next != NULL)
+	{
+		if(currentEntityNode->id == EntityNodeID)
+		{
+			foundEntityNode = currentEntityNode;
+		}
+		currentEntityNode = currentEntityNode->next;
+	}
+	return foundEntityNode;
+}
+
+GIAActionNode * findActionNodeByID(long ActionNodeID, GIAActionNode * firstActionNodeInNetwork)
+{
+	GIAActionNode * foundActionNode = NULL;
+	GIAActionNode * currentActionNode = firstActionNodeInNetwork;
+	while(currentActionNode->next != NULL)
+	{
+		if(currentActionNode->id == ActionNodeID)
+		{
+			foundActionNode = currentActionNode;
+		}
+		currentActionNode = currentActionNode->next;
+	}
+	return foundActionNode;
+}
+
+GIAConditionNode * findConditionNodeByID(long conditionNodeID, GIAConditionNode * firstConditionNodeInNetwork)
+{
+	GIAConditionNode * foundConditionNode = NULL;
+	GIAConditionNode * currentConditionNode = firstConditionNodeInNetwork;
+	while(currentConditionNode->next != NULL)
+	{
+		if(currentConditionNode->id == ConditionNodeID)
+		{
+			foundConditionNode = currentConditionNode;
+		}
+		currentConditionNode = currentConditionNode->next;
+	}
+	return foundConditionNode;
+}
+
+
+
+
+bool writeSemanticNetXMLFile(string xmlFileName, GIAEntityNode * firstEntityNodeInNetwork, GIAActionNode * firstActionNodeInNetwork, GIAConditionNode * firstConditionNodeInNetwork)
 {
 	bool result = true;
 
@@ -100,10 +1150,29 @@ bool writeSemanticNetXMLFile(string xmlFileName, GIAEntityNode * firstEntityNode
 	XMLParserTag * newTag1 = new XMLParserTag();	//had to add a null tag
 	currentTagL1->nextTag = newTag1;
 
-	if(!generateXMLTagListBasedUponSemanticNetEntityList(currentTagL0->firstLowerLevelTag, firstEntityNodeInNetwork))
+	if(!parseEntityContainerNodeTag(currentTagL1, firstEntityNodeInNetwork))
 	{
 		result = false;
 	}
+	
+	currentTagL1 = currentTagL1->nextTag
+	XMLParserTag * newTag2 = new XMLParserTag();	//had to add a null tag
+	currentTagL1->nextTag = newTag2;
+	
+	if(!parseEntityContainerNodeTag(currentTagL1, firstActionNodeInNetwork))
+	{
+		result = false;
+	}
+
+	currentTagL1 = currentTagL1->nextTag
+	XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
+	currentTagL1->nextTag = newTag3;
+	
+	if(!parseEntityContainerNodeTag(currentTagL1, firstConditionNodeInNetwork))
+	{
+		result = false;
+	}
+	
 
 	//cout << "dEBUG generateXMLTagListBasedUponSubnet done " << endl;
 
@@ -512,52 +1581,7 @@ NeuronContainer * findNeuronContainer(NeuronContainer * firstNeuronContainerInLa
 }
 
 
-//Top Level
-bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, GIAEntityNode * firstEntityNodeInNetwork)
-{
-	bool result = true;
 
-	XMLParserTag * currentTagUpdatedL1 = firstTagInNetwork;
-
-	if(currentTagUpdatedL1->name == NET_XML_TAG_semanticNetwork)
-	{
-		currentTagUpdatedL1 = currentTagUpdatedL1->firstLowerLevelTag;
-	}
-	else
-	{
-		cout << "parseSemanticNetTag error: semanticNetwork tag not detected";
-		result = false;
-	}
-
-	if(result)
-	{
-		GIAEntityNode * currentEntity = firstEntityNodeInNetwork;
-		 
-		while(currentTagUpdatedL1->nextTag != NULL)
-		{
-			if(currentTagUpdatedL1->name == NET_XML_TAG_entityNode)
-			{
-				if(!parseEntityNodeTag(currentTagUpdatedL1->firstLowerLevelTag, currentEntity)
-				{
-					result = false;
-				}
-			}
-			else
-			{
-				cout << "parseSemanticNetTag error: no entity tag detected";
-				result = false;
-			}
-			
-			GIAEntityNode * newEntity = GIAEntityNode();
-			currentEntity->next = newEntity;
-			currentEntity = currentEntity->next;
-			
-			currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
-		}
-	}
-
-	return result;
-}
 
 
 bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * entityNode)
@@ -692,161 +1716,6 @@ bool parseForwardNeuronConnectionTag(XMLParserTag * currentTag, NeuronConnection
 
 
 
-
-bool parseNeuronTag(XMLParserTag * currentTag, NeuronContainer * currentNeuron, long layerIDCounter, long orderIDCounter, long * wrongAndNotUsedIDCounter, long subnetIDCounter)
-{
-	bool result = true;
-
-	//cout << "g1 error detected here" << endl;
-
-	XMLParserAttribute * currentAttribute = currentTag->firstAttribute;
-
-	bool idFound = false;
-	bool orderIDFound = false;
-	bool layerIDFound = false;
-	bool subnetIDFound = false;
-	bool biasFound = false;
-	bool outputFound = false;
-	bool classTargetFound = false;
-	bool errorFound = false;
-
-	//incase network is never trained, but output for visualisation purposes, set these values to dummy values
-	currentNeuron->neuron->bias = 0;
-	currentNeuron->neuron->output = 0;
-	currentNeuron->neuron->classTarget = 0;
-	currentNeuron->neuron->error = 0;
-
-	while(currentAttribute->nextAttribute != NULL)
-	{
-		if(currentAttribute->name == NET_XML_ATTRIBUTE_id)
-		{
-			long attributeValue = atof(currentAttribute->value.c_str());
-			//always use XML file's neuron id as this has been generated in a different order than wrongAndNotUsedIDCounter
-			//#ifndef DO_NOT_REGENERATE_NEURON_IDS_WHEN_PARSING_NET_XML
-
-			currentNeuron->neuron->id = attributeValue;
-
-			idFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_orderID)
-		{
-			long attributeValue = atof(currentAttribute->value.c_str());
-			if(attributeValue != orderIDCounter)
-			{
-				cout << "parseNeuronTag error: attributeValue != orderIDCounter, attributeValue = " << attributeValue << ", orderIDCounter = " << subnetIDCounter << endl;
-				result = false;
-			}
-			currentNeuron->neuron->orderID = attributeValue;
-			orderIDFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_layerID)
-		{
-			long attributeValue = atof(currentAttribute->value.c_str());
-			if(attributeValue != layerIDCounter)
-			{
-				cout << "parseNeuronTag error: attributeValue != layerIDCounter, attributeValue = " << attributeValue << ", layerIDCounter = " << subnetIDCounter << endl;
-				result = false;
-			}
-			currentNeuron->neuron->layerID = attributeValue;
-			layerIDFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_subnetID)
-		{
-			long attributeValue = atof(currentAttribute->value.c_str());
-			if(attributeValue != subnetIDCounter)
-			{
-				cout << "parseNeuronTag error: attributeValue != subnetIDCounter, attributeValue = " << attributeValue << ", subnetIDCounter = " << subnetIDCounter << endl;
-				result = false;
-			}
-			currentNeuron->neuron->subnetID = attributeValue;
-			subnetIDFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_bias)
-		{
-			double attributeValue = atof(currentAttribute->value.c_str());
-			currentNeuron->neuron->bias = attributeValue;
-			biasFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_output)
-		{
-			double attributeValue = atof(currentAttribute->value.c_str());
-			currentNeuron->neuron->output = attributeValue;
-			outputFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_classTarget)
-		{
-			double attributeValue = atof(currentAttribute->value.c_str());
-			currentNeuron->neuron->classTarget = attributeValue;
-			classTargetFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_error)
-		{
-			double attributeValue = atof(currentAttribute->value.c_str());
-			currentNeuron->neuron->error = attributeValue;
-			errorFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_xPosRel)
-		{
-			currentNeuron->neuron->spatialCoordinatesSet = true;
-			long attributeValue = atof(currentAttribute->value.c_str());
-			currentNeuron->neuron->xPosRel = attributeValue;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_yPosRel)
-		{
-			currentNeuron->neuron->spatialCoordinatesSet = true;
-			long attributeValue = atof(currentAttribute->value.c_str());
-			currentNeuron->neuron->yPosRel = attributeValue;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_zPosRel)
-		{
-			currentNeuron->neuron->spatialCoordinatesSet = true;
-			long attributeValue = atof(currentAttribute->value.c_str());
-			currentNeuron->neuron->zPosRel = attributeValue;
-		}
-		else
-		{
-			cout << "parseNeuronTag error: illegal attribute name detected";
-		}
-
-		currentAttribute = currentAttribute->nextAttribute;
-	}
-
-	if(!idFound)
-	{
-		cout << "parseNeuronTag error: neuron attribute 'id' not detected";
-		result = false;
-	}
-
-#ifdef ENFORCE_EXPLICIT_NET_XML_NEURON_ID_PARAMETERS
-	if(!orderIDFound || !layerIDFound || !subnetIDFound)
-	{
-		cout << "parseNeuronTag error: NEURON_ID_PARAMETERS not detected (ENFORCE_EXPLICIT_NET_XML_NEURON_ID_PARAMETERS)";
-		result = false;
-	}
-#else
-	if(!orderIDFound)
-	{
-		currentNeuron->neuron->orderID = orderIDCounter;
-	}
-	if(!layerIDFound)
-	{
-		currentNeuron->neuron->layerID = layerIDCounter;
-	}
-	if(!subnetIDFound)
-	{
-		currentNeuron->neuron->subnetID = subnetIDCounter;
-	}
-#endif
-
-#ifdef ENFORCE_EXPLICIT_NET_XML_NEURON_KEYPROPERTIES_PARAMETERS
-	if(!biasFound || !outputFound || !classTargetFound || !errorFound)
-	{
-		cout << "parseNeuronTag error: NEURON_KEYPROPERTIES_PARAMETERS not detected (ENFORCE_EXPLICIT_NET_XML_NEURON_KEYPROPERTIES_PARAMETERS)";
-		result = false;
-	}
-#endif
-	return result;
-}
 
 
 

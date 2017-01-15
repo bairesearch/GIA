@@ -87,7 +87,7 @@ public:
 	
 	//flat tree structures are not used - this is only used for the semanticNet xml parse (read) process;	
 	GIAActionNode * next;
-	
+	long id;
 };
 
 
