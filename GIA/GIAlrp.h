@@ -26,7 +26,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6e 10-June-2015
+ * Project Version: 2j7a 19-June-2015
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -246,7 +246,7 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 	bool loadMultiWordPrepositionData(string multiwordPrepositionListFileName, GIALRPtag* firstTagInMultiwordPrepositionList);
 	bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag* firstTagInPlainText);
 		#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-		bool isIntrawordPunctuationMark(char currentToken, int indextOfCurrentToken, string* lineContents);
+		bool isIntrawordPunctuationMark(int indexOfCurrentToken, string* lineContents);
 		#endif
 	bool searchAndReplacePhrasalVerbs(GIALRPtag* firstTagInPlainText, GIALRPtag* firstTagInPhrasalVerbList, GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo);
 	bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, GIALRPtag* firstTagInMultiwordPrepositionList, GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo);

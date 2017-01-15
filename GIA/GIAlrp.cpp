@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6e 10-June-2015
+ * Project Version: 2j7a 19-June-2015
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -1022,7 +1022,7 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag* firstTagInPlain
 		if(charInCharArray(currentToken, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
 		{
 			#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-			if(!isIntrawordPunctuationMark(currentToken, charCount, &fileContents))
+			if(!isIntrawordPunctuationMark(charCount, &fileContents))
 			{
 			#endif
 				punctuationMarkFound = true;
@@ -1113,7 +1113,7 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag* firstTagInPlain
 							if(charInCharArray(currentToken, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
 							{
 								#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-								if(!isIntrawordPunctuationMark(currentToken, charCount, &fileContents))
+								if(!isIntrawordPunctuationMark(charCount, &fileContents))
 								{
 								#endif
 									endOfSentencePunctuationMarkFound = true;
@@ -1179,14 +1179,15 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag* firstTagInPlain
 }
 
 #ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-bool isIntrawordPunctuationMark(char currentToken, int indextOfCurrentToken, string* lineContents)
+bool isIntrawordPunctuationMark(int indexOfCurrentToken, string* lineContents)
 {
 	bool intrawordPunctuationMark = false;
+	char currentToken = (*lineContents)[indexOfCurrentToken];
 	if((currentToken == CHAR_FULLSTOP) || (currentToken == CHAR_COLON))	//updated 2j6e (added CHAR_COLON for times, eg 06:45)
 	{
-		if(indextOfCurrentToken < lineContents->length()-1)	//ensure fullstop is not immediately succeded by an alphabetical character, which indicates that the fullstop is part of a filename, eg "people.xml"
+		if(indexOfCurrentToken < lineContents->length()-1)	//ensure fullstop is not immediately succeded by an alphabetical character, which indicates that the fullstop is part of a filename, eg "people.xml"
 		{	
-			char characterImmediatelySucceedingPunctuationMark = (*lineContents)[indextOfCurrentToken+1];
+			char characterImmediatelySucceedingPunctuationMark = (*lineContents)[indexOfCurrentToken+1];
 			bool isPunctuationMarkImmediatelySucceededByAlphanumericCharacter = charInCharArray(characterImmediatelySucceedingPunctuationMark, GIALRPNLPparsableCharacters, GIA_LRP_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES);
 			//cout << "isIntrawordPunctuationMark{}: characterImmediatelySucceedingPunctuationMark = " << characterImmediatelySucceedingPunctuationMark << endl;
 			//cout << "isIntrawordPunctuationMark{}: isPunctuationMarkImmediatelySucceededByAlphanumericCharacter = " << isPunctuationMarkImmediatelySucceededByAlphanumericCharacter << endl;

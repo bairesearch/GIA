@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntitiesDynamic.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6e 10-June-2015
+ * Project Version: 2j7a 19-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -315,86 +315,33 @@ void linkEntitiesDynamicFromConditions(GIAsentence* currentSentenceInList, bool 
 						//now see if from condition subject is an action (if so, perform the relinking to the action object instead of the from condition subject)
 						if(fromConditionSubject->isAction)
 						{
+							/*
+							NB not parsed this way by Stanford:
+							eg move -> chicken
+								\
+								from
+								  \
+								   pie
+							*/
 							//cout << "fromConditionSubject->isAction" << endl;
 							
-							/* //now done in GIArules.xml instead
-							#ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_CORRECT_SAME_REFERENCE_SET
-							(fromCondition->conditionObjectEntity->back())->sameReferenceSet = false;
-							#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-							int fromConditionIndex = getEntityIndex(GIAentityNodeArrayFilled, GIAentityNodeArray, fromCondition);
-							int fromConditionObjectIndex = getEntityIndex(GIAentityNodeArrayFilled, GIAentityNodeArray, fromConditionObject);
-							GIA2nonHeuristicImplementationRemoveExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, fromConditionObjectIndex, fromConditionIndex, true);
-							GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, fromConditionObjectIndex, fromConditionIndex, false);
-							#endif
-							(fromCondition->conditionSubjectEntity->back())->sameReferenceSet = false;
-							#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-							int fromConditionSubjectIndex = getEntityIndex(GIAentityNodeArrayFilled, GIAentityNodeArray, fromConditionSubject);
-							GIA2nonHeuristicImplementationRemoveExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, fromConditionSubjectIndex, fromConditionIndex, true);
-							GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, fromConditionSubjectIndex, fromConditionIndex, false);
-							#endif
-							#endif
-							*/
-						
 							if(!(fromConditionSubject->actionObjectEntity->empty()))
 							{
 								GIAentityNode* fromConditionSubjectActionObject = (fromConditionSubject->actionObjectEntity->back())->entity;
 								fromConditionParent = fromConditionSubjectActionObject;
 								foundFromConditionParent = true;
 							}
-							
-							/* //now done in GIArules.xml instead
-							#ifdef STANFORD_CORENLP_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND
-							for(vector<GIAentityConnection*>::iterator connectionIter2 = fromConditionObject->conditionNodeList->begin(); connectionIter2 != fromConditionObject->conditionNodeList->end(); )
-							{
-								GIAentityNode* toCondition = (*connectionIter2)->entity;
-								if(textInTextArray(toCondition->entityName, relationTypePrepositionToNameArray, RELATION_TYPE_PREPOSITION_TO_NUMBER_OF_TYPES))
-								{
-									//cout << "toCondition" << endl;
-									
-									//move the to condition to action entity
-									connectionIter2 = fromConditionObject->conditionNodeList->erase(connectionIter2);
-									toCondition->conditionSubjectEntity->clear();
-									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									int fromConditionObjectIndex = getEntityIndex(GIAentityNodeArrayFilled, GIAentityNodeArray, fromConditionObject);
-									int toConditionIndex = getEntityIndex(GIAentityNodeArrayFilled, GIAentityNodeArray, toCondition);
-									GIA2nonHeuristicImplementationRemoveExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, fromConditionObjectIndex, toConditionIndex, true);
-									#endif
-									
-									addOrConnectConditionToSubject(fromConditionSubject, toCondition, false);
-									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									int fromConditionSubjectIndex = getEntityIndex(GIAentityNodeArrayFilled, GIAentityNodeArray, fromConditionSubject);
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, fromConditionSubjectIndex, toConditionIndex, false);
-									#endif
-									
-									#ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_CORRECT_SAME_REFERENCE_SET
-									if(!(toCondition->conditionObjectEntity->empty()))
-									{
-										//cout << "toConditionObject" << endl;
-										
-										GIAentityNode* toConditionObject = (toCondition->conditionObjectEntity->back())->entity;
-										(toCondition->conditionObjectEntity->back())->sameReferenceSet = false;
-										#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-										int toConditionObjectIndex = getEntityIndex(GIAentityNodeArrayFilled, GIAentityNodeArray, toConditionObject);
-										GIA2nonHeuristicImplementationRemoveExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, toConditionObjectIndex, toConditionIndex, true);
-										GIA2nonHeuristicImplementationRemoveExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, toConditionObjectIndex, toConditionIndex, false);
-										#endif
-									}
-									#endif
-									#ifdef GIA_TRANSLATOR_DEBUG
-									cout << "STANFORD_CORENLP_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND: linkEntitiesDynamicFromConditions(): move the to condition to from the from condition object to the action entity (ie the from condition subject)" << endl;
-									#endif
-								}
-								else
-								{
-									connectionIter2++;
-								}
-								
-							}
-							#endif
-							*/
 						}
 						else
 						{
+							/*
+							NB not parsed this way by Stanford:
+							eg move -> chicken
+									\
+									from
+									  \
+									   pie
+							*/
 							fromConditionParent = fromConditionSubject;
 							foundFromConditionParent = true;	
 						}
@@ -444,9 +391,15 @@ void linkEntitiesDynamicFromConditions(GIAsentence* currentSentenceInList, bool 
 												{
 													if(previousConditionRelationshipFoundTemp)
 													{
-														//cout << "previousConditionRelationshipFound" << endl;
-														previousRelationshipFound = true;
-														previousConditionRelationshipFound = true;
+														#ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_ONLY_ACCEPT_AT_CONDITIONS
+
+														#endif
+															//cout << "previousConditionRelationshipFound" << endl;
+															previousRelationshipFound = true;
+															previousConditionRelationshipFound = true;
+														#ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_ONLY_ACCEPT_AT_CONDITIONS
+														
+														#endif
 													}
 												}
 											}

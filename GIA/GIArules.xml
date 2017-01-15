@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6e 10-June-2015
+ * Project Version: 2j7a 19-June-2015
  *
  *******************************************************************************/
 -->
@@ -657,7 +657,7 @@
 			</function>
 			<!-- #endif -->
 			
-			<function name="redistributeStanfordRelationsMultiwordPreposition">
+			<function name="redistributeStanfordRelationsActionPrepositionAction">	<!-- extracted from redistributeStanfordRelationsMultiwordPreposition -->
 			<!-- #ifndefGIA_REDISTRIBUTE_STANFORD_RELATIONS_ACTION_PREPOSITION_ACTION -->
 				<!-- #ifdefGIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP -->
 				<!-- #ifdefGIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION -->
@@ -730,7 +730,9 @@
 				<!-- #endif -->
 				<!-- #endif -->
 			<!-- #endif -->
+			</function>
 
+			<function name="redistributeStanfordRelationsDepAndPrepWithBe">	!-- extracted from redistributeStanfordRelationsMultiwordPreposition -->
 			<!-- #ifdefGIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_WITH_BE -->
 				<!-- for queries only (1j6g) -->
 				
@@ -779,9 +781,11 @@
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
 				<option disableEntity="true" REL="3" REL_ENT="2" />
 				</paramDepRel>
+			</function>
 			<!-- #endif -->
 
 			<!-- #ifdefGIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION -->
+			<function name="redistributeStanfordRelationsSubjAndPreposition">
 				<example><!--
 				need to consider this case for the following example text;
 				The patent claims are on the frame.
@@ -805,6 +809,7 @@
 				--></example>
 				
 				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
+				<!-- <=GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2014_04_04_OR_GREATER only? GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER uses redistributeStanfordRelationsCase -->
 				<example><!--
 				eg [case added GIA 2c1c] 
 				The chicken is not near the house.
@@ -866,8 +871,10 @@
 				<!-- #endif -->
 				</paramDepRel>
 				<!-- #endif -->
+			</function>
 			<!-- #endif -->
 
+			<function name="redistributeStanfordRelationsMultiwordPreposition">	<!-- CHECKTHIS: is this still required with -lrp enabled? -->
 				<example><!--
 				<!-- stanford parser prepositition reduction check (based upon http:
 				Y	The woman is white according to John.
@@ -2698,47 +2705,113 @@
 			<!-- #ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER -->
 			<function name="redistributeStanfordRelationsConnectToAndFromConditions">
 				
-				<!-- #ifdef STANFORD_CORENLP_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND -->
+				<!-- #ifdefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND -->
 				<example><!--
-				eg1 Move the chicken from the pie to the apple.. _obj(move[1], chicken[3]) + prep_from(move[1], pie[6]) + prep_to(pie[6], apple[9]) -> _obj(move[1], chicken[3]) + prep_from(move[1], pie[6]) + prep_to(move[1], apple[9])	[assign !sameReferenceSet]
+				eg1 Move the chicken from the pie to the apple. _obj(move[1], chicken[3]) + prep_from(move[1], pie[6]) + prep_to(pie[6], apple[9]) + !rcmodIndicatesSameReferenceSet(to) -> _obj(move[1], chicken[3]) + prep_from(move[1], pie[6]) + prep_to(move[1], apple[9])	[assign !sameReferenceSet]
+				NOT: Move the chicken from the car that is near the apple.
 				--></example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="3" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_obj" />
+				<!-- #ifndefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_ACTION_TYPES -->
+				<!-- <option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy" relationArrayTestSize="2" /> -->
+				<!-- #endif -->
+				<!-- #ifdefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_CONDITION_TYPES -->
+				<!-- changed 2j7a -->
+				<option expectToFindPrepositionTest="true" REL="2" />
+				<option expectToFindPrepositionTest="true" REL="3" />
+				<!-- #else -->
+				<!--
 				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="from" relationArrayTestSize="1" />
 				<option useRelationArrayTest="true" REL="3" REL_ENT="3" relationArrayTest="to" relationArrayTestSize="1" />
+				-->
+				<!-- #endif -->
+				<option useRedistributeSpecialCaseRcmodIndicatesSameReferenceSetNotTest="true" REL="3" />	<!-- added 2j7a -->
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
 				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="3" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
-				<!-- #ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_CORRECT_SAME_REFERENCE_SET -->
-				<!--
-				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSet="true" REL="2" />
-				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSet="true" REL="3" />
-				-->
-				<!-- #endif -->
 				</paramDepRel>
-				<!-- #endif -->
 				
-				<!-- #ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_CORRECT_SAME_REFERENCE_SET -->
-				<!--
-				<example>
-				eg1 Move the chicken from the pie to the apple.. _obj(move[1], chicken[3]) + prep_from(move[1], pie[6]) -> _obj(move[1], chicken[3]) + prep_from(move[1], pie[6])	[assign !sameReferenceSet]
-				</example>
+				<!-- #ifdefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_CONDITION_TYPES -->
+				<!-- added 2j7a -->
+				<example><!--
+				eg1 Move the chicken near the pie to the apple _obj(Move-1, chicken-3) + prep_near(chicken-3, pie-6) + prep_to(pie-6, apple-9) + !rcmodIndicatesSameReferenceSet(near) -> _obj(move[1], chicken[3]) + prep_near(chicken[1], pie[6]) + prep_to(chicken[1], apple[9])	[assign !sameReferenceSet]
+				NOT: Move the bike that is near the car. 
+				--></example>
 				<paramDepRel mode="redistribute">
-				<option numberOfRelations="2" />
+				<option numberOfRelations="3" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_obj" />
-				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="from" relationArrayTestSize="1" />
-				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
-				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSet="true" REL="2" />
+				<!-- #ifndefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_ACTION_TYPES -->
+				<!-- <option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy" relationArrayTestSize="2" /> -->
+				<!-- #endif -->
+				<option expectToFindPrepositionTest="true" REL="2" />
+				<option expectToFindPrepositionTest="true" REL="3" />
+				<!-- #endif -->
+				<option useRedistributeSpecialCaseRcmodIndicatesSameReferenceSetNotTest="true" REL="3" />	<!-- added 2j7a -->
+				<option useRelationIndexTest="true" REL="1" REL_ENT="2" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="3" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 				</paramDepRel>
-				-->
-				<!-- #endif -->		
+				<!-- #endif -->
+				<!-- #endif -->
 				
+	
 			</function>
 			<!-- #endif -->
 			<!-- #endif -->
 			
-
+			<!-- XML only function (not hard coded) --> 
+			<!-- note this function really should be NLP independent (ie moved from redistributeStanfordRelations to GIAtranslatorRedistributeRelations), but Relex doesn't support rcmods at present -->
+			<function name="redistributeStanfordRelationsDetectPrepositionsConnectedToActionObjectRatherThanAction">
+				
+				<!-- #ifdef GIA_STANFORD_PARSER_CONNECT_PREPOSITIONS_TO_ACTION_OBJECT_RATHER_THAN_ACTION -->
+				<example><!--
+				eg1 Move the bike near the car. obj(Move-1, bike-3) + prep_near(bike[3], car[6]) + !prep_from(move[1], x) + !rcmodIndicatesSameReferenceSet(near)  ->obj(Move-1, bike-3) + prep_near(Move-1, car[6])     [assign !sameReferenceSet]
+				NOT: Move the bike that is near the car.
+				ILLEGAL {not supported by English/NLP/GIA/NLC}: Move the bike near the car to the house. (should be "Move the bike that is near the car to the house.")
+				eg2 Move the bike that is near the car to the house.	[NB stanford will connect to condition between car and house, then redistributeStanfordRelationsConnectToAndFromConditions will connect it between bike and house, then redistributeStanfordRelationsDetectPrepositionsConnectedToActionObjectRatherThanAction will connect it between move and house]
+				eg3 Move the bike near the car from the house. 
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="2" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_obj" />
+				<!-- #ifndefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_ACTION_TYPES -->
+				<!-- <option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy" relationArrayTestSize="2" /> -->
+				<!-- #endif -->
+				<option expectToFindPrepositionTest="true" REL="2" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="2" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option useRedistributeSpecialCaseRcmodIndicatesSameReferenceSetNotTest="true" REL="2" />	<!-- will this only work for Stanford Parser 2015/redistributeStanfordRelationsCase?; verify that standard (isolated) preposition rcmod relations are parsed by GIA [ie rcmodIndicatesSameReferenceSet is assigned to prepositions] when using previous versions of Stanford Parser -->
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSet="true" REL="2" />	<!-- [not required as action conditions/properties are always interpreted as !sameReferenceSet, this is just use for semantic consistency/correctness.] This is used to override the fact conditions connections are by default (ie without rcmod) assigned sameReferenceSet=true (DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS) -->
+				</paramDepRel>
+				<!-- #endif -->
+				
+				<!-- #ifdefGIA_LINK_ACTION_CONDITIONS_CORRECT_SAME_REFERENCE_SET -->
+				<example>
+				eg1 Move the chicken from/near the pie [to the apple]. _obj(move[1], chicken[3]) + prep_from(move[1], pie[6]) -> _obj(move[1], chicken[3]) + prep_from(move[1], pie[6])	[assign !sameReferenceSet]
+				NOT: Move the chicken that is near the pie.
+				</example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="2" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_obj" />
+				<!-- #ifndefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_ACTION_TYPES
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy" relationArrayTestSize="2" />
+				#endif -->
+				<!-- #ifdefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_CONDITION_TYPES -->
+				<option expectToFindPrepositionTest="true" REL="2" />
+				<!-- #else -->
+				<!--
+				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="from" relationArrayTestSize="1" />
+				-->
+				<!-- #endif -->
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSet="true" REL="2" />	<!-- note this will correctly be overridden if there is an rcmod present as rcmodIndicatesSameReferenceSet will be set, which takes precedence over auxiliaryIndicatesDifferentReferenceSet (see determineSameReferenceSetValue) -->
+				</paramDepRel>
+				<!-- #endif -->
+				
+			</function>
+			<!-- #endif -->
+			
 		</file>
 		<file name="GIAtranslatorRedistributeRelationsRelex">
 					
