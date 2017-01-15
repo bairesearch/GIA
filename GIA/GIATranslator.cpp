@@ -2544,17 +2544,28 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								#endif
 								else if(partnerTypeObjectSpecialConditionMeasureDistanceFound)
 								{
-									GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;
-									GIAEntityNode * specialConditionNode = GIAEntityNodeArray[relationFunctionIndex2];
-									//cout << "subjectEntityOrProperty->entityName = " << subjectEntityOrProperty->entityName << endl;
-									//cout << "specialConditionNode->entityName = " << specialConditionNode->entityName << endl;	
+									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2D_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO
+										//eg The rabbit is 20 meters away.	[away is a property of rabbit, not a condition of rabbit]
+										GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;	//aka subjectObjectEntityArray[SUBJECT_INDEX];
+										GIAEntityNode * propertyEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
 
-									string conditionTypeName = "specialCondition";
-									long entityIndex = -1;
-									bool entityAlreadyExistant = false;									
-									GIAEntityNode * conditionTypeConceptEntity  = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+										addOrConnectPropertyToEntity(subjectEntityOrProperty, propertyEntity);
+									#else
+										//eg The rabbit is 20 meters away.	[away is a condition of rabbit, not a property of rabbit]
+									
+										GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;
+										GIAEntityNode * specialConditionNode = GIAEntityNodeArray[relationFunctionIndex2];
+										//cout << "subjectEntityOrProperty->entityName = " << subjectEntityOrProperty->entityName << endl;
+										//cout << "specialConditionNode->entityName = " << specialConditionNode->entityName << endl;	
 
-									addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity);
+										string conditionTypeName = "specialCondition";
+										long entityIndex = -1;
+										bool entityAlreadyExistant = false;									
+										GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+
+										addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity);
+
+									#endif
 								}
 								#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D
 								else if(partnerTypeObjectSpecialConditionToDoPropertyFound)
