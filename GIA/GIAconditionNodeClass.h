@@ -23,7 +23,7 @@
  * File Name: GIAconditionNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t6c 07-August-2013
+ * Project Version: 1t7a 09-August-2013
  *
  *******************************************************************************/
 
@@ -53,6 +53,10 @@ using namespace std;
 #define CONDITION_NODE_TYPE_TIME (1)
 #define CONDITION_NODE_TYPE_LOCATION (2)
 #define CONDITION_NODE_TYPE_REASON (3)
+#define CONDITION_NODE_TYPE_UNDEFINED_STRING "0"
+#define CONDITION_NODE_TYPE_TIME_STRING "1"
+#define CONDITION_NODE_TYPE_LOCATION_STRING "2"
+#define CONDITION_NODE_TYPE_REASON_STRING "3"
 
 #define TIME_MONTH_JANUARY "January"
 #define TIME_MONTH_FEBRUARY "February"

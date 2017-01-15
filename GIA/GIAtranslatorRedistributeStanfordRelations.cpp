@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t6c 07-August-2013
+ * Project Version: 1t7a 09-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -39,7 +39,183 @@
 
 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
+#ifndef GIA_TRANSLATOR_XML_INTERPRETATION
+void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[])
+{				
+	#ifdef GIA_USE_STANFORD_CORENLP
+	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+	{
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout <<"pass 1c2; disable redundant nodes Stanford Core NLP/Parser" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
+		#endif
+		disableRedundantNodesStanfordCoreNLP(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	}
+	#endif
+	disableRedundantNodesStanfordParser(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c3; redistribute Stanford Relations Create Query Vars Adjust for Action Preposition Action" << endl;
+	#endif		
+	//redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction() needs to be called with LRP also - separated out from redistributeStanfordRelationsMultiwordPreposition() 24 July 2013 to achieve this
+	redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);	//added 28 October 2012
+
+	#ifdef GIA_LRP_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
+	if(!(getUseLRP()))
+	{
+	#endif
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1c4; redistribute Stanford Relations Multiword Preposition" << endl;
+		#endif
+		redistributeStanfordRelationsMultiwordPreposition(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#ifdef GIA_LRP_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
+	}
+	#endif
+
+	//added 8 August 2012
+	#ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c5a; redistribute Relations - prep_of (eg The ball of the red dog is green..   nsubj(green-8, ball-2) / prep_of(ball-2, dog-6) ->  nsubj(green-7, ball-5) / poss(ball-5, dog-3)" << endl;
+	#endif
+	redistributeStanfordRelationsInterpretOfAsPossessive(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#endif
+	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_WHAT_IS_THE_NAME_NUMBER_OF_QUERIES
+	#ifndef GIA_DEPENDENCY_RELATIONS_TYPE_RELEX_PARSE_QUESTIONS_IN_NON_QUERY_INPUTTEXT
+	if(currentSentenceInList->isQuestion)
+	{
+	#endif
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1c5b; redistribute Relations - what is the name/number of? 	nsubj(is-2, name-4) / attr(is-2, What-1) {/ det(name-4, the-3)} / poss/prep_of(name-4, dog-8) -> appos(That-1, _$qVar[1])" << endl;
+		#endif
+		redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#ifndef GIA_DEPENDENCY_RELATIONS_TYPE_RELEX_PARSE_QUESTIONS_IN_NON_QUERY_INPUTTEXT
+	}
+	#endif
+	#endif
+	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c5c; redistribute Relations - intepret name of as definition (eg interpret 'The red dog's name is Max.' / 'The name of the red dog is Max.'	nsubj(Max-7, name-5) / poss/prep_of(name-5, dog-3) -> appos(dog-3, Max-7)" << endl;
+	#endif
+	redistributeStanfordRelationsInterpretNameOfAsDefinition(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#endif		
+
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c6; redistribute Stanford Relations - Collapse Advmod Relation Function Be (eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - > _predadj(rabbit-2, away-6)   +    Kane is late.	nsubj(late-3, Kane-1) / cop(late-3, is-2) -> _predadj(kane-1, late-3)          +    She is the one     nsubj(one-4, She-1) /cop(one-4, is-2) / det(one-4, the-3) -> appos(She-1, one-4)" << endl;
+	//[OLD: nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - >nsubj(away-6, rabbit-2)] )" << endl;
+	#endif
+	redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
+
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c7; redistribute Stanford Relations - Generate Adjectives And Appos" << endl;
+	cout << "eg1 Kane is late	      nsubj(late-3, Kane-1) / cop(late-3, is-2) -> _predadj(kane-1, late-3)			      [NB non-determinate of governer and dependent of subject relation; take as indicator of substance]" << endl;
+	cout << "eg2 She is the one	      nsubj(one-4, She-1) / cop(one-4, is-2) / det(one-4, the-3) -> appos(She-1, one-4) 	      [NB determinate of dependent of subject relation; take as an indicator of definition]" << endl;
+	cout << "eg3 The girl is tall	      nsubj(tall-6, girl-2) / cop(tall-6, is-3) / det(girl-2, The-1) -> _predadj(girl-2, tall-6)      [NB non-plural and determinate of governer of subject relation; take as indicator of substance]" << endl;
+	cout << "eg4 bikes are machines        nsubj(machines-3, bikes-1) / cop(machines-3, are-2) -> appos(bikes-1, machines-3) 	      [NB plural and non-determinate of governer of subject relation; take as an indicator of definition]" << endl;
+	cout << "eg5 the wheels are green      nsubj(green-6, wheels-4) / cop(green-6, are-5) -> _predadj(wheels-4, green-6)		      [NB plural and determinate of governer of subject relation; take as indicator of substance]" << endl;
+	cout << "eg6 That is Jim.	      nsubj(Jim-3, That-1) / cop(Jim-3, is-2) -> appos(That-1, Jim-3)" << endl;
+	cout << "eg7 The time is 06:45	      nsubj(06:45-4, time-2) / cop(06:45-4, is-3) / det(time-2, The-1) -> appos(time-2, 06:45-4)" << endl;	
+	#endif
+	redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
+	#endif
+
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c8; redistribute Stanford Relations - Adverbal Clause Modifier And Complement (eg The accident happened as the night was falling. 	advcl(happen, fall) / mark(fall, as))" << endl;
+	#endif
+	redistributeStanfordRelationsAdverbalClauseModifierAndComplement(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+
+	#ifndef GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_TYPE1
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c9; redistribute Stanford Relations - Clausal Subject (eg What she said makes sense. 	csubj (make, say)/dobj ( said-3 , What-1 ))" << endl;
+	#endif
+	redistributeStanfordRelationsClausalSubject(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#endif
+
+	/*OLD:
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c10; redistribute Stanford Relations - Phrasal Verb Particle (eg They shut down the station.    prt(shut, down))" << endl;
+	#endif
+	redistributeStanfordRelationsPhrasalVerbParticle(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	*/
+
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c10; redistribute Stanford Relations - Conjunction And Coordinate (eg I eat a pie or tom rows the boat. 	cc(pie-4, or-5) / conj(pie-4, tom-6))" << endl;
+	#endif
+	redistributeStanfordRelationsConjunctionAndCoordinate(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c11; redistribute Stanford Relations - Generate Unparsed Quantity Modifers (eg The punter won almost $1000. 	advmod(won-3, almost-4) / pobj(almost-4, $-5)) / num($-5, 1000-6)" << endl;
+	#endif
+	redistributeStanfordRelationsGenerateUnparsedQuantityModifers(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);	
+
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c12; redistribute Stanford Relations - Generate Measures (eg years old - npadvmod(old, years) -> _measure_time(old[7], years[6]))" << endl;
+	#endif
+	redistributeStanfordRelationsGenerateMeasures(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#endif
+
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c13; redistribute Stanford Relations - Prt And Tmods (eg The disaster happened over night.   prt(happened-3, over-4) / tmod(happened-3, night-5) -> over(happened-3, night-5) )" << endl;
+	#endif
+	redistributeStanfordRelationsPhrasalVerbParticle(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+
+	#ifndef GIA_DEPENDENCY_RELATIONS_TYPE_RELEX_PARSE_QUESTIONS_IN_NON_QUERY_INPUTTEXT
+	if(currentSentenceInList->isQuestion)
+	{
+	#endif
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1c14; redistribute Stanford Relations - Create Query Vars (eg interpret 'who is that' / 'what is the time.'  attr(is-2, Who-1) / attr(is-2, What-1) | interpret 'how much'/'how many' | interpret 'which' det(house-2, Which-1) | interpret how/when/where/why advmod(happen-5, How-1) / advmod(leave-4, When-1) / advmod(is-2, Where-1) / advmod(fall-5, Why-1)	 )" << endl;
+		#endif
+		redistributeStanfordRelationsCreateQueryVars(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
+	#ifndef GIA_DEPENDENCY_RELATIONS_TYPE_RELEX_PARSE_QUESTIONS_IN_NON_QUERY_INPUTTEXT
+	}
+	#endif
+
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c15; redistribute Stanford Relations - partmod (eg Truffles picked during the spring are tasty.   partmod(truffle, pick) -> obj(pick, truffle) )" << endl;
+	#endif
+	redistributeStanfordRelationsPartmod(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+
+	#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS
+	//Added 28 October 2012b
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c16; redistribute Stanford Relations - Interpret Of As Object For ContinuousVerb (eg What is wood used in the delivering of?   interpret prep_of(xing, y) as obj(xing, y) )" << endl;
+	#endif
+	redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser, featureArrayTemp);
+	#endif
+
+	#ifdef GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES
+	//Added 13 November 2012
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c17; redistribute Stanford Relations - expletives (eg 'There is a place that we go'   _expl(be[2], there[1]) + _subj(be[2], place[4]) + _subj(go[7], we[6]) + _obj(be[2], go[7]) -> _subj(go[7], we[6]) + _obj(go[7], place[4])  )" << endl;
+	#endif
+	redistributeStanfordRelationsExpletives(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#endif
+
+	#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP
+	//Added 13 November 2012
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c18; redistribute Stanford Relations - dependency prepositions (eg 'Given the nature of the bank, write the letter.'  prep(write-8, Given-1) / dep(Given-1, nature-3) -> prep_given(write-8, nature-3) )" << endl;
+	#endif
+	redistributeStanfordRelationsDependencyPreposition(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#endif
+
+	#ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
+	//added 12 July 2013
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 1c19; redistribute Stanford Relations - disable Aux And Cop Relations" << endl;
+	#endif		
+	redistributeStanfordRelationsDisableAuxAndCop(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#endif
+
+	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	//this has been shifted before linkHavingPropertyConditionsAndBeingDefinitionConditions - 1t2l
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "1c20 pass; collapseRedundantRelationAndMakeNegativeStanford (eg The chicken has not eaten a pie.: neg(eaten-5, not-4)" << endl;
+	#endif
+	collapseRedundantRelationAndMakeNegativeStanford(currentSentenceInList, GIAentityNodeArray);
+	#endif		
+}
 
 #ifdef GIA_USE_STANFORD_CORENLP
 void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
@@ -249,7 +425,6 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 }
 #endif
 
-#ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 void disableRedundantNodesStanfordParser(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 	/*
@@ -2951,6 +3126,14 @@ void redistributeStanfordRelationsGenerateMeasures(Sentence * currentSentenceInL
 	genericDependecyRelationInterpretation(&param, REL1);
 
 	//eg3 Robert ate 4 times a day.	dep(times-4, day-6) -> measure_dependency(times-4, day-6)			{Relex: _measure_per(times[4], day[6])}
+	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	param.numberOfRelations = 1;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DEPENDENT;
+	EntityCharacteristic useRedistributeSpecialCaseNERTempCheck("NERTemp", FEATURE_NER_DURATION_STRING); param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&useRedistributeSpecialCaseNERTempCheck);
+	param.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_MEASURE_DEPENDENCY_UNKNOWN;
+	genericDependecyRelationInterpretation(&param, REL1);
+	
+	/*	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -2967,6 +3150,7 @@ void redistributeStanfordRelationsGenerateMeasures(Sentence * currentSentenceInL
 		}
 		currentRelationInList = currentRelationInList->next;
 	}
+	*/
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -4284,6 +4468,5 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 }
 
 #endif
-
 #endif
 
