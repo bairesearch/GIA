@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5a 26-July-2012
+ * Project Version: 1n5b 26-July-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -362,6 +362,9 @@ public:
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	int referenceSetID;
 	int minimumEntityIndexOfReferenceSet;
+	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
+	bool wasReferenceTemp;
+	#endif
 	#endif
 
 	#ifdef GIA_USE_DATABASE

@@ -3,7 +3,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5a 26-July-2012
+ * Project Version: 1n5b 26-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1255,7 +1255,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 									bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 									#endif
 
-									#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
+									#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 									GIAEntityNodeArray[FEATURE_INDEX_OF_HAVING_UNKNOWN] = addOrConnectHavingPropertyConditionToEntity(entityNode, conditionPropertyNode, conditionTypeConceptEntity, negative, sameReferenceSet);
 									#else
 									addOrConnectHavingPropertyConditionToEntity(entityNode, conditionPropertyNode, conditionTypeConceptEntity, negative, sameReferenceSet);
@@ -1295,7 +1295,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 									bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 									#endif
 
-									#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
+									#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 									GIAEntityNodeArray[FEATURE_INDEX_OF_BEING_UNKNOWN] = addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative, sameReferenceSet);
 									#else
 									addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative, sameReferenceSet);
@@ -1750,7 +1750,7 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			cout << "timeConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
 			#endif
 
-			#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
+			#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS
 			GIAEntityNodeArray[featureIndexOfPreposition] = addTimeConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 			#else
 			addTimeConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
@@ -1763,7 +1763,7 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			cout << "locationConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
 			#endif
 
-			#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
+			#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS
 			GIAEntityNodeArray[featureIndexOfPreposition] = addLocationConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 			#else
 			addLocationConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
@@ -1776,7 +1776,7 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			cout << "reasonConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
 			#endif
 
-			#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
+			#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS
 			GIAEntityNodeArray[featureIndexOfPreposition] = addReasonConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 			#else
 			addReasonConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
@@ -1790,7 +1790,7 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			cout << "actionOrPropertyConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
 			#endif
 
-			#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
+			#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS
 			GIAEntityNodeArray[featureIndexOfPreposition] = addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 			#else
 			addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);

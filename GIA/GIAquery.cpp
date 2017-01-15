@@ -3,7 +3,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5a 26-July-2012
+ * Project Version: 1n5b 26-July-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -86,7 +86,7 @@ GIAQueryTraceParameters::GIAQueryTraceParameters(GIAQueryTraceParameters * query
 
 GIAReferenceTraceParameters::GIAReferenceTraceParameters(void)
 {
-	#ifdef GIA_USE_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+	#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 	intrasentenceReference = false;
 	#endif
 }
@@ -610,11 +610,11 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 				if(queryEntityNode->referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)		//added 13 July 2012
 				{
 				#endif
-					#ifndef GIA_USE_ADVANCED_REFERENCING_ORIGINAL
+					#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
 					if(queryEntityNode->idActiveList != entityNode->idActiveList)	//else they are exactly the same [NB with new implementation of GIA_USE_ADVANCED_REFERENCING, it will detect the same nodes as a reference match, so they need to be ignored when this happens]
 					{
 					#endif
-						#ifdef GIA_USE_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 						bool passIntrasentenceReferenceRequirements = true;
 						if(referenceTraceParameters->intrasentenceReference)
 						{
@@ -642,7 +642,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 								{
 									result = EXACT_MATCH_PASS;
 									/*
-									#ifdef GIA_USE_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+									#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 									//debug only
 									if(referenceTraceParameters->intrasentenceReference)
 									{						
@@ -660,14 +660,14 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 							{
 								result = EXACT_MATCH_FAIL;
 							}
-						#ifdef GIA_USE_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 						}
 						else
 						{
 							result = EXACT_MATCH_FAIL;	//CHECKTHIS
 						}
 						#endif
-					#ifndef GIA_USE_ADVANCED_REFERENCING_ORIGINAL
+					#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
 					}
 					else
 					{
@@ -965,7 +965,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 						if(exactMatchTemp == EXACT_MATCH_PASS)
 						{
 							/*
-							#ifdef GIA_USE_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+							#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 							//debug only
 							if(referenceTraceParameters->intrasentenceReference)
 							{						
@@ -993,12 +993,12 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 							bool bestAnswerCandidate = determineIfBestAnswerCandidate(traceModeIsQuery, queryTraceParametersTemp.foundAnswer, alreadyFoundAnAnswer, numberOfMatchedNodesTemp, numberOfMatchedNodesTempMax, numberOfMatchedNodesRequiredSynonymnDetectionTemp, numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax, referenceTraceParameters->traceMode, exactMatchTemp);
 							if(bestAnswerCandidate)
 							{
-								#ifdef GIA_USE_ADVANCED_REFERENCING_UPDATE_NOT_NECESSARY_OR_TESTED
+								#ifdef GIA_ADVANCED_REFERENCING_UPDATE_NOT_NECESSARY_OR_TESTED
 								foundExactMatchPass = true;
 								#endif
 								
 								/*
-								#ifdef GIA_USE_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+								#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 								//debug only
 								if(referenceTraceParameters->intrasentenceReference)
 								{
@@ -1195,7 +1195,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 					//cout << "fin5" << endl;
 
 					bool exactMatchFoundTemp = false;
-					#ifdef GIA_USE_ADVANCED_REFERENCING_UPDATE_NOT_NECESSARY_OR_TESTED
+					#ifdef GIA_ADVANCED_REFERENCING_UPDATE_NOT_NECESSARY_OR_TESTED
 					if(foundExactMatchPass)
 					{
 						exactMatchFoundTemp = true;
@@ -1208,7 +1208,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 					#endif
 					
 					/*
-					#ifdef GIA_USE_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+					#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 					//debug only
 					if(referenceTraceParameters->intrasentenceReference)
 					{
@@ -1223,7 +1223,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 					bool matchFound = determineMatchParameters(exactMatchFoundTemp, traceModeIsQuery, referenceTraceParameters->traceMode, numberOfMatchedNodesTempMax, &exactMatch);
 
 					/*
-					#ifdef GIA_USE_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+					#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 					//debug only
 					if(referenceTraceParameters->intrasentenceReference)
 					{

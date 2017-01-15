@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5a 26-July-2012
+ * Project Version: 1n5b 26-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -68,12 +68,13 @@
 #endif
 #define GIA_USE_ADVANCED_REFERENCING	//this needs to be debugged (not yet tested)
 #ifdef GIA_USE_ADVANCED_REFERENCING
-	//#define GIA_USE_ADVANCED_REFERENCING_UPDATE_NOT_NECESSARY_OR_TESTED
-	#define GIA_USE_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-	#define GIA_USE_ADVANCED_REFERENCING_ORIGINAL
-	#define GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
-	#define GIA_USE_ADVANCED_REFERENCING_CONDITIONS		//all conditions; ie, not just preposition conditions
-	#define GIA_USE_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET	//added 1m5aTEMP11 [requires Stanford Parser - incompatible with Relex - because it requires record of the sentence entity index of the determiner "the"; grammaticalIsDefiniteIndexOfDeterminer/grammaticalDefiniteIndexOfDeterminerTemp] 
+	#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
+	//#define GIA_ADVANCED_REFERENCING_UPDATE_NOT_NECESSARY_OR_TESTED
+	#define GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+	#define GIA_ADVANCED_REFERENCING_ORIGINAL
+	#define GIA_ADVANCED_REFERENCING_PREPOSITIONS
+	#define GIA_ADVANCED_REFERENCING_CONDITIONS		//all conditions; ie, not just preposition conditions
+	#define GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET	//added 1m5aTEMP11 [requires Stanford Parser - incompatible with Relex - because it requires record of the sentence entity index of the determiner "the"; grammaticalIsDefiniteIndexOfDeterminer/grammaticalDefiniteIndexOfDeterminerTemp] 
 #endif
 
 //variables currently under attention for testing purposes

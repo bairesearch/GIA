@@ -3,7 +3,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5a 26-July-2012
+ * Project Version: 1n5b 26-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -367,7 +367,7 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 
 									bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 
-									#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
+									#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 									GIAEntityNodeArray[FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN] = addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
 									#else
 									addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
@@ -506,7 +506,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAEntityNode
 								GIAEntityNode * conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
-								#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
+								#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 								GIAEntityNodeArray[FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN] = addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
 								#else
 								addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
@@ -623,7 +623,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAEntityNode
 						//now add measure_per condition node
 						sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 
-						#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
+						#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 						GIAEntityNodeArray[FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN] = addOrConnectConditionToEntity(newQuantityTimesEntity, measureProperty, conditionTypeEntity, sameReferenceSet);
 						#else
 						addOrConnectConditionToEntity(newQuantityTimesEntity, measureProperty, conditionTypeEntity, sameReferenceSet);
@@ -702,7 +702,7 @@ void extractMeasures(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFi
 
 				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 
-				#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
+				#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 				if(measureDependencyFound)
 				{
 					GIAEntityNodeArray[FEATURE_INDEX_OF_MEASURE_UNKNOWN] = addOrConnectConditionToEntity(quantityEntity, measurePropertyEntity, conditionTypeEntity, sameReferenceSet);
@@ -822,7 +822,7 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, bool GIAEntit
 
 						bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;
 
-						#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
+						#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 						GIAEntityNodeArray[FEATURE_INDEX_OF_TODO_UNKNOWN] = addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
 						#else
 						addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
@@ -926,7 +926,7 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAEntityN
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 				#endif
 
-				#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
+				#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 				GIAEntityNodeArray[FEATURE_INDEX_OF_CONJUNCTION_UNKNOWN] = addOrConnectConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeEntity, sameReferenceSet);
 				#else
 				addOrConnectConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeEntity, sameReferenceSet);

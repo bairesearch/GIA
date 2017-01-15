@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5a 26-July-2012
+ * Project Version: 1n5b 26-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1409,7 +1409,7 @@ bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relatio
 GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int featureIndex, string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts)
 {
 	GIAEntityNode * conditionTypeEntity;
-	#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
+	#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 	if(GIAEntityNodeArrayFilled[featureIndex])
 	{
 		conditionTypeEntity = GIAEntityNodeArray[featureIndex];
@@ -1461,45 +1461,54 @@ GIAEntityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNod
 //this function does write to database, but prepares data structures for write to database (at the end of the user sequence, writeDatabase() is written...)
 void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet)
 {
-	vector<GIAEntityConnection*> * vectorConnection = &(entityNode->entityVectorConnectionsArray[connectionType]);
-	if(entityVectorConnectionIsBasicArray[connectionType])
+	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
+	if(!(entityNode->wasReferenceTemp && entityNodeToAdd->wasReferenceTemp))
 	{
-		vectorConnection->clear();	//clear the vector (basic connections only support 1 node)
-
-	}
-
-	GIAEntityConnection * newConnection = new GIAEntityConnection();
-	newConnection->entity = entityNodeToAdd;
-	vectorConnection->push_back(newConnection);
-
-	#ifdef GIA_USE_ADVANCED_REFERENCING
-	newConnection->sameReferenceSet = sameReferenceSet;
-	/*
-	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-	cout << "writeVectorConnection: newConnection->sameReferenceSet = " << sameReferenceSet << endl;
 	#endif
-	*/
-	#endif
-
-	#ifdef GIA_USE_DATABASE
-	if((getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE) || (getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_INACTIVE))	//NB even if not accessing the database for new information (read), still prepare nodes for database write
-	{
-		//#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS		//why is this preprocessor check not required???
-		//required for database syncronisation with RAM
-		if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
+	
+		vector<GIAEntityConnection*> * vectorConnection = &(entityNode->entityVectorConnectionsArray[connectionType]);
+		if(entityVectorConnectionIsBasicArray[connectionType])
 		{
-			cout << "error: writeVectorConnection called, but entityVectorConnectionsReferenceListLoadedArray set to false" << endl;
-			exit(0);
-		}
-		//#endif
+			vectorConnection->clear();	//clear the vector (basic connections only support 1 node)
 
-		newConnection->entityName = entityNodeToAdd->entityName;
-		newConnection->idInstance = entityNodeToAdd->idInstance;
-		newConnection->loaded = true;
-		newConnection->modified = false;
-		newConnection->added = true;		//this allows for fast update of the DB (append reference connections)
+		}
+
+		GIAEntityConnection * newConnection = new GIAEntityConnection();
+		newConnection->entity = entityNodeToAdd;
+		vectorConnection->push_back(newConnection);
+
+		#ifdef GIA_USE_ADVANCED_REFERENCING
+		newConnection->sameReferenceSet = sameReferenceSet;
+		/*
+		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+		cout << "writeVectorConnection: newConnection->sameReferenceSet = " << sameReferenceSet << endl;
+		#endif
+		*/
+		#endif
+
+		#ifdef GIA_USE_DATABASE
+		if((getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE) || (getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_INACTIVE))	//NB even if not accessing the database for new information (read), still prepare nodes for database write
+		{
+			//#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS		//why is this preprocessor check not required???
+			//required for database syncronisation with RAM
+			if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
+			{
+				cout << "error: writeVectorConnection called, but entityVectorConnectionsReferenceListLoadedArray set to false" << endl;
+				exit(0);
+			}
+			//#endif
+
+			newConnection->entityName = entityNodeToAdd->entityName;
+			newConnection->idInstance = entityNodeToAdd->idInstance;
+			newConnection->loaded = true;
+			newConnection->modified = false;
+			newConnection->added = true;		//this allows for fast update of the DB (append reference connections)
+		}
+		#endif
+		
+	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	}
-	#endif
+	#endif		
 }
 
 long determineNextIdInstance(GIAEntityNode * entity)

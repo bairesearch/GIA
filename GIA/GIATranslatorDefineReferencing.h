@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineReferencing.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5a 26-July-2012
+ * Project Version: 1n5b 26-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -50,17 +50,12 @@ int identifyReferenceSets(unordered_map<string, GIAEntityNode*> *sentenceConcept
 	void resetReferenceSets(unordered_map<string, GIAEntityNode*> *conceptEntityNodesList);
 void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAEntityNode*> *sentenceConceptEntityNodesList, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, GIACoreference * firstGIACoreferenceInList, int numberReferenceSets);	//bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[]
 	void createGIACoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConceptsQuery, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, GIAReferenceTraceParameters *referenceTraceParameters, int *maxNumberOfMatchedNodes, GIAEntityNode **queryEntityWithMaxNumberNodesMatched, GIAEntityNode **networkEntityWithMaxNumberNodesMatched, bool *foundAtLeastOneMatch);
-	#ifdef GIA_USE_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+	#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 	GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIAEntityNode * entityNode, GIACoreference * currentGIACoreferenceInList, bool intrasentenceReference);
 	#else
 	GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIAEntityNode * entityNode, GIACoreference * currentGIACoreferenceInList);
 	#endif
-#ifdef GIA_USE_ADVANCED_REFERENCING_ORIGINAL
 void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, GIACoreference * firstCoreferenceInList, Feature * featureArrayTemp[]);
-#else
-void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, GIACoreference * firstCoreferenceInList);
-void replaceReferenceWithReferenceSource(GIAEntityNode * reference, GIAEntityNode * referenceSource);
-#endif
 
 
 #endif
