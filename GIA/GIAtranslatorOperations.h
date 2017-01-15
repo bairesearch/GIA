@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c4c 16-January-2014
+ * Project Version: 2c4d 19-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -273,11 +273,6 @@ using namespace std;
 	#endif
 #endif
 
-//#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC	//disabled GIA 2c1a
-#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-	#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR	//assumes GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS is true
-#endif
-#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_DEFINITION_BASIC
 
 #define GIA_TRANSLATOR_ACTION_DEFINITION_CODE_SIMPLIFICATION
 

@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c4c 16-January-2014
+ * Project Version: 2c4d 19-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -514,6 +514,14 @@
 #include "SHAREDglobalDefs.h"
 
 //#define GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA //disabled GIA 2b3c [disabling required for GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN] - CHECKTHIS does not cause problems with alternative test scenarios
+
+#ifdef USE_NLC
+	#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC	//disabled GIA 2c1a (make sure to update GIArules.xml if USE_NLC is activated; see "GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC". Must test NLC with GIA 2b code, else revert to GIA 2a code; ie BAI Source Archive - Source3c8a,GIA2a11a,CE1d4a,NLC1f4b,CF1a1b - 14December2013a.zip)
+#endif
+#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+	#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR	//assumes GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS is true
+#endif
+#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_DEFINITION_BASIC
 
 #define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS	//GIA 2b4a
 #ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
