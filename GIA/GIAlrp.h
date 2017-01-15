@@ -23,7 +23,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p11c 24-September-2012
+ * Project Version: 1p11d 24-September-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -94,8 +94,10 @@ static char englishConsonantArray[GIA_LRP_NUMBER_OF_CONSTONANTS] = {'b', 'c', 'd
 static char lrpVerbDoubleConsonantRule1LastLetterExceptions[GIA_LRP_VERB_DOUBLE_CONSONANT_RULE1_LAST_LETTER_EXCEPTIONS_NUMBER_OF_TYPES] = {'w', 'x', 'y', 'z'};
 */
 
-#define GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS (4)		//CHECKTHIS; need to location RelEx/Stanford dependency relation specification and match the exact same punction marks detected
-static char nlpPunctionMarkCharacterArray[GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS] = {CHAR_FULLSTOP, CHAR_COMMA, CHAR_SEMICOLON, CHAR_COLON};
+#define GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS (5)		//CHECKTHIS; need to location RelEx/Stanford dependency relation specification and match the exact same punction marks detected
+static char nlpPunctionMarkCharacterArray[GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS] = {CHAR_FULLSTOP, CHAR_COMMA, CHAR_SEMICOLON, CHAR_COLON, CHAR_QUESTIONMARK};
+#define GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE (2)
+static char nlpPunctionMarkCharacterEndOfSentenceArray[GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE] = {CHAR_FULLSTOP, CHAR_QUESTIONMARK};
 #define GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS (3)		//CHECKTHIS; need to location RelEx/Stanford dependency relation specification and match the exact same punction marks detected
 static char nlpWhitespaceCharacterArray[GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS] = {CHAR_NEWLINE, CHAR_TAB, CHAR_SPACE};
 
@@ -179,7 +181,8 @@ bool getUseLRP();
 
 GIALRPtagTextCorrespondenceInfo * getCurrentGIALRPtagTextCorrespondenceInfo();
 void setCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
-void initialiseCurrentGIALRPtagTextCorrespondenceInfo();
+void initialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
+void deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);
 
 bool parseTextFileAndReduceLanguage(string inputTextPlainTXTFileName, string outputLRPTextPlainTXTFileName, string outputLRPTextForNLPonlyPlainTXTFileName);
 	bool loadPhrasalVerbDataAndGenerateAllTenseVariants();

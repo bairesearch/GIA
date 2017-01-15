@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p11c 24-September-2012
+ * Project Version: 1p11d 24-September-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -121,12 +121,28 @@ void setCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery)
 		currentGIALRPtagTextCorrespondenceInfo = textGIALRPtagTextCorrespondenceInfo;
 	}
 }
-void initialiseCurrentGIALRPtagTextCorrespondenceInfo()
+void initialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery)
 {
-	queryGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();
-	textGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();
+	if(isQuery)
+	{
+		queryGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();
+	}
+	else
+	{
+		textGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();
+	}
 }
-
+void deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery)
+{
+	if(isQuery)
+	{
+		delete queryGIALRPtagTextCorrespondenceInfo;
+	}
+	else
+	{
+		delete textGIALRPtagTextCorrespondenceInfo;
+	}
+}
 
 
 bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainTextLRPOutputFileName, string plainTextLRPforNLPOutputFileName)
@@ -135,6 +151,9 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 	
 	#ifdef GIA_LRP_DEBUG
 	cout << "lrpDataFolderName= " << lrpDataFolderName << endl;
+	cout << "plainTextInputFileName = " << plainTextInputFileName << endl;
+	cout << "plainTextLRPOutputFileName = " << plainTextLRPOutputFileName << endl;
+	cout << "plainTextLRPforNLPOutputFileName = " << plainTextLRPforNLPOutputFileName << endl;	
 	#endif
 	
 	string irregularVerbListFileName = lrpDataFolderName + GIA_LRP_IRREGULARVERB_DATABASE_FILE_NAME;
@@ -163,7 +182,13 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 	{
 		result = false;
 	}
-	
+
+	#ifdef LINUX
+	chdir(tempFolderCharStar);
+	#else
+	::SetCurrentDirectory(tempFolderCharStar);
+	#endif	
+		
 	GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo = getCurrentGIALRPtagTextCorrespondenceInfo();
 	if(!searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(firstTagInPlainText, firstTagInPhrasalVerbList, firstTagInMultiwordPrepositionList, plainTextLRPOutputFileName, plainTextLRPforNLPOutputFileName, firstGIALRPtagCorrespondenceInfo))
 	{
@@ -915,10 +940,18 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlai
 						#endif								
 						currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
 
-						if(currentToken == CHAR_FULLSTOP)
+						bool endOfSentencePunctuationMarkFound = false;
+						for(int i=0; i<GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE; i++)
+						{
+							if(currentToken == nlpPunctionMarkCharacterEndOfSentenceArray[i])
+							{
+								endOfSentencePunctuationMarkFound = true;
+							}
+						}
+						if(endOfSentencePunctuationMarkFound)
 						{
 							#ifdef GIA_LRP_DEBUG
-							//cout << "CHAR_FULLSTOP" << endl;
+							//cout << "endOfSentencePunctuationMarkFound" << endl;
 							//cout << "currentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;							
 							#endif
 							currentTagInPlainText->nextSentence = new GIALRPtag();
@@ -949,7 +982,23 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlai
 		}
 		parseFileObject.close();
 	}
-	
+
+	#ifdef GIA_LRP_DEBUG
+	currentTagInPlainText = firstTagInPlainText;
+	while(currentTagInPlainText->nextSentence != NULL)
+	{				
+		firstTagInPlainTextSentence = currentTagInPlainText;
+		currentTagInPlainTextSentence = firstTagInPlainTextSentence;
+		while(currentTagInPlainTextSentence->nextTag != NULL)
+		{			
+			cout << "currentTagInPlainTextSentence->tagName = " << currentTagInPlainTextSentence->tagName << endl;
+			
+			currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
+		}
+		currentTagInPlainText = currentTagInPlainText->nextSentence;
+	}
+	#endif
+		
 	return result;
 }
 
