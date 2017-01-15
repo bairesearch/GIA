@@ -232,7 +232,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 					pos5.x = timeConditionNodePrintX;
 					pos5.y = timeConditionNodePrintY;	
 					pos5.z = DRAW_CONNECTION_Z;
-					currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject, entityNode->timeConditionNode->conditionName);
+					currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject, "time");
 				}
 			}		
 		}

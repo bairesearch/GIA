@@ -85,7 +85,7 @@ using namespace std;
 #define DRAW_Y_SPACE_BETWEEN_ACTION_DEFINITION_NODES (30)	//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_ACTION_DEFINITION_NODES (-50)	//should not be used during initialiseForPrint
 
-#define DRAW_Y_SPACE_BETWEEN_CONDITION_NODES (10)		//should not be used during initialiseForPrint
+#define DRAW_Y_SPACE_BETWEEN_CONDITION_NODES (20)		//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_CONDITION_NODES (30)		//should not be used during initialiseForPrint
 #define DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (15)	//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (0)	//should not be used during initialiseForPrint

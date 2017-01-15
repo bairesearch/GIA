@@ -1443,7 +1443,47 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			}
 			currentRelationInList = currentRelationInList->next;
 		}			
-				
+
+		 //cout << "3c pass; define object/subject of preposition" << endl;
+		 currentRelationInList = currentSentenceInList->firstRelationInList;
+		while(currentRelationInList->next != NULL)
+		{	
+			//cout << "here1" << endl;
+			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+														
+			if(currentRelationInList->relationType == RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION)
+			{					
+				//now find the associated object..
+ 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				while(currentRelationInList2->next != NULL)
+				{	
+					bool partnerTypeRequiredFound = false;					
+					if(currentRelationInList2->relationType == RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION)
+					{
+						partnerTypeRequiredFound = true;
+					}
+						
+					if(partnerTypeRequiredFound)
+					{		
+						if(currentRelationInList2->relationFunctionIndex == currentRelationInList->relationFunctionIndex)
+						{//found a matching preposition of object-subject relationship
+							//cout << "partnerTypeRequiredFound: currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
+						
+							GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex];
+							GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+							string conditionName = GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex]->entityName;
+							
+							addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionName);
+						}
+					}
+					
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+			}
+			currentRelationInList = currentRelationInList->next;
+		}
+		
+						
 		//cout << "4 pass; define action conditions" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
