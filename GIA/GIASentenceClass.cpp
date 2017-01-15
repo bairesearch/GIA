@@ -98,7 +98,7 @@ Sentence::~Sentence(void)
 
 }
 
-#ifdef GIA_RELEX_USE_PARAGRAPH_TAG
+#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 
 Paragraph::Paragraph(void)
 {	

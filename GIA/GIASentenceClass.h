@@ -21,7 +21,7 @@
 #include <string>
 using namespace std;
 
-//#define GIA_RELEX_USE_PARAGRAPH_TAG
+#define GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 
 #define FEATURE_GRAMMATICAL_TENSE_DATE "date"
 #define FEATURE_GRAMMATICAL_TENSE_PAST "past"
@@ -111,7 +111,7 @@ public:
 	bool isQuestion;
 };
 
-#ifdef GIA_RELEX_USE_PARAGRAPH_TAG
+#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 class Paragraph
 {
 public:

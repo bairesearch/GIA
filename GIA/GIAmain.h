@@ -16,6 +16,13 @@
 
 #define GIA_DEBUG_PRINT_QUERY_SEMANTIC_NETWORK
 
+#define CFF_XML_TAG_nlparse ((string)"nlparse")
+#define CFF_XML_TAG_paragraph ((string)"paragraph")
+#define CFF_XML_TAG_sentence ((string)"sentence")
+#define CFF_XML_TAG_parse ((string)"parse")
+#define CFF_XML_TAG_relations ((string)"relations")
+#define CFF_XML_TAG_features ((string)"features")
+
 #define GIA_TM_STRUCT_YEAR_OFFSET 1900
 
 #define GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE

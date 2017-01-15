@@ -90,12 +90,6 @@ using namespace std;
 #include "LDsprite.h"
 #include "LDopengl.h"
 
-#define CFF_XML_TAG_nlparse ((string)"nlparse")
-#define CFF_XML_TAG_sentence ((string)"sentence")
-#define CFF_XML_TAG_parse ((string)"parse")
-#define CFF_XML_TAG_relations ((string)"relations")
-#define CFF_XML_TAG_features ((string)"features")
-
 static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any of the following\n"
 "\n\n\t-itxt [string]  : plain text .txt inputText filename to be parsed by Relex (def: inputText.txt)"
 "\n\n\t-irelex [string] : RelEx compact outputText .xml inputText filename (def: relexCompactOutput.xml)"
@@ -758,7 +752,7 @@ bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *en
 {
 	bool result = true;
 	
-	#ifdef GIA_RELEX_USE_PARAGRAPH_TAG
+	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 	Paragraph * firstParagraphInList = new Paragraph();
 	Paragraph * currentParagraph = firstParagraphInList;
 	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;	
@@ -771,7 +765,7 @@ bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *en
 	XMLParserTag * firstTagInXMLFile = new XMLParserTag();
 	readXMLFile(inputTextRelexXMLFileName, firstTagInXMLFile);
 
-	#ifdef GIA_RELEX_USE_PARAGRAPH_TAG	
+	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS	
 	XMLParserTag * currentTag2 = firstTagInXMLFile;
 	currentTag2 = parseTagDownALevel(currentTag2, CFF_XML_TAG_nlparse, &result);
 	if(result)
@@ -782,10 +776,12 @@ bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *en
 			if(currentTag2->name == CFF_XML_TAG_paragraph)
 			{
 				XMLParserTag * currentTag = currentTag2;
+				currentTag = parseTagDownALevel(currentTag, CFF_XML_TAG_paragraph, &result);
 	#else
 				XMLParserTag * currentTag = firstTagInXMLFile;
-	#endif
 				currentTag = parseTagDownALevel(currentTag, CFF_XML_TAG_nlparse, &result);
+	#endif
+				
 				if(result)
 				{
 					//now for every sentence;
@@ -842,10 +838,10 @@ bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *en
 					}
 
 				}
-	#ifdef GIA_RELEX_USE_PARAGRAPH_TAG
-				Sentence * newParagraph = new Paragraph();		
+	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
+				Paragraph * newParagraph = new Paragraph();		
 				newParagraph->previous = currentParagraph;
-				newParagraph->next = newParagraph();
+				currentParagraph->next = newParagraph;
 				firstSentenceInList = newParagraph->firstSentenceInList;	
 				currentSentence = firstSentenceInList;				
 				currentParagraph = currentParagraph->next;
@@ -859,7 +855,11 @@ bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *en
 	setTranslatorPropertyEntityNodesList(propertyEntityNodesList);
 	setTranslatorActionEntityNodesList(actionEntityNodesList);
 	setTranslatorConditionEntityNodesList(conditionEntityNodesList);
-	convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList);
+	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
+	convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstParagraphInList);
+	#else
+	convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList);	
+	#endif
 	
 	return result;
 }
