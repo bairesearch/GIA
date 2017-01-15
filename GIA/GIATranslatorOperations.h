@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i15a 17-Apr-2012
+ * Project Version: 1i15b 17-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -512,6 +512,9 @@ static string redistributionStanfordRelationsMultiwordPrepositionSubjObjRelation
 
 
 static string featureQueryWordAcceptedByAlternateMethodNameArray[FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES] = {"which"};
+
+#define RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES (3)
+static string relationTypeQVariableNameArray[RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE, REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY};
 
 static string relationTypePropositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {"in", "on", "after", "ago", "before", "between", "by", "during", "for", "to", "till", "until", "past", "since", "up_to", "within", "over", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
 	//http://www.englisch-hilfen.de/en/grammar/preposition_time.htm + is [time is] etc
