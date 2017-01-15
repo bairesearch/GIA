@@ -493,7 +493,7 @@ void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntity
 	addConditionToProperty(entityNode, conditionEntityNode, conditionTypeConceptEntity);
 }
 
-void addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionDefinitionNode, GIAEntityNode * conditionTypeConceptEntity)
+void addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionDefinitionNode, GIAEntityNode * conditionTypeConceptEntity, bool negative)
 {
 	if(entityNode->hasAssociatedInstanceTemp)
 	{
@@ -505,6 +505,8 @@ void addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GI
 	}
 	
 	GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
+	newCondition->negative = negative;	//overwrite negative with orrect one from context; ie that from "being" entity node
+	//cout << "negative = " << negative;
 	
 	newCondition->conditionSubjectEntity = entityNode;	
 	entityNode->ConditionNodeList.push_back(newCondition);
@@ -513,7 +515,7 @@ void addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GI
 	conditionDefinitionNode->EntityNodeDefinitionReverseList.push_back(newCondition);		
 }
 
-void addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionPropertyNode, GIAEntityNode * conditionTypeConceptEntity)
+void addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionPropertyNode, GIAEntityNode * conditionTypeConceptEntity, bool negative)
 {
 	if(entityNode->hasAssociatedInstanceTemp)
 	{
@@ -525,6 +527,7 @@ void addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIA
 	}	
 	
 	GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
+	newCondition->negative = negative;	//overwrite negative with correct one from context; ie that from "having" entity node
 	
 	newCondition->conditionSubjectEntity = entityNode;
 	entityNode->ConditionNodeList.push_back(newCondition);
@@ -2259,17 +2262,19 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 										#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_CONDITION_DEFINITION									
 										else if(passdefinition || partnerTypeObjectSpecialConditionFound)
 										{
+											bool negative = subjectObjectFunctionEntityArray[SUBJECT_INDEX]->negative;
 											subjectIsConnectedToAnAdvMod = true;
 											actionOrPropertyConditionEntity = objectEntityTemp;
-											addOrConnectBeingDefinitionConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);
+											addOrConnectBeingDefinitionConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, negative);
 										}
 										#endif
 										#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_CONDITION_PROPERTY
 										else if(passcomposition)
 										{
+											bool negative = subjectObjectFunctionEntityArray[SUBJECT_INDEX]->negative;
 											subjectIsConnectedToAnAdvMod = true;
 											actionOrPropertyConditionEntity = objectEntityTemp;	//= subjectObjectEntityArray[SUBJECT_INDEX], = old subjectEntityTemp;
-											addOrConnectHavingPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);
+											addOrConnectHavingPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, negative);
 										}
 										#endif
 										else

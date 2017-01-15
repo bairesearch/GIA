@@ -461,13 +461,16 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				}
 				else
 				{
-					
 					sprintf(quantityNumberStringcharstar, "%d", entityNode->quantityNumber);
-					
 				}
 				nameOfBox = nameOfBox + quantityNumberStringcharstar + " " + entityNode->entityName;
 				
 			}
+			else if(entityNode->negative)
+			{
+				nameOfBox = nameOfBox + "!" + entityNode->entityName;
+			}
+			
 			else
 			{
 				nameOfBox = entityNode->entityName;

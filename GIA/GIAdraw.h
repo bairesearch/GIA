@@ -28,7 +28,7 @@ using namespace std;
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
-#define GIA_DRAW_DEBUG
+//#define GIA_DRAW_DEBUG
 
 #define GIA_USE_SVG_ELLIPTICAL_BOXES (true)
 
