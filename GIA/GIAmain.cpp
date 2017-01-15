@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i13a 15-Apr-2012
+ * Project Version: 1i13b 15-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
@@ -157,11 +157,11 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-width [int]       : raster graphics width in pixels (def: 640)"
 "\n\t-height [int]      : raster graphics height in pixels (def: 480)"
 "\n\t-nlprelation [int] : NLP dependency relation parser to be executed by GIA (0 - Relex, 1 - Stanford Core NLP, 2 - Stanford Parser [def])"
-"\n\t-nlpfeature [int]  : NLP feature parser to be executed by GIA (def: same developer as nlprelation) (0 - Relex, 1 - Stanford Core NLP [def], 2 - Stanford Parser (ie, none))"
-"\n\t-nlpcompmode       : sets Relex into Stanford compatibilty mode (Relex dependency relation parser creates Stanford relations type) [UNIMPLEMENTED]"
-"\n\t-nlprelationq [int]: query NLP dependency relation parser to be executed by GIA (0 - Relex, 1 - Stanford Core NLP, 2 - Stanford Parser [def])"
-"\n\t-nlpfeatureq [int] : query NLP feature parser to be executed by GIA (def: same developer as nlprelationq) (0 - Relex, 1 - Stanford Core NLP [def], 2 - Stanford Parser (ie, none))"
-"\n\t-nlpcompmodeq      : query sets Relex into Stanford compatibilty mode (Relex dependency relation parser creates Stanford relations type) [UNIMPLEMENTED]"
+"\n\t-nlpfeature [int]  : NLP feature parser to be executed by GIA (0 - Relex, 1 - Stanford Core NLP [def], 2 - Stanford Parser (ie, none))"
+"\n\t-nlpcompmode       : sets Relex into Stanford compatibility mode (Relex dependency relation parser creates Stanford relations type) [UNIMPLEMENTED]"
+"\n\t-nlprelationq [int]: query NLP dependency relation parser to be executed by GIA (0 - Relex [def], 1 - Stanford Core NLP, 2 - Stanford Parser)"
+"\n\t-nlpfeatureq [int] : query NLP feature parser to be executed by GIA (0 - Relex [def], 1 - Stanford Core NLP, 2 - Stanford Parser (ie, none))"
+"\n\t-nlpcompmodeq      : query sets Relex into Stanford compatibility mode (Relex dependency relation parser creates Stanford relations type) [UNIMPLEMENTED]"
 "\n"
 "\n\t-workingfolder [string]    : working directory name for input files (def: same as exe)"
 "\n\t-nlprelexefolder [string]  : exe directory name for NLP dependency relation parser executable (def: same as exe)"
@@ -190,12 +190,12 @@ int main(int argc,char **argv)
 		 
 	bool result = true;
 
-	int NLPfeatureParser = GIA_NLP_FEATURE_PARSER_DEFAULT;
-	int NLPdependencyRelationsParser = GIA_NLP_DEPENDENCY_RELATIONS_PARSER_DEFAULT;
+	int NLPfeatureParser = GIA_NLP_FEATURE_PARSER_FOR_INPUT_TEXT_DEFAULT;
+	int NLPdependencyRelationsParser = GIA_NLP_RELATIONS_PARSER_FOR_INPUT_TEXT_DEFAULT;
 	bool NLPrelexCompatibilityMode = false;		//sets Relex dependency Relations to Stanford type
 
-	int queryNLPfeatureParser = GIA_NLP_FEATURE_PARSER_DEFAULT;
-	int queryNLPdependencyRelationsParser = GIA_NLP_DEPENDENCY_RELATIONS_PARSER_DEFAULT;
+	int queryNLPfeatureParser = GIA_NLP_FEATURE_PARSER_FOR_INPUT_QUERY_DEFAULT;
+	int queryNLPdependencyRelationsParser = GIA_NLP_RELATIONS_PARSER_FOR_INPUT_QUERY_DEFAULT;
 	bool queryNLPrelexCompatibilityMode = false;		//sets Relex dependency Relations to Stanford type
 		
 	bool useInputTextPlainTXTFile = false;
@@ -550,7 +550,7 @@ int main(int argc,char **argv)
 								
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe - Project Version: 1i13a 15-Apr-2012" << endl;
+			cout << "GIA.exe - Project Version: 1i13b 15-Apr-2012" << endl;
 			exit(1);
 		}
 
