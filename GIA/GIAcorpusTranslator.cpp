@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j3a 05-June-2015
+ * Project Version: 2j4a 07-June-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -997,9 +997,9 @@ bool generateAllPermutationsFromSemanticRelationsFile(string corpusFileName, int
 
 				if(foundAtLeastOneRelation)
 				{
-					string corpusSubsetFileName = createNewCorpusFileAndOpenItForWriting(firstFeatureInSentenceSubset);
+					string corpusSubsetFileName = prepareNewCorpusFileTextForWriting(firstFeatureInSentenceSubset);
 					saveTextToCurrentCorpusFile(sentenceText);
-					closeCorpusFile();
+					writeCorpusFile(corpusSubsetFileName);
 				}
 
 				firstFeatureInSentenceSubset = firstFeatureInSentenceSubset->next;

@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j3a 05-June-2015
+ * Project Version: 2j4a 07-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -49,6 +49,7 @@
 #include "GIAtranslatorDefineReferencing.h"
 #include "GIAtranslatorDefineSubstances.h"
 #include "GIAtranslatorLinkEntities.h"
+#include "GIAtranslatorLinkEntitiesDynamic.h"
 #include "GIAtranslatorApplyAdvancedFeatures.h"
 /*
 #endif
@@ -643,7 +644,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	if(!linkPreestablishedReferencesGIA)
 	{
 		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
-		corpusFileName = createNewCorpusFileAndOpenItForWriting(currentSentenceInList->firstFeatureInList);
+		corpusFileName = prepareNewCorpusFileTextForWriting(currentSentenceInList->firstFeatureInList);
 		string sentenceText = regenerateSentenceText(currentSentenceInList->firstFeatureInList, true, NLPfeatureParser);
 		sentenceText = sentenceText + STRING_NEW_LINE;	//required to add new line at end of parsingWordsAndTags as per Stanford Parser specification (see parseStanfordParserFile)
 		saveTextLineToCurrentCorpusFile(sentenceText);
@@ -970,12 +971,10 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	linkEntities(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType, linkPreestablishedReferencesGIA);
 	#endif
 
-	#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "linkEntitiesDynamicPrenominalModifierOfNoun{}:" << endl;
+	cout << "linkEntitiesDynamic{}:" << endl;
 	#endif
-	linkEntitiesDynamicPrenominalModifierOfNoun(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, entityNodesActiveListSentences);
-	#endif
+	linkEntitiesDynamic(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, entityNodesActiveListSentences);
 	
 
 	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
@@ -1197,7 +1196,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	{
 		string sentenceText = "";	//required to add new line at end of parsingTypedDependencies as per Stanford Parser specification (see parseStanfordParserFile)
 		saveTextLineToCurrentCorpusFile(sentenceText);
-		closeCorpusFile();
+		writeCorpusFile(corpusFileName);
 		#ifdef GIA2_CONNECTIONIST_NETWORK
 		if(!generateAllPermutationsFromSemanticRelationsFile(corpusFileName, NLPfeatureParser))
 		{

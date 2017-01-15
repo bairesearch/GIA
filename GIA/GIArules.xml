@@ -105,7 +105,7 @@
 	</draw>
 	<translator>
 		<file name="GIAtranslatorRedistributeStanfordRelations">
-		
+			
 			<!-- XML only function (not hard coded) --> 
 			<!-- #ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER -->
 			<function name="redistributeStanfordRelationsCase">
@@ -2693,6 +2693,51 @@
 				</paramDepRel>
 			
 			</function>
+			
+			<!-- XML only function (not hard coded) --> 
+			<!-- #ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER -->
+			<function name="redistributeStanfordRelationsConnectToAndFromConditions">
+				
+				<!-- #ifdef STANFORD_CORENLP_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND -->
+				<example><!--
+				eg1 Move the chicken from the pie to the apple.. _obj(move[1], chicken[3]) + prep_from(move[1], pie[6]) + prep_to(pie[6], apple[9]) -> _obj(move[1], chicken[3]) + prep_from(move[1], pie[6]) + prep_to(move[1], apple[9])	[assign !sameReferenceSet]
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="3" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_obj" />
+				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="from" relationArrayTestSize="1" />
+				<option useRelationArrayTest="true" REL="3" REL_ENT="3" relationArrayTest="to" relationArrayTestSize="1" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="3" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+				<!-- #ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_CORRECT_SAME_REFERENCE_SET -->
+				<!--
+				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSet="true" REL="2" />
+				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSet="true" REL="3" />
+				-->
+				<!-- #endif -->
+				</paramDepRel>
+				<!-- #endif -->
+				
+				<!-- #ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_CORRECT_SAME_REFERENCE_SET -->
+				<!--
+				<example>
+				eg1 Move the chicken from the pie to the apple.. _obj(move[1], chicken[3]) + prep_from(move[1], pie[6]) -> _obj(move[1], chicken[3]) + prep_from(move[1], pie[6])	[assign !sameReferenceSet]
+				</example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="2" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_obj" />
+				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="from" relationArrayTestSize="1" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSet="true" REL="2" />
+				</paramDepRel>
+				-->
+				<!-- #endif -->		
+				
+			</function>
+			<!-- #endif -->
+			<!-- #endif -->
+			
 
 		</file>
 		<file name="GIAtranslatorRedistributeRelexRelations">

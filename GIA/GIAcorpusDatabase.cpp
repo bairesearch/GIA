@@ -26,7 +26,7 @@
  * File Name: GIAcorpusDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j3a 05-June-2015
+ * Project Version: 2j4a 07-June-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -44,7 +44,7 @@
 #ifdef GIA_USE_CORPUS_DATABASE
 
 static string corpusDatabaseFolderName;
-ofstream corpusWriteFileObjectStream; //(conceptEntityNodesListFileName.c_str());
+string corpusWriteFileString;
 
 void initialiseCorpusDatabase(string newCorpusDatabaseFolderName)
 {
@@ -52,27 +52,40 @@ void initialiseCorpusDatabase(string newCorpusDatabaseFolderName)
 }
 
 //preconditions: determineGIAconnectionistNetworkPOStypeNames has been executed
-string createNewCorpusFileAndOpenItForWriting(GIAfeature* firstFeatureInSentence)
+string prepareNewCorpusFileTextForWriting(GIAfeature* firstFeatureInSentence)
 {
+	corpusWriteFileString = "";
 	string corpusFileName = corpusDBgenerateFileName(firstFeatureInSentence);
-	corpusWriteFileObjectStream.open(corpusFileName);  //= new ofstream(corpusFileName);
 	return corpusFileName;
 }
 
-void closeCorpusFile()
+void writeCorpusFile(string corpusFileName)
 {
+	ofstream corpusWriteFileObjectStream;
+	corpusWriteFileObjectStream.open(corpusFileName);  //= new ofstream(corpusFileName);
+	writeStringToFileObject(corpusWriteFileString, &corpusWriteFileObjectStream);
 	corpusWriteFileObjectStream.close();
 }
 
 void saveTextLineToCurrentCorpusFile(string sentenceText)
 {
-	writeStringToFileObject(sentenceText, &corpusWriteFileObjectStream);
-	writeStringToFileObject(STRING_NEW_LINE, &corpusWriteFileObjectStream);
+	corpusWriteFileString = corpusWriteFileString + sentenceText;
+	corpusWriteFileString = corpusWriteFileString + STRING_NEW_LINE;
 }
 
 void saveTextToCurrentCorpusFile(string sentenceText)
 {
-	writeStringToFileObject(sentenceText, &corpusWriteFileObjectStream);
+	corpusWriteFileString = corpusWriteFileString + sentenceText;
+}
+
+void removeTextFromCurrentCorpusFile(string sentenceText)
+{
+	corpusWriteFileString = replaceAllOccurancesOfString(&corpusWriteFileString, sentenceText, "")	//not currently used
+}
+
+void removeTextLineFromCurrentCorpusFile(string sentenceText)
+{
+	corpusWriteFileString = replaceAllOccurancesOfString(&corpusWriteFileString, (sentenceText+STRING_NEW_LINE), "")	//not currently used
 }
 
 
