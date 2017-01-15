@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1e 31-August-2016
+ * Project Version: 2m1f 31-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -255,7 +255,7 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	}
 
 	#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-	dreamModeLinkSpecificConceptsAndActions(entityNodesActiveListConcepts);
+	dreamModeLinkSpecificConceptsAndActions();
 	#endif
 }
 #endif
@@ -366,7 +366,7 @@ void convertSentenceListRelationsIntoGIAnetworkNodes(unordered_map<string, GIAen
 	}
 
 	#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-	dreamModeLinkSpecificConceptsAndActions(entityNodesActiveListConcepts);
+	dreamModeLinkSpecificConceptsAndActions();
 	#endif
 }
 
@@ -778,6 +778,9 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	locateAndAddAllConceptEntities(currentSentenceInList, GIAentityNodeArrayFilled, GIAconceptNodeArray, entityNodesActiveListConcepts, sentenceConceptEntityNodesList, NLPdependencyRelationsType, GIAfeatureTempEntityNodeArray);
 
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+	linkSubclassEntitiesWithParentClassEntities(GIAentityNodeArrayFilled, GIAconceptNodeArray, entityNodesActiveListConcepts, sentenceConceptEntityNodesList);
+	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -1248,6 +1251,53 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 }
 
+#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+void linkSubclassEntitiesWithParentClassEntities(bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* sentenceConceptEntityNodesList)
+{
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{
+		if(GIAentityNodeArrayFilled[w])
+		{
+			GIAentityNode* conceptEntity = GIAentityNodeArray[w];
+			if(conceptEntity->isSubClass)
+			{
+				string parentClassName = getParentClassEntityNameFromSubClassEntityName(conceptEntity->entityName);
+
+				bool subclassToParentEntityConnectionAlreadyMade = false;
+				GIAentityNode* parentEntity = NULL;
+				for(vector<GIAentityConnection*>::iterator definitionNodeListIterator = conceptEntity->entityNodeDefinitionList->begin(); definitionNodeListIterator < conceptEntity->entityNodeDefinitionList->end(); definitionNodeListIterator++)
+				{
+					GIAentityNode* definitionEntity = (*definitionNodeListIterator)->entity;
+					if(definitionEntity->isConcept)	//assume true
+					{
+						if(definitionEntity->entityName == parentClassName)
+						{
+							subclassToParentEntityConnectionAlreadyMade = true;
+						}
+					}
+				}
+
+				if(!subclassToParentEntityConnectionAlreadyMade)
+				{
+					#ifdef NLC_DEBUG
+					cout << "linkSubclassEntitiesWithParentClassEntities{}: entity->isSubClass - creating connection between subclass entity and parent, parentClassName = " << parentClassName << endl;
+					#endif
+					
+					bool parentConceptEntityAlreadyExistant = false;
+					GIAentityNode* parentConceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&parentClassName, &parentConceptEntityAlreadyExistant, entityNodesActiveListConcepts);
+					sentenceConceptEntityNodesList->push_back(parentConceptEntity);
+					addDefinitionToEntity(conceptEntity, parentConceptEntity, true);
+					
+					#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
+					//parentConceptEntity->entityIndexTemp = conceptEntity->entityIndexTemp;	//there is no entity index associated with the subclass parent
+					parentConceptEntity->sentenceIndexTemp = conceptEntity->sentenceIndexTemp;
+					#endif
+				}								
+			}
+		}
+	}
+}
+#endif
 
 void disableConceptEntitiesBasedOnFeatureTempEntityNodeArray(bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAentityNode* GIAfeatureTempEntityNodeArray[])
 {
@@ -1277,62 +1327,16 @@ void disableEntitiesBasedOnFeatureTempEntityNodeArray(bool GIAentityNodeArrayFil
 }
 
 #ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-void dreamModeLinkSpecificConceptsAndActions(unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts)
+void dreamModeLinkSpecificConceptsAndActions()
 {
 	vector<GIAentityNode*>* entityNodesActiveListComplete = getTranslatorEntityNodesCompleteList();
 
 	identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(entityNodesActiveListComplete);
-
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
-	linkSubclassEntitiesWithParentClassEntities(entityNodesActiveListComplete, entityNodesActiveListConcepts);
-	#endif
 	
 	#ifdef GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES
 	createAndLinkNonSpecificConceptsForAllEntities(entityNodesActiveListComplete);
 	#endif
 }
-
-#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
-void linkSubclassEntitiesWithParentClassEntities(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts)
-{
-	for(vector<GIAentityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
-	{
-		GIAentityNode* entity = (*entityIter);
-		if(entity->isSubClass)
-		{
-			if(!(entity->isConcept))
-			{
-				GIAentityNode* conceptEntity = getPrimaryConceptNodeDefiningInstance(entity);
-
-				string parentClassName = getParentClassEntityNameFromSubClassEntityName(entity->entityName);
-				
-				bool subclassToParentEntityConnectionAlreadyMade = false;
-				GIAentityNode* parentEntity = NULL;
-				for(vector<GIAentityConnection*>::iterator definitionNodeListIterator = conceptEntity->entityNodeDefinitionList->begin(); definitionNodeListIterator < conceptEntity->entityNodeDefinitionList->end(); definitionNodeListIterator++)
-				{
-					GIAentityNode* definitionEntity = (*entityIter);
-					if(definitionEntity->isConcept)	//assume true
-					{
-						if(definitionEntity->entityName == parentClassName)
-						{
-							subclassToParentEntityConnectionAlreadyMade = true;
-						}
-					}
-				}
-				
-				if(!subclassToParentEntityConnectionAlreadyMade)
-				{
-					//cout << "linkSubclassEntitiesWithParentClassEntities{}: entity->isSubClass - creating connection between subclass entity and parent" << endl;
-
-					bool parentConceptEntityAlreadyExistant = false;
-					GIAentityNode* parentConceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&parentClassName, &parentConceptEntityAlreadyExistant, entityNodesActiveListConcepts);
-					addDefinitionToEntity(conceptEntity, parentConceptEntity, true);
-				}								
-			}
-		}
-	}
-}
-#endif
 	
 #ifdef GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES
 void createAndLinkNonSpecificConceptsForAllEntities(vector<GIAentityNode*>* entityNodesActiveListComplete)
