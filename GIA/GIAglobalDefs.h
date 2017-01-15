@@ -612,9 +612,9 @@
 
 #define GIA_SPATIOTEMPORAL_NETWORK		//yet to implement ~2h2a/17-November-2014+
 #ifdef GIA_SPATIOTEMPORAL_NETWORK
-	#define GIA_LRP_DETECT_PREPOSITION_TYPE		//added 2h1a/14-November-2014 - required for NLC 1m1a+
 	#define GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS	//added 2h1a/14-November-2014 - required for NLC 1m1a+
 	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+		#define GIA_LRP_DETECT_PREPOSITION_TYPE		//added 2h1a/14-November-2014 - required for NLC 1m1a+
 		#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW	//added 2h1c/14-November-2014 - required for NLC 1m1a+
 	#endif
 #endif
