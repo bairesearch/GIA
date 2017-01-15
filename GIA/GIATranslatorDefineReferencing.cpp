@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o4c 16-August-2012
+ * Project Version: 1o4d 17-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1178,6 +1178,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 
 	#ifdef GIA_DATABASE_CLEAR_CACHE_EVERY_SENTENCE
 	#ifdef GIA_USE_DATABASE
+	int useDatabaseOriginal = getUseDatabase();
 	if(getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE)
 	{
 		initialiseDBentityNodesTempActiveListComplete();
@@ -1205,13 +1206,16 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		referenceTraceParameters.intrasentenceReference = false;
 		#endif
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-		cout << "1. createGIACoreferenceInListBasedUponIdentifiedReferenceSet" << endl;
+		cout << "1. createGIACoreferenceInListBasedUponIdentifiedReferenceSet (!intrasentenceReference)" << endl;
 		#endif
 		createGIACoreferenceInListBasedUponIdentifiedReferenceSet(sentenceConceptEntityNodesList, entityNodesActiveListConcepts, &referenceTraceParameters, &maxNumberOfMatchedNodes, &queryEntityWithMaxNumberNodesMatched, &networkEntityWithMaxNumberNodesMatched, &foundAtLeastOneMatch);
 		#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-		cout << "2. createGIACoreferenceInListBasedUponIdentifiedReferenceSet" << endl;
+		cout << "2. createGIACoreferenceInListBasedUponIdentifiedReferenceSet (intrasentenceReference)" << endl;
 		#endif
+		#ifdef GIA_USE_DATABASE
+		setUseDatabase(GIA_USE_DATABASE_FALSE);
+		#endif		
 		referenceTraceParameters.intrasentenceReference = true;
 		bool foundAtLeastOneMatchIntraSentence = false;
 		createGIACoreferenceInListBasedUponIdentifiedReferenceSet(sentenceConceptEntityNodesList, sentenceConceptEntityNodesList, &referenceTraceParameters, &maxNumberOfMatchedNodes, &queryEntityWithMaxNumberNodesMatched, &networkEntityWithMaxNumberNodesMatched, &foundAtLeastOneMatchIntraSentence);	//always perform intrasentence reference detection last (as this takes priority)
@@ -1227,6 +1231,9 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		{
 			referenceTraceParameters.intrasentenceReference = false;
 		}
+		#ifdef GIA_USE_DATABASE
+		setUseDatabase(useDatabaseOriginal);
+		#endif		
 		#endif
 
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG

@@ -23,125 +23,11 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o4c 16-August-2012
+ * Project Version: 1o4d 17-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
 
-/* Additional Dependencies: NLP (Relex/Standord Core NLP/Stanford Parser)
-install relex as per relex installation instructions	"relex installation procedure EL6.txt"
-su root
-cp -rf relex-1.3.0 /home/baiappserver/bin
-cd /home/baiappserver/bin
-chown -R baiappserver:baiappserver /home/baiappserver/bin/APPLICATION
-
-where APPLICATION = relex-1.3.0 / relex-1.4.0 / stanford-parser-2012-03-09 / stanford-corenlp-2012-04-03
-
-*/
-
-
-/* Additional Dependencies: Relex
-
-NB execute-relex.sh contains the following text;
-
-	export LANG=en_US.UTF-8
-
-	VM_OPTS="-Xmx1024m"
-
-	RELEX_OPTS="\
-		-Djava.library.path=/usr/lib:/usr/local/lib \
-		-Drelex.algpath=data/relex-semantic-algs.txt \
-		-Dwordnet.configfile=data/wordnet/file_substances.xml \
-		"
-
-	CLASSPATH="-classpath \
-	bin:\
-	/usr/local/share/java/opennlp-tools-1.4.3.jar:\
-	/usr/local/share/java/opennlp-tools-1.3.0.jar:\
-	/usr/local/share/java/maxent-2.5.2.jar:\
-	/usr/local/share/java/maxent-2.4.0.jar:\
-	/usr/local/share/java/trove.jar:\
-	/usr/local/share/java/jwnl.jar:\
-	/usr/local/share/java/jwnl-1.3.3.jar:\
-	/usr/share/java/commons-logging.jar:\
-	/usr/share/java/gnu-getopt.jar:\
-	/usr/local/share/java/linkgrammar.jar:\
-	/usr/share/java/linkgrammar.jar:\
-	/usr/share/java/xercesImpl.jar:\
-	/usr/share/java/xml-apis.jar:\
-	/opt/GATE-4.0/lib/PDFBox-0.7.2.jar:\
-	#/opt/GATE-4.0/bin/gate.jar:\
-	/opt/GATE-4.0/lib/jdom.jar:\
-	/opt/GATE-4.0/lib/jasper-compiler-jdt.jar:\
-	/opt/GATE-4.0/lib/nekohtml-0.9.5.jar:\
-	/opt/GATE-4.0/lib/ontotext.jar:\
-	"
-
-	cat $3/$1 | java $VM_OPTS $RELEX_OPTS $CLASSPATH relex.WebFormat -g --url "$3/$1" > $3/$2
-
-Make sure to set the nlprelexfolder to the folder where relex-1.x.0 presides, eg;
-
-./OpenGIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlprelation 0 -notshow
-./OpenGIA.exe -itxt inputText.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -notshow
-
-*/
-
-/* Additional Dependencies: Stanford NLP Core
-
-NB execute-stanfordCoreNLP.sh contains the following text;
-
-	java -cp stanford-corenlp-2012-04-03.jar:stanford-corenlp-2012-03-09-models.jar:xom.jar:joda-time.jar -Xmx3g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file $3/$1 -outputDirectory $4 -outputExtension $5
-
-NB execute-stanfordCoreNLP.bat contains the following text;
-
-	"C:\Program Files\Java\jre7\bin\java.exe" -d64 -cp stanford-corenlp-2012-04-03.jar;stanford-corenlp-2012-03-09-models.jar;xom.jar;joda-time.jar -Xmx3g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file %3/%1 -outputDirectory %4 -outputExtension %5
-
-./OpenGIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlprelation 1 -notshow
-
-*/
-
-/* Additional Dependencies: Stanford Parser
-
-NB execute-stanfordParser.sh contains the following text;
-
-	#!/usr/bin/env bash
-	scriptdir=`dirname $0`
-	java -mx2000m -cp "$scriptdir/*:" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "wordsAndTags,penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz $3/$1 > $4/$2
-
-NB execute-stanfordParser.bat contains the following text;
-
-	@echo off
-	:: Runs the English PCFG parser on one or more files, printing trees only
-	:: usage: lexparser fileToparse
-	"C:\Program Files\Java\jre7\bin\java.exe" -d64 -mx150m -cp "*;" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "wordsAndTags,penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz %3/%1 > %4/%2
-
-./OpenGIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-2012-03-09" -nlprelation 2 -notshow
-
-*/
-
-/*
-Additional example where relations + features are parsed from different NLP files;
-./OpenGIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelation 2 -nlpfeature 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-2012-03-09" -notshow
-./OpenGIA.exe -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-2012-03-09" -notshow
-OpenGIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelation 2 -nlpfeature 1 -nlprelexfolder "E:/Files/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "E:/Files/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "E:/Files/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -notshow
-OpenGIA.exe -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelexfolder "E:/Files/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "E:/Files/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "E:/Files/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -notshow
-
-Additional example where relations + features parsed from different NLP file, queries parsed using different NLP file;
-./OpenGIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-2012-03-09" -notshow
-[Relex not supported in Windows]
-
-Additional example where relations + features parsed from different NLP file, queries parsed using same/corresponding NLP files;
-./OpenGIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-2012-03-09" -notshow
-OpenGIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "E:/Files/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "E:/Files/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "E:/Files/soft/BAISource/stanford/parser/stanford-parser-2012-03-09"
-
-*/
-
-/*
-GIA Database is a (Linux) filesystem structure of the format:
-	//server/database/w/o/r/word1/0/0/1/referencesOfInstance1.txt
-	//server/database/w/o/r/word1/0/0/2/referencesOfInstance2.txt
-	/server/database/w/o/r/word2/0/0/1/referencesOfInstance1.txt etc
-*/
 
 
 #include <ctime>
@@ -657,7 +543,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1o4c 16-August-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1o4d 17-August-2012" << endl;
 			exit(1);
 		}
 

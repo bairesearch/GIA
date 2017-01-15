@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o4c 16-August-2012
+ * Project Version: 1o4d 17-August-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -668,23 +668,30 @@ void DBreadConceptEntityNodesLoadedList()	//unordered_map<string, bool> *DBconce
 
 void DBreadVectorConnections(GIAEntityNode * entityNode, int connectionType)
 {
-	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "\tDBreadVectorConnections(): entity = " << entityNode->entityName << ", connectionType = " << connectionType << endl;
+	#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
+	if(!(entityNode->disabled))	//Added 17 August 2012
+	{
 	#endif
-
-	if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
-	{
-		DBreadVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsArray[connectionType]));
-		entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType] = true;
-	}
-	else
-	{
 		#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-		cout << "!DBreadVectorConnectionsReferences (already loaded)" << endl;
+		cout << "\tDBreadVectorConnections(): entity = " << entityNode->entityName << ", connectionType = " << connectionType << endl;
 		#endif
-	}
 
-	DBreadVectorConnectionEntities(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsArray[connectionType]));
+		if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
+		{
+			DBreadVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsArray[connectionType]));
+			entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType] = true;
+		}
+		else
+		{
+			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
+			cout << "!DBreadVectorConnectionsReferences (already loaded)" << endl;
+			#endif
+		}
+
+		DBreadVectorConnectionEntities(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsArray[connectionType]));
+	#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
+	}
+	#endif
 }
 
 //this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
@@ -797,7 +804,7 @@ void DBreadVectorConnectionsReference(string * entityName, long idInstance, int 
 void DBreadVectorConnectionEntities(string * entityName, long idInstance, int connectionType, vector<GIAEntityConnection*> *entityVectorConnections)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBreadVectorConnectionEntities(): entityName = " << *entityName << ", connectionType = " << connectionType << endl;
+	cout << "DBreadVectorConnectionEntities(): entityName = " << *entityName << ", idInstance = " << idInstance << ", connectionType = " << connectionType << endl;
 	#endif
 
 	for(vector<GIAEntityConnection*>::iterator connectionIter = entityVectorConnections->begin(); connectionIter != entityVectorConnections->end(); connectionIter++)
@@ -880,7 +887,7 @@ void DBreadConceptEntityNode(string * entityName, GIAEntityNode * conceptEntityN
 void DBreadEntityNode(string * entityName, long idInstance, GIAEntityNode * entityNode)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBreadEntityNode(): entityName = " << *entityName << endl;
+	cout << "DBreadEntityNode(): entityName = " << *entityName << ", idInstance = " << idInstance << endl;
 	#endif
 
 	string entityFileName = DBgenerateFileName(entityName, idInstance, GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY);
@@ -963,11 +970,13 @@ void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 			*/
 
 			entity->entityName = entityNameCharStarTemp;
-			#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
-			entity->wordOrig = wordOrigCharStarTemp;
+			#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR		
+			entity->wordOrig = DBreplaceBlankString(string(wordOrigCharStarTemp));
+			//cout << "entityNameCharStarTemp = " << entityNameCharStarTemp << endl;
+			//cout << "wordOrigCharStarTemp = " << wordOrigCharStarTemp << endl;				
 			#endif
 			#ifdef GIA_SUPPORT_ALIASES
-			string aliasesString = aliasesCharStarTemp;
+			string aliasesString = DBreplaceBlankString(string(aliasesCharStarTemp));
 			convertAliasesStringToAliases(entity, aliasesString);
 			#endif			
 			entity->isConcept = bool(isConcept);
@@ -1116,54 +1125,60 @@ void writeDatabase(vector<GIAEntityNode*> *entityNodesActiveListComplete)
 	for(vector<GIAEntityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesActiveListComplete->begin(); entityNodesActiveCompleteListIterator != entityNodesActiveListComplete->end(); entityNodesActiveCompleteListIterator++)
 	{
 		GIAEntityNode* entityNode = *entityNodesActiveCompleteListIterator;
-
-		if(entityNode->added || entityNode->modified)
+	
+		#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
+		if(!(entityNode->disabled))	//added 17 August 2012
 		{
-			//(re-)write node itself
-			DBwriteEntityNode(&(entityNode->entityName), entityNode->idInstance, entityNode);
-		}
+		#endif
+			if(entityNode->added || entityNode->modified)
+			{
+				//(re-)write node itself
+				DBwriteEntityNode(&(entityNode->entityName), entityNode->idInstance, entityNode);
+			}
 
-		//only write specific connections
-		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-		{
-			if(entityNode->entityVectorConnectionsReferenceListLoadedArray[i])
-			{//they should all be loaded
+			//only write specific connections
+			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+			{
+				if(entityNode->entityVectorConnectionsReferenceListLoadedArray[i])
+				{//they should all be loaded
 
-				if(entityNode->added || entityNode->entityVectorConnectionsRemovedArray[i])
-				{
-					cout << "at1" << endl;
-					//write all vector connection references
-					DBwriteVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, i, &(entityNode->entityVectorConnectionsArray[i]));
+					if(entityNode->added || entityNode->entityVectorConnectionsRemovedArray[i])
+					{
+						//cout << "at1" << endl;
+						//write all vector connection references
+						DBwriteVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, i, &(entityNode->entityVectorConnectionsArray[i]));
+					}
+					else
+					{
+						int referenceIndex = 0;
+						for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
+						{
+							GIAEntityConnection * connection = *connectionIter;
+							if(connection->modified)
+							{//modified; overwrite vector connection reference
+								//cout << "DBmodifyVectorConnectionsReference" << endl;
+								DBmodifyVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance, referenceIndex);
+							}
+							else if(connection->added)
+							{//added; append vector connection reference
+								//cout << "DBappendVectorConnectionsReference" << endl;
+								DBappendVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance);
+							}
+							referenceIndex++;
+						}
+					}
 				}
 				else
 				{
-					int referenceIndex = 0;
-					for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
-					{
-						GIAEntityConnection * connection = *connectionIter;
-						if(connection->modified)
-						{//modified; overwrite vector connection reference
-							//cout << "DBmodifyVectorConnectionsReference" << endl;
-							DBmodifyVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance, referenceIndex);
-						}
-						else if(connection->added)
-						{//added; append vector connection reference
-							//cout << "DBappendVectorConnectionsReference" << endl;
-							DBappendVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance);
-						}
-						referenceIndex++;
-					}
+					/*this may be the case when joining reference sets - so do not throw error
+					cout << "writeDatabase() error: entityVectorConnectionsReferenceListLoadedArray[i] != true" << endl;
+					cout << "entityNode = " << entityNode->entityName << endl;
+					*/
 				}
 			}
-			else
-			{
-				/*this may be the case when joining reference sets - so do not throw error
-				cout << "writeDatabase() error: entityVectorConnectionsReferenceListLoadedArray[i] != true" << endl;
-				cout << "entityNode = " << entityNode->entityName << endl;
-				*/
-			}
+		#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES			
 		}
-
+		#endif
 	}
 
 	//cout << "writeDatabase() finish" << endl;
@@ -1223,11 +1238,15 @@ void DBwriteEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 	else
 	{
 		//cout << "GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE = " << GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE << endl;
-		string aliasesString = ""
+		string wordOrig = "";
+		wordOrig = DBaddBlankString(entity->wordOrig);
+		string aliasesString = "";
 		#ifdef GIA_SUPPORT_ALIASES;
 		convertAliasesToAliasesString(entity, &aliasesString);
-		#endif
-		fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str(), (entity->wordOrig).c_str(), aliasesString.c_str(), entity->confidence, int(entity->isConcept), int(entity->isSubstance), int(entity->isAction), int(entity->isCondition), int(entity->hasAssociatedInstance), int(entity->hasAssociatedInstanceIsAction), int(entity->hasAssociatedInstanceIsCondition), int(entity->hasAssociatedTime), int(entity->isSubstanceQuality), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), int(entity->hasMeasure));
+		#endif	
+		aliasesString = DBaddBlankString(aliasesString);
+		
+		fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str(), wordOrig.c_str(), aliasesString.c_str(), entity->confidence, int(entity->isConcept), int(entity->isSubstance), int(entity->isAction), int(entity->isCondition), int(entity->hasAssociatedInstance), int(entity->hasAssociatedInstanceIsAction), int(entity->hasAssociatedInstanceIsCondition), int(entity->hasAssociatedTime), int(entity->isSubstanceQuality), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), int(entity->hasMeasure));
 		//fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str());
 		//cout << "sf" << endl;
 		fclose(pFile);
@@ -1639,6 +1658,27 @@ void clearDBentityNodesTempActiveListComplete()
 {
 	entityNodesTempActiveListComplete->clear();
 }
+
+string DBreplaceBlankString(string word)
+{
+	string wordWithBlankStringReplaced = word;
+	if(word == GIA_DATABASE_BLANK_STRING)
+	{
+		wordWithBlankStringReplaced = "";
+	}
+	return wordWithBlankStringReplaced;
+}
+
+string DBaddBlankString(string word)
+{
+	string wordWithBlankStringAdded = word;
+	if(word == "")
+	{
+		wordWithBlankStringAdded = GIA_DATABASE_BLANK_STRING;
+	}
+	return wordWithBlankStringAdded;
+}
+
 
 
 #endif
