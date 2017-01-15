@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4b 27-July-2013
+ * Project Version: 1t4c 28-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -598,24 +598,25 @@ void redistributeRelexRelationsDetectNameQueries(Sentence * currentSentenceInLis
 {
 	bool firstWordOfSentenceIsWho = false;
 	
-	/*OLD:
-	if(GIAentityNodeArrayFilled[GIA_NLP_START_ENTITY_INDEX])
+	#ifdef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
+	//if(GIAentityNodeArrayFilled[GIA_NLP_START_ENTITY_INDEX])	//approximately the reason: "who" is not added to a relation and therefore GIAentityNodeArrayFilled will not be filled	
+	if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX] != NULL)
 	{
 		if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
 		{
-			cout << "found who" << endl;
+			//cout << "found who" << endl;
 			firstWordOfSentenceIsWho = true;
 		}
 	}
-	*/
+	#else
 	if(GIAentityNodeArrayFilled[REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX])
 	{
 		if(featureArrayTemp[REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
 		{
-			//cout << "found who" << endl;
 			firstWordOfSentenceIsWho = true;
 		}	
 	}
+	#endif
 	if(firstWordOfSentenceIsWho)
 	{
 		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)

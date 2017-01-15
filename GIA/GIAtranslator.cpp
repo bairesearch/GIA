@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4b 27-July-2013
+ * Project Version: 1t4c 28-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1118,6 +1118,22 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	defineSubstancesActions(currentSentenceInList, GIAentityNodeArray);
 	#endif
 
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "After substance declarations: " << endl;
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAentityNodeArrayFilled[i])
+		{
+			if(!(GIAentityNodeArray[i]->disabled))
+			{
+				cout << "i = " << i << endl;
+				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
+				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
+			}
+		}
+	}
+	#endif
+	
 	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//Stanford version is executed after all substances have been generated (including actions)... [Upgrade translator - do not associate feature/grammatical info with concept entities; just leave them in the feature array until the concept instances have been generated]
 	#ifdef GIA_USE_RELEX

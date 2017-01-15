@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4b 27-July-2013
+ * Project Version: 1t4c 28-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -317,9 +317,9 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				{
 				#endif			
 					//cout << "thingEntity->isNameQuery = " << thingEntity->isNameQuery << endl;
-					//cout << "definitionEntity->isNameQuery = " << definitionEntity->isNameQuery << endl;	
+					//cout << "definitionEntity->isNameQuery = " << definitionEntity->isNameQuery << endl;  
 					//cout << "thingEntity->isSubstance = " << thingEntity->isSubstance << endl;
-					//cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;										
+					//cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;									      
 					if((thingEntity->isSubstance || thingEntity->isNameQuery) && (definitionEntity->isSubstance || definitionEntity->isNameQuery))
 					{//equality link found - add alias instead
 										
