@@ -45,7 +45,7 @@
 
 int maxXAtAParticularY[MAX_GIA_TREE_DEPTH];
 
-void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile)
+void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile, int maxNumberSentences)
 {//most of this is copied from CSexecFlow.cpp
 	bool result = true;
 	
@@ -72,10 +72,10 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 	}
 
 	Reference * firstReferenceInPrintList = new Reference();
-	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, initialiseOrPrint, firstReferenceInPrintList, &currentTagInSVGFile);
+	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, initialiseOrPrint, firstReferenceInPrintList, &currentTagInSVGFile, maxNumberSentences);
 	/*
 	initialiseOrPrint = DRAW_PRINT;
-	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, initialiseOrPrint, firstReferenceInPrintList, &currentTagInSVGFile);
+	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, initialiseOrPrint, firstReferenceInPrintList, &currentTagInSVGFile, maxNumberSentences);
 	*/
 
 
@@ -173,7 +173,7 @@ void initiateMaxXAtParticularY()
 }
 
 
-void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, XMLparserTag ** currentTag)
+void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, XMLparserTag ** currentTag, int maxNumberSentences)
 {
 	vector<GIAentityNode*>::iterator entityIter;
 
@@ -186,7 +186,7 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesA
 	//first pass; determine maxXAtAParticularY	[and use these to centre each row {at a given y} respectively]
 
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-	for(int sentenceIndex=1; sentenceIndex < MAXIMUM_NUMBER_OF_SENTENCES_IN_INPUT_TEXT; sentenceIndex++)
+	for(int sentenceIndex=1; sentenceIndex < maxNumberSentences; sentenceIndex++)
 	{
 	#else
 	int sentenceIndex = 1;
@@ -226,11 +226,13 @@ Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityNode * en
 
 
 Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag, int sentenceIndex)
-{
+{	
+	cout << "1 entityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp  << endl;
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	if((entityNode->sentenceIndexTemp == sentenceIndex) || (entityNode->wasReference))	//condition (entityNode->wasReference) added 12 October 2012 1q3b
 	{
-	#endif		
+	#endif
+		cout << "2 " << endl;		
 		//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
 		if(!(entityNode->initialisedForPrinting) && !(entityNode->disabled))
 		{
@@ -329,7 +331,7 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 				int r = entityVectorConnectionDrawPosXinitialArray[i];
 				for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 				{
-					//cout << "\ti = " << i << ", initialiseEntityNodeForPrinting; " << (*connectionIter)->entity->entityName << endl;
+					cout << "\ti = " << i << ", initialiseEntityNodeForPrinting; " << (*connectionIter)->entity->entityName << endl;
 					currentReferenceInPrintList = initialiseEntityNodeForPrinting((*connectionIter)->entity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, currentTag, sentenceIndex);
 
 					bool pass = true;

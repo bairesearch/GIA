@@ -675,7 +675,7 @@
 //#define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 //#define GIA_TRANSLATOR_DEBUG
 //#define GIA_NLP_DEBUG
-//#define GIA_DRAW_DEBUG
+#define GIA_DRAW_DEBUG
 //#define GIA_SEMANTIC_NET_XML_DEBUG
 //#define GIA_SEMANTIC_NET_CXL_DEBUG
 //#define GIA_FREE_MEMORY_DEBUG
@@ -708,7 +708,7 @@
 	#endif
 	#define GIA_USE_RELEX_1_4_0	//default: enabled (otherwise use Relex 1.3.0)
 	#ifdef GIA_USE_RELEX_1_4_0
-		#define GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS		//BAI paragraph tag support has not yet been added to Relex 1.3.0
+		//#define GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS		//BAI paragraph tag support has not yet been added to Relex 1.3.0	//NB GIA no longer works with BAI Relex <paragraph> tag upgrade - as sentence ID is now used for a variety of purposes (without paragraph id): therefore will need to determine a new method of establishing intra paragraph referencing.
 	#endif
 #endif
 #ifdef GIA_USE_STANFORD_CORENLP		//a more advanced implementation of stanford parser (with lemma, entity name detection, etc: Stanford CoreNLP integrates all our NLP tools for the English language, including the part-of-speech (stanfordPOS) tagger, the named entity recognizer (NER), the parser, and the coreference resolution system)

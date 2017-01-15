@@ -129,8 +129,16 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 
 static int dependencyRelationsTypes[GIA_NLP_PARSER_NUMBER_OF_TYPES] = {GIA_NLP_DEPENDENCY_RELATIONS_PARSER_RELEX_DEFAULT_DEPENDENCY_RELATIONS_TYPE, GIA_NLP_DEPENDENCY_RELATIONS_PARSER_STANFORD_CORENLP_DEFAULT_DEPENDENCY_RELATIONS_TYPE, GIA_NLP_DEPENDENCY_RELATIONS_PARSER_STANFORD_PARSER_DEFAULT_DEPENDENCY_RELATIONS_TYPE};
 
+#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+int maxNumberSentences;
+#endif
+
 int main(int argc,char **argv)
 {
+	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	maxNumberSentences = 0;
+	#endif
+	
 	#ifdef GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
 	initialiseWordNet();
 	string wordExample = "like";
@@ -1257,7 +1265,7 @@ int main(int argc,char **argv)
 	{
 		if(printOutputQuery)	//moved here in version 1i8a
 		{
-			printGIAnetworkNodes(entityNodesActiveListCompleteQuery, rasterImageWidth, rasterImageHeight, outputQueryLDRFileName, outputQuerySVGFileName, outputQueryPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputQueryLDRFile, useOutputQueryPPMFile, useOutputQuerySVGFile);
+			printGIAnetworkNodes(entityNodesActiveListCompleteQuery, rasterImageWidth, rasterImageHeight, outputQueryLDRFileName, outputQuerySVGFileName, outputQueryPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputQueryLDRFile, useOutputQueryPPMFile, useOutputQuerySVGFile, maxNumberSentences);
 		}
 		if(useOutputQueryCXLFile)	//moved here in version 1i8a
 		{
@@ -1475,7 +1483,7 @@ int main(int argc,char **argv)
 	
 	if(printOutput)
 	{
-		printGIAnetworkNodes(entityNodesActiveListComplete, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile, useOutputTextSVGFile);
+		printGIAnetworkNodes(entityNodesActiveListComplete, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile, useOutputTextSVGFile, maxNumberSentences);
 	}
 
 	#ifdef GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
@@ -1602,6 +1610,19 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 	outputInternalRelationsInRelexFormat(&outputCFFfileName, &originalInputFileName, firstParagraphInList, NLPdependencyRelationsParser, NLPfeatureParser, NLPexeFolderArray);
 	#endif
 
+	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	//count maxNumberSentences
+	Sentence * currentSentenceInList = firstParagraphInList->firstSentenceInList;
+	while(currentSentenceInList->next != NULL)
+	{
+		if(currentSentenceInList->sentenceIndex > maxNumberSentences)
+		{
+			maxNumberSentences = currentSentenceInList->sentenceIndex;
+		}
+		currentSentenceInList = currentSentenceInList->next;
+	}
+	#endif
+	
 	#ifdef GIA_FREE_MEMORY1
 	delete firstParagraphInList;
 	#endif

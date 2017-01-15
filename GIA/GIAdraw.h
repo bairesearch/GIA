@@ -52,9 +52,6 @@ using namespace std;
 #include "GIAconditionNodeClass.h"
 
 
-#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-	#define MAXIMUM_NUMBER_OF_SENTENCES_IN_INPUT_TEXT (1000000)
-#endif
 	
 #ifdef GIA_DRAW_USE_PATENT
 	//#define GIA_DRAW_USE_UNIQUE_COLOURS_FOR_ENTITY_DEFINITION_NODES	//switched off for patent diagrams
@@ -232,9 +229,9 @@ static bool entityVectorConnectionDrawConnectionArray[GIA_ENTITY_NUMBER_OF_VECTO
 //static bool entityVectorConnectionDrawConnectionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {true, true, true, true, true, true, true, true, false, true, true, true, true, true};
 
 
-void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile);
+void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile, int maxNumberSentences);
 
-void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, XMLparserTag ** currentTag);
+void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, XMLparserTag ** currentTag, int maxNumberSentences);
 
 void initiateMaxXAtParticularY();
 Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag, int sentenceIndex);
