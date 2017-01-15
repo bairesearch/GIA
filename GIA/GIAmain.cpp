@@ -89,6 +89,12 @@ NB execute-stanfordParser.sh contains the following text;
 Additional example where relations + features are parsed from different NLP files;
 ./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelation 2 -nlprelexefolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -nlpfeature 1 -nlptagexefolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -notshow
 
+Additional example where relations + features parsed from different NLP file, queries parsed using different NLP file;
+./GIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelation 2 -nlprelexefolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -nlpfeature 1 -nlptagexefolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlprelationq 0 -nlprelqexefolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlpfeatureq 0 -nlptagqexefolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -notshow
+
+Additional example where relations + features parsed from different NLP file, queries parsed using different NLP file;
+./GIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlprelexefolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -nlpfeature 1 -nlptagexefolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlprelationq 0 -nlprelqexefolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlpfeatureq 0 -nlptagqexefolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -notshow
+
 */	
 
 
