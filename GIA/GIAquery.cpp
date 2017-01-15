@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u9a 02-October-2013
+ * Project Version: 1u9b 02-October-2013
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -652,10 +652,16 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode * queryEntityNode,
 											passPluralityMatch = false;
 										}
 									}
+									#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+									if(referenceTraceParameters->linkSpecificConceptsAndActions)
+									{
+										passPluralityMatch = true;
+									}
+									#endif
 									if(passPluralityMatch)
 									{
 									#endif
-										//cout << "passed isSubstanceConcept tests" << endl;
+										//cout << "\tpassed isSubstanceConcept tests" << endl;
 									
 										//cout << "\texactMatch" << endl;
 										if(testEntityNodeForQueryOrReferenceSet2(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
@@ -689,7 +695,7 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode * queryEntityNode,
 							//cout << "!passIntrasentenceReferenceRequirements" << endl;
 							//cout << "\t!(entityNode->entityIndexTemp < queryEntityNode->minimumEntityIndexOfReferenceSet)" << endl;
 							//cout << "\tentityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
-							//cout << "\tqueryEntityNode->minimumEntityIndexOfReferenceSet = " << queryEntityNode->minimumEntityIndexOfReferenceSet << endl;	
+							//cout << "\tqueryEntityNode->minimumEntityIndexOfReferenceSet = " << queryEntityNode->minimumEntityIndexOfReferenceSet << endl;        
 						}
 						#endif
 					#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
@@ -709,7 +715,6 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode * queryEntityNode,
 			}
 			else
 			{
-				
 				//cout << "!((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))" << endl;
 				//cout << "\t(referenceTraceParameters->traceModeAssertSameReferenceSetID) = " << (referenceTraceParameters->traceModeAssertSameReferenceSetID) << endl;
 				//cout << "\t(queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID)  = " << (queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID)  << endl;
