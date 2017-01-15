@@ -23,7 +23,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q1c 15-Sept-2013
+ * Project Version: 1q1d 15-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -331,7 +331,7 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragr
 								bool foundSentenceIndexAttribute = false;
 								while(currentAttributeInSentenceTag->nextAttribute != NULL)
 								{
-									if(currentAttributeInSentenceTag->name != Relex_CFF_XML_ATTRIBUTE_index)
+									if(currentAttributeInSentenceTag->name == Relex_CFF_XML_ATTRIBUTE_index)
 									{
 										int sentenceIndex = atoi(currentAttributeInSentenceTag->value.c_str());
 										currentSentence->sentenceIndex = sentenceIndex;
