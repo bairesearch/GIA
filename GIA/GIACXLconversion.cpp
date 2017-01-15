@@ -133,10 +133,6 @@ bool writeCMapToolsCXLFile(string xmlFileName, vector<GIAEntityNode*> *entityNod
 	
 	//cout << "d" << endl;
 		
-	currentTagL2 = currentTagL2->nextTag;
-	newTag2 = new XMLParserTag();	//had to add a null tag
-	currentTagL2->nextTag = newTag2;
-	
 	if(!generateCXLConnectionNodeTagList(currentTagL2, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, &currentCmapNodeIDInCmapNodeList, firstTagInLinkingPhraseList, firstTagInLinkingPhraseAppearanceList))
 	{
 		result = false;
@@ -167,7 +163,7 @@ bool generateCXLEntityNodeTagList(XMLParserTag * firstTagInMap, vector<GIAEntity
 	XMLParserTag * currentTagL0 = firstTagInMap;
 	if(conceptOrLinkingPhraseList)
 	{
-		if(appearanceList)
+		if(!appearanceList)
 		{
 			currentTagL0->name = NET_CXL_TAG_conceptList;
 		}
@@ -178,7 +174,7 @@ bool generateCXLEntityNodeTagList(XMLParserTag * firstTagInMap, vector<GIAEntity
 	}
 	else
 	{
-		if(appearanceList)
+		if(!appearanceList)
 		{
 			currentTagL0->name = NET_CXL_TAG_linkingPhraseList;
 		}
@@ -259,7 +255,7 @@ XMLParserTag * generateCXLEntityNodeTag(XMLParserTag * currentTagL1, string enti
 	//generate neuron connection tag
 	if(conceptOrLinkingPhraseList)
 	{
-		if(appearanceList)
+		if(!appearanceList)
 		{
 			currentTagL1->name = NET_CXL_TAG_concept;
 		}
@@ -270,7 +266,7 @@ XMLParserTag * generateCXLEntityNodeTag(XMLParserTag * currentTagL1, string enti
 	}
 	else
 	{
-		if(appearanceList)
+		if(!appearanceList)
 		{
 			currentTagL1->name = NET_CXL_TAG_linkingPhrase;
 		}
@@ -296,7 +292,7 @@ XMLParserTag * generateCXLEntityNodeTag(XMLParserTag * currentTagL1, string enti
 
 	//cout << "h5ii" << endl;
 	
-	if(appearanceList)
+	if(!appearanceList)
 	{
 		currentAttribute->name = NET_CXL_ATTRIBUTE_label;
 		currentAttribute->value = entityName;
@@ -653,8 +649,14 @@ XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * c
 		//cout << "entity1ID = " << entity1ID << endl;
 		//cout << "connectionID = " << connectionID << endl;		
 		//cout << "q3" << endl;
-		currentTagL1 = generateCXLConnectionNodeTag(currentTagL1, entity1ID, connectionID);
-		currentTagL1 = generateCXLConnectionNodeTag(currentTagL1, connectionID, entity2ID);
+		if(!(entity1->CXLdummyNode))
+		{
+			currentTagL1 = generateCXLConnectionNodeTag(currentTagL1, entity1ID, connectionID);
+		}
+		if(!(entity2->CXLdummyNode))
+		{		
+			currentTagL1 = generateCXLConnectionNodeTag(currentTagL1, connectionID, entity2ID);
+		}
 		*currentTagInLinkingPhraseList = generateCXLEntityNodeTag(*currentTagInLinkingPhraseList, connectionTypeName, connectionID, connectionTypeX, connectionTypeY, false, false);
 		*currentTagInLinkingPhraseAppearanceList = generateCXLEntityNodeTag(*currentTagInLinkingPhraseAppearanceList, connectionTypeName, connectionID, connectionTypeX, connectionTypeY, false, true);
 		(*currentCmapNodeIDInCmapNodeList) = (*currentCmapNodeIDInCmapNodeList) + 1;

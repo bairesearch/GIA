@@ -28,7 +28,7 @@ using namespace std;
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
-#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. concept-list -> concepts or properties
+//#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. concept-list -> concepts or properties
 #ifdef GIA_CMAP_CONVERSION_SANITISED
 	//#define GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
 #endif
@@ -51,7 +51,7 @@ using namespace std;
 #define NET_CXL_ATTRIBUTE_id ((string)"id")
 #define NET_CXL_ATTRIBUTE_label ((string)"label")
 
-#define NET_CXL_TAG_connectionList ((string)"connectionList")
+#define NET_CXL_TAG_connectionList ((string)"connection-list")
 #define NET_CXL_TAG_connection ((string)"connection")
 #define NET_CXL_TAG_fromid ((string)"from-id")
 #define NET_CXL_TAG_toid ((string)"to-id")
