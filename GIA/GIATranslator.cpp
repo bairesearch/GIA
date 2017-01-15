@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n1b 15-July-2012
+ * Project Version: 1n2a 16-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -139,7 +139,7 @@ void convertSentenceListRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEn
 void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations)
 {
 #ifdef GIA_USE_ADVANCED_REFERENCING
-	#ifdef GIA_USE_ADVANCED_REFERENCING_OLD
+	#ifdef GIA_USE_ADVANCED_REFERENCING_ORIGINAL
 
 	#ifdef GIA_USE_DATABASE
 	int useDatabaseOriginal = getUseDatabase();
@@ -208,7 +208,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#endif
 
 	createGIACoreferenceInListBasedUponIdentifiedReferenceSets(sentenceConceptEntityNodesList, entityNodesActiveListConcepts, firstGIACoreferenceInList, numberReferenceSets);
-
+	
 	//cout << "bf2" << endl;
 	setSaveNetwork(true);
 
@@ -247,39 +247,39 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		
 	#else
 		
-	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-	cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (1convertSentenceRelationsIntoGIAnetworkNodes)\n" << endl;
-	#endif
-			
-	vector<GIAEntityNode*> sentenceConceptEntityNodesList;
-	convertSentenceRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
-	
-	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-	cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (2identifyReferenceSets)\n" << endl;
-	#endif
-		
-	unordered_map<string, GIAEntityNode*> sentenceConceptEntityNodesListMap;
-	for(vector<GIAEntityNode*>::iterator sentenceConceptEntityNodesListIter = sentenceConceptEntityNodesList.begin(); sentenceConceptEntityNodesListIter != sentenceConceptEntityNodesList.end(); sentenceConceptEntityNodesListIter++)
-	{
-		GIAEntityNode * conceptEntityNodeTemp = *sentenceConceptEntityNodesListIter;
-		string entityNodeNameTemp = conceptEntityNodeTemp->entityName;
-		sentenceConceptEntityNodesListMap.insert(pair<string, GIAEntityNode*>(entityNodeNameTemp, conceptEntityNodeTemp));
-	}		
-	int numberReferenceSets = identifyReferenceSets(&sentenceConceptEntityNodesListMap, NLPdependencyRelationsType);
+												#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+												cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (1convertSentenceRelationsIntoGIAnetworkNodes)\n" << endl;
+												#endif
 
-	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-	cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (3createGIACoreferenceInListBasedUponIdentifiedReferenceSets)\n" << endl;
-	#endif
+												vector<GIAEntityNode*> sentenceConceptEntityNodesList;
+												convertSentenceRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
 
-	GIACoreference * firstGIACoreferenceInList = new GIACoreference();
-	createGIACoreferenceInListBasedUponIdentifiedReferenceSets(&sentenceConceptEntityNodesListMap, entityNodesActiveListConcepts, firstGIACoreferenceInList, numberReferenceSets);	//CHECK THIS; do: if intra sentence reference, then assert reference source occurs before reference OR assert reference source is not the same as reference
+												#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+												cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (2identifyReferenceSets)\n" << endl;
+												#endif
 
-	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-	cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (5linkAdvancedReferencesGIA)\n" << endl;
-	#endif
-	linkAdvancedReferencesGIA(currentSentenceInList, entityNodesActiveListConcepts, firstGIACoreferenceInList);
-	
-	#endif
+												unordered_map<string, GIAEntityNode*> sentenceConceptEntityNodesListMap;
+												for(vector<GIAEntityNode*>::iterator sentenceConceptEntityNodesListIter = sentenceConceptEntityNodesList.begin(); sentenceConceptEntityNodesListIter != sentenceConceptEntityNodesList.end(); sentenceConceptEntityNodesListIter++)
+												{
+													GIAEntityNode * conceptEntityNodeTemp = *sentenceConceptEntityNodesListIter;
+													string entityNodeNameTemp = conceptEntityNodeTemp->entityName;
+													sentenceConceptEntityNodesListMap.insert(pair<string, GIAEntityNode*>(entityNodeNameTemp, conceptEntityNodeTemp));
+												}		
+												int numberReferenceSets = identifyReferenceSets(&sentenceConceptEntityNodesListMap, NLPdependencyRelationsType);
+
+												#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+												cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (3createGIACoreferenceInListBasedUponIdentifiedReferenceSets)\n" << endl;
+												#endif
+
+												GIACoreference * firstGIACoreferenceInList = new GIACoreference();
+												createGIACoreferenceInListBasedUponIdentifiedReferenceSets(&sentenceConceptEntityNodesListMap, entityNodesActiveListConcepts, firstGIACoreferenceInList, numberReferenceSets);	//CHECK THIS; do: if intra sentence reference, then assert reference source occurs before reference OR assert reference source is not the same as reference
+
+												#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+												cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (5linkAdvancedReferencesGIA)\n" << endl;
+												#endif
+												linkAdvancedReferencesGIA(currentSentenceInList, entityNodesActiveListConcepts, firstGIACoreferenceInList);
+
+												#endif
 #else
 
 	vector<GIAEntityNode*> sentenceConceptEntityNodesListTempNotUsed;
@@ -293,7 +293,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 
 
 //NB vector<GIAEntityNode*> *sentenceConceptEntityNodesList is for GIA_USE_CE only
-#ifdef GIA_USE_ADVANCED_REFERENCING_OLD
+#ifdef GIA_USE_ADVANCED_REFERENCING_ORIGINAL
 void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations, bool linkPreestablishedReferencesGIA,  GIACoreference * firstGIACoreferenceInList)
 #else
 void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations)
@@ -600,7 +600,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		GIAEntityNodeArray[w] = GIAConceptNodeArray[w];		//set default values of GIAEntityNodeArray
 	}
 
-	#ifdef GIA_USE_ADVANCED_REFERENCING_OLD
+	#ifdef GIA_USE_ADVANCED_REFERENCING_ORIGINAL
 	if(linkPreestablishedReferencesGIA)
 	{
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -633,7 +633,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		#endif
 		#endif
 		#endif
-	#ifdef GIA_USE_ADVANCED_REFERENCING_OLD
+	#ifdef GIA_USE_ADVANCED_REFERENCING_ORIGINAL
 	}
 	#endif
 

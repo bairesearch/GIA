@@ -3,7 +3,7 @@
  * File Name: GIASentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n1b 15-July-2012
+ * Project Version: 1n2a 16-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -66,6 +66,7 @@ GIAMention::GIAMention(void)
 	idActiveList = -1;
 	entityIndex = -1;	//ie, "head"
 	entityName = "";
+	intrasentenceReference = false;		//only applies to representative/source mentions (specifies whether reference source is contained within current sentence)
 
 	next = NULL;
 }
