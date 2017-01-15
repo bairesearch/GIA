@@ -111,6 +111,10 @@ public:
 	long totalTimeInSeconds;
 	
 	bool isProgressive;
+	
+	int id;		//for CXL output only
+	int printX;	//for CXL output only
+	int printY;	//for CXL output only
 };
 
 #define TIME_DATE_DISPLAY_FORMAT_AMERICAN (1)

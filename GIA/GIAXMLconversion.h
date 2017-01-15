@@ -28,6 +28,9 @@ using namespace std;
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
+#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. concept-list -> concepts or properties
+#define GIA_CMAP_CONVERSION_SANITISED_USE_PROPERTIES_ELSE_USE_CONCEPTS
+
 #define GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
 //#define GIA_SEMANTIC_NET_XML_DEBUG
 
@@ -81,7 +84,31 @@ using namespace std;
 #define NET_XML_TAG_conditionNodeReference ((string)"conditionNodeReference")
 #define NET_XML_ATTRIBUTE_conditionNodeID ((string)"conditionNodeID")
 
+/*CXL*/
 
+#define NET_CXL_TAG_cmap ((string)"cmap")
+#define NET_CXL_ATTRIBUTE_xmlns ((string)"xmlns")
+#define NET_CXL_ATTRIBUTE_xmlnsdc ((string)"xmlns:dc")
+#define NET_CXL_TAG_map ((string)"map")
+
+#define NET_CXL_TAG_conceptList ((string)"concept-list")
+#define NET_CXL_TAG_linkingPhraseList ((string)"linking-phrase-list")
+#define NET_CXL_TAG_concept ((string)"concept")
+#define NET_CXL_TAG_linkingPhrase ((string)"linking-phrase")
+#define NET_CXL_ATTRIBUTE_id ((string)"id")
+#define NET_CXL_ATTRIBUTE_label ((string)"label")
+
+#define NET_CXL_TAG_connectionList ((string)"connectionList")
+#define NET_CXL_TAG_connection ((string)"connection")
+#define NET_CXL_TAG_fromid ((string)"from-id")
+#define NET_CXL_TAG_toid ((string)"to-id")
+
+#define NET_CXL_TAG_conceptAppearanceList ((string)"concept-appearance-list")
+#define NET_CXL_TAG_linkingPhraseAppearanceList ((string)"linking-phrase-appearance-list")
+#define NET_CXL_TAG_conceptAppearance ((string)"concept-appearance")
+#define NET_CXL_TAG_linkingPhraseAppearance ((string)"linking-phrase-appearance")
+#define NET_CXL_ATTRIBUTE_x ((string)"x")
+#define NET_CXL_ATTRIBUTE_y ((string)"y"
 
 /*entity node*/
 

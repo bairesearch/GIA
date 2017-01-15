@@ -556,9 +556,12 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 
 Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeConditionNode, int y, int x, int initialiseOrPrint, Reference * currentReferenceInPrintList, ofstream * writeFileObject)
 {
+
 	int timeConditionNodePrintX = x;
 	int timeConditionNodePrintY = y;
-
+	timeConditionNode->printX = timeConditionNodePrintX;
+	timeConditionNode->printY = timeConditionNodePrintY;
+	
 	vec pos1;
 	vec pos2;
 	vec pos3;

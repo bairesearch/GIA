@@ -31,6 +31,10 @@ GIATimeConditionNode::GIATimeConditionNode(void)
 	totalTimeInSeconds = 0;
 	
 	isProgressive = false;
+	
+	id = 0;
+	printX = 0;
+	printY = 0;
 }
 GIATimeConditionNode::~GIATimeConditionNode(void)
 {

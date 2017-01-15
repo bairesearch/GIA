@@ -84,6 +84,7 @@ using namespace std;
 #include "GIAdraw.h"
 #include "GIAquery.h"
 #include "GIAXMLconversion.h"
+#include "GIACXLconversion.h"
 #include "GIAdatabase.h"
 #include "XMLParserClass.h"
 #include "XMLrulesClass.h"
@@ -91,17 +92,18 @@ using namespace std;
 #include "LDopengl.h"
 
 static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any of the following\n"
-"\n\n\t-itxt [string]  : plain text .txt inputText filename to be parsed by Relex (def: inputText.txt)"
-"\n\n\t-irelex [string] : RelEx compact outputText .xml inputText filename (def: relexCompactOutput.xml)"
-"\n\n\t-ixml [string]   : semantic network definition .xml inputText filename (def: semanticNet.xml)"
-"\n\n\t-qtxt [string]  : plain text .txt query filename to be parsed by Relex (def: inputQuery.txt)"
-"\n\n\t-qrelex [string] : RelEx compact outputText .xml query filename (def: relexCompactOutputQuery.xml)"
-"\n\n\t-qxml [string]   : semantic network definition .xml query filename (def: semanticNetQuery.xml)"
-"\n\n\t-oxml [string]   : semantic network definition .xml outputText filename (def: semanticNet.xml)"
-"\n\t-osvg [string]     : semantic network display .svg 2D vector graphics outputText filename (def: semanticNet.svg)"
-"\n\t-oldr [string]     : semantic network display .ldr 3D vector graphics outputText filename (def: semanticNet.ldr)"
-"\n\t-oppm [string]     : semantic network display .ppm raster graphics outputText filename (def: semanticNet.ppm)"
-"\n\t-oall [string]     : semantic network display xml/.svg/.ldr/.ppm default generic outputText filename (def: semanticNet)"
+"\n\n\t-itxt [string]  : plain text .txt input filename to be parsed by Relex (def: inputText.txt)"
+"\n\n\t-irelex [string] : RelEx compact .xml input filename (def: relexCompactOutput.xml)"
+"\n\n\t-ixml [string]   : semantic network definition .xml input filename (def: semanticNet.xml)"
+"\n\n\t-qtxt [string]  : plain text .txt input query filename to be parsed by Relex (def: inputQuery.txt)"
+"\n\n\t-qrelex [string] : RelEx compact .xml input query filename (def: relexCompactOutputQuery.xml)"
+"\n\n\t-qxml [string]   : semantic network definition .xml input query filename (def: semanticNetQuery.xml)"
+"\n\n\t-oxml [string]   : semantic network definition .xml output filename (def: semanticNet.xml)"
+"\n\n\t-ocxl [string]   : semantic network display .cxl vector graphics output filename (def: semanticNet.cxl)"
+"\n\t-osvg [string]     : semantic network display .svg 2D vector graphics output filename (def: semanticNet.svg)"
+"\n\t-oldr [string]     : semantic network display .ldr 3D vector graphics output filename (def: semanticNet.ldr)"
+"\n\t-oppm [string]     : semantic network display .ppm raster graphics output filename (def: semanticNet.ppm)"
+"\n\t-oall [string]     : semantic network display xml/.svg/.ldr/.ppm default generic output filename (def: semanticNet)"
 "\n\t-oanswer [string]  : plain text .txt file containing the answer to the query (def: answer.txt)"
 "\n\t-notshow           : do not display outputText in opengl"
 "\n\t-width [int]       : raster graphics width in pixels (def: 640)"
@@ -140,7 +142,10 @@ int main(int argc,char **argv)
 		
 	bool useOutputTextXMLFile = false;
 	string outputTextXMLFileName = "semanticNet.xml";
-	
+
+	bool useOutputTextCXLFile = false;
+	string outputTextCXLFileName = "semanticNet.cxl";
+		
 	bool useOutputTextLDRFile = false;
 	string outputTextLDRFileName = "semanticNet.ldr";
 	
@@ -149,7 +154,7 @@ int main(int argc,char **argv)
 	
 	bool useOutputTextSVGFile = false;
 	string outputTextSVGFileName = "semanticNet.svg";
-	
+		
 	bool useInputQueryPlainTXTFile = false;
 	string inputQueryPlainTXTFileName = "inputQuery.txt";
 		
@@ -161,7 +166,10 @@ int main(int argc,char **argv)
 	
 	//bool useOutputQueryXMLFile = true;
 	//string outputQueryXMLFileName = "semanticNetQuery.xml";
-	
+
+	//bool useOutputQueryCXLFile = true;
+	//string outputQueryCXLFileName = "semanticNetQuery.cxl";
+		
 	bool useOutputQueryLDRFile = true;
 	string outputQueryLDRFileName = "semanticNetQuery.ldr";
 	
@@ -236,6 +244,12 @@ int main(int argc,char **argv)
 		{
 			outputTextXMLFileName=get_char_argument(argc,argv,"-oxml");
 			useOutputTextXMLFile = true;
+		}
+
+		if(exists_argument(argc,argv,"-ocxl"))
+		{
+			outputTextCXLFileName=get_char_argument(argc,argv,"-ocxl");
+			useOutputTextCXLFile = true;
 		}
 
 		if(exists_argument(argc,argv,"-oldr"))
@@ -387,7 +401,15 @@ int main(int argc,char **argv)
 				useOutputTextXMLFile = true;		
 				outputTextXMLFileName = outputTextAllFileName + ".xml";
 			}
-		}		
+		}	
+		if(!useOutputTextCXLFile)
+		{	
+			if(useOutputTextAllFile)
+			{	
+				useOutputTextCXLFile = true;		
+				outputTextCXLFileName = outputTextAllFileName + ".cxl";
+			}
+		}			
 		if(!useOutputTextLDRFile)
 		{		
 			if(useOutputTextAllFile || displayInOpenGLAndOutputScreenshot)		//LDR outputText is always required when displaying semantic network in OpenGL and outputTexting screenshot
@@ -710,6 +732,10 @@ int main(int argc,char **argv)
 		{
 			result = false;
 		}
+		if(!writeCMapToolsCXLFileOptimised(outputTextCXLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList))
+		{
+			result = false;
+		}	
 	}
 	#endif
 	

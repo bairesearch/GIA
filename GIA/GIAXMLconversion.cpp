@@ -1186,6 +1186,19 @@ bool parseTimeConditionNodeTag(XMLParserTag * firstTagInTimeConditionNode, GIATi
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 bool writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList)
 {	
 	vector<GIAEntityNode*> * conceptEntityNodesList = new vector<GIAEntityNode*>;
@@ -1286,6 +1299,11 @@ bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAEntityNode*> *entityN
 
 	return result;
 }
+
+
+
+
+
 
 
 #ifdef GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
