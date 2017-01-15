@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p5a 21-September-2012
+ * Project Version: 1p5b 21-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -786,7 +786,12 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 		char * topLevelSceneFileNameCollapsed = "sceneCollapsedForRaytracing.ldr";
 		write2DReferenceListCollapsedTo1DToFile(topLevelSceneFileNameCollapsed, firstReferenceInPrintList);
 		*/
-
+		
+		#ifdef GIA_FREE_MEMORY
+		delete initialReferenceInSceneFile;
+		delete topLevelReferenceInSceneFile;
+		#endif
+		
 		//cout << "has" << endl;
 
 
@@ -808,6 +813,11 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 		drawPrimitivesReferenceListToOpenGLAndCreateRGBMapBasic(initialReferenceInCollapsedSceneFile, width, height, rgbMap);
 			//due to opengl code bug, need to execute this function twice.
 
+		#ifdef GIA_FREE_MEMORY
+		delete initialReferenceInCollapsedSceneFile;
+		delete topLevelReferenceInCollapsedSceneFile;
+		#endif
+		
 		if(useOutputPPMFile)
 		{
 			generatePixmapFromRGBMap(displayFileNamePPMcharstar, width, height, rgbMap);
@@ -820,7 +830,10 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 	{
 		//must use an external program to view the .ldr file (Eg LDView)
 	}
-
+	
+	#ifdef GIA_FREE_MEMORY
+	delete firstReferenceInPrintList;
+	#endif
 
 
 }

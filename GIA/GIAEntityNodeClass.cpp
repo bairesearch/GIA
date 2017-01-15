@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p5a 21-September-2012
+ * Project Version: 1p5b 21-September-2012
  *
  *******************************************************************************/
 
@@ -441,4 +441,75 @@ vector<string> explode(const string& str, const char& ch)
 
 #endif
 
+void deleteEntitiesInEntityNodeList(vector<GIAEntityNode*> * entityNodesActiveListComplete)
+{
+	for(vector<GIAEntityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
+	{
+		GIAEntityNode * entityNode = *entityIter;
+		
+		//delete all connections
+		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+		{
+			for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
+			{
+				delete *connectionIter;
+			}
+			entityNode->entityVectorConnectionsArray[i].clear();
+		}
+					
+		#ifdef GIA_SUPPORT_ALIASES
+		entityNode->aliasList.clear();
+		#endif		
+		#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
+		delete entityNode->conceptEntityLoaded;
+		#endif
+		
+		delete entityNode;
+	}
+}
+
+
+/*
+void deleteAllEntitiesInConceptEntityNodeList(unordered_map<string, GIAEntityNode*> * conceptEntityNodesList);
+{
+	for(vector<GIAEntityNode*>::iterator conceptEntityNodesListIter = conceptEntityNodesList.begin(); conceptEntityNodesListIter != conceptEntityNodesList.end(); conceptEntityNodesListIter++)
+	{
+		GIAEntityNode * conceptEntityNode = sentenceConceptEntityNodesListTempNotUsedIter->second;
+		
+		for(vector<GIAEntityNode*>::iterator instanceEntityNodesListIter = conceptEntityNode->AssociatedInstanceNodeList.begin(); instanceEntityNodesListIter != conceptEntityNode->AssociatedInstanceNodeList.end(); )
+		{
+			GIAEntityNode * instanceEntityNode = *instanceEntityNodesListIter;
+			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+			{
+				for(vector<GIAEntityConnection*>::iterator connectionIter = instanceEntityNode->entityVectorConnectionsArray[i].begin(); connectionIter != instanceEntityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
+				{
+					delete *connectionIter;
+				}
+				instanceEntityNode->entityVectorConnectionsArray[i].clear();
+			}			
+			#ifdef GIA_SUPPORT_ALIASES
+			delete aliasList;
+			#endif		
+			#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
+			delete conceptEntityLoaded;
+			#endif
+				
+			instanceEntityNodesListIter = conceptEntityNode->AssociatedInstanceNodeList.erase(instanceEntityNodesListIter);		
+		}
+			
+		
+		GIAEntityNode * currentInstanceInConcept = conceptEntityNodeTemp-> 
+		string entityNodeNameTemp = conceptEntityNodeTemp->entityName;
+		sentenceConceptEntityNodesListTempNotUsedMap.insert(pair<string, GIAEntityNode*>(entityNodeNameTemp, conceptEntityNodeTemp));
+		
+		#ifdef GIA_SUPPORT_ALIASES
+		delete aliasList;
+		#endif		
+		#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
+		delete conceptEntityLoaded;
+		#endif
+		
+	}
+}
+*/
 

@@ -23,7 +23,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p5a 21-September-2012
+ * Project Version: 1p5b 21-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -379,7 +379,7 @@ bool parseRelexFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragr
 		#endif
 	}
 	
-	#ifdef GIA_FREE_MEMORY
+	#ifndef GIA_FREE_MEMORY
 	delete firstTagInXMLFile;
 	#endif
 		
