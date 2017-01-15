@@ -3,7 +3,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7b 07-May-2012
+ * Project Version: 1j7c 09-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -499,9 +499,10 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	cop(outside-4, is-3)
 	prep_of(outside-4, house-7)
 
-	dobj(bought-7, paint-9)	
-	partmod(bought-7, Owing-1)	//NB currently interpreted as obj	
-	prep_to(Owing-1, weather-4)
+		[Removed because (currentRelationInList3->relationGovernorIndex != currentRelationInList->relationGovernorIndex)]
+		dobj(bought-7, paint-9)	
+		partmod(bought-7, Owing-1)	//NB currently interpreted as obj	
+		prep_to(Owing-1, weather-4)
 
 	nsubj(beach-8, Right-1)
 	cop(beach-8, is-6)
@@ -644,6 +645,14 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 													}
 													else if(multiwordPrepositionIntermediaryRelationTypeBFound)
 													{
+														/*
+														if(currentRelationInList2->relationType == RELATION_TYPE_PARTICIPIAL_MODIFIER)
+														{
+															cout << "SFDFD" << endl;
+															exit(0);
+														}
+														*/
+														
 														GIAEntityNode * entityContainingFirstWordOfMultiwordPreposition = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
 
 														string newPrepositionName = "";
