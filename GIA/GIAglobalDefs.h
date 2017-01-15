@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f14b 15-July-2014
+ * Project Version: 2f15a 16-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -615,7 +615,7 @@
 #define GIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES	//added 2f13a 14-July-2014
 #define GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES	//added 2f8a 09-July-2014
 
-//#define GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA //disabled GIA 2b3c [disabling required for GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN] - CHECKTHIS does not cause problems with alternative test scenarios
+//#define GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA //disabled GIA 2c3c [disabling required for GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN] - CHECKTHIS does not cause problems with alternative test scenarios
 
 #define GIA_USE_NON_STANDARD_CONDITION_CONDITION_CONNECTIONS_CONNECT_CONJUNCTIONS_TO_THEIR_RELEVANT_PREPOSITIONS	//required for USE_NLC
 /*
@@ -907,7 +907,7 @@
 //#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
 //#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
 
-//#define GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE
+#define GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE
 //#define GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
 //#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 //#define GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
@@ -919,9 +919,9 @@
 	//#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS_WORK_WITH_MULTIPLE_SENTENCES
 #endif
 //#define GIA_ALIASES_DEBUG
-//#define GIA_ADVANCED_REFERENCING_DEBUG  	  //just finished first debug using this (1l5f)
+#define GIA_ADVANCED_REFERENCING_DEBUG  	  //finished first debug using this (1l5f)
 //#define GIA_QUERY_DEBUG
-//#define GIA_QUERY_MULTIPLE_ANSWERS_DEBUG      //just finished first debug using this (1l2a)
+//#define GIA_QUERY_MULTIPLE_ANSWERS_DEBUG      //finished first debug using this (1l2a)
 //#define GIA_STANFORD_CORENLP_CODEPENDENCY_PRONOMINAL_REFERENCING_DEBUG
 //#define GIA_DATABASE_DEBUG_FILESYSTEM_IO
 //#define GIA_DATABASE_DEBUG		  //this needs to be debugged (not yet tested)
@@ -1043,7 +1043,7 @@
 #ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS	//is this condition required?
 	#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX		//this is required by USE_NLC
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-		#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED		//more robust implementation (should activate when using GIA_USE_DATABASE to ensure all the semantic network connections are visible)
+		//#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED		//more robust implementation (should activate when using GIA_USE_DATABASE to ensure all the semantic network connections are visible)
 	#endif
 #endif
 
