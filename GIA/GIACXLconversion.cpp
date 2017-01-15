@@ -72,7 +72,7 @@ bool writeCMapToolsCXLFile(string xmlFileName, vector<GIAEntityNode*> *entityNod
 
 	long currentCmapNodeIDInCmapNodeList;
 	
-	#ifdef GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
+	#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
 	currentCmapNodeIDInCmapNodeList = 0;
 	resetIDsForNodeList2(conceptEntityNodesList, &currentCmapNodeIDInCmapNodeList);
 	resetIDsForNodeList2(propertyEntityNodesList, &currentCmapNodeIDInCmapNodeList);
@@ -83,7 +83,7 @@ bool writeCMapToolsCXLFile(string xmlFileName, vector<GIAEntityNode*> *entityNod
 	//cout << "z" << endl;
 	
 	currentCmapNodeIDInCmapNodeList = 0;
-	
+	long firstCmapNodeIDInConceptList = currentCmapNodeIDInCmapNodeList;	
 	if(!generateCXLEntityNodeTagList(currentTagL2, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, &currentCmapNodeIDInCmapNodeList, true, false))
 	{
 		result = false;
@@ -95,7 +95,7 @@ bool writeCMapToolsCXLFile(string xmlFileName, vector<GIAEntityNode*> *entityNod
 	newTag2 = new XMLParserTag();	//had to add a null tag
 	currentTagL2->nextTag = newTag2;
 
-	currentCmapNodeIDInCmapNodeList = 0;
+	long firstCmapNodeIDInLinkingPhraseList = currentCmapNodeIDInCmapNodeList;	//NOT NECESSARY: redundant
 	if(!generateCXLEntityNodeTagList(currentTagL2, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, &currentCmapNodeIDInCmapNodeList, false, false))
 	{
 		result = false;
@@ -109,6 +109,7 @@ bool writeCMapToolsCXLFile(string xmlFileName, vector<GIAEntityNode*> *entityNod
 	newTag2 = new XMLParserTag();	//had to add a null tag
 	currentTagL2->nextTag = newTag2;
 	
+	currentCmapNodeIDInCmapNodeList = firstCmapNodeIDInConceptList;
 	if(!generateCXLEntityNodeTagList(currentTagL2, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, &currentCmapNodeIDInCmapNodeList, true, true))
 	{
 		result = false;
@@ -120,6 +121,7 @@ bool writeCMapToolsCXLFile(string xmlFileName, vector<GIAEntityNode*> *entityNod
 	
 	//cout << "c" << endl;
 	
+	currentCmapNodeIDInCmapNodeList = firstCmapNodeIDInLinkingPhraseList;	//NOT NECESSARY: redundant
 	if(!generateCXLEntityNodeTagList(currentTagL2, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, &currentCmapNodeIDInCmapNodeList, false, true))
 	{
 		result = false;
@@ -132,8 +134,21 @@ bool writeCMapToolsCXLFile(string xmlFileName, vector<GIAEntityNode*> *entityNod
 	currentTagL2->nextTag = newTag2;
 	
 	//cout << "d" << endl;
-		
-	if(!generateCXLConnectionNodeTagList(currentTagL2, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, &currentCmapNodeIDInCmapNodeList, firstTagInLinkingPhraseList, firstTagInLinkingPhraseAppearanceList))
+	
+	XMLParserTag * currentTagInLinkingPhraseList = firstTagInLinkingPhraseList;
+	XMLParserTag * currentTagInLinkingPhraseAppearanceList = firstTagInLinkingPhraseAppearanceList;
+	while(currentTagInLinkingPhraseList->nextTag != NULL)
+	{
+		currentTagInLinkingPhraseList = currentTagInLinkingPhraseList->nextTag;
+	}
+	while(currentTagInLinkingPhraseAppearanceList->nextTag != NULL)
+	{
+		currentTagInLinkingPhraseAppearanceList = currentTagInLinkingPhraseAppearanceList->nextTag;
+	}
+	XMLParserTag * lastTagInLinkingPhraseList = currentTagInLinkingPhraseList;
+	XMLParserTag * lastTagInLinkingPhraseAppearanceList = currentTagInLinkingPhraseAppearanceList;
+			
+	if(!generateCXLConnectionNodeTagList(currentTagL2, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, &currentCmapNodeIDInCmapNodeList, lastTagInLinkingPhraseList, lastTagInLinkingPhraseAppearanceList))
 	{
 		result = false;
 	}	
@@ -153,7 +168,7 @@ bool writeCMapToolsCXLFile(string xmlFileName, vector<GIAEntityNode*> *entityNod
 	return result;
 }
 
-//generateCXLEntityNodeTagList(): generates and fills <concept-list> and <concept-appearance-list> tags. generates <linking-phrase-list> and <linking-phrase-appearance-list> tags.
+//generateCXLEntityNodeTagList(): generates and fills <concept-list>, <concept-appearance-list>, <linking-phrase-list> and <linking-phrase-appearance-list> tags.
 bool generateCXLEntityNodeTagList(XMLParserTag * firstTagInMap, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, long * currentCmapNodeIDInCmapNodeList, bool conceptOrLinkingPhraseList, bool appearanceList)
 {
 	//cout << "h3" << endl;
@@ -192,19 +207,38 @@ bool generateCXLEntityNodeTagList(XMLParserTag * firstTagInMap, vector<GIAEntity
 	XMLParserTag * newTag1 = new XMLParserTag();	//had to add a null tag
 	currentTagL1->nextTag = newTag1;
 
+	/*OLD version <= 1h4d
 	if(conceptOrLinkingPhraseList)
 	{	
-		#ifdef GIA_CMAP_CONVERSION_SANITISED
-		//cout << "z2" << endl;
-		currentTagL1 = addToCXLEntityNodeTagList(currentTagL1, propertyEntityNodesList, currentCmapNodeIDInCmapNodeList, conceptOrLinkingPhraseList, appearanceList);
-		currentTagL1 = addToCXLEntityNodeTagList(currentTagL1, conceptEntityNodesList, currentCmapNodeIDInCmapNodeList, conceptOrLinkingPhraseList, appearanceList);
-		#else
 		currentTagL1 = addToCXLEntityNodeTagList(currentTagL1, conceptEntityNodesList, currentCmapNodeIDInCmapNodeList, conceptOrLinkingPhraseList, appearanceList);
 		currentTagL1 = addToCXLEntityNodeTagList(currentTagL1, propertyEntityNodesList, currentCmapNodeIDInCmapNodeList, conceptOrLinkingPhraseList, appearanceList);
 		currentTagL1 = addToCXLEntityNodeTagList(currentTagL1, actionEntityNodesList, currentCmapNodeIDInCmapNodeList, conceptOrLinkingPhraseList, appearanceList);
 		currentTagL1 = addToCXLEntityNodeTagList(currentTagL1, conditionEntityNodesList, currentCmapNodeIDInCmapNodeList, conceptOrLinkingPhraseList, appearanceList);
-		#endif
 	}
+	*/
+			
+	#ifdef GIA_CMAP_CONVERSION_SANITISED
+	//cout << "z2" << endl;
+	if(conceptOrLinkingPhraseList)
+	{
+		currentTagL1 = addToCXLEntityNodeTagList(currentTagL1, propertyEntityNodesList, currentCmapNodeIDInCmapNodeList, conceptOrLinkingPhraseList, appearanceList);
+		currentTagL1 = addToCXLEntityNodeTagList(currentTagL1, conceptEntityNodesList, currentCmapNodeIDInCmapNodeList, conceptOrLinkingPhraseList, appearanceList);
+	}
+	else
+	{
+		//cout << "sad" << endl;
+		currentTagL1 = addToCXLEntityNodeTagList(currentTagL1, actionEntityNodesList, currentCmapNodeIDInCmapNodeList, conceptOrLinkingPhraseList, appearanceList);	//required for timeCondition node printing
+		currentTagL1 = addToCXLEntityNodeTagList(currentTagL1, conditionEntityNodesList, currentCmapNodeIDInCmapNodeList, conceptOrLinkingPhraseList, appearanceList);	//required for timeCondition node printing		
+		//cout << "sad2" << endl;
+	}
+	#else
+	currentTagL1 = addToCXLEntityNodeTagList(currentTagL1, conceptEntityNodesList, currentCmapNodeIDInCmapNodeList, conceptOrLinkingPhraseList, appearanceList);
+	currentTagL1 = addToCXLEntityNodeTagList(currentTagL1, propertyEntityNodesList, currentCmapNodeIDInCmapNodeList, conceptOrLinkingPhraseList, appearanceList);
+	currentTagL1 = addToCXLEntityNodeTagList(currentTagL1, actionEntityNodesList, currentCmapNodeIDInCmapNodeList, conceptOrLinkingPhraseList, appearanceList);
+	currentTagL1 = addToCXLEntityNodeTagList(currentTagL1, conditionEntityNodesList, currentCmapNodeIDInCmapNodeList, conceptOrLinkingPhraseList, appearanceList);
+	#endif
+		
+	
 
 	//cout << "h6" << endl;
 	
@@ -224,6 +258,7 @@ XMLParserTag * addToCXLEntityNodeTagList(XMLParserTag * currentTagL1, vector<GIA
 
 		//cout << "h4" << endl;
 		
+		#ifndef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_TIME_CONDITION_NODES
 		if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
 		{//this exception is required because timeCondition nodes have a separate id in Cmap maps / CXL
 			//cout << "asd" << endl;
@@ -231,17 +266,31 @@ XMLParserTag * addToCXLEntityNodeTagList(XMLParserTag * currentTagL1, vector<GIA
 			currentTagL1 = generateCXLEntityNodeTag(currentTagL1, currentEntity->timeConditionNode->conditionName, *currentCmapNodeIDInCmapNodeList, currentEntity->timeConditionNode->printX, currentEntity->timeConditionNode->printY, conceptOrLinkingPhraseList, appearanceList);		
 			(*currentCmapNodeIDInCmapNodeList) = (*currentCmapNodeIDInCmapNodeList) + 1;
 		}
-			
-		#ifdef GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
-		currentEntity->reorderdIDforXMLsave = *currentCmapNodeIDInCmapNodeList;
-		//cout << "currentEntity->reorderdIDforXMLsave = " << currentEntity->reorderdIDforXMLsave << endl;
-		currentTagL1 = generateCXLEntityNodeTag(currentTagL1, currentEntity->entityName, *currentCmapNodeIDInCmapNodeList, currentEntity->printX, currentEntity->printY, conceptOrLinkingPhraseList, appearanceList);
-		#else		
-		currentTagL1 = generateCXLEntityNodeTag(currentTagL1, currentEntity->entityName, currentEntity->id, currentEntity->printX, currentEntity->printY, conceptOrLinkingPhraseList, appearanceList);
 		#endif
-		(*currentCmapNodeIDInCmapNodeList) = (*currentCmapNodeIDInCmapNodeList) + 1;
 		
-		//cout << "h5f" << endl;
+		if(!(currentEntity->disabled))
+		{
+			#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
+			if(currentEntity->AssociatedInstanceNodeList.begin() == currentEntity->AssociatedInstanceNodeList.end())
+			{//if GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES; then do not add a concept entity if it has an associated instance (property node)
+			#endif
+				//cout << "DEBUG: currentEntity->entityName = " << currentEntity->entityName << endl;
+
+				#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
+				currentEntity->reorderdIDforXMLsave = *currentCmapNodeIDInCmapNodeList;
+				//cout << "currentEntity->reorderdIDforXMLsave = " << currentEntity->reorderdIDforXMLsave << endl;
+				long currentEntityID = *currentCmapNodeIDInCmapNodeList;
+				#else	
+				long currentEntityID = currentEntity->id;
+				#endif
+				currentTagL1 = generateCXLEntityNodeTag(currentTagL1, currentEntity->entityName, currentEntityID, currentEntity->printX, currentEntity->printY, conceptOrLinkingPhraseList, appearanceList);				
+				(*currentCmapNodeIDInCmapNodeList) = (*currentCmapNodeIDInCmapNodeList) + 1;
+
+				//cout << "h5f" << endl;
+			#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
+			}
+			#endif	
+		}		
 	}
 
 	//cout << "h6" << endl;
@@ -354,19 +403,12 @@ bool generateCXLConnectionNodeTagList(XMLParserTag * firstTagInMap, vector<GIAEn
 	currentTagL1->nextTag = newTag1;
 	
 	//cout << "h3b" << endl;
-	
-	#ifdef GIA_CMAP_CONVERSION_SANITISED
-	currentTagL1 = addToCXLConnectionNodeTagList(currentTagL1, conceptEntityNodesList, currentCmapNodeIDInCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
-	currentTagL1 = addToCXLConnectionNodeTagList(currentTagL1, propertyEntityNodesList, currentCmapNodeIDInCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
-	currentTagL1 = addToCXLConnectionNodeTagList(currentTagL1, actionEntityNodesList, currentCmapNodeIDInCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
-	currentTagL1 = addToCXLConnectionNodeTagList(currentTagL1, conditionEntityNodesList, currentCmapNodeIDInCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
-	#else
-	currentTagL1 = addToCXLConnectionNodeTagList(currentTagL1, conceptEntityNodesList, currentCmapNodeIDInCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
-	currentTagL1 = addToCXLConnectionNodeTagList(currentTagL1, propertyEntityNodesList, currentCmapNodeIDInCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
-	currentTagL1 = addToCXLConnectionNodeTagList(currentTagL1, actionEntityNodesList, currentCmapNodeIDInCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
-	currentTagL1 = addToCXLConnectionNodeTagList(currentTagL1, conditionEntityNodesList, currentCmapNodeIDInCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
-	#endif
 
+	currentTagL1 = addToCXLConnectionNodeTagList(currentTagL1, conceptEntityNodesList, currentCmapNodeIDInCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
+	currentTagL1 = addToCXLConnectionNodeTagList(currentTagL1, propertyEntityNodesList, currentCmapNodeIDInCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
+	currentTagL1 = addToCXLConnectionNodeTagList(currentTagL1, actionEntityNodesList, currentCmapNodeIDInCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
+	currentTagL1 = addToCXLConnectionNodeTagList(currentTagL1, conditionEntityNodesList, currentCmapNodeIDInCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
+	
 	//cout << "h6" << endl;
 	
 	return result;
@@ -385,6 +427,8 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 		#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
 		if(currentEntity->AssociatedInstanceNodeList.begin() == currentEntity->AssociatedInstanceNodeList.end())
 		{//if GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES; then do not add a concept entity if it has an associated instance (property node) 
+		//if((currentEntity->isAction) || (currentEntity->isProperty) || (currentEntity->isCondition))
+		//{//do not add raw concept nodes
 		#endif
 		
 			//cout << "w1" << endl;
@@ -397,25 +441,20 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 				//cout << "connectionTypeName = " << connectionTypeName << endl;
 				GIAEntityNode * actionSubjectEntity = currentEntity->actionSubjectEntity ;
 				GIAEntityNode * actionObjectEntity = currentEntity->actionObjectEntity;
+				long linkingPhraseID = currentEntity->reorderdIDforXMLsave;
 				if(currentEntity->actionSubjectEntity == NULL)
 				{
 					actionSubjectEntity = new GIAEntityNode();
 					actionSubjectEntity->CXLdummyNode = true;
-					actionSubjectEntity->printX = currentEntity->printX - (currentEntity->actionObjectEntity->printX - currentEntity->printX);
-					actionSubjectEntity->printY = currentEntity->printY - (currentEntity->actionObjectEntity->printY - currentEntity->printY);
-					actionObjectEntity->id = -1;
-					
+				
 				}
 				else if(currentEntity->actionObjectEntity == NULL)
 				{
 					actionObjectEntity = new GIAEntityNode();
-					actionObjectEntity->CXLdummyNode = true;
-					actionObjectEntity->printX = currentEntity->printX + (currentEntity->printX - currentEntity->actionSubjectEntity->printX);
-					actionObjectEntity->printY = currentEntity->printY + (currentEntity->printY - currentEntity->actionSubjectEntity->printY);									
-					actionObjectEntity->id = -1;
+					actionObjectEntity->CXLdummyNode = true;	
+				
 				}
-								
-				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, actionSubjectEntity, actionObjectEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList);		
+				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, actionSubjectEntity, actionObjectEntity, connectionTypeName, &linkingPhraseID, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, true);		
 			}
 			
 			if(currentEntity->isCondition)
@@ -423,51 +462,48 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 				//cout << "w1c" << endl;
 				string connectionTypeName = currentEntity->entityName;
 				
-				GIAEntityNode * conditionSubjectEntity = currentEntity->conditionSubjectEntity ;
+				GIAEntityNode * conditionSubjectEntity = currentEntity->conditionSubjectEntity;
 				GIAEntityNode * conditionObjectEntity = currentEntity->conditionObjectEntity;
+				long linkingPhraseID = currentEntity->reorderdIDforXMLsave;
 				if(currentEntity->conditionSubjectEntity == NULL)
 				{
 					conditionSubjectEntity = new GIAEntityNode();
-					conditionSubjectEntity->CXLdummyNode = true;
-					conditionSubjectEntity->printX = currentEntity->printX - (currentEntity->conditionObjectEntity->printX - currentEntity->printX);
-					conditionSubjectEntity->printY = currentEntity->printY - (currentEntity->conditionObjectEntity->printY - currentEntity->printY);
-					conditionObjectEntity->id = -1;
-					
+					conditionSubjectEntity->CXLdummyNode = true;	
+					cout << "conditionSubjectEntity->reorderdIDforXMLsave = " << conditionSubjectEntity->reorderdIDforXMLsave << endl;
 				}
 				else if(currentEntity->conditionObjectEntity == NULL)
 				{
 					conditionObjectEntity = new GIAEntityNode();
 					conditionObjectEntity->CXLdummyNode = true;
-					conditionObjectEntity->printX = currentEntity->printX + (currentEntity->printX - currentEntity->conditionSubjectEntity->printX);
-					conditionObjectEntity->printY = currentEntity->printY + (currentEntity->printY - currentEntity->conditionSubjectEntity->printY);									
-					conditionObjectEntity->id = -1;
-				}				
-				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, conditionSubjectEntity, conditionObjectEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList);				
+					cout << "conditionObjectEntity->reorderdIDforXMLsave = " << conditionObjectEntity->reorderdIDforXMLsave << endl;
+						
+				}							
+				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, conditionSubjectEntity, conditionObjectEntity, connectionTypeName, &linkingPhraseID, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, true);				
 			}
 							
 			#else
 			if(currentEntity->actionSubjectEntity != NULL)
 			{
 				string connectionTypeName = "subject";
-				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, currentEntity->actionSubjectEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList);
+				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, currentEntity->actionSubjectEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);
 			}	
 
 			if(currentEntity->actionObjectEntity != NULL)
 			{
 				string connectionTypeName = "object";
-				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, currentEntity->actionObjectEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList);			
+				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, currentEntity->actionObjectEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);			
 			}
 
 			if(currentEntity->conditionSubjectEntity != NULL)
 			{	
 				string connectionTypeName = "subject";	
-				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, currentEntity->conditionSubjectEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList);			
+				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, currentEntity->conditionSubjectEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);			
 			}	
 
 			if(currentEntity->conditionObjectEntity != NULL)
 			{
 				string connectionTypeName = "object";
-				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, currentEntity->conditionObjectEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList);			
+				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, currentEntity->conditionObjectEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);			
 			}		
 			#endif
 
@@ -477,7 +513,7 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 			if(currentEntity->entityNodeDefiningThisInstance != NULL)
 			{
 				string connectionTypeName = "instance";
-				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, currentEntity->entityNodeDefiningThisInstance, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList);						
+				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, currentEntity->entityNodeDefiningThisInstance, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);						
 			}
 			#endif
 
@@ -536,7 +572,7 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 				for(currentEntity->PropertyNodeReverseListIterator = currentEntity->PropertyNodeReverseList.begin(); currentEntity->PropertyNodeReverseListIterator < currentEntity->PropertyNodeReverseList.end(); currentEntity->PropertyNodeReverseListIterator++)
 				{	
 					string connectionTypeName = "property";
-					currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, *(currentEntity->PropertyNodeReverseListIterator), connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList);							
+					currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, *(currentEntity->PropertyNodeReverseListIterator), connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);							
 				} 
 			}
 
@@ -545,7 +581,7 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 				for(currentEntity->EntityNodeDefinitionListIterator = currentEntity->EntityNodeDefinitionList.begin(); currentEntity->EntityNodeDefinitionListIterator < currentEntity->EntityNodeDefinitionList.end(); currentEntity->EntityNodeDefinitionListIterator++)
 				{
 					string connectionTypeName = "definition";
-					currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, *(currentEntity->EntityNodeDefinitionListIterator), connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList);
+					currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, *(currentEntity->EntityNodeDefinitionListIterator), connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);
 				} 
 			}
 
@@ -569,20 +605,22 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 			}
 			*/
 
+			#ifndef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_TIME_CONDITION_NODES
 			if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
 			{
 				GIAEntityNode fakeTimeEntity;
 				fakeTimeEntity.entityName = currentEntity->timeConditionNode->conditionName;
 				fakeTimeEntity.printX = currentEntity->timeConditionNode->printX;
 				fakeTimeEntity.printY = currentEntity->timeConditionNode->printY;
-				#ifdef GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
+				#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
 				fakeTimeEntity.reorderdIDforXMLsave = currentEntity->timeConditionNode->id;
 				#else
 				fakeTimeEntity.id = currentEntity->timeConditionNode->id;				
 				#endif
 				string connectionTypeName = "time";
-				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, &fakeTimeEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList);
+				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, &fakeTimeEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);
 			}
+			#endif
 			//cout << "w3" << endl;
 		
 		#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
@@ -596,9 +634,9 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 	return currentTagL1;
 }
 
-XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * currentTagL1, GIAEntityNode * entity1, GIAEntityNode * entity2, string connectionTypeName, long * currentCmapNodeIDInCmapNodeList, XMLParserTag ** currentTagInLinkingPhraseList, XMLParserTag ** currentTagInLinkingPhraseAppearanceList, XMLParserTag * firstTagInConnectionsList)
+XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * currentTagL1, GIAEntityNode * entity1, GIAEntityNode * entity2, string connectionTypeName, long * currentCmapNodeIDInCmapNodeList, XMLParserTag ** currentTagInLinkingPhraseList, XMLParserTag ** currentTagInLinkingPhraseAppearanceList, XMLParserTag * firstTagInConnectionsList, bool alreadyMadeLinkingPhrase)
 {
-	#ifdef GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
+	#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
 	//cout << "entity1->reorderdIDforXMLsave = " << entity1->reorderdIDforXMLsave << endl;
 	//cout << "entity2->reorderdIDforXMLsave = " << entity2->reorderdIDforXMLsave << endl;
 	int entity1ID = entity1->reorderdIDforXMLsave;
@@ -619,6 +657,7 @@ XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * c
 	
 	//verify connection is not already found;
 	bool alreadyMadeConnection = false;
+	/*
 	XMLParserTag * currentTagInList = firstTagInConnectionsList;
 	while(currentTagInList->nextTag != NULL)
 	{
@@ -654,6 +693,7 @@ XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * c
 		}
 		currentTagInList = currentTagInList->nextTag;	
 	}
+	*/
 	
 	//cout << "q2" << endl;
 
@@ -672,9 +712,12 @@ XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * c
 		{		
 			currentTagL1 = generateCXLConnectionNodeTag(currentTagL1, connectionID, entity2ID);
 		}
-		*currentTagInLinkingPhraseList = generateCXLEntityNodeTag(*currentTagInLinkingPhraseList, connectionTypeName, connectionID, connectionTypeX, connectionTypeY, false, false);
-		*currentTagInLinkingPhraseAppearanceList = generateCXLEntityNodeTag(*currentTagInLinkingPhraseAppearanceList, connectionTypeName, connectionID, connectionTypeX, connectionTypeY, false, true);
-		(*currentCmapNodeIDInCmapNodeList) = (*currentCmapNodeIDInCmapNodeList) + 1;
+		if(!alreadyMadeLinkingPhrase)
+		{
+			*currentTagInLinkingPhraseList = generateCXLEntityNodeTag(*currentTagInLinkingPhraseList, connectionTypeName, connectionID, connectionTypeX, connectionTypeY, false, false);
+			*currentTagInLinkingPhraseAppearanceList = generateCXLEntityNodeTag(*currentTagInLinkingPhraseAppearanceList, connectionTypeName, connectionID, connectionTypeX, connectionTypeY, false, true);		
+			(*currentCmapNodeIDInCmapNodeList) = (*currentCmapNodeIDInCmapNodeList) + 1;
+		}
 		//cout << "q4" << endl;
 	}
 
@@ -686,6 +729,11 @@ XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * c
 XMLParserTag * generateCXLConnectionNodeTag(XMLParserTag * currentTagL1, long fromID, long toID)
 {	
 	bool result = true;
+	
+	/*
+	cout << "fromID = " << fromID << endl;
+	cout << "toID = " << toID << endl;
+	*/
 	
 	//cout << "h5" << endl;
 
@@ -724,7 +772,7 @@ XMLParserTag * generateCXLConnectionNodeTag(XMLParserTag * currentTagL1, long fr
 
 
 
-#ifdef GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
+#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
 void resetIDsForNodeList2(vector<GIAEntityNode*> *entityNodesList, long * currentEntityNodeIDInConceptEntityNodesList)
 {
 	//cout << "h3" << endl;

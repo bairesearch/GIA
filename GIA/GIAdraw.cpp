@@ -79,7 +79,7 @@ Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAEntityNode * en
 			pos2.x = entityNodeToConnect->printX;
 			pos2.y = entityNodeToConnect->printY;	
 			pos2.z = DRAW_CONNECTION_Z;
-			currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, pos1, &pos2, GIA_DRAW_ACTION_SUBJECT_CONNECTION_COLOUR, writeFileObject, connectionName);
+			currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, pos1, &pos2, entityDefinitionConnectionColour, writeFileObject, connectionName);
 		}
 	}
 	
@@ -412,6 +412,12 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			#endif
 			else if(entityNode->hasAssociatedInstanceIsAction)
 			{
+				/*
+				if(entityNode->isAction)
+				{
+					cout << "asd" << endl;
+				}
+				*/
 				if(entityNode->hasMeasure)
 				{
 					entityColour = GIA_DRAW_PROPERTY_MEASURE_NODE_COLOUR;
