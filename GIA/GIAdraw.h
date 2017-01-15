@@ -23,7 +23,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s4a 28-June-2013
+ * Project Version: 1s5a 28-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -231,16 +231,16 @@ static bool entityVectorConnectionDrawConnectionArray[GIA_ENTITY_NUMBER_OF_VECTO
 
 void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile, int maxNumberSentences);
 
-void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, XMLparserTag ** currentTag, int maxNumberSentences);
+void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, bool printType[], Reference * firstReferenceInPrintList, XMLparserTag ** currentTag, int maxNumberSentences);
 
 void initiateMaxXAtParticularY();
-Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance);
-	Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityNode * entityNodeToConnect, Reference * currentReferenceInPrintList, bool initialiseOrPrint[], string connectionName, int entityDefinitionConnectionColour, XMLparserTag ** currentTag);
-	Reference * initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode * timeConditionNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag);
+Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, int x, bool printType[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance);
+	Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityNode * entityNodeToConnect, Reference * currentReferenceInPrintList, bool printType[], string connectionName, int entityDefinitionConnectionColour, XMLparserTag ** currentTag);
+	Reference * initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode * timeConditionNode, int y, int x, bool printType[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag);
 
-Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, string connectionTypeName, bool initialiseOrPrint[]);
-	Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, bool initialiseOrPrint[]);
-Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, XMLparserTag ** currentTag, int thickness, bool initialiseOrPrint[]);
+Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, string connectionTypeName, bool printType[]);
+	Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, bool printType[]);
+Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, XMLparserTag ** currentTag, int thickness, bool printType[]);
 
 
 

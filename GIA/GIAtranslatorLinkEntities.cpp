@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s4a 28-June-2013
+ * Project Version: 1s5a 28-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1736,7 +1736,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 				for(entityIter = entityNode->propertyNodeReverseList.begin(); entityIter != entityNode->propertyNodeReverseList.end(); entityIter++)
 				{
 					...
-					currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+					currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, printType, currentReferenceInPrintList, writeFileObject);
 
 				}
 				*/

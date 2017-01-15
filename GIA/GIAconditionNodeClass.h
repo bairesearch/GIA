@@ -23,7 +23,7 @@
  * File Name: GIAconditionNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s4a 28-June-2013
+ * Project Version: 1s5a 28-June-2013
  *
  *******************************************************************************/
 
@@ -131,6 +131,7 @@ public:
 	long idActiveListReorderdIDforXMLsave;	//for CXL output only
 	int printX;			//for CXL output only
 	int printY;			//for CXL output only
+	bool printCoordsAlreadyDefined;
 };
 
 #define TIME_DATE_DISPLAY_FORMAT_AMERICAN (1)

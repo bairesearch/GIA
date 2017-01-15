@@ -23,7 +23,7 @@
  * File Name: GIAconditionNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s4a 28-June-2013
+ * Project Version: 1s5a 28-June-2013
  *
  *******************************************************************************/
 
@@ -56,6 +56,7 @@ GIAtimeConditionNode::GIAtimeConditionNode(void)
 	idActiveListReorderdIDforXMLsave = 0;
 	printX = 0;
 	printY = 0;
+	printCoordsAlreadyDefined = false;
 }
 GIAtimeConditionNode::~GIAtimeConditionNode(void)
 {

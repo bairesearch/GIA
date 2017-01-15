@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s4a 28-June-2013
+ * Project Version: 1s5a 28-June-2013
  *
  *******************************************************************************/
 
@@ -109,6 +109,7 @@ GIAentityNode::GIAentityNode(void)
 	printYIndex = 0;
 	printTextX = 0;
 	printTextY = 0;
+	printCoordsAlreadyDefined = false;
 
 	for(int grammaticalTenseModifierIndex=0; grammaticalTenseModifierIndex<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
 	{

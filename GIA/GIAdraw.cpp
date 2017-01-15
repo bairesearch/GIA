@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s4a 28-June-2013
+ * Project Version: 1s5a 28-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -56,26 +56,26 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 	XMLparserTag * firstTagInSVGFile = new XMLparserTag();
 	XMLparserTag * currentTagInSVGFile = firstTagInSVGFile;
 	
-	bool initialiseOrPrint[3];
-	initialiseOrPrint[DRAW_CREATE_LDR_REFERENCES] = false;
-	initialiseOrPrint[DRAW_CREATE_SVG_REFERENCES] = false;
-	initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = false;
+	bool printType[3];
+	printType[DRAW_CREATE_LDR_REFERENCES] = false;
+	printType[DRAW_CREATE_SVG_REFERENCES] = false;
+	printType[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = false;
 	if(useOutputLDRfile || display)
 	{// || useOutputPPMfile - implied
-		initialiseOrPrint[DRAW_CREATE_LDR_REFERENCES] = true;
-		initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = true;
+		printType[DRAW_CREATE_LDR_REFERENCES] = true;
+		printType[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = true;
 	}
 	if(useOutputSVGfile)
 	{
-		initialiseOrPrint[DRAW_CREATE_SVG_REFERENCES] = true;
-		initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = true;
+		printType[DRAW_CREATE_SVG_REFERENCES] = true;
+		printType[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = true;
 	}
 
 	Reference * firstReferenceInPrintList = new Reference();
-	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, initialiseOrPrint, firstReferenceInPrintList, &currentTagInSVGFile, maxNumberSentences);
+	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, printType, firstReferenceInPrintList, &currentTagInSVGFile, maxNumberSentences);
 	/*
-	initialiseOrPrint = DRAW_PRINT;
-	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, initialiseOrPrint, firstReferenceInPrintList, &currentTagInSVGFile, maxNumberSentences);
+	printType = DRAW_PRINT;
+	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, printType, firstReferenceInPrintList, &currentTagInSVGFile, maxNumberSentences);
 	*/
 
 
@@ -89,7 +89,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 	}
 
 
-	if(initialiseOrPrint[DRAW_CREATE_LDR_REFERENCES] == true)
+	if(printType[DRAW_CREATE_LDR_REFERENCES] == true)
 	{
 		writeReferencesToFile(outputFileNameLDRcharstar, firstReferenceInPrintList);
 	}
@@ -173,7 +173,7 @@ void initiateMaxXAtParticularY()
 }
 
 
-void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, XMLparserTag ** currentTag, int maxNumberSentences)
+void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, bool printType[], Reference * firstReferenceInPrintList, XMLparserTag ** currentTag, int maxNumberSentences)
 {
 	vector<GIAentityNode*>::iterator entityIter;
 
@@ -185,12 +185,17 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesA
 	maxXAtAParticularY[yInitial] = xInitial;
 	//first pass; determine maxXAtAParticularY	[and use these to centre each row {at a given y} respectively]
 
-	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	#ifndef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	maxNumberSentences = 1;
+	#endif	
+	bool printFromXMLcoordinatesAlreadyDefined = false;
+	if((*(entityNodesActiveListComplete->begin()))->printCoordsAlreadyDefined)
+	{
+		printFromXMLcoordinatesAlreadyDefined = true;
+		maxNumberSentences = 1;
+	}
 	for(int sentenceIndex=1; sentenceIndex <= maxNumberSentences; sentenceIndex++)
 	{
-	#else
-	int sentenceIndex = 1;
-	#endif
 		//cout << "*** sentenceIndex = " << sentenceIndex << endl;
 		for(entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 		{
@@ -206,14 +211,12 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesA
 			
 			bool thisIsDefinitionAndPreviousNodeWasInstance = false;
 			
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, initialiseOrPrint, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);		
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, printType, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);		
 		}
-	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	}
-	#endif	
 }
 
-Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityNode * entityNodeToConnect, Reference * currentReferenceInPrintList, bool initialiseOrPrint[], string connectionName, int entityDefinitionConnectionColour, XMLparserTag ** currentTag)
+Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityNode * entityNodeToConnect, Reference * currentReferenceInPrintList, bool printType[], string connectionName, int entityDefinitionConnectionColour, XMLparserTag ** currentTag)
 {
 	if(!(entityNodeToConnect->disabled))
 	{
@@ -222,18 +225,18 @@ Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityNode * en
 		pos2.x = entityNodeToConnect->printX;
 		pos2.y = entityNodeToConnect->printY;
 		pos2.z = DRAW_CONNECTION_Z;
-		currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, pos1, &pos2, entityDefinitionConnectionColour, currentTag, connectionName, initialiseOrPrint);
+		currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, pos1, &pos2, entityDefinitionConnectionColour, currentTag, connectionName, printType);
 	}
 
 	return currentReferenceInPrintList;
 }
 
 
-Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance)
+Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, int x, bool printType[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance)
 {	
 	//cout << "1 entityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp  << endl;
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-	if((entityNode->sentenceIndexTemp == sentenceIndex) || (entityNode->wasReference) || thisIsDefinitionAndPreviousNodeWasInstance)	//condition (entityNode->wasReference) added 12 October 2012 1q3b
+	if((entityNode->sentenceIndexTemp == sentenceIndex) || (entityNode->wasReference) || thisIsDefinitionAndPreviousNodeWasInstance || entityNode->printCoordsAlreadyDefined)	//condition (entityNode->wasReference) added 12 October 2012 1q3b
 	{
 	#endif
 		//cout << "2 " << endl;		
@@ -297,10 +300,17 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 			entityNode->initialisedForPrinting = true;
 
 			maxXAtAParticularY[y] = maxXAtAParticularY[y] + DRAW_X_SPACE_BETWEEN_ENTITIES;	//only used, for indepdendent network visualisation (eg, when rendering next sentence)
-
-			entityNode->printX = x;
-			entityNode->printY = y;
-
+			
+			if(entityNode->printCoordsAlreadyDefined)
+			{
+				x = entityNode->printX;
+				y = entityNode->printY;
+			}
+			else
+			{
+				entityNode->printX = x;
+				entityNode->printY = y;			
+			}
 
 			int q, r;
 
@@ -343,13 +353,13 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 						thisIsDefinitionAndPreviousNodeWasInstance = true;
 					}
 					#endif
-					currentReferenceInPrintList = initialiseEntityNodeForPrinting((*connectionIter)->entity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
+					currentReferenceInPrintList = initialiseEntityNodeForPrinting((*connectionIter)->entity, y+q, x+r, printType, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
 
 					bool pass = true;
 					int entityConnectionColour = entityVectorConnectionDrawColourNameArray[i];
 					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
 					{
-						if(initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] == true)
+						if(printType[DRAW_CREATE_LDR_OR_SVG_REFERENCES] == true)
 						{
 							entityConnectionColour = entityDefinitionConnectionColour;
 						}
@@ -374,7 +384,7 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 							}
 							#endif
 							//cout << "entityConnectionColour = " << entityConnectionColour << endl;
-							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, (*connectionIter)->entity, currentReferenceInPrintList, initialiseOrPrint, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);
+							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, (*connectionIter)->entity, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);
 						}
 					}
 					q = q + entityVectorConnectionDrawPosYspacingArray[i];
@@ -387,7 +397,7 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 			{
 				int timeConditionNodePrintX = x+r;
 				int timeConditionNodePrintY = y+q;
-				currentReferenceInPrintList = initialiseTimeConditionNodeForPrinting(entityNode->timeConditionNode, timeConditionNodePrintY, timeConditionNodePrintX, initialiseOrPrint, currentReferenceInPrintList, currentTag);
+				currentReferenceInPrintList = initialiseTimeConditionNodeForPrinting(entityNode->timeConditionNode, timeConditionNodePrintY, timeConditionNodePrintX, printType, currentReferenceInPrintList, currentTag);
 
 				q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 
@@ -396,12 +406,12 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 				pos2.x = timeConditionNodePrintX;
 				pos2.y = timeConditionNodePrintY;
 				pos2.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_TIME_CONNECTION_COLOUR, currentTag, "time", initialiseOrPrint);
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_TIME_CONNECTION_COLOUR, currentTag, "time", printType);
 
 			}
 
 
-			if(initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] == true)
+			if(printType[DRAW_CREATE_LDR_OR_SVG_REFERENCES] == true)
 			{
 				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
 
@@ -538,7 +548,7 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 					nameOfBox = entityNode->entityName;
 				}
 				//cout << "entityColour = " << entityColour << endl;	
-				currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, currentTag, boxThickness, initialiseOrPrint);
+				currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, currentTag, boxThickness, printType);
 
 			}
 
@@ -589,14 +599,15 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 
 
 
-Reference * initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode * timeConditionNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag)
+Reference * initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode * timeConditionNode, int y, int x, bool printType[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag)
 {
 
 	int timeConditionNodePrintX = x;
 	int timeConditionNodePrintY = y;
+		
 	timeConditionNode->printX = timeConditionNodePrintX;
 	timeConditionNode->printY = timeConditionNodePrintY;
-
+	
 	vec pos1;
 	vec pos2;
 	vec pos3;
@@ -613,7 +624,7 @@ Reference * initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode * timeCo
 	{
 		boxThickness = GIA_DRAW_THICKNESS_THICK;
 	}
-	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_TIME_NODE_COLOUR, &(timeConditionNode->conditionName), currentTag, boxThickness, initialiseOrPrint);
+	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_TIME_NODE_COLOUR, &(timeConditionNode->conditionName), currentTag, boxThickness, printType);
 
 	/*
 	int timeConditionNodeColour = GIA_DRAW_CONDITION_TIME_NODE_COLOUR;
@@ -621,7 +632,7 @@ Reference * initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode * timeCo
 	{
 		timeConditionNodeColour = GIA_DRAW_CONDITION_TIME_STATE_NODE_COLOUR;
 	}
-	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, timeConditionNodeColour, &(timeConditionNode->conditionName), currentTag, GIA_DRAW_THICKNESS_NORMAL, initialiseOrPrint);
+	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, timeConditionNodeColour, &(timeConditionNode->conditionName), currentTag, GIA_DRAW_THICKNESS_NORMAL, printType);
 	*/
 
 	#ifdef GIA_DRAW_DEBUG
@@ -632,11 +643,11 @@ Reference * initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode * timeCo
 }
 
 
-Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, string connectionTypeName, bool initialiseOrPrint[])
+Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, string connectionTypeName, bool printType[])
 {
 	Reference * newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
-	newCurrentReferenceInPrintList = createReferenceConnection(newCurrentReferenceInPrintList, pos1, pos2, colour, currentTag, initialiseOrPrint);
+	newCurrentReferenceInPrintList = createReferenceConnection(newCurrentReferenceInPrintList, pos1, pos2, colour, currentTag, printType);
 
 	if(GIA_DRAW_USE_CONNECTION_TYPE_NAME_TEXT)
 	{
@@ -645,7 +656,7 @@ Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrin
 		vect.y = (pos1->y + pos2->y)/2;
 		vect.z = (pos1->z + pos2->z)/2;
 
-		if(initialiseOrPrint[DRAW_CREATE_LDR_REFERENCES] == true)
+		if(printType[DRAW_CREATE_LDR_REFERENCES] == true)
 		{
 			int numSpritesAdded;	//not used
 			vec positionLDR;
@@ -654,7 +665,7 @@ Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrin
 			positionLDR.z = vect.z - GIA_OUTPUT_Z_POSITION_CONNECTIONS;
 			newCurrentReferenceInPrintList = LDaddBasicTextualSpriteStringToReferenceList(&connectionTypeName, newCurrentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
 		}
-		if(initialiseOrPrint[DRAW_CREATE_SVG_REFERENCES] == true)
+		if(printType[DRAW_CREATE_SVG_REFERENCES] == true)
 		{
 			vec positionSVG;
 			positionSVG.x = vect.x - GIA_DRAW_BASICENTITY_NODE_WIDTH/3;
@@ -667,11 +678,11 @@ Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrin
 	return newCurrentReferenceInPrintList;
 }
 
-Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, bool initialiseOrPrint[])
+Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, XMLparserTag ** currentTag, bool printType[])
 {
 	Reference * newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
-	if(initialiseOrPrint[DRAW_CREATE_LDR_REFERENCES] == true)
+	if(printType[DRAW_CREATE_LDR_REFERENCES] == true)
 	{
 		#ifdef GIA_DRAW_DEBUG
 		//cout << "drawing connection" << endl;
@@ -710,7 +721,7 @@ Reference * createReferenceConnection(Reference * currentReferenceInPrintList, v
 		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
 	}
 
-	if(initialiseOrPrint[DRAW_CREATE_SVG_REFERENCES] == true)
+	if(printType[DRAW_CREATE_SVG_REFERENCES] == true)
 	{
 		pos1->z = GIA_OUTPUT_Z_POSITION_CONNECTIONS;
 		pos2->z = GIA_OUTPUT_Z_POSITION_CONNECTIONS;
@@ -724,11 +735,11 @@ Reference * createReferenceConnection(Reference * currentReferenceInPrintList, v
 
 //consider using elipse instead; <ellipse cx="240" cy="100" rx="220" ry="30">
 
-Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, XMLparserTag ** currentTag, int thickness, bool initialiseOrPrint[])
+Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, XMLparserTag ** currentTag, int thickness, bool printType[])
 {
 	Reference * newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
-	if(initialiseOrPrint[DRAW_CREATE_LDR_REFERENCES] == true)
+	if(printType[DRAW_CREATE_LDR_REFERENCES] == true)
 	{
 
 		newCurrentReferenceInPrintList->type = REFERENCE_TYPE_QUAD;
@@ -846,7 +857,7 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 		newCurrentReferenceInPrintList = LDaddBasicTextualSpriteStringToReferenceList(text, newCurrentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
 	}
 
-	if(initialiseOrPrint[DRAW_CREATE_SVG_REFERENCES] == true)
+	if(printType[DRAW_CREATE_SVG_REFERENCES] == true)
 	{
 		vec positionSVG;
 		positionSVG.x = vect->x + GIA_DRAW_BASICENTITY_NODE_WIDTH/2;

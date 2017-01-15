@@ -23,7 +23,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s4a 28-June-2013
+ * Project Version: 1s5a 28-June-2013
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -732,36 +732,42 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 			int attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->printX = attributeValue;
 			printXFound = true;
+			entityNode->printCoordsAlreadyDefined = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printY)
 		{
 			int attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->printY = attributeValue;
 			printYFound = true;
+			entityNode->printCoordsAlreadyDefined = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printXIndex)
 		{
 			int attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->printXIndex = attributeValue;
 			printXIndexFound = true;
+			entityNode->printCoordsAlreadyDefined = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printYIndex)
 		{
 			int attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->printYIndex = attributeValue;
 			printYIndexFound = true;
+			entityNode->printCoordsAlreadyDefined = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextX)
 		{
 			int attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->printTextX = attributeValue;
 			printTextXFound = true;
+			entityNode->printCoordsAlreadyDefined = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextY)
 		{
 			int attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->printTextY = attributeValue;
 			printTextYFound = true;
+			entityNode->printCoordsAlreadyDefined = true;
 		}
 
 		currentAttribute = currentAttribute->nextAttribute;
