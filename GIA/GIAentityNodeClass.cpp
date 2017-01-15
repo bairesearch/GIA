@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g5b 05-September-2014
+ * Project Version: 2g6a 08-September-2014
  *
  *******************************************************************************/
 
@@ -645,6 +645,8 @@ void setEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristi
 bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic)
 {
 	bool foundMatch = false;
+	bool illegalVariable = false;
+	
 	//cout << "testEntityCharacteristic():" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
 
 	/*GIA Entity Type*/
@@ -715,6 +717,11 @@ bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * ent
 	/*GIA Miscellaneous Internal Variables*/
 	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 	testEntityCharacteristicIterationbool(entity->wasReference, entityCharacteristic, "wasReference", &foundMatch);
+	#else
+	if(entityCharacteristic->name == "wasReference")
+	{
+		illegalVariable = true;	//ignore illegal variable - added 2g6a
+	}
 	#endif
 	testEntityCharacteristicIterationbool(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp, entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->mustSetIsSubstanceConceptBasedOnApposRelation, entityCharacteristic, "mustSetIsSubstanceConceptBasedOnApposRelation", &foundMatch);
@@ -743,6 +750,11 @@ bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * ent
 		{
 			result = false;
 		}
+	}
+	
+	if(illegalVariable)
+	{
+		result = true;
 	}
 
 	return result;
