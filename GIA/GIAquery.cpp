@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i24a 03-February-2015
+ * Project Version: 2i24b 03-February-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -793,11 +793,18 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode* queryEntityNode, 
 												if(passReferenceContextMatch)
 												{
 												#endif
-													//cout << "\texactMatch" << endl;
-													if(testEntityNodeForQueryOrReferenceSet2(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
+													#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
+													if(!(entityNode->NLCmathTextParsablePhraseEntity))
 													{
-														exactMatch = true;
+													#endif
+														//cout << "\texactMatch" << endl;
+														if(testEntityNodeForQueryOrReferenceSet2(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
+														{
+															exactMatch = true;
+														}
+													#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
 													}
+													#endif
 												#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 												}
 												#endif
@@ -1478,26 +1485,32 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode* queryEntityNode, GI
 											{
 											#endif
 											//cout << "passed isSubstanceConcept tests" << endl;
-
-												if(testEntityNodeForQueryOrReferenceSet(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
+												#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
+												if(!(entityNode->NLCmathTextParsablePhraseEntity))
 												{
-													result = EXACT_MATCH_PASS;
-
-													#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-													/*
-													#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-													if(referenceTraceParameters->intrasentenceReference)
+												#endif
+													if(testEntityNodeForQueryOrReferenceSet(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
 													{
-														cout << "EXACT_MATCH_PASS" << endl;
+														result = EXACT_MATCH_PASS;
+
+														#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+														/*
+														#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+														if(referenceTraceParameters->intrasentenceReference)
+														{
+															cout << "EXACT_MATCH_PASS" << endl;
+														}
+														#endif
+														*/
+														#endif
 													}
-													#endif
-													*/
-													#endif
+													else
+													{
+														result = EXACT_MATCH_FAIL;
+													}
+												#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
 												}
-												else
-												{
-													result = EXACT_MATCH_FAIL;
-												}
+												#endif
 											#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
 											}
 											else

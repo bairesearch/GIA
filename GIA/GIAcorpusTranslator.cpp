@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i24a 03-February-2015
+ * Project Version: 2i24b 03-February-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -271,6 +271,16 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 		if(GIAentityNodeArrayFilled[w])
 		{
 			entityNodesActiveListSentence->push_back(GIAentityNodeArray[w]);
+			
+			#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
+			if(!enableAdvancedReferencing)
+			{
+				if(!(GIAentityNodeArray[w]->wasReference))	//redundant?
+				{
+					GIAentityNodeArray[w]->NLCmathTextParsablePhraseEntity = true;
+				}
+			}
+			#endif
 		}
 	}
 	

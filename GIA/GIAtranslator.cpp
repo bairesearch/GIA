@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i24a 03-February-2015
+ * Project Version: 2i24b 03-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1001,6 +1001,17 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 			entityNodesActiveListSentence->push_back(GIAentityNodeArray[w]);
 			
 			#ifdef GIA_USE_ADVANCED_REFERENCING
+			
+			#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
+			if(!enableAdvancedReferencing)
+			{
+				if(!(GIAentityNodeArray[w]->wasReference))	//redundant?
+				{
+					GIAentityNodeArray[w]->NLCmathTextParsablePhraseEntity = true;
+				}
+			}
+			#endif
+		
 			#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 			if(!(GIAentityNodeArray[w]->wasReference))
 			{
@@ -1133,6 +1144,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	}
 	else
 	{
+	
 	#endif
 		entityNodesActiveListSentences->insert(pair<int, vector<GIAentityNode*>*>(currentSentenceInList->sentenceIndex, entityNodesActiveListSentence));
 	#ifdef GIA_USE_ADVANCED_REFERENCING

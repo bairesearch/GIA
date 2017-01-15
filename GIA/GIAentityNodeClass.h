@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i24a 03-February-2015
+ * Project Version: 2i24b 03-February-2015
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -473,6 +473,9 @@ public:
 	string NLCoriginalNumericalVariableName;	//added NLC 1h1d/24-July-2014
 	bool NLCcontextGeneratedTemp;		//added NLC 1l2d/31-October-2014
 	bool NLCcategoryListCreatedTemp;	//added NLC 1l10d/06-November-2014
+	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
+	bool NLCmathTextParsablePhraseEntity;
+	#endif
 	#endif
 	
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
