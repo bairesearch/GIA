@@ -9,7 +9,7 @@
 		<miscellaneousItem name="SPRITE_TEXT_PADDING_IN_LDRAW_UNITS" stringValue="" fractionalValue="1.0" />
 		
 		<miscellaneousItem name="SPRITES_FLOATING_WIDTH_IN_LDRAW_UNITS" stringValue="" fractionalValue="0" />
-		<miscellaneousItem name="SPRITES_FLOATING_HEIGHT_IN_LDRAW_UNITS" stringValue="" fractionalValue="-5" />
+		<miscellaneousItem name="SPRITES_FLOATING_HEIGHT_IN_LDRAW_UNITS" stringValue="" fractionalValue="0" />
 		
 		<miscellaneousItem name="SPRITE_NAME_START" stringValue="sprite" fractionalValue="" />
 		<miscellaneousItem name="SPRITE_EXTENSION" stringValue=".ldr" fractionalValue="" />

@@ -520,7 +520,7 @@ Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrin
 {
 	Reference * newCurrentReferenceInPrintList = currentReferenceInPrintList;
 	
-	createReferenceConnection(newCurrentReferenceInPrintList, pos1, pos2, colour, writeFileObject);
+	newCurrentReferenceInPrintList = createReferenceConnection(newCurrentReferenceInPrintList, pos1, pos2, colour, writeFileObject);
 
 	if(GIA_DRAW_USE_CONNECTION_TYPE_NAME_TEXT)
 	{
@@ -537,8 +537,8 @@ Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrin
 		newCurrentReferenceInPrintList = LDaddBasicTextualSpriteStringToReferenceList(&connectionTypeName, newCurrentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
 
 		vec positionSVG;
-		positionSVG.x = vect.x - GIA_DRAW_BASICENTITY_NODE_WIDTH/4;
-		positionSVG.y = vect.y;
+		positionSVG.x = vect.x - GIA_DRAW_BASICENTITY_NODE_WIDTH/3;
+		positionSVG.y = vect.y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 		positionSVG.z = GIA_OUTPUT_Z_POSITION_CONNECTIONS;
 		writeSVGText(writeFileObject, connectionTypeName, &positionSVG, SVG_SCALE_FACTOR*SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
 	}
@@ -714,8 +714,8 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 	positionSVG.y = vect->y;	
 	positionSVG.z = GIA_OUTPUT_Z_POSITION_NODES;
 	writeSVGBox(writeFileObject, &positionSVG, width, height, colour, GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG*thickness, GIA_USE_SVG_ELLIPTICAL_BOXES);
-	positionSVG.x = vect->x - GIA_DRAW_BASICENTITY_NODE_WIDTH/4;
-	positionSVG.y = vect->y;
+	positionSVG.x = vect->x - GIA_DRAW_BASICENTITY_NODE_WIDTH/3;
+	positionSVG.y = vect->y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 	positionSVG.z = GIA_OUTPUT_Z_POSITION_TEXT;
 	writeSVGText(writeFileObject, *text, &positionSVG, SVG_SCALE_FACTOR*SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
 
