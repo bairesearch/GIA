@@ -593,7 +593,14 @@ Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeCo
 	
 	//may accidentially overwrite adjacent nodes/connections that have already been printed here; be careful...
 
-	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_TIME_NODE_COLOUR, &(timeConditionNode->conditionName), writeFileObject, GIA_DRAW_THICKNESS_NORMAL);
+	int boxThickness = GIA_DRAW_THICKNESS_NORMAL;
+	if(timeConditionNode->isState)
+	{
+		//cout << "box thickness is high" << endl;
+		boxThickness = GIA_DRAW_THICKNESS_THICK;
+	}
+				
+	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_TIME_NODE_COLOUR, &(timeConditionNode->conditionName), writeFileObject, boxThickness);
 
 	#ifdef GIA_DRAW_DEBUG
 	cout << "Exiting: timeConditionNode = " << timeConditionNode->conditionName << endl;

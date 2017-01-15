@@ -110,6 +110,7 @@ public:
 	double period;	//in seconds
 	long totalTimeInSeconds;
 	
+	bool isState;
 };
 
 #define TIME_DATE_DISPLAY_FORMAT_AMERICAN (1)

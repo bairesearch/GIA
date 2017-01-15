@@ -145,9 +145,15 @@ GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
 	newProperty->grammaticalNumber = propertyEntity->grammaticalNumberTemp;
 	//}
 
-	if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
+	if(propertyEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true)
+	{
+		newProperty->isActionOrPropertyState = true;
+		//cout << "property is state" << endl;
+	}
+		
+	if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newProperty->isActionOrPropertyState)
 	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
-		addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp);
+		addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp, newProperty->isActionOrPropertyState);
 	}
 
 	//configure property definition node
@@ -248,6 +254,7 @@ void addActionToActionDefinition(GIAEntityNode * actionEntity)
 }
 
 
+
 	//conditions required to be added [eg when, where, how, why]
 GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 {		
@@ -295,7 +302,7 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 		newOrExistingAction = new GIAEntityNode();
 		newOrExistingAction->id = currentEntityNodeIDInCompleteList;
 		newOrExistingAction->idSecondary = currentEntityNodeIDInActionEntityNodesList;
-		
+							
 		entityNodesCompleteList->push_back(newOrExistingAction);
 		currentEntityNodeIDInCompleteList++;
 		actionEntityNodesList->push_back(newOrExistingAction);
@@ -313,14 +320,20 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 		newOrExistingAction->isAction = true;
 		//WHY WOULD THIS EVER BE REQURIED?; newAction->entityNodeContainingThisProperty = NULL;
 
+		if(actionEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true)
+		{
+			newOrExistingAction->isActionOrPropertyState = true;
+			//cout << "action is state" << endl;			
+		}
+			
 		//cout << "actionEntity->grammaticalTenseTemp = " << actionEntity->grammaticalTenseTemp << endl;
 		//cout << "actionEntity->entityName = " << actionEntity->entityName << endl;
 
-		if(actionEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
+		if(actionEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newOrExistingAction->isActionOrPropertyState)
 		{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
 			//cout << "hello" << endl;
 			//exit(0);
-			addTenseOnlyTimeConditionToProperty(newOrExistingAction, actionEntity->grammaticalTenseTemp);
+			addTenseOnlyTimeConditionToProperty(newOrExistingAction, actionEntity->grammaticalTenseTemp, newOrExistingAction->isActionOrPropertyState);
 		}	
 		
 		actionEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
@@ -341,7 +354,7 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense)
 #endif
 */
-void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense)
+void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, bool isState)
 {
 	propertyNode->conditionType = CONDITION_NODE_TYPE_TIME;
 	
@@ -360,9 +373,14 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense
 	
 	newTimeCondition->tense = tense;
 	newTimeCondition->conditionName = grammaticalTenseNameArray[tense];
+	if(isState)
+	{
+		newTimeCondition->isState = true;
+	}	
 	propertyNode->timeConditionNode = newTimeCondition;
-}
+	
 
+}
 
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity)
 {
@@ -1067,6 +1085,7 @@ void fillGrammaticalArrays(Sentence * currentSentenceInList, bool GIAEntityNodeI
 			//NB only the first characters of currentFeatureInList->grammar contain the tense type name 
 			if((currentFeatureInList->grammar).find(grammaticalTenseModifierNameArray[grammaticalTenseModifierIndex]) != -1) 
 			{
+				//cout << "grammaticalTenseModifierNameArray[grammaticalTenseModifierIndex] = " << grammaticalTenseModifierNameArray[grammaticalTenseModifierIndex] << endl;
 				GIAEntityNodeGrammaticalTenseModifierArray[currentFeatureInList->entityIndex*GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES + grammaticalTenseModifierIndex] = true;
 				//cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalTenseModifierIndex true = " << grammaticalTenseModifierNameArray[grammaticalTenseModifierIndex] << endl;
 			}			
@@ -1165,13 +1184,17 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 			//cout << "functionEntity->hasAssociatedTime = " << functionEntity->hasAssociatedTime << endl;
 			//cout << "relationFunctionIndex = " << relationFunctionIndex << endl;	
 
+			for(int grammaticalTenseModifierIndex=0; grammaticalTenseModifierIndex<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
+			{
+				GIAEntityNodeArray[relationFunctionIndex]->grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = GIAEntityNodeGrammaticalTenseModifierArray[relationFunctionIndex*GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES + grammaticalTenseModifierIndex];				
+			}
 			GIAEntityNodeArray[relationFunctionIndex]->grammaticalTenseTemp = GIAEntityNodeGrammaticalTenseArray[relationFunctionIndex];
 			GIAEntityNodeArray[relationFunctionIndex]->grammaticalNumberTemp = GIAEntityNodeGrammaticalNumberArray[relationFunctionIndex];
 			GIAEntityNodeArray[relationFunctionIndex]->grammaticalDefiniteTemp = GIAEntityNodeGrammaticalIsDefiniteArray[relationFunctionIndex];
 			GIAEntityNodeArray[relationFunctionIndex]->grammaticalPersonTemp = GIAEntityNodeGrammaticalIsPersonArray[relationFunctionIndex];
 			GIAEntityNodeArray[relationFunctionIndex]->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[relationFunctionIndex];
 			GIAEntityNodeArray[relationFunctionIndex]->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[relationFunctionIndex];
-
+			
 
 			GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedInstanceTemp = false;
 
@@ -1186,6 +1209,10 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 			//cout << "argumentEntity->hasAssociatedTime = " << argumentEntity->hasAssociatedTime << endl;	
 			//cout << "relationArgumentIndex = " << relationArgumentIndex << endl;
 
+			for(int grammaticalTenseModifierIndex=0; grammaticalTenseModifierIndex<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
+			{
+				GIAEntityNodeArray[relationArgumentIndex]->grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = GIAEntityNodeGrammaticalTenseModifierArray[relationArgumentIndex*GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES + grammaticalTenseModifierIndex];				
+			}			
 			GIAEntityNodeArray[relationArgumentIndex]->grammaticalTenseTemp = GIAEntityNodeGrammaticalTenseArray[relationArgumentIndex];
 			GIAEntityNodeArray[relationArgumentIndex]->grammaticalNumberTemp = GIAEntityNodeGrammaticalNumberArray[relationArgumentIndex];
 			GIAEntityNodeArray[relationArgumentIndex]->grammaticalDefiniteTemp = GIAEntityNodeGrammaticalIsDefiniteArray[relationArgumentIndex];

@@ -312,7 +312,7 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
 	
 void addActionToActionDefinition(GIAEntityNode * actionEntity);
 
-void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense);
+void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, bool isState);
 
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity);
 

@@ -32,11 +32,11 @@ using namespace std;
 #define GRAMMATICAL_TENSE_FUTURE 3
 #define GRAMMATICAL_TENSE_NUMBER_OF_TYPES (4)
 
-#define GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE "progressive"
-#define GRAMMATICAL_TENSE_MODIFIER_PERFECT "perfect"
-#define GRAMMATICAL_TENSE_MODIFIER_PASSIVE "passive"
-#define GRAMMATICAL_TENSE_MODIFIER_INFINITIVE "infinitive"
-#define GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE "imperative"
+#define GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE 0
+#define GRAMMATICAL_TENSE_MODIFIER_PERFECT 1
+#define GRAMMATICAL_TENSE_MODIFIER_PASSIVE 2
+#define GRAMMATICAL_TENSE_MODIFIER_INFINITIVE 3
+#define GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE 4
 #define GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES (5)
 
 #define GRAMMATICAL_NUMBER_UNDEFINED 0
@@ -108,7 +108,8 @@ public:
 	bool hasAssociatedInstanceIsAction;
 	bool hasAssociatedInstanceIsCondition;
 	bool hasAssociatedTime;
-		
+	bool isActionOrPropertyState;	//eg The cat is lying on the bed. / Mark is being happy.
+			
 	/*
 	enum
 	{

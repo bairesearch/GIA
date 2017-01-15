@@ -41,6 +41,7 @@ GIAEntityNode::GIAEntityNode(void)
 	hasAssociatedInstanceIsAction = false;
 	hasAssociatedInstanceIsCondition = false;
 	hasAssociatedTime = false;
+	isActionOrPropertyState = false;
 	
 	//type = undefinedEntityType;
 	//instance = undefinedInstance;
@@ -75,7 +76,10 @@ GIAEntityNode::GIAEntityNode(void)
 	printTextX = 0;
 	printTextY = 0;
 	
-	//setArrayToFalse(grammaticalTenseModifierArrayTemp); 
+	for(int grammaticalTenseModifierIndex=0; grammaticalTenseModifierIndex<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
+	{
+		grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = false;
+	}
 	grammaticalTenseTemp = GRAMMATICAL_TENSE_UNDEFINED;
 	grammaticalNumberTemp = GRAMMATICAL_NUMBER_UNDEFINED;
 	grammaticalDefiniteTemp = GRAMMATICAL_DEFINITE_UNDEFINED;

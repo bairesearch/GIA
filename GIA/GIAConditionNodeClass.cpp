@@ -30,6 +30,7 @@ GIATimeConditionNode::GIATimeConditionNode(void)
 	period = -1;
 	totalTimeInSeconds = 0;
 	
+	isState = false;
 }
 GIATimeConditionNode::~GIATimeConditionNode(void)
 {
