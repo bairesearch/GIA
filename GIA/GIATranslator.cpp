@@ -519,6 +519,7 @@ void addReasonConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * 
 
 void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, string conditionName, bool negative)
 {
+	
 	//timeConditionEntity->conditionType = CONDITION_NODE_TYPE_UNDEFINED;
 	
 	addConditionToProperty(propertyNode, propertyConditionEntity, conditionName, negative);
@@ -1501,6 +1502,7 @@ void collapseRedundantRelationAndMakeNegative(Sentence * currentSentenceInList, 
 						{
 							GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex] = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
 							GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex]->negative = true;
+							currentRelationInList->disabled = true;
 						}
 					}
 					currentRelationInList2 = currentRelationInList2->next;
@@ -1929,7 +1931,12 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 			{
 				passed = true;
 			}
-		}												
+		}
+		if(currentRelationInList->disabled)
+		{//required for relations disabled for negative collapse purposes
+			passed = false;
+		}
+														
 		//if((currentRelationInList->relationType == RELATION_TYPE_SUBJECT) || ((currentRelationInList->relationType == RELATION_TYPE_OBJECT) || (currentRelationInList->relationType == RELATION_TYPE_OBJECT_TO) || (currentRelationInList->relationType == RELATION_TYPE_SUBJECT_EXPLETIVE)))
 		if(passed)
 		{
@@ -2124,7 +2131,6 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											addActionToActionDefinition(actionOrPropertyConditionEntity);	//not required is done later?
 										}
 
-										//cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
 
 										addOrConnectPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType, relationNegative);	
 
@@ -2249,6 +2255,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 													bool relationNegative = GIAEntityNodeArray[currentRelationInList3->relationFunctionIndex]->negative & GIAEntityNodeArray[currentRelationInList3->relationArgumentIndex]->negative;
 
+
 													addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, currentRelationInList3->relationArgument, relationNegative);														
 
 													foundPartner = true;
@@ -2312,6 +2319,8 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 										addActionToActionDefinition(actionOrPropertyConditionEntity);
 
 										bool relationNegative = subjectObjectEntityArray[SUBJECT_INDEX]->negative;
+
+										//cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
 
 										addOrConnectPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType, relationNegative);								
 									}

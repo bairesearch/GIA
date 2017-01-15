@@ -22,6 +22,8 @@ Relation::Relation(void)
 	relationFunction = "";
 	relationFunctionIndex = 0;
 	
+	disabled = false;
+	
 	next = NULL;
 }
 

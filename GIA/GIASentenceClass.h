@@ -40,6 +40,8 @@ public:
 	string relationFunction;
 	int relationFunctionIndex;
 	
+	bool disabled;
+	
 	Relation * next;
 };
 
