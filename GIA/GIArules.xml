@@ -56,9 +56,7 @@
 		<miscellaneousItem name="GIA_ACTION_NODE_COLOUR" stringValue="" fractionalValue="2" />
 		<miscellaneousItem name="GIA_CONDITION_NODE_COLOUR" stringValue="" fractionalValue="3" />
 		
-	
-		<!--not used... -->
-	
+		
 		<miscellaneousItem name="GIA_LAYER_4_COLOUR" stringValue="" fractionalValue="4" />
 		<miscellaneousItem name="GIA_LAYER_5_COLOUR" stringValue="" fractionalValue="22" />
 		<miscellaneousItem name="GIA_LAYER_6_COLOUR" stringValue="" fractionalValue="25" />

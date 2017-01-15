@@ -122,6 +122,15 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 
 int main(int argc,char **argv)
 {
+	//print execution time
+	struct tm *current;
+	time_t now;
+	time(&now);
+	current = localtime(&now);
+	char timeAndDateString[100];
+	sprintf(timeAndDateString, "%i:%i:%i %i/%.2i/%i", current->tm_hour, current->tm_min, current->tm_sec, current->tm_mday, current->tm_mon, (current->tm_year + GIA_TM_STRUCT_YEAR_OFFSET));
+	cout << "GIA execution time: " << timeAndDateString << endl;
+		 
 	bool result = true;
 
 	bool useInputPlainTXTFile = false;
@@ -575,7 +584,7 @@ int main(int argc,char **argv)
 			answerString = answerString + "\nAnswer Not Found.";
 		}
 		
-		if(!(foundAnswer && foundComparisonVariable))
+		if(foundAnswer && !foundComparisonVariable)
 		{
 			#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 			cout << "Best Inexact Answer Found:" << queryAnswerNode->entityName << endl;
@@ -591,9 +600,7 @@ int main(int argc,char **argv)
 		sprintf(tempMaxConfidenceStringCharStar, "%0.6f", maxConfidence);		
 		answerString = answerString + "\nconfidence = " + tempConfidenceStringCharStar;			
 		answerString = answerString + "\nmax confidence = " + tempMaxConfidenceStringCharStar;	
-		
-		//cout << "ahsd" << endl;
-								
+										
 		char * fileByteArray = const_cast<char*>(answerString.c_str());
 		char * outputAnswerPlainTXTFileNameCharStar = const_cast<char*>(outputAnswerPlainTXTFileName.c_str());	
 		writeByteArrayToFile(outputAnswerPlainTXTFileNameCharStar, fileByteArray, answerString.length());		

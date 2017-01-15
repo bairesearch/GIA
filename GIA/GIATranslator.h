@@ -243,6 +243,7 @@ void setTranslatorEntityNodesCompleteList(vector<GIAEntityNode*> * newEntityNode
 void setTranslatorPropertyEntityNodesList(vector<GIAEntityNode*> * newPropertyEntityNodesList);
 void setTranslatorActionEntityNodesList(vector<GIAEntityNode*> * newActionEntityNodesList);
 
+void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity, GIAEntityNode * actionOrPropertyConditionEntity, string relationType);
 
 bool getFoundComparisonVariable();
 GIAEntityNode* getComparisonVariableNode();
