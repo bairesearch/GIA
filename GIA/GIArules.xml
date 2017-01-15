@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i16c 27-January-2015
+ * Project Version: 2i17a 30-January-2015
  *
  *******************************************************************************/
 -->
@@ -2337,6 +2337,7 @@
 			<!-- #ifdefGIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF -->
 			<function name="redistributeStanfordRelationsInterpretNamedAsDefinition">
 				<example><!--
+				eg interpret 'The piece's image is called pawnBlack.png.'	nsubjpass(called-6, image-4) + xcomp(called-6, pawnBlack.png-7) -> appos(image-4, pawnBlack.png-7)
 				eg interpret 'The file is called people.xml.'		nsubjpass(called-4, file-2) + acomp(called-4, people.xml-5) -> appos(file-2, people.xml)
 				eg interpret 'Write the countries to the file called countries.xml.' vmod(file-6, called-7) + acomp(called-7, countries.xml-8) -> appos(file-2, people.xml)
 				--></example>
@@ -2345,7 +2346,7 @@
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="2" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_obj" />
-				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_to-be" />
+				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_to-be|_to-do" relationArrayTestSize="2" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="call|name" relationArrayTestSize="2" />
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
 				<option disableRelation="true" REL="1" />
