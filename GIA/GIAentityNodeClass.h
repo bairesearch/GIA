@@ -430,7 +430,7 @@ public:
 	#ifdef USE_NLPI
 	bool parsedForNLPIcodeBlocks;
 	//bool parsedForNLPIclassHeirarchy;
-	bool NLPIuseThisAlias;
+	bool NLPIisArgument;
 	#endif
 };
 
