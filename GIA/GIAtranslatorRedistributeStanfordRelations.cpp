@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s9b 04-July-2013
+ * Project Version: 1s10a 05-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -567,7 +567,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	[CaseA]
 	nsubj(close-3, He-1)
 	cop(close-3, is-2)
-	prep_to(close-3, house-6)
+	prep_to(close-3, house-6)	[assert "to"/"of" prepositions 5 July 2013]
 
 	[CaseA]
 	nsubjpass(left-4, house-2)
@@ -781,13 +781,25 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 					//NB this assumes "cop/aux" etc relations cannot be disabled in fillGrammaticalArraysStanford
 
 						bool multiwordPrepositionIntermediaryRelationTypeAFound = false;
-						for(int i=0; i<GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA; i++)
+						bool multiwordPrepositionSupportedPrepositionTypeAFound = false;
+						for(int i=0; i<GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_SUPPORTED_PREPOSITIONS_TYPEA; i++)
 						{
-							if(currentRelationInList2->relationType == redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeA[i])
+							if(relexPreposition == redistributionStanfordRelationsMultiwordPrepositionSupportedPrepositionsTypeA[i])
 							{
-								if(currentRelationInList2->relationDependent == RELATION_ENTITY_BE)
+								multiwordPrepositionSupportedPrepositionTypeAFound = true;
+							}
+						}						
+						if(multiwordPrepositionSupportedPrepositionTypeAFound)
+						{//[assert "to"/"of" prepositions 5 July 2013]
+							
+							for(int i=0; i<GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA; i++)
+							{
+								if(currentRelationInList2->relationType == redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeA[i])
 								{
-									multiwordPrepositionIntermediaryRelationTypeAFound = true;
+									if(currentRelationInList2->relationDependent == RELATION_ENTITY_BE)
+									{
+										multiwordPrepositionIntermediaryRelationTypeAFound = true;
+									}
 								}
 							}
 						}
@@ -2916,7 +2928,7 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 			GIAentityNode * actionOrSubstanceConditionEntity = GIAentityNodeArray[actionOrSubstanceConditionIndex];		
 
 			bool stanfordPrepositionFound = false;
-			if(convertStanfordPrepositionToRelex(&relationType, NLPdependencyRelationsType, &stanfordPrepositionFound) == RELATION_TYPE_OF)
+			if(convertStanfordPrepositionToRelex(&relationType, NLPdependencyRelationsType, &stanfordPrepositionFound) == RELATION_TYPE_PREPOSITION_OF)
 			{
 				//cout << "actionOrSubstanceEntity->stanfordPOStemp = " << actionOrSubstanceEntity->stanfordPOStemp << endl;
 				//cout << "actionOrSubstanceEntity->wordNetPOS = " << actionOrSubstanceEntity->wordNetPOS << endl;	

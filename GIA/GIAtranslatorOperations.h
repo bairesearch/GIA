@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s9b 04-July-2013
+ * Project Version: 1s10a 05-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -556,6 +556,7 @@ static string featureQueryWhatIsTheNameNumberOfNameArray[FEATURE_QUERY_WHAT_IS_T
 
 //prepositions;
 #define RELATION_TYPE_PREPOSITION_IN "in"
+#define RELATION_TYPE_PREPOSITION_TO "to"
 	//prepositions are now added explicitly
 	/*
 	#define RELATION_TYPE_PREPOSITION_ON "on"		//eg rides on tuesday		[ride tuesday]		//this forms the action condition; "when"
@@ -566,7 +567,7 @@ static string featureQueryWhatIsTheNameNumberOfNameArray[FEATURE_QUERY_WHAT_IS_T
 	#define RELATION_TYPE_PREPOSITION_WHEN "when"	//eg joe fires his bow when john drives fast.	[fire drive]	//this forms the action condition; "when" [not time, but in association with another action]
 	#define RELATION_TYPE_PREPOSITION_BECAUSE "because"
 	*/
-#define RELATION_TYPE_OF "of"		//eg [she grew tired] of it	 "She grew tired of the pie."  / "The house of Kriton is blue."	//detect if function and argument are both nouns/substance entities; if so then create a substance connection. if a function is a verb/action, then create a condition connection.
+#define RELATION_TYPE_PREPOSITION_OF "of"		//eg [she grew tired] of it	 "She grew tired of the pie."  / "The house of Kriton is blue."	//detect if function and argument are both nouns/substance entities; if so then create a substance connection. if a function is a verb/action, then create a condition connection.
 #define STANFORD_PARSER_PREPOSITION_PREPEND "prep_"
 #define STANFORD_PARSER_PREPOSITIONC_PREPEND "prepc_"
 #define STANFORD_PARSER_PREPOSITION_DELIMITER "_"
@@ -598,7 +599,7 @@ static string relationContextPropositionLocationNameArray[REFERENCE_TYPE_QUESTIO
 static string relationContextPropositionReasonNameArray[REFERENCE_TYPE_QUESTION_WHY_CONTEXT_NUMBER_OF_TYPES] = {"reason", "basis", "argument"};
 #ifdef GIA_TRANSLATOR_INTERPRET_IN_AS_POSSESSIVE_FOR_SUBSTANCES
 #define RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES (2)
-static string relationTypePossessivePrepositionsNameArray[RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES] = {RELATION_TYPE_OF, RELATION_TYPE_PREPOSITION_IN};
+static string relationTypePossessivePrepositionsNameArray[RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_OF, RELATION_TYPE_PREPOSITION_IN};
 #else
 #define RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES (1)
 static string relationTypePossessivePrepositionsNameArray[RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_IN};
@@ -674,6 +675,9 @@ static string redistributionStanfordRelationsMultiwordPrepositionSubjObjRelation
 #define GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NUMBER_OF_TYPES (2)
 static string redistributionRelationsSupportNameOfSubjectDependentOrGovernorNameArray[GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NUMBER_OF_TYPES] = {GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME, GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NUMBER};
 */
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_SUPPORTED_PREPOSITIONS_TYPEA (2)
+static string redistributionStanfordRelationsMultiwordPrepositionSupportedPrepositionsTypeA[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_SUPPORTED_PREPOSITIONS_TYPEA] = {RELATION_TYPE_PREPOSITION_TO, RELATION_TYPE_PREPOSITION_OF};	//OLD: RELATION_TYPE_PASSIVE_AUX, RELATION_TYPE_MODAL_AUX
+
 
 
 //measures and quantities;
