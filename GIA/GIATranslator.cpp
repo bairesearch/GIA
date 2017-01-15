@@ -167,6 +167,58 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
  	applyGrammaticalInfoToAllConceptEntities(GIAEntityNodeArrayFilled, GIAEntityNodeArray, currentSentenceInList->firstFeatureInList);
 
 	
+		
+	#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG	
+	cout << "dependency relations: " << endl;
+	currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		if(!(currentRelationInList->disabled))
+		{
+			string relationType = currentRelationInList->relationType;
+			GIAEntityNode * relationGoverner = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];				
+			GIAEntityNode * relationDependent = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+
+			cout << "relationType = " << currentRelationInList->relationType << endl;	      
+			cout << "relationGoverner = " << relationGoverner->entityName << endl;
+			cout << "relationDependent = " << relationDependent->entityName << endl;		
+
+		}
+		currentRelationInList = currentRelationInList->next;		
+	}
+	cout << "features (tags): " << endl;
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{	
+		if(GIAEntityNodeArrayFilled[w])
+		{	
+			if(!(GIAEntityNodeArray[w]->disabled))
+			{	
+				Feature * currentFeature = featureArrayTemp[w];
+				
+				cout << "Sentence Word Index = " << w;					
+				cout << "Is Date or Time = " << convertBoolToString(currentFeature->grammaticalIsDateOrTime);
+				cout << "Tense = " << grammaticalTenseNameArray[currentFeature->grammaticalTense];
+				for(int q=0; q<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES;q++)
+				{
+					cout << "Tense Modifier (" << grammaticalTenseModifierNameArray[q] << ") = " << convertBoolToString(currentFeature->grammaticalTenseModifierArray[q]);
+				}					
+				cout << "Plurality = " << grammaticalNumberNameArray[currentFeature->grammaticalNumber];
+				cout << "Is Definite = " << convertBoolToString(currentFeature->grammaticalIsDefinite);
+				cout << "Is Proper Noun = " << convertBoolToString(currentFeature->grammaticalIsProperNoun);
+				cout << "Gender = " << grammaticalGenderNameArray[currentFeature->grammaticalGender];
+				cout << "Is Pronoun = " << convertBoolToString(currentFeature->grammaticalIsPronoun);
+				cout << "Wordtype = " << grammaticalWordTypeNameArray[currentFeature->grammaticalWordType];
+
+				cout << "NER = " << featureNERTypeArray[currentFeature->NER];
+				cout << "NormalizedNER = " << currentFeature->NormalizedNER;
+				cout << "Timex = " << currentFeature->Timex;
+				cout << "POS = " << currentFeature->stanfordPOS << endl;
+			}
+		}
+	}
+	#endif
+		
+			
 	
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
@@ -241,7 +293,57 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 				
 	}
 	#endif
-		
+
+	#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG	
+	cout << "dependency relations: " << endl;
+	currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		if(!(currentRelationInList->disabled))
+		{
+			string relationType = currentRelationInList->relationType;
+			GIAEntityNode * relationGoverner = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];				
+			GIAEntityNode * relationDependent = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+
+			cout << "relationType = " << currentRelationInList->relationType << endl;	      
+			cout << "relationGoverner = " << relationGoverner->entityName << endl;
+			cout << "relationDependent = " << relationDependent->entityName << endl;		
+
+		}
+		currentRelationInList = currentRelationInList->next;		
+	}
+	cout << "features (tags): " << endl;
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{	
+		if(GIAEntityNodeArrayFilled[w])
+		{	
+			if(!(GIAEntityNodeArray[w]->disabled))
+			{	
+				Feature * currentFeature = featureArrayTemp[w];
+				
+				cout << "Sentence Word Index = " << w;					
+				cout << "Is Date or Time = " << convertBoolToString(currentFeature->grammaticalIsDateOrTime);
+				cout << "Tense = " << grammaticalTenseNameArray[currentFeature->grammaticalTense];
+				for(int q=0; q<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES;q++)
+				{
+					cout << "Tense Modifier (" << grammaticalTenseModifierNameArray[q] << ") = " << convertBoolToString(currentFeature->grammaticalTenseModifierArray[q]);
+				}					
+				cout << "Plurality = " << grammaticalNumberNameArray[currentFeature->grammaticalNumber];
+				cout << "Is Definite = " << convertBoolToString(currentFeature->grammaticalIsDefinite);
+				cout << "Is Proper Noun = " << convertBoolToString(currentFeature->grammaticalIsProperNoun);
+				cout << "Gender = " << grammaticalGenderNameArray[currentFeature->grammaticalGender];
+				cout << "Is Pronoun = " << convertBoolToString(currentFeature->grammaticalIsPronoun);
+				cout << "Wordtype = " << grammaticalWordTypeNameArray[currentFeature->grammaticalWordType];
+
+				cout << "NER = " << featureNERTypeArray[currentFeature->NER];
+				cout << "NormalizedNER = " << currentFeature->NormalizedNER;
+				cout << "Timex = " << currentFeature->Timex;
+				cout << "POS = " << currentFeature->stanfordPOS << endl;
+			}
+		}
+	}
+	#endif
+			
 				
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1b; identify comparison variable" << endl;
@@ -282,6 +384,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#endif
 	#endif
 
+
+
+		
 	
 							
 	#ifdef GIA_TRANSLATOR_DEBUG

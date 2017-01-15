@@ -63,7 +63,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 	void extractPastTenseFromPOStag(string * POStag, Feature * feature);
 	void extractGrammaticalInformationFromPOStag(string * POStag, Feature * feature);
 	void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLPfeatureParser);
-	void extractPastTense(int entityIndex, int entityIndexContainingTenseIndication, Feature * firstFeatureInList, int NLPfeatureParser);
+	void extractPastTense(Feature * featureWithEntityIndex, int entityIndexContainingTenseIndication, Feature * firstFeatureInList, int NLPfeatureParser);
 	#endif
 		
 void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], Feature * firstFeatureInSentence);

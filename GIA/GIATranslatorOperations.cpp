@@ -1164,7 +1164,7 @@ void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, stri
 void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArrayTemp[])
 {
 	//generateFeatureArray;
-	int featureIndex = 0;
+	int featureIndex = 1;
 	Feature * currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{

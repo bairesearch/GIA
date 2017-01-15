@@ -303,8 +303,10 @@ void extractPastTenseFromPOStag(string * POStag, Feature * feature)
 	}
 	if(pastTenseDetected)
 	{
+		//cout << "ABC2 entityIndex = " << feature->entityIndex << endl;
 		feature->grammaticalTense = GRAMMATICAL_TENSE_PAST;		//fixed in 28 April 2012
 	}
+	//cout << "ABC3" << endl;
 }
 
 //Preconditions: extractGrammaticalInformationStanford()/extractGrammaticalInformationFromPOStag() must be executed before relations (eg aux/cop) are processed, as they may [possibly] overwrite the tenses here established
@@ -415,7 +417,7 @@ void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLP
 	}
 }
 
-void extractPastTense(int entityIndex, int entityIndexContainingTenseIndication, Feature * firstFeatureInList, int NLPfeatureParser)
+void extractPastTense(Feature * featureWithEntityIndex, int entityIndexContainingTenseIndication, Feature * firstFeatureInList, int NLPfeatureParser)
 {
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
@@ -426,7 +428,8 @@ void extractPastTense(int entityIndex, int entityIndexContainingTenseIndication,
 		{	
 			if(currentFeatureInList->entityIndex == entityIndexContainingTenseIndication)
 			{	
-				extractPastTenseFromPOStag(&(currentFeatureInList->stanfordPOS), currentFeatureInList);
+				//cout << "ABC entityIndex = " << entityIndexContainingTenseIndication << endl;
+				extractPastTenseFromPOStag(&(currentFeatureInList->stanfordPOS), featureWithEntityIndex);
 			}
 			currentFeatureInList = currentFeatureInList->next;
 		}
@@ -467,8 +470,9 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 				featureArrayTemp[entityIndexOfVerb]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PERFECT] = true;		
 				GIAEntityNodeArray[entityIndexOfAuxillary]->disabled = true;		
 
+				//cout << "ABC0a" << endl;
 				#ifdef GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILLARY_TO_SET_TENSE_OF_VERB
-				extractPastTense(entityIndexOfVerb, entityIndexOfAuxillary, currentSentenceInList->firstFeatureInList, NLPfeatureParser);		
+				extractPastTense(featureArrayTemp[entityIndexOfVerb], entityIndexOfAuxillary, currentSentenceInList->firstFeatureInList, NLPfeatureParser);		
 				#endif	
 
 			}
@@ -486,8 +490,9 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 				featureArrayTemp[entityIndexOfVerb]->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PASSIVE] = true;		
 				GIAEntityNodeArray[entityIndexOfAuxillary]->disabled = true;				
 
+				//cout << "ABC0b" << endl;
 				#ifdef GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILLARY_TO_SET_TENSE_OF_VERB
-				extractPastTense(entityIndexOfVerb, entityIndexOfAuxillary, currentSentenceInList->firstFeatureInList, GIAEntityNodeGrammaticalTenseArray, NLPfeatureParser);		
+				extractPastTense(featureArrayTemp[entityIndexOfVerb], entityIndexOfAuxillary, currentSentenceInList->firstFeatureInList, GIAEntityNodeGrammaticalTenseArray, NLPfeatureParser);		
 				#endif			
 
 			}
@@ -507,7 +512,10 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 				int entityIndexOfNoun = currentRelationInList->relationGovernorIndex;
 				GIAEntityNodeArray[entityIndexOfCopula]->disabled = true;	
 
-				extractPastTense(entityIndexOfNoun, entityIndexOfCopula, currentSentenceInList->firstFeatureInList, NLPfeatureParser);
+				//cout << "ABC0c" << endl;
+				//cout << "entityIndexOfNoun = " << entityIndexOfNoun << endl;
+				//cout << "entityIndexOfCopula = " << entityIndexOfCopula << endl;
+				extractPastTense(featureArrayTemp[entityIndexOfNoun], entityIndexOfCopula, currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 
 			}
 
@@ -579,7 +587,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 
 void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], Feature * firstFeatureInSentence)
 {
-	int w = 0;
+	int w = 1;
 	Feature * currentFeatureInList = firstFeatureInSentence;
 	while(currentFeatureInList->next != NULL)
 	{	
@@ -607,6 +615,7 @@ void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], G
 			entity->NERTemp = currentFeatureInList->NER;			
 			#ifdef GIA_USE_STANFORD_CORENLP
 			entity->stanfordPOSTemp = currentFeatureInList->stanfordPOS;
+			//cout << "1 entity->stanfordPOSTemp = " << entity->stanfordPOSTemp << endl;			
 			entity->NormalizedNERTemp = currentFeatureInList->NormalizedNER;
 			entity->TimexTemp = currentFeatureInList->Timex;
 			#endif
@@ -1839,9 +1848,12 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 											bool subjectGovernorAdjectiveOrAdvebFound = false;
 											for(int i=0; i<FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_TYPES; i++)
 											{
+												//cout << "currentRelationInList->relationGovernorIndex = " << currentRelationInList->relationGovernorIndex << endl;
 												//cout << "subjectGovernorEntity->stanfordPOSTemp = " << subjectGovernorEntity->stanfordPOSTemp << endl;
+												//cout << "featurePOSindicatesAdjectiveOrAdverbTypeArray[i] = " << featurePOSindicatesAdjectiveOrAdverbTypeArray[i] << endl;
 												if(subjectGovernorEntity->stanfordPOSTemp == featurePOSindicatesAdjectiveOrAdverbTypeArray[i])
 												{
+													//cout << "subjectGovernorEntity->stanfordPOSTemp = " << subjectGovernorEntity->stanfordPOSTemp << endl;
 													subjectGovernorAdjectiveOrAdvebFound = true;
 												}
 											}											
