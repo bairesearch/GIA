@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a1a 27-October-2013
+ * Project Version: 2a1b 27-October-2013
  *
  *******************************************************************************/
 -->
@@ -3004,7 +3004,7 @@
 				<option functionEntityRelationID="0" FUNC_ENT="1" functionEntityRelationEntityID="0" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="true" REL="0" REL_ENT="0" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="true" REL="0" REL_ENT="1" />
-				<option mustGenerateConditionTypeName="true" conditionTypeEntityDefaultName="requires" conditionTypeEntityDefaultIndex="990" />
+				<option mustGenerateConditionTypeName="true" conditionTypeEntityDefaultName="involves" conditionTypeEntityDefaultIndex="990" />
 				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
 				<option defaultSameSetRelationID="0" defaultSameSetReferenceValue="false" />
 				<!-- #endif -->
