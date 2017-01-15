@@ -35,8 +35,9 @@ string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES]
 string relationFunctionCompositionNameArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_COMPOSITION_1, RELATION_FUNCTION_COMPOSITION_2, RELATION_FUNCTION_COMPOSITION_3, RELATION_FUNCTION_COMPOSITION_4};
 string relationFunctionDefinitionNameArray[RELATION_FUNCTION_DEFINITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_DEFINITION_1};
 
-string relationTypeObjectSpecialConditionNameArray[RELATION_TYPE_OBJECT_SPECIAL_CONDITION_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE};
-string relationTypeObjectSpecial2ConditionNameArray[RELATION_TYPE_OBJECT_SPECIAL2_CONDITION_NUMBER_OF_TYPES] = {RELATION_TYPE_COMPLIMENT_TO_DO};
+string relationTypeObjectSpecialConditionMeasureDistanceNameArray[RELATION_TYPE_OBJECT_SPECIAL_CONDITION_MEASURE_DISTANCE_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE};
+string relationTypeObjectSpecialConditionToDoPropertyNameArray[RELATION_TYPE_OBJECT_SPECIAL_TO_DO_PROPERTY_NUMBER_OF_TYPES] = {RELATION_TYPE_COMPLIMENT_TO_DO};
+string relationTypeObjectSpecialConditionToBePropertyNameArray[RELATION_TYPE_OBJECT_SPECIAL_TO_BE_PROPERTY_NUMBER_OF_TYPES] = {RELATION_TYPE_COMPLIMENT_TO_BE};
 
 string relationTypeComplementsNameArray[RELATION_TYPE_COMPLEMENTS_NUMBER_OF_TYPES] = {RELATION_TYPE_COMPLIMENT_TO_BE, RELATION_TYPE_COMPLIMENT_TO_DO};
 
@@ -831,7 +832,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "4e/4f pass; define to_be/to_do conditions" << endl;
 		#endif
-		defineToBeAndToDoConditions(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList, conceptEntityNamesList);
+		defineToBeAndToDoProperties(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList, conceptEntityNamesList);
 		
 		
 		
@@ -2124,8 +2125,9 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 					//cout << "currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
 
 					bool partnerTypeRequiredFound = false;
-					bool partnerTypeObjectSpecialConditionFound = false;
-					bool partnerTypeObjectSpecial2ConditionFound = false;
+					bool partnerTypeObjectSpecialConditionMeasureDistanceFound = false;
+					bool partnerTypeObjectSpecialConditionToDoPropertyFound = false;
+					bool partnerTypeObjectSpecialConditionToBePropertyFound = false;
 					
 					if(partnerTypeRequired == RELATION_TYPE_SUBJECT)
 					{							
@@ -2147,23 +2149,36 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 							}
 						}
 
-						for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_CONDITION_NUMBER_OF_TYPES; i++)
+						for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_CONDITION_MEASURE_DISTANCE_NUMBER_OF_TYPES; i++)
 						{
-							if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionNameArray[i])
+							if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionMeasureDistanceNameArray[i])
 							{
 								partnerTypeRequiredFound = true;
-								partnerTypeObjectSpecialConditionFound = true;
+								partnerTypeObjectSpecialConditionMeasureDistanceFound = true;
 							}
 						}		
 
-						for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL2_CONDITION_NUMBER_OF_TYPES; i++)
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D
+						for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_TO_DO_PROPERTY_NUMBER_OF_TYPES; i++)
 						{
-							if(currentRelationInList2->relationType == relationTypeObjectSpecial2ConditionNameArray[i])
+							if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionToDoPropertyNameArray[i])
 							{
 								partnerTypeRequiredFound = true;
-								partnerTypeObjectSpecial2ConditionFound = true;
+								partnerTypeObjectSpecialConditionToDoPropertyFound = true;
 							}
 						}
+						#endif
+						
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E
+						for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_TO_BE_PROPERTY_NUMBER_OF_TYPES; i++)						
+						{
+							if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionToBePropertyNameArray[i])
+							{
+								partnerTypeRequiredFound = true;
+								partnerTypeObjectSpecialConditionToBePropertyFound = true;
+							}
+						}
+						#endif						
 																	
 					}
 					int relationFunctionIndex2 = currentRelationInList2->relationFunctionIndex;
@@ -2224,7 +2239,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 										
 										}
 										#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_CONDITION_DEFINITION									
-										else if(passdefinition || partnerTypeObjectSpecialConditionFound)
+										else if(passdefinition || partnerTypeObjectSpecialConditionMeasureDistanceFound)
 										{
 											bool negative = subjectObjectFunctionEntityArray[SUBJECT_INDEX]->negative;
 											subjectIsConnectedToAnAdvMod = true;
@@ -2353,7 +2368,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 										//check can use properties for composition/comprises ; ie, does "tom is happy" = "tom comprises happiness" ?
 								}
 								#endif
-								else if(partnerTypeObjectSpecialConditionFound)
+								else if(partnerTypeObjectSpecialConditionMeasureDistanceFound)
 								{
 									GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;
 									GIAEntityNode * specialConditionNode = GIAEntityNodeArray[relationFunctionIndex2];
@@ -2367,10 +2382,39 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 									addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity);
 								}
-								else if(partnerTypeObjectSpecial2ConditionFound)
+								#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D
+								else if(partnerTypeObjectSpecialConditionToDoPropertyFound)
 								{
 								
 								}
+								#endif
+								#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E
+								else if(partnerTypeObjectSpecialConditionToBePropertyFound)
+								{
+									
+									//cout << "c" << endl;
+									/* 
+									Eg;	 The pastry tasted awesome.							
+									_to-be(taste[3], awesome[4])
+									_subj(taste[3], pastry[2])											
+									*/
+
+									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
+									GIAEntityNode * objectEntityTempUpdated = subjectObjectEntityArray[SUBJECT_INDEX];
+									GIAEntityNode * actionEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
+									
+									addActionToObject(objectEntityTempUpdated, actionEntity);
+								
+									//create a property link between the subject and object
+									GIAEntityNode * propertyEntity = subjectObjectEntityArray[OBJECT_INDEX];
+									GIAEntityNode * ownerEntity = actionEntity;
+									//cout << "propertyName = " << propertyEntity->entityName << endl;
+									//cout << "ownerName = " << ownerEntity->entityName << endl;
+
+									addOrConnectPropertyToEntity(ownerEntity, propertyEntity);
+													
+								}	
+								#endif								
 								else
 								{//assume that the subject-object relationships is an action
 									string actionName = currentRelationInList->relationFunction;
@@ -2398,7 +2442,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 							
 						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C
 							#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
-							if(!partnerTypeObjectSpecial2ConditionFound || subjectIsConnectedToAnAdvMod)
+							if(!partnerTypeObjectSpecialConditionToDoPropertyFound || subjectIsConnectedToAnAdvMod)
 							{
 								foundPartner = true;
 							}
@@ -2411,12 +2455,13 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 
 						}
-						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A
 						else
-						{//do not find matching object-subject relationship [search for intermediary {ie redundant} relations, and if so create a condition link between subject and object] 
-
+						{//do not find matching object-subject relationship 
+							
+							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A
+							//[search for intermediary {ie redundant} relations, and if so create a condition link between subject and object] 
 							if(!foundPartner)
-							{//do not overwrite usage of subj/obj if a direct link [ie action] has been found (this condition probably mau not be required)
+							{//do not overwrite usage of subj/obj if a direct link [ie action] has been found (this condition probably/mau not be required)
 
 								if(subjectObjectFunctionEntityArray[SUBJECT_INDEX]->entityName == RELATION_FUNCTION_DEFINITION_1)
 								{
@@ -2479,8 +2524,41 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									}
 								}
 							}
+							#endif
+							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D
+							//[search for special relation _to-do AND _subj, and if so create a property link between subject and object] 
+							if(!foundPartner)
+							{//do not overwrite usage of subj/obj if a direct link [ie action] has been found (this condition probably/may not be required)
+
+								if(partnerTypeObjectSpecialConditionToDoPropertyFound)
+								{
+									//cout << "b" << endl;
+									if(subjectObjectFunctionEntityArray[SUBJECT_INDEX]->entityName == subjectObjectEntityArray[OBJECT_INDEX]->entityName)
+									{
+										//cout << "c" << endl;
+										/* 
+										Eg;	Luke is slow.							
+										_to-do(be[2], slow[3])
+										_subj(slow[3], Luke[1])												
+										*/
+										
+										//create a property link between the object and subject
+										GIAEntityNode * propertyEntity = objectEntityTemp;
+										GIAEntityNode * ownerEntity = subjectEntityTemp;
+										//cout << "propertyName = " << propertyEntity->entityName << endl;
+										//cout << "ownerName = " << ownerEntity->entityName << endl;
+
+										addOrConnectPropertyToEntity(ownerEntity, propertyEntity);
+			
+										foundPartner = true;
+																								
+									}	
+								}
+							}
+							#endif
+							
 						}
-						#endif
+						
 					}
 					currentRelationInList2 = currentRelationInList2->next;
 				}
@@ -3145,7 +3223,7 @@ void extractMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntity
 	}
 }
 
-void defineToBeAndToDoConditions(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList)
+void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -3164,14 +3242,9 @@ void defineToBeAndToDoConditions(Sentence * currentSentenceInList, GIAEntityNode
 		if(pass)
 		{					
 			GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
-			GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+			GIAEntityNode * propertyEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
 			
-			string conditionTypeName = currentRelationInList->relationType;
-			long entityIndex = -1;
-			bool entityAlreadyExistant = false;
-			GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
-
-			addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);
+			addOrConnectPropertyToEntity(entityNode, propertyEntity);
 		}
 		currentRelationInList = currentRelationInList->next;
 	}

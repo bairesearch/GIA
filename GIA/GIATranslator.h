@@ -46,6 +46,8 @@ using namespace std;
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C
+//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D
+//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A
 	#define GIA_IGNORE_MEANINGLESS_RELATIONS
 #endif
@@ -143,8 +145,9 @@ using namespace std;
 	//? #define RELATION_TYPE_QUANTITY "_quantity"	//eg his bike	[bike him]		/its bike
 
 
-#define RELATION_TYPE_OBJECT_SPECIAL_CONDITION_NUMBER_OF_TYPES (1)
-#define RELATION_TYPE_OBJECT_SPECIAL2_CONDITION_NUMBER_OF_TYPES (1)
+#define RELATION_TYPE_OBJECT_SPECIAL_CONDITION_MEASURE_DISTANCE_NUMBER_OF_TYPES (1)
+#define RELATION_TYPE_OBJECT_SPECIAL_TO_DO_PROPERTY_NUMBER_OF_TYPES (1)
+#define RELATION_TYPE_OBJECT_SPECIAL_TO_BE_PROPERTY_NUMBER_OF_TYPES (1)
 
 //action/property conditions: prepositions [predicates????]
 #define RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES (18)
@@ -294,7 +297,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 	void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[]);
 	void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList);
 	void extractMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList);
-	void defineToBeAndToDoConditions(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList);
+	void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList);
 
 
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity);
