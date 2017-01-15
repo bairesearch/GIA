@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t6a 04-August-2013
+ * Project Version: 1t6c 07-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -345,6 +345,7 @@ void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubsta
 	newSubstance->grammaticalProperNounTemp = entity->grammaticalProperNounTemp;	//must forward grammatical info for GIAtranslatorDefineSubstances.cpp post substance declaration modifications (ie defineSubstanceConcepts)
 	newSubstance->grammaticalGenderTemp = entity->grammaticalGenderTemp;		//not currently used		
 	newSubstance->grammaticalPronounTemp = entity->grammaticalPronounTemp;		//must forward grammatical info for GIAtranslatorDefineSubstances.cpp post substance declaration modifications (ie defineSubstanceConcepts)
+	newSubstance->mustSetIsSubstanceConceptBasedOnApposRelation = entity->mustSetIsSubstanceConceptBasedOnApposRelation;
 	#endif
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	newSubstance->grammaticalDefiniteIndexOfDeterminerTemp = entity->grammaticalDefiniteIndexOfDeterminerTemp;	

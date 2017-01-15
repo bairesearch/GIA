@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t6a 04-August-2013
+ * Project Version: 1t6c 07-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -176,7 +176,10 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 	paramC.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest3);
 	EntityCharacteristic entityCharacteristicsSetCD("mustSetIsSubstanceConceptBasedOnApposRelation", "true");		
 	paramC.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&entityCharacteristicsSetCD);		
-	genericDependecyRelationInterpretation(&paramC, REL1);
+	if(genericDependecyRelationInterpretation(&paramC, REL1))
+	{
+		//cout << "at1" << endl;
+	}
 	
 	GIAgenericDepRelInterpretationParameters paramD(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	paramD.numberOfRelations = 1;
@@ -185,7 +188,10 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 	paramD.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest2);
 	paramD.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest3);
 	paramD.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT2].push_back(&entityCharacteristicsSetCD);		
-	genericDependecyRelationInterpretation(&paramD, REL1);
+	if(genericDependecyRelationInterpretation(&paramD, REL1))
+	{
+		//cout << "at2" << endl;
+	}
 	#endif
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -1012,7 +1018,10 @@ void defineSubstanceConcepts(Sentence * currentSentenceInList, bool GIAentityNod
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA6);
 	EntityCharacteristic entityCharacteristicsSetA("isSubstanceConcept", "true");		
 	paramA.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetA);		
-	genericEntityInterpretation(&paramA);
+	if(genericEntityInterpretation(&paramA))
+	{
+		cout << "qt1" << endl;
+	}
 
 	GIAgenericEntityInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	EntityCharacteristic entityCharacteristicsTestB1("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_NOUN_STRING);
@@ -1029,7 +1038,10 @@ void defineSubstanceConcepts(Sentence * currentSentenceInList, bool GIAentityNod
 	paramB.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestB4);
 	EntityCharacteristic entityCharacteristicsSetB("isSubstanceConcept", "true");		
 	paramB.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetB);		
-	genericEntityInterpretation(&paramB);
+	if(genericEntityInterpretation(&paramB))
+	{
+		cout << "qt2" << endl;
+	}
 	
 	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS	
 	GIAgenericEntityInterpretationParameters paramC(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
