@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n2b 17-July-2012
+ * Project Version: 1n3a 19-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -91,12 +91,12 @@
 #ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
 	//#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS_WORK_WITH_MULTIPLE_SENTENCES
 #endif
-//#define GIA_ADVANCED_REFERENCING_DEBUG		//just finished first debug using this (1l5f)
+//#define GIA_ADVANCED_REFERENCING_DEBUG  	      //just finished first debug using this (1l5f)
 //#define GIA_QUERY_DEBUG
 //#define GIA_STANFORD_CORENLP_CODEPENDENCY_PRONOMINAL_REFERENCING_DEBUG
 //#define GIA_DATABASE_DEBUG_FILESYSTEM_IO
-//#define GIA_DATABASE_DEBUG			//this needs to be debugged (not yet tested)
-//#define GIA_QUERY_MULTIPLE_ANSWERS_DEBUG	//just finished first debug using this (1l2a)
+//#define GIA_DATABASE_DEBUG		      //this needs to be debugged (not yet tested)
+//#define GIA_QUERY_MULTIPLE_ANSWERS_DEBUG      //just finished first debug using this (1l2a)
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 //#define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG

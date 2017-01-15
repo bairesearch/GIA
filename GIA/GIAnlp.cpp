@@ -3,7 +3,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n2b 17-July-2012
+ * Project Version: 1n3a 19-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -85,7 +85,7 @@ void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelat
 	::SetCurrentDirectory(NLPexeFolder.c_str());
 	#endif
 
-	cout << "system(" << executeNLPCommand << ");" << endl;
+	//cout << "system(" << executeNLPCommand << ");" << endl;
 	#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 	cout << "system(" << executeNLPCommand << ");" << endl;
 	#endif

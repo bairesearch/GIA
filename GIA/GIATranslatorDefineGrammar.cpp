@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n2b 17-July-2012
+ * Project Version: 1n3a 19-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -129,7 +129,7 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 	{
 		if(GIAEntityNodeArrayFilled[w])
 		{
-			GIAEntityNode * entity = GIAEntityNodeArray[w];
+			GIAEntityNode * entity = GIAFeatureTempEntityNodeArray[w];
 			cout << "entity->entityName = " << entity->entityName << endl;
 		}
 	}
@@ -138,8 +138,8 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 	while(currentRelationInList->next != NULL)
 	{
 		string relationType = currentRelationInList->relationType;
-		GIAEntityNode * relationGoverner = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
-		GIAEntityNode * relationDependent = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+		GIAEntityNode * relationGoverner = GIAFeatureTempEntityNodeArray[currentRelationInList->relationGovernorIndex];
+		GIAEntityNode * relationDependent = GIAFeatureTempEntityNodeArray[currentRelationInList->relationDependentIndex];
 
 		cout << "relationType = " << currentRelationInList->relationType << endl;
 		cout << "relationGoverner = " << relationGoverner->entityName << endl;
