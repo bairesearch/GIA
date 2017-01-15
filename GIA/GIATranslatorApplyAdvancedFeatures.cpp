@@ -69,6 +69,11 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 			if(featureNERindicatesNameConcatenationRequired)
 			{
 				governerEntity->entityName = dependentEntity->entityName + FEATURE_NER_NAME_CONCATENATION_TOKEN + governerEntity->entityName;	//join names together
+				
+				if(governerEntity->hasAssociatedInstanceTemp)
+				{//disable its property also
+					(governerEntity->AssociatedInstanceNodeList.back())->entityName = governerEntity->entityName;	//join names together
+				}					
 			}
 		}
 		
