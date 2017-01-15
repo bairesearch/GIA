@@ -2838,7 +2838,7 @@
 				<!-- #ifdefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_ACTION_TYPES -->
 				<!-- <option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="of" relationArrayTestSize="1" relationTestIsNegative="true" /> -->
 				<!-- #else -->
-				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy|read|write" relationArrayTestSize="4" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy|read|write|add" relationArrayTestSize="5" />
 				<!-- #endif -->
 				<option expectToFindPrepositionTest="true" REL="2" />
 				<option expectToFindPrepositionTest="true" REL="3" />
