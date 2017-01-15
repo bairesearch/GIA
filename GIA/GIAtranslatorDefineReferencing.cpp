@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u5b 29-Sept-2013
+ * Project Version: 1u5c 29-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1235,6 +1235,15 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 					referenceTraceParameters.referenceSetID = referenceSetID;
 					referenceTraceParameters.linkSpecificConceptsAndActions = true;
 
+					#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
+					int irrelevant;
+					string printEntityNodeString = "";
+					int maxNumberOfMatchedNodesPossible = 0;
+					bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
+					traceEntityNode(firstNodeConceptEntityNodesListQuery, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY, &maxNumberOfMatchedNodesPossible, NULL, false, referenceSetID, traceInstantiations);
+					traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
+					#endif
+
 					for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
 					{
 						GIAentityNode * entityNode = *entityNodesActiveListCompleteIter;
@@ -1253,15 +1262,22 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 
 							if(exactMatch)
 							{
-								//found instance in network matching substance concept...
-								#ifdef GIA_USE_ADVANCED_REFERENCING
-								bool sameReferenceSet = false;
-								#else
-								bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+								#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
+								if(numberOfMatchedNodesTemp == maxNumberOfMatchedNodesPossible)
+								{
 								#endif
-								
-								addDefinitionToEntity(entityNode, currentSpecificConcept, sameReferenceSet);
-								cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(): addDefinitionToEntity" << endl; 
+									//found instance in network matching substance concept...
+									#ifdef GIA_USE_ADVANCED_REFERENCING
+									bool sameReferenceSet = false;
+									#else
+									bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+									#endif
+
+									addDefinitionToEntity(entityNode, currentSpecificConcept, sameReferenceSet);
+									cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(): addDefinitionToEntity" << endl; 
+								#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
+								}
+								#endif
 							}
 
 							//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
@@ -1372,7 +1388,7 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 			queryTraceParameters.level = 0;
 			#endif
-			#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE
+			#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_REPLACE_ADVANCED_SEARCH
 			bool result = testEntityNodeForQueryOrReferenceSet2(queryEntityWithMaxNumberNodesMatched, networkEntityWithMaxNumberNodesMatched, &numberOfMatchedNodesTemp, true, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, &referenceTraceParameters);
 			#else
 			bool result = testEntityNodeForQueryOrReferenceSet(queryEntityWithMaxNumberNodesMatched, networkEntityWithMaxNumberNodesMatched, &numberOfMatchedNodesTemp, true, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, &referenceTraceParameters);			
@@ -1383,11 +1399,11 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 			queryEntityWithMaxNumberNodesMatched->entityCorrespondingBestMatch = networkEntityWithMaxNumberNodesMatched;		//this shouldn't be required for queries....
 			#endif
 
-			//#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 			cout << "(foundAtLeastOneMatch)" << endl;
 			cout << "numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
 			//cout << "networkEntityWithMaxNumberNodesMatched->entityName = " << networkEntityWithMaxNumberNodesMatched->entityName << endl;			
-			//#endif
+			#endif
 
 			//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
 			int irrelevantInt;
@@ -1439,19 +1455,25 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 	unordered_map<string, GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListConceptsQuery->begin();
 	GIAentityNode* firstNodeConceptEntityNodesListQuery = entityIterQuery->second;
 
-	int maxNumberOfMatchedNodesPossible = 0;
-	bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
-	traceEntityNode(firstNodeConceptEntityNodesListQuery, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY, &maxNumberOfMatchedNodesPossible, NULL, NULL, referenceSetID, traceInstantiations);
-
 	for(entityIterQuery = entityNodesActiveListConceptsQuery->begin(); entityIterQuery != entityNodesActiveListConceptsQuery->end(); entityIterQuery++)
 	{//for each node in query semantic net;
 
 		GIAentityNode* currentQueryEntityNode = entityIterQuery->second;
-
+		
 		#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
 		if(!(currentQueryEntityNode->disabled))
 		{
 		#endif
+
+			#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
+			int irrelevant;
+			string printEntityNodeString = "";
+			int maxNumberOfMatchedNodesPossible = 0;
+			bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
+			traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY, &maxNumberOfMatchedNodesPossible, NULL, false, referenceSetID, traceInstantiations);
+			traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
+			#endif
+		
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 			cout << "Reference Set Trace Start: currentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
 			#endif
@@ -1477,14 +1499,14 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 
 				if(foundQueryEntityNodeName)
 				{
-					//#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+					#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 					cout << "\tcreateGIAcoreferenceInListBasedUponIdentifiedReferenceSet:" << endl;
 					cout << "\tfoundQueryEntityNodeName" << endl;
 					cout << "\tcurrentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
 					cout << "\tconceptEntityMatchingCurrentQueryEntity->entityName = " << conceptEntityMatchingCurrentQueryEntity->entityName << endl;
 					//cout << "currentQueryEntityNode->isConcept = " << currentQueryEntityNode->isConcept << endl;
 					//cout << "conceptEntityMatchingCurrentQueryEntity->isConcept = " << conceptEntityMatchingCurrentQueryEntity->isConcept << endl;
-					//#endif
+					#endif
 
 					//now start matching structure search for all substances of the identical concept node (to current query entity name) in Semantic Network
 
@@ -1493,7 +1515,7 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 					#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 					queryTraceParameters.level = 0;
 					#endif
-					#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE
+					#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_REPLACE_ADVANCED_SEARCH
 					bool exactMatch = testEntityNodeForQueryOrReferenceSet2(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, referenceTraceParameters);
 					#else
 					bool exactMatch = testEntityNodeForQueryOrReferenceSet(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, referenceTraceParameters);		
@@ -1504,10 +1526,10 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 					{
 						if(exactMatch)
 						{
-							//#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+							#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 							cout << "exactMatch trace found" << endl;
 							cout << "numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
-							//#endif
+							#endif
 							matchFound = true;
 						}
 					}
@@ -1523,17 +1545,27 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 						if(numberOfMatchedNodesTemp > *maxNumberOfMatchedNodes)
 						#endif
 						{
-							*foundAtLeastOneMatch = true;
-								
-							*maxNumberOfMatchedNodes = numberOfMatchedNodesTemp;
-							*queryEntityWithMaxNumberNodesMatched = currentQueryEntityNode;
-							*networkEntityWithMaxNumberNodesMatched = conceptEntityMatchingCurrentQueryEntity;
+							#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
+							cout << "maxNumberOfMatchedNodesPossible = " << maxNumberOfMatchedNodesPossible << endl;
+							cout << "numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
+							if(numberOfMatchedNodesTemp == maxNumberOfMatchedNodesPossible)
+							{
+							#endif
+								*foundAtLeastOneMatch = true;
 
-							//#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-							cout << "\t\t numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
-							cout << "\t\t queryEntityWithMaxNumberNodesMatched->entityName = " << (*queryEntityWithMaxNumberNodesMatched)->entityName << endl;
-							cout << "\t\t networkEntityWithMaxNumberNodesMatched->entityName = " << (*networkEntityWithMaxNumberNodesMatched)->entityName << endl;
-							//#endif
+								*maxNumberOfMatchedNodes = numberOfMatchedNodesTemp;
+								*queryEntityWithMaxNumberNodesMatched = currentQueryEntityNode;
+								*networkEntityWithMaxNumberNodesMatched = conceptEntityMatchingCurrentQueryEntity;
+
+								#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+								cout << "\t\t numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
+								cout << "\t\t queryEntityWithMaxNumberNodesMatched->entityName = " << (*queryEntityWithMaxNumberNodesMatched)->entityName << endl;
+								cout << "\t\t networkEntityWithMaxNumberNodesMatched->entityName = " << (*networkEntityWithMaxNumberNodesMatched)->entityName << endl;
+								#endif
+								
+							#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
+							}
+							#endif
 						}
 					}
 
