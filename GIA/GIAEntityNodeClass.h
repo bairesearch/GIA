@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1a 15-May-2012
+ * Project Version: 1l1c 22-May-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -164,10 +164,13 @@ public:
 	GIAEntityNode(void);
 	~GIAEntityNode(void);
 	
-	long id;
-	long idSecondary;
-	long reorderdIDforXMLsave;
-
+	long idActiveList;
+	long idActiveEntityTypeList;
+	long reorderdIDforXMLsave;	//for CXL output only
+	#ifdef GIA_USE_DATABASE
+	long instanceId; 		//not for concepts (this instance idActiveList of the concept entityName)
+	#endif
+	
 	string entityName;
 	double confidence;
 	
@@ -192,22 +195,22 @@ public:
 	vector<GIAEntityNode*> entityVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
 	GIAEntityNode* entityBasicConnectionsArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	vector<int> entityVectorConnectionsParametersSameReferenceSetArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
-	int entityBasicConnectionsParametersSameReferenceSetArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];
-	GIAEntityNode* entityCorrespondingBestMatch;	//not possible in case of multiple diversions [assumes single matches only] //best match entity node corresponding to this assumed query entity node		
-	/*
-	#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS_NOT_YET_CODED
-		#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS_ADVANCED_DIVERGENCE_NOT_YET_CODED
-			vector<GIAEntityNode*> entityVectorConnectionsCorrespondingBestMatchArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
-			vector<GIAEntityNode*> entityVectorConnectionsCorrespondingBestnumberOfMatchedNodesRequiredSynonymnDetectionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
-			GIAEntityNode* entityBasicConnectionsCorrespondingBestMatchArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];	
-			GIAEntityNode* entityBasicConnectionsCorrespondingBestnumberOfMatchedNodesRequiredSynonymnDetectionArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];	
-		#else
-			vector<GIAEntityNode*> entityCorrespondingBestMatches;
-			vector<bool> entityCorrespondingBestMatchesRequiredSynonymnDetection;
-		#endif
-	#else
-	*/
+	vector<bool> entityVectorConnectionsParametersSameReferenceSetArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
+	bool entityBasicConnectionsParametersSameReferenceSetArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];
+	GIAEntityNode* entityCorrespondingBestMatch;	 //best match entity node corresponding to this assumed query entity node	//does not take into account multiple diversions/answers [assumes single matches only]	
+	#endif
+	
+	#ifdef GIA_USE_DATABASE
+	//for a low scale database (with < 200 000 references per instance), this may not be necessary; can just use 'added'/'modified' instead [and update the entire instance instead]
+	vector<bool> entityVectorConnectionsArrayInRAMArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];			//signifies whether the vector connection node has been loaded (eg from the db)
+	bool entityBasicConnectionsArrayInRAMArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];				//signifies whether the basic connection node has been loaded (eg from the db)
+		bool entityBasicConnectionsArrayAllInRAMArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//signifies whether all the vector connection nodes have been loaded (eg from the db)
+	vector<bool> entityVectorConnectionsNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//records the vector connection name (to enable loading from db)
+	bool entityBasicConnectionsNameArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];					//records the basic connection name (to enable loading from db)
+	vector<bool> entityVectorConnectionsIDArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//records the vector connection instance id (to enable loading from db)
+	bool entityBasicConnectionsIDArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];					//records the basic connection instance id (to enable loading from db)
+	vector<bool> entityVectorConnectionsParametersModifiedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];		//signifies whether the database needs to be updated upon exit with modified reference/node
+	bool entityBasicConnectionsParametersModifiedArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];			//signifies whether the database needs to be updated upon exit with modified reference/node
 	#endif
 	/*
 	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPES];
@@ -217,37 +220,23 @@ public:
 		//non-actions only;
 	vector<GIAEntityNode*> ActionNodeList;	//where this entity is the subject of the action
 	vector<GIAEntityNode*> IncomingActionNodeList;	//where this entity is the object of the action
-	#ifdef GIA_USE_ADVANCED_REFERENCING	
-	vector<int> ActionNodeListParameters;
-	vector<int> IncomingActionNodeListParameters;
-	#endif
 	
 		//actions only;
 	//NB actions can be performed by and on concepts, and by and on properties?
 	GIAEntityNode * actionSubjectEntity;	//record of entity that is the subject of this action instance
 	GIAEntityNode * actionObjectEntity;	//record of which entity that is the object of this action instance
-	#ifdef GIA_USE_ADVANCED_REFERENCING
-	int actionSubjectEntityParameters;
-	int actionObjectEntityParameters;
-	#endif
 	
 	//condition connections;
 		//non-conditions only (?);
 	//conditions connections: conditions and reverse conditions (reason) lookups [condition and reason respectively]
 	vector<GIAEntityNode*> ConditionNodeList;		//this property requires the following...
 	vector<GIAEntityNode*> IncomingConditionNodeList;	//this property is required by the following... //aka reason	[NB these may only be property, location, {and time action condtions}, not action conditions]
-	#ifdef GIA_USE_ADVANCED_REFERENCING   	
-	vector<int> ConditionNodeListParameters;		
-	vector<int> IncomingConditionNodeListParameters;	
-	#endif
+
 		//conditions only;
 	//NB conditions can be performed by and on concepts, and by and on properties?
 	GIAEntityNode * conditionSubjectEntity;	//record of entity that is the subject of this action instance
 	GIAEntityNode * conditionObjectEntity;		//record of which entity that is the object of this action instance
-	#ifdef GIA_USE_ADVANCED_REFERENCING
-	int conditionSubjectEntityParameters;
-	int conditionObjectEntityParameters;
-	#endif
+
 	//time condition connections;
 	int conditionType;	//added 25 Sept 11	
 	GIATimeConditionNode * timeConditionNode;		//if conditionType == CONDITION_NODE_TYPE_TIME
@@ -258,15 +247,10 @@ public:
 		//properties only [is this possible for actions also? - may require upgrade in future]
 	//GIAEntityNode * entityNodeContainingThisProperty;		//removed 8 Dec 2011			//OLD: if property/action only:	//OLD: eg, Tom; OR;  Tom's Assets	//OLD: NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
 	vector<GIAEntityNode*> PropertyNodeReverseList;			//if property/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given property [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for concept entities [property entities may possibly only be contained by {ie, be a property of} a single entity]
-	#ifdef GIA_USE_ADVANCED_REFERENCING     
-	vector<int> PropertyNodeListParameters;
-	vector<int> PropertyNodeReverseListParameters;		
-	#endif
+
 		//actions, properties, and conditions only
 	GIAEntityNode * entityNodeDefiningThisInstance;					//if property/action/condition only:					//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
-	#ifdef GIA_USE_ADVANCED_REFERENCING  
-	int entityNodeDefiningThisInstanceParameters;
-	#endif
+
 	
 		//concepts only (not properties/"instances" of entities);
 	//entity connections;										
@@ -275,11 +259,6 @@ public:
 	vector<GIAEntityNode*> EntityNodeDefinitionReverseList;			//if not property only: 	//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
 	//associated actions and properties [ie does this entity also define an action/verb or a property/adjective? [ie, it is not just a thing/noun]]
 	vector<GIAEntityNode*> AssociatedInstanceNodeList;			//if not property only: if type == definesAPropertyAdjective (ie, if this entity is not a property/instance but defines one or more properties/instances)
-	#ifdef GIA_USE_ADVANCED_REFERENCING  	
-	vector<int> EntityNodeDefinitionListParameters;	
-	vector<int> EntityNodeDefinitionReverseListParameters;	
-	vector<int> AssociatedInstanceNodeListParameters;	
-	#endif
 	
 	//CHECKTHIS; what is the difference between EntityNodeDefinitionList and entityNodeDefiningThisInstance? - it appears to achieve a similar purpose; ANSWER - one is direct definition [definition of instance] the other is not
 	//CHECKTHIS; what is the difference between EntityNodeDefinitionReverseList and AssociatedInstanceNodeList? - it appears to achieve a similar purpose; ANSWER - one is direct definition [definition of instance] the other is not
@@ -371,27 +350,15 @@ public:
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	int referenceSetID;
 	#endif
-
-
+	
+	#ifdef GIA_USE_DATABASE
+	bool added;	//implies database Update is Required
+	bool modified;	//implies database Update is Required
+	#endif
 };
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode);
 
-/*
-class GIAEntityNodeContainer
-{
-public:
-
-	GIAEntityNodeContainer(void);
-	~GIAEntityNodeContainer(void);
-	
-	//flat tree structures are not used - this is only used for the semanticNet xml parse (read) process;		
-	GIAEntityNode * node;
-	GIAEntityNodeContainer * next;
-	long id;	
-	
-}
-*/
 
 int calculateQuantityNumberInt(string quantityNumberString);
 int calculateQuantityModifierInt(string quantityModifierString);

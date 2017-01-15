@@ -3,7 +3,7 @@
  * File Name: GIAXMLconversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1a 15-May-2012
+ * Project Version: 1l1c 22-May-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -93,13 +93,13 @@ using namespace std;
 #define NET_CXL_TAG_linkingPhraseList ((string)"linking-phrase-list")
 #define NET_CXL_TAG_concept ((string)"concept")
 #define NET_CXL_TAG_linkingPhrase ((string)"linking-phrase")
-#define NET_CXL_ATTRIBUTE_id ((string)"id")
+#define NET_CXL_ATTRIBUTE_id ((string)"idActiveList")
 #define NET_CXL_ATTRIBUTE_label ((string)"label")
 
 #define NET_CXL_TAG_connectionList ((string)"connectionList")
 #define NET_CXL_TAG_connection ((string)"connection")
-#define NET_CXL_TAG_fromid ((string)"from-id")
-#define NET_CXL_TAG_toid ((string)"to-id")
+#define NET_CXL_TAG_fromid ((string)"from-idActiveList")
+#define NET_CXL_TAG_toid ((string)"to-idActiveList")
 
 #define NET_CXL_TAG_conceptAppearanceList ((string)"concept-appearance-list")
 #define NET_CXL_TAG_linkingPhraseAppearanceList ((string)"linking-phrase-appearance-list")
@@ -110,7 +110,7 @@ using namespace std;
 
 /*entity node*/
 
-#define NET_XML_ATTRIBUTE_id ((string)"id")
+#define NET_XML_ATTRIBUTE_id ((string)"idActiveList")
 #define NET_XML_ATTRIBUTE_entityName ((string)"entityName")
 #define NET_XML_ATTRIBUTE_confidence ((string)"confidence")
 //

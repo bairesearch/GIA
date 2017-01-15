@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1a 15-May-2012
+ * Project Version: 1l1c 22-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -894,23 +894,6 @@ GIAEntityNode* getComparisonVariableNode();
 void setFoundComparisonVariable(bool value);
 void setComparisonVariableNode(GIAEntityNode* newComparisonVariableNode);
 
-/*
-void setCurrentEntityNodeIDInCompleteList(long newCurrentEntityNodeIDInCompleteList);
-void setCurrentEntityNodeIDInConceptEntityNodesList(long newCurrentEntityNodeIDInConceptEntityNodesList);
-void setCurrentEntityNodeIDInPropertyEntityNodesList(long newCurrentEntityNodeIDInPropertyEntityNodesList);
-void setCurrentEntityNodeIDInActionEntityNodesList(long newCurrentEntityNodeIDInActionEntityNodesList);
-void setCurrentEntityNodeIDInConditionEntityNodesList(long newCurrentEntityNodeIDInConditionEntityNodesList);
-void incrementCurrentEntityNodeIDInCompleteList();
-void incrementCurrentEntityNodeIDInConceptEntityNodesList();
-void incrementCurrentEntityNodeIDInPropertyEntityNodesList();
-void incrementCurrentEntityNodeIDInActionEntityNodesList();
-void incrementCurrentEntityNodeIDInConditionEntityNodesList();
-long getCurrentEntityNodeIDInCompleteList();
-long getCurrentEntityNodeIDInConceptEntityNodesList();
-long getCurrentEntityNodeIDInPropertyEntityNodesList();
-long getCurrentEntityNodeIDInActionEntityNodesList();
-long getCurrentEntityNodeIDInConditionEntityNodesList();
-*/
 long * getCurrentEntityNodeIDInCompleteList();
 long * getCurrentEntityNodeIDInConceptEntityNodesList();
 long * getCurrentEntityNodeIDInPropertyEntityNodesList();
@@ -946,5 +929,8 @@ bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relatio
 #endif
 
 GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList);
+
+void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int vectorConnectionType, bool sameReferenceSet);
+void writeBasicConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int basicConnectionType, bool sameReferenceSet);
 
 #endif

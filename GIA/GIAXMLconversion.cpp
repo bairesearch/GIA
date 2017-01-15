@@ -3,9 +3,10 @@
  * File Name: GIAXMLconversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1a 15-May-2012
+ * Project Version: 1l1c 22-May-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
- * NB this function overwrites entity id values upon read/write to speed up linking process
+ * NB this function creates entity reorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
+ * NB this function creates entity idActiveList values upon read (it could create reorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
  *
  *******************************************************************************/
 
@@ -170,7 +171,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 
 						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 						int attributeValue = atoi(currentTagUpdatedL3->firstAttribute->value.c_str());
-						newEntity->id = attributeValue;
+						newEntity->idActiveList = attributeValue;
 						#endif
 						
 						entityNodesCompleteList->push_back(newEntity);
@@ -213,7 +214,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 							}
 							else
 							{
-								cout << "error: concept entityTag does not have id as first attribute" << endl;
+								cout << "error: concept entityTag does not have idActiveList as first attribute" << endl;
 								exit(0);								
 							}	
 						}
@@ -289,7 +290,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 
 						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 						int attributeValue = atoi(currentTagUpdatedL3->firstAttribute->value.c_str());
-						newEntity->id = attributeValue;
+						newEntity->idActiveList = attributeValue;
 						#endif
 						
 						entityNodesCompleteList->push_back(newEntity);
@@ -358,7 +359,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 						
 						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 						int attributeValue = atoi(currentTagUpdatedL3->firstAttribute->value.c_str());
-						newEntity->id = attributeValue;
+						newEntity->idActiveList = attributeValue;
 						#endif
 						
 						entityNodesCompleteList->push_back(newEntity);
@@ -428,7 +429,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 						
 						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 						int attributeValue = atoi(currentTagUpdatedL3->firstAttribute->value.c_str());
-						newEntity->id = attributeValue;
+						newEntity->idActiveList = attributeValue;
 						#endif
 						
 						entityNodesCompleteList->push_back(newEntity);
@@ -535,9 +536,9 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		if(currentAttribute->name == NET_XML_ATTRIBUTE_id)
 		{			
 			long attributeValue = atol(currentAttribute->value.c_str());
-			entityNode->id = attributeValue;
+			entityNode->idActiveList = attributeValue;
 			idFound = true;
-			//cout << "entityNode->id = " << entityNode->id << endl;
+			//cout << "entityNode->idActiveList = " << entityNode->idActiveList << endl;
 		}			
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityName)
 		{
@@ -795,7 +796,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLParserTag * firstTagInEntityVecto
 			long attributeValue = atol(currentAttribute->value.c_str());
 			entityNode->entityVectorConnectionsArray[entityVectorConnectionIndex].push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
 			//cout << "attributeValue = " << attributeValue << endl;
-			//cout << "refID = " << findEntityNodeByID(attributeValue, entityNodesCompleteList)->id << endl;
+			//cout << "refID = " << findEntityNodeByID(attributeValue, entityNodesCompleteList)->idActiveList << endl;
 		}
 		else
 		{
@@ -1017,11 +1018,10 @@ void resetIDsForNodeList(vector<GIAEntityNode*> *entityNodesList, long * current
 {
 	//cout << "h3" << endl;
 
-	
 	for(vector<GIAEntityNode*>::iterator entityNodesCompleteListIterator = entityNodesList->begin(); entityNodesCompleteListIterator < entityNodesList->end(); entityNodesCompleteListIterator++)	
 	{
 		GIAEntityNode * currentEntity = *entityNodesCompleteListIterator;
-		currentEntity->id = *currentEntityNodeIDInConceptEntityNodesList;
+		currentEntity->reorderdIDforXMLsave = *currentEntityNodeIDInConceptEntityNodesList;
 		(*currentEntityNodeIDInConceptEntityNodesList) = (*currentEntityNodeIDInConceptEntityNodesList) + 1;
 
 		//cout << "h5f" << endl;
@@ -1086,12 +1086,15 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	XMLParserAttribute * currentAttribute = currentTagL1->firstAttribute;
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_id;
+	sprintf(tempString, "%ld", currentEntityNodeIDInConceptEntityNodesList);
+	/*
 	#ifdef GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
-		//do not write current id value, write new id value - this enables fast linking of parsed xml file			
+		//do not write current idActiveList value, write new idActiveList value - this enables fast linking of parsed xml file			
 		sprintf(tempString, "%ld", currentEntityNodeIDInConceptEntityNodesList);
 	#else
-		sprintf(tempString, "%ld", (currentEntity->id));
+		sprintf(tempString, "%ld", (currentEntity->idActiveList));
 	#endif
+	*/
 	currentAttribute->value = tempString;
 
 	XMLParserAttribute * newAttribute = new XMLParserAttribute();
@@ -1184,7 +1187,7 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 		if(currentEntity->entityBasicConnectionsArray[i] != NULL)
 		{
 			currentAttribute->name = entityBasicConnectionXMLAttributeNameArray[i];
-			sprintf(tempString, "%ld", (currentEntity->entityBasicConnectionsArray[i]->id));
+			sprintf(tempString, "%ld", (currentEntity->entityBasicConnectionsArray[i]->reorderdIDforXMLsave));
 			currentAttribute->value = tempString;
 
 			newAttribute = new XMLParserAttribute();
@@ -1387,7 +1390,7 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 				currentAttribute = currentTagL3->firstAttribute;
 
 				currentAttribute->name = NET_XML_ATTRIBUTE_id;
-				sprintf(tempString, "%ld", (*(entityIter))->id);
+				sprintf(tempString, "%ld", (*(entityIter))->reorderdIDforXMLsave);
 				currentAttribute->value = tempString;
 
 				XMLParserAttribute * newAttribute = new XMLParserAttribute();

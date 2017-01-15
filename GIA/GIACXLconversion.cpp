@@ -3,9 +3,9 @@
  * File Name: GIACXLconversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1a 15-May-2012
+ * Project Version: 1l1c 22-May-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
- * NB this function overwrites entity id values upon read/write to speed up linking process
+ * NB this function creates entity reorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  *
  *******************************************************************************/
 
@@ -72,14 +72,16 @@ bool writeCMapToolsCXLFile(string xmlFileName, vector<GIAEntityNode*> *entityNod
 
 	long currentCmapNodeIDInCmapNodeList;
 	
-	#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
+	/*
+	#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_THIS_SHOULDNT_EVER_BE_USED
 	currentCmapNodeIDInCmapNodeList = 0;
 	resetIDsForNodeList2(conceptEntityNodesList, &currentCmapNodeIDInCmapNodeList);
 	resetIDsForNodeList2(propertyEntityNodesList, &currentCmapNodeIDInCmapNodeList);
 	resetIDsForNodeList2(actionEntityNodesList, &currentCmapNodeIDInCmapNodeList);
 	resetIDsForNodeList2(conditionEntityNodesList, &currentCmapNodeIDInCmapNodeList);
 	#endif
-
+	*/
+	
 	//cout << "z" << endl;
 	
 	currentCmapNodeIDInCmapNodeList = 0;
@@ -260,9 +262,9 @@ XMLParserTag * addToCXLEntityNodeTagList(XMLParserTag * currentTagL1, vector<GIA
 		
 		#ifndef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_TIME_CONDITION_NODES
 		if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
-		{//this exception is required because timeCondition nodes have a separate id in Cmap maps / CXL
+		{//this exception is required because timeCondition nodes have a separate idActiveList in Cmap maps / CXL
 			//cout << "asd" << endl;
-			currentEntity->timeConditionNode->id = (*currentCmapNodeIDInCmapNodeList);			
+			currentEntity->timeConditionNode->idActiveList = (*currentCmapNodeIDInCmapNodeList);			
 			currentTagL1 = generateCXLEntityNodeTag(currentTagL1, currentEntity->timeConditionNode->conditionName, *currentCmapNodeIDInCmapNodeList, currentEntity->timeConditionNode->printX, currentEntity->timeConditionNode->printY, conceptOrLinkingPhraseList, appearanceList);		
 			(*currentCmapNodeIDInCmapNodeList) = (*currentCmapNodeIDInCmapNodeList) + 1;
 		}
@@ -276,13 +278,17 @@ XMLParserTag * addToCXLEntityNodeTagList(XMLParserTag * currentTagL1, vector<GIA
 			#endif
 				//cout << "DEBUG: currentEntity->entityName = " << currentEntity->entityName << endl;
 
+				currentEntity->reorderdIDforXMLsave = *currentCmapNodeIDInCmapNodeList;
+				/*
 				#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
 				currentEntity->reorderdIDforXMLsave = *currentCmapNodeIDInCmapNodeList;
 				//cout << "currentEntity->reorderdIDforXMLsave = " << currentEntity->reorderdIDforXMLsave << endl;
 				long currentEntityID = *currentCmapNodeIDInCmapNodeList;
 				#else	
-				long currentEntityID = currentEntity->id;
+				long currentEntityID = currentEntity->idActiveList;
 				#endif
+				*/
+				
 				currentTagL1 = generateCXLEntityNodeTag(currentTagL1, currentEntity->entityName, currentEntityID, currentEntity->printX, currentEntity->printY, conceptOrLinkingPhraseList, appearanceList);				
 				(*currentCmapNodeIDInCmapNodeList) = (*currentCmapNodeIDInCmapNodeList) + 1;
 
@@ -751,11 +757,14 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 				fakeTimeEntity.entityName = currentEntity->timeConditionNode->conditionName;
 				fakeTimeEntity.printX = currentEntity->timeConditionNode->printX;
 				fakeTimeEntity.printY = currentEntity->timeConditionNode->printY;
+				fakeTimeEntity.reorderdIDforXMLsave = currentEntity->timeConditionNode->reorderdIDforXMLsave;
+				/*
 				#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
-				fakeTimeEntity.reorderdIDforXMLsave = currentEntity->timeConditionNode->id;
+				fakeTimeEntity.reorderdIDforXMLsave = currentEntity->timeConditionNode->idActiveList;
 				#else
-				fakeTimeEntity.id = currentEntity->timeConditionNode->id;				
+				fakeTimeEntity.idActiveList = currentEntity->timeConditionNode->idActiveList;				
 				#endif
+				*/
 				string connectionTypeName = "time";
 				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, &fakeTimeEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);
 			}
@@ -777,16 +786,19 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 
 XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * currentTagL1, GIAEntityNode * entity1, GIAEntityNode * entity2, string connectionTypeName, long * currentCmapNodeIDInCmapNodeList, XMLParserTag ** currentTagInLinkingPhraseList, XMLParserTag ** currentTagInLinkingPhraseAppearanceList, XMLParserTag * firstTagInConnectionsList, bool alreadyMadeLinkingPhrase)
 {
-		
+	int entity1ID = entity1->reorderdIDforXMLsave;
+	int entity2ID = entity2->reorderdIDforXMLsave;	
+	/*		
 	#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
 	//cout << "entity1->reorderdIDforXMLsave = " << entity1->reorderdIDforXMLsave << endl;
 	//cout << "entity2->reorderdIDforXMLsave = " << entity2->reorderdIDforXMLsave << endl;
 	int entity1ID = entity1->reorderdIDforXMLsave;
 	int entity2ID = entity2->reorderdIDforXMLsave;	
 	#else
-	int entity1ID = entity1->id;
-	int entity2ID = entity2->id;	
+	int entity1ID = entity1->idActiveList;
+	int entity2ID = entity2->idActiveList;	
 	#endif
+	*/
 	//cout << "entity1ID = " << entity1ID << endl;
 	//cout << "entity2ID = " << entity2ID << endl;
 		
@@ -918,17 +930,16 @@ XMLParserTag * generateCXLConnectionNodeTag(XMLParserTag * currentTagL1, long fr
 }
 
 
-
-#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
+/*
+#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_THIS_SHOULDNT_EVER_BE_USED
 void resetIDsForNodeList2(vector<GIAEntityNode*> *entityNodesList, long * currentEntityNodeIDInConceptEntityNodesList)
 {
 	//cout << "h3" << endl;
 
-	
 	for(vector<GIAEntityNode*>::iterator entityNodesCompleteListIterator = entityNodesList->begin(); entityNodesCompleteListIterator < entityNodesList->end(); entityNodesCompleteListIterator++)	
 	{
 		GIAEntityNode * currentEntity = *entityNodesCompleteListIterator;
-		currentEntity->id = *currentEntityNodeIDInConceptEntityNodesList;
+		currentEntity->idActiveList = *currentEntityNodeIDInConceptEntityNodesList;
 		(*currentEntityNodeIDInConceptEntityNodesList) = (*currentEntityNodeIDInConceptEntityNodesList) + 1;
 
 		//cout << "h5f" << endl;
@@ -937,5 +948,5 @@ void resetIDsForNodeList2(vector<GIAEntityNode*> *entityNodesList, long * curren
 	//cout << "h6" << endl;
 }
 #endif
-
+*/
 

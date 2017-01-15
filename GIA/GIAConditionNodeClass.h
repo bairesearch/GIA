@@ -3,7 +3,7 @@
  * File Name: GIAConditionNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1a 15-May-2012
+ * Project Version: 1l1c 22-May-2012
  *
  *******************************************************************************/
 
@@ -109,9 +109,9 @@ public:
 	
 	bool isProgressive;
 	
-	int id;		//for CXL output only
-	int printX;	//for CXL output only
-	int printY;	//for CXL output only
+	long reorderdIDforXMLsave;	//for CXL output only
+	int printX;			//for CXL output only
+	int printY;			//for CXL output only
 };
 
 #define TIME_DATE_DISPLAY_FORMAT_AMERICAN (1)

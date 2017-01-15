@@ -3,7 +3,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1a 15-May-2012
+ * Project Version: 1l1c 22-May-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes 
@@ -643,6 +643,7 @@ bool testEntityNodeForReferenceSet(GIAEntityNode * queryEntityNode, GIAEntityNod
 				int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax = 0;
 				GIAEntityNode * queryEntityCorrespondingBestMatch;
 				int numberOfMatchedNodesAtPreviousAnswerNode = 0;
+				readVectorConnection(entityNode, i);
 				for(vector<GIAEntityNode*>::iterator entityIter = entityNode->entityVectorConnectionsArray[i].end(); entityIter != entityNode->entityVectorConnectionsArray[i].begin(); entityIter--)	//always search from end position first (to take the latest/newest reference/answer, if equal number of matched nodes is detected) 
 				{
 					GIAQueryTraceParameters queryTraceParametersTemp(queryTraceParameters);
@@ -741,7 +742,8 @@ bool testEntityNodeForReferenceSet(GIAEntityNode * queryEntityNode, GIAEntityNod
 		for(int i=0; i<GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES; i++)
 		{		
 			if(queryEntityNode->entityBasicConnectionsArray[i] != NULL)
-			{		
+			{	
+				readBasicConnection(queryEntityNode, i);
 				if(entityNode->entityBasicConnectionsArray[i] != NULL)
 				{	
 				

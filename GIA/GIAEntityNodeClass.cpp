@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1a 15-May-2012
+ * Project Version: 1l1c 22-May-2012
  *
  *******************************************************************************/
 
@@ -21,9 +21,12 @@ string quantityModifierNameArray[QUANTITY_MODIFIER_NUMBER_OF_TYPES] = {"almost"}
 //~nouns
 GIAEntityNode::GIAEntityNode(void)
 {
-	id = 0;	
-	idSecondary = 0;	//temporary ID reserved for specific entity types; concept, action, property etc
+	idActiveList = 0;	
+	idActiveEntityTypeList = 0;	//temporary ID reserved for specific entity types; concept, action, property etc
 	reorderdIDforXMLsave = 0;
+	#ifdef GIA_USE_DATABASE
+	
+	#endif
 				
 	entityName = "";
 	confidence = 1.0;
@@ -93,7 +96,7 @@ GIAEntityNode::GIAEntityNode(void)
 	entityIndexTemp = 0;
 	sentenceIndexTemp = 0;
 	
-	//to minimise query/referencing code
+	//to minimise query/referencing code	
 	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS] = ActionNodeList;
 	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS] = IncomingActionNodeList;
 	entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS] = ConditionNodeList;
@@ -115,20 +118,12 @@ GIAEntityNode::GIAEntityNode(void)
 	*/
 	
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	entityVectorConnectionsParametersSameReferenceSetArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS] = ActionNodeListParameters;
-	entityVectorConnectionsParametersSameReferenceSetArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS] = IncomingActionNodeListParameters;
-	entityVectorConnectionsParametersSameReferenceSetArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS] = ConditionNodeListParameters;
-	entityVectorConnectionsParametersSameReferenceSetArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS] = IncomingConditionNodeListParameters;
-	entityVectorConnectionsParametersSameReferenceSetArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES] = PropertyNodeListParameters;
-	entityVectorConnectionsParametersSameReferenceSetArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES] = PropertyNodeReverseListParameters;
-	entityVectorConnectionsParametersSameReferenceSetArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS] = EntityNodeDefinitionListParameters;
-	entityVectorConnectionsParametersSameReferenceSetArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS] = EntityNodeDefinitionReverseListParameters;
-	entityVectorConnectionsParametersSameReferenceSetArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES] = AssociatedInstanceNodeListParameters;
-	entityBasicConnectionsParametersSameReferenceSetArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_SUBJECT] = actionSubjectEntityParameters;
-	entityBasicConnectionsParametersSameReferenceSetArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_OBJECT] = actionObjectEntityParameters;
-	entityBasicConnectionsParametersSameReferenceSetArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_SUBJECT] = conditionSubjectEntityParameters;
-	entityBasicConnectionsParametersSameReferenceSetArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_OBJECT] = conditionObjectEntityParameters;
-	entityBasicConnectionsParametersSameReferenceSetArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE] = entityNodeDefiningThisInstanceParameters;	
+	/* initialisation shouldnt be necessary...
+	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+	{
+		entityVectorConnectionsParametersSameReferenceSetArray[i] = new vector<GIAEntityNode*>();
+	}
+	*/
 	#endif
 	
 	
@@ -172,27 +167,15 @@ GIAEntityNode::GIAEntityNode(void)
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	referenceSetID = -1;
 	#endif	
+	
+	#ifdef GIA_USE_DATABASE
+	bool added = false;	//implies database Update is Required
+	bool modified = false;	//implies database Update is Required
+	#endif	
 }
 GIAEntityNode::~GIAEntityNode(void)
 {
 }
-
-/*
-GIAEntityNodeContainer::GIAEntityNodeContainer(void)
-{
-	id = 0;
-	node = NULL; 			
-	next = NULL;
-}
-GIAEntityNodeContainer::~GIAEntityNodeContainer(void)
-{	
-	//delete node		
-	if(next != NULL)
-	{
-		delete next;
-	}
-}
-*/
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode)
 {

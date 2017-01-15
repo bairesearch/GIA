@@ -3,13 +3,96 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1a 15-May-2012
+ * Project Version: 1l1c 22-May-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
  *******************************************************************************/
  
 #include "GIAdatabase.h"
+
+
+#ifdef GIA_USE_DATABASE
+GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, bool> *conceptEntityNodesLoadedList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList, bool saveNetwork)
+{
+	GIAEntityNode * entityNodeFound = NULL;
+	
+	unordered_map<string, bool> ::iterator conceptEntityNodesLoadedListIterator;
+	conceptEntityNodesLoadedListIterator = conceptEntityNodesList->find(*entityNodeName);
+	
+	if(conceptEntityNodesLoadedListIterator != conceptEntityNodesLoadedListIterator->end())
+	{//concept entity found	
+	
+		bool conceptEntityNodeLoaded = false;
+		if(*conceptEntityNodesLoadedListIterator) 
+		{
+			conceptEntityNodeLoaded = true;
+		}
+		
+		GIAEntityNode * conceptEntityNode;
+		if(conceptEntityNodeLoaded)
+		{
+			unordered_map<string, GIAEntityNode*> ::iterator conceptEntityNodesListIterator;
+			conceptEntityNodesListIterator = conceptEntityNodesList->find(*entityNodeName);		
+			conceptEntityNode = conceptEntityNodesListIterator->second;
+		}
+		else
+			//load the concept node from the database into RAM
+			#define GIA_DATABASE_NODE_CONCEPT_ID_IRRELEVANT (0)
+			int idActiveList = GIA_DATABASE_NODE_CONCEPT_ID_IRRELEVANT;
+			readEntityNodeFromDatabase(conceptEntityNode, GIA_DATABASE_NODE_CONCEPT, entityNodeName, idActiveList);
+			conceptEntityNodesList->insert(pair<string, GIAEntityNode*>(*entityNodeName, conceptEntityNode));
+		}
+			
+		#ifdef GIA_DATABASE_DEBUG
+		cout << "\tentity node found; " << *entityNodeName << endl;
+		#endif		
+		entityNodeFound = conceptEntityNode;
+		*found = true;
+	}
+	else
+	{//concept entity not found - add it to the map
+		
+		if(addIfNonexistant)
+		{
+			#ifdef GIA_DATABASE_DEBUG
+			cout << "adding entity node; " << *entityNodeName << endl;
+			#endif
+
+			newEntityNode = new GIAEntityNode();
+			newEntityNode->isConcept = true;	//added 10 May 2012
+			newEntityNode->idActiveList = *currentEntityNodeIDInCompleteList;
+			newEntityNode->idActiveEntityTypeList = *currentEntityNodeIDInConceptEntityNodesList;
+			#ifdef GIA_USE_DATABASE
+			newEntityNode->added = true;
+			#endif
+			
+			if(saveNetwork)
+			{
+				entityNodesCompleteList->push_back(newEntityNode);							//not used for database...
+			}
+			(*currentEntityNodeIDInCompleteList) = (*currentEntityNodeIDInCompleteList) + 1;				//used to indicate that this new node may need to be updated on the database
+
+			conceptEntityNodesList->insert(pair<string, GIAEntityNode*>(*entityNodeName, newEntityNode));
+			(*currentEntityNodeIDInConceptEntityNodesList) = (*currentEntityNodeIDInConceptEntityNodesList) + 1;		//not used for database...
+
+			bool conceptEntityNodeLoaded = true;
+			conceptEntityNodesLoadedList->insert(pair<string, bool>(*entityNodeName, conceptEntityNodeLoaded));		
+			newEntityNode->added = true;											//used to indicate that this new node needs to be added to the database (at the end of the routine, after it is ensured that it has not been disabled)
+			/*
+			bool conceptEntityNodeAdded = true;
+			conceptEntityNodesModifiedList->insert(pair<string, bool>(*entityNodeName, conceptEntityNodeAdded));		
+			*/
+						
+			newEntityNode->entityName = *entityNodeName;	
+		
+			entityNodeFound = newEntityNode;
+		}
+	}
+
+	return entityNodeFound;
+}
+#endif
 
 #ifdef GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
 //uses fast search algorithm
@@ -40,9 +123,12 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 
 			entityNodeFound = new GIAEntityNode();
 			entityNodeFound->isConcept = true;	//added 10 May 2012
-			entityNodeFound->id = *currentEntityNodeIDInCompleteList;
-			entityNodeFound->idSecondary = *currentEntityNodeIDInConceptEntityNodesList;
-
+			entityNodeFound->idActiveList = *currentEntityNodeIDInCompleteList;
+			entityNodeFound->idActiveEntityTypeList = *currentEntityNodeIDInConceptEntityNodesList;
+			#ifdef GIA_USE_DATABASE
+			entityNodeFound->added = true;
+			#endif
+			
 			if(saveNetwork)
 			{
 				entityNodesCompleteList->push_back(entityNodeFound);
@@ -89,8 +175,8 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 			#endif
 			
 			entityNodeFound = new GIAEntityNode();
-			entityNodeFound->id = *currentEntityNodeIDInCompleteList;
-			entityNodeFound->idSecondary = *currentEntityNodeIDInConceptEntityNodesList;
+			entityNodeFound->idActiveList = *currentEntityNodeIDInCompleteList;
+			entityNodeFound->idActiveEntityTypeList = *currentEntityNodeIDInConceptEntityNodesList;
 			
 			entityNodesCompleteList->push_back(entityNodeFound);
 			(*currentEntityNodeIDInCompleteList) = (*currentEntityNodeIDInCompleteList) + 1;
@@ -255,8 +341,8 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 				//cout << "previousFindIndex = " << previousFindIndex << endl;
 				
 				entityNodeFound = new GIAEntityNode();
-				entityNodeFound->id = *currentEntityNodeIDInCompleteList;
-				entityNodeFound->idSecondary = *currentEntityNodeIDInConceptEntityNodesList;
+				entityNodeFound->idActiveList = *currentEntityNodeIDInCompleteList;
+				entityNodeFound->idActiveEntityTypeList = *currentEntityNodeIDInConceptEntityNodesList;
 			
 				entityNodesCompleteList->push_back(entityNodeFound);
 				(*currentEntityNodeIDInCompleteList) = (*currentEntityNodeIDInCompleteList) + 1;
@@ -492,7 +578,7 @@ GIAEntityNode * findEntityNodeByID(long EntityNodeID, vector<GIAEntityNode*> *en
 	GIAEntityNode * currentEntityNode = entityNodesCompleteList;
 	while(currentEntityNode->next != NULL)
 	{
-		if(currentEntityNode->id == EntityNodeID)
+		if(currentEntityNode->idActiveList == EntityNodeID)
 		{
 			foundEntityNode = currentEntityNode;
 		}
