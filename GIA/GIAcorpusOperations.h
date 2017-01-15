@@ -23,7 +23,7 @@
  * File Name: GIAcorpusOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b7a 10-January-2014
+ * Project Version: 2b7b 12-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -158,11 +158,6 @@ static int featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[
 static string GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"isNoun", "isVerbOrParticiple", "isAdjectiveOrAdverb", "isPreposition", "isAuxillaryBeing", "isAuxillaryHaving", "isAuxillaryDoing", "isAuxillaryModal", "isDeterminerThatWhich", "isDeterminer", "isComma", "isConjunction", "isInterjection"};
 */
 
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_DETERMINER (14)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_COMPOSITION_AUXILIARY (15)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA (16)
-#define GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 3)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
-
 //the following definitions must map to relationGovernorCompositionNameArray[]:
 #define RELATION_GOVERNOR_COMPOSITION_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES (3)
 static string relationGovernorCompositionPastTenseNameArray[RELATION_GOVERNOR_COMPOSITION_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"contained", "comprised", "had"};	
@@ -174,8 +169,14 @@ static string relationAuxiliaryPastTenseNameArray[RELATION_AUXILIARY_PAST_TENSE_
 static string relationAuxiliaryFutureTenseNameArray[RELATION_AUXILIARY_FUTURE_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"will"};	//FUTURE: take into account all principal modal verbs; can, could, may, might, must, shall, should, will, would
 //must use LRP to determine continuous tense..
 
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_DETERMINER (14)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_COMPOSITION_AUXILIARY (15)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA (16)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_QUANTITY (17)
+#define GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 4)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
+
 #ifdef GIA_USE_CORPUS_DATABASE
-static string GIA2semanticDependencyRelationNameArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"actionSubject", "actionObject", "conditionSubject", "conditionObject", "property", "property", "definition", "definition", "instance", "actionSubject", "actionObject", "conditionSubject", "conditionObject", "instance", "determiner", "compositionAuxiliary", "modalAuxiliaryOrCopula"};
+static string GIA2semanticDependencyRelationNameArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"actionSubject", "actionObject", "conditionSubject", "conditionObject", "property", "property", "definition", "definition", "instance", "actionSubject", "actionObject", "conditionSubject", "conditionObject", "instance", "determiner", "compositionAuxiliary", "modalAuxiliaryOrCopula", "quantity"};
 //static string GIA2semanticDependencyRelationNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"actionSubject", "actionObject", "conditionSubject", "conditionObject", "property", "property", "definition", "definition", "instance", "actionSubject", "actionObject", "conditionSubject", "conditionObject", "instance"};	
 #define GIA2_SEMANTIC_DEPENDENCY_RELATION_SECONDARY_NUMBER_OF_TYPES (3)
 static string GIA2semanticDependencyRelationSecondaryNameArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_SECONDARY_NUMBER_OF_TYPES] = {"determiner", "compositionAuxiliary", "modalAuxiliaryOrCopula"};

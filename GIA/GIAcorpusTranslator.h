@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b7a 10-January-2014
+ * Project Version: 2b7b 12-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -49,6 +49,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 		void updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(GIAentityNode * entity, string modalAuxiliaryString);	
 	void defineSubstancesBasedOnSemanticRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
 	void defineConnectionsBasedOnSemanticRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
+	void defineQuantitiesBasedOnSemanticRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser);
 
 #endif
 

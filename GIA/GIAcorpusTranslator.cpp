@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b7a 10-January-2014
+ * Project Version: 2b7b 12-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -186,6 +186,8 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	//measure, dates, and quantities??
 	defineTenseOnlyTimeConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 
+	defineQuantitiesBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
+	
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	//record entityIndexTemp + sentenceIndexTemp for all substances in sentence (allows for referencing)...
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -655,14 +657,10 @@ void defineConnectionsBasedOnSemanticRelations(Sentence * currentSentenceInList,
 					GIAentityNodeArray[entity2Index] = addOrConnectConditionToSubject(entity1, entity2, sameReferenceSet);
 				}
 				currentRelationInList->disabled = true;	
-			/*
-			//not required as there is never an isolated condition-object connection declared according to current GIA specification;
 			}	
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT])
-			{
-				GIAentityNodeArray[functionEntityIndex2] = addOrConnectConditionToObject(entity1, entity2, sameReferenceSet);
-			}
-			*/
+			{//THIS SHOULDNT BE required as there is never an isolated condition-object connection declared according to current GIA specification [but due to bug, it is requierd for Relex with measure dependency cases eg 'He runs every hour.'];
+				GIAentityNodeArray[entity2Index] = addOrConnectConditionToObject(entity1, entity2, sameReferenceSet);
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS])
 			{
@@ -678,6 +676,77 @@ void defineConnectionsBasedOnSemanticRelations(Sentence * currentSentenceInList,
 		currentRelationInList = currentRelationInList->next;
 	}	
 }
+
+void defineQuantitiesBasedOnSemanticRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
+{
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+ 	while(currentRelationInList->next != NULL)
+	{
+		if(!(currentRelationInList->disabled))
+		{
+			if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_QUANTITY])
+			{
+				int entity1Index = currentRelationInList->relationGovernorIndex;
+				int entity2Index = currentRelationInList->relationDependentIndex;			
+				GIAentityNode * entity1 = GIAentityNodeArray[entity1Index];
+				GIAentityNode * entity2 = GIAentityNodeArray[entity2Index];
+				entity1->hasQuantity = true;
+								
+				GIAentityNode * quantitySubstance = entity1;
+
+				if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+				{
+					//code copied from extractQuantitiesStanfordCoreNLP():
+					//if(quantitySubstance->NERTemp != FEATURE_NER_DATE)		//do not assume quantity entities when dealing with Stanford Dates (as they have already been parsed).
+					//{
+
+					quantitySubstance->hasQuantity = true;
+					if((quantitySubstance->NormalizedNERtemp != "") && (quantitySubstance->NormalizedNERtemp != "0.0"))		//added 0.0 for a stanford anomaly 11 May 2012
+					{
+						quantitySubstance->quantityNumberString = quantitySubstance->NormalizedNERtemp;
+					}
+					else
+					{
+						quantitySubstance->quantityNumberString = currentRelationInList->relationDependent;
+					}
+
+					int quantityNumberInt = calculateQuantityNumberInt(quantitySubstance->quantityNumberString);
+					quantitySubstance->quantityNumber = quantityNumberInt;
+					quantitySubstance->isSubstanceConcept = false;	//added 2a11a [because defineSubstanceConcepts() does not have access to quantity data]
+
+					/*//comparison variables not yet implemented for GIA2
+					if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+					{//update comparison variable (set it to the quantity)
+						quantitySubstance->isQuery = true;
+						GIAentityNodeArray[currentRelationInList->relationDependentIndex]->isQuery = false;
+						setComparisonVariableNode(quantitySubstance);
+					}
+					*/
+					//}
+				}
+				else if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
+				{
+					quantitySubstance->hasQuantity = true;
+					quantitySubstance->quantityNumberString = currentRelationInList->relationDependent;
+
+					int quantityNumberInt = calculateQuantityNumberInt(quantitySubstance->quantityNumberString);
+					quantitySubstance->quantityNumber = quantityNumberInt;
+
+					/*//comparison variables not yet implemented for GIA2
+					if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+					{//update comparison variable (set it to the quantity)
+						quantitySubstance->isQuery = true;
+						GIAentityNodeArray[currentRelationInList->relationDependentIndex]->isQuery = false;
+						setComparisonVariableNode(quantitySubstance);
+					}
+					*/
+				}
+			}
+		}
+		currentRelationInList = currentRelationInList->next;
+	}
+}
+
 
 #endif
 

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b7a 10-January-2014
+ * Project Version: 2b7b 12-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -32,7 +32,9 @@
 
 #include "GIAtranslatorApplyAdvancedFeatures.h"
 #include "GIAdatabase.h"
-
+#ifdef GIA_USE_CORPUS_DATABASE
+#include "GIAcorpusOperations.h"
+#endif
 
 
 void applyAdvancedFeatures(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType, int NLPfeatureParser)
@@ -425,6 +427,10 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 
 				if(quantityEntity->NERTemp != FEATURE_NER_DATE)		//do not assume quantity entities when dealing with Stanford Dates (as they have already been parsed).
 				{
+					#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_QUANTITY, currentRelationInList->relationGovernorIndex, currentRelationInList->relationDependentIndex, false);
+					#endif
+									
 					GIAentityNode * quantitySubstance = quantityEntity;
 					quantitySubstance->hasQuantity = true;
 					if((quantitySubstance->NormalizedNERtemp != "") && (quantitySubstance->NormalizedNERtemp != "0.0"))		//added 0.0 for a stanford anomaly 11 May 2012
@@ -487,6 +493,11 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 									GIAentityNodeArray[FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN] = addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
 									#else
 									addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
+									#endif
+									
+									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, currentRelationInList->relationGovernorIndex, FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN, sameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, currentRelationInList2->relationDependentIndex, FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN, sameReferenceSet);
 									#endif
 								}
 
@@ -560,6 +571,10 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 		#endif
 			if(currentRelationInList->relationType == RELATION_TYPE_QUANTITY)
 			{
+				#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+				GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_QUANTITY, currentRelationInList->relationGovernorIndex, currentRelationInList->relationDependentIndex, false);
+				#endif
+					
 				#ifdef GIA_TRANSLATOR_DEBUG
 				/*
 				cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
@@ -625,6 +640,11 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 								#else
 								addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
 								#endif
+								
+								#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+								GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, currentRelationInList->relationGovernorIndex, FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN, sameReferenceSet);
+								GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, currentRelationInList2->relationDependentIndex, FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN, sameReferenceSet);
+								#endif
 							}
 
 						}
@@ -632,6 +652,9 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 						{
 							if(currentRelationInList2->relationGovernor == currentRelationInList->relationDependent)
 							{
+								#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+								//quantity multipliers not currently supported by GIA2 [NB Stanford CoreNLP use them, only Relex]
+								#endif
 								disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList2->relationDependentIndex]);
 
 								int quantityMultiplierInt = calculateQuantityMultiplierInt(currentRelationInList2->relationDependent);
@@ -741,6 +764,11 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 						GIAentityNodeArray[FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN] = addOrConnectConditionToEntity(newQuantityTimesEntity, measureSubstance, conditionTypeEntity, sameReferenceSet);
 						#else
 						addOrConnectConditionToEntity(newQuantityTimesEntity, measureSubstance, conditionTypeEntity, sameReferenceSet);
+						#endif
+						
+						#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+						//GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, FEATURE_INDEX_OF_QUANTITY_TIMES_UNKNOWN, FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN, sameReferenceSet);	//this (conditionSubject<->condition connection) is not currently been generated correctly by GIA1
+						GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, currentRelationInList->relationGovernorIndex, FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN, sameReferenceSet);
 						#endif
 					}
 				}

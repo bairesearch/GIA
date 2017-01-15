@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b7a 10-January-2014
+ * Project Version: 2b7b 12-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -978,6 +978,52 @@ GIAentityNode * addOrConnectConditionToSubject(GIAentityNode * entityNode, GIAen
 	return newOrExistingCondition;
 }
 
+GIAentityNode * addOrConnectConditionToObject(GIAentityNode * conditionEntityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet)
+{
+	GIAentityNode * newOrExistingCondition = conditionTypeEntity;
+
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(conditionEntityNode->disabled))
+	{
+	if(!(conditionTypeEntity->disabled))
+	{
+	#endif
+		/*//do not presume single linked actions/conditions are identical
+		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
+		//see if relevant link already exists between the two nodes, and if so use that
+		bool foundNode1 = false;
+		GIAentityConnection * connectionFound = findEntityNodeNameInVector(conditionEntityNode, &(conditionTypeEntity->entityName), GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS, &foundNode1);
+		if(foundNode1)
+		{
+			GIAentityNode * currentConditionNodeInList = connectionFound->entity;
+			if(newOrExistingCondition != currentConditionNodeInList)
+			{
+				newOrExistingCondition->disabled = true;
+				newOrExistingCondition = currentConditionNodeInList;
+			}
+		}
+		#endif
+		*/
+
+		newOrExistingCondition = addConditionToConditionDefinition(conditionTypeEntity);
+		
+		#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		//required to compensate for defineSubstancesActions() being exectuted before linkDependentActionsType1()
+		newOrExistingCondition->isSubstance = false;	//required because defineSubstancesActions() defines substances [not actions]
+		newOrExistingCondition->isCondition = true;
+		#endif
+		//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+
+		//configure entity node containing this substance
+		connectConditionInstanceToObject(conditionEntityNode, newOrExistingCondition, sameReferenceSet);
+
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	}
+	}
+	#endif
+
+	return newOrExistingCondition;
+}
 
 GIAentityNode * addConditionToConditionDefinition(GIAentityNode * conditionTypeEntity)
 {
