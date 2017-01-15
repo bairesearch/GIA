@@ -390,7 +390,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 		}
 				
 		if(foundMatch)
-		{
+		{	
 			//cout << "dg1" << endl;
 		
 			//OLD: if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters))
@@ -425,6 +425,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 			}	
 			#endif
 
+			*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
 		}
 		
 		//cout << "dg2" << endl;
