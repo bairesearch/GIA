@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1f 14-November-2014
+ * Project Version: 2h1g 14-November-2014
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -567,6 +567,17 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 	bool wasReferenceFound = false;
 	bool isQueryFound = false;
 	#endif
+	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
+	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
+	bool conditionType2Found = false;
+	#endif
+	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+	bool conditionTwoWayFound = false;
+	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	bool inverseConditionTwoWayFound = false;
+	#endif
+	#endif
+	#endif	
 
 	bool entityVectorConnectionNodeFoundArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
@@ -849,6 +860,33 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 			isQueryFound = true;
 		}
 		#endif
+		
+		#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
+		#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionType2)
+		{
+			string attributeValue = currentAttribute->value.c_str();
+			entityNode->conditionType2 = attributeValue;
+			conditionType2Found = true;
+		}
+		#endif
+		#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionTwoWay)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->conditionTwoWay = attributeValue;
+			conditionTwoWayFound = true;
+		}
+		#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_inverseConditionTwoWay)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->inverseConditionTwoWay = attributeValue;
+			inverseConditionTwoWayFound = true;
+		}
+		#endif
+		#endif
+		#endif		
 
 		currentAttribute = currentAttribute->nextAttribute;
 	}
@@ -1689,9 +1727,38 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 
 	newAttribute = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
-		
+	currentAttribute = currentAttribute->nextAttribute;	
 	#endif
+	
+	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
+	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
+	currentAttribute->name = NET_XML_ATTRIBUTE_conditionType2;
+	currentAttribute->value = currentEntity->conditionType2;
+
+	newAttribute = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute;
+	currentAttribute = currentAttribute->nextAttribute;
+	#endif
+	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+	currentAttribute->name = NET_XML_ATTRIBUTE_conditionTwoWay;
+	sprintf(tempString, "%d", int(currentEntity->conditionTwoWay));
+	currentAttribute->value = tempString;
+
+	newAttribute = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute;
+	currentAttribute = currentAttribute->nextAttribute;
+	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	currentAttribute->name = NET_XML_ATTRIBUTE_inverseConditionTwoWay;
+	sprintf(tempString, "%d", int(currentEntity->inverseConditionTwoWay));
+	currentAttribute->value = tempString;
+
+	newAttribute = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute;
+	currentAttribute = currentAttribute->nextAttribute;
+	#endif
+	#endif
+	#endif	
+		
 
 	XMLparserTag * firstTagL3;
 	XMLparserTag * currentTagL3;

@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1f 14-November-2014
+ * Project Version: 2h1g 14-November-2014
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -212,6 +212,18 @@ using namespace std;
 #endif
 #ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 #define NET_XML_ATTRIBUTE_isAlias ((string)"isAlias")	//this is only used for NLC
+#endif
+#endif
+
+#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
+#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
+#define NET_XML_ATTRIBUTE_conditionType2 ((string)"conditionType2")
+#endif
+#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+#define NET_XML_ATTRIBUTE_conditionTwoWay ((string)"conditionTwoWay")
+#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+#define NET_XML_ATTRIBUTE_inverseConditionTwoWay ((string)"inverseConditionTwoWay")
+#endif
 #endif
 #endif
 

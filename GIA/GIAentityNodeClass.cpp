@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1f 14-November-2014
+ * Project Version: 2h1g 14-November-2014
  *
  *******************************************************************************/
 
@@ -266,11 +266,16 @@ GIAentityNode::GIAentityNode(void)
 	NLCcategoryListCreatedTemp = false;
 	#endif
 	
+	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
 	conditionType2 = ""; 
 	#endif
 	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
-	inverseConditionTwoWay = false;	//added 2h1e/14-November-2014 - required for NLC 1m1e+
+	conditionTwoWay = false;
+	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	inverseConditionTwoWay = false;
+	#endif
+	#endif
 	#endif
 }
 GIAentityNode::~GIAentityNode(void)
