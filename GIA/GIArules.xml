@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h12f 21-January-2015
+ * Project Version: 2h12g 21-January-2015
  *
  *******************************************************************************/
 -->
@@ -1391,10 +1391,6 @@
 						<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_cop" />
 						<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="be" />
 						<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" /> <!-- redundant test -->
-						<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
-						<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="2" />
-						<option useRelationTest="true" REL="3" REL_ENT="1" relationTest="impossibleEntityName" /> <!-- an impossible check which is therefore guaranteed to set auxiliaryIndicatesDifferentReferenceSet to true -->
-						<!-- #endif -->
 						<option numberOfRelations="2" />
 						<!-- <option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="JJ|JJR|JJS|RB|RBR|RBS" relationArrayTestSize="6" relationArrayTestSpecialCasePOStemp="true" /> -->
 						<specialCase type="specialCaseCharacteristicsTestOrVector" variable="stanfordPOStemp" value="JJ" REL="1" REL_ENT="1" />
@@ -1407,6 +1403,12 @@
 						<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 						<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 						<option disableRelation="true" REL="2" />
+						<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+						<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+						<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
+						<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
+						<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
+						<!-- #endif -->
 						</paramDepRel>
 
 						<paramDepRel mode="redistribute">
@@ -1414,10 +1416,7 @@
 						<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_subj" />
 						<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_cop" />
 						<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="be" />
-						<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" /> <!-- redundant test -->
-						<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="2" />
-						<option useRelationTest="true" REL="3" REL_ENT="1" relationTest="impossibleEntityName" /> <!-- an impossible check which is therefore guaranteed to set auxiliaryIndicatesDifferentReferenceSet to true -->
-						<option numberOfRelations="2" />
+						<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" /> <!-- redundant test -->						<option numberOfRelations="2" />
 						<!-- <option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="CD|NN|NNS|NNP|NNPS" relationArrayTestSize="5" relationArrayTestSpecialCasePOStemp="true" /> -->
 						<specialCase type="specialCaseCharacteristicsTestOrVector" variable="stanfordPOStemp" value="CD" REL="1" REL_ENT="1" />
 						<specialCase type="specialCaseCharacteristicsTestOrVector" variable="stanfordPOStemp" value="NN" REL="1" REL_ENT="1" />
@@ -1428,6 +1427,12 @@
 						<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 						<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 						<option disableRelation="true" REL="2" />
+						<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+						<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+						<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
+						<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
+						<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
+						<!-- #endif -->
 						</paramDepRel>
 
 						<!-- must switch subject to object; -->
@@ -3238,6 +3243,9 @@
 				<specialCase type="specialCaseCharacteristicsTestOr3Vector" variable="grammaticalProperNounTemp" value="true" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestOr3Vector" variable="isNameQuery" value="true" REL="1" REL_ENT="1" />
 				<option disableRelationDuringLink="true" REL="1" />
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
+				<!-- #endif -->
 				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
 				<option functionToExecuteUponFind="14" />
 				<!-- #else -->
@@ -3263,6 +3271,9 @@
 				<!-- #endif -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="hasAssociatedTime" value="false" REL="1" REL_ENT="2" />
 				<option disableRelationDuringLink="true" REL="1" />
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
+				<!-- #endif -->
 				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
 				<option functionToExecuteUponFind="14" />
 				<!-- #else -->
@@ -3281,6 +3292,9 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isName" value="true" REL="1" REL_ENT="2" />
 				<option disableRelationDuringLink="true" REL="1" />
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
+				<!-- #endif -->
 				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
 				<option functionToExecuteUponFind="14" />
 				<!-- #else -->
@@ -3293,6 +3307,9 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
+				<!-- #endif -->
 				<option functionToExecuteUponFind="11" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
@@ -3432,6 +3449,7 @@
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<!-- <option defaultSameSetReferenceValue="true" /> -->	<!-- CHECKTHIS; OLD: before 2h2c -->
+				<!-- FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeStanfordRelations -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
@@ -3933,6 +3951,7 @@
 				<option functionToExecuteUponFind="4" />
 				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				//<defaultSameSetReferenceValue="true" />	//CHECKTHIS; OLD: before 2h12e
+				// FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeStanfordRelations
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> //determine reference set; eg The pastry tasted awesome./The chicken ate the pie that tasted awesome.
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
@@ -3951,6 +3970,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<!-- <defaultSameSetReferenceValue="true" /> 	//CHECKTHIS; OLD: before 2h12e -->
+				<!-- FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeStanfordRelations -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> <!-- determine same reference set; eg The pastry tasted awesome./The chicken ate the pie that tasted awesome. -->
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
@@ -3975,6 +3995,7 @@
 				<option functionToExecuteUponFind="4" />
 				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				//<defaultSameSetReferenceValue="true" />	//CHECKTHIS; OLD: before 2h12e
+				// FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeStanfordRelations
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> //determine same reference set; eg Jezel likes to draw./The chicken ate the pie that likes to draw.
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
@@ -3993,6 +4014,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<!-- <defaultSameSetReferenceValue="true" /> 	//CHECKTHIS; OLD: before 2h12e -->
+				<!-- FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeStanfordRelations -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> <!-- determine same reference set; eg Jezel likes to draw./The chicken ate the pie that likes to draw. -->
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />

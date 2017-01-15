@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h12f 21-January-2015
+ * Project Version: 2h12g 21-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -448,6 +448,9 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 		paramA.specialCaseCharacteristicsTestOr3Vector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest5);
 		paramA.specialCaseCharacteristicsTestOr3Vector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest6);
 		paramA.disableRelationDuringLink[REL1] = true;
+		#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+		paramA.defaultSameSetRelationID = REL1; paramA.defaultSameSetReferenceValue = false;
+		#endif
 		#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 		paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias;				
 		#else
@@ -474,6 +477,9 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 		//EntityCharacteristic entityCharacteristicsTest4("hasAssociatedTime", "false");
 		paramB.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest4);
 		paramB.disableRelationDuringLink[REL1] = true;
+		#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+		paramB.defaultSameSetRelationID = REL1; paramB.defaultSameSetReferenceValue = false;
+		#endif
 		#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 		paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias;			
 		#else
@@ -489,6 +495,9 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, NULL, GIAentityNodeArray, true);
 	paramC.numberOfRelations = 1;
 	paramC.useRelationTest[REL1][REL_ENT3] = true; paramC.relationTest[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+	paramC.defaultSameSetRelationID = REL1; paramC.defaultSameSetReferenceValue = false;
+	#endif
 	paramC.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntity;
 	paramC.functionEntityRelationID[FUNC_ENT1] = REL1; paramC.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 	paramC.functionEntityRelationID[FUNC_ENT2] = REL1; paramC.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;

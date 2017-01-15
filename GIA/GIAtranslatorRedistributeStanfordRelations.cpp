@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h12f 21-January-2015
+ * Project Version: 2h12g 21-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -2581,10 +2581,6 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_COPULA;
 	param.useRelationTest[REL2][REL_ENT2] = true; param.relationTest[REL2][REL_ENT2] = RELATION_ENTITY_BE;
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;	//redundant test
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-	param.useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[REL2] = true;
-	param.useRelationTest[REL3][REL_ENT1] = true; param.relationTest[REL3][REL_ENT1] = "impossibleEntityName";	//an impossible check which is therefore guaranteed to set auxiliaryIndicatesDifferentReferenceSet to true
-	#endif
 	#ifndef GIA_OPTIMISE_PERFORMANCE_FOR_RELEX_PATENT_QUERIES_REPLICATION_RATHER_THAN_RELEX_PATENT_SYNTACTIC_PROTOTYPE_OUTPUT_REPLICATION
 		#ifndef GIA_COLLAPSE_COP_RELATION_DEPENDENT_BE_TO_APPOS_NOT_PREDADJ_OLD
 		//currently in use
@@ -2615,6 +2611,12 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;
 			paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1;
 			paramA.disableRelation[REL2] = true;
+			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+			paramA.useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[REL1] = true;
+			paramA.useRelationTest[REL3][REL_ENT3] = true; paramA.relationTest[REL3][REL_ENT3] = RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER;
+			paramA.useRelationIndexTest[REL3][REL_ENT1] = true; paramA.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; paramA.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT2;
+			paramA.useRelationIndexTest[REL3][REL_ENT2] = true; paramA.relationIndexTestRelationID[REL3][REL_ENT2] = REL1; paramA.relationIndexTestEntityID[REL3][REL_ENT2] = REL_ENT1;
+			#endif
 			if(genericDependecyRelationInterpretation(&paramA, REL1))
 			{
 				//cout << "passA" << endl;
@@ -2636,6 +2638,12 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;
 			paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1;
 			paramB.disableRelation[REL2] = true;
+			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+			paramB.useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[REL1] = true;
+			paramB.useRelationTest[REL3][REL_ENT3] = true; paramB.relationTest[REL3][REL_ENT3] = RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER;
+			paramB.useRelationIndexTest[REL3][REL_ENT1] = true; paramB.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; paramB.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT2;
+			paramB.useRelationIndexTest[REL3][REL_ENT2] = true; paramB.relationIndexTestRelationID[REL3][REL_ENT2] = REL1; paramB.relationIndexTestEntityID[REL3][REL_ENT2] = REL_ENT1;
+			#endif
 			if(genericDependecyRelationInterpretation(&paramB, REL1))
 			{
 				//cout << "passB" << endl;
