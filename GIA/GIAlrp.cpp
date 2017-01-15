@@ -2237,16 +2237,16 @@ void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool * inver
 					if(currentTagInPrepositionsInverseListSentence->tagName == conditionNameNew)
 					{
 						*twoWayConditionRequired = true;
-						//#ifdef GIA_TRANSLATOR_DEBUG
+						#ifdef GIA_TRANSLATOR_DEBUG
 						cout << "detectIfInverseOrTwoWayConditionRequired(): twoWayConditionRequired: conditionName = " << conditionName << endl;
-						//#endif
+						#endif
 					}
 					else
 					{
 						foundConditionToInvert = true;
-						//#ifdef GIA_TRANSLATOR_DEBUG
+						#ifdef GIA_TRANSLATOR_DEBUG
 						cout << "detectIfInverseOrTwoWayConditionRequired(): foundConditionToInvert: conditionName = " << conditionName << endl;
-						//#endif
+						#endif
 					}
 				}
 			}	
@@ -2258,9 +2258,9 @@ void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool * inver
 					{
 						*inverseConditionRequired = true;
 						*inverseConditionName = conditionNameNew;
-						//#ifdef GIA_TRANSLATOR_DEBUG
+						#ifdef GIA_TRANSLATOR_DEBUG
 						cout << "detectIfInverseOrTwoWayConditionRequired(): inverseConditionRequired: conditionNameNew = " << conditionNameNew << endl;
-						//#endif
+						#endif
 					}
 				}
 			}	
@@ -2294,9 +2294,9 @@ bool identifyConditionType(GIAentityNode * conditionEntity)
 				if(i == GIA_LRP_PREPOSITIONS_DATABASE_TAG_TYPE)
 				{
 					conditionEntity->conditionType2 = currentTagInPrepositionsInverseListSentence->tagName;
-					//#ifdef GIA_TRANSLATOR_DEBUG
+					#ifdef GIA_TRANSLATOR_DEBUG
 					cout << "identifyConditionTypeAndInvertIfNecessary(): conditionEntity->conditionType2 = " << conditionEntity->conditionType2 << endl;
-					//#endif
+					#endif
 					conditionTypeIdentified = true;
 				}		
 				currentTagInPrepositionsInverseListSentence = currentTagInPrepositionsInverseListSentence->nextTag;

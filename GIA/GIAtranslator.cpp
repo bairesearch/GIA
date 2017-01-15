@@ -1278,16 +1278,16 @@ void invertOrDuplicateConditionsIfRequired(Sentence * currentSentenceInList, boo
 
 					if(inverseConditionRequired)
 					{
-						//#ifdef GIA_TRANSLATOR_DEBUG
+						#ifdef GIA_TRANSLATOR_DEBUG
 						cout << "invertOrDuplicateConditionsIfRequired(): inverseConditionRequired: conditionName = " << conditionName  << endl;
-						//#endif
+						#endif
 						createNewInverseConditionEntity(currentRelationInList, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, inverseConditionName, featureArrayTemp);
 					}
 					else if(twoWayConditionRequired)
 					{
-						//#ifdef GIA_TRANSLATOR_DEBUG
+						#ifdef GIA_TRANSLATOR_DEBUG
 						cout << "invertOrDuplicateConditionsIfRequired(): twoWayConditionRequired: conditionName = " << conditionName << endl;
-						//#endif
+						#endif
 						Relation * lastRelationInList = currentSentenceInList->firstRelationInList;
 						while(lastRelationInList->next != NULL)
 						{	
