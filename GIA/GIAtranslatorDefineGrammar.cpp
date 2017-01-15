@@ -248,7 +248,7 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAen
 			#endif
 
 				GIAentityNode * featureTempEntityNode = GIAfeatureTempEntityNodeArray[w];
-				cout << "featureTempEntityNode->entityName = " << featureTempEntityNode->entityName << endl;
+				//cout << "featureTempEntityNode->entityName = " << featureTempEntityNode->entityName << endl;
 				//cout << "!(featureTempEntityNode->disabled) = " << !(featureTempEntityNode->disabled) << endl;
 
 				bool entityAlreadyExistant = false;

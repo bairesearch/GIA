@@ -239,7 +239,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 			string prepositionName = convertPrepositionToRelex(&(param->relation[currentRelationID]->relationType), &prepositionFound);
 			if(prepositionFound)
 			{
-				cout << "prepositionName = " << prepositionName << endl;
+				//cout << "prepositionName = " << prepositionName << endl;
 				int prepositionEntityIndex = -1;
 				bool prepositionFeatureFound = determineFeatureIndexOfPreposition(param->currentSentenceInList, &prepositionName, &(param->relationEntityIndex[currentRelationID][REL_ENT3]));
 				if(prepositionFeatureFound)
