@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i19a 31-January-2015
+ * Project Version: 2i19b 31-January-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -140,7 +140,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	#endif
 	redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
 
-#ifndef GIA_ADVANCED_REFERENCING_DEBUG_DISABLE_LINKING
+#ifndef GIA_ADVANCED_REFERENCING_DISABLE_LINKING
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	if(linkPreestablishedReferencesGIA)
 	{

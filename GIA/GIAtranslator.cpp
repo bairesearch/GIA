@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i19a 31-January-2015
+ * Project Version: 2i19b 31-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -823,7 +823,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		}
 	}
 
-#ifndef GIA_ADVANCED_REFERENCING_DEBUG_DISABLE_LINKING
+#ifndef GIA_ADVANCED_REFERENCING_DISABLE_LINKING
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	//if(!linkPreestablishedReferencesGIA)	//criteria not used as same reference set tags may be required for dream mode or post processing (not just advanced referencing)
 	//{
@@ -848,7 +848,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		GIAentityNodeArray[w] = GIAconceptNodeArray[w];		//set default values of GIAentityNodeArray
 	}
 
-#ifndef GIA_ADVANCED_REFERENCING_DEBUG_DISABLE_LINKING
+#ifndef GIA_ADVANCED_REFERENCING_DISABLE_LINKING
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	if(linkPreestablishedReferencesGIA)
 	{
@@ -1016,6 +1016,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes() warning: GIAentityNodeArray[" << w << "] sentenceIndexTemp undefined, this is an artificial entity" << endl;
 					#endif
 				}
+				//#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
 				if(GIAentityNodeArray[w]->entityIndexTemp != w)
 				{
@@ -1049,6 +1050,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 						}
 					} 
 				}
+				//#endif
 			}
 			#else
 			if(!(GIAentityNodeArray[w]->wasReference))

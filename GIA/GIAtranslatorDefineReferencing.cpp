@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i19a 31-January-2015
+ * Project Version: 2i19b 31-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1181,6 +1181,9 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 
 		unordered_map<string, GIAentityNode*>* entityNodesActiveListConceptsQuery = sentenceConceptEntityNodesList;
 
+		#ifdef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY
+		referenceTraceParameters.traceSubstanceConceptsOnly = true;
+		#endif
 		#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 		referenceTraceParameters.intrasentenceReference = false;
 		#endif

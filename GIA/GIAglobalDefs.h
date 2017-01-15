@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i19a 31-January-2015
+ * Project Version: 2i19b 31-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -611,7 +611,7 @@
 
 #define GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS		//GIA 2a7a		//this is recommended for NLC and required for USE_GIA2	//warning: GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS needs to be tested independently without USE_GIA2
 #ifdef GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
-	#define GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT	//GIA 2a10a
+	//#define GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT	//GIA 2a10a	//disabled 2i19b
 #endif
 
 //#define GIA_DISABLE_2g_CODE_FOR_DEBUG
@@ -620,11 +620,10 @@
 #ifndef GIA_DISABLE_2g_CODE_FOR_DEBUG
 	#define GIA_SUPPORT_NUMBER_OF	//added 2g9a/24-September-2014
 	#ifdef USE_NLC
-		#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - XML only function (not hard coded) 1j2b+, optional for NLC 1k11a+
+		//#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - XML only function (not hard coded) 1j2b+, optional for NLC 1k11a+
 	#endif
 	#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 		#define GIA_DISABLE_ALIAS_ENTITY_MERGING	//added 2g11a/21-October-2014 - XML only function (not hard coded) 1k14a+	//IMPORTANT: when activating/deactivating from compilation, ensure GIArules.xml is updated accordingly (search for "GIA_DISABLE_ALIAS_ENTITY_MERGING") 
-		#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_USE_ADVANCED_REFERENCING 2g5a/05 September 2014	//added 2g5a - required for advanced referencing, dream mode (identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts():identifyReferenceSetDetermineNextCourseOfAction():identifyReferenceSet()), and NLC 1j2b+
 		//#define GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES	//untested and unused
 	#else
 		#ifdef USE_NLC
@@ -637,6 +636,14 @@
 	#define GIA_XML_RECORD_ADDITIONAL_VARIABLES
 #endif
 #ifndef GIA_DISABLE_2i_CODE_FOR_DEBUG
+	/*
+	#ifdef USE_NLC
+		#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
+			#define GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY	//2i19c	//NB this requires !GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS	//designed for GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
+		#endif
+	#endif
+	*/
+	#define GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS_ADVANCED //2i19a
 	#define GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS	//2i18a
 	#define GIA_TRANSLATOR_CONVERT_AMOD_WITH_NUMBERS_TO_QUANTITY_RELATION	//2i12a
 	#define GIA_TRANSLATOR_DO_NOT_CREATE_SUBSTANCE_CONCEPT_PROPERTIES_FOR_NON_SUBSTANCE_CONCEPT_PARENTS	//2i10a
@@ -649,6 +656,7 @@
 	#define GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER	//2i5a
 	#define GIA_SUPPORT_EXTRA_DETERMINERS	//added 2i2a
 #endif
+	
 #ifndef GIA_DISABLE_2h_CODE_FOR_DEBUG
 	#define GIA_SPATIOTEMPORAL_NETWORK		//yet to implement ~2h2a/17-November-2014+
 	#ifdef GIA_SPATIOTEMPORAL_NETWORK
@@ -727,7 +735,7 @@
 		#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 			//#define GIA_RECORD_LINK_PREESTABLISHED_REFERENCES_GIA
 		#endif
-		#define GIA_ADVANCED_REFERENCING_DEBUG_DISABLE_LINKING	//do not link references when generating semantic relation text corpus
+		#define GIA_ADVANCED_REFERENCING_DISABLE_LINKING	//do not link references when generating semantic relation text corpus
 	#endif
 	#define GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
 	#define GIA2_SUPPORT_QUERIES
@@ -770,12 +778,6 @@
 
 //variables currently being tested (1q1a+)
 #define GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS	//XML only function (not hard coded)
-#ifndef GIA_DISABLE_2i_CODE_FOR_DEBUG
-	#define GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS_ADVANCED
-#endif	
-#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-	#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_USE_ADVANCED_REFERENCING 2g5a/05 September 2014	//added 2g5a - required for advanced referencing, dream mode (identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts():identifyReferenceSetDetermineNextCourseOfAction():identifyReferenceSet()), and NLC 1j2b+
-#endif
 
 #define GIA_QUERY_SIMPLIFIED_SEARCH
 #define GIA_QUERY_SIMPLIFIED_SEARCH_REPLACE_ADVANCED_SEARCH
@@ -937,20 +939,30 @@
 	//#define GIA_SEMANTIC_NET_DO_NOT_WRITE_CONNECTIONS_FROM_DISABLED_ENTITY_NODES	//optional to enable disbled node i/o without recording their connections
 #endif
 
+#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_USE_ADVANCED_REFERENCING 2g5a/05 September 2014	//added 2g5a - required for advanced referencing, dream mode (identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts():identifyReferenceSetDetermineNextCourseOfAction():identifyReferenceSet()), and NLC 1j2b+
 #ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
-	#define GIA_USE_ADVANCED_REFERENCING	//requires further testing
-	#ifdef GIA_USE_ADVANCED_REFERENCING
-		#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_USE_ADVANCED_REFERENCING 2g5a/05 September 2014
-		#define GIA_RECORD_WAS_REFERENCE_INFORMATION
-		#ifndef GIA_STORE_CONNECTION_SENTENCE_INDEX
-			#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
-		#endif
-		#define GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-		#define GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES
-	#else
-		//#define GIA_USE_NON_ADVANCED_REFERENCING
-	#endif
+	#define GIA_USE_ADVANCED_REFERENCING
 #endif
+#ifdef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY
+	#define GIA_USE_ADVANCED_REFERENCING
+#endif
+#ifdef GIA_USE_ADVANCED_REFERENCING
+	#define GIA_RECORD_WAS_REFERENCE_INFORMATION
+	#ifndef GIA_STORE_CONNECTION_SENTENCE_INDEX
+		#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
+	#endif
+	#ifdef USE_NLC	
+		#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//ie #ifndef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY. Note NLC does not require intrasentence referencing when NLC_USE_ADVANCED_REFERENCING is enabled (ie )
+			#define GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+		#endif	
+	#else
+		#define GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+	#endif
+	#define GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES
+#else
+	//#define GIA_USE_NON_ADVANCED_REFERENCING
+#endif
+
 
 #ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	
 	#define GIA_IDENTIFY_REFERENCE_SET_CONCEPT_ENTITY_ENTRANCE_DO_NOT_ENTER_ON_AN_ACTION_NODE	//GIA 2a8a	//this update is XML only function (not hard coded) if statement parsing //this update enforces orginal GIA specification: '//an action is considered by default not to be part of the same reference set as its subject/object (eg "the man fires the bow"). An rcmod /"that" is explicitly required for an action to be considered part of the same reference set as its subject/object (eg "the man that fires the bow...")'
@@ -1074,7 +1086,7 @@
 #ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
 	//#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS_WORK_WITH_MULTIPLE_SENTENCES
 #endif
-//#define GIA_ADVANCED_REFERENCING_DEBUG_DISABLE_LINKING
+//#define GIA_ADVANCED_REFERENCING_DISABLE_LINKING
 
 
 //DebugOLD;
