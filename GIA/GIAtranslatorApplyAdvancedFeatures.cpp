@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t3a 25-July-2013
+ * Project Version: 1t3b 25-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * ?TO DO: extract date information of entities from relex <features> tag area
@@ -67,8 +67,14 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAentit
 			GIAentityNode * currentEntity = GIAentityNodeArray[i];
 			if(!(currentEntity->disabled))
 			{
+				#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+				if(currentEntity->hasAssociatedTime)
+				{
+					addTimeToSubstance(currentEntity);	//note will overwrite any previous time condition nodes (eg tenseOnlyTimeCondition) - but these should not exist in the case of hasAssociatedTime 
+				#else
 				if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
 				{
+				#endif
 					GIAentityNode * timeEntity = currentEntity;
 					#ifdef GIA_TRANSLATOR_DEBUG
 					//cout << "currentEntity->entityName = " << currentEntity->entityName << endl;
@@ -135,8 +141,14 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAentityNodeArray
 		if(GIAentityNodeArrayFilled[i])
 		{
 			GIAentityNode * currentEntity = GIAentityNodeArray[i];
+			#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+			if(currentEntity->hasAssociatedTime)
+			{
+				addTimeToSubstance(currentEntity);	//note will overwrite any previous time condition nodes (eg tenseOnlyTimeCondition) - but these should not exist in the case of hasAssociatedTime 
+			#else
 			if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
 			{
+			#endif
 				GIAentityNode * timeEntity = currentEntity;
 				if(timeEntity->timeConditionNode != NULL)
 				{
@@ -288,6 +300,20 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAentityNodeArray
 }
 #endif
 
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+void addTimeToSubstance(GIAentityNode * timeConditionEntity)
+{
+	#ifdef GIA_TRANSLATOR_DEBUG
+	//cout << "addTimeToSubstance timeConditionEntity->entityName = " << timeConditionEntity->entityName << endl;
+	#endif
+	timeConditionEntity->conditionType = CONDITION_NODE_TYPE_TIME;
+
+	GIAtimeConditionNode * newTimeCondition = new GIAtimeConditionNode();
+
+	timeConditionEntity->timeConditionNode = newTimeCondition;
+
+}
+#endif
 
 void extractQuantities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, int NLPfeatureParser)
 {
@@ -1144,3 +1170,23 @@ void defineClausalComplementProperties(Sentence * currentSentenceInList, bool GI
 }
 #endif
 #endif
+
+void defineTenseOnlyTimeConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+{	
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAentityNodeArrayFilled[i])
+		{
+			GIAentityNode * entity = GIAentityNodeArray[i];
+			//cout << "entity = " << entity->entityName << endl;
+			//cout << "entity->grammaticalTenseTemp = " << entity->grammaticalTenseTemp << endl;
+			if(entity->conditionType != CONDITION_NODE_TYPE_TIME)		//why can't this be used: if(entity->timeConditionNode != NULL)
+			{//do not overwrite non-tense only time conditions
+				if(entity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || entity->hasProgressiveTemp)
+				{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
+					addTenseOnlyTimeConditionToSubstance(entity, entity->grammaticalTenseTemp, entity->hasProgressiveTemp);
+				}
+			}		
+		}
+	}
+}

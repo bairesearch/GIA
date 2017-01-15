@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t3a 25-July-2013
+ * Project Version: 1t3b 25-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1124,7 +1124,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "1a pass; collapseRedundantRelationAndMakeNegativeRelex (eg 'Space is saved by not having a bulky cart.'); _subj(not[5], by[4]), _subj(have[6], not[5]) [THIS PROBABLY SHOULD BE MOVED ABOVE linkPronounReferencesRelex...()]" << endl;
+		cout << "1aOLD pass; collapseRedundantRelationAndMakeNegativeRelex (eg 'Space is saved by not having a bulky cart.'); _subj(not[5], by[4]), _subj(have[6], not[5]) [THIS PROBABLY SHOULD BE MOVED ABOVE linkPronounReferencesRelex...()]" << endl;
 		#endif
 		collapseRedundantRelationAndMakeNegativeRelex(currentSentenceInList, GIAentityNodeArray);
 	}
@@ -1133,7 +1133,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 
 	//this function has been shifted, and applied to entity instances, not the concept entity array...
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "pass 1b [execution#2]; apply Grammatical Info To All Entities" << endl;
+	cout << "pass 1a [execution#2]; apply Grammatical Info To All Entities" << endl;
 	#endif
  	applyGrammaticalInfoToAllEntities(GIAentityNodeArrayFilled, GIAentityNodeArray, currentSentenceInList->firstFeatureInList);
 
@@ -1154,12 +1154,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	*/
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "pass 1c; identify comparison variable" << endl;
+	cout << "pass 1b; identify comparison variable" << endl;
 	#endif
 	identifyComparisonVariableAlternateMethod(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "pass 1d; disable Entities Based On Feature Temp Entity Node Array" << endl;
+	cout << "pass 1c; disable Entities Based On Feature Temp Entity Node Array" << endl;
 	#endif
 	//transfer disabled substances across execution#2 [this is required since GIAtranslatorRedistributeStanfordRelations operations are now done on temporary entity nodes GIAfeatureTempEntityNodeArray instead of concept entity nodes {whose values would have been automatically transferred their instances upon creation}...]
 	disableEntitiesBasedOnFeatureTempEntityNodeArray(GIAentityNodeArrayFilled, GIAentityNodeArray, GIAfeatureTempEntityNodeArray);
@@ -1207,7 +1207,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
- 	cout <<"3a pass; link dependent subject-object definition/composition/action relationships;" << endl;
+	//26 July 2013 - shifted linkIndirectObjects before linkSubjectObjectRelationships for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK (as obj is disableRelationDuringLink by linkSubjectObjectRelationships) - note defineToBeAndToDoPropertiesAndConditions is also reliant on at least a subj being active [but not a subj and obj combination like linkIndirectObjects]: check this does not require shifting either
+	cout << "3a pass; link properties (define indirect objects); eg The officer gave the youth a ride. _iobj(give, youth) +  _obj(give[3], ride[7])" << endl;
+	#endif
+	linkIndirectObjects(currentSentenceInList, GIAentityNodeArray);
+	
+	#ifdef GIA_TRANSLATOR_DEBUG
+ 	cout <<"3b pass; link dependent subject-object definition/composition/action relationships;" << endl;
 	cout << "eg1; The rabbit is 20 meters away. _subj(away[6], rabbit[2]) + _measure_distance(away[6], meter[5])" << endl;		
 	cout << "eg2; A bat is an animal. _subj(be[3], bat[2]) + _obj(be[3], animal[5])" << endl;	
 	cout << "eg3; The house has a table. _subj(have[3], house[2]) + _obj(have[3], table[5])" << endl;
@@ -1216,21 +1222,16 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	linkSubjectObjectRelationships(currentSentenceInList, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
- 	cout <<"3b pass; link independent subject/object action relationships; eg Tom runs quickly. _subj(run[2], Tom[1]) / The bike was ridden. _obj(ride[4], bike[2])" << endl;
+ 	cout <<"3c pass; link independent subject/object action relationships; eg Tom runs quickly. _subj(run[2], Tom[1]) / The bike was ridden. _obj(ride[4], bike[2])" << endl;
 	#endif
 	linkSubjectOrObjectRelationships(currentSentenceInList, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
-
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "3c pass; link properties (define indirect objects); eg The officer gave the youth a ride. _iobj(give, youth) +  _obj(give[3], ride[7])" << endl;
-	#endif
-	linkIndirectObjects(currentSentenceInList, GIAentityNodeArray);
 
 	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
 		#ifdef GIA_USE_STANFORD_CORENLP	//why GIA_USE_STANFORD_CORENLP and not GIA_USE_STANFORD_DEPENDENCY_RELATIONS?
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "3d pass; link Having Substance Conditions And Being Definition Conditions" << endl;
+		cout << "3dOLD pass; link Having Substance Conditions And Being Definition Conditions" << endl;
 		#endif
 		linkHavingPropertyConditionsAndBeingDefinitionConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 		#endif
@@ -1238,19 +1239,19 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "3e pass; link object/subject of preposition; eg The garage is next to the house. _pobj(next_to, house)  + _psubj(next_to, garage) [appears to be Relex only]" << endl;
+	cout << "3d pass; link object/subject of preposition; eg The garage is next to the house. _pobj(next_to, house)  + _psubj(next_to, garage) [appears to be Relex only]" << endl;
 	#endif
 	linkObjectSubjectOfPreposition(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "3f pass; link conjunction conditions; eg Tom and/or Max eat the cake. conj_and(Tom[1], Max[3]) / conj_or(Tom[2], Max[4])" << endl;
+	cout << "3e pass; link conjunction conditions; eg Tom and/or Max eat the cake. conj_and(Tom[1], Max[3]) / conj_or(Tom[2], Max[4])" << endl;
 	#endif
 	linkConjunctionConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts);
 	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "3g pass; link conditions; eg Joe is sad at the park. at(sad[3], park[6])" << endl;
+	cout << "3f pass; link conditions; eg Joe is sad at the park. at(sad[3], park[6])" << endl;
 	#endif
 	linkConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
@@ -1259,7 +1260,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	{
 		//stanford only
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "3h pass; link conditions (dependent actions type 2); eg To copy the files[, ]create a backup of the old file.	dep(create-6, copy-2)" << endl;
+		cout << "3g pass; link conditions (dependent actions type 2); eg To copy the files[, ]create a backup of the old file.	dep(create-6, copy-2)" << endl;
 		#endif
 		linkDependentActionsType2(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts);
 	}
@@ -1271,7 +1272,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "4a pass; collapseRedundantRelationAndMakeNegativeStanford (eg The chicken has not eaten a pie.: neg(eaten-5, not-4)" << endl;
+		cout << "4aOLD pass; collapseRedundantRelationAndMakeNegativeStanford (eg The chicken has not eaten a pie.: neg(eaten-5, not-4)" << endl;
 		#endif
 		collapseRedundantRelationAndMakeNegativeStanford(currentSentenceInList, GIAentityNodeArray);
 	}
@@ -1280,34 +1281,34 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout <<"4b pass; extract dates; eg The battle happened on March 11th, 1973. _date_day(December, 3rd) /_date_year(December, 1990)" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
+	cout <<"4a pass; extract dates; eg The battle happened on March 11th, 1973. _date_day(December, 3rd) /_date_year(December, 1990)" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
 	#endif
 	extractDates(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4c pass; extract quantities; eg He lost three dollars. /   He lost almost three dollars. / He lost three hundred dollars. _quantity(dollar, three) / _quantity_mod(three, almost) / _quantity_mult(hundred, three) " << endl;
+	cout << "4b pass; extract quantities; eg He lost three dollars. /   He lost almost three dollars. / He lost three hundred dollars. _quantity(dollar, three) / _quantity_mod(three, almost) / _quantity_mult(hundred, three) " << endl;
 	#endif
 	extractQuantities(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPfeatureParser);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4d pass; extract measures and link properties (measure-quantity relationships);  eg The boy is 4 feet away. / Take these 4 times a day. / The boy is 4 feet tall. / The birthday boy is 12 years old.	_measure_distance(away, foot) / _measure_per(times, day) / _measure_size(tall, feet) / _measure_time(old, years)" << endl;
+	cout << "4c pass; extract measures and link properties (measure-quantity relationships);  eg The boy is 4 feet away. / Take these 4 times a day. / The boy is 4 feet tall. / The birthday boy is 12 years old.	_measure_distance(away, foot) / _measure_per(times, day) / _measure_size(tall, feet) / _measure_time(old, years)" << endl;
 	#endif
 	extractMeasures(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4e/4f pass; define to_be/to_do conditions;" << endl;
+	cout << "4d/4e pass; define to_be/to_do conditions;" << endl;
 	cout << "eg1 The pastry tasted awesome. _to-be(taste[3], awesome[4]) + _subj(taste[3], pastry[2])" << endl;
 	cout << "eg2 Jezel likes to draw. _to-do(like[2], draw[4]) + _subj(like[2], Jezel[1])" << endl;
 	#endif
 	defineToBeAndToDoPropertiesAndConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4g pass; extract qualities; eg The broken pencil fell apart. / Giants are red. [Joe is happy.] / Tom runs quickly. _amod(pencil, broken) / _predadj(giants, red) / _advmod(run, quick)" << endl;
+	cout << "4f pass; extract qualities; eg The broken pencil fell apart. / Giants are red. [Joe is happy.] / Tom runs quickly. _amod(pencil, broken) / _predadj(giants, red) / _advmod(run, quick)" << endl;
 	#endif
 	extractQualities(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4h pass; link properties (parataxis); eg The guy, Akari said, left early in the morning. _parataxis(leave[7], say[5])" << endl;
+	cout << "4g pass; link properties (parataxis); eg The guy, Akari said, left early in the morning. _parataxis(leave[7], say[5])" << endl;
 	#endif
 	linkPropertiesParataxis(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 
@@ -1316,13 +1317,18 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		#ifdef GIA_USE_STANFORD_CORENLP
 		#ifndef GIA_TRANSLATOR_INTERPRET_CLAUSAL_COMPLEMENT_AS_ACTION_OBJECT_INSTEAD_OF_ACTION_PROPERTY
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "4i pass; define Clausal Complement Properties (ccomp); eg He says that you like to swim. ccomp(say, like)" << endl;
+		cout << "4h pass; define Clausal Complement Properties (ccomp); eg He says that you like to swim. ccomp(say, like)" << endl;
 		#endif
 		defineClausalComplementProperties(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 		#endif
 		#endif
 	}
 
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "4i pass; define tense only time conditions" << endl;
+	#endif
+	defineTenseOnlyTimeConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	//record entityIndexTemp + sentenceIndexTemp for all substances in sentence (allows for referencing)...
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)

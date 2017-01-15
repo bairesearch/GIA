@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t3a 25-July-2013
+ * Project Version: 1t3b 25-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -321,7 +321,7 @@ GIAentityNode * addSubstanceToSubstanceDefinition(GIAentityNode * substanceEntit
 }
 
 void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubstance)
-{
+{	
 	if(entity->hasAssociatedTime)
 	{
 		newSubstance->hasAssociatedTime = true;
@@ -335,10 +335,15 @@ void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubsta
 		//cout << "substance has progressive (eg lying/sitting/being happy)" << endl;
 	}
 
-	if(entity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newSubstance->hasProgressiveTemp)
+	/*//execution of addTenseOnlyTimeConditionToSubstance has been shifted from forwardInfoToNewSubstance to a separate function - 26 July 2013 
+	//cout << "entity = " << entity->entityName << endl;
+	//cout << "entity->grammaticalTenseTemp = " << entity->grammaticalTenseTemp << endl;	
+	if(entity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || entity->hasProgressiveTemp)	//changed from newSubstance->hasProgressiveTemp to entity->hasProgressiveTemp 26 July 2013
 	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
-		addTenseOnlyTimeConditionToSubstance(newSubstance, entity->grammaticalTenseTemp, newSubstance->hasProgressiveTemp);
+		addTenseOnlyTimeConditionToSubstance(newSubstance, entity->grammaticalTenseTemp, entity->hasProgressiveTemp);
 	}
+	*/
+	newSubstance->grammaticalTenseTemp = entity->grammaticalTenseTemp;
 
 	#ifdef GIA_SUPPORT_ALIASES
 	if(entity->isName)
@@ -2445,14 +2450,30 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity)
 								{
 									#ifdef GIA_USE_ADVANCED_REFERENCING
-									if(param->relation[REL1]->relationType != RELATION_TYPE_SUBJECT)
+									bool subjectFound = false;
+									for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
 									{
-										cout << "error: addOrConnectActionToEntity && (relation[REL1]->relationType != RELATION_TYPE_SUBJECT)" << endl;
+										if(param->relation[REL1]->relationType == relationTypeSubjectNameArray[i])
+										{
+											subjectFound = true;
+										}
+									}									
+									if(!subjectFound)
+									{
+										cout << "error: addOrConnectActionToEntity && (relation[REL1]->relationType != ~RELATION_TYPE_SUBJECT)" << endl;
 									}
-									if(param->relation[REL2]->relationType != RELATION_TYPE_OBJECT)
+									bool objectFound = false;
+									for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
 									{
-										cout << "error: addOrConnectActionToEntity && (relation[REL2]->relationType != RELATION_TYPE_OBJECT)" << endl;
-									}								
+										if(param->relation[REL2]->relationType == relationTypeObjectNameArray[i])
+										{
+											objectFound = true;
+										}
+									}									
+									if(!objectFound)
+									{
+										cout << "error: addOrConnectActionToEntity && (relation[REL1]->relationType != ~RELATION_TYPE_OBJECT)" << endl;
+									}																	
 									bool sameReferenceSetSubject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, param->relation[REL1]);
 									bool sameReferenceSetObject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, param->relation[REL2]);
 									#else

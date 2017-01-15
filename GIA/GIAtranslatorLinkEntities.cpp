@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t3a 25-July-2013
+ * Project Version: 1t3b 25-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -756,6 +756,83 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 #endif	
 }
 
+void linkIndirectObjects(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+{
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	/*
+	eg The officer gave the youth a ride. _iobj(give, youth) +  _obj(give[3], ride[7])
+	*/
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);	
+	param.numberOfRelations = 2;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_INDIRECT_OBJECT;
+	param.useRelationArrayTest[REL2][REL_ENT3] = true; param.relationArrayTest[REL2][REL_ENT3] = relationTypeObjectNameArray; param.relationArrayTestSize[REL2][REL_ENT3] = RELATION_TYPE_OBJECT_NUMBER_OF_TYPES;
+	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
+
+	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty;
+	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
+	param.functionEntityRelationID[FUNC_ENT2] = REL2; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;	
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE;
+	#endif		
+	genericDependecyRelationInterpretation(&param, REL1);
+#else
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			if(currentRelationInList->relationType == RELATION_TYPE_INDIRECT_OBJECT)
+			{
+				//now find the associated object..
+ 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				while(currentRelationInList2->next != NULL)
+				{
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+					if(!(currentRelationInList2->disabled))
+					{
+					#endif
+						bool partnerTypeRequiredFound = false;
+						for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
+						{
+							if(currentRelationInList2->relationType == relationTypeObjectNameArray[i])
+							{
+								partnerTypeRequiredFound = true;
+							}
+						}
+						if(partnerTypeRequiredFound)
+						{
+
+							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
+							{//found a matching object-indirectobject relationship
+								#ifdef GIA_TRANSLATOR_DEBUG
+								//cout << "addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty: currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
+								#endif
+								
+								int substanceIndex = currentRelationInList2->relationDependentIndex;
+								int thingIndex = currentRelationInList->relationDependentIndex;
+								GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
+								GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
+
+								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//eg the linebacker that gave the quarterback a push is blue. / the linebacker gave the quarterback a push
+								GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(thingEntity, substanceEntity, sameReferenceSet);
+							}
+						}
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+					}
+					#endif
+
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}
+#endif	
+}
 
 void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType)
 {
@@ -1901,85 +1978,6 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAentit
 #endif	
 }
 
-void linkIndirectObjects(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
-{
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
-	/*
-	eg The officer gave the youth a ride. _iobj(give, youth) +  _obj(give[3], ride[7])
-	*/
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);	
-	param.numberOfRelations = 2;
-	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_INDIRECT_OBJECT;
-	param.useRelationArrayTest[REL2][REL_ENT3] = true; param.relationArrayTest[REL2][REL_ENT3] = relationTypeObjectNameArray; param.relationArrayTestSize[REL2][REL_ENT3] = RELATION_TYPE_OBJECT_NUMBER_OF_TYPES;
-	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
-
-	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty;
-	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
-	param.functionEntityRelationID[FUNC_ENT2] = REL2; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;	
-	#ifdef GIA_USE_ADVANCED_REFERENCING
-	param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE;
-	#endif		
-	genericDependecyRelationInterpretation(&param, REL1);
-#else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
-	while(currentRelationInList->next != NULL)
-	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-		if(!(currentRelationInList->disabled))
-		{
-		#endif
-			if(currentRelationInList->relationType == RELATION_TYPE_INDIRECT_OBJECT)
-			{
-				//now find the associated object..
- 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
-				while(currentRelationInList2->next != NULL)
-				{
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-					if(!(currentRelationInList2->disabled))
-					{
-					#endif
-						bool partnerTypeRequiredFound = false;
-						for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
-						{
-							if(currentRelationInList2->relationType == relationTypeObjectNameArray[i])
-							{
-								partnerTypeRequiredFound = true;
-							}
-						}
-						if(partnerTypeRequiredFound)
-						{
-
-							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
-							{//found a matching object-indirectobject relationship
-								#ifdef GIA_TRANSLATOR_DEBUG
-								//cout << "addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty: currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
-								#endif
-								
-								int substanceIndex = currentRelationInList2->relationDependentIndex;
-								int thingIndex = currentRelationInList->relationDependentIndex;
-								GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
-								GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
-
-								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//eg the linebacker that gave the quarterback a push is blue. / the linebacker gave the quarterback a push
-								GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(thingEntity, substanceEntity, sameReferenceSet);
-							}
-						}
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-					}
-					#endif
-
-					currentRelationInList2 = currentRelationInList2->next;
-				}
-			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-		}
-		#endif
-		currentRelationInList = currentRelationInList->next;
-	}
-#endif	
-}
-
-
 //is this still used by Stanford? [appears to be Relex only]
 void linkObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType)
 {
@@ -2389,7 +2387,7 @@ void createConditionBasedUponPreposition(GIAentityNode * actionOrSubstanceEntity
 	}
 	else if(prepositionName == REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN)
 	{//NB time query entities obviously do not have associated times (time grammar flags generated by relex)
-		passedPrepositionTime = true;
+		passedPrepositionTime = true;		//are time nodes required to be attached to when query nodes (REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN)? Note this functionality has been removed with GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 		passedPreposition = true;
 	}
 	#endif
@@ -2513,7 +2511,7 @@ void createConditionBasedUponPreposition(GIAentityNode * actionOrSubstanceEntity
 
 	}
 	else if(passedPrepositionTime)
-	{//required for extractDatesStanfordCoreNLP
+	{//required for extractDatesStanfordCoreNLP/extractDatesRelex
 
 		addTimeToSubstance(actionOrSubstanceConditionEntity);
 	}
