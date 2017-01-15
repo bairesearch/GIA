@@ -107,6 +107,8 @@ GIAEntityNode::GIAEntityNode(void)
 	disableParsingAsAPrepositionRelationTemp = false;
 	
 	queryEntityTraced = false;
+	
+	disabled = false;
 }
 GIAEntityNode::~GIAEntityNode(void)
 {

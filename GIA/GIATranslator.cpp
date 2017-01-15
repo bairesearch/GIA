@@ -1619,6 +1619,9 @@ void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 						cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
 						#endif
 						//referenceSource->isReferenceEntityInThisSentence = true;
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+						GIAEntityNodeArray[w]->disabled = true;
+						#endif
 						GIAEntityNodeArray[w] =	referenceSource;
 						GIAEntityNodeIsAReference[w] = true;
 					}			
@@ -2464,12 +2467,16 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									}
 									else
 									{
-
 										addDefinitionToEntity(subjectEntityTemp, objectEntityTemp);
+										
+										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+										GIAEntityNodeArray[currentRelationInList->relationFunctionIndex]->disabled = true;	//remove lone 'be' artefacts (blue entity nodes). NB these occur because of the nature of the 'is' -> entity definitional substitution procedure	
+										#endif
 									}
 								}
 								#endif
 								#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+								//NB this case may be redundant because Relex automatical interprets these cases as preadj [eg _predadj(tom[1], happy[3])]
 								//else if((currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_1) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_2) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_3))
 								else if(passcomposition)
 								{//subject-object relationship is a composition [property]

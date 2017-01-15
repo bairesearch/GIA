@@ -232,6 +232,8 @@ public:
 	bool disableParsingAsAPrepositionRelationTemp;
 	
 	bool queryEntityTraced;	//temporary for determining max confifence
+	
+	bool disabled;	//if true, this entity has been deemed redundant in semantic network generation
 };
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode);

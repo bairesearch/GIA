@@ -74,7 +74,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 {
 	
 	//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
-	if(!(entityNode->initialisedForPrinting))
+	if(!(entityNode->initialisedForPrinting) && !(entityNode->disabled))
 	{		
 		#ifdef GIA_DRAW_DEBUG
 		if(entityNode->isProperty)
