@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -124,6 +124,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 												}
 											}
 
+											#ifdef GIA_DEBUG
 											/*
 											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
 											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -270,19 +271,20 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 												}
 											}
 											*/
-
+											#endif
 
 											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation
 											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))
 											{
 											}
-											/*
 											else
 											{
-												cout << "\t\t applyGIATranslatorGenericXMLparam passed: " << functionName << endl;
+												#ifdef GIA_DEBUG
+												//cout << "\t\t applyGIATranslatorGenericXMLparam passed: " << functionName << endl;
+												#endif
 											}
-											*/
 
+											#ifdef GIA_DEBUG
 											/*
 											if(functionName == "defineSubstanceConcepts")
 											{
@@ -327,17 +329,11 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 												}
 											}
 											*/
+											#endif
 										}
 										currentParamTag = currentParamTag->nextTag;
 									}
 								}
-
-								/*
-								if(functionName == "defineSubstanceConcepts")
-								{
-									exit(0);
-								}
-								*/
 
 								currentFunctionTag = currentFunctionTag->nextTag;
 							}
@@ -399,17 +395,23 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 			if(getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_REL, &RELstring))
 			{
 				REL = convertStringToInt(RELstring) - 1;
+				#ifdef GIA_DEBUG
 				//cout << "REL = " << REL << endl;
+				#endif
 			}
 			if(getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_REL_ENT, &REL_ENTstring))
 			{
 				REL_ENT = convertStringToInt(REL_ENTstring) - 1;
+				#ifdef GIA_DEBUG
 				//cout << "REL_ENT = " << REL_ENT << endl;
+				#endif
 			}
 			if(getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_FUNC_ENT, &FUNC_ENTstring))
 			{
 				FUNC_ENT = convertStringToInt(FUNC_ENTstring) - 1;
+				#ifdef GIA_DEBUG
 				//cout << "FUNC_ENT = " << FUNC_ENT << endl;
+				#endif
 			}
 			if(getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_swapIndex, &swapIndexstring))
 			{
@@ -463,11 +465,15 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 						{
 							for(int i=0; i<FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES; i++)
 							{
+								#ifdef GIA_DEBUG
 								//cout << "featureQueryWordAcceptedByAlternateMethodNameArray[i] = " << featureQueryWordAcceptedByAlternateMethodNameArray[i] << endl;
 								//cout << "featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma = " << featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma << endl;	crashes
+								#endif
 								if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i])
 								{
+									#ifdef GIA_DEBUG
 									//cout << "whichOrWhatQueryFound" << endl;
+									#endif
 									whichOrWhatQueryFound = true;
 								}
 							}
@@ -486,7 +492,9 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 						{
 							if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
 							{
+								#ifdef GIA_DEBUG
 								//cout << "found who" << endl;
+								#endif
 								firstWordOfSentenceIsWho = true;
 							}
 						}
@@ -515,7 +523,9 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 					{
 						assertdisableRelationAfterFinish = true;
 						asssertPostProcessingREL = REL;
+						#ifdef GIA_DEBUG
 						//cout << "disableRelationAfterFinish: asssertPostProcessingREL = " << asssertPostProcessingREL << endl;
+						#endif
 					}
 					else if(assertAttribute->value == "setDefiniteAfterFinish")
 					{
@@ -578,11 +588,15 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 		{
 			if(depRelOrEntity)
 			{
+				#ifdef GIA_DEBUG
 				//cout << "genericDependecyRelationInterpretation{}" << endl;
+				#endif
 				if(genericDependecyRelationInterpretation(&paramDepRel, REL1))
 				{
 					result = true;
+					#ifdef GIA_DEBUG
 					//cout << "\t\t genericDependecyRelationInterpretation passed: " << functionName << endl;
+					#endif
 					if(asssertsetDefiniteAfterFinish)
 					{
 						featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalIsDefinite = true;
@@ -601,8 +615,10 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 						int arrayIndexOfResultFound = GRAMMATICAL_PREDETERMINER_UNDEFINED;
 						if(textInTextArray(assertPostProcessingValue, entityPredeterminerSmallNameArray, GRAMMATICAL_PREDETERMINER_SMALL_ARRAY_NUMBER_OF_TYPES, &arrayIndexOfResultFound))
 						{
+							#ifdef GIA_DEBUG
 							//cout << "arrayIndexOfResultFound = " << arrayIndexOfResultFound << endl;
 							//cout << featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->word << endl;
+							#endif
 							featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalPredeterminer = arrayIndexOfResultFound;
 						}
 					}
@@ -610,7 +626,9 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 				}
 				else
 				{
+					#ifdef GIA_DEBUG
 					//cout << "\t\t genericDependecyRelationInterpretation failed: " << functionName << endl;
+					#endif
 				}
 			}
 			else
@@ -618,11 +636,15 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 				if(genericEntityInterpretation(&paramEntity))
 				{
 					result = true;
+					#ifdef GIA_DEBUG
 					//cout << "\t\t genericEntityInterpretation passed: " << functionName << endl;
+					#endif
 				}
 				else
 				{
+					#ifdef GIA_DEBUG
 					//cout << "\t\t genericEntityInterpretation failed: " << functionName << endl;
+					#endif
 				}
 			}
 		}
@@ -634,7 +656,6 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 	{
 		cout << "applyGIATranslatorGenericXMLparam{}: error - param has no options/special case tags: currentParamTag->name" << currentParamTag->name << endl;
 		result = false;
-		//exit(0);
 	}
 	return result;
 }
@@ -700,7 +721,6 @@ bool genericDepRelInterpretationApplySpecialCase(GIAentityCharacteristic* entity
 	else if(type == "specialCaseCharacteristicsTestOrVector")
 	{
 		paramDepRel->specialCaseCharacteristicsTestOrVector[REL][REL_ENT].push_back(entityCharacteristics);
-		//cout << "\t*** genericDepRelInterpretationApplySpecialCase: REL = " << REL << ", REL_ENT = " << REL_ENT << "entityCharacteristics->name = " << entityCharacteristics->name << ", entityCharacteristics->value = " << entityCharacteristics->value << endl;
 	}
 	else if(type == "specialCaseCharacteristicsTestOr2Vector")
 	{
@@ -913,7 +933,9 @@ bool genericEntityInterpretationApplyOptionbool(bool* paramVal, XMLparserAttribu
 		//bool paramOptionSetValue = convertStringToInt(xmlAttribute->value);		//if GIA Translator XML file booleans are defined as '1'/'0' instead of 'true'/'false'
 		*paramVal = paramOptionSetValue;
 
+		#ifdef GIA_DEBUG
 		//cout << "genericEntityInterpretationApplyOptionbool{}: " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
+		#endif
 		*foundMatch = true;
 		result = true;
 	}
@@ -931,7 +953,9 @@ bool genericEntityInterpretationApplyOptionint(int* paramVal, XMLparserAttribute
 		}
 		*paramVal = paramOptionSetValue;
 
+		#ifdef GIA_DEBUG
 		//cout << "genericEntityInterpretationApplyOptionint{}: " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
+		#endif
 		*foundMatch = true;
 		result = true;
 	}
@@ -945,7 +969,9 @@ bool genericEntityInterpretationApplyOptionstring(string* paramVal, XMLparserAtt
 		string paramOptionSetValue = xmlAttribute->value;
 		*paramVal = paramOptionSetValue;
 
+		#ifdef GIA_DEBUG
 		//cout << "testEntityCharacteristicIterationstring{}: " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
+		#endif
 		*foundMatch = true;
 		result = true;
 	}
@@ -960,7 +986,9 @@ bool genericEntityInterpretationApplyOptionstringarray(string** paramVal, XMLpar
 
 		*paramVal = convertDelimitedStringToArray(paramOptionSetValue, GIA_TRANSLATOR_XML_INTERPRETATION_ARRAY_DELIMITER);
 
+		#ifdef GIA_DEBUG
 		//cout << "testEntityCharacteristicIterationstringarray{}: " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
+		#endif
 		*foundMatch = true;
 		result = true;
 	}

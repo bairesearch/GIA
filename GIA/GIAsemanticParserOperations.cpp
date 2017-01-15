@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -39,7 +39,9 @@
 
 void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNode** GIAentityNodeArray, GIAsentence* currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet)
 {
+	#ifdef GIA_DEBUG
 	//cout << "GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain: " << endl;
+	#endif
 	string GIA2semanticDependencyRelationText = "";
 	GIArelation* GIA2semanticDependencyRelation = getCurrentRelationInSemanticParserSentenceList();
 	generateGIA2semanticDependencyRelation(GIAentityNodeArray, connectionType, entityIndex1, entityIndex2, sameReferenceSet, &GIA2semanticDependencyRelationText, GIA2semanticDependencyRelation);
@@ -55,7 +57,9 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 /*
 void GIA2nonHeuristicImplementationRemoveExperiencesForConnectionistNetworkTrain(GIAentityNode** GIAentityNodeArray, GIAsentence* currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet)
 {
+	#ifdef GIA_DEBUG
 	//cout << "GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain: " << endl;
+	#endif
 	string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelation(GIAentityNodeArray, connectionType, entityIndex1, entityIndex2, sameReferenceSet);
 	removeTextLineFromCorpusFileString(GIA2semanticDependencyRelation);
 	cout << GIA2semanticDependencyRelation << endl;
@@ -133,7 +137,6 @@ void generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, 
 	string entityWord1 = GIAentityNodeArray[entityIndex1]->entityName;
 	string entityWord2 = GIAentityNodeArray[entityIndex2]->entityName;
 
-	//cout << "a1" << endl;
 	//NB GIA2:GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE does not support queries/GIA2_SUPPORT_QUERIES (ie the special entity name adjustments below)
 	string entityWord1Query = "";
 	if(GIAentityNodeArray[entityIndex1]->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
@@ -180,8 +183,10 @@ void generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, 
 	#else
 	string entityWord1 = GIAentityNodeArray[entityIndex1]->wordOrig;
 	string entityWord2 = GIAentityNodeArray[entityIndex2]->wordOrig;
+	#ifdef GIA_DEBUG
 	//cout << "entityWord1 = " << entityWord1 << endl;
 	//cout << "entityWord2 = " << entityWord2 << endl;
+	#endif
 	//lemmas are in general not recorded as they are irrelevant (wordOrig is only recorded for debugging purposes and internal/manual/inhouse development of the corpus); only the entity indicies require recording
 	if(entityWord1 == "")
 	{//why does GIAentityNodes in GIAentityNodeArray that correspond to prepositions not have a "wordOrig" but only have an entityName? (is it related to LRP?)
@@ -195,7 +200,9 @@ void generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, 
 
 	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD
 	*GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationText(entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet);
+	#ifdef GIA_DEBUG
 	//cout << "GIA2semanticDependencyRelation = " << GIA2semanticDependencyRelation << endl;
+	#endif
 	#else
 	generateGIA2semanticDependencyRelationObject(GIA2semanticDependencyRelation, entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet);
 	#endif
@@ -206,7 +213,9 @@ string generateGIA2semanticDependencyRelationText(string entityName1, string ent
 {
 	string GIA2semanticDependencyRelation = "";
 	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + semanticRelation + "(" + entityName1 + "-" + convertIntToString(entityIndex1) + ", " + entityName2 + "-" + convertIntToString(entityIndex2) + ") " + createSameReferenceSetRecord(sameReferenceSet);
+	#ifdef GIA_DEBUG
 	//cout << "GIA2semanticDependencyRelation = " << GIA2semanticDependencyRelation << endl;
+	#endif
 	return GIA2semanticDependencyRelation;
 }
 
@@ -219,7 +228,9 @@ string createSameReferenceSetRecord(bool sameReferenceSet)
 //preconditions: determineGIAconnectionistNetworkPOStypeNames() has been executed
 string generateCorpusFileHeaderText(GIAfeature* firstFeatureInSentence, bool addPOSinfo)
 {
-	//cout << "generateCorupusFileHeaderText1" << endl;
+	#ifdef GIA_DEBUG
+	//cout << "generateCorupusFileHeaderText{}:" << endl;
+	#endif
 	string sentenceText = "";
 	GIAfeature* currentFeatureInSentence = firstFeatureInSentence;
 	while(currentFeatureInSentence->next != NULL)
@@ -241,7 +252,6 @@ string generateCorpusFileHeaderText(GIAfeature* firstFeatureInSentence, bool add
 		}
 		currentFeatureInSentence = currentFeatureInSentence->next;
 	}
-	//cout << "generateCorupusFileHeaderText2" << endl;
 	return sentenceText;
 }
 
@@ -250,15 +260,21 @@ string generateCorpusFileHeaderText(GIAfeature* firstFeatureInSentence, bool add
 
 void determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList, int NLPfeatureParser)
 {
+	#ifdef GIA_DEBUG
 	//cout << "\n\n\ndetermineGIAconnectionistNetworkPOStypeNames{}:" << endl;
+	#endif
 	GIAfeature* currentFeatureInSentence = firstFeatureInList;
 	while(currentFeatureInSentence->next != NULL)
 	{
+		#ifdef GIA_DEBUG
 		//cout << "currentFeatureInSentence->word = " << currentFeatureInSentence->word << endl;
+		#endif
 		if((NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP) || (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER))
 		{
 			determineGIAconnectionistNetworkPOStypeNameStanford(currentFeatureInSentence);
+			#ifdef GIA_DEBUG
 			//cout << "currentFeatureInSentence->GIAsemanticParserPOStype = " << currentFeatureInSentence->GIAsemanticParserPOStype << endl;
+			#endif
 		}
 		else if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 		{
@@ -466,8 +482,9 @@ void determineGIAconnectionistNetworkPOStypeNameStanford(GIAfeature* currentFeat
 	*/
 
 	currentFeatureInSentence->GIAsemanticParserPOStype = GIAsemanticParserPOStype;
+	#ifdef GIA_DEBUG
 	//cout << "GIAsemanticParserPOStype = " << GIAsemanticParserPOStype << endl;
-
+	#endif
 }
 
 
@@ -479,9 +496,11 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeature
 	{
 		if(featureRelexPOStypeArray[i] == currentFeatureInSentence->type)
 		{
+			#ifdef GIA_DEBUG
 			//cout << "featureRelexPOStypeArray[i] = " << featureRelexPOStypeArray[i] << endl;
 			//cout << "i = " << i << endl;
 			//cout << "featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i] = " << featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i] << endl;
+			#endif
 			GIAsemanticParserPOStype = featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i];
 		}
 	}
@@ -580,7 +599,9 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeature
 	#endif
 
 	currentFeatureInSentence->GIAsemanticParserPOStype = GIAsemanticParserPOStype;
+	#ifdef GIA_DEBUG
 	//cout << "GIAsemanticParserPOStype = " << GIAsemanticParserPOStype << endl;
+	#endif
 }
 
 #ifdef GIA2_SEMANTIC_PARSER

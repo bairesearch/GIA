@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -413,7 +413,9 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIApar
 													string relationsText = currentTagInParse->value;
 													if(relationsText[0] == '\n')
 													{
+														#ifdef GIA_DEBUG
 														//cout << "(relationsText[0] == \n)" << endl;
+														#endif
 														relationsText = relationsText.substr(1, (relationsText.length() -1));
 													}
 
@@ -1126,10 +1128,11 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 						}
 						#endif
 
-						//cout << "at23" << endl;
 						if((!parseGIA2file && (!onlyParseIfCorpusLookupFailed || !(currentSentence->semanticParserSuccessful))) || (parseGIA2file && createNewSentences))	//added createNewSentences condition GIA 2d1a [for generateAllPermutationsFromSemanticRelationsFile()]
 						{
+							#ifdef GIA_NLP_DEBUG
 							//cout << "GIATHparseStanfordParseWordsAndPOStagsText: " << endl;
+							#endif
 							int maxNumberOfWordsInSentence = 0;
 							#ifdef GIA_NLP_DEBUG
 							cout << "currentStanfordParserOutputParagraphString = " << currentStanfordParserOutputParagraphString << endl;

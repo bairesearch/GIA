@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -278,7 +278,6 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(GIAsentence* curren
 	paramC.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&entityCharacteristicsSetCD);
 	if(genericDependecyRelationInterpretation(&paramC, REL1))
 	{
-		//cout << "at1" << endl;
 	}
 
 	GIAgenericDepRelInterpretationParameters paramD(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
@@ -290,7 +289,6 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(GIAsentence* curren
 	paramD.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT2].push_back(&entityCharacteristicsSetCD);
 	if(genericDependecyRelationInterpretation(&paramD, REL1))
 	{
-		//cout << "at2" << endl;
 	}
 	#endif
 #else
@@ -476,12 +474,16 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(GIAsentence* curren
 				if(thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)
 				{
 					featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation = true;
+					#ifdef GIA_DEBUG
 					//cout << "mustSetIsSubstanceConceptBasedOnApposRelation: " << thingIndex << ", " << featureArrayTemp[thingIndex]->lemma << endl;
+					#endif
 				}
 				if(definitionFeatureHasDeterminate && !definitionIsDefinite && !definitionFeatureIsProperNoun)
 				{
 					featureArrayTemp[definitionIndex]->mustSetIsSubstanceConceptBasedOnApposRelation = true;
+					#ifdef GIA_DEBUG
 					//cout << "mustSetIsSubstanceConceptBasedOnApposRelation: " << definitionIndex << ", " << featureArrayTemp[thingIndex]->lemma << endl;
+					#endif
 
 				}
 				/*The following is not required here as these will be set later on in defineSubstanceConcepts();
@@ -641,8 +643,10 @@ void defineSubstanceConcepts(GIAsentence* currentSentenceInList, bool GIAentityN
 				if(!(thingEntity->wasReference))
 				{
 				#endif
+					#ifdef GIA_DEBUG
 					//cout << "thingEntity->entityName = " << thingEntity->entityName << endl;
 					//cout << "thingIndex = " << thingIndex << endl;
+					#endif
 
 					#ifdef GIA_TRANSLATOR_DEBUG
 					//cout << "defineSubstancesBasedOnDeterminatesOfDefinitionEntities{}: RELATION_TYPE_APPOSITIVE_OF_NOUN" << endl;

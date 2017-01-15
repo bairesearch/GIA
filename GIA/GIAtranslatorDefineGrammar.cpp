@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -113,7 +113,9 @@ void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool
 				GIAfeature* featureArrayTemp[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 				generateTempFeatureArray(currentSentenceInList->firstFeatureInList, featureArrayTemp);
 				GIAfeature* featureOfQueryNode = featureArrayTemp[relationIndex[1]];
+				#ifdef GIA_DEBUG
 				//cout << "featureOfQueryNode->lemma = " << featureOfQueryNode->lemma << endl;
+				#endif
 				featureOfQueryNode->entityIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX;
 				#endif
 
@@ -132,9 +134,10 @@ void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool
 				GIAentityNode* featureTempEntity = new GIAentityNode();
 				featureTempEntity->entityName = name[i];
 				GIAfeatureTempEntityNodeArray[relationIndex[i]] = featureTempEntity;
-
+				#ifdef GIA_DEBUG
 				//cout << "filling: " << relationIndex[i] << " " << name[i] << endl;
-
+				#endif
+				
 				#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)	//ie if(NLPdependencyRelationsType != GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)		//updated 2d1a, OLD: if(NLPfeatureParser == GIA_NLP_PARSER_RELEX) //ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
 				{
@@ -168,7 +171,9 @@ void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool
 		if(prepositionFound)
 		{
 			int prepositionEntityIndex = INT_DEFAULT_VALUE;
+			#ifdef GIA_DEBUG
 			//cout << "prepositionName = " << prepositionName << endl;
+			#endif
 			bool prepositionFeatureFound = determineFeatureIndexOfPreposition(currentSentenceInList, currentRelationInList, &prepositionEntityIndex);
 			if(prepositionFeatureFound)
 			{
@@ -238,12 +243,16 @@ void locateAndAddAllConceptEntities(GIAsentence* currentSentenceInList, bool GIA
 		if(GIAentityNodeArrayFilled[w])
 		{
 			GIAentityNode* featureTempEntityNode = GIAfeatureTempEntityNodeArray[w];
+			#ifdef GIA_DEBUG
 			//cout << "featureTempEntityNode->entityName = " << featureTempEntityNode->entityName << endl;
 			//cout << "!(featureTempEntityNode->disabled) = " << !(featureTempEntityNode->disabled) << endl;
+			#endif
 
 			bool entityAlreadyExistant = false;
 			GIAentityNode* entity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(featureTempEntityNode->entityName), &entityAlreadyExistant, entityNodesActiveListConcepts, !(featureTempEntityNode->disabled));
+			#ifdef GIA_DEBUG
 			//cout << "entity->disabled = " << entity->disabled << endl;
+			#endif
 			GIAentityNodeArray[w] = entity;
 			entity->hasAssociatedInstanceTemp = false;
 			sentenceConceptEntityNodesList->push_back(entity);
@@ -652,7 +661,9 @@ void fillGrammaticalArraysStanford(GIAsentence* currentSentenceInList,  bool GIA
 
 				if(definiteDeterminerFound || indefiniteDeterminerFound)
 				{//if condition added 4 July 2013 to ensure only real determiners (the, some, a) are disabled [and not "What" in det(time-2, What-1)]
+					#ifdef GIA_DEBUG
 					//cout << "disabling feature temp entity" << endl;
+					#endif
 					GIAfeatureTempEntityNodeArray[entityIndexOfDeterminier]->disabled = true;
 
 					#ifdef STANFORD_CORENLP_POS_TAGS_BUG_GIA_WORKAROUND_SET_DETERMINER_DEPENDENT_TO_NOUN
@@ -827,7 +838,9 @@ void extractGrammaticalInformationFromPOStag(string* POStag, GIAfeature* feature
 	bool infinitiveOrImperativeDetected = false;
 	if(textInTextArray(*POStag, posTagVerbInfinitiveOrImperativeArray, FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES))
 	{
+		#ifdef GIA_DEBUG
 		//cout << "infinitiveOrImperativeDetected:" << feature->lemma << endl;
+		#endif
 		infinitiveOrImperativeDetected = true;
 		if(feature->previousWordInSentenceIsTo)
 		{
@@ -836,7 +849,9 @@ void extractGrammaticalInformationFromPOStag(string* POStag, GIAfeature* feature
 		else
 		{
 			feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE] = true;
+			#ifdef GIA_DEBUG
 			//cout << "imperativeFOUND:" << feature->lemma << endl;
+			#endif
 		}
 	}
 
@@ -1055,8 +1070,9 @@ void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode* entity, GIAfeature* c
 	{
 	#endif
 		entity->grammaticalNumber = currentFeatureInList->grammaticalNumber;
+		#ifdef GIA_DEBUG
 		//cout << "entity->grammaticalNumber = " << entity->grammaticalNumber << endl;
-		//cout << "GRAM w = " << w << endl;
+		#endif
 	#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 	}
 	#endif

@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -183,7 +183,9 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesA
 		printFromXMLcoordinatesAlreadyDefined = true;
 		maxNumberSentences = 1;
 	}
+	#ifdef GIA_DEBUG
 	//cout << "maxNumberSentences = " << maxNumberSentences << endl;
+	#endif
 	for(int sentenceIndex=GIA_NLP_START_SENTENCE_INDEX; sentenceIndex <= maxNumberSentences; sentenceIndex++)
 	{
 		#ifdef GIA_DRAW_DEBUG
@@ -210,8 +212,10 @@ LDreference* initialiseEntityConnectionForPrinting(vec* pos1, GIAentityConnectio
 {
 	GIAentityNode* entityNodeToConnect = entityConnection->entity;
 
+	#ifdef GIA_DEBUG
 	//cout << "initialiseEntityConnectionForPrinting: entityNodeToConnect->entityName = " << entityNodeToConnect->entityName << endl;
-
+	#endif
+	
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
 	if((entityNodeToConnect->initialisedForPrinting) && !(entityConnection->initialisedForPrinting) && !(entityNodeToConnect->disabled))
 	//added condition 31 August 2013: only print connection if node has been printed
@@ -240,7 +244,6 @@ LDreference* initialiseEntityConnectionForPrinting(vec* pos1, GIAentityConnectio
 
 LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, bool printType[], LDreference* currentReferenceInPrintList, XMLparserTag** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance)
 {
-	//cout << "1 entityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp  << endl;
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 	if((entityNode->sentenceIndexTemp == sentenceIndex) || (entityNode->wasReference) || thisIsDefinitionAndPreviousNodeWasInstance || entityNode->printCoordsAlreadyDefined)	//condition (entityNode->wasReference) added 12 October 2012 1q3b
@@ -249,13 +252,11 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 	#endif
 	{
 	#endif
-		//cout << "2 " << endl;
-		//cout << "entityNode->disabled = " << entityNode->disabled << endl;
 		//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
 		if(!(entityNode->initialisedForPrinting) && !(entityNode->disabled))
 		{
+			#ifdef GIA_DEBUG
 			//cout << "initialiseEntityNodeForPrinting: entityNode->entityName = " << entityNode->entityName << endl;
-
 			/*
 			cout << "\nentityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp << endl;
 			cout << "entityNode->entityName = " << entityNode->entityName << endl;
@@ -269,6 +270,7 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 				cout << "entityNode = " << entityNode->entityName << " (wasReference)" << endl;
 			}
 			*/
+			#endif
 
 			#ifdef GIA_DRAW_DEBUG
 			if(entityNode->isSubstance)
@@ -372,7 +374,9 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 					}
 					#endif
 
+					#ifdef GIA_DEBUG
 					//cout << "\ti = " << i << ", initialiseEntityNodeForPrinting; " << (*connectionIter)->entity->entityName << endl;
+					#endif
 					bool thisIsDefinitionAndPreviousNodeWasInstance = false;
 					#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
@@ -415,7 +419,6 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 								entityConnectionColour = DAT_FILE_COLOUR_RED;
 							}
 							#endif
-							//cout << "entityConnectionColour = " << entityConnectionColour << endl;
 
 							#ifdef GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDICES
 							//string connectionName = convertIntToString((*connectionIter)->sentenceIndexTemp);
@@ -605,9 +608,7 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 
 				//nameOfBox = nameOfBox + convertIntToString(entityNode->grammaticalDefiniteTemp);
 
-				//cout << "entityColour = " << entityColour << endl;
 				currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, currentTag, boxThickness, printType);
-
 			}
 
 

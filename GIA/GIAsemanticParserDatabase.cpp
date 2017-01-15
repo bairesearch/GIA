@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParserDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -60,7 +60,9 @@ string semanticParserDBgenerateFolderName(GIAfeature* firstFeatureInList)
 
 	//eg network/server/GIAsemanticParserDatabase/de/no/ve/de/no/corpus.txt
 	int fileType = 0;	//irrelevant
+	#ifdef GIA_DEBUG
 	//cout << "firstFeatureInList->GIAsemanticParserPOStype = " << firstFeatureInList->GIAsemanticParserPOStype << endl;
+	#endif
 	string serverName = DBgenerateServerDatabaseName(&(GIAconnectionistNetworkPOStypeNameAbbreviationArray[firstFeatureInList->GIAsemanticParserPOStype]), fileType, GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, semanticParserDatabaseFolderName);
 
 	#ifdef GIA2_SEMANTIC_PARSER_DEBUG
@@ -192,19 +194,21 @@ bool loadSemanticParserCorpusDatabaseFile(GIAsentence* currentSentenceInList, GI
 	bool createNewSentences = false;
 	bool parseGIA2file = true;
 	bool isQuery = false;	//irrelevant
-	//cout << "g2" << endl;
 	if(!parseStanfordParserFile(corpusFileName, isQuery, currentSentenceInList, createNewSentences, parseGIA2file, false))		//CHECK THIS; need to account for corpus.txt having multiple entries [eg different text but identical layout]
 	{
 		result = false;
-		//cout << "1 !semanticParserSuccessful" << endl;
+		#ifdef GIA_DEBUG
+		//cout << "!semanticParserSuccessful" << endl;
+		#endif
 		currentSentenceInList->semanticParserSuccessful = false;
 	}
 	else
 	{
-		//cout << "1 semanticParserSuccessful" << endl;
+		#ifdef GIA_DEBUG
+		//cout << "semanticParserSuccessful" << endl;
+		#endif
 		currentSentenceInList->semanticParserSuccessful = true;
 	}
-	//cout << "g3" << endl;
 	return result;
 }
 

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelationsRelex.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -319,11 +319,15 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(GIAsentence
 		{
 			for(int i=0; i<FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES; i++)
 			{
+				#ifdef GIA_DEBUG
 				//cout << "featureQueryWordAcceptedByAlternateMethodNameArray[i] = " << featureQueryWordAcceptedByAlternateMethodNameArray[i] << endl;
 				//cout << "featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma = " << featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma << endl;	crashes
+				#endif
 				if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i])
 				{
+					#ifdef GIA_DEBUG
 					//cout << "whichOrWhatQueryFound" << endl;
+					#endif
 					whichOrWhatQueryFound = true;
 				}
 			}
@@ -513,7 +517,9 @@ void redistributeRelexRelationsDetectNameQueries(GIAsentence* currentSentenceInL
 	{
 		if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
 		{
+			#ifdef GIA_DEBUG
 			//cout << "found who" << endl;
+			#endif
 			firstWordOfSentenceIsWho = true;
 		}
 	}
@@ -544,7 +550,9 @@ void redistributeRelexRelationsDetectNameQueries(GIAsentence* currentSentenceInL
 			{
 				if(GIAentityNodeArray[i]->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 				{
+					#ifdef GIA_DEBUG
 					//cout << "found who query variable" << endl;
+					#endif
 					GIAentityNodeArray[i]->isNameQuery = true;
 				}
 			}
@@ -626,24 +634,21 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(GIAsentence
 								{
 									//eg Yarn is used in the making of cloth.	of(making[6], cloth[8]) + in(use[3], making[6]) -> _obj(making[6], _cloth[8])
 									currentRelationInList->relationType = RELATION_TYPE_OBJECT;
-									//cout << "1" << endl;
 								}
 							}
 
-							//cout << "astg1" << endl;
 							if(currentRelationInList2->relationType == RELATION_TYPE_OBJECT)
 							{
-								//cout << "astg2" << endl;
+								#ifdef GIA_DEBUG
 								//cout << "currentRelationInList->relationDependent = " << currentRelationInList->relationDependent << endl;
 								//cout << "currentRelationInList->relationGovernor = " << currentRelationInList->relationGovernor << endl;
+								#endif
 
 								if((currentRelationInList->relationDependent == RELATION_TYPE_PREPOSITION_OF) && (currentRelationInList2->relationGovernor == RELATION_TYPE_PREPOSITION_OF))
 								{
-									//cout << "astg3" << endl;
 									if(currentRelationInList2->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 									{
 										//eg What is wood used in the delivering of?   interpret  of(delivering[7], of[8]) + _obj(of[8], _$qVar[1])  -> _obj(making[7], _$qVar[1])
-										//cout << "2" << endl;
 
 										currentRelationInList2->relationType = RELATION_TYPE_OBJECT;
 										currentRelationInList2->relationGovernorIndex = currentRelationInList->relationGovernorIndex;

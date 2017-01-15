@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -42,12 +42,15 @@
 //NB NLPrelexCompatibilityMode mode is only supported when !parseGIA2file; it is a special mode used when parsing Relex relations output with Stanford Compatibility Mode enabled
 void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* currentSentenceInList, int* maxNumberOfWordsInSentence, bool featuresNotPreviouslyFilled, bool parseGIA2file, bool NLPrelexCompatibilityMode)
 {
+	#ifdef GIA_DEBUG
 	//cout << "relationsText = " <<* relationsText << endl;
+	#endif
 	GIArelation* firstRelationInList = currentSentenceInList->firstRelationInList;
 	GIAfeature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
 
+	#ifdef GIA_DEBUG
 	/*
-	cout << "TEST0" << endl;
+	cout << "TEST:" << endl;
 	GIAfeature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
@@ -55,6 +58,7 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 		currentFeatureInList = currentFeatureInList->next;
 	}
 	*/
+	#endif
 
 	string relationType;
 	string relationGovernor;
@@ -89,7 +93,9 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 
 	int currentRelationPart = 0;
 
+	#ifdef GIA_DEBUG
 	//cout << "GIATHparseStanfordParserRelationsText = " <<* relationsText << endl;
+	#endif
 
 	while(characterIndex < numberOfCharactersInRelationsText)
 	{
@@ -102,7 +108,9 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 			{
 				//eg actionObject(6-cake, 4-eaten) [sameReferenceSet=false]
 				string sameReferenceSetString = currentItemString;
+				#ifdef GIA_DEBUG
 				//cout << "sameReferenceSetString = " << sameReferenceSetString << endl;
+				#endif
 				if(sameReferenceSetString.find(createSameReferenceSetRecord2(true)) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 				{
 					currentRelation->sameReferenceSet = true;
@@ -111,18 +119,22 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 				{
 					currentRelation->sameReferenceSet = false;
 				}
+				#ifdef GIA_DEBUG
 				//cout << "currentRelation->sameReferenceSet = " << currentRelation->sameReferenceSet << endl;
 				//cout << "currentRelation->rcmodIndicatesSameReferenceSet = " << currentRelation->rcmodIndicatesSameReferenceSet << endl;
+				#endif
 			}
 			#endif
 
 			currentRelation->relationType = relationType;
 			currentRelation->relationGovernorIndex = relationGovernorIndex;
 			currentRelation->relationDependentIndex = relationDependentIndex;
+			#ifdef GIA_DEBUG
 			//cout << "relationGovernor = " << relationGovernor << endl;
 			//cout << "relationDependent = " << relationDependent << endl;
 			//cout << "currentRelation->relationGovernorIndex = " << currentRelation->relationGovernorIndex << endl;
 			//cout << "currentRelation->relationDependentIndex = " << currentRelation->relationDependentIndex << endl;
+			#endif
 
 			#ifdef GIA_NLP_DEBUG
 			/*
@@ -138,7 +150,6 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 			#ifdef GIA_NLP_DEBUG
 			//cout << "convertStanfordRelationToRelex" << endl;
 			#endif
-
 
 			#ifdef GIA_NLP_DEBUG
 			//cout << "finish: convertStanfordRelationToRelex" << endl;
@@ -184,8 +195,10 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 					}
 
 					GIAfeature* currentFeatureInList = firstFeatureInList;
+					#ifdef GIA_DEBUG
 					//cout << "relationDependent = " << relationDependent << endl;
 					//cout << "relationDependentIndex = " << relationDependentIndex << endl;
+					#endif
 					if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
 					{
 						for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationDependentIndex; f++)
@@ -196,12 +209,16 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 					if(useLemmaFromFeatureSet)
 					{
 						currentRelation->relationDependent = currentFeatureInList->lemma;
+						#ifdef GIA_DEBUG
 						//cout << "currentRelation->relationDependent = " << currentRelation->relationDependent << endl;
+						#endif
 					}
 					else
 					{
 						currentRelation->relationDependent = relationDependent;	//eg "_measure" of _measure-993
+						#ifdef GIA_DEBUG
 						//cout << "relationDependent = " << relationDependent << endl;
+						#endif
 					}
 					#ifdef GIA2_SUPPORT_QUERIES
 					if(parseGIA2file)	//condition added 1d1a
@@ -271,12 +288,16 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 					if(useLemmaFromFeatureSet)
 					{
 						currentRelation->relationGovernor = currentFeatureInList->lemma;
+						#ifdef GIA_DEBUG
 						//cout << "currentRelation->relationGovernor = " << currentRelation->relationGovernor << endl;
+						#endif
 					}
 					else
 					{
 						currentRelation->relationGovernor = relationGovernor;	//eg "_measure" of _measure-993
+						#ifdef GIA_DEBUG
 						//cout << "relationGovernor = " << relationGovernor << endl;
+						#endif
 					}
 					#ifdef GIA2_SUPPORT_QUERIES
 					if(parseGIA2file)	//condition added 1d1a
@@ -331,14 +352,18 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 				{
 					if(currentRelation->relationType == GIA2syntacticDependencyRelationSecondaryNameArray[i])
 					{
+						#ifdef GIA_DEBUG
 						//cout << "secondaryRelationDetected" << endl;
+						#endif
 						secondaryRelationDetected = true;
 					}
 				}
 			}
 			if(!NLPrelexCompatibilityMode || secondaryRelationDetected)
 			{
+				#ifdef GIA_DEBUG
 				//cout << "(!NLPrelexCompatibilityMode || secondaryRelationDetected): secondaryRelationDetected = " << secondaryRelationDetected << endl;
+				#endif
 			#endif
 
 				#ifdef GIA2_SEMANTIC_PARSER
@@ -463,7 +488,9 @@ bool findReplicateRelation(GIAsentence* currentSentenceInList, GIArelation* rela
 		{//do not compare relation to itself
 			if(compareRelations(currentRelation, relation))
 			{
+				#ifdef GIA_DEBUG
 				//cout << "foundReplicateRelation" << endl;
+				#endif
 				foundReplicateRelation = true;
 			}
 		}
@@ -638,7 +665,9 @@ void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsente
 	#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
 	if(!foundReducableStanfordRelation)
 	{
+		#ifdef GIA_DEBUG
 		//cout << "stanfordRelation = " << stanfordRelation << endl;
+		#endif
 		if(stanfordRelation.substr(0, RELATION_TYPE_PREPOSITION_MODIFIER2_LENGTH) == RELATION_TYPE_PREPOSITION_MODIFIER2)
 		{
 			stanfordPrepositionFound = true;
@@ -670,9 +699,11 @@ void convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInLi
 		bool foundOfficialLRPreplacementString = false;
 		GIAfeature* tempFeature = new GIAfeature();
 		tempFeature->word = tempRelexPrepositionString;
+		#ifdef GIA_DEBUG
 		//cout << "\n\t\tconvertStanfordRelationToRelexLRPreversion: tempRelexPrepositionString = " << tempRelexPrepositionString << endl;
 		//cout << "\t\tcurrentRelationInList->relationGovernor: " << currentRelationInList->relationGovernor << endl;
 		//cout << "\t\tcurrentRelationInList->relationDependent: " << currentRelationInList->relationDependent << endl;
+		#endif
 		revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, true, &foundOfficialLRPreplacementString);
 		if(foundOfficialLRPreplacementString)
 		{

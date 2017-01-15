@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -63,11 +63,13 @@ void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(GIAs
 			GIAentityNode* governorEntity = GIAentityNodeArray[governorIndex];
 			GIAentityNode* dependentEntity = GIAentityNodeArray[dependentIndex];
 
+			#ifdef GIA_DEBUG
 			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 			//cout << "governorEntity->entityName = " << governorEntity->entityName << endl;
 			//cout << "dependentEntity->entityName = " << dependentEntity->entityName << endl;
 			//cout << "governorIndex = " << governorIndex << endl;
 			//cout << "dependentIndex = " << dependentIndex << endl;
+			#endif
 			#ifdef GIA2_CORRECT_POSTAGS_FIX2
 			if(featureArrayTemp[governorIndex] != NULL)
 			{
@@ -107,17 +109,21 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 	if(actionOrSubstanceEntity->wordOrig != "")		//required to ignore dynamically generated entities, e.g. "have"/"$qvar"/etc
 	{
 	#endif
+		#ifdef GIA_DEBUG
 		//cout << "\tcorrectVerbPOStagAndLemma{}:" << endl;
 		//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
-
+		#endif
+		
 		string baseNameFound = "";
 		int grammaticalTenseModifier = INT_DEFAULT_VALUE;
 
 		bool foundContinuousOrInfinitiveOrImperativeOrPotentialVerb = determineVerbCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound, &grammaticalTenseModifier);
+		#ifdef GIA_DEBUG
 		//cout << "foundContinuousOrInfinitiveOrImperativeOrPotentialVerb = " << foundContinuousOrInfinitiveOrImperativeOrPotentialVerb << endl;
 		//cout << "actionOrSubstanceEntity->wordOrig = " << actionOrSubstanceEntity->wordOrig << endl;
 		//cout << "baseNameFound = " << baseNameFound << endl;
-
+		#endif
+		
 		//This section of code cannot be used as originally intended as some verb infinitives are also nouns (eg "yarn") - therefore must formally rely on correct infinitive tagging of verbs...
 		if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && ((actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true) || (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE] == true)))
 		{
@@ -155,17 +161,20 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 		else
 		{
 			//FUTURE GIA - consider updating correctVerbPOStagAndLemma{}; currently detecting all instances of "ing"/VBG. This is required such that appropriate instances can be marked as action concepts eg "swimming involves/requires...". Alternatively consider marking these words directly here as GRAMMATICAL_TENSE_MODIFIER_INFINITIVE (ie GRAMMATICAL_TENSE_MODIFIER_ACTIONCONCEPT) such that they can be assigned action concept by defineActionConcepts2{}
-
+			#ifdef GIA_DEBUG
 			//cout << "NB: GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS requires GIA_USE_LRP to be defined and -lrpfolder to be set" << endl;
 			//cout << "1 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
+			#endif
 			#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
 			if(determineIfWordIsIrregularVerbContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))
 			#elif defined GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
 			if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP))
 			#endif
 			{
+				#ifdef GIA_DEBUG
 				//cout << "GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS: 2 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
-
+				#endif
+				
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBG;
 				/*
 				Wood is used for making milk.
@@ -175,8 +184,10 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 				string wordOrigLowerCase = convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
 				if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = Swimming, and entityName = swimming; then apply the lemma correction
 				{
+					#ifdef GIA_DEBUG
 					//cout << "3 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
-
+					#endif
+					
 					updatedLemma = true;
 					actionOrSubstanceEntity->entityName = baseNameFound;	//change irregular verb name eg making to base irregular verb base name eg make
 					currentFeature->lemma = actionOrSubstanceEntity->entityName;
@@ -199,7 +210,9 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 			#ifdef STANFORD_PARSER_USE_POS_TAGS
 			if(determineVerbCase(&(actionOrSubstanceEntity->wordOrig)))	//OR &(currentRelationInList->relationGovernor)	//NB must use wordOrig as only wordOrig is guaranteed to still have "ing" attached - the word may be stripped by stanford corenlp in generation of the lemma
 			{
+				#ifdef GIA_DEBUG
 				//cout << "foundVerb" << endl;
+				#endif
 				//What is wood used in the delivering of?
 				//
 				//	Wood is used for making milk.
@@ -219,7 +232,9 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 			if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ)	//NB "able" words will be marked as JJ/adjective or NN/noun by Stanford/Relex POS tagger (but ignore nouns)
 			{
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBPOTENTIAL;
+				#ifdef GIA_DEBUG
 				//cout << "foundVerb FEATURE_POS_TAG_VERB_VBPOTENTIAL" << endl;
+				#endif
 
 				string wordOrigLowerCase = convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
 				if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = runnable, and entityName (NLP identified lemma) = runnable; then apply the lemma correction
@@ -247,7 +262,9 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 			if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ))	//NB "ive" words will be marked as JJ/adjective or NN/noun by Stanford/Relex POS tagger (but ignore nouns)
 			{
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE;
+				#ifdef GIA_DEBUG
 				//cout << "foundVerb FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE" << endl;
+				#endif
 
 				string wordOrigLowerCase = convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
 				if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = runnable, and entityName (NLP identified lemma) = runnable; then apply the lemma correction
@@ -276,7 +293,9 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 		{
 			if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ)	//NB "is ..." and "is ..ed" (not Stanford CoreNLP/Relex) verbs may be marked as JJ/adjective by Stanford/Relex POS tagger eg "It is open"/"He is tired."
 			{
+				#ifdef GIA_DEBUG
 				//cout << "foundVerb FEATURE_POS_TAG_VERB_VBSTATE" << endl;
+				#endif
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBSTATE;
 
 				currentFeature->stanfordPOS = stanfordPOS;
@@ -290,8 +309,9 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 		{
 			if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_NOUN)	//NB "ion"/"ment" words will be marked as NN/noun by Stanford/Relex POS tagger
 			{
+				#ifdef GIA_DEBUG
 				//cout << "foundVerb FEATURE_POS_TAG_VERB_VBDESCRIPTION" << endl;
-
+				#endif
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBDESCRIPTION;
 
 				string wordOrigLowerCase = convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
@@ -364,14 +384,18 @@ bool determineVerbCase(string* word)
 {
 	bool foundVerbContinuousCase = false;
 	int wordStringLength = word->length();
+	#ifdef GIA_DEBUG
 	//cout << "word = " <<* word << endl;
 	//cout << "wordStringLength = " << wordStringLength << endl;
+	#endif
 	if(wordStringLength > GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND)
 	{
 		int wordTenseFormContinuousAppendLength = string(GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND).length();
 		string lastThreeLettersOfWord = word->substr(wordStringLength-wordTenseFormContinuousAppendLength, wordTenseFormContinuousAppendLength);
+		#ifdef GIA_DEBUG
 		//cout << "wordTenseFormContinuousAppendLength = " << wordTenseFormContinuousAppendLength << endl;
 		//cout << "lastThreeLettersOfWord = " << lastThreeLettersOfWord << endl;
+		#endif
 		if(lastThreeLettersOfWord == GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND)
 		{
 			foundVerbContinuousCase = true;

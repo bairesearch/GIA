@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -619,7 +619,7 @@ int main(int argc, char** argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 2l6c 29-December-2016" << endl;
+			cout << "OpenGIA.exe - Project Version: 2l7a 11-August-2016" << endl;
 			exit(1);
 		}
 
@@ -1482,10 +1482,12 @@ bool executeGIA2()
 	{
 		if(useInputQuery)
 		{
+			#ifdef GIA_DEBUG
 			//cout << "inputQueryPlainTXTFileName = " << inputQueryPlainTXTFileName << endl;
 			//cout << "outputQueryLRPTextPlainTXTFileName = " << outputQueryLRPTextPlainTXTFileName << endl;
 			//cout << "outputQueryLRPTextForNLPonlyPlainTXTFileName = " << outputQueryLRPTextForNLPonlyPlainTXTFileName << endl;
-
+			#endif
+			
 			initialiseCurrentGIALRPtagTextCorrespondenceInfo(true);
 			setCurrentGIALRPtagTextCorrespondenceInfo(true);	//required for local variable access
 			if(!parseTextFileAndReduceLanguage(inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, outputQueryLRPTextForNLPonlyPlainTXTFileName))
@@ -1809,7 +1811,9 @@ bool executeGIA2()
 		cout << "max confidence: " << tempMaxConfidenceString << endl;
 		#endif
 
+		#ifdef GIA_DEBUG
 		//cout << "tempFolder = " << tempFolder << endl;
+		#endif
 		setCurrentDirectory(tempFolder);
 
 		/*
@@ -1823,17 +1827,15 @@ bool executeGIA2()
 		cout << "error: outputText answer require a query to be set" << endl;
 	}
 
+	#ifdef GIA_DEBUG
 	//cout << "tempFolder = " << tempFolder << endl;
+	#endif
 	setCurrentDirectory(tempFolder);
-
-	//cout << "ak7" << endl;
 
 	if(printOutput)
 	{
 		printGIAnetworkNodes(entityNodesActiveListComplete, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile, useOutputTextSVGFile,* maxNumberSentences);
 	}
-
-	//cout << "ak8" << endl;
 
 	#ifdef GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
 	if(!testReadSemanticNetXMLFile2(entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
@@ -1841,7 +1843,7 @@ bool executeGIA2()
 		result = false;
 	}
 	#else
-	//cout << "ak9" << endl;
+
 	if(useOutputTextXMLFile)
 	{
 		if(!writeSemanticNetXMLFileOptimised(outputTextXMLFileName, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
@@ -1849,7 +1851,6 @@ bool executeGIA2()
 			result = false;
 		}
 	}
-	//cout << "ak10" << endl;
 	if(useOutputTextCXLFile)
 	{
 		if(!writeCmapToolsCXLFileOptimised(outputTextCXLFileName, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
@@ -1857,7 +1858,6 @@ bool executeGIA2()
 			result = false;
 		}
 	}
-	//cout << "ak11" << endl;
 
 	#ifdef GIA_USE_NLG
 	GIANLGSentence* firstNLGsentence = new GIANLGSentence();

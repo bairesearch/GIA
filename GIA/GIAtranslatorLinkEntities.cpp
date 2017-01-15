@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -554,15 +554,18 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 				{
 				#endif
 				#endif
+					#ifdef GIA_DEBUG
 					//cout << "thingEntity->isNameQuery = " << thingEntity->isNameQuery << endl;
 					//cout << "definitionEntity->isNameQuery = " << definitionEntity->isNameQuery << endl;
 					//cout << "thingEntity->isSubstance = " << thingEntity->isSubstance << endl;
 					//cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;
+					#endif
 					if((thingEntity->isSubstance || thingEntity->isNameQuery) && (definitionEntity->isSubstance || definitionEntity->isNameQuery))
 					{//equality link found - add alias instead
-
+						#ifdef GIA_DEBUG
 						//cout << "thingEntity->isSubstanceConcept = " << thingEntity->isSubstance << endl;
 						//cout << "definitionEntity->isSubstanceConcept = " << definitionEntity->isSubstance << endl;
+						#endif
 						#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 						if(!(thingEntity->isSubstanceConcept) && (!(definitionEntity->isSubstanceConcept))) 	//only required with GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS: || (definitionEntity->isName)))
 						{
@@ -891,7 +894,9 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(GIAsentence* curre
 										GIAentityNode* conditionConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 										GIAentityNode* haveEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+										#ifdef GIA_DEBUG
 										//cout << "haveEntity->negative = " << haveEntity->negative << endl;
+										#endif
 										bool negative = haveEntity->negative;
 										GIAentityNode* entityNode = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 										GIAentityNode* conditionSubstanceNode = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
@@ -2860,7 +2865,9 @@ void createConditionBasedUponPreposition(GIAentityNode* actionOrSubstanceConditi
 			//currentRelationInList->relationType.substr(1, currentRelationInList->relationType.length()-1)
 		}
 
+		#ifdef GIA_DEBUG
 		//cout << "GIAentityNodeArray[featureIndexOfPreposition]->entityName = " << GIAentityNodeArray[featureIndexOfPreposition]->entityName << endl;
+		#endif
 
 	}
 	else if(passedPrepositionTime)

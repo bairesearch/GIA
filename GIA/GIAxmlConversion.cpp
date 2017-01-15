@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -288,8 +288,10 @@ bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>
 					if(currentTagUpdatedL3->name != "")
 					{//NB concept entities nodes should always exist, so this condition is not required (at the moment)
 						cout << "parseSemanticNetTag error 1: entity node tag not detected" << endl;
+						#ifdef GIA_DEBUG
 						//cout << "tag found: " << currentTagUpdatedL3->name << endl;
 						//cout << "tag expected: " << NET_XML_TAG_entityNode << endl;
+						#endif
 					}
 				}
 				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
@@ -360,8 +362,10 @@ bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>
 					if(currentTagUpdatedL2->name != "")
 					{
 						cout << "parseSemanticNetTag error 2: entity node tag not detected" << endl;
+						#ifdef GIA_DEBUG
 						//cout << "tag found: " << currentTagUpdatedL3->name << endl;
 						//cout << "tag expected: " << NET_XML_TAG_entityNode << endl;
+						#endif
 					}
 				}
 				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
@@ -434,8 +438,10 @@ bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>
 					if(currentTagUpdatedL3->name != "")
 					{
 						cout << "parseSemanticNetTag error 3: entity node tag not detected" << endl;
+						#ifdef GIA_DEBUG
 						//cout << "tag found: " << currentTagUpdatedL3->name << endl;
 						//cout << "tag expected: " << NET_XML_TAG_entityNode << endl;
+						#endif
 					}
 				}
 				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
@@ -505,8 +511,10 @@ bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>
 					if(currentTagUpdatedL3->name != "")
 					{
 						cout << "parseSemanticNetTag error 4: entity node tag not detected" << endl;
+						#ifdef GIA_DEBUG
 						//cout << "tag found: " << currentTagUpdatedL3->name << endl;
 						//cout << "tag expected: " << NET_XML_TAG_entityNode << endl;
+						#endif
 					}
 				}
 				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
@@ -1806,7 +1814,9 @@ string convertBooleanArrayToString(bool booleanArray[], int booleanArraySize)
 		string tempStr = convertIntToString(int(booleanArray[i]));
 		str = str + tempStr;
 	}
+	#ifdef GIA_DEBUG
 	//cout << "convertBooleanArrayToString = " << str << endl;
+	#endif
 	return str;
 
 }
@@ -1818,6 +1828,8 @@ void convertStringToBooleanArray(string str, bool booleanArray[], int booleanArr
 		string tempStr = "";
 		tempStr = tempStr + str[i];
 		booleanArray[i] = convertStringToInt(tempStr);
+		#ifdef GIA_DEBUG
 		//cout << "convertStringToBooleanArray booleanArray[i]  = " << convertStringToInt(tempStr) << endl;
+		#endif
 	}
 }

@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -467,14 +467,18 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		{
 			if(currentSentenceInList->semanticParserSuccessful)
 			{
+				#ifdef GIA_DEBUG
+				//cout << "semanticParserSuccessful" << endl;
+				#endif
 				convertSentenceSemanticRelationsIntoGIAnetworkNodes(sentenceConceptEntityNodesList, sentenceTimeConditionNodesList, firstSentenceInList, currentSentenceInListTemp, &sentenceConceptEntityNodesListTempNotUsed1, &entityNodesActiveListSentencesTempNotUsed, NLPfeatureParser, false, NULL);
-				//cout << "2 semanticParserSuccessful" << endl;
 			}
 		}
 		#endif
 		if(!parseGIA2file || (parseGIA2file && !(currentSentenceInList->semanticParserSuccessful)))
 		{
-			//cout << "2 !semanticParserSuccessful" << endl;
+			#ifdef GIA_DEBUG
+			//cout << "!semanticParserSuccessful" << endl;
+			#endif
 			convertSentenceSyntacticRelationsIntoGIAnetworkNodes(sentenceConceptEntityNodesList, sentenceTimeConditionNodesList, firstSentenceInList, currentSentenceInListTemp, &sentenceConceptEntityNodesListTempNotUsed1, &entityNodesActiveListSentencesTempNotUsed, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, false, NULL);
 		}
 
@@ -1126,7 +1130,9 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 			#else
 				GIAentityNodeArray[w]->entityIndexTemp = w;
 				GIAentityNodeArray[w]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;	//LIMITATION: if !GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR, this will not assign sentence indicies for prepositions...
+				#ifdef GIA_DEBUG
 				//cout << "GIAentityNodeArray[w]->sentenceIndexTemp = " << GIAentityNodeArray[w]->sentenceIndexTemp << endl;
+				#endif
 			#endif
 
 			//#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION	//concept sentenceIndex information is also required for GIAdraw.cpp
@@ -1149,9 +1155,10 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 
 					if(conceptNode->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
 					{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network
-						//cout << "assigning: " <<  currentSentenceInList->sentenceIndex << endl;
 						conceptNode->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
+						#ifdef GIA_DEBUG
 						//cout << "conceptNode->sentenceIndexTemp = " << conceptNode->sentenceIndexTemp << endl;
+						#endif
 					}
 					/*No problem detected here:
 					if(conceptNode->sentenceIndexTemp == 0)
@@ -1400,12 +1407,15 @@ void invertOrDuplicateConditionsIfRequired(GIAsentence* currentSentenceInList, b
 							lastRelationInList->inverseRelationTwoWay = true;
 							lastRelationInList->auxiliaryIndicatesDifferentReferenceSet = currentRelationInList->auxiliaryIndicatesDifferentReferenceSet;	//added 2h3a
 							lastRelationInList->rcmodIndicatesSameReferenceSet = currentRelationInList->rcmodIndicatesSameReferenceSet;	//added 2h3a
-
-							//cout << "inverseRelationTwoWay" << endl;
 							lastRelationInList->next = new GIArelation();
+							#ifdef GIA_DEBUG
+							//cout << "inverseRelationTwoWay" << endl;
+							#endif
 							#endif
 							currentRelationInList->relationTwoWay = true;
+							#ifdef GIA_DEBUG
 							//cout << "relationTwoWay" << endl;
+							#endif
 						}
 						#endif
 					}

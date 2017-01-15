@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -398,7 +398,9 @@ string DBgenerateServerDatabaseName(string* entityName, int fileType, string def
 		databaseName = serverName + defaultDatabaseName;
 		#else
 		databaseName = databaseFolderNameUserChoice;
+		#ifdef GIA_DEBUG
 		//cout << "databaseFolderNameUserChoice = " << databaseFolderNameUserChoice << endl;
+		#endif
 		#endif
 
 	}
@@ -633,7 +635,9 @@ void DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unord
 			DBreadVectorConnections(conceptEntityNode, i);
 		}
 
+		#ifdef GIA_DEBUG
 		//cout << "done reading concept connections" << endl;
+		#endif
 
 		#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 		conceptEntityNode->wasReference = true;	//required for node to be printed
@@ -660,10 +664,7 @@ void DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unord
 			#endif
 		}
 	}
-
-	//cout << "temp exit" << endl;
-	//exit(0);
-
+	
 	clearDBentityNodesActiveListCompleteFastIndexDBcache();
 }
 #endif
@@ -1648,7 +1649,9 @@ void DBwriteConceptEntityNodesLoadedList()	//unordered_map<string, bool>* DBconc
 	#endif
 
 	string conceptEntityNodesListFileName = DBgenerateFileName(NULL, NULL, NULL, GIA_DATABASE_GENERATE_FILENAME_FILE_CONCEPT_ENTITY_NODES_LIST);
+	#ifdef GIA_DEBUG
 	//cout << "conceptEntityNodesListFileName = " << conceptEntityNodesListFileName << endl;
+	#endif
 
 #ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 

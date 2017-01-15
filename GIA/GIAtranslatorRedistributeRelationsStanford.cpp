@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelationsStanford.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -278,7 +278,6 @@ void disableRedundantNodesStanfordCoreNLP(GIAsentence* currentSentenceInList, bo
 	paramA1.disableEntity[REL1][REL_ENT2] = true;
 	if(genericDependecyRelationInterpretation(&paramA1, REL1))
 	{
-		//cout << "A1" << endl;
 	}
 
 	#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
@@ -300,7 +299,6 @@ void disableRedundantNodesStanfordCoreNLP(GIAsentence* currentSentenceInList, bo
 	paramB1.disableEntity[REL1][REL_ENT2] = true;
 	if(genericDependecyRelationInterpretation(&paramB1, REL1))
 	{
-		//cout << "B1" << endl;
 	}
 	#endif
 
@@ -313,7 +311,6 @@ void disableRedundantNodesStanfordCoreNLP(GIAsentence* currentSentenceInList, bo
 	paramA2.disableEntity[REL1][REL_ENT2] = true;
 	if(genericDependecyRelationInterpretation(&paramA2, REL1))
 	{
-		//cout << "A2" << endl;
 	}
 
 	#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
@@ -323,7 +320,6 @@ void disableRedundantNodesStanfordCoreNLP(GIAsentence* currentSentenceInList, bo
 	paramB2.disableEntity[REL1][REL_ENT2] = true;
 	if(genericDependecyRelationInterpretation(&paramB2, REL1))
 	{
-		//cout << "B2" << endl;
 	}
 	#endif
 #else
@@ -366,19 +362,23 @@ void disableRedundantNodesStanfordCoreNLP(GIAsentence* currentSentenceInList, bo
 				}
 				#endif
 
+				#ifdef GIA_DEBUG
 				/*
 				cout << "governerEntity->entityName = " << governerEntity->entityName << endl;
 				cout << "dependentEntity->entityName = " << dependentEntity->entityName << endl;
 				cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
 				cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
 				*/
+				#endif
 
 				//if(((governerEntity->NERTemp == FEATURE_NER_DATE) && (dependentEntity->NERTemp == FEATURE_NER_DATE)) || ((governerEntity->NERTemp == FEATURE_NER_MONEY) && (dependentEntity->NERTemp == FEATURE_NER_MONEY)) || ((governerEntity->NERTemp == FEATURE_NER_NUMBER) && (dependentEntity->NERTemp == FEATURE_NER_NUMBER)) || ((governerEntity->NERTemp == FEATURE_NER_TIME) && (dependentEntity->NERTemp == FEATURE_NER_TIME)))
 				if(governerAndDependentBothHaveSameNERvalue || governerIsPersonAndRelationTypeIsPrenominalModifier)
 				{
+					#ifdef GIA_DEBUG
 					//cout << "governerEntity->entityName = " << governerEntity->entityName << endl;
 					//cout << "dependentEntity->entityName = " << dependentEntity->entityName << endl;
-
+					#endif
+					
 					bool featureNERindicatesNameConcatenationRequired = false;
 					for(int i=0; i<FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_OF_TYPES; i++)
 					{
@@ -530,10 +530,9 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	paramOpt1a.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT2] = true; paramOpt1a.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT2] = REL2; paramOpt1a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT2] = REL_ENT2;
 	if(genericDependecyRelationInterpretation(&paramOpt1a, REL1))
 	{
-		//cout << "opt1a" << endl;
 	}
 
-		//opt1b
+	//opt1b
 	/*
 	What is the cart designed to integrate with?
 	dep(designed-5, What-1)
@@ -552,10 +551,9 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	paramOpt1b.useRelationTest[REL1][REL_ENT3] = true; paramOpt1b.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
 	if(genericDependecyRelationInterpretation(&paramOpt1b, REL1))
 	{
-		//cout << "opt1b" << endl;
 	}
 
-		//opt1c
+	//opt1c
 	/*
 	x(y, _$qVar[1]) + prep_q(y, a) -> x(a, _$qVar[1])
 	eg1;
@@ -592,16 +590,15 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	paramOpt1c.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt1c.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt1c.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
 	if(genericDependecyRelationInterpretation(&paramOpt1c, REL1))
 	{
-		//cout << "opt1c" << endl;
 	}
 
 	#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP
-		//opt2
+	//opt2
 	GIAgenericDepRelInterpretationParameters paramOpt2 = param;
 	paramOpt2.numberOfRelations = 2;
 	paramOpt2.useRelationTest[REL1][REL_ENT3] = true; paramOpt2.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
 
-		//opt2a
+	//opt2a
 	/*
 	What is the Co-cart designed to do?
 	interpret; _to-do(design[5], do[7]) + _dep(design[5], what[1]) -> _to-do(design[5], do[7]) + _dep(design[5], do[7]) [see 2c] -> _to-do(design[5], what[1]) [2a]
@@ -614,10 +611,9 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	paramOpt2a.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT2;
 	if(genericDependecyRelationInterpretation(&paramOpt2a, REL1))
 	{
-		//cout << "opt2a" << endl;
 	}
 
-		//opt2b
+	//opt2b
 	/*
 	eg
 	What is yarn used to make?
@@ -635,30 +631,28 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	paramOpt2b.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramOpt2b.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
 	if(genericDependecyRelationInterpretation(&paramOpt2b, REL1))
 	{
-		//cout << "opt2b" << endl;
 	}
 
-		//opt2c
+	//opt2c
 	//interpret; ...
 	GIAgenericDepRelInterpretationParameters paramOpt2c = paramOpt2;
 	paramOpt2c.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt2c.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt2c.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
 	if(genericDependecyRelationInterpretation(&paramOpt2c, REL1))
 	{
-		//cout << "opt2c" << endl;
 	}
-
 	#endif
 
 #else
-	//cout << "\n" << endl;
 
 	//added 28 October 2012
  	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	bool foundFirstPreposition = false;
 	while(currentRelationInList->next != NULL)
 	{
+		#ifdef GIA_DEBUG
 		//cout << "GIArelation: " << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
-
+		#endif
+		
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
@@ -675,8 +669,10 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
  				GIArelation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{
+					#ifdef GIA_DEBUG
 					//cout << "Relation2: " << currentRelationInList2->relationType << "(" << currentRelationInList2->relationGovernor << ", " << currentRelationInList2->relationDependent << ")" << endl;
-
+					#endif
+					
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					if(!(currentRelationInList2->disabled))
 					{
@@ -711,7 +707,6 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 													{//ensure unique preposition found
 														if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationDependentIndex)
 														{//opt1a
-															//cout << "opt1a" << endl;
 
 															/*
 															What is yarn used in the making of?
@@ -754,8 +749,6 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 
 										if(!foundSecondPreposition)
 										{//opt1c/2c
-											//cout << "opt1c/2c" << endl;
-											//cout << "(!foundSecondPreposition)" << endl;
 
 											/*
 											x(y, _$qVar[1]) + prep_q(y, a) -> x(a, _$qVar[1])
@@ -795,7 +788,6 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 											{//opt2a+b
 												if(currentRelationInList->relationDependent == RELATION_DEPENDENT_DO)
 												{//opt2a
-													//cout << "opt2a" << endl;
 													/*
 													What is the Co-cart designed to do?
 													interpret; _to-do(design[5], do[7]) + _dep(design[5], what[1]) -> {IRRELEVANT: _to-do(design[5], do[7]) + _dep(design[5], do[7]) [2a] } -> _to-do(design[5], what[1]) [2b]
@@ -809,7 +801,6 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 												}
 												else
 												{//opt2b
-													//cout << "opt2b" << endl;
 													/*
 													eg
 													What is yarn used to make?
@@ -1909,8 +1900,6 @@ void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSente
 													if(currentRelationInList3->relationGovernorIndex == currentRelationInList2->relationGovernorIndex)
 													{//found a matching relationship
 
-														//cout << "sdf" << endl;
-
 														GIAentityNode* entityContainingFirstWordOfMultiwordPreposition = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
 
 														string newPrepositionName = "";
@@ -2619,7 +2608,6 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			#endif
 			if(genericDependecyRelationInterpretation(&paramA, REL1))
 			{
-				//cout << "passA" << endl;
 			}
 
 			GIAgenericDepRelInterpretationParameters paramB = param;
@@ -2646,7 +2634,6 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			#endif
 			if(genericDependecyRelationInterpretation(&paramB, REL1))
 			{
-				//cout << "passB" << endl;
 			}
 
 			//must switch subject to object;
@@ -2671,7 +2658,6 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			paramC.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramC.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_OBJECT;
 			if(genericDependecyRelationInterpretation(&paramC, REL1))
 			{
-				//cout << "passC" << endl;
 			}
 		}
 		else
@@ -4104,12 +4090,12 @@ void redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy(GIAsentence* cu
 					}
 					else
 					{
-
+						#ifdef GIA_DEBUG
 						//cout << "redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy{} error: (!queryHowWhenWhereWhySpecialCaseRelationDependentFound || !foundMatchForSpecialCase) && (currentRelationInList->relationGovernor == RELATION_ENTITY_BE)" << endl;
 						//cout << "relationType = " << currentRelationInList->relationType << endl;
 						//cout << "relationGoverner = " << currentRelationInList->relationGovernor << endl;
 						//cout << "relationDependent = " <<currentRelationInList->relationDependent << endl;
-
+						#endif
 					}
 					*/
 				/*
@@ -4318,8 +4304,10 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(GIAsente
 			bool prepositionFound = false;
 			if(convertPrepositionToRelex(&relationType, &prepositionFound) == RELATION_TYPE_PREPOSITION_OF)
 			{
+				#ifdef GIA_DEBUG
 				//cout << "actionOrSubstanceEntity->stanfordPOStemp = " << actionOrSubstanceEntity->stanfordPOStemp << endl;
 				//cout << "actionOrSubstanceEntity->grammaticalWordTypeTemp = " << actionOrSubstanceEntity->grammaticalWordTypeTemp << endl;
+				#endif
 				#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION
 				/*
 				if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
@@ -4705,8 +4693,9 @@ void redistributeStanfordRelationsDisableRedundantLogicalConditions(GIAsentence*
 			//bool foundLogicalConditionOperationBasic = textInTextArray(prepositionName, logicalConditionOperationsArray, NLC_LOGICAL_CONDITION_OPERATIONS_NUMBER_OF_TYPES, &logicalOperation);
 			if(prepositionName == RELATION_TYPE_PREPOSITION_FOR)
 			{//eg for/while/if
-
+				#ifdef GIA_DEBUG
 				//cout << "prepositionName == RELATION_TYPE_PREPOSITION_FOR" << endl;
+				#endif
 				bool primaryLogicalConditionRelation = false;
 				GIArelation* currentRelationInList3 = currentSentenceInList->firstRelationInList;
  				while(currentRelationInList3->next != NULL)
@@ -4718,7 +4707,9 @@ void redistributeStanfordRelationsDisableRedundantLogicalConditions(GIAsentence*
 						{
 							//preposition has an outgoing conjunction connection; take this as the primary relation and disable all others
 							primaryLogicalConditionRelation = true;
+							#ifdef GIA_DEBUG
 							//cout << "primaryLogicalConditionRelation" << endl;
+							#endif
 						}
 					}
 					currentRelationInList3 = currentRelationInList3->next;

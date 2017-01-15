@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -42,8 +42,6 @@ bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDepende
 
 	bool result = true;
 
-	//cout << "cf1" << endl;
-
 	#ifdef STANFORD_PARSER_USE_POS_TAGS
 	cout << "error: performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences() doesn't support STANFORD_PARSER_USE_POS_TAGS (because the semantic relations word types being written must match those being read [and read can only use feature parser])" << endl;
 	#endif
@@ -52,8 +50,6 @@ bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDepende
 	{
 		result = false;
 	}
-
-	//cout << "cf1b" << endl;
 
 	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
@@ -92,8 +88,6 @@ bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDepende
 	}
 	#endif
 
-	//cout << "cf2" << endl;
-
 	#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
 	setCurrentDirectory(tempFolder);
 	bool onlyParseIfCorpusLookupFailed = true;
@@ -108,15 +102,10 @@ bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDepende
 	NLPassumePreCollapsedStanfordRelations = false;	//irrelevant (not used) - only used when executing convertSentenceSyntacticRelationsIntoGIAnetworkNodes(), and performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences() does not execute convertSentenceSyntacticRelationsIntoGIAnetworkNodes()
 	#endif
 
-	//cout << "cf3" << endl;
-
 	if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputCFFfileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListSentences, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, true))	//inputTextNLPrelationXMLfileName/inputTextNLPfeatureXMLfileName/NLPfeatureParser/NLPdependencyRelationsParser/NLPrelexCompatibilityMode/NLPassumePreCollapsedStanfordRelations not used (relations and features have already been parsed)
 	{
 		result = false;
 	}
-
-	//cout << "cf4" << endl;
-
 }
 
 bool lookupSemanticParserFiles(GIAparagraph* firstParagraphInList, int NLPfeatureParser)
@@ -347,7 +336,6 @@ bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureP
 		}
 		*/
 
-		//cout << "here3" << endl;
 		currentSentenceInList = currentSentenceInList->next;
 	}
 	return result;

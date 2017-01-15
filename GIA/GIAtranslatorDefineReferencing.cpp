@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -379,7 +379,9 @@ void linkPronounReferencesRelex(GIAsentence* currentSentenceInList, bool GIAenti
 				#endif
 				if(((currentGIAEntityNode->entityName == referenceTypePossessiveNameArray[i]) || (currentGIAEntityNode->entityName == referenceTypePersonNameArray[i])) && (currentGIAEntityNode->grammaticalPronounTemp))
 				{//pronoun required for currentGIAEntityNode
+					#ifdef GIA_DEBUG
 					//cout << "currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
+					#endif
 					//now go for a search in tree for given / this sentence + previous sentence until find candidate reference source
 
 					GIAentityNode* referenceSource = NULL;
@@ -991,7 +993,9 @@ void fillExplicitReferenceSameSetTags(GIAsentence* currentSentenceInList)
 
 int identifyReferenceSets(unordered_map<string, GIAentityNode*>* sentenceConceptEntityNodesList, bool NLPdependencyRelationsType, vector<GIAentityNode*>* referenceSetDefiniteEntityList)
 {
+	#ifdef GIA_DEBUG
 	//cout << "\n******************** identifyReferenceSets* ******************\n" << endl;
+	#endif
 
 	bool haveSentenceEntityIndexOfDeterminers = false;
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
@@ -1119,7 +1123,9 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode* entityNode, int* r
 					{
 						*referenceSetID	= *referenceSetID + 1;
 						referenceSetDefiniteEntityList->push_back(currentInstance);
+						#ifdef GIA_DEBUG
 						//cout << "*referenceSetID++ = " <<* referenceSetID << endl;
+						#endif
 					}
 
 			#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
@@ -1203,9 +1209,13 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		cout << "1. createGIAcoreferenceInListBasedUponIdentifiedReferenceSet (!intrasentenceReference)" << endl;
 		#endif
+		#ifdef GIA_DEBUG
 		//cout << "!intrasentence start:" << endl;
+		#endif
 		createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(sentenceConceptEntityNodesList, entityNodesActiveListConcepts, &referenceTraceParameters, &maxNumberOfMatchedNodes, &queryEntityWithMaxNumberNodesMatched, &networkEntityWithMaxNumberNodesMatched, &foundAtLeastOneMatch);
+		#ifdef GIA_DEBUG
 		//cout << "intrasentence start ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" << endl;
+		#endif
 		#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		cout << "2. createGIAcoreferenceInListBasedUponIdentifiedReferenceSet (intrasentenceReference)" << endl;
@@ -1222,7 +1232,9 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		#endif
 		bool foundAtLeastOneMatchIntraSentence = false;
 		createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(sentenceConceptEntityNodesList, sentenceConceptEntityNodesList, &referenceTraceParameters, &maxNumberOfMatchedNodes, &queryEntityWithMaxNumberNodesMatched, &networkEntityWithMaxNumberNodesMatched, &foundAtLeastOneMatchIntraSentence);	//always perform intrasentence reference detection last (as this takes priority)
+		#ifdef GIA_DEBUG
 		//cout << "intersentence end" << endl;
+		#endif
 		if(foundAtLeastOneMatchIntraSentence)
 		{
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -1606,12 +1618,16 @@ void linkAdvancedReferencesGIA(GIAsentence* currentSentenceInList, bool GIAentit
 
 				if(!foundReferenceSource)
 				{
+					#ifdef GIA_DEBUG
 					//cout << "!foundReferenceSource" << endl;
-
+					#endif
+					
 					if(currentMentionInList->representative)
 					{
+						#ifdef GIA_DEBUG
 						//cout << "(currentMentionInList->representative)" << endl;
-
+						#endif
+						
 						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 						if(currentMentionInList->intrasentenceReference)
 						{
@@ -1627,12 +1643,16 @@ void linkAdvancedReferencesGIA(GIAsentence* currentSentenceInList, bool GIAentit
 						{
 						#endif
 							bool entityNameFound = false;
+							#ifdef GIA_DEBUG
 							//cout << "findOrAddConceptEntityNodeByNameSimpleWrapper" << endl;
+							#endif
 
 							GIAentityNode* referenceSourceConceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(currentMentionInList->entityName), &entityNameFound, entityNodesActiveListConcepts);
 							if(entityNameFound)
 							{
+								#ifdef GIA_DEBUG
 								//cout << "entityNameFound" << endl;
+								#endif
 								#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE	//should this condition be enforced?
 								#ifdef GIA_USE_DATABASE
 								#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
@@ -1747,7 +1767,9 @@ void linkAdvancedReferencesGIA(GIAsentence* currentSentenceInList, bool GIAentit
 						else
 						{
 						#endif
+							#ifdef GIA_DEBUG
 							//cout << "!intrasentenceReference" << endl;
+							#endif
 							int referenceEntityIndex = currentMentionInList->entityIndex;
 
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -1942,7 +1964,9 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 
 								if(exactMatch)
 								{
+									#ifdef GIA_DEBUG
 									//cout << "exactMatch" << endl;
+									#endif
 									if(numberOfMatchedNodesTemp > 0)
 									{
 										#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
@@ -1959,10 +1983,11 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 											if(entityNode->isSubstanceConcept || entityNode->isActionConcept)
 											{
 												//eg3 Blue birds are tall. The happy eagle is a blue bird.
-
+												#ifdef GIA_DEBUG
 												//cout << "exactMatch: numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
 												//cout << "currentSpecificConcept = " << currentSpecificConcept->entityName << endl;
 												//cout << "entityNode: = " << entityNode->entityName << endl;
+												#endif
 
 												/*
 												//this method may not be appropriate for GIA_USE_ADVANCED_REFERENCING; if substance concepts advanced reference each other in the future:
@@ -1978,7 +2003,9 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 													if((*definitionNodeReverseListIterator)->entity->sentenceIndexTemp == entityNode->sentenceIndexTemp)
 													{
 														instanceEntity = (*definitionNodeReverseListIterator)->entity;
+														#ifdef GIA_DEBUG
 														//cout << "instanceEntity = " << instanceEntity->entityName << endl;
+														#endif
 													}
 												}
 												if(instanceEntity != NULL)
@@ -2010,7 +2037,9 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 								}
 								else
 								{
+									#ifdef GIA_DEBUG
 									//cout << "!exactMatch" << endl;
+									#endif
 								}
 
 								//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
@@ -2106,8 +2135,10 @@ void identifyReferenceSet(GIAentityNode* entityNode, int referenceSetID, int min
 	entityNode->referenceSetID = referenceSetID;
 	entityNode->minimumEntityIndexOfReferenceSet = minimumEntityIndexOfReferenceSet;
 
+	#ifdef GIA_DEBUG
 	//cout << "\tentityNode->referenceSetID = " << entityNode->referenceSetID << endl;
 	//cout << "\tentityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
+	#endif
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 	{
 		if(!(entityNode->entityVectorConnectionsArray[i].empty()))

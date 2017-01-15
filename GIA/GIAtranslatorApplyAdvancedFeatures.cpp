@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -481,13 +481,14 @@ void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool G
 					}
 					else
 					{
-						//cout << "here2" << endl;
 						quantitySubstance->quantityNumberString = currentRelationInList->relationDependent;
 					}
 
 					int quantityNumberInt = calculateQuantityNumberInt(quantitySubstance->quantityNumberString);
 					quantitySubstance->quantityNumber = quantityNumberInt;
+					#ifdef GIA_DEBUG
 					//cout << "quantitySubstance->quantityNumber = " << quantitySubstance->quantityNumber << endl;
+					#endif
 					quantitySubstance->isSubstanceConcept = false;	//added 2a11a [because defineSubstanceConcepts() does not have access to quantity data]
 
 					disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
@@ -1287,8 +1288,10 @@ void defineTenseOnlyTimeConditions(GIAsentence* currentSentenceInList, bool GIAe
 		if(GIAentityNodeArrayFilled[i])
 		{
 			GIAentityNode* entity = GIAentityNodeArray[i];
+			#ifdef GIA_DEBUG
 			//cout << "entity = " << entity->entityName << endl;
 			//cout << "entity->grammaticalTenseTemp = " << entity->grammaticalTenseTemp << endl;
+			#endif
 			if(entity->conditionType != CONDITION_NODE_TYPE_TIME)		//why can't this be used: if(entity->timeConditionNode != NULL)
 			{//do not overwrite non-tense only time conditions
 				if(entity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE])
@@ -1334,22 +1337,21 @@ void defineActionConcepts2(GIAsentence* currentSentenceInList, bool GIAentityNod
 		if(GIAentityNodeArrayFilled[i])
 		{
 			GIAentityNode* entity = GIAentityNodeArray[i];
+			#ifdef GIA_DEBUG
 			//cout << "entity = " << entity->entityName << endl;
 			//cout << "entity->grammaticalTenseTemp = " << entity->grammaticalTenseTemp << endl;
+			#endif
 
 			//if(entity->isAction)	//do not check for isAction; because action concepts are assigned for nodes which have not been defined as actions by GIA; eg "eating is fun"
 			//Condition A.
 			if((entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && ((entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true) || (entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true)))
 			{
-				//cout << "A" << endl;
 				//Condition B1. no subject (cannot have subject)
 				if(entity->actionSubjectEntity->empty())
 				{
-					//cout << "B1" << endl;
 					//Condition B2 action can have condition/property, but cannot be used as input condition/property in sentence
 					if(entity->incomingConditionNodeList->empty() && entity->propertyNodeReverseList->empty())
 					{
-						//cout << "B2" << endl;
 						bool foundActionConcept = true;
 						//Condition 3. object can have condition/property, but it cannot be used as an input condition/property in sentence
 						if(!(entity->actionObjectEntity->empty()))
@@ -1364,7 +1366,6 @@ void defineActionConcepts2(GIAsentence* currentSentenceInList, bool GIAentityNod
 
 						if(foundActionConcept)
 						{
-							//cout << "B3" << endl;
 							//GIAentityNodeArray[i] = addActionToActionDefinition(entity);	//is this required?
 							GIAentityNodeArray[i]->isActionConcept = true;
 						}

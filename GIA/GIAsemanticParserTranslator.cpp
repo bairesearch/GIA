@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParserTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -263,9 +263,10 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 					}
 					if(conceptNode->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
 					{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network
-						//cout << "assigning: " <<  currentSentenceInList->sentenceIndex << endl;
 						conceptNode->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
+						#ifdef GIA_DEBUG
 						//cout << "conceptNode->sentenceIndexTemp = " << conceptNode->sentenceIndexTemp << endl;
+						#endif
 					}
 
 				#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
@@ -406,8 +407,10 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(GIAsentence* current
 				GIAentityNode* conceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(name[i]), &entityAlreadyExistant, entityNodesActiveListConcepts);
 				GIAconceptNodeArray[relationIndex[i]] = conceptEntity;
 
+				#ifdef GIA_DEBUG
 				//cout << "\tcreating concept = " << conceptEntity->entityName << endl;
 				//cout << "relationIndex[i] = " << relationIndex[i] << endl;
+				#endif
 
 				if(isDependencyRelationSecondary)
 				{
@@ -472,7 +475,9 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(GIAsentence* current
 				*/
 
 				/*
+				#ifdef GIA_DEBUG
 				//cout << "filling: " << relationIndex[i] << " " << name[i] << endl;
+				#endif
 				#ifdef GIA_USE_ADVANCED_REFERENCING
 				//this is required for fillGrammaticalArraysStanford findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet()	[nb these values are applied to concept entities only]
 				GIAconceptNodeArray[relationIndex[i]]->entityIndexTemp = relationIndex[i];
@@ -707,7 +712,9 @@ void defineSubstancesBasedOnSemanticRelations(GIAsentence* currentSentenceInList
 
 			if(isConcept)
 			{
+				#ifdef GIA_DEBUG
 				//cout << "isConcept" << endl;
+				#endif
 				GIAentityNodeArray[i]->isSubstanceConcept = true;
 			}
 
@@ -743,7 +750,9 @@ void identifyComparisonVariableBasedOnSemanticRelations(GIAsentence* currentSent
 
 	if(currentSentenceInList->isQuestion)
 	{
+		#ifdef GIA_DEBUG
 		//cout << "isQuestion" << endl;
+		#endif
 		GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{
@@ -757,7 +766,9 @@ void identifyComparisonVariableBasedOnSemanticRelations(GIAsentence* currentSent
 			for(int i=0; i<2; i++)
 			{
 				GIAentityNode* entityNode = entityNodes[i];
+				#ifdef GIA_DEBUG
 				//cout << "entityNode = " << entityNode->entityName << endl;
+				#endif
 				if(corpusSpecialRelationIsQuery[i] == GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME)
 				{
 					cout << GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME << endl;
@@ -933,7 +944,6 @@ void invertOrDuplicateConditionsIfRequiredSemantic(GIAsentence* currentSentenceI
 	}
 	else
 	{
-		//cout << "entity3condition->entityIndexTemp = " << entity3condition->entityIndexTemp << endl;
 		GIAentityNodeArray[entity3condition->entityIndexTemp] = addOrConnectConditionToEntity(entity1, entity2, entity3condition, sameReferenceSet);
 	}
 	#endif
@@ -947,10 +957,14 @@ void invertOrDuplicateConditionsIfRequiredSemantic(GIAsentence* currentSentenceI
 		GIAentityNode* inverseConditionEntity = createNewInverseConditionEntitySemantic(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entity3condition->entityName, entityNodesActiveListConcepts, featureArrayTemp);
 		GIAentityNodeArray[inverseConditionEntity->entityIndexTemp] = addOrConnectConditionToEntity(entity2, entity1, inverseConditionEntity, sameReferenceSet);
 		inverseConditionEntity->inverseConditionTwoWay = true;
+		#ifdef GIA_DEBUG
 		//cout << "inverseConditionTwoWay" << endl;
 		#endif
+		#endif
 		inverseConditionEntity->conditionTwoWay = true;
+		#ifdef GIA_DEBUG
 		//cout << "conditionTwoWay" << endl;
+		#endif
 	}
 	#endif
 }
@@ -1219,7 +1233,9 @@ bool generateAllPermutationsFromSemanticRelationsFile(GIAfeature* firstFeatureIn
 							GIArelation* currentSemanticRelationInList = firstRelationInList;
 							while(currentSemanticRelationInList->next != NULL)
 							{
+								#ifdef GIA_DEBUG
 								//cout << "currentSemanticRelationInList->relationType = " << currentSemanticRelationInList->relationType << endl;
+								#endif
 								int semanticDependencyRelationType = INT_DEFAULT_VALUE;
 								bool sameReferenceSet = currentSemanticRelationInList->sameReferenceSet;
 								if(textInTextArray(currentSemanticRelationInList->relationType, GIA2semanticDependencyRelationNameArray, GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES, &semanticDependencyRelationType))

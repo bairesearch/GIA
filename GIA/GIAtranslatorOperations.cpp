@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -404,13 +404,16 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 	newSubstance->grammaticalWordTypeTemp = entity->grammaticalWordTypeTemp;
 
 	/*//execution of addTenseOnlyTimeConditionToSubstance has been shifted from forwardInfoToNewSubstance to a separate function - 26 July 2013
+	#ifdef GIA_DEBUG
 	//cout << "entity = " << entity->entityName << endl;
 	//cout << "entity->grammaticalTenseTemp = " << entity->grammaticalTenseTemp << endl;
+	#endif
 	if(entity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE])	//changed from newSubstance->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] to entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] 26 July 2013
 	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
 		addTenseOnlyTimeConditionToSubstance(newSubstance, entity->grammaticalTenseTemp, entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE]);
 	}
 	*/
+	
 	for(int i=0; i<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; i++)
 	{
 		newSubstance->grammaticalTenseModifierArrayTemp[i] = entity->grammaticalTenseModifierArrayTemp[i];	//including GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE eg "substance has progressive (eg lying/sitting/being happy)"
@@ -1574,8 +1577,10 @@ void generateTempFeatureArray(GIAfeature* firstFeatureInList, GIAfeature* featur
 
 	GIAfeature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
-	{
+	{	
+		#ifdef GIA_DEBUG
 		//cout << "currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+		#endif
 		featureArrayTemp[currentFeatureInList->entityIndex] = currentFeatureInList;
 		currentFeatureInList = currentFeatureInList->next;
 	}
@@ -2084,8 +2089,6 @@ void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNo
 		{
 			for(vector<GIAentityConnection*>::iterator connectionIter = entityNodeToMerge->entityVectorConnectionsArray[i].begin(); connectionIter != entityNodeToMerge->entityVectorConnectionsArray[i].end(); )
 			{
-				//cout << "h1" << endl;
-
 				bool connectionIterErased = false;
 				//connect entityNodeToMerge ambient node to entityNode
 				GIAentityNode* entityConnectedToEntityToMerge = (*connectionIter)->entity;
@@ -2265,7 +2268,9 @@ void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNo
 		}
 		if(entityNodeToMerge->isQuery)
 		{
+			#ifdef GIA_DEBUG
 			//cout << "entityNodeToMerge->isQuery = " << entityNodeToMerge->isQuery << endl;
+			#endif
 			entityNode->isQuery = entityNodeToMerge->isQuery;
 			entityNode->isWhichOrEquivalentWhatQuery = entityNodeToMerge->isWhichOrEquivalentWhatQuery;
 			#ifdef GIA_SUPPORT_ALIASES
@@ -2307,7 +2312,9 @@ GIAentityNode* getPrimaryConceptNodeDefiningInstance(GIAentityNode* instanceEnti
 			GIAentityNode* conceptEntityNode = (*connectionIter)->entity;
 			if(instanceEntity->entityName == conceptEntityNode->entityName)
 			{
+				#ifdef GIA_DEBUG
 				//cout << "primaryConceptNodeDefiningInstance = conceptEntityNode" << endl;
+				#endif
 				primaryConceptNodeDefiningInstance = conceptEntityNode;
 			}
 		}
@@ -2372,24 +2379,31 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 		 }
 		 NLCsentence* definiteEntityNLCsentenceInList = currentNLCsentenceInList;
 
-
+		#ifdef GIA_DEBUG
 		 //cout << "definiteEntity = " << definiteEntity->entityName << endl;
 		 //cout << "indefiniteEntity = " << indefiniteEntity->entityName << endl;
+		 #endif
 		 if(foundDefiniteEntitySentence)
 		 {
 			if(minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence < indefiniteEntityNLCsentenceInList->indentation)
 			{
+				#ifdef GIA_DEBUG
 				//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{}: no reference found" << endl;
+				#endif
 			}
 			else
 			{
+				#ifdef GIA_DEBUG
 				//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{}: entity declared in this function" << endl;
+				#endif
 				foundIndefiniteEntity = true;
 			}
 		 }
 		 else
 		 {
+		 	#ifdef GIA_DEBUG
 			//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{} error: !foundDefiniteEntitySentence" << endl;
+			#endif
 		 }
 	}
 	//}

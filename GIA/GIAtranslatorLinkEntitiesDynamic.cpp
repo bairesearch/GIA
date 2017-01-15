@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntitiesDynamic.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6c 29-December-2016
+ * Project Version: 2l7a 11-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -73,7 +73,9 @@ void linkEntitiesDynamicPrenominalModifierOfNoun(GIAsentence* currentSentenceInL
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
+		#ifdef GIA_DEBUG
 		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+		#endif
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
@@ -92,7 +94,9 @@ void linkEntitiesDynamicPrenominalModifierOfNoun(GIAsentence* currentSentenceInL
 			if(prenominalModifierFound)
 			{
 				//prenominal modifier found...
+				#ifdef GIA_DEBUG
 				//cout << "prenominal modifier found" << endl;
+				#endif
 
 				string entity1Name = currentRelationInList->relationGovernor;
 				string entity2Name = currentRelationInList->relationDependent;
@@ -308,7 +312,9 @@ void linkEntitiesDynamicFromConditions(GIAsentence* currentSentenceInList, bool 
 		{
 			if(textInTextArray(GIAentityNodeArray[w]->entityName, relationTypePrepositionFromNameArray, RELATION_TYPE_PREPOSITION_FROM_NUMBER_OF_TYPES))
 			{
+				#ifdef GIA_DEBUG
 				//cout << "fromCondition" << endl;
+				#endif
 				GIAentityNode* fromCondition = GIAentityNodeArray[w];
 
 				if(!(fromCondition->conditionObjectEntity->empty()))
@@ -337,7 +343,9 @@ void linkEntitiesDynamicFromConditions(GIAsentence* currentSentenceInList, bool 
 									  \
 									   pie
 								*/
+								#ifdef GIA_DEBUG
 								//cout << "fromConditionSubject->isAction" << endl;
+								#endif
 
 								if(!(fromConditionSubject->actionObjectEntity->empty()))
 								{
@@ -397,7 +405,9 @@ void linkEntitiesDynamicFromConditions(GIAsentence* currentSentenceInList, bool 
 												{
 													if(previousPropertyRelationshipFoundTemp)
 													{
+														#ifdef GIA_DEBUG
 														//cout << "previousPropertyRelationshipFound" << endl;
+														#endif
 														previousRelationshipFound = true;
 														previousPropertyRelationshipFound = true;
 													}
@@ -412,7 +422,9 @@ void linkEntitiesDynamicFromConditions(GIAsentence* currentSentenceInList, bool 
 														#ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_ONLY_ACCEPT_AT_CONDITIONS
 
 														#endif
+															#ifdef GIA_DEBUG
 															//cout << "previousConditionRelationshipFound" << endl;
+															#endif
 															previousRelationshipFound = true;
 															previousConditionRelationshipFound = true;
 														#ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_ONLY_ACCEPT_AT_CONDITIONS
@@ -602,9 +614,10 @@ void connectPropertyToEntityFull(GIAsentence* currentSentenceInList, bool GIAent
 	actionConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfAction, &actionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 	//Alternative (need to fill GIAentityNodeArrayFilled);
 	//actionConceptEntity = (actionEntity->entityNodeDefiningThisInstance->back())->entity;
+	#ifdef GIA_DEBUG
 	//cout << "actionConceptEntity = " << actionConceptEntity->entityName << endl;
-
 	//cout << "featureIndexOfAction = " << featureIndexOfAction << endl;
+	#endif
 	GIAentityNodeArray[featureIndexOfAction] = addOrConnectActionToEntity(entity1, entity2, actionConceptEntity, sameReferenceSet);
 
 	#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
