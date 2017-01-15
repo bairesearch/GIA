@@ -101,9 +101,9 @@ GIAEntityNode::GIAEntityNode(void)
 	isQuery = false;
 	isWhichQuery = false;
 	isAnswerToQuery = false;
-	//#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES	
+	#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES	
 	isAnswerContextToQuery = false;
-	//#endif
+	#endif
 	testedForQueryComparison = false;
 
 	negative = false;

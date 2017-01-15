@@ -11,6 +11,7 @@
 #ifndef HEADER_GIA_CONDITION_NODE_CLASS
 #define HEADER_GIA_CONDITION_NODE_CLASS
 
+#include "GIAglobalDefs.h"
 
 #include <iostream>
 #include <fstream>
@@ -23,15 +24,9 @@
 using namespace std;
 
 
-class GIAEntityNode;
-class GIAActionNode;
-class GIAConditionNode;
+
 class GIATimeConditionNode;
-/*
-class GIALocationConditionNode;
-class GIAPropertyConditionNode;
-class GIAActionConditionNode;
-*/
+
 
 #define CONDITION_NODE_NUMBER_OF_TYPES (4)
 #define CONDITION_NODE_TYPE_UNDEFINED (0)

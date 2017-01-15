@@ -13,7 +13,10 @@
 #define HEADER_GIA_ENTITY_NODE_CLASS
 
 
-#define GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
+
+#include "GIAConditionNodeClass.h"
+#include "GIAglobalDefs.h"
+
 
 #include <iostream>
 #include <fstream>
@@ -28,7 +31,6 @@
 using namespace std;
 
 
-#include "GIAConditionNodeClass.h"
 
 
 #define GRAMMATICAL_TENSE_UNDEFINED 0
@@ -85,8 +87,6 @@ using namespace std;
 #define MEASURE_TYPE_TIME (2)
 #define MEASURE_TYPE_PER (3)
 #define MEASURE_TYPE_UNDEFINED (-1)
-
-#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_TEMP_FOR_DISPLAY_ONLY "_$qVar"
 
 extern string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
 extern string grammaticalTenseModifierNameArray[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];
@@ -233,9 +233,9 @@ public:
 	bool isQuery;
 	bool isWhichQuery;
 	bool isAnswerToQuery;				
-	//#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES				
+	#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES				
 	bool isAnswerContextToQuery;
-	//#endif
+	#endif
 	bool testedForQueryComparison;
 	
 	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for properties and actions; but relex does not appear to output this information]

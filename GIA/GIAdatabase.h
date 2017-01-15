@@ -11,11 +11,10 @@
 
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
+#include "GIAglobalDefs.h"
 
 
-#define GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
 
-//#define GIA_DATABASE_DEBUG
 
 //#define GIA_USE_TIME_NODE_INDEXING
 

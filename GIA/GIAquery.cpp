@@ -1260,11 +1260,13 @@ void traceEntityNodeDetermineNextCourseOfAction(string * printEntityNodeString, 
 {
 	if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_PRINT)
 	{
+		/*
 		#ifdef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 		*printEntityNodeString = *printEntityNodeString + "\nContext: = " + entityNode->entityName;			
 		#else
+		*/
 		*printEntityNodeString = *printEntityNodeString + "\nContext: " + context + " = " + entityNode->entityName;		
-		#endif	
+		//#endif	
 	}
 	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES)
 	{

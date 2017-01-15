@@ -19,8 +19,6 @@
 #endif
 
 
-#define GIA_DEBUG_PRINT_QUERY_SEMANTIC_NETWORK
-
 #define CFF_XML_TAG_nlparse ((string)"nlparse")
 #define CFF_XML_TAG_paragraph ((string)"paragraph")
 #define CFF_XML_TAG_sentence ((string)"sentence")
@@ -30,17 +28,13 @@
 
 #define GIA_TM_STRUCT_YEAR_OFFSET 1900
 
-#define GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
-//#define GIA_DO_NOT_PRINT_RESULTS
-
 #ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 	#define GIA_COMPILE_PRINT_INEXACT_ANSWER_AMBIENT_CONTEXT
 #endif
 
 //#define GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
 
-#define GIA_RELEX_EXECUTABLE_NAME "execute-relex.sh"
-//OLD: #define GIA_RELEX_EXECUTABLE_RELATIVE_PATH_NAME "/relex-1.3.0/"	//gets added to executable path name
+
 
 int main(int argc,char **argv);
 #ifdef USE_CE	

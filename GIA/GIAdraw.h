@@ -25,12 +25,11 @@
 using namespace std;
 
 #include "LDreferenceClass.h"
+#include "GIAglobalDefs.h"
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
-//#define GIA_DRAW_DEBUG
 
-//#define GIA_DRAW_USE_PATENT
 #ifdef GIA_DRAW_USE_PATENT
 	//#define GIA_DRAW_USE_UNIQUE_COLOURS_FOR_ENTITY_DEFINITION_NODES	//switched off for patent diagrams
 	//#define GIA_DRAW_USE_UNIQUE_COLOURS_FOR_ENTITY_DEFINITION_CONNECTIONS	//switched on for patent diagrams

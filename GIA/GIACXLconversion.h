@@ -28,10 +28,6 @@ using namespace std;
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
-#define TRIAL_DATA_CXL_CONVERSION_ONLY
-#ifdef TRIAL_DATA_CXL_CONVERSION_ONLY
-	#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. concept-list -> concepts or properties
-#endif
 #ifdef GIA_CMAP_CONVERSION_SANITISED
 	#define GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
 	/*

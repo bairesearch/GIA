@@ -14,6 +14,7 @@
 #define HEADER_GIA_PARSER
 
 #include "GIASentenceClass.h"
+#include "GIAglobalDefs.h"
 
 #include <iostream>
 #include <fstream>
@@ -24,7 +25,6 @@
 #include <string>
 using namespace std;
 
-//#define DEBUG_TRAIN_NETWORK_WITH_NON_RANDOM_VARS
 
 
 void GIATHparseRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence);

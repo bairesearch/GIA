@@ -487,7 +487,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				string quantityNumberStringTemp;
 				if(entityNode->isQuery)
 				{
-					quantityNumberStringTemp = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_TEMP_FOR_DISPLAY_ONLY;
+					quantityNumberStringTemp = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
 				}
 				else
 				{
