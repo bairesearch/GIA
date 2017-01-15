@@ -479,9 +479,9 @@ bool findPreviousRelationship(GIAentityNode* instanceEntity, GIAentityNode* comp
 
 				*targetEntityFound = definitionEntity;
 				
-				//#ifdef GIA_TRANSLATOR_DEBUG
+				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "previousDefinitionRelationshipFound" << endl;
-				//#endif
+				#endif
 			}
 		}
 	}
@@ -498,9 +498,9 @@ bool findPreviousRelationship(GIAentityNode* instanceEntity, GIAentityNode* comp
 				
 				*targetEntityFound = propertyEntity;	//REDUNDANT
 				
-				//#ifdef GIA_TRANSLATOR_DEBUG
+				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "previousPropertyRelationshipFound" << endl;
-				//#endif
+				#endif
 			}
 		}
 	}
