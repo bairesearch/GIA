@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p12a 26-September-2012
+ * Project Version: 1p10b 23-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -245,6 +245,9 @@ int main(int argc,char **argv)
 	string outputQueryLRPTextPlainTXTFileName = "inputTextWithLRPQuery.txt";
 	bool useOutputQueryLRPTextForNLPonlyPlainTXTFile = false;
 	string outputQueryLRPTextForNLPonlyPlainTXTFileName = "inputTextWithLRPforNLPonlyQuery.txt";
+	GIALRPtagTextCorrespondenceInfo * textGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();
+	GIALRPtagTextCorrespondenceInfo * queryGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();	
+	initialiseCurrentGIALRPtagTextCorrespondenceInfo();
 	string lrpDataFolderName = "";
 #endif
 
@@ -628,7 +631,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1p12a 26-September-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1p10b 23-September-2012" << endl;
 			exit(1);
 		}
 
@@ -658,22 +661,22 @@ int main(int argc,char **argv)
 	//fillInGIARulesExternVariables();
 
 	#ifdef GIA_USE_DATABASE
-	initialiseDatabase(readFromDatabase, databaseFolderName, useDatabase);
-	#ifdef LINUX
-	chdir(workingFolderCharStar);
-	#else
-	::SetCurrentDirectory(workingFolderCharStar);
-	#endif		
+	if(useDatabase)
+	{
+		openDatabase(readFromDatabase, databaseFolderName);
+
+		#ifdef LINUX
+		chdir(workingFolderCharStar);
+		#else
+		::SetCurrentDirectory(workingFolderCharStar);
+		#endif		
+	}
 	#endif
 	
 	#ifdef USE_WORDNET
 	initialiseWordNet(synonymnDetectionStatus);
 	#endif	
 
-	#ifdef GIA_USE_LRP
-	initialiseLRP(lrpDataFolderName, useLRP);
-	#endif
-	
 	vector<GIAEntityNode*> * entityNodesActiveListComplete = new vector<GIAEntityNode*>;
 	unordered_map<string, GIAEntityNode*> * entityNodesActiveListConcepts = new unordered_map<string, GIAEntityNode*>;
 	vector<GIAEntityNode*> * entityNodesActiveListSubstances = new vector<GIAEntityNode*>;
@@ -813,18 +816,15 @@ int main(int argc,char **argv)
 			useOutputLRPTextForNLPonlyPlainTXTFile = true;
 			outputLRPTextForNLPonlyPlainTXTFileName = outputTextAllFileName + "afterLRPforNLPonly.txt";
 		}
-		if(useInputQuery)
+		if(!useOutputQueryLRPTextPlainTXTFile)
 		{
-			if(!useOutputQueryLRPTextPlainTXTFile)
-			{
-				useOutputQueryLRPTextPlainTXTFile = true;
-				outputQueryLRPTextPlainTXTFileName = outputTextAllFileName + "afterLRPQuery.txt";
-			}
-			if(!useOutputQueryLRPTextForNLPonlyPlainTXTFile)
-			{
-				useOutputQueryLRPTextForNLPonlyPlainTXTFile = true;
-				outputQueryLRPTextForNLPonlyPlainTXTFileName = outputTextAllFileName + "afterLRPforNLPonlyQuery.txt";
-			}
+			useOutputQueryLRPTextPlainTXTFile = true;
+			outputQueryLRPTextPlainTXTFileName = outputTextAllFileName + "afterLRPQuery.txt";
+		}
+		if(!useOutputQueryLRPTextForNLPonlyPlainTXTFile)
+		{
+			useOutputQueryLRPTextForNLPonlyPlainTXTFile = true;
+			outputQueryLRPTextForNLPonlyPlainTXTFileName = outputTextAllFileName + "afterLRPforNLPonlyQuery.txt";
 		}
 	}
 
@@ -857,7 +857,22 @@ int main(int argc,char **argv)
 	cout << "rasterImageWidth = " << rasterImageWidth << endl;
 	cout << "rasterImageHeight = " << rasterImageHeight << endl;
 	#endif
-
+	
+#ifdef GIA_USE_LRP
+	if(useLRP)
+	{
+		initialiseLRP(lrpDataFolderName);
+		if(useInputQuery)
+		{
+			setCurrentGIALRPtagTextCorrespondenceInfo(true);	//required for local variable access
+			if(!parseTextFileAndReduceLanguage(inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, outputQueryLRPTextForNLPonlyPlainTXTFileName))
+			{
+				result = false;
+			}
+		}
+		inputQueryPlainTXTFileName = outputQueryLRPTextForNLPonlyPlainTXTFileName;	//now perform NLP using NLP specific (dummy) version of LRP output
+	}
+#endif
 
 	
 #ifdef GIA_SUPPORT_INPUT_FILE_LISTS
@@ -901,6 +916,7 @@ int main(int argc,char **argv)
 
 	for(int inputFileNameIndex=0; inputFileNameIndex<numberOfInputFilesInList; inputFileNameIndex++)	//CHECKTHIS: change back to 0
 	{
+		
 		#ifdef LINUX
 		chdir(workingFolderCharStar);
 		#else
@@ -944,7 +960,6 @@ int main(int argc,char **argv)
 		#ifdef GIA_USE_LRP
 		if(useLRP)
 		{
-			initialiseCurrentGIALRPtagTextCorrespondenceInfo(false);	
 			setCurrentGIALRPtagTextCorrespondenceInfo(false);	//required for local variable access
 			if(!parseTextFileAndReduceLanguage(inputTextPlainTXTFileName, outputLRPTextPlainTXTFileName, outputLRPTextForNLPonlyPlainTXTFileName))
 			{
@@ -963,7 +978,7 @@ int main(int argc,char **argv)
 			#ifdef GIA_WITH_CE_USE_CODEEXTENSION_HEIRACHY
 			useCodeextensionsHeirachy = true;
 			#else
-			useCodeextensionsHeirachy = false;		//have GIA parse codeextension list like any ordinary file (do not execute GIA for each codeextension dependency hierarchical combination)
+			useCodeextensionsHeirachy = false;		//have GIA parse claims list like any ordinary file (do not execute GIA for each claim dependency hierarchical combination)
 			#endif
 
 			//generate codeextensions heirachy
@@ -1032,12 +1047,6 @@ int main(int argc,char **argv)
 				}
 				useInputTextNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
 
-				#ifdef LINUX
-				chdir(tempFolderCharStar);
-				#else
-				::SetCurrentDirectory(tempFolderCharStar);
-				#endif
-	
 				/*
 				#ifdef GIA_USE_LRP
 				convertRevertNLPtagNamesToOfficialLRPOutput(NLPdependencyRelationsParser, NLPfeatureParser, LRPTextForNLPonlyPlainTXTFileName, LRPTextPlainTXTFileName, inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName);
@@ -1110,42 +1119,7 @@ int main(int argc,char **argv)
 
 			}
 		}
-		
-		#ifdef GIA_USE_LRP
-		if(useLRP)
-		{
-			deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(false);	//required for local variable access
-		}
-		#endif	
-#ifdef GIA_SUPPORT_INPUT_FILE_LISTS					
 	}
-#endif	
-
-	#ifdef LINUX
-	chdir(workingFolderCharStar);
-	#else
-	::SetCurrentDirectory(workingFolderCharStar);
-	#endif	
-
-#ifdef GIA_USE_LRP
-	if(useLRP)
-	{
-		if(useInputQuery)
-		{
-			//cout << "inputQueryPlainTXTFileName = " << inputQueryPlainTXTFileName << endl;
-			//cout << "outputQueryLRPTextPlainTXTFileName = " << outputQueryLRPTextPlainTXTFileName << endl;
-			//cout << "outputQueryLRPTextForNLPonlyPlainTXTFileName = " << outputQueryLRPTextForNLPonlyPlainTXTFileName << endl;
-			
-			initialiseCurrentGIALRPtagTextCorrespondenceInfo(true);
-			setCurrentGIALRPtagTextCorrespondenceInfo(true);	//required for local variable access
-			if(!parseTextFileAndReduceLanguage(inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, outputQueryLRPTextForNLPonlyPlainTXTFileName))
-			{
-				result = false;
-			}
-		}
-		inputQueryPlainTXTFileName = outputQueryLRPTextForNLPonlyPlainTXTFileName;	//now perform NLP using NLP specific (dummy) version of LRP output
-	}
-#endif
 
 	if(useInputQueryPlainTXTFile)
 	{
@@ -1174,19 +1148,15 @@ int main(int argc,char **argv)
 			}
 			useInputQueryNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
 
-			#ifdef LINUX
-			chdir(tempFolderCharStar);
-			#else
-			::SetCurrentDirectory(tempFolderCharStar);
-			#endif
-				
 			/*
 			#ifdef GIA_USE_LRP
 			convertRevertNLPtagNamesToOfficialLRPOutput(queryNLPdependencyRelationsParser, queryNLPfeatureParser, outputQueryLRPTextForNLPonlyPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, inputQueryTextNLPrelationXMLFileName, inputQueryTextNLPfeatureXMLFileName);
 			#endif
 			*/
 		}
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
 	}
+#endif
 
 	if(useInputQueryNLPrelationXMLFile)
 	{

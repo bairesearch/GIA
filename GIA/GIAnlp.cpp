@@ -23,7 +23,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p12a 26-September-2012
+ * Project Version: 1p10b 23-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -62,17 +62,6 @@ using namespace std;
 
 void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPXMLFileName, int NLPParser, string NLPexeFolderArray[], bool parseRelationsOrFeatures)
 {
-	/*
-	NB execute NLP on current folder not saved working folder (this is required for when a preprocessor eg LRP/CE has been executed on the input text): 
-	so must assume current folder has been set to the folder where the [pre-processed] plain text file exists (if not the actual working folder)
-	*/
-	char currentFolderCharStar[EXE_FOLDER_PATH_MAX_LENGTH];
-	#ifdef LINUX
-	getcwd(currentFolderCharStar, EXE_FOLDER_PATH_MAX_LENGTH);
-	#else
-	::GetCurrentDirectory(EXE_FOLDER_PATH_MAX_LENGTH, currentFolderCharStar);
-	#endif
-			
 	/*
 	int inputTextNLPParsedXMLFileNameLength = inputTextNLPXMLFileName.length();
 	int inputTextNLPParsedXMLFileNameIndexOfExtension = inputTextNLPXMLFileName.rfind(".");		//find last occurance of "."
@@ -122,7 +111,7 @@ void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPXMLFi
 
 	//execute NLP parser on plain text
 	string executeNLPCommand = "";
-	executeNLPCommand = executeNLPCommand + NLPexeFolder + "/" + NLPParserExecutableName + " " + inputTextPlainTXTFileName + " " + inputTextNLPXMLFileName + " " + currentFolderCharStar + " " + tempFolderCharStar + " " + StanfordCoreNLPdefaultOutputFileExtensionAppend;
+	executeNLPCommand = executeNLPCommand + NLPexeFolder + "/" + NLPParserExecutableName + " " + inputTextPlainTXTFileName + " " + inputTextNLPXMLFileName + " " + workingFolderCharStar + " " + tempFolderCharStar + " " + StanfordCoreNLPdefaultOutputFileExtensionAppend;
 
 	#ifdef LINUX
 	chdir(NLPexeFolder.c_str());
@@ -163,12 +152,6 @@ void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPXMLFi
 
 	}
 	#endif
-	
-	#ifdef LINUX
-	chdir(currentFolderCharStar);
-	#else
-	::SetCurrentDirectory(currentFolderCharStar);
-	#endif	
 }
 
 
@@ -608,12 +591,9 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 					if(parseFeatures)
 					{//process lemma only if parsing features
 						#ifdef GIA_USE_LRP
-						if(getUseLRP())
-						{						
-							bool foundOfficialLRPreplacementString = false;
-							Relation * currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
-							revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentence, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
-						}
+						bool foundOfficialLRPreplacementString = false;
+						Relation * currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
+						revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentence, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
 						#endif
 						#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PRONOUN_LEMMA_CASE_ASSIGNMENT_BUG_MAKE_ALL_LEMMAS_LOWER_CASE
 						string lemma = currentFeatureInList->lemma;

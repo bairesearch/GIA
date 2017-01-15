@@ -23,7 +23,7 @@
  * File Name: GIAParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p12a 26-September-2012
+ * Project Version: 1p10b 23-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -72,37 +72,34 @@ void convertStanfordRelationToRelex(Relation * currentRelationInList, Sentence *
 	#ifdef GIA_USE_LRP
 	//if(stanfordPrepositionFound)
 	//{
-	if(getUseLRP())
+	//if necessary revert temporary/dummy NLP multiword preposition to official LRP form
+	bool foundOfficialLRPreplacementString = false;
+	Feature * tempFeature = new Feature();
+	tempFeature->word = tempRelexPrepositionString; 
+	revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, true, &foundOfficialLRPreplacementString);
+	if(foundOfficialLRPreplacementString)
 	{
-		//if necessary revert temporary/dummy NLP multiword preposition to official LRP form
-		bool foundOfficialLRPreplacementString = false;
-		Feature * tempFeature = new Feature();
-		tempFeature->word = tempRelexPrepositionString; 
-		revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, true, &foundOfficialLRPreplacementString);
-		if(foundOfficialLRPreplacementString)
+		string officialLRPentityName = tempFeature->word;
+		if(stanfordPrepositionFound)
 		{
-			string officialLRPentityName = tempFeature->word;
-			if(stanfordPrepositionFound)
-			{
-				relationTypeRelexStandard = "";
-				relationTypeRelexStandard = relationTypeRelexStandard + STANFORD_PARSER_PREPOSITION_PREPEND + officialLRPentityName;
-				#ifdef GIA_NLP_DEBUG
-				//cout << "stanfordPrepositionFound" << endl;
-				//cout << "relationTypeRelexStandard = " << relationTypeRelexStandard << endl;
-				#endif
-			}
-			else
-			{
-				cout << "!stanfordPrepositionFound" << endl;
-				relationTypeRelexStandard = officialLRPentityName;
-			}
-			#ifdef GIA_LRP_DEBUG
-			cout << "convertStanfordRelationToRelex() foundOfficialLRPreplacementString: tempRelexPrepositionString = " << tempRelexPrepositionString << ", relationTypeRelexStandard= " << relationTypeRelexStandard << endl;
+			relationTypeRelexStandard = "";
+			relationTypeRelexStandard = relationTypeRelexStandard + STANFORD_PARSER_PREPOSITION_PREPEND + officialLRPentityName;
+			#ifdef GIA_NLP_DEBUG
+			//cout << "stanfordPrepositionFound" << endl;
+			//cout << "relationTypeRelexStandard = " << relationTypeRelexStandard << endl;
 			#endif
-			//currentRelationInList->relationTypeForNLPonly = relationTypeRelexStandard;	//not required
 		}
-		delete tempFeature;
+		else
+		{
+			cout << "!stanfordPrepositionFound" << endl;
+			relationTypeRelexStandard = officialLRPentityName;
+		}
+		#ifdef GIA_LRP_DEBUG
+		cout << "convertStanfordRelationToRelex() foundOfficialLRPreplacementString: tempRelexPrepositionString = " << tempRelexPrepositionString << ", relationTypeRelexStandard= " << relationTypeRelexStandard << endl;
+		#endif
+		//currentRelationInList->relationTypeForNLPonly = relationTypeRelexStandard;	//not required
 	}
+	delete tempFeature;
 	//}	
 	#endif
 	currentRelationInList->relationType = relationTypeRelexStandard;
@@ -440,12 +437,9 @@ void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSenten
 			#endif
 
 				#ifdef GIA_USE_LRP
-				if(getUseLRP())				
-				{
-					bool foundOfficialLRPreplacementString = false;
-					Relation * currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
-					revertNLPtagNameToOfficialLRPtagName(currentFeature, currentSentenceInList, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
-				}
+				bool foundOfficialLRPreplacementString = false;
+				Relation * currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
+				revertNLPtagNameToOfficialLRPtagName(currentFeature, currentSentenceInList, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
 				#endif
 				
 				#ifdef GIA_NLP_DEBUG		

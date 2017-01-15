@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p12a 26-September-2012
+ * Project Version: 1p10b 23-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -131,7 +131,7 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirac
 		Sentence * firstSentenceInArtificialList = generateArtificialSentenceListBasedUponParentCodeextensions(currentCodeextensionInHeirachy, lastSentenceInArtificialList, true);
 
 		#ifdef GIA_WITH_CE_DEBUG
-		cout << "CE DEBUG: print codeextension heirachy dependency relations for:" << endl;
+		cout << "CE DEBUG: print claim heirachy dependency relations for:" << endl;
 		cout << "currentCodeextensionInHeirachy->codeextensionTextRaw = " << currentCodeextensionInHeirachy->codeextensionTextRaw << endl;		
 		#endif
 		Sentence * currentSentenceInArtificialList = firstSentenceInArtificialList;
@@ -511,18 +511,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		disableRedundantNodesStanfordParser(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray);
 
 
-		#ifdef GIA_LRP_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
-		if(!(getUseLRP()))
-		{
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1c1; redistribute Stanford Relations NSubj And Preposition" << endl;
 		#endif
-			#ifdef GIA_TRANSLATOR_DEBUG
-			cout << "pass 1c1; redistribute Stanford Relations NSubj And Preposition" << endl;
-			#endif
-			redistributeStanfordRelationsMultiwordPreposition(currentSentenceInList, GIAFeatureTempEntityNodeArray);
-		#ifdef GIA_LRP_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
-		}
-		#endif
-		
+		redistributeStanfordRelationsMultiwordPreposition(currentSentenceInList, GIAFeatureTempEntityNodeArray);
+
 		//added 8 August 2012
 		#ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE
 		#ifdef GIA_TRANSLATOR_DEBUG
