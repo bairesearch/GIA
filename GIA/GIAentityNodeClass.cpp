@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1d 15-July-2013
+ * Project Version: 1t2a 17-July-2013
  *
  *******************************************************************************/
 
@@ -241,6 +241,8 @@ GIAentityNode::GIAentityNode(void)
 	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 	isName = false;
 	#endif
+	
+	isToBeComplimentOfActionTemp = false;
 }
 GIAentityNode::~GIAentityNode(void)
 {

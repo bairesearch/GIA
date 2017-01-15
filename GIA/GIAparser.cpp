@@ -23,7 +23,7 @@
  * File Name: GIAparser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1d 15-July-2013
+ * Project Version: 1t2a 17-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -63,7 +63,7 @@ void convertStanfordRelationToRelex(Relation * currentRelationInList, Sentence *
 	}
 
 	bool stanfordPrepositionFound = false;
-	string tempRelexPrepositionString = convertStanfordPrepositionToRelex(&stanfordRelation, GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+	string tempRelexPrepositionString = convertPrepositionToRelex(&stanfordRelation, GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
 	if(stanfordPrepositionFound)
 	{
 		relationTypeRelexStandard = stanfordRelation;	//do not modify stanford preposition relations "prep_...." to "_prep_..."

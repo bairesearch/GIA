@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1d 15-July-2013
+ * Project Version: 1t2a 17-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -256,7 +256,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 	What time is it?	_subj(be[3], time[2]) + _obj(be[3], it[4]) -> appos(time[2], $qVar[4])
 		note query comparison node used to be identified via identifyComparisonVariableAlternateMethod()
 	*/
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
@@ -520,11 +520,11 @@ void redistributeRelexRelationsDetectNameQueries(Sentence * currentSentenceInLis
 
 #ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS
 //Added 28 October 2012b
-void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType)
+void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 	//eg1 Yarn is used in the making of cloth.	of(making[6], cloth[8]) + in(use[3], making[6])  -> _obj(making[6], _cloth[8])
 	//eg2 What is yarn used in the making of?   interpret  of(making[7], of[8]) + _obj(of[8], _$qVar[1])  -> _obj(making[7], _$qVar[1])
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PREPOSITION_OF;
@@ -562,8 +562,8 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 		if(!(currentRelationInList->disabled))	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
 		{
 		//#endif
-			bool stanfordPrepositionFound = false;
-			if(convertStanfordPrepositionToRelex(&(currentRelationInList->relationType), NLPdependencyRelationsType, &stanfordPrepositionFound) == RELATION_TYPE_PREPOSITION_OF)
+			bool prepositionFound = false;
+			if(convertPrepositionToRelex(&(currentRelationInList->relationType), NLPdependencyRelationsType, &prepositionFound) == RELATION_TYPE_PREPOSITION_OF)
 			{				
 				int continuousVerbIndex = currentRelationInList->relationGovernorIndex;
 				GIAentityNode * continuousVerbEntity = GIAentityNodeArray[continuousVerbIndex];
@@ -576,8 +576,8 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 						if(!(currentRelationInList2->disabled))	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
 						{
 						//#endif
-							bool stanfordPrepositionFound2 = false;
-							if(convertStanfordPrepositionToRelex(&(currentRelationInList2->relationType), NLPdependencyRelationsType, &stanfordPrepositionFound2) != RELATION_TYPE_PREPOSITION_OF)
+							bool prepositionFound2 = false;
+							if(convertPrepositionToRelex(&(currentRelationInList2->relationType), NLPdependencyRelationsType, &prepositionFound2) != RELATION_TYPE_PREPOSITION_OF)
 							{
 								if(currentRelationInList2->relationDependent == currentRelationInList->relationGovernor)
 								{
@@ -633,6 +633,154 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 #endif	
 }
 #endif
+
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+
+#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
+void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]) 
+{
+	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
+	/*eg1;  Space is saved by having a chicken.	_subj(have[5], by[4]) + _obj(have[5], chicken[7]) + _advmod(save[3], by[4]) -> dobj(have[5], chicken[7]) + prep_by(save[3], have[5])	{required for interpretation by linkHavingPropertyConditionsAndBeingDefinitionConditions}
+	_subj(have[5], by[4])
+	_obj(have[5], chicken[7])
+	_advmod(save[3], by[4])
+	_obj(save[3], space[1]) 	[IRRELEVANT]
+	*/
+	/*eg2;  Space is saved by being a chicken.	_subj(be[5], by[4]) + _obj(be[5], chicken[7] + _advmod(save[3], by[4]) -> dobj(be[5], chicken[7]) + prep_by(save[3], be[5])	{required for interpretation by linkHavingPropertyConditionsAndBeingDefinitionConditions} 
+	_subj(be[5], by[4])
+	_obj(be[5], chicken[7])
+	_advmod(save[3], by[4])
+	_obj(save[3], space[1]) 	[IRRELEVANT]
+	*/
+	/*eg3;  Space is saved by moving a chicken.	_subj(move[5], by[4]) + _obj(move[5], chicken[7]) + _advmod(save[3], by[4]) -> -> dobj(move[5], chicken[7]) + prep_by(save[3], move[5])
+	_subj(move[5], by[4])
+	_obj(move[5], chicken[7])
+	_advmod(save[3], by[4])
+	_obj(save[3], space[1])		[IRRELEVANT]
+	*/
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	param.numberOfRelations = 3;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
+	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
+	param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_ADJECTIVE_ADVMOD;
+	param.useRelationIndexTest[REL1][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT1] = REL2; param.relationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT1;
+	param.useRelationIndexTest[REL1][REL_ENT2] = true; param.relationIndexTestRelationID[REL1][REL_ENT2] = REL3; param.relationIndexTestEntityID[REL1][REL_ENT2] = REL_ENT2;
+	param.disableRelation[REL1] = true;
+	param.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT2] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT2] = REL_ENT1;	
+	param.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT3] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT3] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT3] = REL_ENT2;	
+	genericDependecyRelationInterpretation(&param, 1);
+	#else
+	cout << "!GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION not migrated for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION" << endl;
+	#endif
+}
+#endif
+#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
+void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationAllWithADefinitionFunctionAsPropertyLinks(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]) 
+{
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO
+	/*eg; The chicken is 3 minutes late.	_subj(be[3], chicken[2]) + _obj(be[3], minutes[5]) + _advmod(be[3], late[6]) -> _advmod(late[6], minutes[5]) + _advmod(chicken[2],  late[6])
+	_subj(be[3], chicken[2])
+	_obj(be[3], minutes[5])
+	_advmod(be[3], late[6])
+	_quantity(minutes[5], 3[4]) [IRRELEVANT]
+	*/
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	param.numberOfRelations = 3;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
+	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
+	param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_ADJECTIVE_ADVMOD;
+	param.useRelationIndexTest[REL1][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT1] = REL2; param.relationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT1;
+	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL3; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
+	param.useRelationTest[REL1][REL_ENT1] = true; param.relationTest[REL1][REL_ENT1] = RELATION_ENTITY_BE;
+	param.useRelationTest[REL2][REL_ENT1] = true; param.relationTest[REL2][REL_ENT1] = RELATION_ENTITY_BE;	//redundant test
+	param.useRelationTest[REL3][REL_ENT1] = true; param.relationTest[REL3][REL_ENT1] = RELATION_ENTITY_BE;	//redundant test
+	param.disableRelation[REL1] = true;
+	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL3; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
+	param.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_ADJECTIVE_ADVMOD;
+	param.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT1] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT1] = REL_ENT2;	
+	genericDependecyRelationInterpretation(&param, 1);
+	#else
+	cout << "GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO not migrated for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION" << endl;
+	#endif
+}
+#endif
+#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A_RELATIONS_DISREGARD_REDUNDANT_DEFINITION_RELATIONS
+void redistributeRelexRelationsDisregardRedundantDefinitionRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])  
+{
+	/*
+	Eg;	What are the patent claims on?	_subj(be[2], claim[5]) + _obj(on[6], _$qVar[1]) -> on(claim[5], _$qVar[1]) 
+	_subj(be[2], claim[5])
+	_obj(on[6], _$qVar[1])
+	_advmod(be[2], on[6])	+ on(be[2], on[6]) [DUPLICATE INFO: IGNORE]
+	*/
+
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	param.numberOfRelations = 3;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
+	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
+	param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_ADJECTIVE_ADVMOD;
+	param.useRelationIndexTest[REL1][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT1] = REL3; param.relationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT1;
+	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL3; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT2;
+	param.useRelationTest[REL1][REL_ENT1] = true; param.relationTest[REL1][REL_ENT1] = RELATION_ENTITY_BE;
+	param.disableRelation[REL1] = true;
+	param.disableRelation[REL3] = true;
+	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
+	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL3; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT2;	
+	genericDependecyRelationInterpretation(&param, 1);
+	
+	#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
+	cout << "!GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK not migrated for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION" << endl;
+	#endif
+
+}
+#endif
+#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_RELATION_AS_ACTION_CONDITION
+void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]) 
+{
+
+	/*eg 1 Space is saved by running fast.	_subj(run[5], by[4]) + _advmod(save[3], by[4]) -> by(save[3], run[5])
+	_subj(run[5], by[4])
+	_advmod(save[3], by[4])
+	_obj(save[3], space[1]) [NOT MODIFIED]
+	_advmod(run[5], fast[6]) [NOT MODIFIED + IRRELEVANT]
+	*/
+
+	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	paramA.numberOfRelations = 3;
+	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
+	paramA.useRelationTest[REL2][REL_ENT3] = true; paramA.relationTest[REL2][REL_ENT3] = RELATION_TYPE_ADJECTIVE_ADVMOD;
+	paramA.useRelationTest[REL3][REL_ENT3] = true; paramA.relationTest[REL3][REL_ENT3] = RELATION_TYPE_OBJECT;
+	paramA.useRelationIndexTest[REL1][REL_ENT2] = true; paramA.relationIndexTestRelationID[REL1][REL_ENT2] = REL2; paramA.relationIndexTestEntityID[REL1][REL_ENT2] = REL_ENT2;
+	paramA.useRelationIndexTest[REL2][REL_ENT1] = true; paramA.relationIndexTestRelationID[REL2][REL_ENT1] = REL3; paramA.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
+	paramA.disableRelation[REL1] = true;
+	paramA.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT1;	
+	paramA.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL2; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT2; paramA.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL2][REL_ENT3] = true;	
+	genericDependecyRelationInterpretation(&paramA, 1);
+
+	/*eg 2 What is the Co-cart designed for?	_obj(for[6], _$qVar[1]) + _advmod(design[5], for[6]) -> for(design[5], _$qVar[1])
+	_obj(for[6], _$qVar[1])
+	_advmod(design[5], for[6])
+	_obj(design[5], Co[4]) [NOT MODIFIED]
+	for(design[5], _$qVar[1]) [NOT MODIFIED + IRRELEVANT]
+	*/
+
+	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	paramB.numberOfRelations = 3;
+	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_OBJECT;
+	paramB.useRelationTest[REL2][REL_ENT3] = true; paramB.relationTest[REL2][REL_ENT3] = RELATION_TYPE_ADJECTIVE_ADVMOD;
+	paramB.useRelationTest[REL3][REL_ENT3] = true; paramB.relationTest[REL3][REL_ENT3] = RELATION_TYPE_OBJECT;
+	paramB.useRelationIndexTest[REL1][REL_ENT1] = true; paramB.relationIndexTestRelationID[REL1][REL_ENT1] = REL2; paramB.relationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT2;
+	paramB.useRelationIndexTest[REL2][REL_ENT1] = true; paramB.relationIndexTestRelationID[REL2][REL_ENT1] = REL3; paramB.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
+	paramB.disableRelation[REL1] = true;
+	paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;	
+	paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL2; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT2; paramB.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL2][REL_ENT3] = true;	
+	genericDependecyRelationInterpretation(&paramB, 1);
+	
+}
+#endif
+
+#endif
+
 
 
 

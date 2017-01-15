@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1d 15-July-2013
+ * Project Version: 1t2a 17-July-2013
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -348,7 +348,6 @@ public:
 	#endif
 	int NERTemp;
 
-
 	//bool isReferenceEntityInThisSentence;	//temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
 	bool entityAlreadyDeclaredInThisContext;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
 
@@ -409,6 +408,8 @@ public:
 	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 	bool isName;
 	#endif
+	
+	bool isToBeComplimentOfActionTemp;	//required for Relex (linkConditions()/defineSubstancesOfPossessivePrepositions())
 };
 
 

@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1d 15-July-2013
+ * Project Version: 1t2a 17-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -515,7 +515,11 @@
 
 //variables currently being tested (1t1a+)
 #define GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
-//#define GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+//#define GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG	//allows questions to be properly parsed during relation redistribution when they are added to inputText also (instead of just inputTextQuery) 
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+	#define GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION	//1t1a
+	#define GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK			//1t2a
+#endif
 										
 //variables currently being tested (1s1a+)
 #define GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER	//disable this if using previously tested version of Stanford CoreNLP (stanford-corenlp-2012-04-03)

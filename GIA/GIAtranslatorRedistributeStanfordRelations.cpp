@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1d 15-July-2013
+ * Project Version: 1t2a 17-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -143,7 +143,7 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 					//cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
 					#endif
 					
-					//currentRelationInList->disabled = true;	//removed 14 July 2013 for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION (leave quantity dependency relations active)
+					//currentRelationInList->disabled = true;	//removed 14 July 2013 for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK (leave quantity dependency relations active) [although unncessary since quantity link generalisation remains unimplemented]
 
 					disableEntity(dependentEntity);
 
@@ -164,7 +164,7 @@ void disableRedundantNodesStanfordParser(Sentence * currentSentenceInList, bool 
 	//ONLY USED FOR OLD VERSION OF STANFORD PARSER/CORENLP? note the following example no longer generates a complm dependency relation... 
 	//eliminate redundant complementizer 'that' nodes eg 'The authors believe that their method can identify the time at which a subject becomes aware of her own movement.' / _complm(identify[8], that[4])
 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLEMENTIZER;
@@ -202,7 +202,7 @@ void disableRedundantNodesStanfordParser(Sentence * currentSentenceInList, bool 
 
 void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		//general parameters
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.useRelationIndexTest[REL1][REL_ENT3] = true; param.relationIndexTestRelationID[REL1][REL_ENT3] = REL2; param.relationIndexTestEntityID[REL1][REL_ENT3] = REL_ENT3; param.relationIndexTestIsNegative[REL1][REL_ENT3] = true;
@@ -355,7 +355,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 		{
 		#endif
 			bool stanfordPrepositionFound = false;
-			string relexPreposition = convertStanfordPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+			string relexPreposition = convertPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
 			
 			#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP
 			if(stanfordPrepositionFound || (currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO))
@@ -543,7 +543,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 #else	
 	//for queries only (1j6h)
 	#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP
-	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 
 		/*
 		What is the Co-cart designed to do?
@@ -713,14 +713,14 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	/*
 	What are the patent claims on?
 	match dep with prep
-		dep(are-2, What-1)/ nsubj(are-2, claims-5) / prep(are-2, on-6):
-			dep(are-2, What-1) / prep(are-2, on-6) => prep_on(are-2, What-1)
+		dep(are-2, What-1) + nsubj(are-2, claims-5) + prep(are-2, on-6):
+			dep(are-2, What-1) + prep(are-2, on-6) => prep_on(are-2, What-1)
 				[then rely upon redistributeStanfordRelationsMultiwordPreposition() for  nsubj(are-4, claims-3) / prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)]
 	*/
 	//for queries only (1j6g)
 	
 #ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_WITH_BE
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION			
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION			
 	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	paramB.numberOfRelations = 2;
 	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DEPENDENT;
@@ -809,12 +809,12 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	prep_on(are-4, mechanism-17)
 	conj_and(frame-8, mechanism-17)
 	*/
-	//eg1 look for nsubj/prep combination, eg nsubj(are-4, claims-3) / prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)
-	//eg2 case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; The claims that are on the frame are blue. , nsubj(are-4, claims-2) / prep_on(are-4, frame-7) / rcmod(claims-2, are-4)
-		//OLD: look for nsubj/prep combination, eg nsubj(next-4, garage-2) / prep_to(next-4, house-7)	=> prep_subj(next_to, house) / prep_subj(next_to, garage)
+	//eg1 look for nsubj/prep combination, eg nsubj(are-4, claims-3) + prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)
+	//eg2 case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; The claims that are on the frame are blue. , nsubj(are-4, claims-2) + prep_on(are-4, frame-7) + rcmod(claims-2, are-4)
+		//OLD: look for nsubj/prep combination, eg nsubj(next-4, garage-2) + prep_to(next-4, house-7)	=> prep_subj(next_to, house) + prep_subj(next_to, garage)
 
 #ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		//general parameters
 	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	paramC.numberOfRelations = 2;
@@ -869,7 +869,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 					{
 					#endif
 						bool stanfordPrepositionFound = false;
-						string relexPreposition = convertStanfordPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+						string relexPreposition = convertPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
 
 						if(stanfordPrepositionFound)
 						{
@@ -1193,7 +1193,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 
 
 	*/
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 
 		//general parameters
 	GIAgenericDepRelInterpretationParameters paramOptMult(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
@@ -1305,7 +1305,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		{
 		#endif
 			bool stanfordPrepositionFound = false;
-			string relexPreposition = convertStanfordPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+			string relexPreposition = convertPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
 
 			if(stanfordPrepositionFound)
 			{
@@ -1641,7 +1641,7 @@ void redistributeStanfordRelationsInterpretOfAsPossessive(Sentence * currentSent
 {
 	//eg The ball of the red dog is green.   prep_of(ball-2, dog-6) ->  poss(ball-5, dog-3)
 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 1;
 	param.expectToFindPrepositionTest[REL1] = true;	//redundant
@@ -1658,7 +1658,7 @@ void redistributeStanfordRelationsInterpretOfAsPossessive(Sentence * currentSent
 		//#endif
 
 			bool stanfordPrepositionFound = false;
-			string relexPreposition = convertStanfordPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+			string relexPreposition = convertPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
 
 			if(stanfordPrepositionFound)
 			{
@@ -1688,16 +1688,16 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 	/*interpret;
 		[given 'The name of the dog near the farm is Max.']
 		'What is the name of the red dog near the farm?' [return entity names]
-			nsubj(is-2, name-4) / attr(is-2, What-1) {/ det(name-4, the-3)} / poss/prep_of(name-4, dog-8) -> appos(dog[8], _$qVar[1])	{_name(dog[8], _$qVar)??}
+			nsubj(is-2, name-4) + attr(is-2, What-1) {+ det(name-4, the-3)} + poss/prep_of(name-4, dog-8) -> appos(dog[8], _$qVar[1])	{_name(dog[8], _$qVar)??}
 		'What is the dog's name?'
-			nsubj(is-2, name-6) / attr(is-2, What-1) / poss(name-6, dog-4)	
+			nsubj(is-2, name-6) + attr(is-2, What-1) + poss(name-6, dog-4)	
 				
 		'What is the number of the red dogs near the farm?' [return entity number/quantity]
-			nsubj(is-2, number-4) / attr(is-2, What-1) {/ det(number-4, the-3)} / poss/prep_of(number-4, dogs-8) -> _quantity(dog[8], _$qVar[1])
+			nsubj(is-2, number-4) + attr(is-2, What-1) {/ det(number-4, the-3)} + poss/prep_of(number-4, dogs-8) -> _quantity(dog[8], _$qVar[1])
 		
 	*/
 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 3;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
@@ -1716,9 +1716,9 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 
 	/*interpret
 	What is the name of the red dog near the farm? [return entity names]
-		nsubj(is-2, name-4) / attr(is-2, What-1) {/ det(name-4, the-3)} / poss/prep_of(name-4, dog-8) -> appos(dog-1, _$qVar[1])	{_name(That-1, _$qVar)??}
+		nsubj(is-2, name-4) + attr(is-2, What-1) {+ det(name-4, the-3)} + poss/prep_of(name-4, dog-8) -> appos(dog-1, _$qVar[1])	{_name(That-1, _$qVar)??}
 	'What is the dog's name?'
-		nsubj(is-2, name-6) / attr(is-2, What-1) / poss(name-6, dog-4)		
+		nsubj(is-2, name-6) + attr(is-2, What-1) + poss(name-6, dog-4)		
 	*/
 	GIAgenericDepRelInterpretationParameters paramNameQuery = param;
 	paramNameQuery.useRelationTest[REL1][REL_ENT2] = true; paramNameQuery.relationTest[REL1][REL_ENT2] = GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME; 
@@ -1734,7 +1734,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 
 	/*interpret
 	What is the number of the red dogs near the farm? [return entity number/quantity]
-	nsubj(is-2, number-4) / attr(is-2, What-1) {/ det(number-4, the-3)} / poss/prep_of(number-4, dogs-8) -> _quantity(dog[8], _$qVar[1])
+	nsubj(is-2, number-4) + attr(is-2, What-1) {+ det(number-4, the-3)} + poss/prep_of(number-4, dogs-8) -> _quantity(dog[8], _$qVar[1])
 	*/
 	GIAgenericDepRelInterpretationParameters paramNumberQuery = param;
 	paramNumberQuery.useRelationTest[REL1][REL_ENT2] = true; paramNumberQuery.relationTest[REL1][REL_ENT2] = GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NUMBER; 
@@ -1810,7 +1810,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 													if(currentRelationInList3->relationType == RELATION_TYPE_POSSESSIVE)
 													#else
 													bool stanfordPrepositionFound = false;
-													string relexPreposition = convertStanfordPrepositionToRelex(&(currentRelationInList3->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+													string relexPreposition = convertPrepositionToRelex(&(currentRelationInList3->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
 													if((currentRelationInList3->relationType == RELATION_TYPE_POSSESSIVE) || (stanfordPrepositionFound && (relexPreposition == RELATION_TYPE_PREPOSITION_OF)))
 													#endif
 													{
@@ -1906,11 +1906,11 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 #ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	//eg interpret 'The red dog's name is Max.'		nsubj(Max-7, name-5)  poss(name-5, dog-3) -> appos(dog-3, Max-7)
-	//eg interpret 'The name of the red dog is Max.'	nsubj(Max-7, name-5)  prep_of(name-5, dog-3) -> appos(dog-3, Max-7)
-	//eg interpret 'Max is the name of the red dog.' 	nsubj(name-4, Max-1)  prep_of(name-4, dog-8) -> appos(dog-3, Max-7)
+	//eg interpret 'The red dog's name is Max.'		nsubj(Max-7, name-5) + poss(name-5, dog-3) -> appos(dog-3, Max-7)
+	//eg interpret 'The name of the red dog is Max.'	nsubj(Max-7, name-5) + prep_of(name-5, dog-3) -> appos(dog-3, Max-7)
+	//eg interpret 'Max is the name of the red dog.' 	nsubj(name-4, Max-1) + prep_of(name-4, dog-8) -> appos(dog-3, Max-7)
 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		//general parameters
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 2;
@@ -1963,7 +1963,7 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 							if(currentRelationInList2->relationType == RELATION_TYPE_POSSESSIVE)
 							#else
 							bool stanfordPrepositionFound = false;
-							string relexPreposition = convertStanfordPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+							string relexPreposition = convertPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
 							if((currentRelationInList2->relationType == RELATION_TYPE_POSSESSIVE) || (stanfordPrepositionFound && (relexPreposition == RELATION_TYPE_PREPOSITION_OF)))
 							#endif
 							{
@@ -2031,11 +2031,11 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 
 void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
 {
-	//eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - > _predadj(rabbit-2, away-6)
-	//OLD: nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - > nsubj(away-6, rabbit-2) )
-		//case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; nsubj(is-4, rabbit-2) / advmod(is-4, away-7) / rcmod(rabbit-2, is-4) -> _predadj(rabbit-2, away-7)
+	//eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) + advmod(is-3, away-6) - > _predadj(rabbit-2, away-6)
+	//OLD: nsubj(is-3, rabbit-2) + advmod(is-3, away-6) - > nsubj(away-6, rabbit-2) )
+		//case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; nsubj(is-4, rabbit-2) + advmod(is-4, away-7) + rcmod(rabbit-2, is-4) -> _predadj(rabbit-2, away-7)
 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
@@ -2178,21 +2178,21 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
 {
 
-	//eg1 Kane is late. 		nsubj(late-3, Kane-1) / cop(late-3, is-2) -> _predadj(kane-1, late-3) 				[NB non-determinate of governer and dependent of subject relation; take as indicator of substance]
+	//eg1 Kane is late. 		nsubj(late-3, Kane-1) + cop(late-3, is-2) -> _predadj(kane-1, late-3) 				[NB non-determinate of governer and dependent of subject relation; take as indicator of substance]
 	//or
-	//eg2 She is the one. 		nsubj(one-4, She-1) / cop(one-4, is-2) / det(one-4, the-3) -> appos(She-1, one-4)		[NB determinate of dependent of subject relation; take as an indicator of definition]
+	//eg2 She is the one. 		nsubj(one-4, She-1) + cop(one-4, is-2) + det(one-4, the-3) -> appos(She-1, one-4)		[NB determinate of dependent of subject relation; take as an indicator of definition]
 	//or
-	//eg3 The girl is tall. 	nsubj(tall-6, girl-2) / cop(tall-6, is-3) / det(girl-2, The-1) -> _predadj(girl-2, tall-6) 	[NB non-plural and determinate of governer of subject relation; take as indicator of substance]
+	//eg3 The girl is tall. 	nsubj(tall-6, girl-2) + cop(tall-6, is-3) + det(girl-2, The-1) -> _predadj(girl-2, tall-6) 	[NB non-plural and determinate of governer of subject relation; take as indicator of substance]
 	//or
-	//eg4 bikes are machines.  	nsubj(machines-3, bikes-1) / cop(machines-3, are-2) -> appos(bikes-1, machines-3)		[NB plural and non-determinate of governer of subject relation; take as an indicator of definition]
+	//eg4 bikes are machines.  	nsubj(machines-3, bikes-1) + cop(machines-3, are-2) -> appos(bikes-1, machines-3)		[NB plural and non-determinate of governer of subject relation; take as an indicator of definition]
 	//or
-	//eg5 the wheels are green.  	nsubj(green-6, wheels-4) / cop(green-6, are-5) -> _predadj(wheels-4, green-6)			[NB plural and determinate of governer of subject relation; take as indicator of substance]
+	//eg5 the wheels are green.  	nsubj(green-6, wheels-4) + cop(green-6, are-5) -> _predadj(wheels-4, green-6)			[NB plural and determinate of governer of subject relation; take as indicator of substance]
 	//or
-	//eg6 That is Jim.   		nsubj(Jim-3, That-1) / cop(Jim-3, is-2) -> appos(That-1, Jim-3)
+	//eg6 That is Jim.   		nsubj(Jim-3, That-1) + cop(Jim-3, is-2) -> appos(That-1, Jim-3)
 	//or
-	//eg7 The time is 06:45.	nsubj(06:45-4, time-2) / cop(06:45-4, is-3) / det(time-2, The-1) -> appos(time-2, 06:45-4)
+	//eg7 The time is 06:45.	nsubj(06:45-4, time-2) + cop(06:45-4, is-3) + det(time-2, The-1) -> appos(time-2, 06:45-4)
 	
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_COPULA;
@@ -2251,8 +2251,8 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 		}
 		#else
 		//not used
-		//eg the girl is tall	nsubj(tall-6, girl-2) / cop(tall-6, is-3) / det(girl-2, The-1)
-		//eg the wheel is green		nsubj(green-6, wheels-4) / cop(green-6, are-5)
+		//eg the girl is tall	nsubj(tall-6, girl-2) + cop(tall-6, is-3) + det(girl-2, The-1)
+		//eg the wheel is green		nsubj(green-6, wheels-4) + cop(green-6, are-5)
 		GIAgenericDepRelInterpretationParameters paramA = param;
 		paramA.numberOfRelations = 3;
 		paramA.useRelationTest[REL3][REL_ENT3] = true; paramA.relationTest[REL3][REL_ENT3] = RELATION_TYPE_DETERMINER;
@@ -2263,7 +2263,7 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 		paramA.disableRelation[REL2] = true;
 		genericDependecyRelationInterpretation(&paramA, REL1);
 		
-		//eg she is the one	nsubj(one-4, She-1) / cop(one-4, is-2) / det(one-4, the-3)
+		//eg she is the one	nsubj(one-4, She-1) + cop(one-4, is-2) + det(one-4, the-3)
 		GIAgenericDepRelInterpretationParameters paramB = param;
 		paramB.numberOfRelations = 3;
 		paramB.useRelationTest[REL3][REL_ENT3] = true; paramB.relationTest[REL3][REL_ENT3] = RELATION_TYPE_DETERMINER;
@@ -2419,17 +2419,17 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 												{
 													if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationGovernorIndex)	//redundant test
 													{//found a matching object-subject relationship
-														//eg she is the one	nsubj(one-4, She-1) / cop(one-4, is-2) / det(one-4, the-3)
+														//eg she is the one	nsubj(one-4, She-1) + cop(one-4, is-2) + det(one-4, the-3)
 														detectedDeterminateOfSubjectGoverner = true;
 														detectedDeterminate = true;
 													}
 													if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationDependentIndex)	//redundant test
 													{//found a matching object-subject relationship
-														//eg the girl is tall	nsubj(tall-6, girl-2) / cop(tall-6, is-3) / det(girl-2, The-1)
+														//eg the girl is tall	nsubj(tall-6, girl-2) + cop(tall-6, is-3) + det(girl-2, The-1)
 														detectedDeterminateOfSubjectDependent = true;
 														detectedDeterminate = true;
 
-														//eg the wheel is green		nsubj(green-6, wheels-4) / cop(green-6, are-5)
+														//eg the wheel is green		nsubj(green-6, wheels-4) + cop(green-6, are-5)
 													}
 												}
 											#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -2463,7 +2463,6 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 											GIAentityNode * oldRedundantBeEntity = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
 											disableEntity(oldRedundantBeEntity);
 											*/
-
 										}
 										#endif
 
@@ -2497,8 +2496,8 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 
 void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	//eg	The accident happened as the night was falling. 	advcl(happen, fall) / mark(fall, as) -> prep_as (happen, fall)
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+	//eg	The accident happened as the night was falling. 	advcl(happen, fall) + mark(fall, as) -> prep_as (happen, fall)
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER; 
@@ -2567,8 +2566,8 @@ void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence *
 
 void redistributeStanfordRelationsClausalSubject(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	//eg	What she said makes sense. 	csubj (make, say) / dobj ( said-3 , What-1 )
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+	//eg	What she said makes sense. 	csubj (make, say) + dobj ( said-3 , What-1 )
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_OBJECT; 
@@ -2622,8 +2621,8 @@ void redistributeStanfordRelationsClausalSubject(Sentence * currentSentenceInLis
 
 void redistributeStanfordRelationsConjunctionAndCoordinate(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	//eg	I eat a pie or tom rows the boat. 	cc(pie-4, or-5)  / conj(pie-4, tom-6)
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+	//eg	I eat a pie or tom rows the boat. 	cc(pie-4, or-5)  + conj(pie-4, tom-6)
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CONJUNCT; 
@@ -2712,8 +2711,8 @@ void redistributeStanfordRelationsConjunctionAndCoordinate(Sentence * currentSen
 
 void redistributeStanfordRelationsGenerateUnparsedQuantityModifers(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	//eg	 The punter won almost $1000. 	advmod(won-3, almost-4) / pobj(almost-4, $-5) / num($-5, 1000-6)	[Relex: _obj(win[3], $[5])   / _quantity_mod($[5], almost[4])] -> _obj(win[3], $[5]) /  _quantity_mod($[5], almost[4])
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+	//eg	 The punter won almost $1000. 	advmod(won-3, almost-4) + pobj(almost-4, $-5) + num($-5, 1000-6)	[Relex: _obj(win[3], $[5]) + _quantity_mod($[5], almost[4])] -> _obj(win[3], $[5]) +  _quantity_mod($[5], almost[4])
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 3;
@@ -2802,8 +2801,8 @@ void redistributeStanfordRelationsGenerateUnparsedQuantityModifers(Sentence * cu
 
 void redistributeStanfordRelationsGenerateMeasures(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION	
-	//note GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES is not supported by GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION	
+	//note GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES is not supported by GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//eg1	The undergraduate student is 18 years old. 	years old - npadvmod(old, years) -> _measure_time(old[7], years[6])		   {IRRELEVANT years: <NER>NUMBER</NER>} + old: <NER>DURATION</NER>
 	//eg2	The rabbit is 20 meters away.		meters away - npadvmod(away-6, meters-5) -> _measure_distance(away[6], meter[5])
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
@@ -2886,10 +2885,10 @@ void redistributeStanfordRelationsGenerateMeasures(Sentence * currentSentenceInL
 
 void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 
 	#ifdef GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE_AND_TEMPORAL_MODIFIER
-	//The disaster happened over night.   prt(happened-3, over-4) / tmod(happened-3, night-5) -> over(happened-3, night-5)
+	//The disaster happened over night.   prt(happened-3, over-4) + tmod(happened-3, night-5) -> over(happened-3, night-5)
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	paramA.numberOfRelations = 2;
 	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PHRASAL_VERB_PARTICLE;
@@ -2901,7 +2900,7 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 	#endif
 
 	#ifdef GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE_AND_OBJECT_OF_PREPOSITION
-	//What does the red laser work on?	prt(work-6, on-7) / pobj(on-7, What-1) -> on(work-6, What-1)	//case added 7 August 2012b
+	//What does the red laser work on?	prt(work-6, on-7) + pobj(on-7, What-1) -> on(work-6, What-1)	//case added 7 August 2012b
 	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	paramB.numberOfRelations = 2;
 	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PHRASAL_VERB_PARTICLE;
@@ -2951,7 +2950,7 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
 							{//found a matching relationship
 
-								//The disaster happened over night.   prt(happened-3, over-4) / tmod(happened-3, night-5) -> over(happened-3, night-5)
+								//The disaster happened over night.   prt(happened-3, over-4) + tmod(happened-3, night-5) -> over(happened-3, night-5)
 
 								currentRelationInList->disabled = true;
 								GIAentityNode * oldPreposition = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
@@ -2982,7 +2981,7 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationDependentIndex)
 							{//found a matching relationship
 
-								//What does the red laser work on?	prt(work-6, on-7) / pobj(on-7, What-1) -> on(work-6, What-1)	//case added 7 August 2012b
+								//What does the red laser work on?	prt(work-6, on-7) + pobj(on-7, What-1) -> on(work-6, What-1)	//case added 7 August 2012b
 
 								currentRelationInList->disabled = true;
 								GIAentityNode * oldPreposition = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
@@ -3074,7 +3073,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 {
 	//interpret; 'Who is that?' / 'What is the time?'  attr(is-2, What-1) + nsubj(is-2, time-4) -> appos(time-4, _$qVar-1)   /   attr(is-2, Who-1) + nsubj(is-2, that-3) -> appos(That-3, _$qVar-1)	[NB _$qVar can be switched in both cases with respect to GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY]
 	//interpret; 'Who rode the bike?' / 'What broke the glass?' -> nsubj(rode-2, Who-1) -> nsubj(rode-2, _$qVar-1)  /  nsubj(broke-2, What-1) -> nsubj(broke-2, _$qVar-1) [added 7 August 2012]
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//interpret; 'Who rode the bike?' / 'What broke the glass?' -> nsubj(rode-2, Who-1) -> nsubj(rode-2, _$qVar) / nsubj(broke-2, What-1) -> nsubj(broke-2, _$qVar) [added 7 August 2012]
 	GIAgenericDepRelInterpretationParameters paramNsubj(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	paramNsubj.numberOfRelations = 1;
@@ -3187,7 +3186,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 										if((currentRelationInList2->relationGovernor == RELATION_ENTITY_BE) && (currentRelationInList->relationGovernor == RELATION_ENTITY_BE))
 										{//found a matching relationship
 
-											//interpret 'what is the time.' nsubj(is-2, time-4) / attr(is-2, What-1)  -> appos(time-4, _$qVar-1),  'who is that'  nsubj(is-2, that-3) attr(is-2, Who-1)   -> appos(That-3, _$qVar-1)	[NB _$qVar can be switched in both cases with respect to GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY]
+											//interpret 'what is the time.' nsubj(is-2, time-4) + attr(is-2, What-1)  -> appos(time-4, _$qVar-1),  'who is that'  nsubj(is-2, that-3) attr(is-2, Who-1)   -> appos(That-3, _$qVar-1)	[NB _$qVar can be switched in both cases with respect to GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY]
 
 											#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG
 											cout << "redistributeStanfordRelationsCreateQueryVarsWhoWhat" << endl;
@@ -3254,7 +3253,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 
 	//added 3 July 2013
 	//interpret; 'What time is it?'  attr(is-3, time-2) + nsubj(is-3, it-4) + det(time-2, What-1) -> appos(time-4, _$qVar-1)	
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters paramNsubjAndAttrAndDet(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	paramNsubjAndAttrAndDet.numberOfRelations = 3;
 	paramNsubjAndAttrAndDet.useRelationTest[REL1][REL_ENT3] = true; paramNsubjAndAttrAndDet.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
@@ -3366,10 +3365,10 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 
 void redistributeStanfordRelationsCreateQueryVarsHowMuchHowMany(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	//Create Query Vars (eg interpret 'how much'/'how many' advmod(much-2, How-1) amod(milk-3, much-2) -> _quantity(milk[3], _$qVar[2]) )
+	//Create Query Vars (eg interpret 'how much'/'how many' advmod(much-2, How-1) + amod(milk-3, much-2) -> _quantity(milk[3], _$qVar[2]) )
 	//eg1 How much milk should he buy?
 	//eg2 How many apples should he buy?
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 2;
 	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = featureQueryHowMuchFirstRelationNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = FEATURE_QUERY_HOW_MUCH_FIRST_RELATION_NUMBER_OF_TYPES;
@@ -3487,8 +3486,8 @@ void redistributeStanfordRelationsCreateQueryVarsWhich(Sentence * currentSentenc
 
 void redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	//interpret  'How did the disaster happen?' / 'When should they leave?' / 'Where is the ball?' / 'Why does the star fall?' --> advmod(happen-5, How-1) / advmod(leave-4, When-1) / advmod(is-2, Where-1) [nsubj(is-2, ball-4)] / advmod(fall-5, Why-1) -> how(happen[5], _$qVar[1]) / _%atTime(leave[4], _$qVar[1]) / _%atLocation(ball[4], _$qVar[1]) / _%because(fall[5], _$qVar[1])
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+	//interpret  'How did the disaster happen?' / 'When should they leave?' / 'Where is the ball?' / 'Why does the star fall?' --> advmod(happen-5, How-1) / advmod(leave-4, When-1) / advmod(is-2, Where-1) [+ nsubj(is-2, ball-4)] / advmod(fall-5, Why-1) -> how(happen[5], _$qVar[1]) / _%atTime(leave[4], _$qVar[1]) / _%atLocation(ball[4], _$qVar[1]) / _%because(fall[5], _$qVar[1])
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//interpret  'How did the disaster happen?' / 'When should they leave?' / 'Where is the ball?' / 'Why does the star fall?'	advmod(happen-5, How-1) / [advmod(leave-4, When-1)?] / advmod(is-2, Where-1) / advmod(fall-5, Why-1) -> how(happen[5], _$qVar[1]) / _%atTime(leave[4], _$qVar[1]) / [_%atLocation(ball[4], _$qVar[1])?] / _%because(fall[5], _$qVar[1])
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 1;
@@ -3665,7 +3664,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhat(Sentence * currentSentence
 	What broke the glass?
 	What is wood used in the delivering of?
 	*/
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 1;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DETERMINER;  param.relationTestIsNegative[REL1][REL_ENT3] = true;	//OR if(GIAentityNodeArray[currentRelationInList->relationDependentIndex]->stanfordPOStemp != FEATURE_POS_TAG_WDT)	//to distinguish standard what queries from equivalent which queries eg "what time is it?"
@@ -3735,7 +3734,7 @@ void redistributeStanfordRelationsPartmod(Sentence * currentSentenceInList, bool
 		_subj(governor-3, rectifying-4)
 		
 	*/
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_PARTMOD_DEAL_WITH_PROGRESSIVE_ANOMALY
 	//An elevator governor rectifying a chicken. partmod(governor-3, rectifying-4) + dobj(rectifying-4, chicken-6) -> _subj(governor-3, rectifying-4) + dobj(rectifying-4, chicken-6)
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
@@ -3801,7 +3800,7 @@ void redistributeStanfordRelationsPartmod(Sentence * currentSentenceInList, bool
 
 #ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS
 //Added 28 October 2012b
-void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType, int NLPfeatureParser, Feature * featureArrayTemp[])
+void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[])
 {
 	//eg What is wood used in the delivering of?   interpret prep_of(xing, y) as obj(xing, y) )
 
@@ -3820,7 +3819,7 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 			GIAentityNode * actionOrSubstanceConditionEntity = GIAentityNodeArray[actionOrSubstanceConditionIndex];		
 
 			bool stanfordPrepositionFound = false;
-			if(convertStanfordPrepositionToRelex(&relationType, NLPdependencyRelationsType, &stanfordPrepositionFound) == RELATION_TYPE_PREPOSITION_OF)
+			if(convertPrepositionToRelex(&relationType, GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound) == RELATION_TYPE_PREPOSITION_OF)
 			{
 				//cout << "actionOrSubstanceEntity->stanfordPOStemp = " << actionOrSubstanceEntity->stanfordPOStemp << endl;
 				//cout << "actionOrSubstanceEntity->wordNetPOS = " << actionOrSubstanceEntity->wordNetPOS << endl;	
@@ -3857,10 +3856,10 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 #endif
 
 #ifdef GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES
-void redistributeStanfordRelationsExpletives(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType)
+void redistributeStanfordRelationsExpletives(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	//eg 'There is a place that we go.' _expl(be[2], there[1]) / _subj(be[2], place[4]) / _subj(go[7], we[6]) [IRRELEVANT] / _obj(be[2], go[7]) -> _subj(go[7], we[6]) / _obj(place[4], go[7]) 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+	//eg 'There is a place that we go.' _expl(be[2], there[1]) + _subj(be[2], place[4]) + _subj(go[7], we[6]) [IRRELEVANT] + _obj(be[2], go[7]) -> _subj(go[7], we[6]) + _obj(place[4], go[7]) 
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 3;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_EXPLETIVE;
@@ -3959,7 +3958,7 @@ void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSenten
 				det(letter-10, the-9)
 				dobj(write-8, letter-10)
 	*/
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DEPENDENT;

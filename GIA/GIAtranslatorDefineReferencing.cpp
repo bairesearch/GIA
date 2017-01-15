@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1d 15-July-2013
+ * Project Version: 1t2a 17-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -399,6 +399,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 			//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_AMOD) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_PREDADJ) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))
 			if(passed)
 			{
+				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 				bool passed2 = true;
 				#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
 				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
@@ -411,13 +412,16 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 				
 				if(passed2)
 				{
+				#endif
 					int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
 					int relationDependentIndex = currentRelationInList->relationDependentIndex;
 					GIAentityNode * thingEntity = GIAentityNodeArray[relationGovernorIndex];
 					GIAentityNode * substanceEntity = GIAentityNodeArray[relationDependentIndex];
 					thingEntity->hasSubstanceTemp = true;
 					//substanceEntity->hasQualityTemp = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
+				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 				}
+				#endif
 			}
 
 			//has subject:

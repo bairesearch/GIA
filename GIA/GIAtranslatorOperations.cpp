@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1d 15-July-2013
+ * Project Version: 1t2a 17-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -81,7 +81,8 @@ void initialiseGIATranslatorForTexualContextOperations()
 
 }
 
-
+#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+//this is no longer required with redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition, etc..
 bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation * currentRelationInList, GIAentityNode * GIAentityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType)
 {
 	bool result = true;
@@ -107,6 +108,7 @@ bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation * currentRelation
 	return result;
 }
 
+//this is no longer required with redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition, etc..
 bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, Relation * currentRelationInList, int NLPdependencyRelationsType)
 {
 	bool passed2 = true;
@@ -158,6 +160,7 @@ bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, 
 
 	return passed2;
 }
+#endif
 
 
 GIAentityNode * addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAentityNode * thingEntity, GIAentityNode * propertyEntity, bool sameReferenceSet)
@@ -403,6 +406,10 @@ GIAentityNode * addSubstance(GIAentityNode * entity)
 	}
 	#endif
 
+	if(entityNode->isToBeComplimentOfActionTemp)
+	{	
+		newSubstance->isToBeComplimentOfActionTemp = true;
+	} 
 
 	return newSubstance;
 }
@@ -1013,7 +1020,7 @@ GIAentityNode * addCondition(GIAentityNode * conditionEntity)
 }
 
 
-string convertStanfordPrepositionToRelex(string * preposition, int NLPdependencyRelationsType, bool * stanfordPrepositionFound)
+string convertPrepositionToRelex(string * preposition, int NLPdependencyRelationsType, bool * prepositionFound)
 {
 	string relexPreposition = *preposition;
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
@@ -1029,7 +1036,7 @@ string convertStanfordPrepositionToRelex(string * preposition, int NLPdependency
 			{
 				/*
 				#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-				cout << "convertStanfordPrepositionToRelex(): error - preposition 'prep_...' not found" << endl;
+				cout << "convertPrepositionToRelex(): error - preposition 'prep_...' not found" << endl;
 				cout << "the following dependency relation was expected to be a preposition = " << *preposition << endl;
 				exit(0);
 				#endif
@@ -1040,10 +1047,18 @@ string convertStanfordPrepositionToRelex(string * preposition, int NLPdependency
 				int indexOfFirstRealCharacterInPreposition = currentStanfordPrepositionPrepend.length();
 				int lengthOfPreposition = preposition->length() - (indexOfFirstRealCharacterInPreposition);
 				relexPreposition = preposition->substr(indexOfFirstRealCharacterInPreposition, lengthOfPreposition);
-				*stanfordPrepositionFound = true;
+				*prepositionFound = true;
 			}
 		}
 	}
+	else if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
+	{
+		if((*preposition)[0] != RELATION_TYPE_PREPOSITION_FIRST_CHARACTER)
+		{//not valid for REFERENCE_TYPE_QUESTION_QUERY_VARIABLEs... [but this is not a problem because passedPrepositionUnknown is processed last in the if/else switch in createConditionBasedUponPreposition()]
+			*prepositionFound = true;
+		}		
+	}
+	
 	return relexPreposition;
 }
 
@@ -1965,6 +1980,11 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 	entityNode->isName = entityNodeToMerge->isName;
 	#endif
 	
+	if(entityNodeToMerge->isToBeComplimentOfActionTemp)
+	{
+		entityNode->isToBeComplimentOfActionTemp = true;	//should not be required
+	}
+	
 	disableEntity(entityNodeToMerge);
 	
 	#ifdef GIA_ALIASES_DEBUG
@@ -2021,6 +2041,8 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	relationTestSpecialCaseNotDefinite = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	relationTestSpecialCasePOStemp = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	relationArrayTestSpecialCasePOStemp = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
+	relationTestSpecialCaseIsNotAction = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
+	relationTestSpecialCaseIsNotToBeComplimentOfAction = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	
 		//entity index match tests
 	useRelationIndexTest = {{false, false, false}, {false, false}, {false, false, false}, {false, false, false}};
@@ -2047,17 +2069,16 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	
 		//for execution
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	defaultSameSetReferenceID = -1; 
+	defaultSameSetRelationID = -1; 
 	defaultSameSetReferenceValue = -1;
 	#endif		
-	functionEntityRelationID = {-1, -1, -1};		//for entity1, entity2, and entity3 - relation1, relation2, relation3, or relation4
-	functionEntityRelationEntityID = {-1, -1, -1};		//for entity1, entity2, and entity3 - relationType, relationGovernorIndex, or relationDependentIndex	
+	functionEntityRelationID = {REL1, REL1, REL1};				//these dummy values have to be set always to prevent crash //for entity1, entity2, and entity3 - relation1, relation2, relation3, or relation4
+	functionEntityRelationEntityID = {FUNC_ENT1, FUNC_ENT1, FUNC_ENT1};	//these dummy values have to be set always to prevent crash //for entity1, entity2, and entity3 - relationType, relationGovernorIndex, or relationDependentIndex	
 	functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_undefined;
-	mustGenerateConditionTypeConceptEntity = false;
-	expectToFindPreposition = false;
-	conditionTypeEntityDefaultIndex = -1;
+		//special cases
 	mustGenerateConditionTypeName = false;
 	conditionTypeEntityDefaultName = "";
+	conditionTypeEntityDefaultIndex = -1;
 		
 	disableEntity = {{false, false}, {false, false}, {false, false}, {false, false}}; 	//for entity1 and entity2 only
 	disableEntityUseOriginalValues = {{false, false}, {false, false}, {false, false}, {false, false}}; 	//for disabling an entity based on its original index
@@ -2097,7 +2118,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 			param->relationEntity[currentRelationID][REL_ENT1] = param->relation[currentRelationID]->relationGovernor;
 			param->relationEntity[currentRelationID][REL_ENT2] = param->relation[currentRelationID]->relationDependent;
 			param->relationEntity[currentRelationID][REL_ENT3] = param->relation[currentRelationID]->relationType;
-			param->relationEntity[currentRelationID][REL_ENT3] = convertStanfordPrepositionToRelex(&(param->relationEntity[currentRelationID][REL_ENT3]), param->NLPdependencyRelationsType, &(param->relationEntityPrepFound[currentRelationID]));	//convert stanford prep_x to relex x 
+			param->relationEntity[currentRelationID][REL_ENT3] = convertPrepositionToRelex(&(param->relationEntity[currentRelationID][REL_ENT3]), param->NLPdependencyRelationsType, &(param->relationEntityPrepFound[currentRelationID]));	//convert stanford prep_x to relex x 
 			param->relationEntityIndex[currentRelationID][REL_ENT1] = param->relation[currentRelationID]->relationGovernorIndex;
 			param->relationEntityIndex[currentRelationID][REL_ENT2] = param->relation[currentRelationID]->relationDependentIndex;
 				//required to swap variables via redistributeRelationEntityIndexReassignmentUseOriginalValues;
@@ -2130,6 +2151,20 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 			}			
 			for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION; relationEntityID++)
 			{
+				if(param->relationTestSpecialCaseIsNotAction[currentRelationID][relationEntityID])
+				{
+					if(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]]->isAction)
+					{
+						passedRelation = false;	
+					}				
+				}
+				if(param->relationTestSpecialCaseIsNotToBeComplimentOfAction[currentRelationID][relationEntityID])
+				{
+					if(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]]->isToBeComplimentOfActionTemp)
+					{
+						passedRelation = false;	
+					}				
+				}			
 				if(param->relationTestSpecialCaseNotDefinite[currentRelationID][relationEntityID])
 				{
 					if(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]]->grammaticalDefiniteTemp)
@@ -2181,6 +2216,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 					if(passedRelation)
 					{				
 						passedRelation = false;
+						bool foundAnArrayPass = false;
 						//int relationArrayTestSize = sizeof((param->relationArrayTest[currentRelationID][relationEntityID]))/sizeof((param->relationArrayTest[currentRelationID][relationEntityID])[0]);
 						//cout << "relationArrayTestSize = " << relationArrayTestSize << endl;
 						for(int j=0; j<param->relationArrayTestSize[currentRelationID][relationEntityID]; j++)
@@ -2191,24 +2227,27 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								{
 									//cout << "(param->relationArrayTest[currentRelationID][relationEntityID])[j] = " << (param->relationArrayTest[currentRelationID][relationEntityID])[j] << endl;
 									passedRelation = true;
+									foundAnArrayPass = true;
 								}
 							}
 							else
 							{
-								if(param->relationArrayTestIsNegative[currentRelationID][relationEntityID])
-								{//negative
-									if(param->relationEntity[currentRelationID][relationEntityID] != (param->relationArrayTest[currentRelationID][relationEntityID])[j])
-									{
-										passedRelation = true;
-									}							
+								if(param->relationEntity[currentRelationID][relationEntityID] == (param->relationArrayTest[currentRelationID][relationEntityID])[j])
+								{
+									passedRelation = true;
+									foundAnArrayPass = true;
 								}
-								else 
-								{//normal
-									if(param->relationEntity[currentRelationID][relationEntityID] == (param->relationArrayTest[currentRelationID][relationEntityID])[j])
-									{
-										passedRelation = true;
-									}
-								}
+							}
+						}
+						if(param->relationArrayTestIsNegative[currentRelationID][relationEntityID])
+						{
+							if(!foundAnArrayPass)
+							{
+								passedRelation = true;
+							}
+							else
+							{
+								passedRelation = false;
 							}
 						}
 					}				
@@ -2321,47 +2360,69 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 							if(param->executeOrReassign)
 							{//execute
 								#ifdef GIA_USE_ADVANCED_REFERENCING
-								bool sameReferenceSet = determineSameReferenceSetValue(param->defaultSameSetReferenceValue, param->relation[param->defaultSameSetReferenceID]);
+								bool sameReferenceSet;
+								if(param->defaultSameSetRelationID == -1)
+								{
+									sameReferenceSet = param->defaultSameSetReferenceValue;
+								}
+								else
+								{
+									sameReferenceSet = determineSameReferenceSetValue(param->defaultSameSetReferenceValue, param->relation[param->defaultSameSetRelationID]);
+								}
 								#else
 								bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 								#endif
 
-								int functionEntityIndex1 = param->relationEntityIndex[param->functionEntityRelationID[FUNC_ENT1_PRIMARY]][param->functionEntityRelationEntityID[FUNC_ENT1_PRIMARY]]; 
-								int functionEntityIndex2 = param->relationEntityIndex[param->functionEntityRelationID[FUNC_ENT2_SECONDARY]][param->functionEntityRelationEntityID[FUNC_ENT2_SECONDARY]];
-								int functionEntityIndex3 = param->relationEntityIndex[param->functionEntityRelationID[FUNC_ENT3_INTERMEDIARY]][param->functionEntityRelationEntityID[FUNC_ENT3_INTERMEDIARY]];							
+								int functionEntityIndex1 = param->relationEntityIndex[param->functionEntityRelationID[FUNC_ENT1]][param->functionEntityRelationEntityID[FUNC_ENT1]]; 
+								int functionEntityIndex2 = param->relationEntityIndex[param->functionEntityRelationID[FUNC_ENT2]][param->functionEntityRelationEntityID[FUNC_ENT2]];
+								int functionEntityIndex3 = param->relationEntityIndex[param->functionEntityRelationID[FUNC_ENT3]][param->functionEntityRelationEntityID[FUNC_ENT3]];						
 								int functionEntityIndex4special = param->relationEntityIndex[param->functionEntityRelationID[FUNC_ENT4_SPECIAL]][param->functionEntityRelationEntityID[FUNC_ENT4_SPECIAL]]; 
-
-								if(param->mustGenerateConditionTypeConceptEntity)
-								{//conditionType entity not existant - must create it anew 
-									//functionEntityIndex3 is invalid
-
+																
+								//if(param->functionToExecuteUponFind is a condition....
+								if((param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity) ||
+								  (param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity) || 
+								  (param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity))
+								{//if a condition is required to be created
 									string conditionTypeEntityName = "";
+									bool mustLookupOrGenerateConditionTypeConceptEntity = false;
 									if(param->mustGenerateConditionTypeName)
 									{
 										conditionTypeEntityName = param->conditionTypeEntityDefaultName;
+										functionEntityIndex3 = param->conditionTypeEntityDefaultIndex;	
+										mustLookupOrGenerateConditionTypeConceptEntity = true;
 									}
 									else
 									{
-										conditionTypeEntityName = param->relationEntity[param->functionEntityRelationID[FUNC_ENT3_INTERMEDIARY]][param->functionEntityRelationEntityID[FUNC_ENT3_INTERMEDIARY]];
-									}
-
-									if(param->expectToFindPreposition)
-									{				
-										functionEntityIndex3 = -1;
-										bool prepositionFeatureFound = determineFeatureIndexOfPreposition(param->currentSentenceInList, &conditionTypeEntityName, &functionEntityIndex3);
-										if(!prepositionFeatureFound)
+										if(param->conditionTypeEntityDefaultName != "")
+										{//special case where conditionType is required to be changed from the preposition name (not often used)
+											conditionTypeEntityName = param->conditionTypeEntityDefaultName;
+										}	
+										else
 										{
-											functionEntityIndex3 = param->conditionTypeEntityDefaultIndex;
+											conditionTypeEntityName = param->relationEntity[param->functionEntityRelationID[FUNC_ENT3]][param->functionEntityRelationEntityID[FUNC_ENT3]];
+										}
+										if(param->functionEntityRelationEntityID[FUNC_ENT3] == REL_ENT3)	//conditionType is being defined as a relation's relationType and has no obvious concept entity. However a relationType is often a preposition - if so it will already have a feature index (determined by determineFeatureIndexOfPreposition()) [of which there might even be a corresponding entity name/index defined depending upon how the dependency relations were generated by the NLP: see findOrAddEntityNodeByNameSimpleWrapperCondition() below for information on how this case is handled]
+										{
+											functionEntityIndex3 = -1;
+											bool prepositionFeatureFound = determineFeatureIndexOfPreposition(param->currentSentenceInList, &conditionTypeEntityName, &functionEntityIndex3);
+											if(!prepositionFeatureFound)
+											{
+												functionEntityIndex3 = param->conditionTypeEntityDefaultIndex;
+											}
+											mustLookupOrGenerateConditionTypeConceptEntity = true;
+										}
+										else
+										{
+											//functionEntityIndex3 will already be set correctly	[param->relationEntityIndex[param->functionEntityRelationID[FUNC_ENT3]][param->functionEntityRelationEntityID[FUNC_ENT3]];]
 										}
 									}
-									else
+									if(mustLookupOrGenerateConditionTypeConceptEntity)
 									{
-										functionEntityIndex3 = param->conditionTypeEntityDefaultIndex;
+										//NB if concept type entity name has already been defined (GIAentityNodeArrayFilled[functionEntityIndex3]), then findOrAddEntityNodeByNameSimpleWrapperCondition will use it instead
+										bool entityAlreadyExistant = false;
+										param->GIAentityNodeArray[functionEntityIndex3] = findOrAddEntityNodeByNameSimpleWrapperCondition(param->GIAentityNodeArrayFilled, param->GIAentityNodeArray, functionEntityIndex3, &conditionTypeEntityName, &entityAlreadyExistant, param->entityNodesActiveListConcepts);
+										//GIAentityNode * conditionTypeConceptEntity = above									
 									}
-
-									bool entityAlreadyExistant = false;
-									param->GIAentityNodeArray[functionEntityIndex3] = findOrAddEntityNodeByNameSimpleWrapperCondition(param->GIAentityNodeArrayFilled, param->GIAentityNodeArray, functionEntityIndex3, &conditionTypeEntityName, &entityAlreadyExistant, param->entityNodesActiveListConcepts);
-									//GIAentityNode * conditionTypeConceptEntity = above
 								}
 
 								if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition)
@@ -2585,7 +2646,14 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										{
 											oldRedundantEntity = param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]];
 										}
-										disableEntity(oldRedundantEntity);
+										if(param->executeOrReassign)
+										{
+											disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(oldRedundantEntity);
+										}
+										else
+										{
+											disableEntity(oldRedundantEntity);
+										}
 									}
 
 								}

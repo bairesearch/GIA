@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1d 15-July-2013
+ * Project Version: 1t2a 17-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -500,10 +500,12 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 			}
 			if(passed)
 			{
+				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 				bool passed3 = isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(currentRelationInList, GIAentityNodeArray, currentRelationInList->relationGovernorIndex, NLPdependencyRelationsType);
 
 				if(passed3)
-				{					
+				{	
+				#endif				
 					//create a new substance for the entity and assign a substance definition entity if not already created
 					string thingName = currentRelationInList->relationGovernor;
 					string substanceName = currentRelationInList->relationDependent;
@@ -517,7 +519,9 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 					#ifdef GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
 					cout << "defineSubstancesNounsWithAdjectivesOrPrenominalModifiers: " << thingEntity->entityName << endl;
 					#endif
+				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION	
 				}
+				#endif
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
@@ -983,11 +987,29 @@ void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, 
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
+			if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_BE)
+			{
+				//_to-be(grow[2], tired[3])
+				GIAentityNodeArray[currentRelationInList->relationDependentIndex]->isToBeComplimentOfActionTemp = true;;
+			}		
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}		
+		
+	currentRelationInList = currentSentenceInList->firstRelationInList;
+ 	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
 			bool foundPossessivePreposition = false;
 			for(int i=0; i<RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES; i++)
 			{
-				bool stanfordPrepositionFound = false;
-				if(convertStanfordPrepositionToRelex(&(currentRelationInList->relationType), NLPdependencyRelationsType, &stanfordPrepositionFound) == relationTypePossessivePrepositionsNameArray[i])
+				bool prepositionFound = false;
+				if(convertPrepositionToRelex(&(currentRelationInList->relationType), NLPdependencyRelationsType, &prepositionFound) == relationTypePossessivePrepositionsNameArray[i])
 				{
 					foundPossessivePreposition = true;
 				}
@@ -999,7 +1021,7 @@ void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, 
 				bool foundAction = false;
 				int substanceIndex = currentRelationInList->relationGovernorIndex;		//eg 'grow' in prep_of(grew-2, pie-6)
 				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];									
-				if(substanceEntity->isActionTemp)
+				if((substanceEntity->isActionTemp) || (substanceEntity->isToBeComplimentOfActionTemp))
 				{
 					/*Relex:
 					NB not in this case "She grew tired of the pie."

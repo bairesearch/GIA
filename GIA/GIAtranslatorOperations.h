@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1d 15-July-2013
+ * Project Version: 1t2a 17-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -162,7 +162,7 @@ using namespace std;
 //#define GIA_ENFORCE_USE_OF_RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES
 
 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#define GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 #endif
 //#define GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD	//test only
@@ -429,7 +429,7 @@ used
 #define RELATION_TYPE_OBJECT "_obj"			//eg eats y	[? be y]
 #define RELATION_TYPE_OBJECT_THAT_RELEX "_that"		//there is a place that we go	//relation type added by Relex for implicit "that", eg "Moses knew I was angry."
 #define RELATION_TYPE_OBJECT_THAT_RELEX_EXPLICIT_PREPOSITION "that"		//relation type added by Relex for explicit "that" (same as a Relex preposition), eg "He says that you like to swim."
-#define RELATION_TYPE_OBJECT_NUMBER_OF_TYPES (3)
+#define RELATION_TYPE_OBJECT_NUMBER_OF_TYPES (2)
 #define STANFORD_RELATION_TYPE_OBJECT "dobj"
 #define STANFORD_RELATION_TYPE_INFINITIVAL_MODIFIER "infmod"				//Relex usually generates a plain _obj
 #define STANFORD_RELATION_TYPE_PASSIVE_NOMINAL_SUBJECT "nsubjpass" 			//nsubjpass(thrown, rocks) 	rocks were thrown 				Relex: RelEx identifies these as _obj, and marks verb with passive feature.
@@ -723,6 +723,10 @@ static string relationTypeMeasureNameArray[RELATION_TYPE_MEASURE_NUMBER_OF_TYPES
 static int relationTypeMeasureNameTypeIndexArray[RELATION_TYPE_MEASURE_NUMBER_OF_TYPES] = {MEASURE_TYPE_DISTANCE, MEASURE_TYPE_PER, MEASURE_TYPE_SIZE, MEASURE_TYPE_TIME, MEASURE_TYPE_UNKNOWN, MEASURE_DEPENDENCY_UNKNOWN};
 #define RELATION_TYPE_MEASURE_DEPENDENCY_NUMBER_OF_TYPES (2)
 static string relationTypeMeasureDependencyNameArray[RELATION_TYPE_MEASURE_DEPENDENCY_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_PER, RELATION_TYPE_MEASURE_DEPENDENCY_UNKNOWN};
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#define RELATION_TYPE_MEASURE_NOT_DEPENDENCY_NUMBER_OF_TYPES (4)
+static string relationTypeMeasureNotDependencyNameArray[RELATION_TYPE_MEASURE_NOT_DEPENDENCY_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME, RELATION_TYPE_MEASURE_UNKNOWN};
+#endif
 #define RELATION_TYPE_QUANTITY_ARGUMENT_IMPLY_MEASURE_PER_NUMBER_OF_TYPES (1)
 static string relationTypeQuantityArgumentImplyMeasurePerNameArray[RELATION_TYPE_QUANTITY_ARGUMENT_IMPLY_MEASURE_PER_NUMBER_OF_TYPES] = {"every"};
 
@@ -985,8 +989,11 @@ adjective = happy
 
 void initialiseGIATranslatorForTexualContextOperations();
 
+//double check that isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe and isAdjectiveNotConnectedToObjectOrSubject and are no longer required with GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation * currentRelationInList, GIAentityNode * GIAentityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType);
 bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, Relation * currentRelationInList, int NLPdependencyRelationsType);								//Stanford Compatible
+#endif
 
 GIAentityNode * addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAentityNode * thingEntity, GIAentityNode * propertyEntity, bool sameReferenceSet);
 	GIAentityNode * connectPropertyToEntity(GIAentityNode * thingEntity, GIAentityNode * propertyEntity, bool sameReferenceSet);
@@ -1016,7 +1023,7 @@ GIAentityNode * addOrConnectBeingDefinitionConditionToEntity(GIAentityNode * ent
 GIAentityNode * addOrConnectHavingPropertyConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionSubstanceNode, GIAentityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
 		GIAentityNode * addCondition(GIAentityNode * conditionEntity);
 
-string convertStanfordPrepositionToRelex(string * preposition, int NLPdependencyRelationsType, bool * stanfordPrepositionFound);				//Stanford Compatible
+string convertPrepositionToRelex(string * preposition, int NLPdependencyRelationsType, bool * prepositionFound);
 
 
 
@@ -1125,9 +1132,9 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 #define REL_ENT3 (2)		//for test/redistribution - type
 #define GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION (3)
 #define GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION (2)
-#define FUNC_ENT1_PRIMARY (0)		//for function execution
-#define FUNC_ENT2_SECONDARY (1)		//for function execution
-#define FUNC_ENT3_INTERMEDIARY (2)	//for function execution
+#define FUNC_ENT1 (0)		//for function execution - primary
+#define FUNC_ENT2 (1)		//for function execution - secondary
+#define FUNC_ENT3 (2)		//for function execution - intermediary
 #define FUNC_ENT4_SPECIAL (3)		//for function specific special value determinations
 #define GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_FUNCTION (4)
 #define FUNCTION_ENTITY_RELATION_ID_NONEXISTANT_MUST_GENERATE (-9999)
@@ -1184,6 +1191,8 @@ public:
 	bool relationTestSpecialCaseNotDefinite[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
 	bool relationTestSpecialCasePOStemp[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	
 	bool relationArrayTestSpecialCasePOStemp[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	bool relationTestSpecialCaseIsNotAction[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	
+	bool relationTestSpecialCaseIsNotToBeComplimentOfAction[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	
 
 	
 		//entity index match tests
@@ -1211,18 +1220,16 @@ public:
 		
 		//for execution
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	int defaultSameSetReferenceID; 
+	int defaultSameSetRelationID; 
 	int defaultSameSetReferenceValue;
 	#endif	
 	int functionEntityRelationID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_FUNCTION];		//for entity1, entity2, and entity3 [and entity4 for special tests] - relation1, relation2, relation3, or relation4
 	int functionEntityRelationEntityID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_FUNCTION];	//for entity1, entity2, and entity3 [and entity4 for special tests] - relationType, relationGovernorIndex, or relationDependentIndex	
 	int functionToExecuteUponFind;
 		//special cases
-	bool mustGenerateConditionTypeConceptEntity;
-	bool expectToFindPreposition;
-	int conditionTypeEntityDefaultIndex;
 	bool mustGenerateConditionTypeName;
 	string conditionTypeEntityDefaultName;
+	int conditionTypeEntityDefaultIndex;
 	
 		//for cleanup
 	bool disableEntity[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];		//for entity1 and entity2
