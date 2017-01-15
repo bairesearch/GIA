@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t7e 30-August-2013
+ * Project Version: 1t8a 31-August-2013
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -369,9 +369,8 @@ public:
 	bool isActionTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
 	int entityIndexTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Stanford CoreNLP referencing only?)
 	int sentenceIndexTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Stanford CoreNLP referencing only?)
-	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	bool isToBeComplimentOfActionTemp;	//required for Relex (linkConditions()/defineSubstancesOfPossessivePrepositions())
-	#else
+	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	bool disableParsingAsPrepositionRelationTemp;
 	#endif
 	bool entityAlreadyDeclaredInThisContext;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
@@ -477,6 +476,7 @@ string * convertDelimitedStringToArray(string str, char delimiter);
 
 void deleteEntitiesInEntityNodeList(vector<GIAentityNode*> * entityNodesActiveListComplete);
 
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 bool testEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristic*> * redistributeSpecialCasePropertiesTestVector, bool andOrOr);				
 	bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic);
 		void testEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch);
@@ -492,7 +492,7 @@ void setEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristi
 		void getEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic * entityCharacteristicGet, string iterationVariable, bool *foundMatch);
 		void getEntityCharacteristicIterationint(int entityVal, EntityCharacteristic * entityCharacteristicGet, string iterationVariable, bool *foundMatch);
 		void getEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic * entityCharacteristicGet, string iterationVariable, bool *foundMatch);
-
+#endif
 
 #endif
 

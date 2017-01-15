@@ -1579,7 +1579,22 @@
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="0" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="0" redistributeRelationEntityIndexReassignmentRelationEntityID="0" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
 				</paramDepRel>
 			</function>
-
+			
+			<!-- #ifdefGIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS -->
+			<function name="redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs">
+				<example><!--
+				 eg What is wood used in the delivering of?   interpret prep_of(xing, y) as obj(xing, y) )
+				 --></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="of" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="2" REL="0" REL_ENT="0" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalTenseModifierArrayTemp" value="true" arrayIndex="0" REL="0" REL_ENT="0" />
+				<option useRedistributeRelationEntityReassignment="true" REL="0" REL_ENT="2" redistributeRelationEntityReassignment="_obj" />
+				</paramDepRel>
+			</function>
+			<!-- #endif -->
+							
 			<!-- #ifdefGIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES -->
 			<function name="redistributeStanfordRelationsExpletives">
 				<example><!--

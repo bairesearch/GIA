@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t7e 30-August-2013
+ * Project Version: 1t8a 31-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1009,6 +1009,8 @@ void disableEntitiesBasedOnFeatureTempEntityNodeArray(bool GIAentityNodeArrayFil
 #ifdef GIA_TRANSLATOR_XML_INTERPRETATION				
 bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA)
 {
+	//int tempindex = 1;
+	
 	bool result = true;
 	XMLparserTag * firstTagInRulesTag = parseTagDownALevel(GIAfirstTagInXMLfile, RULES_XML_TAG_rules, &result);
 	if(result)
@@ -1091,19 +1093,23 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 											}
 											
 											/*
-											cout << "\t\tdependency relations: " << endl;
-											Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
-											while(currentRelationInList->next != NULL)
+											if(functionName == "redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction")
 											{
-												if(!(currentRelationInList->disabled))
+												cout << "\t\t" << tempindex << ": dependency relations: " << endl;
+												tempindex++;
+												Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+												while(currentRelationInList->next != NULL)
 												{
-													string relationType = currentRelationInList->relationType;
-													GIAentityNode * relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-													GIAentityNode * relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+													if(!(currentRelationInList->disabled))
+													{
+														string relationType = currentRelationInList->relationType;
+														GIAentityNode * relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+														GIAentityNode * relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 
-													cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
+														cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
+													}
+													currentRelationInList = currentRelationInList->next;
 												}
-												currentRelationInList = currentRelationInList->next;
 											}
 											*/											
 								
