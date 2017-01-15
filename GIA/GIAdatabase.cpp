@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b2a 21-December-2013
+ * Project Version: 2b3a 22-December-2013
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -386,7 +386,7 @@ bool checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(string * folderName)
 }
 
 
-string DBgenerateServerDatabaseName(string * entityName, int fileType)
+string DBgenerateServerDatabaseName(string * entityName, int fileType, string defaultDatabaseName, string databaseFolderNameUserChoice)
 {
 	string databaseName;
 	if(fileType == GIA_DATABASE_GENERATE_FILENAME_FILE_CONCEPT_ENTITY_NODES_LIST)
@@ -415,9 +415,10 @@ string DBgenerateServerDatabaseName(string * entityName, int fileType)
 		//cout << "entityFirstCharacterIndex = " << entityFirstCharacterIndex << endl;
 		#endif
 		string serverName = serverNameArray[entityFirstCharacterIndex]; 	//this could be a more complex algorithm; eg serverName = (string)"/mnt/" + serverNameArray[entityFirstCharacterIndex]
-		databaseName = serverName + GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
+		databaseName = serverName + defaultDatabaseName;
 		#else
-		databaseName = databaseFolderName;
+		databaseName = databaseFolderNameUserChoice;
+		cout << "corpusDatabaseFolderName = " << databaseFolderNameUserChoice << endl;
 		#endif
 
 	}
@@ -433,7 +434,7 @@ string DBgenerateFileName(string * entityName, long idInstance, int connectionTy
 {
 
 	//eg network/server/GIAdatabase/e/x/a/example/1/2/3/instance123000000/{vectorConnectionsReferencesConnectionTypeX}.txt	//OLD: //eg network/server/GIAdatabase/e/x/a/example/1/2/3/{vectorConnectionsReferencesConnectionTypeX}/instance123000000.txt
-	string serverName = DBgenerateServerDatabaseName(entityName, fileType);
+	string serverName = DBgenerateServerDatabaseName(entityName, fileType, GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, databaseFolderName);
 	string fileName = serverName;
 
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO

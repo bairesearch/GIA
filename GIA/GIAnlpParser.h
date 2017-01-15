@@ -20,18 +20,21 @@
 
 /*******************************************************************************
  *
- * File Name: GIAbot.h
+ * File Name: GIAnlpParser.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 2b3a 22-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
- * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
+ * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_BOT
-#define HEADER_GIA_BOT
+#ifndef HEADER_GIA_NLP_PARSER
+#define HEADER_GIA_NLP_PARSER
+
+#include "GIAsentenceClass.h"
+#include "GIAglobalDefs.h"
 
 #include <iostream>
 #include <fstream>
@@ -40,23 +43,20 @@
 #include <cstdlib>	//for random number generation
 #include <cmath>
 #include <string>
-#include <vector>
 using namespace std;
 
+#define RELEX_DEPENDENCY_RELATION_PREPENDITION "_"
 
-#include "GIAglobalDefs.h"
-#include "GIAsentenceClass.h"
-#include "GIAentityNodeClass.h"
-#include "GIAentityConnectionClass.h"
-#include "GIAconditionNodeClass.h"
+void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence);
+void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence, bool featuresNotPreviouslyFilled, bool parseGIA2file);
+	void convertStanfordRelationToRelex(Relation * currentRelationInList, Sentence * currentSentenceInList);
 
-#define FEATURE_FIRST_PERSON_NUMBER_OF_TYPES (5)
-#define FEATURE_SECOND_PERSON_NUMBER_OF_TYPES (5)
-static string featureSecondPersonNameArray[FEATURE_SECOND_PERSON_NUMBER_OF_TYPES] = {"you","you","your","yours","yourself"};
-static string featureFirstPersonNameArray[FEATURE_FIRST_PERSON_NUMBER_OF_TYPES] = {"i","me","my","mine","myself"};
+void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSentenceInList);
+void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode);
 
-#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
-void botSwitchFirstAndSecondPerson(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType);
+#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
+string generateRelexCFFfeatureTagContent(Feature * firstFeatureInList);
+string generateRelexCFFrelationTagContent(Relation * firstRelationInList);
 #endif
 
 

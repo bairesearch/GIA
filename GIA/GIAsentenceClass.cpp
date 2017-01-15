@@ -23,7 +23,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b2a 21-December-2013
+ * Project Version: 2b3a 22-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -153,6 +153,10 @@ Relation::Relation(void)
 	rcmodIndicatesSameReferenceSet = false;
 	#endif
 
+	#ifdef GIA_USE_CORPUS_DATABASE
+	sameReferenceSet = false;
+	#endif
+	
 	next = NULL;
 }
 
@@ -214,6 +218,10 @@ Feature::Feature(void)
 
 	entityDisabled = false;
 
+	#ifdef GIA_USE_CORPUS_DATABASE
+	GIAconnectionistNetworkPOStype = 0;	//ie GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNDEFINED
+	#endif
+	
 	next = NULL;
 	previous = NULL;
 }

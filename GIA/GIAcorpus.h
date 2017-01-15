@@ -20,44 +20,25 @@
 
 /*******************************************************************************
  *
- * File Name: GIAbot.h
+ * File Name: GIAcorpus.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 2b3a 22-December-2013
- * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
- * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
+ * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_BOT
-#define HEADER_GIA_BOT
-
-#include <iostream>
-#include <fstream>
-#include <ctime>
-#include <cstring>
-#include <cstdlib>	//for random number generation
-#include <cmath>
-#include <string>
-#include <vector>
-using namespace std;
-
+#ifndef HEADER_GIA_CORPUS
+#define HEADER_GIA_CORPUS
 
 #include "GIAglobalDefs.h"
 #include "GIAsentenceClass.h"
-#include "GIAentityNodeClass.h"
-#include "GIAentityConnectionClass.h"
-#include "GIAconditionNodeClass.h"
 
-#define FEATURE_FIRST_PERSON_NUMBER_OF_TYPES (5)
-#define FEATURE_SECOND_PERSON_NUMBER_OF_TYPES (5)
-static string featureSecondPersonNameArray[FEATURE_SECOND_PERSON_NUMBER_OF_TYPES] = {"you","you","your","yours","yourself"};
-static string featureFirstPersonNameArray[FEATURE_FIRST_PERSON_NUMBER_OF_TYPES] = {"i","me","my","mine","myself"};
-
-#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
-void botSwitchFirstAndSecondPerson(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType);
+#ifdef GIA_USE_CORPUS_DATABASE
+bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(Paragraph * firstParagraphInList, string inputPlainTXTFileName, string inputTextNLPfeatureXMLfileName, string outputCFFfileName, string NLPexeFolderArray[], vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int * maxNumberSentences);
+	bool lookupCorpusFiles(Paragraph * firstParagraphInList, int NLPfeatureParser);
+		bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser);
 #endif
-
 
 #endif

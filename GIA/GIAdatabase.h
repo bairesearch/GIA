@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b2a 21-December-2013
+ * Project Version: 2b3a 22-December-2013
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -208,7 +208,7 @@ bool checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(string * folderName);
 
 
 
-string DBgenerateServerDatabaseName(string * entityName, int fileType);
+string DBgenerateServerDatabaseName(string * entityName, int fileType, string defaultDatabaseName, string databaseFolderNameUserChoice);
 string DBgenerateFileName(string * entityName, long idInstance, int connectionType, int fileType);
 
 void initialiseDatabase(bool readFromDatabase, string newDatabaseFolderName, bool useDatabase, vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> * entityNodesActiveListConcepts);

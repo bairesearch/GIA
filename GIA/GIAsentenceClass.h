@@ -23,7 +23,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b2a 21-December-2013
+ * Project Version: 2b3a 22-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -185,6 +185,10 @@ public:
 	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 	bool isNameTemp;
 	#endif
+	
+	#ifdef GIA_USE_CORPUS_DATABASE
+	bool sameReferenceSet;
+	#endif
 
 	Relation * next;
 };
@@ -241,7 +245,10 @@ public:
 
 	bool entityDisabled;	//added 14 July 2012b
 
-
+	#ifdef GIA_USE_CORPUS_DATABASE
+	int GIAconnectionistNetworkPOStype;
+	#endif
+	
 	Feature * next;
 	Feature * previous;	//used for reference lookup
 };

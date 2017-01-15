@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b2a 21-December-2013
+ * Project Version: 2b3a 22-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -494,13 +494,12 @@ static string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF
 
 //properties:	[NB properties are attached to either another substance or a straight entity);]
 //substances (derived from obj/subj relationships);
-#define RELATION_GOVERNOR_COMPOSITION_1 "contains"	//eg x contains y
-#define RELATION_GOVERNOR_COMPOSITION_2 "comprise"
-#define RELATION_GOVERNOR_COMPOSITION_3 "has"
-#define RELATION_GOVERNOR_COMPOSITION_4 "have"
+#define RELATION_GOVERNOR_COMPOSITION_1 "contain"	//eg x contains y
+#define RELATION_GOVERNOR_COMPOSITION_2 "comprise"	//eg x comprises y 
+#define RELATION_GOVERNOR_COMPOSITION_3 "have"		//eg x has y
 #define RELATION_ENTITY_HAVE "have"
-#define RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES 4
-static string relationGovernorCompositionNameArray[RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_GOVERNOR_COMPOSITION_1, RELATION_GOVERNOR_COMPOSITION_2, RELATION_GOVERNOR_COMPOSITION_3, RELATION_GOVERNOR_COMPOSITION_4};
+#define RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES 3
+static string relationGovernorCompositionNameArray[RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_GOVERNOR_COMPOSITION_1, RELATION_GOVERNOR_COMPOSITION_2, RELATION_GOVERNOR_COMPOSITION_3};
 
 #define RELATION_ENTITY_CAN "can"
 
@@ -657,14 +656,20 @@ static string relationContextNegativeNameArray[RELATION_TYPE_NEGATIVE_CONTEXT_NU
 #define RELATION_TYPE_COORDINATION "_cc"
 #define RELATION_COORDINATION_DEPENDENT_AND "and"
 #define RELATION_COORDINATION_DEPENDENT_OR "or"
-#define RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES 2
+#define RELATION_COORDINATION_DEPENDENT_BUT "but"	//added 2b3a
+#define RELATION_COORDINATION_DEPENDENT_YET "yet"	//added 2b3a
+#define RELATION_COORDINATION_DEPENDENT_NOR "nor"	//added 2b3a
+#define RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES 5
 static string relationTypeConjugationNameArray[RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES] = {RELATION_TYPE_CONJUGATION_AND, RELATION_TYPE_CONJUGATION_OR};
 #define GIA_TRANSLATOR_USE_BASIC_CONJUNCTION_CONDITION_TYPE_NAMES
 #ifdef GIA_TRANSLATOR_USE_BASIC_CONJUNCTION_CONDITION_TYPE_NAMES
 	#define RELATION_TYPE_CONJUGATION_AND_BASIC "and"
 	#define RELATION_TYPE_CONJUGATION_OR_BASIC "or"
+	#define RELATION_TYPE_CONJUGATION_BUT_BASIC "but"
+	#define RELATION_TYPE_CONJUGATION_YET_BASIC "yet"
+	#define RELATION_TYPE_CONJUGATION_NOR_BASIC "nor"
 	#define RELATION_TYPE_CONJUGATION_BASIC_NUMBER_OF_TYPES (RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES)
-	static string relationTypeConjugationBasicNameArray[RELATION_TYPE_CONJUGATION_BASIC_NUMBER_OF_TYPES] = {RELATION_TYPE_CONJUGATION_AND_BASIC, RELATION_TYPE_CONJUGATION_OR_BASIC};
+	static string relationTypeConjugationBasicNameArray[RELATION_TYPE_CONJUGATION_BASIC_NUMBER_OF_TYPES] = {RELATION_TYPE_CONJUGATION_AND_BASIC, RELATION_TYPE_CONJUGATION_OR_BASIC, RELATION_TYPE_CONJUGATION_BUT_BASIC, RELATION_TYPE_CONJUGATION_YET_BASIC, RELATION_TYPE_CONJUGATION_NOR_BASIC};
 
 #endif
 
@@ -897,28 +902,27 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 //stanfordPOS;
 	//from J93-2004-pennTreebankPOStagsets.pdf
 	//conjunction
-#define FEATURE_POS_TAG_COORDINATING_CONJUNCTION_CC "CC"
+#define FEATURE_POS_TAG_COORDINATING_CONJUNCTION_CC "CC"	//"and" is considered a noun by Relex, eg There are 3 chickens and 4 bats.
 	//number
-#define FEATURE_POS_TAG_CARDINALNUMBER_CD "CD"		//required for when "one" is misinterpreted as the number 'one', or for times eg "6:45"
+#define FEATURE_POS_TAG_CARDINALNUMBER_CD "CD"			//"3" is considered an adjective by Relex, eg There are 3 chickens.	//required for when "one" is misinterpreted as the number 'one', or for times eg "6:45"	
 	//determiner
-#define FEATURE_POS_TAG_DETERMINER "DET"
+#define FEATURE_POS_TAG_DETERMINER "DET"			//"the" is considered a determiner by Relex
 	//additional (unknown)
-#define FEATURE_POS_TAG_UNKNOWN_FOREIGNWORD_FW "FW"
-#define FEATURE_POS_TAG_UNKNOWN_EXISTENTIAL_THERE "EX"	//there is a ball.
-#define FEATURE_POS_TAG_UNKNOWN_LISTITEMMARKER_LS "LS"
-#define FEATURE_POS_TAG_UNKNOWN_SYMBOL_SYM "SYM"
-#define FEATURE_POS_TAG_PUNCTUATION_HASH "#"
-#define FEATURE_POS_TAG_PUNCTUATION_DOLLAR "$"
+#define FEATURE_POS_TAG_UNKNOWN_FOREIGNWORD_FW "FW"		//ASSUME foreign word is considered a WORD by Relex, eg Tom moves the $5 note.
+#define FEATURE_POS_TAG_UNKNOWN_EXISTENTIAL_THERE "EX"		//"There" is considered a WORD by Relex, eg There is a ball.
+#define FEATURE_POS_TAG_UNKNOWN_LISTITEMMARKER_LS "LS"		//ASSUME list marker is considered a WORD by Relex, eg Tom moves the $5 note.
+#define FEATURE_POS_TAG_UNKNOWN_SYMBOL_SYM "SYM"		//ASSUME symbol is considered a WORD by Relex, eg Tom moves the $5 note.
+#define FEATURE_POS_TAG_PUNCTUATION_HASH "#"			//"#" is considered a WORD by Relex, eg Tom moves the $5 note.
+#define FEATURE_POS_TAG_PUNCTUATION_DOLLAR "$"			//"$" is considered a WORD by Relex, eg Tom moves the $5 note.
 	//predeterminer
-#define FEATURE_POS_TAG_UNKNOWN_PREDETERMINER_PDT "PDT"		//http://en.wiktionary.org/wiki/predeterminer
+#define FEATURE_POS_TAG_UNKNOWN_PREDETERMINER_PDT "PDT"		//"all" is considered an adjective by Relex, eg He fights all the time.	//http://en.wiktionary.org/wiki/predeterminer		//Parsed incorrectly by Stanford Parser: "three times" is considered an adjective/noun combination by Relex, eg It moves at three times the rate.
 	//posessive ending
-#define FEATURE_POS_TAG_UNKNOWN_POSSESSIVEENDING_POS "POS"
+#define FEATURE_POS_TAG_UNKNOWN_POSSESSIVEENDING_POS "POS"	//"'s" is considered an adjective by Relex, eg Tom's car is blue.
 	//modal auxiliary
-#define FEATURE_POS_TAG_MODALAUXILIARY_MD "MD"
+#define FEATURE_POS_TAG_MODALAUXILIARY_MD "MD"			//can, could, may, might, must, shall, should, will, would - http://en.wikipedia.org/wiki/Modal_verb
 	//preposition
 #define FEATURE_POS_TAG_PREPOSITION_IN "IN"
-#define FEATURE_POS_TAG_UNKNOWN_PARTICLE_RP "RP"	//what is this? http://en.wikipedia.org/wiki/Grammatical_particle
-#define FEATURE_POS_TAG_UNKNOWN_PARTICLE_TO "TO"	//to is a particle is it not?
+#define FEATURE_POS_TAG_PREPOSITION_TO "TO"		//"to" is considered a preposition by Relex, eg He moves the bike to the farm..	//to is a particle is it not?
 	//adjective
 #define FEATURE_POS_TAG_ADJECTIVE_JJ "JJ"
 #define FEATURE_POS_TAG_ADJECTIVE_COMPARATIVE_JJR "JJR"
@@ -933,11 +937,13 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 #define FEATURE_POS_TAG_ADVERB_COMPARATIVE "RBR"
 #define FEATURE_POS_TAG_ADVERB_SUPERLATIVE "RBS"
 	//pronoun personal
-#define FEATURE_POS_TAG_PRONOUN_PERSONAL_PRONOUN_PRP "PRP"
+#define FEATURE_POS_TAG_PRONOUN_PERSONAL_PRONOUN_PRP "PRP"		//"He" is considered a WORD by Relex (with pronoun flag), eg He will be fine.
 	//pronoun possessive
-#define FEATURE_POS_TAG_PRONOUN_POSSESSIVE_PRONOUN_PPDOLLAR "PP$"
+#define FEATURE_POS_TAG_PRONOUN_POSSESSIVE_PRONOUN_PPDOLLAR "PP$"	//"His" is considered a adjective by Relex (with pronoun flag), eg His car is fast.
+	//particle
+#define FEATURE_POS_TAG_PARTICLE_RP "RP"			//what is this? http://en.wikipedia.org/wiki/Grammatical_particle
 	//interjection
-#define FEATURE_POS_TAG_INTERJECTION_UH "UH"
+#define FEATURE_POS_TAG_INTERJECTION_UH "UH"				//interjections currently crash in GIA with Relex
 	//verb
 #define FEATURE_POS_TAG_VERB_VB "VB"
 #define FEATURE_POS_TAG_VERB_VBD "VBD"
@@ -946,114 +952,24 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 #define FEATURE_POS_TAG_VERB_VBP "VBP"
 #define FEATURE_POS_TAG_VERB_VBZ "VBZ"
 	//wh
-#define FEATURE_POS_TAG_WH_DETERMINER_WDT "WDT"
-#define FEATURE_POS_TAG_WH_PRONOUN_WP "WP"
+#define FEATURE_POS_TAG_WH_DETERMINER_WDT "WDT"				//"What"/"Which" is considered an adjective by Relex, eg What time is it?/Which marble is it?
+#define FEATURE_POS_TAG_WH_PRONOUN_WP "WP"				//"What" is considered a WORD by Relex, eg What happened?
 #define FEATURE_POS_TAG_WH_POSSESIVEPRONOUN_WPDOLLAR "WP$"
-#define FEATURE_POS_TAG_WH_ADVERB_WRB "WRB"
+#define FEATURE_POS_TAG_WH_ADVERB_WRB "WRB"				//"Where" is considered an adverb by Relex, eg Where did it happen?
 	//punctuation division
-#define FEATURE_POS_TAG_PUNCTUATION_DIVISION_FULLSTOP "."
-#define FEATURE_POS_TAG_PUNCTUATION_DIVISION_COMMA ","
-#define FEATURE_POS_TAG_PUNCTUATION_DIVISION_COLON_OR_SEMICOLON ":"
+#define FEATURE_POS_TAG_PUNCTUATION_DIVISION_COMMA ","			//"," is considered a conjunction by Relex, eg The man moves, then he runs.
+#define FEATURE_POS_TAG_PUNCTUATION_DIVISION_COLON_OR_SEMICOLON ":"	//":"/";" is considered a conjunction by Relex, eg The man moves: then he runs.
 	//punctuation quote
-#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTBRACKET "("
-#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTBRACKET ")"
-#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_STRAIGHTDOUBLEQUOTE "\""
-#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTOPENSINGLEQUOTE "'"
-#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTOPENDOUBLEQUOTE "\""
-#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTCLOSESINGLEQUOTE "'"
-#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTCLOSEDOUBLEQUOTE "\""
-
-#define ENTITY_CONJUNCTION_ARRAY_NUMBER_OF_TYPES 1
-#define ENTITY_NUMBER_ARRAY_NUMBER_OF_TYPES 1
-#define ENTITY_DETERMINER_ARRAY_NUMBER_OF_TYPES 2	//1
-#define ENTITY_UNKNOWN_ARRAY_NUMBER_OF_TYPES 6
-//#define ENTITY_PREDETERMINER_ARRAY_NUMBER_OF_TYPES 1
-#define ENTITY_POSSESSIVEENDING_ARRAY_NUMBER_OF_TYPES 1
-#define ENTITY_MODALAUXILIARY_ARRAY_NUMBER_OF_TYPES 1
-#define ENTITY_PREPOSITION_ARRAY_NUMBER_OF_TYPES 3
-#define ENTITY_ADJECTIVE_ARRAY_NUMBER_OF_TYPES 3
-#define ENTITY_NOUN_ARRAY_NUMBER_OF_TYPES 4
-#define ENTITY_ADVERB_ARRAY_NUMBER_OF_TYPES 3
-#define ENTITY_PRONOUN_PERSONAL_ARRAY_NUMBER_OF_TYPES 1
-#define ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES 1
-#define ENTITY_INTERJECTION_ARRAY_NUMBER_OF_TYPES 1
-#define ENTITY_VERB_ARRAY_NUMBER_OF_TYPES 6
-#define ENTITY_WH_ARRAY_NUMBER_OF_TYPES 4
-#define ENTITY_PUNCTUATION_DIVISION_ARRAY_NUMBER_OF_TYPES 3
-#define ENTITY_PUNCTUATION_QUOTE_ARRAY_NUMBER_OF_TYPES 7
-static string entityConjunctionArray[ENTITY_CONJUNCTION_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_COORDINATING_CONJUNCTION_CC};
-static string entityNumberArray[ENTITY_NUMBER_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_CARDINALNUMBER_CD};
-static string entityDeterminerArray[ENTITY_DETERMINER_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_DETERMINER, FEATURE_POS_TAG_UNKNOWN_PREDETERMINER_PDT};
-static string entityUnknownArray[ENTITY_UNKNOWN_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_UNKNOWN_FOREIGNWORD_FW, FEATURE_POS_TAG_UNKNOWN_EXISTENTIAL_THERE, FEATURE_POS_TAG_UNKNOWN_LISTITEMMARKER_LS, FEATURE_POS_TAG_UNKNOWN_SYMBOL_SYM, FEATURE_POS_TAG_PUNCTUATION_HASH, FEATURE_POS_TAG_PUNCTUATION_DOLLAR};
-//static string entityPredeterminerArray[ENTITY_PREDETERMINER_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_UNKNOWN_PREDETERMINER_PDT};
-static string entityPossessiveEndingArray[ENTITY_POSSESSIVEENDING_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_UNKNOWN_POSSESSIVEENDING_POS};
-static string entityModalAuxiliaryArray[ENTITY_MODALAUXILIARY_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_MODALAUXILIARY_MD};
-static string entityPrepositionArray[ENTITY_PREPOSITION_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_PREPOSITION_IN, FEATURE_POS_TAG_UNKNOWN_PARTICLE_RP, FEATURE_POS_TAG_UNKNOWN_PARTICLE_TO};
-static string entityAdjectiveArray[ENTITY_ADJECTIVE_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_ADJECTIVE_JJ, FEATURE_POS_TAG_ADJECTIVE_COMPARATIVE_JJR, FEATURE_POS_TAG_ADJECTIVE_SUPERLATIVE_JJS};
-static string entityNounArray[ENTITY_NOUN_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_NOUN_NN, FEATURE_POS_TAG_NOUN_NNS, FEATURE_POS_TAG_NOUN_NNP, FEATURE_POS_TAG_NOUN_NNPS};
-static string entityAdverbArray[ENTITY_ADVERB_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_ADVERB, FEATURE_POS_TAG_ADVERB_COMPARATIVE, FEATURE_POS_TAG_ADVERB_SUPERLATIVE};
-static string entityPronounPersonalArray[ENTITY_PRONOUN_PERSONAL_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_PRONOUN_PERSONAL_PRONOUN_PRP};
-static string entityPronounPossessiveArray[ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_PRONOUN_POSSESSIVE_PRONOUN_PPDOLLAR};
-static string entityInterjectionArray[ENTITY_INTERJECTION_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_INTERJECTION_UH};
-static string entityVerbArray[ENTITY_VERB_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VB, FEATURE_POS_TAG_VERB_VBD, FEATURE_POS_TAG_VERB_VBG, FEATURE_POS_TAG_VERB_VBN, FEATURE_POS_TAG_VERB_VBP, FEATURE_POS_TAG_VERB_VBZ};
-static string entityWhArray[ENTITY_WH_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_WH_DETERMINER_WDT, FEATURE_POS_TAG_WH_PRONOUN_WP, FEATURE_POS_TAG_WH_POSSESIVEPRONOUN_WPDOLLAR, FEATURE_POS_TAG_WH_ADVERB_WRB};
-static string entityPunctuationDivisionArray[ENTITY_PUNCTUATION_DIVISION_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_PUNCTUATION_DIVISION_FULLSTOP, FEATURE_POS_TAG_PUNCTUATION_DIVISION_COMMA, FEATURE_POS_TAG_PUNCTUATION_DIVISION_COLON_OR_SEMICOLON};
-static string entityPunctuationQuoteArray[ENTITY_PUNCTUATION_QUOTE_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTBRACKET, FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTBRACKET, FEATURE_POS_TAG_PUNCTUATION_QUOTE_STRAIGHTDOUBLEQUOTE, FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTOPENSINGLEQUOTE, FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTOPENDOUBLEQUOTE, FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTCLOSESINGLEQUOTE, FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTCLOSEDOUBLEQUOTE};
-
-//http://en.wikipedia.org/wiki/English_auxiliaries_and_contractions
-#define ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES (5)
-#define ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES (3)
-#define ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES (3)
-static string entityAuxiliaryBeingArray[ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES] = {"am", "is", "are", "was", "were"};
-static string entityAuxiliaryHavingArray[ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES] = {"have", "has", "had"};
-static string entityAuxiliaryDoingArray[ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES] = {"do", "does", "did"};
-
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNDEFINED 0		//added in case Stanford POS extraction does not equate exactly to PENN tree bank specification
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_CONJUNCTION 1
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NUMBER 2
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_DETERMINER 3
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNKNOWN 4
-//#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_PREDETERMINER 1
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_POSSESSIVEENDING 5
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_MODALAUXILIARY 6
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_PREPOSITION 7
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADJECTIVE 8
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NOUN 9
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADVERB 10
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_PRONOUN_PERSONAL 11
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_PRONOUN_POSSESSIVE 12
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_INTERJECTION 13
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_VERB 14
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_WH 15
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_PUNCTUATION_DIVISION 16
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_PUNCTUATION_QUOTE 17
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_BEING (18)		//additional case required for GIA semantics extraction
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_HAVING (19)	//additional case required for GIA semantics extraction
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_DOING (20)		//additional case required for GIA semantics extraction
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES (21)
-static string GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"undefined", "conjunction", "number", "determiner", "additional", "posessiveEnding", "modalAuxiliary", "preposition", "adjective", "noun", "adverb", "pronounPersonal", "pronounPossessive", "interjection", "verb", "wh", "punctuationDivision", "punctuationQuote", "isAuxillaryBeing", "isAuxillaryHaving", "isAuxillaryDoing"};
-
-/*
-//requires updating (add more cases from PENN tree)
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NOUN (0)
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_VERB_OR_PARTICIPLE (1)
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADJECTIVE_OR_ADVERB (2)
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_PREPOSITION (3)
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_BEING (4)
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_HAVING (5)
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_DOING (6)
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_MODAL (7)
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_DETERMINER_THATWHICH (8)
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_DETERMINER (9)
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_COMMA (10)
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_CONJUNCTION (11)
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_INTERJECTION (12)
-#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES (13)
-static string GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"isNoun", "isVerbOrParticiple", "isAdjectiveOrAdverb", "isPreposition", "isAuxillaryBeing", "isAuxillaryHaving", "isAuxillaryDoing", "isAuxillaryModal", "isDeterminerThatWhich", "isDeterminer", "isComma", "isConjunction", "isInterjection"};
-*/
+#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_FULLSTOP "."			//"." is considered a punctuation by Relex
+#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTBRACKET "("		//")" is considered a punctuation by Relex
+#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTBRACKET ")"		//"(" is considered a punctuation by Relex
+#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_STRAIGHTDOUBLEQUOTE "\""	//" is ignored by Relex
+#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTOPENSINGLEQUOTE "'"	//"'" is considered a WORD by Relex
+#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTOPENDOUBLEQUOTE "\""	//" is ignored by Relex
+#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTCLOSESINGLEQUOTE "'"	//"'" is considered a WORD by Relex
+#define FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTCLOSEDOUBLEQUOTE "\""	//" is ignored by Relex
 
 #define FEATURE_NER_NAME_CONCATENATION_TOKEN "_" 	//use "_" for Relex format and/or GIA_USE_DATABASE compatibility, else may use " "
-
 
 #define FEATURE_POS_TAG_VERB_PAST_NUMBER_OF_TYPES 2
 #define FEATURE_POS_TAG_VERB_PRESENT_NUMBER_OF_TYPES 2
@@ -1127,6 +1043,11 @@ static string featurePOSindicatesPronounTypeArray[FEATURE_POS_TAG_INDICATES_PRON
 #define FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_OF_TYPES 5
 static string featurePOSindicatesNounTypeArray[FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_CARDINALNUMBER_CD, FEATURE_POS_TAG_NOUN_NN, FEATURE_POS_TAG_NOUN_NNS, FEATURE_POS_TAG_NOUN_NNP, FEATURE_POS_TAG_NOUN_NNPS};
 
+//moved from GIAtranslatorDefineGrammar.h in GIA 2b3a:
+#define GRAMMATICAL_DETERMINER_DEFINITE "the"
+#define GRAMMATICAL_DETERMINER_INDEFINITE "a"
+#define GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL "some"			//required for nlg
+#define GRAMMATICAL_DETERMINER_INDEFINITE_FIRST_LETTER_VOWEL "an"	//required for nlg
 
 /*************************************************************************************/
 
@@ -1285,9 +1206,10 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 #ifdef GIA_SUPPORT_ALIASES
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias 12
 #endif
-#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToSubject 13
-#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToObject 14
+#ifdef GIA_USE_CORPUS_DATABASE
+//#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToSubject 13
+//#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToObject 14
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addAuxiliaryToEntity 13
 #endif
 
 #define GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition 1
@@ -1474,20 +1396,6 @@ bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * para
 #endif
 
 bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, string * prepositionName, int * indexOfPreposition);
-
-
-#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_DETERMINER (14)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_AUXILIARY (15)
-#define GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 2)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
-static string GIA2semanticDependencyRelationNameArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"actionSubject", "actionObject", "conditionSubject", "conditionObject", "property", "property", "definition", "definition", "instance", "actionSubject", "actionObject", "conditionSubject", "conditionObject", "instance", "determiner", "auxiliary"};
-//static string GIA2semanticDependencyRelationNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"actionSubject", "actionObject", "conditionSubject", "conditionObject", "property", "property", "definition", "definition", "instance", "actionSubject", "actionObject", "conditionSubject", "conditionObject", "instance"};	
-void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNode ** GIAentityNodeArray, Sentence * currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet);
-void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(GIAentityNode ** GIAentityNodeArray, Sentence * currentSentenceInList, bool linkPreestablishedReferencesGIA, int NLPdependencyRelationsType);
-	string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet);
-string regenerateSentenceText(Sentence * currentSentenceInList, bool addPOSinfo);
-	string determineGIAconnectionistNetworkPOStypeName(Feature * currentFeatureInSentence);
-#endif
 
 
 #endif

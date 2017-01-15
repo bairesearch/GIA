@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b2a 21-December-2013
+ * Project Version: 2b3a 22-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1075,10 +1075,20 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramC.defaultSameSetReferenceValue = false;
 	#endif
+	#ifndef GIA_USE_CORPUS_DATABASE
 	paramC.disableEntity[REL1][REL_ENT1] = true;	//disable "have" entity
+	#endif
 	genericDependecyRelationInterpretation(&paramC, REL1);
 	#endif
-
+	#ifdef GIA_USE_CORPUS_DATABASE
+	GIAgenericDepRelInterpretationParameters paramC2 = paramC;
+	paramC2.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addAuxiliaryToEntity;
+	paramC2.disableEntity[REL1][REL_ENT1] = true;	//disable "have" entity
+	paramC2.functionEntityRelationID[FUNC_ENT1] = REL2; paramC2.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
+	paramC2.functionEntityRelationID[FUNC_ENT2] = REL2; paramC2.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
+	genericDependecyRelationInterpretation(&paramC2, REL1);
+	#endif
+	
 	/*standard case D:
 	eg1 Tom rides the bike.	_subj(ride[2], Tom[1]) + _obj(ride[2], bike[4])
 	_obj(ride[2], bike[4])
@@ -2284,6 +2294,21 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAentityN
 	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CONJUGATION_OR;
 	paramB.conditionTypeEntityDefaultName = RELATION_TYPE_CONJUGATION_OR_BASIC; //change the conditionType name (_conj_or -> or)
 	genericDependecyRelationInterpretation(&paramB, REL1);
+
+	GIAgenericDepRelInterpretationParameters paramC = param;
+	paramC.useRelationTest[REL1][REL_ENT3] = true; paramC.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CONJUGATION_BUT;
+	paramC.conditionTypeEntityDefaultName = RELATION_TYPE_CONJUGATION_BUT_BASIC; //change the conditionType name (_conj_but -> but)
+	genericDependecyRelationInterpretation(&paramC, REL1);
+
+	GIAgenericDepRelInterpretationParameters paramD = param;
+	paramD.useRelationTest[REL1][REL_ENT3] = true; paramD.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CONJUGATION_YET;
+	paramD.conditionTypeEntityDefaultName = RELATION_TYPE_CONJUGATION_YET_BASIC; //change the conditionType name (_conj_yet -> yet)
+	genericDependecyRelationInterpretation(&paramD, REL1);
+	
+	GIAgenericDepRelInterpretationParameters paramE = param;
+	paramE.useRelationTest[REL1][REL_ENT3] = true; paramE.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CONJUGATION_NOR;
+	paramE.conditionTypeEntityDefaultName = RELATION_TYPE_CONJUGATION_NOR_BASIC; //change the conditionType name (_conj_nor -> nor)
+	genericDependecyRelationInterpretation(&paramE, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)

@@ -20,44 +20,39 @@
 
 /*******************************************************************************
  *
- * File Name: GIAbot.h
+ * File Name: GIAcorpusDatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 2b3a 22-December-2013
- * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
- * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
+ * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_BOT
-#define HEADER_GIA_BOT
-
-#include <iostream>
-#include <fstream>
-#include <ctime>
-#include <cstring>
-#include <cstdlib>	//for random number generation
-#include <cmath>
-#include <string>
-#include <vector>
-using namespace std;
-
+#ifndef HEADER_GIA_CORPUS_DATABASE
+#define HEADER_GIA_CORPUS_DATABASE
 
 #include "GIAglobalDefs.h"
 #include "GIAsentenceClass.h"
-#include "GIAentityNodeClass.h"
-#include "GIAentityConnectionClass.h"
-#include "GIAconditionNodeClass.h"
 
-#define FEATURE_FIRST_PERSON_NUMBER_OF_TYPES (5)
-#define FEATURE_SECOND_PERSON_NUMBER_OF_TYPES (5)
-static string featureSecondPersonNameArray[FEATURE_SECOND_PERSON_NUMBER_OF_TYPES] = {"you","you","your","yours","yourself"};
-static string featureFirstPersonNameArray[FEATURE_FIRST_PERSON_NUMBER_OF_TYPES] = {"i","me","my","mine","myself"};
+#define GIA_CORPUS_DATABASE_FILESYSTEM_USE_FLAT_FILE		//TEMP: for development purposes only
+#define GIA_CORPUS_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME ((string)"GIAcorpusdatabase/")
+#define GIA_CORPUS_DATABASE_FILESYSTEM_DEFAULT_FILE_NAME ((string)"corpus.txt")
 
-#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
-void botSwitchFirstAndSecondPerson(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType);
+#define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES (23)
+static string GIAconnectionistNetworkPOStypeNameAbbreviationArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"un", "cc", "nu", "de", "uk", "po", "mo", "pr", "aj", "no", "av", "pp", "ps", "in", "ve", "wh", "pd", "pq", "ab", "ah", "ad"};
+
+#ifdef GIA_USE_CORPUS_DATABASE
+
+void initialiseCorpusDatabase(string newCorpusDatabaseFolderName);
+void createNewCorpusFileAndOpenItForWriting(Feature * firstFeatureInSentence);
+void closeCorpusFile();
+void saveTextToCurrentCorpusFile(string sentenceText);
+	void writeStringToFileObject2(string s, ofstream * writeFileObject);
+bool loadCorpusFileSemanticDependencyRelations(Sentence * currentSentenceInList);
+
+string corpusDBgenerateFileName(Feature * firstFeatureInList);
+
 #endif
-
 
 #endif

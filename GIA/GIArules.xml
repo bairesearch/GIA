@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b2a 21-December-2013
+ * Project Version: 2b3a 22-December-2013
  *
  *******************************************************************************/
 -->
@@ -2135,15 +2135,13 @@
 				</paramEntity>
 			</function>
 
-			<!-- #ifdefGIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_SENTENCES_WITH_CONCEPTS -->
-			<!--
-			<function name="NLPIdefineSubstancesAllNodes">
+			<!-- #ifdefGIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS -->
+			<function name="defineSubstancesAllNodes">
 				<paramEntity mode="execute">
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isConcept" value="true" />
 				<option functionToExecuteUponFind="1" />
 				</paramEntity>
 			</function>
-			-->
 			<!-- #endif -->
 			
 			<function name="defineSubstancesDefiniteNouns">
@@ -2786,15 +2784,31 @@
 				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
 				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
-				<option useRelationArrayTest="true" REL="0" REL_ENT="0" relationArrayTest="contains|comprise|has|have" relationArrayTestSize="4" />
+				<option useRelationArrayTest="true" REL="0" REL_ENT="0" relationArrayTest="contains|comprise|have" relationArrayTestSize="3" />
 				<option functionToExecuteUponFind="3" />
 				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
 				<option defaultSameSetReferenceValue="false" />
 				<!-- #endif -->
+				<!-- #ifndefGIA_SUPPORT_CORPUS -->
+				<!-- <option disableEntity="true" REL="0" REL_ENT="0" /> --> <!-- disable "have" entity -->
+				</paramDepRel>
+				<!-- #endif -->
+				<!-- #ifdefGIA_SUPPORT_CORPUS -->
+				<paramDepRel mode="execute">
+				<option numberOfRelations="2" />
+				<option useRelationArrayTest="true" REL="0" REL_ENT="2" relationArrayTest="_subj" relationArrayTestSize="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="2" relationArrayTest="_obj|_that" relationArrayTestSize="2" />
+				<option useRelationIndexTest="true" REL="0" REL_ENT="0" relationIndexTestRelationID="1" relationIndexTestEntityID="0" />
+				<option disableRelationDuringLink="true" REL="0" /> <!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
+				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
+				<option functionEntityRelationID="1" FUNC_ENT="0" functionEntityRelationEntityID="1" />
+				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="0" />
+				<option useRelationArrayTest="true" REL="0" REL_ENT="0" relationArrayTest="contains|comprise|have" relationArrayTestSize="3" />
+				<option functionToExecuteUponFind="13" />
 				<option disableEntity="true" REL="0" REL_ENT="0" /> <!-- disable "have" entity -->
 				</paramDepRel>
 				<!-- #endif -->
-
+				
 				<example><!--standard case D:
 				eg1 Tom rides the bike. _subj(ride[2], Tom[1]) + _obj(ride[2], bike[4])
 				_obj(ride[2], bike[4])
@@ -2907,6 +2921,48 @@
 				<!-- #endif -->
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_conj_or" />
 				<option conditionTypeEntityDefaultName="or" /> <!-- change the conditionType name (_conj_or -> or) -->
+				</paramDepRel>
+				
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option functionToExecuteUponFind="8" />
+				<option conditionTypeEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
+				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="0" />
+				<option functionEntityRelationID="0" FUNC_ENT="1" functionEntityRelationEntityID="1" />
+				<option functionEntityRelationID="0" FUNC_ENT="2" functionEntityRelationEntityID="2" />
+				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<option defaultSameSetRelationID="0" defaultSameSetReferenceValue="true" />
+				<!-- #endif -->
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_conj_but" />
+				<option conditionTypeEntityDefaultName="but" /> <!-- change the conditionType name (_conj_but -> but) -->
+				</paramDepRel>
+				
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option functionToExecuteUponFind="8" />
+				<option conditionTypeEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
+				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="0" />
+				<option functionEntityRelationID="0" FUNC_ENT="1" functionEntityRelationEntityID="1" />
+				<option functionEntityRelationID="0" FUNC_ENT="2" functionEntityRelationEntityID="2" />
+				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<option defaultSameSetRelationID="0" defaultSameSetReferenceValue="true" />
+				<!-- #endif -->
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_conj_yet" />
+				<option conditionTypeEntityDefaultName="yet" /> <!-- change the conditionType name (_conj_yet -> yet) -->
+				</paramDepRel>
+				
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option functionToExecuteUponFind="8" />
+				<option conditionTypeEntityDefaultIndex="991" /> <!-- shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)  -->
+				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="0" />
+				<option functionEntityRelationID="0" FUNC_ENT="1" functionEntityRelationEntityID="1" />
+				<option functionEntityRelationID="0" FUNC_ENT="2" functionEntityRelationEntityID="2" />
+				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<option defaultSameSetRelationID="0" defaultSameSetReferenceValue="true" />
+				<!-- #endif -->
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_conj_nor" />
+				<option conditionTypeEntityDefaultName="nor" /> <!-- change the conditionType name (_conj_nor -> nor) -->
 				</paramDepRel>
 			</function>
 
