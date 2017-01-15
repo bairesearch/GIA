@@ -432,7 +432,8 @@ public:
 	#endif
 	
 	#ifdef USE_NLPI
-	bool parsedForNLPI;
+	bool parsedForNLPIcodeBlocks;
+	bool parsedForNLPIclassHeirarchy;
 	#endif
 };
 
