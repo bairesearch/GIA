@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b5a 08-January-2014
+ * Project Version: 2b5b 08-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -518,7 +518,7 @@
 	#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER "_"
 #endif
 
-//#define GIA_USE_CORPUS_DATABASE
+#define GIA_USE_CORPUS_DATABASE
 #ifdef GIA_USE_CORPUS_DATABASE
 	//#define USE_GIA2		//GIA 2b1a - sets GIA into corpus read mode
 	#ifndef USE_GIA2
@@ -742,7 +742,7 @@
 //#define GIA_INSTANCE_OR_REFERENCE_SET_ID_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE
 //#define GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
-#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+//#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 //#define GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG_DISABLE_LINKING
 //#define GIA_LRP_DEBUG
@@ -766,7 +766,7 @@
 //#define GIA_WORDNET_DEBUG
 //#define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG2
 //#define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-#define GIA_TRANSLATOR_DEBUG
+//#define GIA_TRANSLATOR_DEBUG
 //#define GIA_NLP_DEBUG
 //#define GIA_DRAW_DEBUG
 //#define GIA_SEMANTIC_NET_XML_DEBUG
