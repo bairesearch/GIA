@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n6a 02-October-2016
+ * Project Version: 2n7a 03-October-2016
  *
  *******************************************************************************/
 -->
@@ -2438,22 +2438,48 @@
 			<!-- #ifdefGIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES -->
 			<function name="redistributeStanfordRelationsExpletives">
 				<example><!--
-				eg 'There is a place that we go.' _expl(be[2], there[1]) + _subj(be[2], place[4]) + _subj(go[7], we[6]) [IRRELEVANT] + _obj(be[2], go[7]) -> _subj(go[7], we[6]) + _obj(go[7], place[4])
+				eg 'There is a place that we go.' _expl(be[2], there[1]) + _subj(be[2], place[4])[*] + _subj(go[7], we[6]) + _obj(be[2], go[7]) -> _subj(go[7], we[6]) + _obj(go[7], place[4])
 				--></example>
 				<paramDepRel mode="redistribute">
-				<option numberOfRelations="3" />
+				<option numberOfRelations="4" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_expl" />
 				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_subj" />
-				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_obj" />
+				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="4" REL_ENT="3" relationTest="_obj" />
 				<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
-				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="4" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="4" relationIndexTestEntityID="2" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_obj" />
+				<option disableRelation="true" REL="4" />
+				<!--
 				<option disableRelation="true" REL="1" />
-				<option disableRelation="true" REL="3" />
 				<option disableEntity="true" REL="1" REL_ENT="1" />
 				<option disableEntity="true" REL="1" REL_ENT="2" />
+				-->
+				</paramDepRel>
+				
+				<example><!--
+				eg 'There is a new movie we can see.' expl(is-2, There-1) + nsubj(is-2, movie-5)[*] + nsubj(see-8, we-6) + acl:relcl(movie-5, see-8)  -> nsubj(see-8, we-6) + nsubj(see-8, movie-5)
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="4" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_expl" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="4" REL_ENT="3" relationTest="_rcmod" />
+				<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="4" relationIndexTestEntityID="2" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="4" relationIndexTestEntityID="1" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_obj" />
+				<!--
+				<option disableRelation="true" REL="1" />
+				<option disableEntity="true" REL="1" REL_ENT="1" />
+				<option disableEntity="true" REL="1" REL_ENT="2" />
+				-->
 				</paramDepRel>
 			</function>
 			<!-- #endif -->

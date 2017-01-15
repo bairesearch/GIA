@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n6a 02-October-2016
+ * Project Version: 2n7a 03-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -123,7 +123,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 													cout << "applyGIATranslatorGenericXMLfunctions{} error: illegal currentParamTag->firstAttribute->value = " << currentParamTag->firstAttribute->value << endl;
 												}
 											}
-
+											
 											#ifdef GIA_DEBUG
 											/*
 											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
@@ -138,7 +138,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 												}
 											}
 											*/
-
+											
 											/*
 											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
 											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -195,6 +195,24 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 													cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
 												}
 												currentRelationInList = currentRelationInList->next;
+											}
+											
+											if(functionName == "redistributeStanfordRelationsExpletives")
+											{
+												cout << "" << endl;
+												GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
+												while(currentRelationInList->next != NULL)
+												{
+													if(!(currentRelationInList->disabled))
+													{
+														string relationType = currentRelationInList->relationType;
+														GIAentityNode* relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+														GIAentityNode* relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+
+														cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
+													}
+													currentRelationInList = currentRelationInList->next;
+												}
 											}
 											*/
 
