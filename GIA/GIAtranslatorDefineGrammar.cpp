@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h8b 19-January-2015
+ * Project Version: 2h9a 20-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -491,336 +491,37 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 #endif
 
 
-#ifdef GIA_NLP_PARSER_STANFORD_CORENLP
-void extractPastTenseFromPOStag(string * POStag, Feature * feature)
-{
-	bool pastTenseDetected = false;
-
-	//do not write if present tense found: NB copulas take precedence over auxillaries in formation of past tense (eg he has been sick;     nsubj ( sick-4 , he-1 ) / aux ( sick-4 , has-2 ) / cop ( sick-4 , been-3 )
-	for(int i=0; i<FEATURE_POS_TAG_VERB_PAST_NUMBER_OF_TYPES; i++)
-	{
-		if(*POStag == posTagVerbPastArray[i])
-		{
-			pastTenseDetected = true;
-		}
-	}
-	if(pastTenseDetected)
-	{
-		#ifdef GIA_TRANSLATOR_DEBUG
-		//cout << "pastTenseDetected; entityIndex = " << feature->entityIndex << endl;
-		#endif
-		feature->grammaticalTense = GRAMMATICAL_TENSE_PAST;		//fixed in 28 April 2012
-	}
-}
-
-//Preconditions: extractGrammaticalInformationStanford()/extractGrammaticalInformationFromPOStag() must be executed before relations (eg aux/cop) are processed, as they may [possibly] overwrite the tenses here established
-void extractGrammaticalInformationFromPOStag(string * POStag, Feature * feature)
-{
-	//past tense extraction;
-	//this is required for past tense verbs without auxillaries; eg He ran fast.     nsubj ( ran-2 , He-1 ), advmod ( ran-2 , fast-3 ) .
-	extractPastTenseFromPOStag(POStag, feature);
-
-
-	//progressives tense extraction;
-	bool progressiveDetected = false;
-	for(int i=0; i<FEATURE_POS_TAG_VERB_PROGRESSIVE_NUMBER_OF_TYPES; i++)
-	{
-		if(*POStag == posTagVerbProgressiveArray[i])
-		{
-			progressiveDetected = true;
-		}
-	}
-	if(progressiveDetected)
-	{
-		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] = true;
-	}
-	
-	//infinitive tense extraction (added 28 July 2013) + imperative tense extraction (added 10 April 2014)
-	bool infinitiveOrImperativeDetected = false;
-	for(int i=0; i<FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES; i++)
-	{
-		if(*POStag == posTagVerbInfinitiveOrImperativeArray[i])
-		{
-			//cout << "infinitiveOrImperativeDetected:" << feature->lemma << endl;
-			infinitiveOrImperativeDetected = true;
-		}
-	}
-	if(infinitiveOrImperativeDetected)
-	{
-		if(feature->previousWordInSentenceIsTo)
-		{
-			feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] = true;
-		}
-		else
-		{
-			feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE] = true;
-			//cout << "imperativeFOUND:" << feature->lemma << endl;
-		}
-	}
-
-	//singular/plural detection;
-	bool pluralDetected = false;
-	for(int i=0; i<FEATURE_POS_TAG_PLURAL_NOUN_NUMBER_OF_TYPES; i++)
-	{
-		if(*POStag == posTagPluralNounArray[i])
-		{
-			pluralDetected = true;
-		}
-	}
-	if(pluralDetected)
-	{
-		feature->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;
-	}
-	bool singularDetected = false;
-	for(int i=0; i<FEATURE_POS_TAG_SINGULAR_NOUN_NUMBER_OF_TYPES; i++)
-	{
-		if(*POStag == posTagSingularNounArray[i])
-		{
-			singularDetected = true;
-		}
-	}
-	if(singularDetected)
-	{
-		feature->grammaticalNumber = GRAMMATICAL_NUMBER_SINGULAR;
-	}
-
-	//proper noun detection;
-	bool properNounDetected = false;
-	for(int i=0; i<FEATURE_POS_TAG_PROPER_NOUN_NUMBER_OF_TYPES; i++)
-	{
-		if(*POStag == posTagProperNounArray[i])
-		{
-			properNounDetected = true;
-		}
-	}
-	if(properNounDetected)
-	{
-		feature->grammaticalIsProperNoun = true;
-	}
-
-	//pronoun detection;
-	bool pronounDetected = false;
-	//use stanfordPOS information to extract pronoun information - NB alternatively, could use referenceTypePersonNameArray and referenceTypePossessiveNameArray (as there is only a limited set of pronouns in english)
-	for(int i=0; i<FEATURE_POS_TAG_INDICATES_PRONOUN_NUMBER_OF_TYPES; i++)
-	{
-		if(*POStag == featurePOSindicatesPronounTypeArray[i])
-		{
-			feature->grammaticalIsPronoun = true;
-		}
-	}
-
-	//added 2h2a
-	#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
-	//not detected by POS standard
-	//"potential" tense extraction;
-	bool potentialDetected = false;
-	for(int i=0; i<FEATURE_POS_TAG_VERB_POTENTIAL_NUMBER_OF_TYPES; i++)
-	{
-		if(*POStag == posTagVerbPotentialArray[i])
-		{
-			potentialDetected = true;
-		}
-	}
-	if(potentialDetected)
-	{
-		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_POTENTIAL] = true;
-	}
-	#endif
-	#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
-	//not detected by POS standard
-	//state/affection tense extraction (need to verify that Stanford CoreNLP/POS tags as VBN and Stanford Parser tags as JJ);
-	bool stateDetected = false;
-	for(int i=0; i<FEATURE_POS_TAG_VERB_STATE_NUMBER_OF_TYPES; i++)
-	{
-		if(*POStag == posTagVerbStateArray[i])
-		{
-			stateDetected = true;
-		}
-	}
-	if(stateDetected)
-	{
-		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_STATE] = true;
-	}
-	#endif
-	#ifdef GIA_FEATURE_POS_TAG_VERB_DESCRIPTION
-	//added 2h2d
-	//not detected by POS standard
-	//"definition" tense extraction;
-	bool definitionDetected = false;
-	for(int i=0; i<FEATURE_POS_TAG_VERB_DESCRIPTION_NUMBER_OF_TYPES; i++)
-	{
-		if(*POStag == posTagVerbDescriptionArray[i])
-		{
-			definitionDetected = true;
-		}
-	}
-	if(definitionDetected)
-	{
-		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION] = true;
-	}
-	#endif
-}
-
-
-void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLPfeatureParser)
-{
-	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
-	{
-		bool toDetected = false;
-		Feature * currentFeatureInList = firstFeatureInList;
-		while(currentFeatureInList->next != NULL)
-		{
-			//added 10 April 2014 - GIA 2e1a
-			if(toDetected)
-			{
-				currentFeatureInList->previousWordInSentenceIsTo = true;
-			}
-			if(currentFeatureInList->lemma == RELATION_TYPE_PREPOSITION_TO)
-			{
-				toDetected = true;
-			}
-			else
-			{
-				toDetected = false;
-			}
-
-			int currentFeatureIndex = currentFeatureInList->entityIndex;
-
-			extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList);
-
-			if((currentFeatureInList->NER == FEATURE_NER_DATE) || (currentFeatureInList->NER == FEATURE_NER_TIME))
-			{
-				currentFeatureInList->grammaticalIsDateOrTime = true;
-			}
-
-			#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_ASSIGNMENT_BUG_USE_NER_VALUES
-			for(int i=0; i<FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_OF_TYPES; i++)
-			{
-				if(currentFeatureInList->NER == featureNERindicatesProperNounTypeArray[i])
-				{
-					currentFeatureInList->grammaticalIsProperNoun = true;
-					#ifdef GIA_WORDNET_DEBUG
-					cout << "isProperNoun currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
-					#endif
-				}
-			}
-			#endif
-
-			/*//NB the GIAEntityNodeGrammaticalIsProperNounArray array for stanford core nlp does not relate to persons (only proper nouns)
-			if(currentFeatureInList->NER == FEATURE_NER_PERSON)
-			{
-				currentFeatureInList->grammaticalIsProperNounArray = true;
-			}
-			*/
-
-			/*
-			cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
-			cout << "currentFeatureInList->stanfordPOS = " << currentFeatureInList->stanfordPOS << endl;
-			cout << "currentFeatureInList->type = " << currentFeatureInList->type << endl;
-			cout << "currentFeatureInList->grammaticalWordType = " << currentFeatureInList->grammaticalWordType << endl;
-			*/
-
-			currentFeatureInList = currentFeatureInList->next;
-		}
-	}
-}
-
-void extractPOSrelatedGrammaticalInformationStanford(Feature * currentFeature)
-{
-	extractGrammaticalInformationFromPOStag(&(currentFeature->stanfordPOS), currentFeature);
-	convertStanfordPOStagToRelexPOStypeAndWordnetWordType(&(currentFeature->stanfordPOS), &(currentFeature->type), &(currentFeature->grammaticalWordType));
-}
-
-void extractPastTense(Feature * featureWithEntityIndex, int entityIndexContainingTenseIndication, Feature * firstFeatureInList, int NLPfeatureParser)
-{
-	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
-	{
-		//use the copular to set the tense of the noun
-
-		Feature * currentFeatureInList = firstFeatureInList;
-		while(currentFeatureInList->next != NULL)
-		{
-			if(currentFeatureInList->entityIndex == entityIndexContainingTenseIndication)
-			{
-				#ifdef GIA_TRANSLATOR_DEBUG
-				//cout << "extractPastTense; entityIndex = " << entityIndexContainingTenseIndication << endl;
-				#endif
-				extractPastTenseFromPOStag(&(currentFeatureInList->stanfordPOS), featureWithEntityIndex);
-			}
-			currentFeatureInList = currentFeatureInList->next;
-		}
-	}
-}
-#endif
-
-
-
-#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
-void findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(Sentence * currentSentenceInList, int subjectObjectEntityWithAuxiliaryEntityIndex, string * subjectObjectEntityWithAuxiliaryEntityName)
-{
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
-	while(currentRelationInList->next != NULL)
-	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-		if(!(currentRelationInList->disabled))
-		{
-		#endif
-			bool passed = false;
-			for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
-			{
-				if(currentRelationInList->relationType == relationTypeSubjectNameArray[i])
-				{
-					passed = true;
-				}
-			}
-
-			for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
-			{
-				if(currentRelationInList->relationType == relationTypeObjectNameArray[i])
-				{
-					passed = true;
-				}
-			}
-
-			#ifndef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILIARY_AND_SET_DIFFERENT_REFERENCE_SET
-			if(passed)
-			{
-			#endif
-				if(subjectObjectEntityWithAuxiliaryEntityIndex = currentRelationInList->relationGovernorIndex)	//CHECK THIS; this used to be currentRelationInList->relationDependentIndex [before 1 June 2012]
-				{
-					if(*subjectObjectEntityWithAuxiliaryEntityName == currentRelationInList->relationGovernor)	//CHECK THIS; this used to be currentRelationInList->relationDependent [before 1 June 2012]
-					{//this check is redundant
-						currentRelationInList->auxiliaryIndicatesDifferentReferenceSet = true;
-						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-						//cout << "\t\t\t-2currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-						//cout << "\t\t\t-2auxiliaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxiliaryIndicatesDifferentReferenceSet << endl;
-						#endif
-					}
-				}
-			#ifndef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILIARY_AND_SET_DIFFERENT_REFERENCE_SET
-			}
-			#endif
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-		}
-		#endif
-
-		currentRelationInList = currentRelationInList->next;
-	}
-}
-#endif
-
-
-
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 //NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford()
 void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAentityNodeArrayFilled[], GIAentityNode * GIAfeatureTempEntityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[])
 {
 	//uses Stanford specific relations (grammar related)
 
+	Relation * currentRelationInList = NULL;
+	#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
+	currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		//definite/indefinite extraction:
+		if(currentRelationInList->relationType == RELATION_TYPE_DETERMINER)
+		{
+			string determiner = currentRelationInList->relationDependent;
+			bool determinerPotentiallySingularDetected = false;
+			if(textInTextArray(determiner, relationDeterminerPotentiallySingularArray, GRAMMATICAL_DETERMINER_POTENTIALLY_SINGULAR_ARRAY_NUMBER_OF_TYPES))
+			{
+				determinerPotentiallySingularDetected = true;
+				int entityIndexOfNoun = currentRelationInList->relationGovernorIndex;
+				featureArrayTemp[entityIndexOfNoun]->determinerPotentiallySingularDetected = true;
+			}
+		}
+		currentRelationInList = currentRelationInList->next;
+	}
+	#endif
+				
 	//past tense [preliminary only; aux/cop takes precedence], progressive tense, isDate, plurality, isProperNoun extraction
 	extractGrammaticalInformationStanford(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -948,7 +649,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 				}
 				#endif
 				
-				if(definiteDeterminerFound || (determiner == GRAMMATICAL_DETERMINER_DEFINITE) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE))
+				if(definiteDeterminerFound || (determiner == GRAMMATICAL_DETERMINER_DEFINITE) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR))
 				{//if condition added 4 July 2013 to ensure only real determiners (the, some, a) are disabled [and not "What" in det(time-2, What-1)]
 					//cout << "disabling feature temp entity" << endl;
 					GIAfeatureTempEntityNodeArray[entityIndexOfDeterminier]->disabled = true;
@@ -982,7 +683,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 					#endif
 				}
 				/*
-				else if(determiner == GRAMMATICAL_DETERMINER_INDEFINITE)
+				else if(determiner == GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR)
 				{
 					//no marking, in accordance with RelEx; 'doesn't mark [a] "book" at all'
 				}
@@ -997,6 +698,293 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 	}
 }
 #endif
+
+void extractPastTense(Feature * featureWithEntityIndex, int entityIndexContainingTenseIndication, Feature * firstFeatureInList, int NLPfeatureParser)
+{
+	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+	{
+		//use the copular to set the tense of the noun
+
+		Feature * currentFeatureInList = firstFeatureInList;
+		while(currentFeatureInList->next != NULL)
+		{
+			if(currentFeatureInList->entityIndex == entityIndexContainingTenseIndication)
+			{
+				#ifdef GIA_TRANSLATOR_DEBUG
+				//cout << "extractPastTense; entityIndex = " << entityIndexContainingTenseIndication << endl;
+				#endif
+				extractPastTenseFromPOStag(&(currentFeatureInList->stanfordPOS), featureWithEntityIndex);
+			}
+			currentFeatureInList = currentFeatureInList->next;
+		}
+	}
+}
+void extractPastTenseFromPOStag(string * POStag, Feature * feature)
+{
+	bool pastTenseDetected = false;
+
+	//do not write if present tense found: NB copulas take precedence over auxillaries in formation of past tense (eg he has been sick;     nsubj ( sick-4 , he-1 ) / aux ( sick-4 , has-2 ) / cop ( sick-4 , been-3 )
+	for(int i=0; i<FEATURE_POS_TAG_VERB_PAST_NUMBER_OF_TYPES; i++)
+	{
+		if(*POStag == posTagVerbPastArray[i])
+		{
+			pastTenseDetected = true;
+		}
+	}
+	if(pastTenseDetected)
+	{
+		#ifdef GIA_TRANSLATOR_DEBUG
+		//cout << "pastTenseDetected; entityIndex = " << feature->entityIndex << endl;
+		#endif
+		feature->grammaticalTense = GRAMMATICAL_TENSE_PAST;		//fixed in 28 April 2012
+	}
+}
+
+void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLPfeatureParser)
+{
+	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+	{
+		bool toDetected = false;
+		Feature * currentFeatureInList = firstFeatureInList;
+		while(currentFeatureInList->next != NULL)
+		{
+			//added 10 April 2014 - GIA 2e1a
+			if(toDetected)
+			{
+				currentFeatureInList->previousWordInSentenceIsTo = true;
+			}
+			if(currentFeatureInList->lemma == RELATION_TYPE_PREPOSITION_TO)
+			{
+				toDetected = true;
+			}
+			else
+			{
+				toDetected = false;
+			}
+
+			int currentFeatureIndex = currentFeatureInList->entityIndex;
+
+			extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList);
+
+			if((currentFeatureInList->NER == FEATURE_NER_DATE) || (currentFeatureInList->NER == FEATURE_NER_TIME))
+			{
+				currentFeatureInList->grammaticalIsDateOrTime = true;
+			}
+
+			#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_ASSIGNMENT_BUG_USE_NER_VALUES
+			for(int i=0; i<FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_OF_TYPES; i++)
+			{
+				if(currentFeatureInList->NER == featureNERindicatesProperNounTypeArray[i])
+				{
+					currentFeatureInList->grammaticalIsProperNoun = true;
+					#ifdef GIA_WORDNET_DEBUG
+					cout << "isProperNoun currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+					#endif
+				}
+			}
+			#endif
+
+			/*//NB the GIAEntityNodeGrammaticalIsProperNounArray array for stanford core nlp does not relate to persons (only proper nouns)
+			if(currentFeatureInList->NER == FEATURE_NER_PERSON)
+			{
+				currentFeatureInList->grammaticalIsProperNounArray = true;
+			}
+			*/
+
+			/*
+			cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
+			cout << "currentFeatureInList->stanfordPOS = " << currentFeatureInList->stanfordPOS << endl;
+			cout << "currentFeatureInList->type = " << currentFeatureInList->type << endl;
+			cout << "currentFeatureInList->grammaticalWordType = " << currentFeatureInList->grammaticalWordType << endl;
+			*/
+
+			currentFeatureInList = currentFeatureInList->next;
+		}
+	}
+}
+
+void extractPOSrelatedGrammaticalInformationStanford(Feature * currentFeature)
+{
+	extractGrammaticalInformationFromPOStag(&(currentFeature->stanfordPOS), currentFeature);
+	convertStanfordPOStagToRelexPOStypeAndWordnetWordType(&(currentFeature->stanfordPOS), &(currentFeature->type), &(currentFeature->grammaticalWordType));
+}
+
+//Preconditions: extractGrammaticalInformationStanford()/extractGrammaticalInformationFromPOStag() must be executed before relations (eg aux/cop) are processed, as they may [possibly] overwrite the tenses here established
+void extractGrammaticalInformationFromPOStag(string * POStag, Feature * feature)
+{
+	//past tense extraction;
+	//this is required for past tense verbs without auxillaries; eg He ran fast.     nsubj ( ran-2 , He-1 ), advmod ( ran-2 , fast-3 ) .
+	extractPastTenseFromPOStag(POStag, feature);
+
+
+	//progressives tense extraction;
+	bool progressiveDetected = false;
+	if(textInTextArray(*POStag, posTagVerbProgressiveArray, FEATURE_POS_TAG_VERB_PROGRESSIVE_NUMBER_OF_TYPES))
+	{
+		progressiveDetected = true;
+		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] = true;
+	}
+	
+	//infinitive tense extraction (added 28 July 2013) + imperative tense extraction (added 10 April 2014)
+	bool infinitiveOrImperativeDetected = false;
+	if(textInTextArray(*POStag, posTagVerbInfinitiveOrImperativeArray, FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES))
+	{
+		//cout << "infinitiveOrImperativeDetected:" << feature->lemma << endl;
+		infinitiveOrImperativeDetected = true;
+		if(feature->previousWordInSentenceIsTo)
+		{
+			feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] = true;
+		}
+		else
+		{
+			feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE] = true;
+			//cout << "imperativeFOUND:" << feature->lemma << endl;
+		}
+	}
+
+	//singular/plural detection;
+	bool pluralDetected = false;
+	if(textInTextArray(*POStag, posTagPluralNounArray, FEATURE_POS_TAG_PLURAL_NOUN_NUMBER_OF_TYPES))
+	{
+		pluralDetected = true;
+		feature->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;
+	}
+	bool singularDetected = false;
+	if(textInTextArray(*POStag, posTagSingularNounArray, FEATURE_POS_TAG_SINGULAR_NOUN_NUMBER_OF_TYPES))
+	{
+		#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
+		if((*POStag) == FEATURE_POS_TAG_NOUN_NN)
+		{
+			if(feature->determinerPotentiallySingularDetected)
+			{			
+				singularDetected = true;
+			}
+		}
+		else
+		{
+		#endif
+			singularDetected = true;
+		#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
+		}
+		#endif
+		if(singularDetected)
+		{
+			feature->grammaticalNumber = GRAMMATICAL_NUMBER_SINGULAR;
+		}
+	}
+
+	//proper noun detection;
+	bool properNounDetected = false;
+	if(textInTextArray(*POStag, posTagProperNounArray, FEATURE_POS_TAG_PROPER_NOUN_NUMBER_OF_TYPES))
+	{
+		properNounDetected = true;
+		feature->grammaticalIsProperNoun = true;
+	}
+
+	//pronoun detection;
+	bool pronounDetected = false;
+	//use stanfordPOS information to extract pronoun information - NB alternatively, could use referenceTypePersonNameArray and referenceTypePossessiveNameArray (as there is only a limited set of pronouns in english)
+	if(textInTextArray(*POStag, featurePOSindicatesPronounTypeArray, FEATURE_POS_TAG_INDICATES_PRONOUN_NUMBER_OF_TYPES))
+	{
+		pronounDetected = true;
+		feature->grammaticalIsPronoun = true;	
+	}
+
+	//added 2h2a
+	#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
+	//not detected by POS standard
+	//"potential" tense extraction;
+	bool potentialDetected = false;
+	if(textInTextArray(*POStag, posTagVerbPotentialArray, FEATURE_POS_TAG_VERB_POTENTIAL_NUMBER_OF_TYPES))
+	{
+		potentialDetected = true;
+		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_POTENTIAL] = true;
+	}
+	#endif
+	#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
+	//not detected by POS standard
+	//state/affection tense extraction (need to verify that Stanford CoreNLP/POS tags as VBN and Stanford Parser tags as JJ);
+	bool stateDetected = false;
+	if(textInTextArray(*POStag, posTagVerbStateArray, FEATURE_POS_TAG_VERB_STATE_NUMBER_OF_TYPES))
+	{
+		stateDetected = true;
+		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_STATE] = true;
+	}
+	#endif
+	#ifdef GIA_FEATURE_POS_TAG_VERB_DESCRIPTION
+	//added 2h2d
+	//not detected by POS standard
+	//"definition" tense extraction;
+	bool definitionDetected = false;
+	if(textInTextArray(*POStag, posTagVerbDescriptionArray, FEATURE_POS_TAG_VERB_DESCRIPTION_NUMBER_OF_TYPES))
+	{
+		definitionDetected = true;
+		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION] = true;
+	}
+	#endif
+}
+
+
+
+
+
+
+
+#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
+void findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(Sentence * currentSentenceInList, int subjectObjectEntityWithAuxiliaryEntityIndex, string * subjectObjectEntityWithAuxiliaryEntityName)
+{
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			bool passed = false;
+			for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypeSubjectNameArray[i])
+				{
+					passed = true;
+				}
+			}
+
+			for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypeObjectNameArray[i])
+				{
+					passed = true;
+				}
+			}
+
+			#ifndef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILIARY_AND_SET_DIFFERENT_REFERENCE_SET
+			if(passed)
+			{
+			#endif
+				if(subjectObjectEntityWithAuxiliaryEntityIndex = currentRelationInList->relationGovernorIndex)	//CHECK THIS; this used to be currentRelationInList->relationDependentIndex [before 1 June 2012]
+				{
+					if(*subjectObjectEntityWithAuxiliaryEntityName == currentRelationInList->relationGovernor)	//CHECK THIS; this used to be currentRelationInList->relationDependent [before 1 June 2012]
+					{//this check is redundant
+						currentRelationInList->auxiliaryIndicatesDifferentReferenceSet = true;
+						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+						//cout << "\t\t\t-2currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+						//cout << "\t\t\t-2auxiliaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxiliaryIndicatesDifferentReferenceSet << endl;
+						#endif
+					}
+				}
+			#ifndef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILIARY_AND_SET_DIFFERENT_REFERENCE_SET
+			}
+			#endif
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		}
+		#endif
+
+		currentRelationInList = currentRelationInList->next;
+	}
+}
+#endif
+
+
 
 
 

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h8b 19-January-2015
+ * Project Version: 2h9a 20-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1032,14 +1032,17 @@ static string featurePOSindicatesNounTypeArray[FEATURE_POS_TAG_INDICATES_NOUN_NU
 
 //moved from GIAtranslatorDefineGrammar.h in GIA 2b3a:
 #define GRAMMATICAL_DETERMINER_DEFINITE "the"
-#define GRAMMATICAL_DETERMINER_INDEFINITE "a"
+#define GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR "a"
 #define GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL "some"			//required for nlg
-#define GRAMMATICAL_DETERMINER_INDEFINITE_FIRST_LETTER_VOWEL "an"	//required for nlg
+#define GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR_FIRST_LETTER_VOWEL "an"	//required for nlg
 #ifdef GIA_SUPPORT_MULTIPLE_DEFINITE_DETERMINERS
 #define GRAMMATICAL_DETERMINER_GOVERNOR_DEFINITE_ARRAY_NUMBER_OF_TYPES (4)
-static string relationDeterminerGovernorDefiniteArray[GRAMMATICAL_DETERMINER_GOVERNOR_DEFINITE_ARRAY_NUMBER_OF_TYPES] = {"the", "each", "all", "every"};
+static string relationDeterminerGovernorDefiniteArray[GRAMMATICAL_DETERMINER_GOVERNOR_DEFINITE_ARRAY_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_DEFINITE, "each", "all", "every"};
 #endif
-
+#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
+#define GRAMMATICAL_DETERMINER_POTENTIALLY_SINGULAR_ARRAY_NUMBER_OF_TYPES (3)
+static string relationDeterminerPotentiallySingularArray[GRAMMATICAL_DETERMINER_POTENTIALLY_SINGULAR_ARRAY_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_DEFINITE, GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR, GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR_FIRST_LETTER_VOWEL};
+#endif
 /*************************************************************************************/
 
 
@@ -1137,7 +1140,7 @@ static string entityPredeterminerArray[ENTITY_PREDETERMINER_ARRAY_NUMBER_OF_TYPE
 
 //not required for Stanford CoreNLP as "an" lemma is "a" (but is required for Relex)
 #define GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES (2)
-static string grammaticalDeterminerIndefiniteArray[GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_INDEFINITE, GRAMMATICAL_DETERMINER_INDEFINITE_FIRST_LETTER_VOWEL};	//NB this intentionally discludes GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL "some" as this is handled the same as a definite determinier by GIA2 POS tag system
+static string grammaticalDeterminerIndefiniteArray[GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR, GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR_FIRST_LETTER_VOWEL};	//NB this intentionally discludes GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL "some" as this is handled the same as a definite determinier by GIA2 POS tag system
 
 
 #define GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNDEFINED 0		//added in case Stanford POS extraction does not equate exactly to PENN tree bank specification

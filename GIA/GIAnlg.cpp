@@ -26,7 +26,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h8b 19-January-2015
+ * Project Version: 2h9a 20-January-2015
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -1129,11 +1129,11 @@ string calcDeterminate(GIAentityNode * entityNode)
 					{
 						if(firstLetterIsVowel)
 						{
-							determinate = GRAMMATICAL_DETERMINER_INDEFINITE_FIRST_LETTER_VOWEL;	//an
+							determinate = GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR_FIRST_LETTER_VOWEL;	//an
 						}
 						else
 						{
-							determinate = GRAMMATICAL_DETERMINER_INDEFINITE;	//a
+							determinate = GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR;	//a
 						}
 					}
 					addDeterminate = true;

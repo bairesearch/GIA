@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h8b 19-January-2015
+ * Project Version: 2h9a 20-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -270,6 +270,10 @@ public:
 
 	#ifdef GIA_USE_CORPUS_DATABASE
 	int GIAconnectionistNetworkPOStype;
+	#endif
+	
+	#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
+	bool determinerPotentiallySingularDetected;
 	#endif
 
 	Feature * next;
