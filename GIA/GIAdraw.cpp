@@ -567,10 +567,10 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 				{
 					nameOfBox = entityNode->entityName;
 				}
-				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
+				//#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
 				//nameOfBox = convertIntToString(entityNode->referenceSetID);
 				//nameOfBox = convertIntToString(entityNode->idInstance);	
-				#endif
+				//#endif
 				//cout << "entityColour = " << entityColour << endl;	
 				currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, currentTag, boxThickness, printType);
 
