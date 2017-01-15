@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q8b 07-November-2012
+ * Project Version: 1q9a 08-November-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -143,6 +143,8 @@ GIAEntityNode * DBfindOrAddConceptEntityNodeByName(vector<GIAEntityNode*> *entit
 			#endif
 
 			GIAEntityNode * newEntityNode = new GIAEntityNode();
+			newEntityNode->entityName = *entityNodeName;
+			newEntityNode->idInstance = GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE;						
 			newEntityNode->isConcept = true;	//added 10 May 2012
 			newEntityNode->idActiveList = *currentEntityNodeIDInCompleteList;
 			newEntityNode->idActiveEntityTypeList = *currentEntityNodeIDInConceptEntityNodesList;
@@ -154,7 +156,7 @@ GIAEntityNode * DBfindOrAddConceptEntityNodeByName(vector<GIAEntityNode*> *entit
 			{
 				entityNodesActiveListComplete->push_back(newEntityNode);						//?not used for database...
 				addEntityNodesActiveListCompleteFastIndexDBactive(newEntityNode);	//added 2 Nov 2012
-			}
+			}			
 			(*currentEntityNodeIDInCompleteList) = (*currentEntityNodeIDInCompleteList) + 1;				//?used to indicate that this new node may need to be updated on the database
 
 			entityNodesActiveListConcepts->insert(pair<string, GIAEntityNode*>(*entityNodeName, newEntityNode));
@@ -176,8 +178,6 @@ GIAEntityNode * DBfindOrAddConceptEntityNodeByName(vector<GIAEntityNode*> *entit
 			bool conceptEntityNodeAdded = true;
 			conceptEntityNodesModifiedList->insert(pair<string, bool>(*entityNodeName, conceptEntityNodeAdded));
 			*/
-
-			newEntityNode->entityName = *entityNodeName;
 
 			entityNodeFound = newEntityNode;
 		}
@@ -219,6 +219,8 @@ GIAEntityNode * findOrAddConceptEntityNodeByName(vector<GIAEntityNode*> *entityN
 			#endif
 
 			GIAEntityNode * newEntityNode = new GIAEntityNode();
+			newEntityNode->entityName = *entityNodeName;	
+			newEntityNode->idInstance = GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE; 		
 			newEntityNode->isConcept = true;	//added 10 May 2012
 			newEntityNode->idActiveList = *currentEntityNodeIDInCompleteList;
 			newEntityNode->idActiveEntityTypeList = *currentEntityNodeIDInConceptEntityNodesList;
@@ -245,8 +247,6 @@ GIAEntityNode * findOrAddConceptEntityNodeByName(vector<GIAEntityNode*> *entityN
 			newEntityNode->conceptEntityLoaded = conceptEntityLoaded;
 			#endif
 			#endif
-
-			newEntityNode->entityName = *entityNodeName;
 
 			entityNodeFound = newEntityNode;
 		}
@@ -614,6 +614,8 @@ void DBreadDatabase(vector<GIAEntityNode*> *entityNodesActiveListComplete, unord
 		GIAEntityNode* conceptEntityNode = new GIAEntityNode();
 		DBreadConceptEntityNode(&conceptEntityName, conceptEntityNode);
 		entityNodesActiveListConcepts->insert(pair<string, GIAEntityNode*>(conceptEntityName, conceptEntityNode));
+		addEntityNodesActiveListCompleteFastIndexDBcache(conceptEntityNode);
+		
 		#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 		conceptEntityNodesLoadedListIterator->second = true;
 		#else
@@ -632,9 +634,17 @@ void DBreadDatabase(vector<GIAEntityNode*> *entityNodesActiveListComplete, unord
 			DBreadVectorConnections(conceptEntityNode, i);	
 		}	
 		
+		//cout << "done reading concept connections" << endl;
+		
+		#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+		conceptEntityNode->wasReference = true;	//required for node to be printed		
+		#endif
 		for(vector<GIAEntityConnection*>::iterator connectionIter = (conceptEntityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]).begin(); connectionIter != (conceptEntityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]).end(); connectionIter++)
 		{
 			GIAEntityNode* entityNode = (*connectionIter)->entity;
+			#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+			entityNode->wasReference = true;	//required for node to be printed
+			#endif
 			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 			{
 				//read all instances
@@ -642,6 +652,9 @@ void DBreadDatabase(vector<GIAEntityNode*> *entityNodesActiveListComplete, unord
 			}
 		}			
 	}
+	
+	//cout << "temp exit" << endl;
+	//exit(0);
 	
 	clearDBentityNodesActiveListCompleteFastIndexDBcache();	
 }
@@ -1780,6 +1793,7 @@ GIAEntityNode * findEntityNodesActiveListCompleteFastIndex(string * entityName, 
 
 string createEntityNodesActiveListCompleteFastIndexIndex(string * entityName, long idInstance)
 {
+
 	char idInstanceCharStar[GIA_DATABASE_INSTANCE_ID_MAX_LENGTH+1];	//to take into account string terminator character /0
 	sprintf(idInstanceCharStar, "%ld", idInstance);
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
@@ -1787,6 +1801,12 @@ string createEntityNodesActiveListCompleteFastIndexIndex(string * entityName, lo
 	#endif
 	string entityNodesTempActiveListCompleteIndex = "";
 	entityNodesTempActiveListCompleteIndex = entityNodesTempActiveListCompleteIndex + *entityName + idInstanceCharStar;
+	
+	#ifdef GIA_DATABASE_DEBUG
+	//cout << "*entityName = " << *entityName << endl;
+	//cout << "idInstance = " << idInstance << endl;
+	//cout << "entityNodesTempActiveListCompleteIndex = " << entityNodesTempActiveListCompleteIndex << endl;
+	#endif
 
 	return entityNodesTempActiveListCompleteIndex;
 }

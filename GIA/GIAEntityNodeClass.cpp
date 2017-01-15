@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q8b 07-November-2012
+ * Project Version: 1q9a 08-November-2012
  *
  *******************************************************************************/
 
@@ -57,7 +57,7 @@ GIAEntityNode::GIAEntityNode(void)
 	idActiveList = 0;
 	idActiveEntityTypeList = 0;	//temporary ID reserved for specific entity types; concept, action, substance etc
 	idActiveListReorderdIDforXMLsave = 0;
-	idInstance = 0;
+	idInstance = 0;		//set as concept by default (GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE)
 
 	entityName = "";
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR

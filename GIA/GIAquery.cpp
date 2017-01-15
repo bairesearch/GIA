@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q8b 07-November-2012
+ * Project Version: 1q9a 08-November-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -1000,6 +1000,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 					GIAEntityNode * queryEntityCorrespondingBestMatch;
 
 					#ifdef GIA_USE_DATABASE
+					#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
 					if(getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE)
 					{
 						#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
@@ -1008,6 +1009,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 						#endif
 						DBreadVectorConnections(entityNode, i);		//this is important, as it will read all of the vector connections from the database for this node (conferred 25 May 2012)
 					}
+					#endif
 					#endif
 
 					#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG

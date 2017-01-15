@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q8b 07-November-2012
+ * Project Version: 1q9a 08-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -630,7 +630,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1q8b 07-November-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1q9a 08-November-2012" << endl;
 			exit(1);
 		}
 
@@ -1278,7 +1278,9 @@ int main(int argc,char **argv)
 		GIAEntityNode* comparisonVariableNode = getComparisonVariableNode();
 		bool foundAnswer = false;
 		double confidence = 0.0;
-
+		char tempConfidenceStringCharStar[100];
+		char tempMaxConfidenceStringCharStar[100];
+		
 		GIAEntityNode* queryAnswerNode;
 		string queryAnswerContext = "";
 		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(entityNodesActiveListConcepts, entityNodesActiveListConceptsQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerContext);
@@ -1434,12 +1436,11 @@ int main(int argc,char **argv)
 			#endif
 		}
 
-
 		//add confidence to answer
-		char tempConfidenceStringCharStar[100];
-		sprintf(tempConfidenceStringCharStar, "%0.6f", confidence*GIA_QUERY_CONFIDENCE_MULTIPLIER);
-		char tempMaxConfidenceStringCharStar[100];
-		sprintf(tempMaxConfidenceStringCharStar, "%0.6f", maxConfidence*GIA_QUERY_CONFIDENCE_MULTIPLIER);
+		double confidencePrint = confidence*GIA_QUERY_CONFIDENCE_MULTIPLIER;
+		double maxConfidencePrint = maxConfidence*GIA_QUERY_CONFIDENCE_MULTIPLIER;
+		sprintf(tempConfidenceStringCharStar, "%0.6f", confidencePrint);
+		sprintf(tempMaxConfidenceStringCharStar, "%0.6f", maxConfidencePrint);
 		answerString = answerString + "\nconfidence = " + tempConfidenceStringCharStar;
 		answerString = answerString + "\nmax confidence = " + tempMaxConfidenceStringCharStar;
 		#ifndef GIA_DO_NOT_PRINT_RESULTS
@@ -1447,22 +1448,30 @@ int main(int argc,char **argv)
 		cout << "max confidence: " << tempMaxConfidenceStringCharStar << endl;
 		#endif
 
+		//cout << "tempFolderCharStar = " << tempFolderCharStar << endl;
+		#ifdef LINUX
+		chdir(tempFolderCharStar);
+		#else
+		::SetCurrentDirectory(tempFolderCharStar);
+		#endif
+	
+		/*
 		char * fileByteArray = const_cast<char*>(answerString.c_str());
 		char * outputTextAnswerPlainTXTFileNameCharStar = const_cast<char*>(outputTextAnswerPlainTXTFileName.c_str());
 		writeByteArrayToFile(outputTextAnswerPlainTXTFileNameCharStar, fileByteArray, answerString.length());
+		*/
 	}
 	else if(useOutputTextAnswerPlainTXTFile)
 	{
 		cout << "error: outputText answer require a query to be set" << endl;
 	}
 
-	/*
+	//cout << "tempFolderCharStar = " << tempFolderCharStar << endl;
 	#ifdef LINUX
 	chdir(tempFolderCharStar);
 	#else
 	::SetCurrentDirectory(tempFolderCharStar);
 	#endif
-	*/
 	
 	if(printOutput)
 	{

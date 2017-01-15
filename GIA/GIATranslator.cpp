@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q8b 07-November-2012
+ * Project Version: 1q9a 08-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -210,7 +210,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	unordered_map<string, GIAEntityNode*> * entityNodesActiveListCompleteFastIndexDBactiveOriginal;
 	if(getUseDatabase() != GIA_USE_DATABASE_FALSE)
 	{
-		getDBentityNodesActiveListCompleteFastIndexDBactive();	
+		entityNodesActiveListCompleteFastIndexDBactiveOriginal = getDBentityNodesActiveListCompleteFastIndexDBactive();	
 	}
 	vector<GIAEntityNode*> * entityNodesActiveListSubstancesOriginal = getTranslatorSubstanceEntityNodesList();
 	vector<GIAEntityNode*> * entityNodesActiveListActionsOriginal = getTranslatorActionEntityNodesList();
@@ -907,7 +907,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 
 	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0o pass; define substances concepts (ie specific concepts): 
+	cout << "0o pass; define substances concepts (ie specific concepts)" << endl;
 	#endif
 	defineSubstanceConcepts(GIAEntityNodeArrayFilled, GIAEntityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
 	#endif 

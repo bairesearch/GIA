@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q8b 07-November-2012
+ * Project Version: 1q9a 08-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -193,8 +193,10 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesA
 	#endif
 		for(entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 		{
+			#ifndef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 			#ifdef GIA_DRAW_DEBUG
 			cout << "\ttracing..." << (*entityIter)->entityName << endl;
+			#endif
 			#endif
 
 			//initiateMaxXAtAParticularY();
@@ -357,6 +359,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 								entityConnectionColour = DAT_FILE_COLOUR_RED;
 							}
 							#endif
+							//cout << "entityConnectionColour = " << entityConnectionColour << endl;
 							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, (*connectionIter)->entity, currentReferenceInPrintList, initialiseOrPrint, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);
 						}
 					}
@@ -520,6 +523,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				{
 					nameOfBox = entityNode->entityName;
 				}
+				//cout << "entityColour = " << entityColour << endl;	
 				currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, currentTag, boxThickness, initialiseOrPrint);
 
 			}
