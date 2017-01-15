@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7d 09-May-2012
+ * Project Version: 1j7e 09-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -294,6 +294,9 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationGovernorIndex];
 				GIAEntityNode * ownerEntity = GIAEntityNodeArray[relationDependentIndex];
 				ownerEntity->hasPropertyTemp = true;
+				#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
+				ownerEntity->hasProperty = true;	//only required for linkReferences(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
+				#endif
 			}
 
 			//possessive of properties:
@@ -318,7 +321,9 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 					GIAEntityNode * thingEntity = GIAEntityNodeArray[relationGovernorIndex];
 					GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
 					thingEntity->hasPropertyTemp = true;
-
+					#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
+					ownerEntity->hasProperty = true;	//only required for linkReferences(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
+					#endif
 					//propertyEntity->hasQualityTemp = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]				
 				}
 			}
@@ -339,6 +344,9 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 				int relationDependentIndex = currentRelationInList->relationDependentIndex;	
 				GIAEntityNode * subjectEntity = GIAEntityNodeArray[relationDependentIndex];
 				subjectEntity->isSubjectTemp = true;
+				#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
+				ownerEntity->isSubject = true;	//only required for linkReferences(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
+				#endif
 			}
 
 			//has object:
@@ -357,6 +365,9 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 				int relationDependentIndex = currentRelationInList->relationDependentIndex;
 				GIAEntityNode * objectEntity = GIAEntityNodeArray[relationDependentIndex];
 				objectEntity->isObjectTemp = true; 
+				#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
+				ownerEntity->isObject = true;	//only required for linkReferences(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
+				#endif
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
@@ -623,27 +634,37 @@ void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 										//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp << endl;
 										//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalRelexPersonOrStanfordProperNounTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalRelexPersonOrStanfordProperNounTemp << endl;
 
-
-										if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp)
+										#ifndef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
+										if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubject) || (currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp))
+										#else
+										if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubject)																				
+										#endif
 										{
-											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp << endl;
+											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubject = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp << endl;
 											referenceSourceHasBeenFound = true;
 											referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
 										}
-										else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp) && (s2 > 0))
+										#ifndef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
+										else if(((currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObject) || (currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp)) && (s2 > 0))	//NB (currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp) check is redundant as (s2 > 0)										
+										#else	
+										else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObject) && (s2 > 0))
+										#endif
 										{
-											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp << endl;
+											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObject = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp << endl;
 											referenceSourceHasBeenFound = true;
 											referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
 										}
-										else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp) && (s2 > 0))
+										#ifndef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
+										else if(((currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasProperty) || (currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp)) && (s2 > 0))		//NB (currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp) check is redundant as (s2 > 0)										
+										#else										
+										else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasProperty) && (s2 > 0))
+										#endif
 										{
-											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp << endl;
+											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasProperty = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp << endl;
 											referenceSourceHasBeenFound = true;
 											referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
 										}
 									}
-
 								}
 								else
 								{

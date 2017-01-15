@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7d 09-May-2012
+ * Project Version: 1j7e 09-May-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -242,11 +242,14 @@ public:
 	int grammaticalGenderTemp; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	//bool grammaticalCountTemp;	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed		
 	bool grammaticalPronounTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+	
 	bool isSubjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool isObjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool hasPropertyTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	//bool hasQualityTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-	bool isObject;			//used for generating non exact answers during queries
+	bool isSubject;			//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Relex referencing only)
+	bool isObject;			//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Relex referencing only)
+	bool hasProperty;		//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Relex referencing only)
 	
 	#ifdef GIA_USE_STANFORD_CORENLP
 	/*
