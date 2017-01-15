@@ -23,7 +23,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p10c 24-September-2012
+ * Project Version: 1p10d 24-September-2012
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -191,7 +191,7 @@ bool checkIfWordIsContainedWithinAnotherWordsSynsets(string * word, string * oth
 			#ifdef GIA_FREE_MEMORY3
 			if(senseOutputWithHighestTagsPassedNewSynsetMustFree)
 			{
-				free_syns(senseOutputWithHighestTags);	//Free a synset	//CHECK THIS; senseOutputWithHighestTags may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)
+				free_synset(senseOutputWithHighestTags);	//Free a synset	//CHECK THIS; senseOutputWithHighestTags may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)
 			}
 			#endif		
 		}
@@ -251,7 +251,7 @@ SynsetPtr findMostPopularSynsets(string * word, bool * wordIsFound, int wordNetP
 				#ifdef GIA_FREE_MEMORY3
 				if(senseOutputWithHighestTagsPassedNewSynsetMustFree)
 				{
-					free_syns(senseOutputWithHighestTags);	//Free a synset	//CHECK THIS; senseOutputWithHighestTags may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)
+					free_synset(senseOutputWithHighestTags);	//Free a synset	//CHECK THIS; senseOutputWithHighestTags may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)
 				}
 				#endif				
 			}
