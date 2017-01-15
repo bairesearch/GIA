@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b3c 31-December-2013
+ * Project Version: 2b4a 05-January-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -990,6 +990,9 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlai
 		string currentWord = "";
 		int entityIndex = GIA_NLP_START_ENTITY_INDEX;	//only assigned after collapse?
 		int sentenceIndex = GIA_NLP_START_SENTENCE_INDEX;	//only assigned after collapse?
+		#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
+		bool readingQuotation = false;
+		#endif
 		while(parseFileObject.get(currentToken))
 		{
 			bool punctuationMarkFound = false;
@@ -1008,8 +1011,25 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlai
 					whiteSpaceFound = true;
 				}
 			}
-			if(whiteSpaceFound || punctuationMarkFound)
+			#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
+			bool quotationMarkFound = false;
+			for(int i=0; i<GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS; i++)
 			{
+				if(currentToken == nlpQuotationMarkCharacterArray[i])
+				{
+					quotationMarkFound = true;
+				}
+			}
+			if(quotationMarkFound)
+			{//NB imbedded/recursive quotation marks not currently supported eg "'hello'"
+				if(!readingQuotation)
+				{
+					readingQuotation = true;
+				}
+				else
+				{
+					readingQuotation = false;
+				}
 				if(!whiteSpace)
 				{
 					currentTagInPlainTextSentence->tagName = currentWord;
@@ -1022,55 +1042,95 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlai
 					#endif
 					currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
 					entityIndex++;
-					if(punctuationMarkFound)
-					{
-						currentTagInPlainTextSentence->tagName = currentToken;
-						currentTagInPlainTextSentence->entityIndex = entityIndex;
-						currentTagInPlainTextSentence->sentenceIndex = sentenceIndex;
-						currentTagInPlainTextSentence->nextTag = new GIALRPtag();
-						#ifdef GIA_LRP_DEBUG
-						cout <<  "adding Tag: " << currentTagInPlainTextSentence->tagName << endl;
-						#endif
-						currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
-
-						bool endOfSentencePunctuationMarkFound = false;
-						for(int i=0; i<GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE; i++)
-						{
-							if(currentToken == nlpPunctionMarkCharacterEndOfSentenceArray[i])
-							{
-								endOfSentencePunctuationMarkFound = true;
-							}
-						}
-						if(endOfSentencePunctuationMarkFound)
-						{
-							#ifdef GIA_LRP_DEBUG
-							//cout << "endOfSentencePunctuationMarkFound" << endl;
-							//cout << "currentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
-							#endif
-							currentTagInPlainText->nextSentence = new GIALRPtag();
-							currentTagInPlainText = currentTagInPlainText->nextSentence;
-							currentTagInPlainTextSentence = currentTagInPlainText;
-							sentenceIndex++;
-							entityIndex = 0;
-						}
-						else
-						{
-							entityIndex++;
-						}
-					}
 					currentWord = "";
 				}
-				else
-				{//skip (do not parse) multiple white space/punctuation characters (eg ". ")
-				}
-
-				whiteSpace = true;
 			}
 			else
 			{
-				whiteSpace = false;
-				currentWord = currentWord + currentToken;
+			#endif
+				if(whiteSpaceFound || punctuationMarkFound)
+				{
+					#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
+					if(readingQuotation)
+					{
+						currentWord = currentWord + GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER;					
+					}
+					else
+					{
+					#endif
+						if(!whiteSpace)
+						{
+							#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
+							if(currentWord != "")
+							{//do not add empty tag after closing quotation marks 
+							#endif
+								currentTagInPlainTextSentence->tagName = currentWord;
+								currentTagInPlainTextSentence->entityIndex = entityIndex;
+								currentTagInPlainTextSentence->sentenceIndex = sentenceIndex;
+								currentTagInPlainTextSentence->nextTag = new GIALRPtag();
+								#ifdef GIA_LRP_DEBUG
+								cout <<  "adding Tag: " << currentTagInPlainTextSentence->tagName << endl;
+								//cout << "currentTagInPlainTextSentence->sentenceIndex = " << currentTagInPlainTextSentence->sentenceIndex << endl;
+								#endif
+								currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
+								entityIndex++;
+							#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
+							}
+							#endif
+							if(punctuationMarkFound)
+							{
+								currentTagInPlainTextSentence->tagName = currentToken;
+								currentTagInPlainTextSentence->entityIndex = entityIndex;
+								currentTagInPlainTextSentence->sentenceIndex = sentenceIndex;
+								currentTagInPlainTextSentence->nextTag = new GIALRPtag();
+								#ifdef GIA_LRP_DEBUG
+								cout <<  "adding Tag: " << currentTagInPlainTextSentence->tagName << endl;
+								#endif
+								currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
+
+								bool endOfSentencePunctuationMarkFound = false;
+								for(int i=0; i<GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE; i++)
+								{
+									if(currentToken == nlpPunctionMarkCharacterEndOfSentenceArray[i])
+									{
+										endOfSentencePunctuationMarkFound = true;
+									}
+								}
+								if(endOfSentencePunctuationMarkFound)
+								{
+									#ifdef GIA_LRP_DEBUG
+									//cout << "endOfSentencePunctuationMarkFound" << endl;
+									//cout << "currentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
+									#endif
+									currentTagInPlainText->nextSentence = new GIALRPtag();
+									currentTagInPlainText = currentTagInPlainText->nextSentence;
+									currentTagInPlainTextSentence = currentTagInPlainText;
+									sentenceIndex++;
+									entityIndex = 0;
+								}
+								else
+								{
+									entityIndex++;
+								}
+							}
+							currentWord = "";
+						}
+						else
+						{//skip (do not parse) multiple white space/punctuation characters (eg ". ")
+						}
+						whiteSpace = true;
+					#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
+					}
+					#endif
+				}
+				else
+				{
+					whiteSpace = false;
+					currentWord = currentWord + currentToken;
+				}
+			#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
 			}
+			#endif
 			charCount++;
 		}
 		parseFileObject.close();
