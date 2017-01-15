@@ -52,7 +52,7 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesC
 		if(!((*entityIter)->initialisedForPrinting))
 		{
 			#ifdef GIA_DRAW_DEBUG
-			cout << "tracing..." << endl;
+			cout << "\ttracing..." << (*entityIter)->entityName << endl;
 			#endif
 			
 			//initiateMaxXAtAParticularY();
@@ -201,22 +201,22 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		//cout << "a2" << endl;
 		
 		//conditions connections
+		//go reverse also...
+		q = -DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
+		vector<GIAEntityNode*>::iterator ConditionIter;		
+		for(ConditionIter = entityNode->IncomingConditionNodeList.begin(); ConditionIter != entityNode->IncomingConditionNodeList.end(); ConditionIter++) 
+		{						
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+		}		
 		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
 		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
-		vector<GIAEntityNode*>::iterator ConditionIter;
 		for(ConditionIter = entityNode->ConditionNodeList.begin(); ConditionIter != entityNode->ConditionNodeList.end(); ConditionIter++) 
 		{				
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;				
 		}				
-		//go reverse also...
-		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
-		r = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;		
-		for(ConditionIter = entityNode->IncomingConditionNodeList.begin(); ConditionIter != entityNode->IncomingConditionNodeList.end(); ConditionIter++) 
-		{						
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y-q, x-r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		}
 			
 		q = -DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
 		r = -DRAW_X_SPACE_BETWEEN_CONDITION_NODES;			
@@ -284,8 +284,8 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		*/	
 		//cout << "a3b" << endl;
 		//go upwards also...
-		q = -DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;
-		r = -DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;		
+		q = -DRAW_Y_SPACE_BETWEEN_INSTANCE_DEFINITION_NODES;
+		r = -DRAW_X_SPACE_BETWEEN_INSTANCE_DEFINITION_NODES;		
 		if(entityNode->entityNodeDefiningThisInstance != NULL)
 		{
 			//cout << "a33" << endl;
@@ -357,8 +357,8 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				
 		//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
 		//associated actions and properties [ie does this entity also define an action/verb or a property/adjective? [ie, it is not just a thing/noun]]
-		q = DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;
-		r = DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;	//this used to be - not +		
+		q = DRAW_Y_SPACE_BETWEEN_INSTANCE_DEFINITION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_INSTANCE_DEFINITION_NODES;	//this used to be - not +		
 		for(entityIter = entityNode->AssociatedInstanceNodeList.begin(); entityIter != entityNode->AssociatedInstanceNodeList.end(); entityIter++) 
 		{
 			//cout << "as0" << endl;

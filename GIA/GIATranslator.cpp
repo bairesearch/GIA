@@ -551,11 +551,11 @@ void addConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * proper
 	conditionTypeConceptEntity->hasAssociatedInstance = true;
 	conditionTypeConceptEntity->hasAssociatedInstanceIsCondition = true;
 	conditionTypeConceptEntity->hasAssociatedInstanceTemp = true;
-	newCondition->isAction = true;
+	newCondition->isCondition = true;
 	newCondition->negative = conditionTypeConceptEntity->negative;	
 	
-	propertyNode->ConditionNodeList.push_back(propertyConditionEntity);
-	propertyConditionEntity->IncomingConditionNodeList.push_back(propertyNode);
+	propertyNode->ConditionNodeList.push_back(newCondition);
+	propertyConditionEntity->IncomingConditionNodeList.push_back(newCondition);
 }
 
 
