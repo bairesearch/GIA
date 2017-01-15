@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- *r
+ *
  * You should have received a copy of the GNU Affero General Public License
  * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d1b 21-January-2014
+ * Project Version: 2d2a 22-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -562,11 +562,15 @@
 		#define GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE	//NB maxNumberOfWordsInSentence is only currently used by GIA2
 		#define GIA_CORPUS_DATABASE_FILESYSTEM_USE_FLAT_FILE	//temporarily enabled for debugging
 		//#define GIA2_CONNECTIONIST_NETWORK_DEBUG		//temporary
+		#define GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE (5)	//ie 5 words in subset is the minimimum
+		#define GIA2_CONNECTIONIST_NETWORK_DO_NOT_ALLOW_OVERLAP	//if this is disabled, then will need to work out a way of reconciling redundant semantic relations (eg deleting replicate semantic relations)
 	#else
 		#define GIA_CORPUS_DATABASE_FILESYSTEM_USE_FLAT_FILE
 	#endif
 	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-		#define GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIED_BY_GIA2
+		#define GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
+	#elif defined GIA2_CONNECTIONIST_NETWORK
+		#define GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2	//this is required as semantic relations from multiple corpus files may be required to properly parse a sentence [if a single corpus file does not exist for the entire sentence]
 	#endif
 #endif
 

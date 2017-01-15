@@ -23,7 +23,7 @@
  * File Name: GIAcorpus.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d1b 21-January-2014
+ * Project Version: 2d2a 22-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -152,6 +152,7 @@ bool lookupCorpusFiles(Paragraph * firstParagraphInList, int NLPfeatureParser)
 	return result;
 }
 
+//NB GIA2_CONNECTIONIST_NETWORK currently uses a simplified algorithm; a future implementation would not use GIA2_CONNECTIONIST_NETWORK_DO_NOT_ALLOW_OVERLAP, ie it would perform multiple lookups for a given sub-subset as determined by multiple overlapping subset files and rank them (eg take the largest sub-subset)  
 bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser)
 {
 	bool result = true;
@@ -161,10 +162,85 @@ bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser)
 		//cout << "here" << endl;
 		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 		//cout << "here2" << endl;
-		if(!loadCorpusFileSemanticDependencyRelations(currentSentenceInList))
+		if(!loadCorpusFileSemanticDependencyRelations(currentSentenceInList, currentSentenceInList->firstFeatureInList))
 		{
+			#ifdef GIA2_CONNECTIONIST_NETWORK
+			//if corpus file not found, then search for apppropriate corpus file subsets...
+			//#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
+			//DOING GIA 2d2a...
+			cout << "lookupCorpusFiles() GIA2_CONNECTIONIST_NETWORK case not yet tested" << endl;
+			//#endif
+			Feature * dummyBlankFeature = new Feature();
+			//now simulate GIA2 semantic relations for each subset of original sentence POS permutation
+			Feature * centralFeatureInSentence = currentSentenceInList->firstFeatureInList;
+			if(centralFeatureInSentence->next != NULL)
+			{
+				while(centralFeatureInSentence->next->next != NULL)	//set centralFeatureInSentence to last in sentence
+				{
+					centralFeatureInSentence = centralFeatureInSentence->next;
+				}
+			}
+			int subsetStillNotFoundMaxFeatureIndex = currentSentenceInList->maxNumberOfWordsInSentence;
+			bool notFoundASubsetForAtLeastTwoWords = false;
+			for(int centralWord=currentSentenceInList->maxNumberOfWordsInSentence; centralWord>=2; centralWord--)	//centralWord in subset [NB centralWord>=2 as a subset of 1 is not a subset]
+			{
+				#ifdef GIA2_CONNECTIONIST_NETWORK_DO_NOT_ALLOW_OVERLAP
+				if(centralWord <= subsetStillNotFoundMaxFeatureIndex)
+				{
+				#endif
+					//#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
+					cout << "centralWord = " << centralWord << ", " << centralFeatureInSentence->lemma << endl;
+					//#endif
+					Feature * recordOfFeatureAfterCentralFeatureInSentence = centralFeatureInSentence->next;
+					centralFeatureInSentence->next = dummyBlankFeature;	//temporarily disconnect node at end of sentence subset
+					bool foundACorpusSubsetForCentralWord = false;
+					Feature * firstFeatureInSentenceSubset = currentSentenceInList->firstFeatureInList;
+					for(int firstWord=1; firstWord<=centralWord-(GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1); firstWord++)	//firstWord in subset
+					{
+						if(!foundACorpusSubsetForCentralWord)
+						{
+							#ifdef GIA2_CONNECTIONIST_NETWORK_DO_NOT_ALLOW_OVERLAP
+							//don't find a subset if the first word is !1 && < GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE, as the remaining subset will be 2 small to be found
+							if(firstWord == 1 || firstWord >= GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE)
+							{
+							#endif
+								//#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
+								cout << "firstWord = " << firstWord << ", " << firstFeatureInSentenceSubset->lemma << endl;
+								//#endif
+								int subsetSize = centralWord-firstWord+1;	//subsetSize aka maxSpread
+
+								//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes():
+
+								if(loadCorpusFileSemanticDependencyRelations(currentSentenceInList, firstFeatureInSentenceSubset))
+								{
+									foundACorpusSubsetForCentralWord = true;
+									subsetStillNotFoundMaxFeatureIndex = firstWord;
+								}
+							#ifdef GIA2_CONNECTIONIST_NETWORK_DO_NOT_ALLOW_OVERLAP
+							}
+							#endif	
+						}
+						firstFeatureInSentenceSubset = firstFeatureInSentenceSubset->next;
+					}
+					if(!foundACorpusSubsetForCentralWord)
+					{
+						notFoundASubsetForAtLeastTwoWords = true;
+					}
+					centralFeatureInSentence->next = recordOfFeatureAfterCentralFeatureInSentence;	//restore temporarily disconnected node at end of sentence subset
+				#ifdef GIA2_CONNECTIONIST_NETWORK_DO_NOT_ALLOW_OVERLAP
+				}
+				#endif
+				centralFeatureInSentence = centralFeatureInSentence->previous;
+			}
+			if(notFoundASubsetForAtLeastTwoWords)
+			{
+				result = false;
+			}
+			#else
 			result = false;
+			#endif	
 		}
+
 		//cout << "here3" << endl;
 		currentSentenceInList = currentSentenceInList->next;
 	}

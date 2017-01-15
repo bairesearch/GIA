@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d1b 21-January-2014
+ * Project Version: 2d2a 22-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -969,48 +969,6 @@ bool generateAllPermutationsFromSemanticRelationsFile(string corpusFileName, int
 	
 	return result;	
 }
-/*Pseudo Code For Lookup
-Feature * currentFeatureInSentence = sentence->firstFeatureInList;
-for(int w=0; w<sentence->maxNumberOfWordsInSentence; w++)
-{
-	int centralWord = w;
-	bool foundMatchAtGivenSubset = false;
-	int subsetSize = centralWord;	//subsetSize aka maxSpread
-	int indexOfFirstWordInLocalisedSubset = 0;
-	while(!foundMatchAtGivenSubset)
-	{
-
-		//prefers to find the largest subset (pos sequence); stop once a subset is found. 
-		//Semantic relations are only generated based on word POS permuations existant before the centralWord. 
-		//Word POS permuations after the centralWord are ignored and are not used in semantic relation determination
-
-		if(findPOSsequenceInDatabase(currentSentenceInList->firstFeatureInList, indexOfFirstWordInLocalisedSubset, subsetSize))
-		{
-			foundMatchAtGivenSubset = true;
-			//now determine the required semantic connections between each node in the spread and the centralNode
-
-			//for(int r=0; r<subsetSize; r++)
-			//{//r == reference word
-			//	int referenceWordIndex = indexOfFirstWordInLocalisedSubset + r;
-			//	for(int p=0; p<GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES; p++)
-			//	{
-			//
-			//	}
-			//}
-
-
-		}
-		indexOfFirstWordInLocalisedSubset++;
-		subsetSize--;
-		if(indexOfFirstWordInLocalisedSubset == centralWord)
-		{
-			foundMatchAtGivenSubset = false;
-		}
-	}
-	for(int subsetSize =
-	currentFeatureInSentence = currentFeatureInSentence->next;
-}
-*/
 #endif
 
 

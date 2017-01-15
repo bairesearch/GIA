@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d1b 21-January-2014
+ * Project Version: 2d2a 22-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -1410,7 +1410,7 @@ int main2(int argc,char **argv)
 				if(inputTextNLPfeatureXMLfileName != inputTextNLPrelationXMLfileName)
 				{
 				#endif
-					#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIED_BY_GIA2
+					#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 					executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, NLPfeatureParser, NLPexeFolderArray, false, true);
 					#else
 					executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, NLPfeatureParser, NLPexeFolderArray, false, NLPrelexCompatibilityMode);			
@@ -1571,7 +1571,7 @@ int main2(int argc,char **argv)
 			if(inputQueryNLPfeatureXMLFileName != inputQueryNLPrelationXMLFileName)
 			{
 			#endif
-				#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIED_BY_GIA2
+				#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray, false, true);
 				#else
 				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray, false, NLPrelexCompatibilityMode);		
