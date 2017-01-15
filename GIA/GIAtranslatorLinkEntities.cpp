@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i30a 06-February-2015
+ * Project Version: 2i30b 06-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -88,6 +88,24 @@ void linkEntitiesDynamicPrenominalModifierOfNoun(GIAsentence* currentSentenceInL
 
 				if(!direction1Found && !direction2Found)
 				{
+					#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_ENSURE_PROPERTY_PARENT_IS_DEFINITE
+					if(entity2->grammaticalDefiniteTemp)
+					{
+						entity1->grammaticalDefiniteTemp = true;
+						entity2->grammaticalDefiniteTemp = false;
+					}
+					#endif
+					#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_ENSURE_PROPERTY_PARENT_IS_SUBSTANCECONCEPT_IF_NECESSARY
+					if(entity2->isSubstanceConcept)
+					{
+						entity1->isSubstanceConcept = true;	//this may not be used currently because substance concept prenominal modifiers are interpreted by at least stanford NLP as _amod not _nn (_amod(line[2], goal[1]))
+					}
+					else
+					{
+						entity1->isSubstanceConcept = false;
+					}
+					#endif
+											
 					//use default linking (property link)
 					#ifdef GIA_TRANSLATOR_DEBUG
 					cout << "!previousRelationshipFound: creating default property link" << endl;
@@ -186,7 +204,7 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(GIArelation* currentRe
 									#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_ENSURE_PROPERTY_PARENT_IS_SUBSTANCECONCEPT_IF_NECESSARY
 									if(entity2->isSubstanceConcept)
 									{
-										entity1->isSubstanceConcept = true;
+										entity1->isSubstanceConcept = true;	//this may not be used currently because substance concept prenominal modifiers are interpreted by at least stanford NLP as _amod not _nn (_amod(line[2], goal[1]))
 									}
 									else
 									{
