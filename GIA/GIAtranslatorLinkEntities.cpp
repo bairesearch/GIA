@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r8b 19-November-2012
+ * Project Version: 1r9a 28-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1163,7 +1163,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 									}
 									#endif
 									#endif
-									#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_WITH_BE_AS_DEFINITION_LINK
+									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_WITH_BE_AS_DEFINITION_LINK
 									if(relexAdditionalRequirement)
 									{
 										if(partnerTypeObjectSpecialConditionToDoSubstanceFound)
