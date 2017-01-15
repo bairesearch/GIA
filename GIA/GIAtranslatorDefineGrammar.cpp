@@ -23,11 +23,10 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a6a 05-December-2013
+ * Project Version: 2a7a 06-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
- * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
- * TO DO: extract date information of entities from relex <features> tag area
+ *
  *******************************************************************************/
 
 
@@ -833,7 +832,7 @@ void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentit
 		if(GIAentityNodeArrayFilled[w])
 		{
 			GIAentityNode * entity = GIAentityNodeArray[w];
-			if(!(entity->wasReference))	//added GIA 2a5a - required for NLPI; do not overwrite isDefinite=false (from "a dog") with isDefinite=true (from "the dog") when the variable is being re-referenced in context
+			if(!(entity->wasReference))	//added GIA 2a5a - required for NLC; do not overwrite isDefinite=false (from "a dog") with isDefinite=true (from "the dog") when the variable is being re-referenced in context
 			{
 				#ifdef GIA_TRANSLATOR_DEBUG
 				//cout << "entity->entityName = " << entity->entityName << endl;

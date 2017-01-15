@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a6a 05-December-2013
+ * Project Version: 2a7a 06-December-2013
  *
  *******************************************************************************/
 
@@ -242,12 +242,13 @@ GIAentityNode::GIAentityNode(void)
 	sourceReferencedInLanguageGeneration = false;
 	#endif
 
-	#ifdef USE_NLPI
-	parsedForNLPIcodeBlocks = false;
-	//parsedForNLPIcodeBlocksActionRound = false;
-	//parsedForNLPIclassHeirarchy = false;
-	NLPIisSingularArgument = false;
-	NLPIlocalListVariableHasBeenDeclared = false;
+	#ifdef USE_NLC
+	parsedForNLCcodeBlocks = false;
+	//parsedForNLCcodeBlocksActionRound = false;
+	//parsedForNLCclassHeirarchy = false;
+	NLCisSingularArgument = false;
+	NLClocalListVariableHasBeenDeclared = false;
+	NLCconditionLogicalOperations = false;
 	#endif
 }
 GIAentityNode::~GIAentityNode(void)

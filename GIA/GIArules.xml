@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a6a 05-December-2013
+ * Project Version: 2a7a 06-December-2013
  *
  *******************************************************************************/
 -->
@@ -2110,8 +2110,8 @@
 			</function>
 			<!-- #endif -->
 			
-			<!-- NLPI Only (testing) -->
-			<function name="NLPIredistributeRelexRelationsDisableRedundantObjectRelations">
+			<!-- NLC Only (testing) -->
+			<function name="NLCredistributeRelexRelationsDisableRedundantObjectRelations">
 				<example><!--
 				eg Tom rides the Max's blue bike near the garage
 				near(ride[2], garage[10])
@@ -2135,6 +2135,17 @@
 				</paramEntity>
 			</function>
 
+			<!-- #ifdefGIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_SENTENCES_WITH_CONCEPTS -->
+			<!--
+			<function name="NLPIdefineSubstancesAllNodes">
+				<paramEntity mode="execute">
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isConcept" value="true" />
+				<option functionToExecuteUponFind="1" />
+				</paramEntity>
+			</function>
+			-->
+			<!-- #endif -->
+			
 			<function name="defineSubstancesDefiniteNouns">
 				<paramEntity mode="execute">
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isPronounReference" value="false" />
@@ -2900,8 +2911,8 @@
 			</function>
 
 			
-			<!-- NLPI Only -->
-			<function name="NLPIinterpretWithAsPropertyWhenConnectedToSubstanceOnly">
+			<!-- NLC Only -->
+			<function name="NLCinterpretWithAsPropertyWhenConnectedToSubstanceOnly">
 				<example><!--
 				eg The city with a house is fast.
 					_predadj(city[2], fast[7])

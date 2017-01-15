@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a6a 05-December-2013
+ * Project Version: 2a7a 06-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -513,6 +513,8 @@
 
 #include "SHAREDglobalDefs.h"
 
+//#define GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_SENTENCES_WITH_CONCEPTS		//GIA 2a7a
+
 //variables currently being tested (3a4a+)
 #define GIA_RELEX_FIX_DO_NOT_ASSIGN_DEFINITE_IF_UNCOUNTABLE
 
@@ -520,7 +522,7 @@
 #define GIA_TRANSLATOR_SUPPORT_CSUB_AND_COP_GENERATE_ADJECTIVES 
 
 //variables currently being tested (1q1a+)
-#define GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS	//required for NLPI
+#define GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS	//required for NLC
 #define GIA_QUERY_SIMPLIFIED_SEARCH
 #define GIA_QUERY_SIMPLIFIED_SEARCH_REPLACE_ADVANCED_SEARCH
 //#define GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
