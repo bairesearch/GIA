@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e1a 10-April-2014
+ * Project Version: 2e2a 15-April-2014
  *
  *******************************************************************************/
 -->
@@ -1399,13 +1399,9 @@
 			</function>
 
 			<function name="redistributeStanfordRelationsCreateQueryVarsWhoWhat">
-				<example><!--
-				interpret; 'Who is that?' / 'What is the time?' attr(is-2, What-1) + nsubj(is-2, time-4) -> appos(time-4, _$qVar-1) / attr(is-2, Who-1) + nsubj(is-2, that-3) -> appos(That-3, _$qVar-1) [NB _$qVar can be switched in both cases with respect to ]
-				interpret; 'Who rode the bike?' / 'What broke the glass?' -> nsubj(rode-2, Who-1) -> nsubj(rode-2, _$qVar-1) / nsubj(broke-2, What-1) -> nsubj(broke-2, _$qVar-1) [added 7 August 2012]
-				--></example>
 
 				<example><!--
-				interpret; 'Who rode the bike?' / 'What broke the glass?' -> nsubj(rode-2, Who-1) -> nsubj(rode-2, _$qVar) / nsubj(broke-2, What-1) -> nsubj(broke-2, _$qVar) [added 7 August 2012]
+				interpret; 'Who rode the bike?' nsubj(rode-2, Who-1) -> nsubj(rode-2, _$qVar-1) [added 7 August 2012]
 				--></example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
@@ -1417,7 +1413,9 @@
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNameQuery" value="true" REL="0" REL_ENT="1" />
 				<!-- #endif -->
 				</paramDepRel>
-
+				<example><!--
+				interpret; 'What broke the glass?' nsubj(broke-2, What-1) -> nsubj(broke-2, _$qVar-1) [added 7 August 2012]
+				--></example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_subj" />
@@ -1425,8 +1423,10 @@
 				<option useRelationTest="true" REL="0" REL_ENT="1" relationTest="what" />
 				</paramDepRel>
 
+
+				<!-- Supports Stanford Parser/CoreNLP version 2+ e.g. 2013-04-04 --> 
 				<example><!--
-				interpret; 'who is that' attr(is-2, Who-1) + nsubj(is-2, that-3) -> appos(That-3, _$qVar-1) [NB _$qVar can be switched in both cases with respect to ]
+				interpret; 'Who is that?' nsubj(is-2, that-3) + attr(is-2, Who-1) -> appos(That-3, _$qVar-1) [NB _$qVar can be switched in both cases with respect to ]
 				--></example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="2" />
@@ -1462,9 +1462,48 @@
 				<!-- #endif -->
 				<!-- #endif -->
 				</paramDepRel>
+					<!-- Supports Stanford Parser/CoreNLP version 3+ e.g. 2014-01-04 [UNTESTED] --> 
+					<example><!--
+					interpret; 'Who is that?' nsubj(Who-1, that-3) + cop(Who-1, is-2) -> appos(That-3, _$qVar-1) [NB _$qVar can be switched in both cases with respect to ]				
+					--></example>
+					<paramDepRel mode="redistribute">
+					<option numberOfRelations="2" />
+					<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_subj" />
+					<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_cop" />
+					<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
+					<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
+					<!-- #ifdefGIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY -->
+					<option disableRelation="true" REL="0" />
+					<option disableEntity="true" REL="1" REL_ENT="1" />
+					<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_appo" />
+					<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="0" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+					<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="0" redistributeRelationEntityIndexReassignmentRelationEntityID="0" />
+					<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityReassignment="_$qVar" /> <!-- convert "What"/"Who" to _$qVar -->
+					<!-- #else -->
+					<!--
+					<option disableRelation="true" REL="1" />
+					<option disableEntity="true" REL="1" REL_ENT="1" />
+					<option useRedistributeRelationEntityReassignment="true" REL="0" REL_ENT="2" redistributeRelationEntityReassignment="_appo" />
+					<option useRedistributeRelationEntityReassignment="true" REL="0" REL_ENT="0" redistributeRelationEntityReassignment="_$qVar" /> //convert "What"/"Who" to _$qVar
+					-->
+					<!-- #endif -->
+					<option useRelationTest="true" REL="0" REL_ENT="0" relationTest="who" />
+					<!-- #ifdefGIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS -->
+					<!-- #ifdefGIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY -->
+					<!-- <option useRedistributeSpecialCaseIsNameQueryAssignment="true" REL="1" REL_ENT="1" /> -->
+					<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNameQuery" value="true" REL="1" REL_ENT="1" />
+					<!-- #else -->
+					<!--
+					<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNameQuery" value="true" REL="1" REL_ENT="0" />
+					-->
+					</paramDepRel>
 
+
+
+
+				<!-- Supports Stanford Parser/CoreNLP version 2+ e.g. 2013-04-04 --> 
 				<example><!--
-				interpret; 'what is the time.' attr(is-2, What-1) + nsubj(is-2, time-4) -> appos(time-4, _$qVar-1) [NB _$qVar can be switched in both cases with respect to ]
+				interpret; 'What is the time?'  nsubj(is-2, time-4) + attr(is-2, What-1) -> appos(time-4, _$qVar-1) [NB _$qVar can be switched in both cases with respect to ]
 				--></example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="2" />
@@ -1490,7 +1529,36 @@
 				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="what" />
 				</paramDepRel>
+					<!-- Supports Stanford Parser/CoreNLP version 3+ e.g. 2014-01-04 [UNTESTED] --> 
+					<example><!--
+					interpret; 'What is the time?' nsubj(What-1, time-4) + cop(What-1, is-2) -> appos(time-4, _$qVar-1) [NB _$qVar can be switched in both cases with respect to ]
+					--></example>
+					<paramDepRel mode="redistribute">
+					<option numberOfRelations="2" />
+					<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_subj" />
+					<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_cop" />
+					<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
+					<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
+					<!-- #ifdefGIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY -->
+					<option disableRelation="true" REL="0" />
+					<option disableEntity="true" REL="1" REL_ENT="1" />
+					<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_appo" />
+					<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="0" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+					<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="0" redistributeRelationEntityIndexReassignmentRelationEntityID="0" />
+					<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityReassignment="_$qVar" /> <!-- convert "What"/"Who" to _$qVar -->
+					<!-- #else -->
+					<!--
+					<option disableRelation="true" REL="1" />
+					<option disableEntity="true" REL="1" REL_ENT="1" />
+					<option useRedistributeRelationEntityReassignment="true" REL="0" REL_ENT="2" redistributeRelationEntityReassignment="_appo" />
+					<option useRedistributeRelationEntityReassignment="true" REL="0" REL_ENT="0" redistributeRelationEntityReassignment="_$qVar" /> //convert "What"/"Who" to _$qVar
+					-->
+					<!-- #endif -->
+					<option useRelationTest="true" REL="0" REL_ENT="0" relationTest="what" />
+					</paramDepRel>
 
+
+				<!-- Supports Stanford Parser/CoreNLP version 2+ e.g. 2013-04-04 --> 
 				<example><!--
 				interpret; 'What time is it?' attr(is-3, time-2) + nsubj(is-3, it-4) + det(time-2, What-1) -> appos(time-4, _$qVar-1)
 				--></example>
@@ -1511,6 +1579,27 @@
 				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityReassignment="_$qVar" /> <!-- CHECK THIS overwrite -->
 				<assert variable="setDefiniteAfterFinish" REL="1" REL_ENT="0" /> <!-- required such that "time" is treated the same way as when generated by "what is the time?" -->
 				</paramDepRel>
+					<!-- Supports Stanford Parser/CoreNLP version 3+ e.g. 2014-01-04 [UNTESTED] --> 
+					<example><!--
+					interpret; 'What time is it?' dep(is-3, time-2) + nsubj(is-3, it-4) + det(time-2, What-1) -> appos(time-4, _$qVar-1)
+					--></example>
+					<paramDepRel mode="redistribute">
+					<option numberOfRelations="3" />
+					<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_subj" />
+					<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_dep" />
+					<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="_det" />
+					<option useRelationArrayTest="true" REL="2" REL_ENT="1" relationArrayTest="what" relationArrayTestSize="1" />
+					<option useRelationTest="true" REL="0" REL_ENT="0" relationTest="be" />
+					<option useRelationTest="true" REL="1" REL_ENT="0" relationTest="be" />
+					<option disableRelation="true" REL="0" />
+					<option disableEntity="true" REL="0" REL_ENT="0" /> <!-- oldRedundantBeEntity -->
+					<option disableEntity="true" REL="0" REL_ENT="1" /> <!-- oldRedundantItEntity -->
+					<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_appo" />
+					<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+					<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+					<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityReassignment="_$qVar" /> <!-- CHECK THIS overwrite -->
+					<assert variable="setDefiniteAfterFinish" REL="1" REL_ENT="0" /> <!-- required such that "time" is treated the same way as when generated by "what is the time?" -->
+					</paramDepRel>
 			</function>
 
 			<function name="redistributeStanfordRelationsCreateQueryVarsHowMuchHowMany">
@@ -2855,11 +2944,11 @@
 				//#ifdefGIA_USE_ADVANCED_REFERENCING
 				<option defaultSameSetReferenceValue="false" />
 				//#endif
-				//#ifndefGIA_SUPPORT_CORPUS
+				//#ifndefGIA_USE_CORPUS_DATABASE
 				//<option disableEntity="true" REL="0" REL_ENT="0" /> //disable "have" entity
 				//#endif
 				</paramDepRel>
-				//#ifdefGIA_SUPPORT_CORPUS
+				//#ifdefGIA_USE_CORPUS_DATABASE
 				<paramDepRel mode="execute">
 				<option numberOfRelations="2" />
 				<option useRelationArrayTest="true" REL="0" REL_ENT="2" relationArrayTest="_subj" relationArrayTestSize="1" />
