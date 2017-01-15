@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s6a 28-June-2013
+ * Project Version: 1s7a 29-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -587,11 +587,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		#endif
 		redistributeStanfordRelationsAdverbalClauseModifierAndComplement(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
 
+		#ifndef GIA_INTERPRET_CSUBJ_AS_SUBJECT_OF_ACTION
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1c4; redistribute Stanford Relations - Clausal Subject (eg What she said makes sense. 	csubj (make, say)/dobj ( said-3 , What-1 ))" << endl;
 		#endif
 		redistributeStanfordRelationsClausalSubject(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
-
+		#endif
 		
 		//#ifdef GIA_TRANSLATOR_DEBUG
 		//cout << "pass 1c5; redistribute Stanford Relations - Phrasal Verb Particle (eg They shut down the station. 	prt(shut, down))" << endl;

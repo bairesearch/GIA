@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s6a 28-June-2013
+ * Project Version: 1s7a 29-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -136,7 +136,7 @@ static int dependencyRelationsTypes[GIA_NLP_PARSER_NUMBER_OF_TYPES] = {GIA_NLP_D
 int maxNumberSentences;
 #endif
 
-#ifndef USE_NLP
+#ifndef USE_NLPI
 int main(int argc,char **argv)
 {
 	#ifdef GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
@@ -638,7 +638,7 @@ int main(int argc,char **argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1s6a 28-June-2013" << endl;
+			cout << "OpenGIA.exe - Project Version: 1s7a 29-June-2013" << endl;
 			exit(1);
 		}
 
