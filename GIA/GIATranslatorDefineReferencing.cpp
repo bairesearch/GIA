@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m1a 20-June-2012
+ * Project Version: 1m2a 30-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1149,6 +1149,8 @@ void identityReferenceSet(GIAEntityNode * entityNode, int referenceSetID)
 //based on answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork();
 void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAEntityNode*> *sentenceConceptEntityNodesList, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, GIACoreference * firstGIACoreferenceInList, int numberReferenceSets)	//bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[]
 {
+	//cout << "start createGIACoreferenceInListBasedUponIdentifiedReferenceSets" << endl;
+	
 	unordered_map<string, GIAEntityNode*> * entityNodesActiveListConceptsQuery = sentenceConceptEntityNodesList;
 
 	#ifdef GIA_DATABASE_CLEAR_CACHE_EVERY_SENTENCE
@@ -1226,6 +1228,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 					#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 					queryTraceParameters.level = 0;		
 					#endif
+					//cout << "a" << endl;
 					bool exactMatch = testEntityNodeForQueryOrReferenceSet(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, &referenceTraceParameters);
 					
 					bool matchFound = false;
@@ -1249,9 +1252,14 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 						if(numberOfMatchedNodesTemp > maxNumberOfMatchedNodes)
 						{
 							foundAtLeastOneMatch = true;
+							
 							maxNumberOfMatchedNodes = numberOfMatchedNodesTemp;
 							queryEntityWithMaxNumberNodesMatched = currentQueryEntityNode;
 							networkEntityWithMaxNumberNodesMatched = conceptEntityMatchingCurrentQueryEntity;
+							
+							//cout << "\t\t numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
+							//cout << "\t\t queryEntityWithMaxNumberNodesMatched->entityName = " << queryEntityWithMaxNumberNodesMatched->entityName << endl;
+							//cout << "\t\t networkEntityWithMaxNumberNodesMatched->entityName = " << networkEntityWithMaxNumberNodesMatched->entityName << endl;							
 						}
 					}
 				
@@ -1261,7 +1269,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 					bool traceInstantiations = true;					
 					traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);		
 					traceEntityNode(conceptEntityMatchingCurrentQueryEntity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
-													
+					//cout << "b" << endl;								
 				}
 			}
 			/*
@@ -1292,6 +1300,9 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 			#endif
 			int result = testEntityNodeForQueryOrReferenceSet(queryEntityWithMaxNumberNodesMatched, networkEntityWithMaxNumberNodesMatched, &numberOfMatchedNodesTemp, true, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, &referenceTraceParameters);
 			
+			//cout << "c" << endl;
+			//cout << "networkEntityWithMaxNumberNodesMatched->entityName = " << networkEntityWithMaxNumberNodesMatched->entityName << endl;
+			 
 			#ifdef GIA_USE_ADVANCED_REFERENCING
 			//required to set entityCorrespondingBestMatch of  the first node (concept) in the reference set trace. This should not be required as concept entity nodes of the same name (ie not pronouns) don't need referencing... It is just done for algorithmic consistency sake (considering other concept nodes in the reference set trace will have their entityCorrespondingBestMatch value set) 
 			queryEntityWithMaxNumberNodesMatched->entityCorrespondingBestMatch = networkEntityWithMaxNumberNodesMatched;		//this shouldn't be required for queries....
@@ -1325,6 +1336,9 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 	}
 	#endif	
 	#endif	
+	
+	//cout << "end createGIACoreferenceInListBasedUponIdentifiedReferenceSets" << endl;
+	
 }
 
 
@@ -1341,7 +1355,7 @@ GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIA
 		if(entityNode->entityCorrespondingBestMatch != NULL)
 		{
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-			cout << "addingEntityCorrespondingBestMatch. entityNode being traced: = " << entityNode->entityName << endl;
+			cout << "\taddingEntityCorrespondingBestMatch. entityNode being traced: = " << entityNode->entityName << endl;
 			cout << "entityNode->entityName = " << entityNode->entityName << endl;
 			cout << "entityNode->entityCorrespondingBestMatch->entityName = " << entityNode->entityCorrespondingBestMatch->entityName << endl;
 			#endif

@@ -3,7 +3,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m1a 20-June-2012
+ * Project Version: 1m2a 30-June-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -211,11 +211,13 @@ GIAEntityNode * findOrAddConceptEntityNodeByName(vector<GIAEntityNode*> *entityN
 			entityNodesActiveListConcepts->insert(pair<string, GIAEntityNode*>(*entityNodeName, newEntityNode));
 			(*currentEntityNodeIDInConceptEntityNodesList) = (*currentEntityNodeIDInConceptEntityNodesList) + 1;
 
+			#ifdef GIA_USE_DATABASE
 			#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 			GIAconceptEntityLoaded * conceptEntityLoaded = new GIAconceptEntityLoaded();
 			conceptEntityLoaded->loaded = true;
 			conceptEntityLoaded->numberOfInstances = 0;
 			newEntityNode->conceptEntityLoaded = conceptEntityLoaded;
+			#endif
 			#endif
 			
 			newEntityNode->entityName = *entityNodeName;

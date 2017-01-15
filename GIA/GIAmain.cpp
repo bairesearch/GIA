@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m1a 20-June-2012
+ * Project Version: 1m2a 30-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -328,6 +328,7 @@ int main(int argc,char **argv)
 		{
 			inputTextPlainTXTFileName=get_char_argument(argc,argv,"-itxt");
 			useInputTextPlainTXTFile = true;
+			//cout << "DEBUGZ" << endl;
 		}
 	
 	#ifdef USE_CE
@@ -342,11 +343,13 @@ int main(int argc,char **argv)
 		{
 			inputTextNLPrelationXMLFileName=get_char_argument(argc,argv,"-ionlprel");
 			useInputTextNLPrelationXMLFile = true;
+			//cout << "DEBUG ionlprel = " << inputTextNLPrelationXMLFileName << endl;			
 		}
 		if(exists_argument(argc,argv,"-ionlptag"))
 		{
 			inputTextNLPfeatureXMLFileName=get_char_argument(argc,argv,"-ionlptag");
 			useInputTextNLPfeatureXMLFile = true;
+			//cout << "DEBUG ionlptag = " << inputTextNLPfeatureXMLFileName << endl;			
 		}		
 
 		if(exists_argument(argc,argv,"-ixml"))
@@ -368,12 +371,14 @@ int main(int argc,char **argv)
 			inputQueryNLPrelationXMLFileName=get_char_argument(argc,argv,"-ionlprelq");
 			useInputQueryNLPrelationXMLFile = true;
 			useInputQuery = true;
+			//cout << "DEBUG ionlprelq = " << inputQueryNLPrelationXMLFileName << endl;
 		}
 		if(exists_argument(argc,argv,"-ionlptagq"))
 		{
 			inputQueryNLPfeatureXMLFileName=get_char_argument(argc,argv,"-ionlptagq");
 			useInputQueryNLPfeatureXMLFile = true;
 			useInputQuery = true;
+			//cout << "DEBUG ionlptagq = " << inputQueryNLPfeatureXMLFileName << endl;
 		}
 		
 		if(exists_argument(argc,argv,"-ixmlq"))
@@ -635,7 +640,7 @@ int main(int argc,char **argv)
 								
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe - Project Version: 1m1a 20-June-2012" << endl;
+			cout << "GIA.exe - Project Version: 1m2a 30-June-2012" << endl;
 			exit(1);
 		}
 
@@ -861,6 +866,7 @@ int main(int argc,char **argv)
 					
 	if(useInputTextPlainTXTFile)
 	{
+		//cout << "DEBUGA" << endl;
 		/*
 		if(useInputTextNLPrelationXMLFile)
 		{
@@ -887,6 +893,11 @@ int main(int argc,char **argv)
 	
 	if(useInputTextNLPrelationXMLFile)
 	{
+		//cout << "DEBUGB" << endl;
+		//cout << "inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
+		//cout << "inputTextNLPfeatureXMLFileName = " << inputTextNLPfeatureXMLFileName << endl;
+		//cout << "outputTextCFFFileName = " << outputTextCFFFileName << endl;
+		
 		if(useInputTextXMLFile)
 		{
 			cout << "error: useInputTextXMLFile && useInputTextNLPrelationXMLFile" << endl;
@@ -910,6 +921,7 @@ int main(int argc,char **argv)
 	
 	if(useInputTextXMLFile)
 	{
+		//cout << "DEBUGC" << endl;
 		if(useInputTextPlainTXTFile)
 		{
 			cout << "error: useInputTextXMLFile && useInputTextPlainTXTFile" << endl;
@@ -936,6 +948,7 @@ int main(int argc,char **argv)
 			
 	if(useInputQueryPlainTXTFile)
 	{
+		//cout << "DEBUG2A" << endl;
 		/*
 		if(useInputQueryNLPrelationXMLFile)
 		{
@@ -962,6 +975,8 @@ int main(int argc,char **argv)
 			
 	if(useInputQueryNLPrelationXMLFile)
 	{
+		//cout << "DEBUG2B" << endl;
+	
 		if(useInputQueryXMLFile)
 		{
 			cout << "error: useInputQueryXMLFile && useInputQueryNLPrelationXMLFile" << endl;
@@ -992,6 +1007,8 @@ int main(int argc,char **argv)
 		
 	if(useInputQueryXMLFile)
 	{
+		//cout << "DEBUG2C" << endl;
+	
 		if(useInputQueryPlainTXTFile)
 		{
 			cout << "error: useInputQueryXMLFile && useInputQueryPlainTXTFile" << endl;

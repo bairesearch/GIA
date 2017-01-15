@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m1a 20-June-2012
+ * Project Version: 1m2a 30-June-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -160,6 +160,7 @@ static string entityVectorConnectionDrawConnectionNameArray[GIA_ENTITY_NUMBER_OF
 
 class GIAEntityConnection;
 
+#ifdef GIA_USE_DATABASE
 #ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 class GIAconceptEntityLoaded
 {
@@ -170,6 +171,7 @@ public:
 	bool loaded;
 	long numberOfInstances; 
 };
+#endif
 #endif
 
 class GIAEntityNode

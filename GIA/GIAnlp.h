@@ -3,7 +3,7 @@
  * File Name: GIAnlp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m1a 20-June-2012
+ * Project Version: 1m2a 30-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -17,6 +17,7 @@
 
 #define GIA_TM_STRUCT_YEAR_OFFSET 1900
 
+#define STANFORD_PARSER_SENTENCE_SKIPPED_TEXT "Sentence skipped"
 
 #define Relex_CFF_XML_TAG_nlparse ((string)"nlparse")
 	#define Relex_CFF_XML_ATTRIBUTE_xmlns ((string)"xmlns")
@@ -90,6 +91,7 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 	#ifdef GIA_USE_STANFORD_PARSER
 	bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragraph * firstParagraphInList, bool createNewSentences);
 	#endif
+		int countSubstring(const std::string& str, const std::string& sub);
 
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 void outputInternalRelationsInRelexFormat(string * nameOfRelexCompactFormatCFFfile, string * originalInputFileName, Paragraph * firstParagraphInList, int NLPdependencyRelationsParser, int NLPfeatureParser, string NLPexeFolderArray[]);

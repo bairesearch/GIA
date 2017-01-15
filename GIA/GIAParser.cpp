@@ -3,7 +3,7 @@
  * File Name: GIAParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m1a 20-June-2012
+ * Project Version: 1m2a 30-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of CFF File
  *
@@ -244,7 +244,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 				currentRelation->relationDependent = relationDependent;			
 			}
 			
-			/*
+			
 			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 			cout << "relation added;" << endl;
 			cout << "currentRelation->relationType = " << currentRelation->relationType << endl;
@@ -253,7 +253,8 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			cout << "currentRelation->relationGovernorIndex = " << currentRelation->relationGovernorIndex << endl;
 			cout << "currentRelation->relationDependentIndex = " << currentRelation->relationDependentIndex << endl;
 			#endif
-			*/
+			//cout << currentRelation->relationType << "(" << currentRelation->relationGovernor << ", " << currentRelation->relationDependent << ")" << endl;	
+
 			
 			#ifdef GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
 			if(currentRelation->relationType != RELATION_TYPE_ROOT)

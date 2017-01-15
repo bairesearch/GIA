@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m1a 20-June-2012
+ * Project Version: 1m2a 30-June-2012
  *
  *******************************************************************************/
 
@@ -18,6 +18,7 @@ string quantityModifierNameArray[QUANTITY_MODIFIER_NUMBER_OF_TYPES] = {"almost"}
 
 //int grammaticalTenseNameLengthsArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES] = {9, 7, 4, 6};
 
+#ifdef GIA_USE_DATABASE
 #ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 GIAconceptEntityLoaded::GIAconceptEntityLoaded(void)
 {
@@ -27,6 +28,7 @@ GIAconceptEntityLoaded::GIAconceptEntityLoaded(void)
 GIAconceptEntityLoaded::~GIAconceptEntityLoaded(void)
 {
 }
+#endif
 #endif
 
 //~nouns
@@ -120,7 +122,11 @@ GIAEntityNode::GIAEntityNode(void)
 	conditionSubjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT]);
 	conditionObjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT]);
 	entityNodeDefiningThisInstance = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE]);
-
+	
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	entityCorrespondingBestMatch = NULL;
+	#endif
+	
 	#ifdef GIA_USE_DATABASE
 	DBsetEntityConnectionsReferenceListsLoaded(this, true);	//for now, assume that a new entity will be configured with its connections loaded into RAM
 	#endif

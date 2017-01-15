@@ -3,7 +3,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1m1a 20-June-2012
+ * Project Version: 1m2a 30-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -101,7 +101,7 @@ void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelat
 		#endif
 		
 		string commandCopyTemporaryFileToRealFile = "";
-		commandCopyTemporaryFileToRealFile = commandCopyTemporaryFileToRealFile + SYSTEM_MOVE_COMMAND + " " + inputTextNLPParsedXMLFileNameTemp + " " + inputTextNLPrelationXMLFileName;
+		commandCopyTemporaryFileToRealFile = commandCopyTemporaryFileToRealFile + SYSTEM_MOVE_COMMAND + " " + inputTextNLPParsedXMLFileNameTemp + " " + inputTextNLPrelationXMLFileName;	//this is required because Stanford CoreNLP cannot output a file of a given name, it can only output a file with a modified extension 
 		system(commandCopyTemporaryFileToRealFile.c_str());
 	
 		#ifdef LINUX
@@ -122,11 +122,13 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 
 	bool createNewSentences = true;
 	
-	//cout << "inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
-	//cout << "inputTextNLPfeatureXMLFileName = " << inputTextNLPfeatureXMLFileName << endl;
-	//cout << "NLPfeatureParser = " << NLPfeatureParser << endl;
-	//cout << "NLPdependencyRelationsParser = " << NLPdependencyRelationsParser << endl;
-	//cout << "NLPrelexCompatibilityMode = " << NLPrelexCompatibilityMode << endl;
+	/*
+	cout << "inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
+	cout << "inputTextNLPfeatureXMLFileName = " << inputTextNLPfeatureXMLFileName << endl;
+	cout << "NLPfeatureParser = " << NLPfeatureParser << endl;
+	cout << "NLPdependencyRelationsParser = " << NLPdependencyRelationsParser << endl;
+	cout << "NLPrelexCompatibilityMode = " << NLPrelexCompatibilityMode << endl;
+	*/
 	
 	//Parse Features
 	#ifdef GIA_USE_RELEX
@@ -139,6 +141,7 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 		}
 	}
 	#endif
+	//cout << "NLP1" << endl;
 	#ifdef GIA_USE_STANFORD_CORENLP
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
@@ -149,6 +152,7 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 		}
 	}
 	#endif
+	//cout << "NLP2" << endl;
 	#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 	#ifdef GIA_USE_STANFORD_PARSER
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER)
@@ -161,7 +165,8 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 	}	
 	#endif	
 	#endif
-		
+	
+	//cout << "NLP3" << endl;	
 			
 	//Parse Relations
 	#ifdef GIA_USE_RELEX
@@ -173,6 +178,7 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 		}
 	}
 	#endif
+	//cout << "NLP4" << endl;
 	#ifdef GIA_USE_STANFORD_CORENLP
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
@@ -182,6 +188,7 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 		}
 	}
 	#endif
+	//cout << "NLP5, inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
 	#ifdef GIA_USE_STANFORD_PARSER
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_STANFORD_PARSER)
 	{
@@ -191,7 +198,8 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 		}
 	}	
 	#endif		
-				
+	//cout << "NLP6" << endl;
+		
 	return result;
 }
 
@@ -282,11 +290,13 @@ bool parseRelexFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragr
 
 											if(isQuery)
 											{
+												#ifdef GIA_QUERIES_MUST_BE_QUESTIONS
 												if(!(currentSentence->isQuestion))
 												{
 													cout << "error: GIA query is not a question" << endl;
 													exit(0); 
 												}
+												#endif
 											}
 										}						
 										//cout << "fini" << endl;
@@ -465,8 +475,10 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 				}
 				else
 				{
+					#ifdef GIA_QUERIES_MUST_BE_QUESTIONS
 					cout << "error: GIA query is not a question" << endl;
 					exit(0); 
+					#endif
 				}
 			}
 			#endif
@@ -687,6 +699,22 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 #endif
 
 #ifdef GIA_USE_STANFORD_PARSER
+
+//http://rosettacode.org/wiki/Count_occurrences_of_a_substring#C.2B.2B
+// returns count of non-overlapping occurrences of 'sub' in 'str'
+int countSubstring(const std::string& str, const std::string& sub)
+{
+    if (sub.length() == 0) return 0;
+    int count = 0;
+    for (size_t offset = str.find(sub); offset != std::string::npos;
+	 offset = str.find(sub, offset + sub.length()))
+    {
+        ++count;
+    }
+    return count;
+}
+ 
+ 
 bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragraph * firstParagraphInList, bool createNewSentences)
 {
 	bool result = true;
@@ -725,10 +753,14 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuer
 					//two consecutive new line characters detected..
 					if(parsingDependencyRelations)
 					{
+						//cout << "parsingDependencyRelationsSTART" << endl;
+						
 						int maxNumberOfWordsInSentence = 0;
 						bool featuresNotPreviouslyFilled = createNewSentences;
+						//cout << "currentDependencyRelationSetString = " << currentDependencyRelationSetString << endl;						
 						GIATHparseStanfordParserRelationsText(&currentDependencyRelationSetString, currentSentence, &maxNumberOfWordsInSentence, featuresNotPreviouslyFilled);
-						//cout << "currentDependencyRelationSetString = " << currentDependencyRelationSetString << endl;
+						
+						//cout << "parsingDependencyRelationsEND" << endl;
 						currentDependencyRelationSetString = "";
 						if(createNewSentences)
 						{
@@ -743,26 +775,34 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuer
 					else
 					{
 						parsingDependencyRelations = true;
+
+						//take into account sentences skipped by Stanford Parser - added 30 June 2012 to disregard (eg large) sentences that have been skipped
+						int numberOfSentencesSkipped = countSubstring(currentDependencyRelationSetString, STANFORD_PARSER_SENTENCE_SKIPPED_TEXT);
+						for(int i=0; i<numberOfSentencesSkipped; i++)
+						{
+							//cout << "numberOfSentencesSkipped = " << numberOfSentencesSkipped << endl;
+							if(createNewSentences)
+							{
+								Sentence * newSentence = new Sentence();
+								newSentence->previous = currentSentence;						
+								currentSentence->next = newSentence;
+							}						
+							currentSentence = currentSentence->next;
+						}
+						
+						currentDependencyRelationSetString = "";	//reset currentDependencyRelationSetString for parsing of dependency relations
 					}
 				}
 				else
 				{
-					if(parsingDependencyRelations)
-					{
-						currentDependencyRelationSetString = currentDependencyRelationSetString + currentToken;
-					}
+					currentDependencyRelationSetString = currentDependencyRelationSetString + currentToken;
 					newLineDetected = true;
 				}
 			}
 			else
 			{
 				newLineDetected = false;
-				
-				if(parsingDependencyRelations)
-				{
-					//parsing dependency relations
-					currentDependencyRelationSetString = currentDependencyRelationSetString + currentToken;
-				}
+				currentDependencyRelationSetString = currentDependencyRelationSetString + currentToken;
 			}
 		
 			charCount++;
