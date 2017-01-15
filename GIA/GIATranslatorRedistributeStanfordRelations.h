@@ -23,7 +23,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o5b 22-August-2012
+ * Project Version: 1o5c 22-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -55,6 +55,7 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 #endif
 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
+void disableRedundantNodesStanfordParser(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[]);
 void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[]);										//Stanford Specific
 #ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE
 void redistributeStanfordRelationsInterpretOfAsPossessive(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[]);		//this should be supported for both Stanford + Relex, but has been untested for Relex
