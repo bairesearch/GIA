@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b5d 09-January-2014
+ * Project Version: 2b6a 09-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -460,15 +460,18 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#ifdef GIA_USE_CORPUS_DATABASE
 	if(parseGIA2file)
 	{
-		convertSentenceSemanticRelationsIntoGIAnetworkNodes(sentenceConceptEntityNodesList, sentenceTimeConditionNodesList, firstSentenceInList, currentSentenceInListTemp, &sentenceConceptEntityNodesListTempNotUsed1, NLPfeatureParser, false, NULL);
+		if(currentSentenceInList->corpusLookupSuccessful)
+		{
+			convertSentenceSemanticRelationsIntoGIAnetworkNodes(sentenceConceptEntityNodesList, sentenceTimeConditionNodesList, firstSentenceInList, currentSentenceInListTemp, &sentenceConceptEntityNodesListTempNotUsed1, NLPfeatureParser, false, NULL);
+			//cout << "2 corpusLookupSuccessful" << endl;
+		}
 	}
-	else
+	#endif
+	if(!parseGIA2file || (parseGIA2file && !(currentSentenceInList->corpusLookupSuccessful)))
 	{
-	#endif
+		//cout << "2 !corpusLookupSuccessful" << endl;
 		convertSentenceSyntacticRelationsIntoGIAnetworkNodes(sentenceConceptEntityNodesList, sentenceTimeConditionNodesList, firstSentenceInList, currentSentenceInListTemp, &sentenceConceptEntityNodesListTempNotUsed1, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, false, NULL);
-	#ifdef GIA_USE_CORPUS_DATABASE
 	}
-	#endif
 	
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (2identifyReferenceSets)\n" << endl;
@@ -540,15 +543,16 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#ifdef GIA_USE_CORPUS_DATABASE
 	if(parseGIA2file)
 	{
-		convertSentenceSemanticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser, true, firstGIACoreferenceInList);
+		if(currentSentenceInList->corpusLookupSuccessful)
+		{
+			convertSentenceSemanticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser, true, firstGIACoreferenceInList);
+		}
 	}
-	else
+	#endif
+	if(!parseGIA2file || (parseGIA2file && !(currentSentenceInList->corpusLookupSuccessful)))
 	{
-	#endif
 		convertSentenceSyntacticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, true, firstGIACoreferenceInList);
-	#ifdef GIA_USE_CORPUS_DATABASE
 	}
-	#endif
 	
 	//cout << "ak1" << endl;
 	
@@ -596,11 +600,16 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 #else
 
 	vector<GIAentityNode*> sentenceConceptEntityNodesListTempNotUsed;
+	#ifdef GIA_USE_CORPUS_DATABASE
 	if(parseGIA2file)
 	{	
-		convertSentenceSemanticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser);
+		if(currentSentenceInList->corpusLookupSuccessful)
+		{
+			convertSentenceSemanticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser);
+		}
 	}
-	else
+	#endif
+	if(!parseGIA2file || (parseGIA2file && !(currentSentenceInList->corpusLookupSuccessful)))
 	{
 		convertSentenceSyntacticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);	
 	}

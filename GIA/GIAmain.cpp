@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b5d 09-January-2014
+ * Project Version: 2b6a 09-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -1407,13 +1407,13 @@ int main2(int argc,char **argv)
 			}
 			else
 			{
-				#ifndef USE_GIA2
+				#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 				executeNLPparser(inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, NLPdependencyRelationsParser, NLPexeFolderArray, true);
 				if(inputTextNLPfeatureXMLfileName != inputTextNLPrelationXMLfileName)
 				{
 				#endif
 					executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, NLPfeatureParser, NLPexeFolderArray, false);
-				#ifndef USE_GIA2
+				#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 				}
 				#endif
 				useInputTextNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
@@ -1459,7 +1459,7 @@ int main2(int argc,char **argv)
 
 				Paragraph * firstParagraphInList = new Paragraph();
 				#ifdef USE_GIA2
-				if(!performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(firstParagraphInList, inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, maxNumberSentences))
+				if(!performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(firstParagraphInList, inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences))
 				{
 					result = false;
 				}
@@ -1566,13 +1566,13 @@ int main2(int argc,char **argv)
 		}
 		else
 		{
-			#ifndef USE_GIA2
+			#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 			executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, queryNLPdependencyRelationsParser, NLPexeFolderArray, true);
 			if(inputQueryNLPfeatureXMLFileName != inputQueryNLPrelationXMLFileName)
 			{
 			#endif
 				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray, false);
-			#ifndef USE_GIA2
+			#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 			}
 			#endif
 			useInputQueryNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
@@ -1605,7 +1605,7 @@ int main2(int argc,char **argv)
 		{
 			Paragraph * firstParagraphInList = new Paragraph();
 			#ifdef USE_GIA2
-			if(!performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(firstParagraphInList, inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, maxNumberSentences))
+			if(!performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(firstParagraphInList, inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences))
 			{
 				result = false;
 			}

@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b5d 09-January-2014
+ * Project Version: 2b6a 09-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -521,7 +521,14 @@
 #define GIA_USE_CORPUS_DATABASE
 #ifdef GIA_USE_CORPUS_DATABASE
 	#define USE_GIA2		//GIA 2b1a - sets GIA into corpus read mode
-	#ifndef USE_GIA2
+	#ifdef USE_GIA2
+		#define GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH 
+		#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
+			#define GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+		#else
+			#define GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE 	
+		#endif
+	#else
 		#define GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN 
 		#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN	
 			//#define GIA_RECORD_LINK_PREESTABLISHED_REFERENCES_GIA
