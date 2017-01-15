@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3c 12-October-2012
+ * Project Version: 1q3d 12-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1317,7 +1317,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 			#else
 			currentGIACoreferenceInList = generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(queryEntityWithMaxNumberNodesMatched, currentGIACoreferenceInList);
 			#endif
-			traceEntityNode(queryEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISON, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);					//added 15 July 2012
+			traceEntityNode(queryEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISON, &irrelevantInt, &irrelevantString, false, NULL, true);					//added 15 July 2012	//changed traceInstantiations to true 13 October 2012
 		}
 
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -1341,7 +1341,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 	int referenceSetID = referenceTraceParameters->referenceSetID;
 
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-	cout << "createGIACoreferenceInListBasedUponIdentifiedReferenceSets(), referenceSetID = " << referenceSetID << endl;
+	cout << "createGIACoreferenceInListBasedUponIdentifiedReferenceSet(), referenceSetID = " << referenceSetID << endl;
 	#endif
 
 	GIAQueryTraceParameters queryTraceParameters;	//irrelevant
@@ -1386,6 +1386,8 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 				cout << "foundQueryEntityNodeName" << endl;
 				cout << "currentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
 				cout << "conceptEntityMatchingCurrentQueryEntity->entityName = " << conceptEntityMatchingCurrentQueryEntity->entityName << endl;
+				//cout << "currentQueryEntityNode->isConcept = " << currentQueryEntityNode->isConcept << endl;
+				//cout << "conceptEntityMatchingCurrentQueryEntity->isConcept = " << conceptEntityMatchingCurrentQueryEntity->isConcept << endl;
 				#endif
 
 				//now start matching structure search for all substances of the identical concept node (to current query entity name) in Semantic Network

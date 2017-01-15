@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3c 12-October-2012
+ * Project Version: 1q3d 12-October-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -632,17 +632,28 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 			//cout << "queryEntityNode->referenceSetID = " << queryEntityNode->referenceSetID << endl;
 			//cout << "referenceTraceParameters->referenceSetID = " << referenceTraceParameters->referenceSetID << endl;
+			/*
+			cout << "A1:" << endl;
+			cout << "queryEntityNode->referenceSetID = " << queryEntityNode->referenceSetID << endl;
+			cout << "referenceTraceParameters->referenceSetID = " << referenceTraceParameters->referenceSetID << endl;
+			cout << "(queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) = " << (queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) << endl;
+			cout << "(referenceTraceParameters->traceModeAssertSameReferenceSetID) = " << (referenceTraceParameters->traceModeAssertSameReferenceSetID) << endl;
+			*/
 			#endif
 			if((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))	//only trace paths of same reference set ID
 			{
+				#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+				//cout << "A2: ((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))" << endl;
+				#endif
+				
 				#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
 				if(queryEntityNode->referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)		//added 13 July 2012
 				{
-				#endif
+				#endif					
 					#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
 					if(queryEntityNode->idActiveList != entityNode->idActiveList)	//else they are exactly the same [NB with new implementation of GIA_USE_ADVANCED_REFERENCING, it will detect the same nodes as a reference match, so they need to be ignored when this happens]
 					{
-					#endif
+					#endif						
 						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 						bool passIntrasentenceReferenceRequirements = true;
 						if(referenceTraceParameters->intrasentenceReference)
@@ -656,9 +667,9 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 
 						if(passIntrasentenceReferenceRequirements)
 						{
-						#endif
+						#endif							
 							if(compareEntityNamesResult)
-							{
+							{								
 								#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 								for(int level=0; level<queryTraceParameters->level+1; level++)
 								{
@@ -689,6 +700,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 							}
 							else
 							{
+								//cout << "!compareEntityNamesResult" << endl;
 								result = EXACT_MATCH_FAIL;
 							}
 						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
@@ -749,7 +761,14 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 
 	#ifdef GIA_QUERY_DEBUG
 	//cout << "testEntityNodeForQueryOrReferenceSet" << endl;
+	/*
+	cout << "entityNode->testedForQueryComparison = " << entityNode->testedForQueryComparison << endl;
+	cout << "entityNode->testedForQueryComparisonTemp = " << entityNode->testedForQueryComparisonTemp << endl;
+	cout << "queryEntityNode->testedForQueryComparison = " << queryEntityNode->testedForQueryComparison << endl;
+	cout << "queryEntityNode->testedForQueryComparisonTemp = " << queryEntityNode->testedForQueryComparisonTemp << endl;	
+	*/
 	#endif
+
 	
 	if(!(entityNode->testedForQueryComparison) && !(entityNode->testedForQueryComparisonTemp) && !(queryEntityNode->testedForQueryComparison) && !(queryEntityNode->testedForQueryComparisonTemp))
 	{
@@ -824,10 +843,14 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 		#ifdef GIA_QUERY_DEBUG
 		cout << "\ntestEntityNodeForQueryOrReferenceSet:" << endl;
 		cout << "entityNode = " << entityNode->entityName << endl;
-		#endif
-
+		#endif		
+		
 		#ifdef GIA_QUERY_DEBUG
 		//cout << "\tqueryEntityNode->entityName = " << queryEntityNode->entityName << endl;
+		if(entityNode->isConcept)
+		{
+			cout << "entityNode = " << entityNode->entityName << " (is concept)" << endl;
+		}		
 		if(entityNode->isSubstance)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is substance)" << endl;
