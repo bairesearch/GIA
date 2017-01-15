@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2l 24-July-2013
+ * Project Version: 1t2m 24-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -477,6 +477,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	Space is saved through/by having a chicken.	prepc/prep_through/by(saved-3, having-5) + dobj(having-5, chicken-7)
 	*/	
 	GIAgenericDepRelInterpretationParameters paramA = param;
+	paramA.functionEntityRelationID[FUNC_ENT4_SPECIAL] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT4_SPECIAL] = REL_ENT2;	
 	paramA.useRelationTest[REL2][REL_ENT3] = true; paramA.relationTest[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
 	paramA.useRelationTest[REL1][REL_ENT2] = true; paramA.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_HAVE;
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity;
@@ -491,6 +492,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	Space is saved through/by being a chicken.		prep_through/by(saved-3, be-5) + dobj(be-5, chicken-7) 	[Relex Only - note Relex currently fails to parse 'through having' but can parse 'by having']
 	*/	
 	GIAgenericDepRelInterpretationParameters paramB = param;
+	paramB.functionEntityRelationID[FUNC_ENT4_SPECIAL] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT4_SPECIAL] = REL_ENT2;		
 	paramB.useRelationTest[REL2][REL_ENT3] = true; paramB.relationTest[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
 	paramB.useRelationTest[REL1][REL_ENT2] = true; paramB.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_BE;
 	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity;
@@ -505,6 +507,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	Space is saved through/by being a chicken.		prepc_through/by(saved-3, chicken-7) + cop(chicken-7, being-5) 	[Stanford Only]
 	*/
 	GIAgenericDepRelInterpretationParameters paramC = param;
+	paramB.functionEntityRelationID[FUNC_ENT4_SPECIAL] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT4_SPECIAL] = REL_ENT2;			
 	paramC.useRelationTest[REL2][REL_ENT3] = true; paramC.relationTest[REL2][REL_ENT3] = RELATION_TYPE_COPULA;
 	paramC.useRelationTest[REL2][REL_ENT2] = true; paramC.relationTest[REL2][REL_ENT2] = RELATION_ENTITY_BE;
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity;
@@ -568,6 +571,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 										GIAentityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_HAVING_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 										GIAentityNode * haveEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+										//cout << "haveEntity->negative = " << haveEntity->negative << endl;
 										bool negative = haveEntity->negative;
 										GIAentityNode * entityNode = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 										GIAentityNode * conditionSubstanceNode = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];

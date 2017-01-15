@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2l 24-July-2013
+ * Project Version: 1t2m 24-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -4075,6 +4075,44 @@ void redistributeStanfordRelationsDisableAuxAndCop(Sentence * currentSentenceInL
 }
 #endif
 
+void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+{
+	/*
+	eg The chicken has not eaten a pie.: neg(eaten-5, not-4)
+	*/
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, false);	
+	param.numberOfRelations = 1;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_NEGATIVE;
+	param.disableRelation[REL1] = true;
+	param.disableEntity[REL1][REL_ENT2] = true; 	//disable "not" entity
+	//param.useRedistributeSpecialCaseDisableInstanceAndConcept[REL1][REL_ENT2]= true;	//no longer required because collapseRedundantRelationAndMakeNegativeRelex() is executed during redistribution	
+	param.useRedistributeSpecialCaseNegativeAssignment[REL1][REL_ENT1] = true;
+	genericDependecyRelationInterpretation(&param, REL1);
+#else	
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			if(currentRelationInList->relationType == RELATION_TYPE_NEGATIVE)
+			{
+				//eg The chicken has not eaten a pie.: neg(eaten-5, not-4)
+
+				currentRelationInList->disabled = true;
+				GIAentityNodeArray[currentRelationInList->relationGovernorIndex]->negative = true;
+				disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
+			}
+
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}
+#endif	
+}
 
 
 #endif

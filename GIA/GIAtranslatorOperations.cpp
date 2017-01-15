@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2l 24-July-2013
+ * Project Version: 1t2m 24-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -320,7 +320,7 @@ GIAentityNode * addSubstanceToSubstanceDefinition(GIAentityNode * substanceEntit
 	return newOrExistingSubstance;
 }
 
-void forwardTimeInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubstance)
+void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubstance)
 {
 	if(entity->hasAssociatedTime)
 	{
@@ -346,6 +346,44 @@ void forwardTimeInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSu
 		newSubstance->isName = true;
 	}	
 	#endif
+	
+	#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
+	if(entity->isQuery)
+	{
+		entity->isQuery = false;
+		newSubstance->isQuery = true;
+		
+		//this propogation was only defined for substance instances [generalised 1t1m 24 July 2013]:
+		#ifdef GIA_1S8D_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_APPLY_FIX_TO_IS_NAME_QUERY_PROPOGATION
+		#ifdef GIA_SUPPORT_ALIASES
+		if(entity->isNameQuery)
+		{
+			entity->isNameQuery = false;		
+			newSubstance->isNameQuery = true;
+		}
+		#endif		
+		#endif
+		
+		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
+		if(entity->isWhichOrEquivalentWhatQuery)
+		{
+			entity->isWhichOrEquivalentWhatQuery = false;
+			newSubstance->isWhichOrEquivalentWhatQuery = true;
+		}
+		#endif
+	}
+	#endif
+
+	//this propogation was only defined for substance instances [generalised 1t1m 24 July 2013]:
+	if(entity->isToBeComplimentOfActionTemp)
+	{	
+		newSubstance->isToBeComplimentOfActionTemp = true;
+	} 
+		
+	if(entity->negative)
+	{
+		newSubstance->negative = true;
+	}	
 }
 
 GIAentityNode * addSubstance(GIAentityNode * entity)
@@ -373,7 +411,7 @@ GIAentityNode * addSubstance(GIAentityNode * entity)
 	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 	newSubstance->isSubstanceConcept = entity->isSubstanceConcept;
 	#endif
-	forwardTimeInfoToNewSubstance(entity, newSubstance);
+	forwardInfoToNewSubstance(entity, newSubstance);
 
 	writeVectorConnection(newSubstance, entity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
 	writeVectorConnection(entity, newSubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
@@ -381,35 +419,6 @@ GIAentityNode * addSubstance(GIAentityNode * entity)
 	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 	entity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
 	#endif
-
-	#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
-	if(entity->isQuery)
-	{
-		entity->isQuery = false;
-		newSubstance->isQuery = true;
-		#ifdef GIA_1S8D_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_APPLY_FIX_TO_IS_NAME_QUERY_PROPOGATION
-		#ifdef GIA_SUPPORT_ALIASES
-		if(entity->isNameQuery)
-		{
-			entity->isNameQuery = false;		
-			newSubstance->isNameQuery = true;
-		}
-		#endif		
-		#endif
-		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
-		if(entity->isWhichOrEquivalentWhatQuery)
-		{
-			entity->isWhichOrEquivalentWhatQuery = false;
-			newSubstance->isWhichOrEquivalentWhatQuery = true;
-		}
-		#endif
-	}
-	#endif
-
-	if(entity->isToBeComplimentOfActionTemp)
-	{	
-		newSubstance->isToBeComplimentOfActionTemp = true;
-	} 
 
 	return newSubstance;
 }
@@ -582,22 +591,7 @@ GIAentityNode * addAction(GIAentityNode * actionEntity)
 	newAction->wordNetPOS = actionEntity->wordNetPOS;
 	//WHY WOULD THIS EVER BE REQURIED?; newAction->entityNodeContainingThisSubstance = NULL;
 
-	forwardTimeInfoToNewSubstance(actionEntity, newAction);
-
-	#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
-	if(actionEntity->isQuery)
-	{
-		actionEntity->isQuery = false;
-		newAction->isQuery = true;
-		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
-		if(actionEntity->isWhichOrEquivalentWhatQuery)
-		{
-			actionEntity->isWhichOrEquivalentWhatQuery = false;
-			newAction->isWhichOrEquivalentWhatQuery = true;
-		}
-		#endif
-	}
-	#endif
+	forwardInfoToNewSubstance(actionEntity, newAction);
 
 	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 	actionEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
@@ -1010,7 +1004,7 @@ GIAentityNode * addCondition(GIAentityNode * conditionEntity)
 	conditionEntity->hasAssociatedInstance = true;
 	conditionEntity->hasAssociatedInstanceIsCondition = true;
 	conditionEntity->hasAssociatedInstanceTemp = true;
-	newCondition->negative = conditionEntity->negative;
+	newCondition->negative = conditionEntity->negative;	//check forwardInfoToNewSubstance() is not required
 
 	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 	conditionEntity->entityAlreadyDeclaredInThisContext = true;	//added 9 May 2012
@@ -2075,8 +2069,8 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	defaultSameSetRelationID = -1; 
 	defaultSameSetReferenceValue = -1;
 	#endif		
-	functionEntityRelationID = {REL1, REL1, REL1};				//these dummy values have to be set always to prevent crash //for entity1, entity2, and entity3 - relation1, relation2, relation3, or relation4
-	functionEntityRelationEntityID = {FUNC_ENT1, FUNC_ENT1, FUNC_ENT1};	//these dummy values have to be set always to prevent crash //for entity1, entity2, and entity3 - relationType, relationGovernorIndex, or relationDependentIndex	
+	functionEntityRelationID = {REL1, REL1, REL1, REL1};				//these dummy values have to be set always to prevent crash //for entity1, entity2, and entity3 - relation1, relation2, relation3, or relation4
+	functionEntityRelationEntityID = {FUNC_ENT1, FUNC_ENT1, FUNC_ENT1, FUNC_ENT1};	//these dummy values have to be set always to prevent crash //for entity1, entity2, and entity3 - relationType, relationGovernorIndex, or relationDependentIndex	
 	functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_undefined;
 		//special cases
 	mustGenerateConditionTypeName = false;
@@ -2477,12 +2471,16 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								}							
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity)
 								{
+									cout << "a1" << endl;
 									bool negative = param->GIAentityNodeArray[functionEntityIndex4special]->negative;
+									cout << "negative = " << negative << endl;
 									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectBeingDefinitionConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], negative, sameReferenceSet);
 								}						
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity)
 								{	
+									cout << "a2" << endl;
 									bool negative = param->GIAentityNodeArray[functionEntityIndex4special]->negative;						
+									cout << "negative = " << negative << endl;
 									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectHavingPropertyConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], negative, sameReferenceSet);
 								}
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntity)
@@ -2631,6 +2629,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										}
 										if(param->useRedistributeSpecialCaseNegativeAssignment[relationID][relationEntityID])
 										{
+											//cout << "neg: " << param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName << endl;
 											param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->negative = true;
 										}	
 										if(param->useRedistributeSpecialCaseQualityAssignment[relationID][relationEntityID])
