@@ -129,7 +129,7 @@ int main(int argc,char **argv)
 	current = localtime(&now);
 	char timeAndDateString[100];
 	sprintf(timeAndDateString, "%i:%i:%i %i/%.2i/%i", current->tm_hour, current->tm_min, current->tm_sec, current->tm_mday, current->tm_mon, (current->tm_year + GIA_TM_STRUCT_YEAR_OFFSET));
-	cout << "GIA execution time: " << timeAndDateString << endl;
+	cout << "GIA execution time: " << timeAndDateString << " (start)" << endl;
 		 
 	bool result = true;
 
@@ -551,19 +551,19 @@ int main(int argc,char **argv)
 		if(foundAnswer)
 		{	
 		
-			#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
+			#ifndef GIA_DO_NOT_PRINT_RESULTS
 			cout << "Answer Found." << endl;					
 			#endif
 			answerString = answerString + "\nAnswer found.";
 			if(foundComparisonVariable)
 			{
-				#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
+				#ifndef GIA_DO_NOT_PRINT_RESULTS
 				cout << "Exact Found Answer: " << queryAnswerNode->entityName << endl;
 				#endif
 				answerString = answerString + "\nExact Answer found: " + queryAnswerNode->entityName;	
 				if(comparisonVariableNode->hasQuantity)
 				{
-					#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
+					#ifndef GIA_DO_NOT_PRINT_RESULTS
 					cout << "Quantity number: " << queryAnswerNode->quantityNumber << endl;
 					#endif
 					char tempQuantityNumberStringCharStar[100]; 
@@ -573,7 +573,7 @@ int main(int argc,char **argv)
 				/*
 				if(queryAnswerPreviousNode->isCondition)
 				{
-					#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
+					#ifndef GIA_DO_NOT_PRINT_RESULTS
 					cout << "Answer is a Condition of type/preposition:" << queryAnswerPreviousNode->entityName << endl;
 					#endif
 					answerString = answerString + "\nAnswer is a Condition of type/preposition: " + queryAnswerPreviousNode->entityName;	
@@ -584,7 +584,7 @@ int main(int argc,char **argv)
 		}
 		else
 		{
-			#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
+			#ifndef GIA_DO_NOT_PRINT_RESULTS
 			cout << "Answer Not Found." << endl;
 			#endif
 			answerString = answerString + "\nAnswer Not Found.";
@@ -592,7 +592,7 @@ int main(int argc,char **argv)
 		
 		if(foundAnswer && !foundComparisonVariable)
 		{
-			#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
+			#ifndef GIA_DO_NOT_PRINT_RESULTS
 			cout << "Best Inexact Answer Found: " << queryAnswerNode->entityName << endl;
 			#endif
 			answerString = answerString + "\nBest Inexact Answer Found: " + queryAnswerNode->entityName;
@@ -602,7 +602,7 @@ int main(int argc,char **argv)
 		if(foundAnswer)
 		{
 			//print AnswerPreviousNode relationship with answerNode
-			#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
+			#ifndef GIA_DO_NOT_PRINT_RESULTS
 			cout << "Answer Context: " << queryAnswerContext << endl;
 			answerString = answerString + "\nAnswer Context: " + queryAnswerContext;
 			#endif
@@ -611,12 +611,12 @@ int main(int argc,char **argv)
 					
 		//add confidence to answer
 		char tempConfidenceStringCharStar[100]; 
-		sprintf(tempConfidenceStringCharStar, "%0.6f", confidence);
+		sprintf(tempConfidenceStringCharStar, "%0.6f", confidence*10);
 		char tempMaxConfidenceStringCharStar[100]; 
-		sprintf(tempMaxConfidenceStringCharStar, "%0.6f", maxConfidence);		
+		sprintf(tempMaxConfidenceStringCharStar, "%0.6f", maxConfidence*10);		
 		answerString = answerString + "\nconfidence = " + tempConfidenceStringCharStar;			
 		answerString = answerString + "\nmax confidence = " + tempMaxConfidenceStringCharStar;	
-		#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
+		#ifndef GIA_DO_NOT_PRINT_RESULTS
 		cout << "confidence: " << tempConfidenceStringCharStar << endl;
 		cout << "max confidence: " << tempMaxConfidenceStringCharStar << endl;
 		#endif
@@ -656,7 +656,11 @@ int main(int argc,char **argv)
 	}
 	#endif
 	
-
+	//print execution time (end)
+	time(&now);
+	current = localtime(&now);
+	sprintf(timeAndDateString, "%i:%i:%i %i/%.2i/%i", current->tm_hour, current->tm_min, current->tm_sec, current->tm_mday, current->tm_mon, (current->tm_year + GIA_TM_STRUCT_YEAR_OFFSET));
+	cout << "GIA execution time: " << timeAndDateString << " (finish)" << endl;
 	
 }
 

@@ -146,8 +146,8 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 	if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters && !(entityNode->isAnswerContextToQuery)))
 	{
 		
-		cout << "\tqueryEntityNode = " << queryEntityNode->entityName << endl;
-		cout << "\tentityNode = " << entityNode->entityName << endl;
+		//cout << "\tqueryEntityNode = " << queryEntityNode->entityName << endl;
+		//cout << "\tentityNode = " << entityNode->entityName << endl;
 			
 		/*	
 		#ifdef GIA_QUERY_USE_EXTRA_LONG_CONTEXT_TRACE
