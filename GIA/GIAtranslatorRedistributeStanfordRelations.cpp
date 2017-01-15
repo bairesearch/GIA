@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e6a 08-June-2014
+ * Project Version: 2f1a 01-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -2868,6 +2868,22 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	//eg	If the basket is near the house, the dog is happy. advcl(happy-12, is-4) + mark(is-4, If-1) + nsubj(is-4, basket-3) -> prep_if(happy-12, basket-3)
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
+	param.numberOfRelations = 3;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER;
+	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_COMPLEMENT_OF_ADVERBAL_CLAUSE_MODIFIER;
+	param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_SUBJECT; 
+	param.parseDisabledRelation[REL3] = true;
+	param.useRelationTest[REL1][REL_ENT2] = true; param.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_BE;
+	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT2] = REL1; param.relationIndexTestEntityID[REL1][REL_ENT2] = REL_ENT2;
+	param.useRelationIndexTest[REL3][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT2] = REL1; param.relationIndexTestEntityID[REL1][REL_ENT2] = REL_ENT2;
+	param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT3] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT3] = REL_ENT2;
+	param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL3; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT2;
+	paramOr.disableRelation[REL2] = true;
+	paramOr.disableRelation[REL3] = true;
+	genericDependecyRelationInterpretation(&param, REL1);
+
 	//eg	The accident happened as the night was falling. 	advcl(happen, fall) + mark(fall, as) -> prep_as (happen, fall)
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 2;
@@ -2875,6 +2891,7 @@ void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence *
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_COMPLEMENT_OF_ADVERBAL_CLAUSE_MODIFIER;
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT2;
 	param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT3] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT3] = REL_ENT2;
+	paramOr.disableRelation[REL2] = true;
 	genericDependecyRelationInterpretation(&param, REL1);
 
 	//NEW
@@ -2885,6 +2902,7 @@ void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence *
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_COMPLEMENT_OF_ADVERBAL_CLAUSE_MODIFIER;
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT2;
 	param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT3] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT3] = REL_ENT2;
+	paramOr.disableRelation[REL2] = true;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;

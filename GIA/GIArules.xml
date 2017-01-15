@@ -1345,6 +1345,26 @@
 			</function>
 
 			<function name="redistributeStanfordRelationsAdverbalClauseModifierAndComplement">
+			
+				<!-- case added GIA 1f1a -->
+				<example><!--
+				eg If the basket is near the house, the dog is happy. advcl(happy-12, is-4) + mark(is-4, If-1) + nsubj(is-4, basket-3) -> prep_if(happy-12, basket-3)
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="3" />
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_advcl" />
+				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_mark" />
+				<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="_subj" />
+				<option parseDisabledRelation="true" REL="2" /> 	<!--_nsubj relation will have been disabled when nsubj(is-4, basket-3)  + prep_near(is-4, house-7) is converted to prep_near(basket[3], house[7]) in redistributeStanfordRelationsMultiwordPreposition(), so must explicitly allow it to be parsed-->
+				<option useRelationTest="true" REL="0" REL_ENT="1" relationTest="be" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="1" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="0" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="0" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+				<option disableRelation="true" REL="1" />
+				<option disableRelation="true" REL="2" />
+				</paramDepRel>
+				
 				<example><!--
 				eg The accident happened as the night was falling. advcl(happen, fall) + mark(fall, as) -> prep_as (happen, fall)
 				--></example>
@@ -1354,7 +1374,9 @@
 				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_mark" />
 				<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="1" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="0" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+				<option disableRelation="true" REL="1" />
 				</paramDepRel>
+				
 				<example><!--
 				eg If the cow is blue fight the turtle, else fight the pie. : csubj(fight-6, blue-5) + mark(blue-5, If-1) -> prep_if(blue-5, fight-6)
 				--></example>
@@ -1364,6 +1386,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_mark" />
 				<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="1" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="0" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+				<option disableRelation="true" REL="1" />
 				</paramDepRel>
 			</function>
 
