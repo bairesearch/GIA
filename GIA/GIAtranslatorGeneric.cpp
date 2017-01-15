@@ -1252,7 +1252,9 @@ bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, Relati
 	{//added GIA 2f9b 11-July-2014
 		if(numberOfPrepositionFeaturesFound > 1)
 		{
+			#ifdef GIA_ENABLE_WARNINGS
 			cout << "determineFeatureIndexOfPreposition(): !centredPrepositionFeatureFound && (numberOfPrepositionFeaturesFound > 1); cannot guarantee correct preposition feature index has been assigned" << endl;
+			#endif
 		}
 		*indexOfPreposition = featureIndexOfNonCentredPrepositionFeature;
 	}
