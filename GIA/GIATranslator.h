@@ -107,23 +107,23 @@ using namespace std;
 
 //predicates????
 //action/property conditions
-#define RELATION_TYPE_PREPOSITION_ON "on"		//eg rides on tuesday		[ride tuesday]		//this forms the action condition; "when"
-#define RELATION_TYPE_PREPOSITION_AT "at"		//eg rides at the palace	[ride palace]	//this forms the action condition; "where"
-#define RELATION_TYPE_PREPOSITION_TO "to"		//eg rides to the shops 			//this forms the action condition; "where"	
-#define RELATION_TYPE_PREPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES (3)
-#define RELATION_TYPE_PREPOSITION_WHEN "when"	//eg joe fires his bow when john drives fast.	[fire drive]	//this forms the action condition; "when" [not time, but in association with another action]
-#define RELATION_TYPE_PREPOSITION_BECAUSE "because"
-#define RELATION_TYPE_PREPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES (2)
-#define RELATION_TYPE_PREPOSITION_FIRST_CHARACTER '_'
-#define RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION "_pobj"
-#define RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION "_psubj"
+#define RELATION_TYPE_PROPOSITION_ON "on"		//eg rides on tuesday		[ride tuesday]		//this forms the action condition; "when"
+#define RELATION_TYPE_PROPOSITION_AT "at"		//eg rides at the palace	[ride palace]	//this forms the action condition; "where"
+#define RELATION_TYPE_PROPOSITION_TO "to"		//eg rides to the shops 			//this forms the action condition; "where"	
+#define RELATION_TYPE_PROPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES (3)
+#define RELATION_TYPE_PROPOSITION_WHEN "when"	//eg joe fires his bow when john drives fast.	[fire drive]	//this forms the action condition; "when" [not time, but in association with another action]
+#define RELATION_TYPE_PROPOSITION_BECAUSE "because"
+#define RELATION_TYPE_PROPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES (2)
+#define RELATION_TYPE_PROPOSITION_FIRST_CHARACTER '_'
+#define RELATION_TYPE_PROPOSITION_OBJECT_OF_PROPOSITION "_pobj"
+#define RELATION_TYPE_PROPOSITION_SUBJECT_OF_PROPOSITION "_psubj"
 
 //?#define RELATION_TYPE_OF "of"		//eg [she grew tired] of it	{same as with it}
 
 //action/property reasons [???]
-#define RELATION_TYPE_PREPOSITION_SUCH_THAT "such"
-#define RELATION_TYPE_PREPOSITION_SO "so"
-#define RELATION_TYPE_PREPOSITION_REASON_NUMBER_OF_TYPES (2)
+#define RELATION_TYPE_PROPOSITION_SUCH_THAT "such"
+#define RELATION_TYPE_PROPOSITION_SO "so"
+#define RELATION_TYPE_PROPOSITION_REASON_NUMBER_OF_TYPES (2)
 
 #define RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES (4)
 #define RELATION_TYPE_QUANTITY_OR_MEASURE_SWITCHED_NUMBER_OF_TYPES (1)

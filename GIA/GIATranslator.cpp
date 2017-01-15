@@ -13,8 +13,8 @@
 
 #include "GIATranslator.h"
 
-string relationTypePrepositionLocationOrTimeNameArray[RELATION_TYPE_PREPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_AT, RELATION_TYPE_PREPOSITION_ON, RELATION_TYPE_PREPOSITION_TO};
-string relationTypePrepositionActionOrPropertyNameArray[RELATION_TYPE_PREPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_WHEN, RELATION_TYPE_PREPOSITION_BECAUSE};
+string relationTypePropositionLocationOrTimeNameArray[RELATION_TYPE_PROPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES] = {RELATION_TYPE_PROPOSITION_AT, RELATION_TYPE_PROPOSITION_ON, RELATION_TYPE_PROPOSITION_TO};
+string relationTypePropositionActionOrPropertyNameArray[RELATION_TYPE_PROPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES] = {RELATION_TYPE_PROPOSITION_WHEN, RELATION_TYPE_PROPOSITION_BECAUSE};
 
 string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_THAT};
 string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_SUBJECT_EXPLETIVE};
@@ -1589,14 +1589,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			//cout << "here1" << endl;
 			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 														
-			if(currentRelationInList->relationType == RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION)
+			if(currentRelationInList->relationType == RELATION_TYPE_PROPOSITION_OBJECT_OF_PROPOSITION)
 			{					
 				//now find the associated object..
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{	
 					bool partnerTypeRequiredFound = false;					
-					if(currentRelationInList2->relationType == RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION)
+					if(currentRelationInList2->relationType == RELATION_TYPE_PROPOSITION_SUBJECT_OF_PROPOSITION)
 					{
 						partnerTypeRequiredFound = true;
 					}
@@ -1631,27 +1631,27 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
 			int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
 				
-			bool passedPrepositionLocationOrTime = false;
-			bool passedPrepositionActionOrProperty = false;
-			bool passedPrepositionUnkown = false;
-			for(int i=0; i<RELATION_TYPE_PREPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES; i++)
+			bool passedPropositionLocationOrTime = false;
+			bool passedPropositionActionOrProperty = false;
+			bool passedPropositionUnkown = false;
+			for(int i=0; i<RELATION_TYPE_PROPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES; i++)
 			{
-				if(currentRelationInList->relationType == relationTypePrepositionLocationOrTimeNameArray[i])
+				if(currentRelationInList->relationType == relationTypePropositionLocationOrTimeNameArray[i])
 				{
-					passedPrepositionLocationOrTime = true;
+					passedPropositionLocationOrTime = true;
 				}
 			}
-			for(int i=0; i<RELATION_TYPE_PREPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES; i++)
+			for(int i=0; i<RELATION_TYPE_PROPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES; i++)
 			{
-				if(currentRelationInList->relationType == relationTypePrepositionActionOrPropertyNameArray[i])
+				if(currentRelationInList->relationType == relationTypePropositionActionOrPropertyNameArray[i])
 				{
-					passedPrepositionActionOrProperty = true;
+					passedPropositionActionOrProperty = true;
 				}
 			}
 			
-			if(currentRelationInList->relationType[0] != RELATION_TYPE_PREPOSITION_FIRST_CHARACTER)
+			if(currentRelationInList->relationType[0] != RELATION_TYPE_PROPOSITION_FIRST_CHARACTER)
 			{
-				passedPrepositionUnkown = true;
+				passedPropositionUnkown = true;
 			}
 			
 			
@@ -1678,7 +1678,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				actionOrPropertyConditionEntity = actionOrPropertyConditionEntity->AssociatedActionNodeList.back();	//added 4 May 11a
 			}
 																	
-			if(passedPrepositionLocationOrTime)
+			if(passedPropositionLocationOrTime)
 			{
 				if(actionOrPropertyConditionEntity->hasAssociatedTime)
 				{
@@ -1696,7 +1696,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					addLocationConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType);
 				}	
 			}		
-			else if(passedPrepositionActionOrProperty)
+			else if(passedPropositionActionOrProperty)
 			{
 			
 				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
@@ -1704,7 +1704,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 									
 				addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType);		
 			}
-			else if(passedPrepositionUnkown)
+			else if(passedPropositionUnkown)
 			{
 				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
 				cout << "actionOrPropertyConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
