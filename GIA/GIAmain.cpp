@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i8a 10-Apr-2012
+ * Project Version: 1i8b 11-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
@@ -153,10 +153,15 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-nlprelation [int] : NLP dependency relation parser to be executed by GIA (0 - Relex, 1 - Stanford Core NLP, 2 - Stanford Parser [def])"
 "\n\t-nlpfeature [int]  : NLP feature parser to be executed by GIA (def: same developer as nlprelation) (0 - Relex, 1 - Stanford Core NLP [def], 2 - Stanford Parser (ie, none))"
 "\n\t-nlpcompmode       : sets Relex into Stanford compatibilty mode (Relex dependency relation parser creates Stanford relations type) [UNTESTED]"
+"\n\t-nlprelationq [int]: query NLP dependency relation parser to be executed by GIA (0 - Relex, 1 - Stanford Core NLP, 2 - Stanford Parser [def])"
+"\n\t-nlpfeatureq [int] : query NLP feature parser to be executed by GIA (def: same developer as nlprelation) (0 - Relex, 1 - Stanford Core NLP [def], 2 - Stanford Parser (ie, none))"
+"\n\t-nlpcompmodeq      : query sets Relex into Stanford compatibilty mode (Relex dependency relation parser creates Stanford relations type) [UNTESTED]"
 "\n"
 "\n\t-workingfolder [string]   : working directory name for input files (def: same as exe)"
 "\n\t-nlprelexefolder [string] : exe directory name for NLP dependency relation parser executable (def: same as exe)"
 "\n\t-nlptagexefolder [string] : exe directory name for NLP feature tag parser executable (def: same as nlprelexefolder)"
+"\n\t-nlprelqexefolder [string] : query exe directory name for NLP dependency relation parser executable (def: same as nlprelexefolder)"
+"\n\t-nlptagqexefolder [string] : query exe directory name for NLP feature tag parser executable (def: same as nlprelqexefolder)"
 "\n\t-tempfolder [string]      : temp directory name for temporary and outputText files (def: same as exe)"
 "\n"
 "\n\n\t-version         : print version"
@@ -181,9 +186,12 @@ int main(int argc,char **argv)
 
 	int NLPfeatureParser = GIA_NLP_FEATURE_PARSER_DEFAULT;
 	int NLPdependencyRelationsParser = GIA_NLP_DEPENDENCY_RELATIONS_PARSER_DEFAULT;
-	int NLPdependencyRelationsType = dependencyRelationsTypes[GIA_NLP_DEPENDENCY_RELATIONS_PARSER_DEFAULT];
 	bool NLPrelexCompatibilityMode = false;		//sets Relex dependency Relations to Stanford type
-	
+
+	int queryNLPfeatureParser = GIA_NLP_FEATURE_PARSER_DEFAULT;
+	int queryNLPdependencyRelationsParser = GIA_NLP_DEPENDENCY_RELATIONS_PARSER_DEFAULT;
+	bool queryNLPrelexCompatibilityMode = false;		//sets Relex dependency Relations to Stanford type
+		
 	bool useInputTextPlainTXTFile = false;
 	string inputTextPlainTXTFileName = "inputText.txt";
 
@@ -449,7 +457,6 @@ int main(int argc,char **argv)
 		{
 			NLPfeatureParser = NLPdependencyRelationsParser;
 		}
-		
 		if(exists_argument(argc,argv,"-nlpcompmode"))
 		{
 			if(NLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
@@ -458,7 +465,27 @@ int main(int argc,char **argv)
 			}
 		}
 		
-				
+		if(exists_argument(argc,argv,"-nlprelationq"))
+		{
+			queryNLPdependencyRelationsParser = int(get_float_argument(argc,argv,"-nlprelationq"));
+		}
+		
+		if(exists_argument(argc,argv,"-nlpfeatureq"))
+		{
+			queryNLPfeatureParser = int(get_float_argument(argc,argv,"-nlpfeatureq"));
+		}
+		else
+		{
+			queryNLPfeatureParser = queryNLPdependencyRelationsParser;
+		}
+		if(exists_argument(argc,argv,"-nlpcompmodeq"))
+		{
+			if(queryNLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
+			{
+				queryNLPrelexCompatibilityMode = true;
+			}
+		}
+						
 								
 		if (exists_argument(argc,argv,"-workingfolder"))
 		{
@@ -483,7 +510,23 @@ int main(int argc,char **argv)
 		else
 		{
 			NPLfeatureExeFolderCharStar = NPLrelationExeFolderCharStar;
-		}		
+		}
+		if (exists_argument(argc,argv,"-nlprelqexefolder"))
+		{
+			queryNPLrelationExeFolderCharStar=get_char_argument(argc,argv,"-nlprelqexefolder");
+		}
+		else
+		{
+			queryNPLrelationExeFolderCharStar = NPLrelationExeFolderCharStar;
+		}
+		if (exists_argument(argc,argv,"-nlptagqexefolder"))
+		{
+			queryNPLfeatureExeFolderCharStar=get_char_argument(argc,argv,"-nlptagqexefolder");
+		}
+		else
+		{
+			queryNPLfeatureExeFolderCharStar = queryNPLrelationExeFolderCharStar;
+		}						
 		if (exists_argument(argc,argv,"-tempfolder"))
 		{
 			tempFolderCharStar=get_char_argument(argc,argv,"-tempfolder");
@@ -717,10 +760,10 @@ int main(int argc,char **argv)
 		}
 		else
 		{	
-			executeNLPparser(inputTextPlainTXTFileName, inputTextNLPrelationXMLFileName, NLPdependencyRelationsParser, GIA_NLP_PARSER_TYPE_RELATIONS);	
+			executeNLPparser(inputTextPlainTXTFileName, inputTextNLPrelationXMLFileName, NLPdependencyRelationsParser, GIA_NLP_PARSER_TYPE_RELATIONS, false);	
 			if(inputTextNLPfeatureXMLFileName != inputTextNLPrelationXMLFileName)
 			{
-				executeNLPparser(inputTextPlainTXTFileName, inputTextNLPfeatureXMLFileName, NLPfeatureParser, GIA_NLP_PARSER_TYPE_FEATURES);	
+				executeNLPparser(inputTextPlainTXTFileName, inputTextNLPfeatureXMLFileName, NLPfeatureParser, GIA_NLP_PARSER_TYPE_FEATURES, false);	
 			}		
 			useInputTextNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
 		}
@@ -788,10 +831,10 @@ int main(int argc,char **argv)
 		}
 		else
 		{	
-			executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, NLPdependencyRelationsParser, GIA_NLP_PARSER_TYPE_RELATIONS);	
+			executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, queryNLPdependencyRelationsParser, GIA_NLP_PARSER_TYPE_RELATIONS, true);	
 			if(inputQueryNLPfeatureXMLFileName != inputQueryNLPrelationXMLFileName)
 			{
-				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, NLPfeatureParser, GIA_NLP_PARSER_TYPE_FEATURES);	
+				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, GIA_NLP_PARSER_TYPE_FEATURES, true);	
 			}					
 			useInputQueryNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
 		}
@@ -807,9 +850,9 @@ int main(int argc,char **argv)
 		else
 		{
 			#ifdef USE_CE	
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, firstClaimInHeirachy, claimsList))
+			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, firstClaimInHeirachy, claimsList))
 			#else
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode))			
+			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode))			
 			#endif
 			{
 				result = false;

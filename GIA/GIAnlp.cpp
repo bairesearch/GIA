@@ -3,7 +3,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i8a 10-Apr-2012
+ * Project Version: 1i8b 11-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -33,7 +33,7 @@ using namespace std;
 #include "GIAParser.h"
 
 
-void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelationXMLFileName, int NLPParser, bool NLPparserType)
+void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelationXMLFileName, int NLPParser, bool NLPparserType, bool isQuery)
 {
 	/*
 	int inputTextNLPParsedXMLFileNameLength = inputTextNLPrelationXMLFileName.length();
@@ -69,11 +69,25 @@ void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelat
 	string NPLexeFolder = "";
 	if(NLPparserType == GIA_NLP_PARSER_TYPE_RELATIONS)
 	{
-		NPLexeFolder = NPLrelationExeFolderCharStar;
+		if(isQuery)
+		{
+			NPLexeFolder = queryNPLrelationExeFolderCharStar;
+		}
+		else
+		{
+			NPLexeFolder = NPLrelationExeFolderCharStar;
+		}
 	}
 	else if(NLPparserType == GIA_NLP_PARSER_TYPE_FEATURES)
 	{
-		NPLexeFolder = NPLfeatureExeFolderCharStar;
+		if(isQuery)
+		{
+			NPLexeFolder = queryNPLfeatureExeFolderCharStar;
+		}
+		else
+		{
+			NPLexeFolder = NPLfeatureExeFolderCharStar;
+		}	
 	}
 	else
 	{
