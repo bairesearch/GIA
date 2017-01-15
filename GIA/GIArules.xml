@@ -1646,6 +1646,24 @@
 				</paramDepRel>
 			</function>
 
+			<function name="redistributeStanfordRelationsAuxHave">
+				<example><!--
+				eg Red dogs have flies. aux(flies-4, have-3) + nsubj(flies-4, dogs-2) -> _predadj(dogs-2, flies-4)
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="2" />
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_aux" />
+				<option useRelationTest="true" REL="0" REL_ENT="1" relationTest="have" />
+				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_subj" />
+				<option useRelationIndexTest="true" REL="0" REL_ENT="0" relationIndexTestRelationID="1" relationIndexTestEntityID="0" />
+				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_predadj" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="0" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
+				<option disableRelation="true" REL="0" />
+				<option disableEntity="true" REL="0" REL_ENT="1" /> <!-- disable "have" entity -->
+				</paramDepRel>
+			</function>
+			
 			<!-- #ifdefGIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START -->
 			<function name="redistributeStanfordRelationsDisableAuxAndCop">
 				<paramDepRel mode="redistribute">
@@ -1686,7 +1704,7 @@
 				<!-- <option useRedistributeSpecialCaseNegativeAssignment="true" REL="0" REL_ENT="0" /> -->
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="negative" value="true" REL="0" REL_ENT="0" />
 				</paramDepRel>
-			</function>		
+			</function>			
 		</file>
 		<file name="GIAtranslatorRedistributeRelexRelations">
 					

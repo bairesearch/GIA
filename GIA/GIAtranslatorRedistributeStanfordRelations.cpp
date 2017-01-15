@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u7a 01-October-2013
+ * Project Version: 1u8a 02-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -200,10 +200,17 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 	redistributeStanfordRelationsDependencyPreposition(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 
+	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "1c19 pass; redistributeStanfordRelationsAuxHave (eg Red dogs have flies.	aux(flies-4, have-3) + nsubj(flies-4, dogs-2) -> _predadj(dogs-2, flies-4" << endl;
+	#endif
+	redistributeStanfordRelationsAuxHave(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#endif	
+
 	#ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 	//added 12 July 2013
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "pass 1c19; redistribute Stanford Relations - disable Aux And Cop Relations" << endl;
+	cout << "pass 1c20; redistribute Stanford Relations - disable Aux And Cop Relations" << endl;
 	#endif		
 	redistributeStanfordRelationsDisableAuxAndCop(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
@@ -211,7 +218,7 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//this has been shifted before linkHavingPropertyConditionsAndBeingDefinitionConditions - 1t2l
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "1c20 pass; collapseRedundantRelationAndMakeNegativeStanford (eg The chicken has not eaten a pie.: neg(eaten-5, not-4)" << endl;
+	cout << "1c21 pass; collapseRedundantRelationAndMakeNegativeStanford (eg The chicken has not eaten a pie.: neg(eaten-5, not-4)" << endl;
 	#endif
 	collapseRedundantRelationAndMakeNegativeStanford(currentSentenceInList, GIAentityNodeArray);
 	#endif		
@@ -4379,6 +4386,37 @@ void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSenten
 	}
 #endif	
 }
+
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+void redistributeStanfordRelationsAuxHave(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+{
+	/*
+	eg Red dogs have flies.	aux(flies-4, have-3) + nsubj(flies-4, dogs-2) -> _predadj(dogs-2, flies-4)
+	nn(dogs-2, Red-1)
+	nsubj(flies-4, dogs-2)
+	aux(flies-4, have-3)
+	root(ROOT-0, flies-4)
+	Joe is happy.	_predadj(Joe[1], happy[3])
+	*/
+//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	param.numberOfRelations = 2;
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_MODAL_AUX;
+	param.useRelationTest[REL1][REL_ENT2] = true; param.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_HAVE;
+	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_SUBJECT;
+	param.useRelationIndexTest[REL1][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT1] = REL2; param.relationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT1;
+	param.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_ADJECTIVE_PREDADJ;
+	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2; 	
+	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT1; param.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL2][REL_ENT2] = true;
+	param.disableRelation[REL1] = true;
+	param.disableEntity[REL1][REL_ENT2] = true;
+	genericDependecyRelationInterpretation(&param, REL1);
+//#else
+	//not coded as this function was developed after GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+//#endif	
+}
+#endif
+
 
 #ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 void redistributeStanfordRelationsDisableAuxAndCop(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
