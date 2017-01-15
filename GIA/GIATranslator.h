@@ -345,7 +345,9 @@ void addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIA
 	void addConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, GIAEntityNode * conditionTypeConceptEntity);
 		GIAEntityNode * addCondition(GIAEntityNode * conditionEntity);
 
-
+#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
+string performPrepositionReduction(string relationType);
+#endif
 
 
 

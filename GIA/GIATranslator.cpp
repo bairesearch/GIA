@@ -16,24 +16,17 @@
 
 string featureQueryWordAcceptedByAlternateMethodNameArray[FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES] = {"which"};
 
-#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
 string relationTypePropositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {"in", "on", "after", "ago", "before", "between", "by", "during", "for", "to", "till", "until", "past", "since", "up_to", "within", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
 	//http://www.englisch-hilfen.de/en/grammar/preposition_time.htm + is [time is] etc
 string relationTypePropositionLocationNameArray[RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES] = {"in", "on", "at", "by", "near", "nearby", "above", "below", "over", "under", "around", "through", "inside", "inside_of", "outside", "between", "beside", "beyond", "in_front_of", "in_front", "in_back_of", "behind", "next_to", "on_top_of", "within", "beneath", "underneath", "among", "along", "against", "before", "after", "behind", "to", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE};		
 	//http://www.eslgold.com/grammar/prepositions_location.html + before, after, behind, to, etc
-#else
-string relationTypePropositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_REDUCTION_POSITION_REPLACEMENT_STRING, RELATION_TYPE_PREPOSITION_REDUCTION_RELATION_REPLACEMENT_STRING, "after", "ago", "before", "between", "during", "for", "till", "until", "past", "since", "up_to", "within", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
-string relationTypePropositionLocationNameArray[RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_REDUCTION_POSITION_REPLACEMENT_STRING, RELATION_TYPE_PREPOSITION_REDUCTION_RELATION_REPLACEMENT_STRING, "near", "nearby", "above", "below", "over", "under", "around", "through", "inside", "inside_of", "outside", "between", "beside", "beyond", "in_front_of", "in_front", "in_back_of", "behind", "next_to", "on_top_of", "within", "beneath", "underneath", "among", "along", "against", "before", "after", "behind", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE};		
+#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
+//string relationTypePropositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_REDUCTION_POSITION_REPLACEMENT_STRING, RELATION_TYPE_PREPOSITION_REDUCTION_RELATION_REPLACEMENT_STRING, "after", "ago", "before", "between", "during", "for", "till", "until", "past", "since", "up_to", "within", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
+//string relationTypePropositionLocationNameArray[RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_REDUCTION_POSITION_REPLACEMENT_STRING, RELATION_TYPE_PREPOSITION_REDUCTION_RELATION_REPLACEMENT_STRING, "near", "nearby", "above", "below", "over", "under", "around", "through", "inside", "inside_of", "outside", "between", "beside", "beyond", "in_front_of", "in_front", "in_back_of", "behind", "next_to", "on_top_of", "within", "beneath", "underneath", "among", "along", "against", "before", "after", "behind", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE};		
 
 string relationTypePropositionReductionNameArray[RELATION_TYPE_PREPOSITION_REDUCTION_NUMBER_OF_TYPES][RELATION_TYPE_PREPOSITION_REDUCTION_MAX_NUMBER_VARIATIONS] = {{"at", "in", "to", "on"}, {"from", "of", "by", "", }, {"for", "since", "", ""}};
 int relationTypePropositionReductionNumberVariationsArray[RELATION_TYPE_PREPOSITION_REDUCTION_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_REDUCTION_POSITION_NUMBER_OF_TYPES, RELATION_TYPE_PREPOSITION_REDUCTION_RELATION_NUMBER_OF_TYPES, RELATION_TYPE_PREPOSITION_REDUCTION_UNDEFINED_NUMBER_OF_TYPES};
 string relationTypePropositionReductionReplacementNamesArray[RELATION_TYPE_PREPOSITION_REDUCTION_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_REDUCTION_POSITION_REPLACEMENT_STRING, RELATION_TYPE_PREPOSITION_REDUCTION_RELATION_REPLACEMENT_STRING, RELATION_TYPE_PREPOSITION_REDUCTION_UNDEFINED_REPLACEMENT_STRING};
-
-/*
-string relationTypePropositionPositionNameArray[] = {"at", "in", "to", "on"};
-string relationTypePropositionRelationNameArray[] = {"from", "of", "by"};
-string relationTypePropositionUndefinedNameArray[] = {"for", "since"};
-*/
 #endif
 
 string relationTypePropositionReasonOrCircumstanceNameArray[RELATION_TYPE_PREPOSITION_REASON_OR_CIRCUMSTANCE_NUMBER_OF_TYPES] = {"because", "on_account_of", "for", "out_of", "when",  REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY};
@@ -1000,9 +993,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 
 }
 
-void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity, GIAEntityNode * actionOrPropertyConditionEntity, string relationType, bool negative, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
-{		
-	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
+#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
+string performPrepositionReduction(string relationType)
+{
+	string relationTypeModified = relationType;
+	
 	//perform preposition reduction based upon frenchEnglishPrepositions.ods;
 	for(int i=0; i<RELATION_TYPE_PREPOSITION_REDUCTION_NUMBER_OF_TYPES; i++)
 	{
@@ -1013,11 +1008,23 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			if(relationType == relationTypePropositionReductionNameArray[i][j])
 			{
 				//cout << "matched preposition; " << relationType << endl;
-				relationType = relationTypePropositionReductionReplacementNamesArray[i];
+				relationTypeModified = relationTypePropositionReductionReplacementNamesArray[i];
 			}
 		}
 	}
+	
+	return relationTypeModified;
+}
+#endif
+	
+
+void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity, GIAEntityNode * actionOrPropertyConditionEntity, string relationType, bool negative, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
+{	
+	/* does not cover all grounds	
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
+	relationType = performPrepositionReduction(relationType);
 	#endif
+	*/
 	
 	//cout << "relationType = " << relationType << endl;
 	
@@ -1342,85 +1349,72 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 		
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
-	{			
-
-		string functionName = currentRelationInList->relationFunction;
-		string argumentName = currentRelationInList->relationArgument; 
-		int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
-		int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
-		//cout << "functionName = " << functionName << endl;
-		//cout << "argumentName = " << argumentName << endl;
-
-		long functionEntityIndex = -1;
-		long argumentEntityIndex = -1;
-		bool functionEntityAlreadyExistant = false;
-		bool argumentEntityAlreadyExistant = false;
-
-		//cout << "relationFunctionIndex = " << relationFunctionIndex << endl;
-		//cout << "relationArgumentIndex = " << relationArgumentIndex << endl;
+	{		
+		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
+		currentRelationInList->relationFunction = performPrepositionReduction(currentRelationInList->relationFunction);
+		currentRelationInList->relationArgument = performPrepositionReduction(currentRelationInList->relationArgument);
+		currentRelationInList->relationType = performPrepositionReduction(currentRelationInList->relationType);
+		#endif	
+				
+		string name[2]; 
+		name[0] = currentRelationInList->relationFunction;
+		name[1] =  currentRelationInList->relationArgument; 	//argumentName
+		int relationIndex[2];
+		relationIndex[0] = currentRelationInList->relationFunctionIndex;
+		relationIndex[1] = currentRelationInList->relationArgumentIndex;
+		//cout << "relationIndex[0]  = " << relationIndex[0] << endl;
+		//cout << "relationIndex[1]  = " << relationIndex[1] << endl;
+		//cout << "name[0]  = " << name[0] << endl;
+		//cout << "name[1]  = " << name[1] << endl;
+		long entityIndex[2];
+		entityIndex[0] = -1;
+		entityIndex[1] = -1;
+		bool entityAlreadyExistant[2];
+		entityAlreadyExistant[0] = false;
+		entityAlreadyExistant[1] = false;
 
 		bool argumentIsQuery = false;
-		if(argumentName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+		if(name[1] == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 		{//modify relation index [to prevent overlapping of comparison variable indicies with other indicies]
-			relationArgumentIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_ARGUMENT_INDEX;
+			relationIndex[1] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_ARGUMENT_INDEX;
 			currentRelationInList->relationArgumentIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_ARGUMENT_INDEX;
 			argumentIsQuery = true;
 		}
 
-		if(!GIAEntityNodeArrayFilled[relationFunctionIndex])
+		for(int i=0; i<2; i++)
 		{
-			//cout << "wf2" <<endl;
-			GIAEntityNode * functionEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &functionName, &functionEntityAlreadyExistant, &functionEntityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
-			//cout << "wf3" <<endl;
-			GIAEntityNodeArrayFilled[relationFunctionIndex] = true;
-			GIAEntityNodeArray[relationFunctionIndex] = functionEntity;
-			functionEntity->hasAssociatedTime = GIAEntityNodeIsDate[relationFunctionIndex]; 
-			//cout << "functionEntity->hasAssociatedTime = " << functionEntity->hasAssociatedTime << endl;
-			//cout << "relationFunctionIndex = " << relationFunctionIndex << endl;	
-
-			for(int grammaticalTenseModifierIndex=0; grammaticalTenseModifierIndex<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
+			if(!GIAEntityNodeArrayFilled[relationIndex[i]])
 			{
-				GIAEntityNodeArray[relationFunctionIndex]->grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = GIAEntityNodeGrammaticalTenseModifierArray[relationFunctionIndex*GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES + grammaticalTenseModifierIndex];				
-			}
-			GIAEntityNodeArray[relationFunctionIndex]->grammaticalTenseTemp = GIAEntityNodeGrammaticalTenseArray[relationFunctionIndex];
-			GIAEntityNodeArray[relationFunctionIndex]->grammaticalNumberTemp = GIAEntityNodeGrammaticalNumberArray[relationFunctionIndex];
-			GIAEntityNodeArray[relationFunctionIndex]->grammaticalDefiniteTemp = GIAEntityNodeGrammaticalIsDefiniteArray[relationFunctionIndex];
-			GIAEntityNodeArray[relationFunctionIndex]->grammaticalPersonTemp = GIAEntityNodeGrammaticalIsPersonArray[relationFunctionIndex];
-			GIAEntityNodeArray[relationFunctionIndex]->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[relationFunctionIndex];
-			GIAEntityNodeArray[relationFunctionIndex]->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[relationFunctionIndex];
-			
-			GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedInstanceTemp = false;
+				GIAEntityNode * argumentEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &(name[i]), &(entityAlreadyExistant[i]), &(entityIndex[i]), true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+				GIAEntityNodeArrayFilled[relationIndex[i]] = true;
+				GIAEntityNodeArray[relationIndex[i]] = argumentEntity;				
+				argumentEntity->hasAssociatedTime = GIAEntityNodeIsDate[relationIndex[i]]; 
+				//cout << "argumentEntity->hasAssociatedTime = " << argumentEntity->hasAssociatedTime << endl;	
+				//cout << "[relationIndex[i] = " << [relationIndex[i] << endl;
 
-		}
-		if(!GIAEntityNodeArrayFilled[relationArgumentIndex])
-		{
+				for(int grammaticalTenseModifierIndex=0; grammaticalTenseModifierIndex<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
+				{
+					GIAEntityNodeArray[relationIndex[i]]->grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = GIAEntityNodeGrammaticalTenseModifierArray[relationIndex[i]*GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES + grammaticalTenseModifierIndex];				
+				}			
+				GIAEntityNodeArray[relationIndex[i]]->grammaticalTenseTemp = GIAEntityNodeGrammaticalTenseArray[relationIndex[i]];
+				GIAEntityNodeArray[relationIndex[i]]->grammaticalNumberTemp = GIAEntityNodeGrammaticalNumberArray[relationIndex[i]];
+				GIAEntityNodeArray[relationIndex[i]]->grammaticalDefiniteTemp = GIAEntityNodeGrammaticalIsDefiniteArray[relationIndex[i]];
+				GIAEntityNodeArray[relationIndex[i]]->grammaticalPersonTemp = GIAEntityNodeGrammaticalIsPersonArray[relationIndex[i]];
+				GIAEntityNodeArray[relationIndex[i]]->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[relationIndex[i]];
+				GIAEntityNodeArray[relationIndex[i]]->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[relationIndex[i]];
 
-			GIAEntityNode * argumentEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &argumentName, &argumentEntityAlreadyExistant, &argumentEntityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
-			GIAEntityNodeArrayFilled[relationArgumentIndex] = true;
-			GIAEntityNodeArray[relationArgumentIndex] = argumentEntity;				
-			argumentEntity->hasAssociatedTime = GIAEntityNodeIsDate[relationArgumentIndex]; 
-			//cout << "argumentEntity->hasAssociatedTime = " << argumentEntity->hasAssociatedTime << endl;	
-			//cout << "relationArgumentIndex = " << relationArgumentIndex << endl;
+				GIAEntityNodeArray[relationIndex[i]]->hasAssociatedInstanceTemp = false;
 
-			for(int grammaticalTenseModifierIndex=0; grammaticalTenseModifierIndex<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
-			{
-				GIAEntityNodeArray[relationArgumentIndex]->grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = GIAEntityNodeGrammaticalTenseModifierArray[relationArgumentIndex*GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES + grammaticalTenseModifierIndex];				
-			}			
-			GIAEntityNodeArray[relationArgumentIndex]->grammaticalTenseTemp = GIAEntityNodeGrammaticalTenseArray[relationArgumentIndex];
-			GIAEntityNodeArray[relationArgumentIndex]->grammaticalNumberTemp = GIAEntityNodeGrammaticalNumberArray[relationArgumentIndex];
-			GIAEntityNodeArray[relationArgumentIndex]->grammaticalDefiniteTemp = GIAEntityNodeGrammaticalIsDefiniteArray[relationArgumentIndex];
-			GIAEntityNodeArray[relationArgumentIndex]->grammaticalPersonTemp = GIAEntityNodeGrammaticalIsPersonArray[relationArgumentIndex];
-			GIAEntityNodeArray[relationArgumentIndex]->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[relationArgumentIndex];
-			GIAEntityNodeArray[relationArgumentIndex]->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[relationArgumentIndex];
-
-			GIAEntityNodeArray[relationArgumentIndex]->hasAssociatedInstanceTemp = false;
-			
-			if(argumentIsQuery)
-			{
-				GIAEntityNodeArray[relationArgumentIndex]->isQuery = true;
-				foundComparisonVariable = true;
-				comparisonVariableNode = GIAEntityNodeArray[relationArgumentIndex];					
-			}			
+				if(i == 1)
+				{//argument index only
+					if(argumentIsQuery)
+					{
+						GIAEntityNodeArray[relationIndex[i]]->isQuery = true;
+						foundComparisonVariable = true;
+						comparisonVariableNode = GIAEntityNodeArray[relationIndex[i]];					
+					}
+				}			
+			}		
 		}
 
 		currentRelationInList = currentRelationInList->next;
