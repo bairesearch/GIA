@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j7a 19-June-2015
+ * Project Version: 2j8a 22-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -635,6 +635,9 @@
 		#define GIA2_CORRECT_POSTAGS_FIX1	//2j5a
 		#define GIA2_CORRECT_POSTAGS_FIX2	//2j5d
 	#endif
+	//#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+		#define GIA_RECORD_RCMOD_SET_INFORMATION	//2j8a	//only required to identify subject (primary entity holding math value) in nlp parsable phrase	//originally implemented 2i16a but rejected
+	//#endif
 #endif
 #ifndef GIA_DISABLE_2g_CODE_FOR_DEBUG
 	#define GIA_SUPPORT_NUMBER_OF	//added 2g9a/24-September-2014

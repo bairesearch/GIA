@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j7a 19-June-2015
+ * Project Version: 2j8a 22-June-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -725,7 +725,7 @@ void DBreadConceptEntityNodesLoadedList()	//unordered_map<string, bool>* DBconce
 	if(!parseFileObject.rdbuf( )->is_open( ))
 	{
 		//file does not exist in current directory.
-		cout << "DBreadConceptEntityNodesLoadedList() error: GIA Concept Entity Nodes List File does not exist in current directory: " << conceptEntityNodesListFileName << endl;
+		cout << "DBreadConceptEntityNodesLoadedList{} error: GIA Concept Entity Nodes List File does not exist in current directory: " << conceptEntityNodesListFileName << endl;
 		exit(0);
 	}
 	else
@@ -742,7 +742,7 @@ void DBreadConceptEntityNodesLoadedList()	//unordered_map<string, bool>* DBconce
   	FILE* pFile = fopen(conceptEntityNodesListFileName.c_str(),"r");
 	if(pFile == NULL)
 	{
-		cout << "DBreadConceptEntityNodesLoadedList() error: GIA Concept Entity Nodes List File does not exist in current directory: " << conceptEntityNodesListFileName << endl;
+		cout << "DBreadConceptEntityNodesLoadedList{} error: GIA Concept Entity Nodes List File does not exist in current directory: " << conceptEntityNodesListFileName << endl;
 	}
 	else
 	{
@@ -843,7 +843,7 @@ void DBreadVectorConnectionsReferences(string* entityName, long idInstance, int 
   	pFile = fopen(fileNameCharStar,"r");
 	if(pFile == NULL)
 	{
-		cout << "DBreadVectorConnectionsReferences() error: referencesFileName, " << referencesFileName << " does not exist" << endl;
+		cout << "DBreadVectorConnectionsReferences{} error: referencesFileName, " << referencesFileName << " does not exist" << endl;
 	}
 	else
 	{
@@ -911,7 +911,7 @@ void DBreadVectorConnectionsReference(string* entityName, long idInstance, int c
 	}
 	else
 	{
-		cout << "DBreadVectorConnectionsReference() Error: cannot read location, referenceIndex = " << referenceIndex << endl;
+		cout << "DBreadVectorConnectionsReference{} error: cannot read location, referenceIndex = " << referenceIndex << endl;
 		cout << "entityName = " <<* entityName << endl;
 		cout << "idInstance = " << idInstance << endl;
 	}
@@ -1065,7 +1065,7 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
   	pFile = fopen(fileNameCharStar,"r");
 	if(pFile == NULL)
 	{
-		cout << "DBreadEntityNodeFile() error: entityFileName, " <<* entityFileName << " does not exist" << endl;
+		cout << "DBreadEntityNodeFile{} error: entityFileName, " <<* entityFileName << " does not exist" << endl;
 	}
 	else
 	{
@@ -1177,7 +1177,7 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 		}
 		else
 		{
-			cout << "DBreadEntityNodeFile() Error: cannot read entity" << endl;
+			cout << "DBreadEntityNodeFile{} error: cannot read entity" << endl;
 			cout << "entityFileName = " <<* entityFileName << endl;
 		}
 
@@ -1227,7 +1227,7 @@ void DBreadTimeConditionNodeFile(string* timeConditionFileName, GIAtimeCondition
   	pFile = fopen(fileNameCharStar,"r");
 	if(pFile == NULL)
 	{
-		cout << "DBreadTimeConditionNodeFile() error: timeConditionFileName, " <<* timeConditionFileName << " does not exist" << endl;
+		cout << "DBreadTimeConditionNodeFile{} error: timeConditionFileName, " <<* timeConditionFileName << " does not exist" << endl;
 	}
 	else
 	{
@@ -1248,7 +1248,7 @@ void DBreadTimeConditionNodeFile(string* timeConditionFileName, GIAtimeCondition
 		}
 		else
 		{
-			cout << "DBreadTimeConditionNodeFile() Error: cannot read time condition node" << endl;
+			cout << "DBreadTimeConditionNodeFile{} error: cannot read time condition node" << endl;
 			cout << "entityFileName = " <<* timeConditionFileName << endl;
 		}
 
@@ -1422,7 +1422,7 @@ void DBwriteEntityNodeFile(string* entityFileName, GIAentityNode* entity)
   	pFile = fopen(fileNameCharStar,"w");
 	if(pFile == NULL)
 	{
-		cout << "DBwriteEntityNodeFile() error: entityFileName, " <<* entityFileName << " does not exist" << endl;
+		cout << "DBwriteEntityNodeFile{} error: entityFileName, " <<* entityFileName << " does not exist" << endl;
 	}
 	else
 	{
@@ -1489,7 +1489,7 @@ void DBwriteTimeConditionNodeFile(string* timeConditionFileName, GIAtimeConditio
   	pFile = fopen(fileNameCharStar,"w");
 	if(pFile == NULL)
 	{
-		cout << "DBwriteTimeConditionNodeFile() error: timeConditionFileName, " <<* timeConditionFileName << " does not exist" << endl;
+		cout << "DBwriteTimeConditionNodeFile{} error: timeConditionFileName, " <<* timeConditionFileName << " does not exist" << endl;
 	}
 	else
 	{
@@ -1525,7 +1525,7 @@ void DBwriteVectorConnectionsReferences(string* entityName, long idInstance, int
   	pFile = fopen(fileNameCharStar,"w");
 	if(pFile == NULL)
 	{
-		cout << "DBwriteVectorConnectionsReferences() error: referencesFileName, " << referencesFileName << " could not be created" << endl;
+		cout << "DBwriteVectorConnectionsReferences{} error: referencesFileName, " << referencesFileName << " could not be created" << endl;
 	}
 	else
 	{
@@ -1588,7 +1588,7 @@ void DBmodifyVectorConnectionsReference(string* entityName, long idInstance, int
 	FILE* pFile = fopen(fileNameCharStar, "r+b"); // r+ if you need char mode
 	if(pFile == NULL)
 	{
-		cout << "DBmodifyVectorConnectionsReference() error: referencesFileName, " << referencesFileName << " could not be created" << endl;
+		cout << "DBmodifyVectorConnectionsReference{} error: referencesFileName, " << referencesFileName << " could not be created" << endl;
 	}
 	else
 	{
@@ -1628,7 +1628,7 @@ void DBappendVectorConnectionsReference(string* entityName, long idInstance, int
 	FILE* pFile = fopen(fileNameCharStar, "a");
 	if(pFile == NULL)
 	{
-		cout << "DBappendVectorConnectionsReference() error: referencesFileName, " << referencesFileName << " could not be created" << endl;
+		cout << "DBappendVectorConnectionsReference{} error: referencesFileName, " << referencesFileName << " could not be created" << endl;
 	}
 	else
 	{
@@ -1682,7 +1682,7 @@ void DBwriteConceptEntityNodesLoadedList()	//unordered_map<string, bool>* DBconc
   	FILE* pFile = fopen(conceptEntityNodesListFileName.c_str(),"w");
 	if(pFile == NULL)
 	{
-		cout << "DBwriteConceptEntityNodesLoadedList() error: conceptEntityNodesListFileName, " << conceptEntityNodesListFileName << " could not be created" << endl;
+		cout << "DBwriteConceptEntityNodesLoadedList{} error: conceptEntityNodesListFileName, " << conceptEntityNodesListFileName << " could not be created" << endl;
 	}
 	else
 	{

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j7a 19-June-2015
+ * Project Version: 2j8a 22-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -120,7 +120,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 												}
 												else
 												{
-													cout << "applyGIATranslatorGenericXMLfunctions() error: illegal currentParamTag->firstAttribute->value = " << currentParamTag->firstAttribute->value << endl;
+													cout << "applyGIATranslatorGenericXMLfunctions{} error: illegal currentParamTag->firstAttribute->value = " << currentParamTag->firstAttribute->value << endl;
 												}
 											}
 											
@@ -686,7 +686,7 @@ bool genericInterpretationGenerateSpecialCase(XMLparserTag* xmlTag, GIAentityCha
 	}
 	else
 	{
-		cout << "genericEntityInterpretationApplySpecialCase() error: !(typeFound && variableFound && valueFound)" << endl;
+		cout << "genericEntityInterpretationApplySpecialCase{} error: !(typeFound && variableFound && valueFound)" << endl;
 	}
 	return result;
 }
@@ -717,7 +717,7 @@ bool genericDepRelInterpretationApplySpecialCase(GIAentityCharacteristic* entity
 	}
 	else
 	{
-		cout << "genericDepRelInterpretationApplySpecialCase() error: illegal type" << endl;
+		cout << "genericDepRelInterpretationApplySpecialCase{} error: illegal type" << endl;
 		result = false;
 	}
 	return result;
@@ -851,7 +851,7 @@ bool genericEntityInterpretationApplySpecialCase(GIAentityCharacteristic* entity
 	}
 	else
 	{
-		cout << "genericEntityInterpretationApplySpecialCase() error: illegal type: " << type << endl;
+		cout << "genericEntityInterpretationApplySpecialCase{} error: illegal type: " << type << endl;
 		result = false;
 	}
 	return result;
@@ -909,7 +909,7 @@ bool genericEntityInterpretationApplyOptionbool(bool* paramVal, XMLParserAttribu
 		}
 		else
 		{
-			cout << "genericEntityInterpretationApplyOptionbool() error: illegal paramOptionSetValue for " << iterationVariable << ": " << xmlAttribute->value << endl;
+			cout << "genericEntityInterpretationApplyOptionbool{} error: illegal paramOptionSetValue for " << iterationVariable << ": " << xmlAttribute->value << endl;
 		}
 		//bool paramOptionSetValue = atoi(xmlAttribute->value.c_str());		//if GIA Translator XML file booleans are defined as '1'/'0' instead of 'true'/'false'
 		*paramVal = paramOptionSetValue;

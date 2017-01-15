@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j7a 19-June-2015
+ * Project Version: 2j8a 22-June-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1951,8 +1951,10 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 										#endif
 											#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 											bool sameReferenceSet = false;
+											bool rcmodIndicatesSameReferenceSet = false;
 											#else
-											bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+											bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+											bool rcmodIndicatesSameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 											#endif
 											
 											#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS_ADVANCED
@@ -1983,7 +1985,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 												}
 												if(instanceEntity != NULL)
 												{
-													addDefinitionToEntity(instanceEntity, currentSpecificConcept, sameReferenceSet);
+													addDefinitionToEntity(instanceEntity, currentSpecificConcept, sameReferenceSet, rcmodIndicatesSameReferenceSet);
 													#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 													cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts{}: addDefinitionToEntity" << endl;
 													#endif	
@@ -1996,7 +1998,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 												//eg2 The yellow banana is a fruit. The yellow fruit is tasty. 
 												
 												//found instance in network matching substance concept...
-												addDefinitionToEntity(entityNode, currentSpecificConcept, sameReferenceSet);
+												addDefinitionToEntity(entityNode, currentSpecificConcept, sameReferenceSet, rcmodIndicatesSameReferenceSet);
 												#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 												cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts{}: addDefinitionToEntity" << endl;
 												#endif

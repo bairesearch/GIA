@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j7a 19-June-2015
+ * Project Version: 2j8a 22-June-2015
  *
  *******************************************************************************/
 
@@ -1025,7 +1025,7 @@ void testEntityCharacteristicIterationbool(bool entityVal, GIAentityCharacterist
 		}
 		else
 		{
-			cout << "testEntityCharacteristicIterationbool() error: illegal entityCharacteristicTestValue for " << iterationVariable << ": " << entityCharacteristicTest->value << endl;
+			cout << "testEntityCharacteristicIterationbool{} error: illegal entityCharacteristicTestValue for " << iterationVariable << ": " << entityCharacteristicTest->value << endl;
 		}
 		//bool entityCharacteristicTestValue = atoi(entityCharacteristicTest->value.c_str());		//if GIA Translator XML file booleans are defined as '1'/'0' instead of 'true'/'false'
 		if(entityCharacteristicTestValue == entityVal)
@@ -1146,7 +1146,7 @@ bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 
 	if(!foundMatch)
 	{
-		cout << "setEntityCharacteristic() error: entityCharacteristic not found:" << entityCharacteristic->name << endl;
+		cout << "setEntityCharacteristic{} error: entityCharacteristic not found:" << entityCharacteristic->name << endl;
 	}
 	return foundMatch;
 }
@@ -1166,7 +1166,7 @@ void setEntityCharacteristicIterationbool(bool* entityVal, GIAentityCharacterist
 		}
 		else
 		{
-			cout << "testEntityCharacteristicIterationbool() error: illegal entityCharacteristicTestValue for " << iterationVariable << ": " << entityCharacteristicSet->value << endl;
+			cout << "testEntityCharacteristicIterationbool{} error: illegal entityCharacteristicTestValue for " << iterationVariable << ": " << entityCharacteristicSet->value << endl;
 		}
 		//cout << "setEntityCharacteristicIterationbool{}: " << entityCharacteristicSet->name << " = " << entityCharacteristicSetValue << endl;
 
@@ -1278,7 +1278,7 @@ bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 
 	if(!foundMatch)
 	{
-		cout << "getEntityCharacteristic() error: entityCharacteristic not found:" << entityCharacteristic->name << endl;
+		cout << "getEntityCharacteristic{} error: entityCharacteristic not found:" << entityCharacteristic->name << endl;
 	}
 	return foundMatch;
 }
