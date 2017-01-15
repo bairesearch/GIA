@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r3a 13-November-2012
+ * Project Version: 1r4a 13-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -639,6 +639,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		cout << "pass 1c12; redistribute Stanford Relations - Interpret Of As Object For ContinuousVerb (eg What is wood used in the delivering of?   interpret prep_of(xing, y) as obj(xing, y) )" << endl;
 		#endif
 		redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray, NLPdependencyRelationsType);
+		#endif
+	
+		#ifdef GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES
+		//Added 13 November 2012
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1c13; redistribute Stanford Relations - expletives (eg 'There is a place that we go'   _expl(be[2], there[1]) / _subj(be[2], place[4]) / _subj(go[7], we[6]) / _obj(be[2], go[7]) -> _subj(go[7], we[6]) / _obj(place[4], go[7])  )" << endl;
+		#endif
+		redistributeStanfordRelationsExpletives(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray, NLPdependencyRelationsType);
 		#endif
 	}
 	#endif

@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r3a 13-November-2012
+ * Project Version: 1r4a 13-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -515,6 +515,7 @@
 
 //variables currently being tested (1o1a+)
 
+#define GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES
 #define GIA_TRANSLATOR_INTERPRET_CLAUSAL_COMPLEMENT_AS_ACTION_OBJECT_INSTEAD_OF_ACTION_PROPERTY	//added to bring Stanford back into line with Relex: eg He says that you like to swim / ccomp(say, like) -> obj(say, like), Moses knew I was angry. / ccomp(knew-2, angry-5) ->  obj(knew-2, angry-5
 
 #define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR	//interpret "toy"/"red" as property of "shop"/"dog" (originally "shop"/"dog" was interpreted as property of "toy"/"red")

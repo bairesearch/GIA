@@ -23,7 +23,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r3a 13-November-2012
+ * Project Version: 1r4a 13-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -2877,6 +2877,74 @@ bool determineIfWordIsVerbContinuousCase(string * word)
 		foundVerbContinuousCase = true;
 	}
 	return foundVerbContinuousCase;
+}
+#endif
+
+#ifdef GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES
+void redistributeStanfordRelationsExpletives(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int NLPdependencyRelationsType)
+{
+	//eg 'There is a place that we go' _expl(be[2], there[1]) / _subj(be[2], place[4]) / _subj(go[7], we[6]) [IRRELEVANT] / _obj(be[2], go[7]) -> _subj(go[7], we[6]) / _obj(place[4], go[7]) 
+	
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT_EXPLETIVE)
+			{
+ 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				while(currentRelationInList2->next != NULL)
+				{
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					if(!(currentRelationInList2->disabled))
+					{
+					#endif
+						if(currentRelationInList2->relationType == RELATION_TYPE_SUBJECT)
+						{					
+ 							Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+							while(currentRelationInList3->next != NULL)
+							{
+								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+								if(!(currentRelationInList3->disabled))
+								{
+								#endif
+									if(currentRelationInList3->relationType == RELATION_TYPE_OBJECT)
+									{
+										if(currentRelationInList->relationGovernor == RELATION_ENTITY_BE)
+										{
+											if(currentRelationInList->relationGovernorIndex == currentRelationInList2->relationGovernorIndex)
+											{
+												if(currentRelationInList->relationGovernorIndex == currentRelationInList3->relationGovernorIndex)
+												{
+													currentRelationInList3->relationGovernorIndex = currentRelationInList2->relationDependentIndex; 
+													currentRelationInList3->relationGovernor = currentRelationInList2->relationDependent; 
+													currentRelationInList->disabled = true; 
+													currentRelationInList2->disabled = true; 
+													disableEntity(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]);
+													disableEntity(GIAEntityNodeArray[currentRelationInList->relationDependentIndex]);
+												}	
+											}
+										}				
+									}
+								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+								}
+								#endif
+								currentRelationInList3 = currentRelationInList3->next;
+							}
+						}
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					}
+					#endif
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}
 }
 #endif
 
