@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b5c 08-January-2014
+ * Project Version: 2b5d 09-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1095,6 +1095,7 @@ GIAentityNode * addActionToActionDefinitionDefineSubstances(GIAentityNode * acti
 		GIAentityNode * addAction(GIAentityNode * actionEntity);
 
 GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionEntityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet);
+GIAentityNode * addOrConnectConditionToSubject(GIAentityNode * entityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet);	
 	GIAentityNode * addConditionToConditionDefinition(GIAentityNode * conditionTypeEntity);
 	void connectConditionInstanceToSubject(GIAentityNode * subjectEntity, GIAentityNode * newOrExistingCondition, bool sameReferenceSet);
 	void connectConditionInstanceToObject(GIAentityNode * objectEntity, GIAentityNode * newOrExistingCondition, bool sameReferenceSet);

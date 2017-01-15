@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b5c 08-January-2014
+ * Project Version: 2b5d 09-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -765,17 +765,6 @@ GIAentityNode * addOrConnectActionToEntity(GIAentityNode * subjectEntity, GIAent
 	return newOrExistingAction;
 }
 
-
-void connectActionInstanceToSubject(GIAentityNode * subjectEntity, GIAentityNode * newOrExistingAction, bool sameReferenceSet)
-{
-	//configure action subject entity node
-	writeVectorConnection(subjectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS, sameReferenceSet);
-	writeVectorConnection(newOrExistingAction, subjectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, sameReferenceSet);
-
-	subjectEntity->isSubjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-}
-
-
 GIAentityNode * addOrConnectActionToSubject(GIAentityNode * subjectEntity, GIAentityNode * actionEntity, bool sameReferenceSet)
 {
 	GIAentityNode * newOrExistingAction = actionEntity;
@@ -813,15 +802,6 @@ GIAentityNode * addOrConnectActionToSubject(GIAentityNode * subjectEntity, GIAen
 	return newOrExistingAction;
 }
 
-void connectActionInstanceToObject(GIAentityNode * objectEntity, GIAentityNode * newOrExistingAction, bool sameReferenceSet)
-{
-	//configure action object entity node
-	writeVectorConnection(objectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS, sameReferenceSet);
-	writeVectorConnection(newOrExistingAction, objectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, sameReferenceSet);
-
-	objectEntity->isObjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-}
-
 GIAentityNode * addOrConnectActionToObject(GIAentityNode * objectEntity, GIAentityNode * actionEntity, bool sameReferenceSet)
 {
 	GIAentityNode * newOrExistingAction = actionEntity;
@@ -857,6 +837,24 @@ GIAentityNode * addOrConnectActionToObject(GIAentityNode * objectEntity, GIAenti
 	#endif
 
 	return newOrExistingAction;
+}
+
+void connectActionInstanceToSubject(GIAentityNode * subjectEntity, GIAentityNode * newOrExistingAction, bool sameReferenceSet)
+{
+	//configure action subject entity node
+	writeVectorConnection(subjectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS, sameReferenceSet);
+	writeVectorConnection(newOrExistingAction, subjectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, sameReferenceSet);
+
+	subjectEntity->isSubjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+}
+
+void connectActionInstanceToObject(GIAentityNode * objectEntity, GIAentityNode * newOrExistingAction, bool sameReferenceSet)
+{
+	//configure action object entity node
+	writeVectorConnection(objectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS, sameReferenceSet);
+	writeVectorConnection(newOrExistingAction, objectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, sameReferenceSet);
+
+	objectEntity->isObjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 }
 
 
@@ -932,6 +930,54 @@ GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * entityNode, GIAent
 
 	return newOrExistingCondition;
 }
+
+GIAentityNode * addOrConnectConditionToSubject(GIAentityNode * entityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet)
+{
+	GIAentityNode * newOrExistingCondition = conditionTypeEntity;
+
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(entityNode->disabled))
+	{
+	if(!(conditionTypeEntity->disabled))
+	{
+	#endif
+		/*//do not presume single linked actions/conditions are identical
+		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
+		//see if relevant link already exists between the two nodes, and if so use that
+		bool foundNode1 = false;
+		GIAentityConnection * connectionFound = findEntityNodeNameInVector(entityNode, &(conditionTypeEntity->entityName), GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, &foundNode1);
+		if(foundNode1)
+		{
+			GIAentityNode * currentConditionNodeInList = connectionFound->entity;
+			if(newOrExistingCondition != currentConditionNodeInList)
+			{
+				newOrExistingCondition->disabled = true;
+				newOrExistingCondition = currentConditionNodeInList;
+			}
+		}
+		#endif
+		*/
+
+		newOrExistingCondition = addConditionToConditionDefinition(conditionTypeEntity);
+		
+		#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		//required to compensate for defineSubstancesActions() being exectuted before linkDependentActionsType1()
+		newOrExistingCondition->isSubstance = false;	//required because defineSubstancesActions() defines substances [not actions]
+		newOrExistingCondition->isCondition = true;
+		#endif
+		//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+
+		//configure entity node containing this substance
+		connectConditionInstanceToSubject(entityNode, newOrExistingCondition, sameReferenceSet);
+
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	}
+	}
+	#endif
+
+	return newOrExistingCondition;
+}
+
 
 GIAentityNode * addConditionToConditionDefinition(GIAentityNode * conditionTypeEntity)
 {
