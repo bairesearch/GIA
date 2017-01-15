@@ -108,8 +108,9 @@ public:
 	bool hasAssociatedInstanceIsAction;
 	bool hasAssociatedInstanceIsCondition;
 	bool hasAssociatedTime;
-	bool isActionOrPropertyState;	//eg The cat is lying on the bed. / Mark is being happy.
-			
+	bool hasState;			//PRECISE ORIGINALNAME: isActionOrPropertyState		//eg The cat is lying on the bed. / Mark is being happy.
+	bool hasQuality;		//PRECISE ORIGINAL NAME: isPropertyQualityOrAffection	//eg 'the locked door..' / 'Jim runs quickly' / 'Mr. Smith is late' 	[Not: Tom has an arm'/'Tom's bike']
+		
 	/*
 	enum
 	{
@@ -214,6 +215,7 @@ public:
 	bool isSubjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool isObjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool hasPropertyTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+	//bool hasQualityTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	
 	//bool isReferenceEntityInThisSentence;	//temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
 	bool entityAlreadyDeclaredInThisContext;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed

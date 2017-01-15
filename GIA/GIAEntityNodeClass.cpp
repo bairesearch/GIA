@@ -41,7 +41,8 @@ GIAEntityNode::GIAEntityNode(void)
 	hasAssociatedInstanceIsAction = false;
 	hasAssociatedInstanceIsCondition = false;
 	hasAssociatedTime = false;
-	isActionOrPropertyState = false;
+	hasState = false;
+	hasQuality = false;
 	
 	//type = undefinedEntityType;
 	//instance = undefinedInstance;
@@ -90,6 +91,7 @@ GIAEntityNode::GIAEntityNode(void)
 	isSubjectTemp = false;
 	isObjectTemp = false;
 	hasPropertyTemp = false;
+	//hasQualityTemp = false;
 	
 	entityAlreadyDeclaredInThisContext = false;
 	

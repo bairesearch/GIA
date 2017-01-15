@@ -147,13 +147,13 @@ GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
 
 	if(propertyEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true)
 	{
-		newProperty->isActionOrPropertyState = true;
+		newProperty->hasState = true;
 		//cout << "property is state" << endl;
 	}
 		
-	if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newProperty->isActionOrPropertyState)
+	if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newProperty->hasState)
 	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
-		addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp, newProperty->isActionOrPropertyState);
+		addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp, newProperty->hasState);
 	}
 
 	//configure property definition node
@@ -187,7 +187,14 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 	if(propertyEntity->hasAssociatedInstanceTemp)
 	{
 		GIAEntityNode * existingProperty  = propertyEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-		
+
+		/*
+		if(propertyEntity->hasQualityTemp)
+		{
+			existingProperty->hasQuality = true;
+		}
+		*/
+			
 		if(thingEntity->hasAssociatedInstanceTemp)
 		{		
 			thingEntity = thingEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
@@ -211,8 +218,16 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 				
 			thingEntity = thingEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
 		}
-	
+		
 		GIAEntityNode * newProperty = addProperty(propertyEntity);		
+
+		/*
+		if(propertyEntity->hasQualityTemp)
+		{
+			newProperty->hasQuality = true;
+		}
+		*/
+
 		newProperty->PropertyNodeReverseList.push_back(thingEntity);
 		//newProperty->entityNodeContainingThisProperty = thingEntity;		//added 26 Aug 11a, removed 8 Dec 2011
 		
@@ -221,6 +236,8 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 
 		thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	}
+	
+
 	
 }
 
@@ -322,18 +339,18 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 
 		if(actionEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true)
 		{
-			newOrExistingAction->isActionOrPropertyState = true;
+			newOrExistingAction->hasState = true;
 			//cout << "action is state" << endl;			
 		}
 			
 		//cout << "actionEntity->grammaticalTenseTemp = " << actionEntity->grammaticalTenseTemp << endl;
 		//cout << "actionEntity->entityName = " << actionEntity->entityName << endl;
 
-		if(actionEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newOrExistingAction->isActionOrPropertyState)
+		if(actionEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newOrExistingAction->hasState)
 		{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
 			//cout << "hello" << endl;
 			//exit(0);
-			addTenseOnlyTimeConditionToProperty(newOrExistingAction, actionEntity->grammaticalTenseTemp, newOrExistingAction->isActionOrPropertyState);
+			addTenseOnlyTimeConditionToProperty(newOrExistingAction, actionEntity->grammaticalTenseTemp, newOrExistingAction->hasState);
 		}	
 		
 		actionEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
@@ -857,7 +874,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 		#endif
 		defineToBeAndToDoProperties(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList, conceptEntityNamesList);
 		
-		
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "4g pass; extract qualities" << endl;
+		#endif
+		extractQualities(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList, conceptEntityNamesList);
+				
 		
 		
 		//cout << "5a pass; parse questions" << endl;	
@@ -1366,6 +1387,8 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 				GIAEntityNode * thingEntity = GIAEntityNodeArray[relationFunctionIndex];
 				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
 				thingEntity->hasPropertyTemp = true;
+				
+				//propertyEntity->hasQualityTemp = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]				
 			}
 		}
 
@@ -2001,7 +2024,7 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 				cout << "thingEntity = " << thingEntity->entityName << endl;
 				cout << "propertyEntity = " << propertyEntity->entityName << endl;
 				#endif
-
+				
 				addOrConnectPropertyToEntity(thingEntity, propertyEntity);		
 			}			
 		}			
@@ -3298,6 +3321,46 @@ void extractMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntity
 		currentRelationInList = currentRelationInList->next;		
 	}
 }
+
+void extractQualities(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList)
+{
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{	
+		//cout << "here1" << endl;
+		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+		bool passed = false;
+		for(int i=0; i<RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES; i++)
+		{
+			if(currentRelationInList->relationType == relationTypeAdjectiveNameArray[i])
+			{
+				passed = true;
+			}
+		}						
+		//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_1) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_2) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3))
+		if(passed)
+		{
+			bool passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList);
+
+			if(passed2)
+			{			
+				int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
+				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;				
+				GIAEntityNode * thingEntity = GIAEntityNodeArray[relationFunctionIndex];
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+
+				if(propertyEntity->AssociatedInstanceNodeList.size() >= 1)
+				//if(propertyEntity->AssociatedInstanceNodeList.back() != NULL) - this is dangerous/impossible to use; it will not return NULL if pop_back() has been executed on the vector
+				{
+					GIAEntityNode * qualityPropertyEntity = propertyEntity->AssociatedInstanceNodeList.back();
+					qualityPropertyEntity->hasQuality = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]	
+				}
+			}
+		}
+		currentRelationInList = currentRelationInList->next;		
+	}
+}
+
 
 void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList)
 {
