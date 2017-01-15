@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i10d 12-Apr-2012
+ * Project Version: 1i11a 13-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -28,6 +28,10 @@ using namespace std;
 #include "GIASentenceClass.h"
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
+
+
+//#define GIA_DO_NOT_PARSE_DISABLED_RELATIONS	//test only
+#define GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES	//test only
 
 
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION	//NO; pre-process "two word prepositions" eg from http://en.wikipedia.org/wiki/List_of_English_prepositions, or post process (currently implemented)
@@ -113,6 +117,7 @@ using namespace std;
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE 
 		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE
 			#define GIA_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE_TO_PREDADJ_NOT_SUBJ
+			//#define GIA_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE_TO_PREDADJ_NOT_SUBJ_OLD
 		#endif
 	#endif
 #endif
@@ -639,6 +644,12 @@ long * getCurrentEntityNodeIDInPropertyEntityNodesList();
 long * getCurrentEntityNodeIDInActionEntityNodesList();
 long * getCurrentEntityNodeIDInConditionEntityNodesList();
 
+void applyEntityAlreadyExistsFunction(GIAEntityNode * entity);
+void disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity);
+void disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity);
 
-			
+void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[]);
+void recordConceptNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap);
+void recordConceptNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap);
+		
 #endif

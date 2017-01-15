@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i10d 12-Apr-2012
+ * Project Version: 1i11a 13-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
@@ -550,7 +550,7 @@ int main(int argc,char **argv)
 								
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe - Project Version: 1i10d 12-Apr-2012" << endl;
+			cout << "GIA.exe - Project Version: 1i11a 13-Apr-2012" << endl;
 			exit(1);
 		}
 
@@ -816,6 +816,10 @@ int main(int argc,char **argv)
 			{
 				result = false;
 			}
+			#ifdef GIA_TRANSLATOR_DEBUG
+			cout << "record concept nodes as permanent if they are disabled (prepare for use in GIA)" << endl;
+			#endif			
+			recordConceptNodesAsNonPermanentIfTheyAreDisabled(conceptEntityNodesList);	//prepare for use in GIA	
 			
 		}
 	}
@@ -895,6 +899,10 @@ int main(int argc,char **argv)
 			{
 				result = false;
 			}
+			#ifdef GIA_TRANSLATOR_DEBUG
+			cout << "record concept nodes as permanent if they are disabled (prepare for use in GIA)" << endl;
+			#endif			
+			recordConceptNodesAsNonPermanentIfTheyAreDisabled(conceptEntityNodesListQuery);	//prepare for use in GIA	
 			
 		}
 	}
@@ -1172,6 +1180,11 @@ bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * 
 		#endif
 	#endif
 	
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "record concept nodes as disabled if they are not permanent (used for printing/xml write purposes)" << endl;
+	#endif
+	recordConceptNodesAsDisabledIfTheyAreNotPermanent(conceptEntityNodesList);
+		
 	return result;
 }
 

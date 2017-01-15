@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i10d 12-Apr-2012
+ * Project Version: 1i11a 13-Apr-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -259,10 +259,12 @@ public:
 	
 	bool queryEntityTraced;	//temporary for determining max confifence
 	
-	bool disabled;	//if true, this entity has been deemed redundant in semantic network generation
-
+	bool disabled;	//temporary for concept entities: used for GIA translator reference paser only - overwritten every time a new sentence is parsed 
+	bool permanentConcept;	//concept entity is to be drawn/saved to XML (if false, this entity has been deemed redundant in semantic network generation)
+	
 	bool CXLdummyNode;
 	
+	//bool firstSentenceToAppearInNetwork;
 };
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode);
@@ -288,7 +290,6 @@ int calculateQuantityModifierInt(string quantityModifierString);
 int calculateQuantityMultiplierInt(string quantityMultiplierString);
 
 string printQuantityNumberString(GIAEntityNode * entityNode);
-
 
 
 #endif

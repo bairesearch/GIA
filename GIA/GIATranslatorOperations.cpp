@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i10d 12-Apr-2012
+ * Project Version: 1i11a 13-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -90,6 +90,7 @@ void initialiseGIATranslatorForTexualContextOperations()
 	*/
 }
 
+					
 bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation * currentRelationInList, GIAEntityNode * GIAEntityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType)
 {
 	bool result = true;
@@ -101,9 +102,7 @@ bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation * currentRelation
 		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES_ADVANCED
 		if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD) && (GIAEntityNodeArray[relationGovernorIndex]->entityName == RELATION_GOVERNOR_BE))
 		{//added condition Fri 27 Jan - remove 'be' node artefacts
-			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
-			GIAEntityNodeArray[relationGovernorIndex]->disabled = true;
-			#endif		
+			disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[relationGovernorIndex]);	
 			result = false;
 			//cout << "GIAEntityNodeArray[relationGovernorIndex]->disabled = true" << endl;		
 		}
@@ -170,110 +169,130 @@ bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, 
 
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity)
 {
-	
-	if(propertyEntity->entityAlreadyDeclaredInThisContext)
-	{
-		if(!(propertyEntity->hasAssociatedInstanceTemp))
-		{
-			propertyEntity->hasAssociatedInstanceTemp = true;
-		}	
-		//cout << "1. propertyEntity->entityName = " << propertyEntity->entityName << endl; 
-	}
-
-	if(thingEntity->entityAlreadyDeclaredInThisContext)
-	{
-		if(!(thingEntity->hasAssociatedInstanceTemp))
-		{
-			thingEntity->hasAssociatedInstanceTemp = true;
-		}	
-	}
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(propertyEntity->disabled))
+	{	
+	if(!(thingEntity->disabled))
+	{			
+	#endif	
 			
-	if(propertyEntity->hasAssociatedInstanceTemp)
-	{
-		GIAEntityNode * existingProperty  = propertyEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-
-		/*
-		if(propertyEntity->hasQualityTemp)
+		if(propertyEntity->entityAlreadyDeclaredInThisContext)
 		{
-			existingProperty->hasQuality = true;
-		}
-		*/
-			
-		if(thingEntity->hasAssociatedInstanceTemp)
-		{		
-			thingEntity = thingEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
+			if(!(propertyEntity->hasAssociatedInstanceTemp))
+			{
+				propertyEntity->hasAssociatedInstanceTemp = true;
+			}	
+			//cout << "1. propertyEntity->entityName = " << propertyEntity->entityName << endl; 
 		}
 
-		//configure entity node containing this property
-		thingEntity->PropertyNodeList.push_back(existingProperty);	
+		if(thingEntity->entityAlreadyDeclaredInThisContext)
+		{
+			if(!(thingEntity->hasAssociatedInstanceTemp))
+			{
+				thingEntity->hasAssociatedInstanceTemp = true;
+			}	
+		}
 
-		thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+		if(propertyEntity->hasAssociatedInstanceTemp)
+		{
+			GIAEntityNode * existingProperty  = propertyEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
 
-		existingProperty->PropertyNodeReverseList.push_back(thingEntity);	
-		//existingProperty->entityNodeContainingThisProperty = thingEntity;		//added 26 Aug 11a, removed 8 Dec 2011
-		
-	}
-	else
-	{
-		if(thingEntity->hasAssociatedInstanceTemp)
-		{	
+			/*
+			if(propertyEntity->hasQualityTemp)
+			{
+				existingProperty->hasQuality = true;
+			}
+			*/
+
+			if(thingEntity->hasAssociatedInstanceTemp)
+			{		
+				thingEntity = thingEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
+			}
+
+			//configure entity node containing this property
+			thingEntity->PropertyNodeList.push_back(existingProperty);	
+
+			thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+
+			existingProperty->PropertyNodeReverseList.push_back(thingEntity);	
+			//existingProperty->entityNodeContainingThisProperty = thingEntity;		//added 26 Aug 11a, removed 8 Dec 2011
+
+		}
+		else
+		{
+			if(thingEntity->hasAssociatedInstanceTemp)
+			{	
+				//cout << "thingEntity = " << thingEntity->entityName << endl;
+				//cout << "propertyEntity = " << propertyEntity->entityName << endl;
+
+				thingEntity = thingEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
+			}
+
 			//cout << "thingEntity = " << thingEntity->entityName << endl;
-			//cout << "propertyEntity = " << propertyEntity->entityName << endl;
-				
-			thingEntity = thingEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-		}
-		
-		//cout << "thingEntity = " << thingEntity->entityName << endl;
-		
-		GIAEntityNode * newProperty = addProperty(propertyEntity);		
 
-		/*
-		if(propertyEntity->hasQualityTemp)
-		{
-			newProperty->hasQuality = true;
-		}
-		*/
+			GIAEntityNode * newProperty = addProperty(propertyEntity);		
 
-		newProperty->PropertyNodeReverseList.push_back(thingEntity);
-		//newProperty->entityNodeContainingThisProperty = thingEntity;		//added 26 Aug 11a, removed 8 Dec 2011
-		
-		//configure entity node containing this property
-		thingEntity->PropertyNodeList.push_back(newProperty);		
+			/*
+			if(propertyEntity->hasQualityTemp)
+			{
+				newProperty->hasQuality = true;
+			}
+			*/
 
-		thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-	}	
+			newProperty->PropertyNodeReverseList.push_back(thingEntity);
+			//newProperty->entityNodeContainingThisProperty = thingEntity;		//added 26 Aug 11a, removed 8 Dec 2011
+
+			//configure entity node containing this property
+			thingEntity->PropertyNodeList.push_back(newProperty);		
+
+			thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+		}	
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	}
+	}			
+	#endif			
 }
 
 
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 {	
-	//cout << "\t\t addPropertyToPropertyDefinition; propertyEntity->entityName = " << propertyEntity->entityName << endl;
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(propertyEntity->disabled))
+	{				
+	#endif
 	
-	GIAEntityNode * newOrExistingProperty;
-	
-	if(propertyEntity->entityAlreadyDeclaredInThisContext)
-	{
-		if(!(propertyEntity->hasAssociatedInstanceTemp))
+		//cout << "\t\t addPropertyToPropertyDefinition; propertyEntity->entityName = " << propertyEntity->entityName << endl;
+
+		GIAEntityNode * newOrExistingProperty;
+
+		if(propertyEntity->entityAlreadyDeclaredInThisContext)
 		{
-			propertyEntity->hasAssociatedInstanceTemp = true;
-		}	
-	}
+			if(!(propertyEntity->hasAssociatedInstanceTemp))
+			{
+				propertyEntity->hasAssociatedInstanceTemp = true;
+			}	
+		}
+
+		if(propertyEntity->hasAssociatedInstanceTemp)
+		{	
+			//cout << "break; propertyEntity->entityName = " << propertyEntity->entityName << endl;
+			GIAEntityNode * newOrExistingProperty = propertyEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
+
+		}
+		else
+		{	
+			GIAEntityNode * newProperty = addProperty(propertyEntity);	
+		}
 	
-	if(propertyEntity->hasAssociatedInstanceTemp)
-	{	
-		//cout << "break; propertyEntity->entityName = " << propertyEntity->entityName << endl;
-		GIAEntityNode * newOrExistingProperty = propertyEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-		
-	}
-	else
-	{	
-		GIAEntityNode * newProperty = addProperty(propertyEntity);	
-	}	
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	}			
+	#endif		
 }
 
 
 GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
 {	
+	
 	//configure property node
 	GIAEntityNode * newProperty = new GIAEntityNode();
 	newProperty->id = currentEntityNodeIDInCompleteList;
@@ -301,7 +320,7 @@ GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
 		newProperty->hasProgressiveTemp = true;
 		//cout << "property has progressive (eg lying/sitting/being happy)" << endl;
 	}
-		
+
 	if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newProperty->hasProgressiveTemp)
 	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
 		addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp, newProperty->hasProgressiveTemp);
@@ -311,7 +330,7 @@ GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
 	propertyEntity->AssociatedInstanceNodeList.push_back(newProperty);
 
 	propertyEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
-	
+
 	#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
 	//cout << "propertyEntity->entityName = " << propertyEntity->entityName << endl;
 	if(propertyEntity->isQuery)
@@ -327,58 +346,68 @@ GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
 		#endif
 	}
 	#endif	
-				
+
+					
 	return newProperty;	
 }
 
 
 GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity)
 {
-	GIAEntityNode * newOrExistingAction;
+	GIAEntityNode * newOrExistingAction = NULL;
 	
-	if(actionEntity->entityAlreadyDeclaredInThisContext)
-	{//CHECK THIS; need to convert to action node here also? ie hasAssociatedInstanceIsAction->true? [must look at generated semanticNet.xml and see if any propertyNodeContainers contain action nodes..., or if any actionNodeContainers do not contain property nodes...]
-		if(!(actionEntity->hasAssociatedInstanceTemp))
-		{	
-			//cout << "actionEntity->entityAlreadyDeclaredInThisContext as a property:" << actionEntity->entityName << endl;
-			actionEntity->hasAssociatedInstanceTemp = true;
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(actionEntity->disabled))
+	{				
+	#endif
+
+		if(actionEntity->entityAlreadyDeclaredInThisContext)
+		{//CHECK THIS; need to convert to action node here also? ie hasAssociatedInstanceIsAction->true? [must look at generated semanticNet.xml and see if any propertyNodeContainers contain action nodes..., or if any actionNodeContainers do not contain property nodes...]
+			if(!(actionEntity->hasAssociatedInstanceTemp))
+			{	
+				//cout << "actionEntity->entityAlreadyDeclaredInThisContext as a property:" << actionEntity->entityName << endl;
+				actionEntity->hasAssociatedInstanceTemp = true;
+			}
 		}
-	}
-			
-	//configure action node	
-	if(actionEntity->hasAssociatedInstanceTemp)
-	{
-		newOrExistingAction = actionEntity->AssociatedInstanceNodeList.back();	
-		
-		if(actionEntity->hasAssociatedInstanceIsAction == false)
-		{//upgrade associated property to action
-			
-			//CHECK THIS; must remove from property list, and add to action list 
-			actionEntity->hasAssociatedInstanceIsAction = true;
-			newOrExistingAction->isProperty = false;
-			newOrExistingAction->isAction = true;
-			
-			//cout << "newOrExistingAction->idSecondary = " << newOrExistingAction->idSecondary << endl;
-			
-			vector<GIAEntityNode*>::iterator propertyEntityNodesListIterator = propertyEntityNodesList->begin();
-			advance(propertyEntityNodesListIterator,newOrExistingAction->idSecondary);
-			propertyEntityNodesList->erase(propertyEntityNodesListIterator);
-			currentEntityNodeIDInPropertyEntityNodesList--;
-			
-			actionEntityNodesList->push_back(newOrExistingAction);
-			currentEntityNodeIDInActionEntityNodesList++;
+
+		//configure action node	
+		if(actionEntity->hasAssociatedInstanceTemp)
+		{
+			newOrExistingAction = actionEntity->AssociatedInstanceNodeList.back();	
+
+			if(actionEntity->hasAssociatedInstanceIsAction == false)
+			{//upgrade associated property to action
+
+				//CHECK THIS; must remove from property list, and add to action list 
+				actionEntity->hasAssociatedInstanceIsAction = true;
+				newOrExistingAction->isProperty = false;
+				newOrExistingAction->isAction = true;
+
+				//cout << "newOrExistingAction->idSecondary = " << newOrExistingAction->idSecondary << endl;
+
+				vector<GIAEntityNode*>::iterator propertyEntityNodesListIterator = propertyEntityNodesList->begin();
+				advance(propertyEntityNodesListIterator,newOrExistingAction->idSecondary);
+				propertyEntityNodesList->erase(propertyEntityNodesListIterator);
+				currentEntityNodeIDInPropertyEntityNodesList--;
+
+				actionEntityNodesList->push_back(newOrExistingAction);
+				currentEntityNodeIDInActionEntityNodesList++;
+			}
+			#ifdef USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_CONCEPT_ENTITY_IN_A_GIVEN_SENTENCE
+			else
+			{
+				newOrExistingAction = addAction(actionEntity);
+			}
+			#endif
 		}
-		#ifdef USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_CONCEPT_ENTITY_IN_A_GIVEN_SENTENCE
 		else
 		{
 			newOrExistingAction = addAction(actionEntity);
 		}
-		#endif
-	}
-	else
-	{
-		newOrExistingAction = addAction(actionEntity);
-	}
+		
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	}				
+	#endif		
 	
 	return newOrExistingAction;
 }
@@ -386,7 +415,8 @@ GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity)
 
 	//conditions required to be added [eg when, where, how, why]
 GIAEntityNode * addAction(GIAEntityNode * actionEntity)
-{				
+{	
+				
 	//cout << "as4" << endl;
 
 	GIAEntityNode * newAction = new GIAEntityNode();
@@ -491,40 +521,67 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense
 
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity)
 {
-	if(thingEntity->hasAssociatedInstanceTemp)
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(thingEntity->disabled))
 	{
-		//cout << "thingEntity = thingEntity->AssociatedInstanceNodeList.back()" << endl;
-		thingEntity = thingEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
+	if(!(definitionEntity->disabled))
+	{					
+	#endif
+	
+		if(thingEntity->hasAssociatedInstanceTemp)
+		{
+			//cout << "thingEntity = thingEntity->AssociatedInstanceNodeList.back()" << endl;
+			thingEntity = thingEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
+		}
+
+		if(definitionEntity->hasAssociatedInstanceTemp)
+		{
+			//cout << "definitionEntity = definitionEntity->AssociatedInstanceNodeList.back()" << endl;
+			definitionEntity = definitionEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
+		}
+
+		//configure entity node
+		thingEntity->EntityNodeDefinitionList.push_back(definitionEntity);
+
+		//configure entity definition node
+		definitionEntity->EntityNodeDefinitionReverseList.push_back(thingEntity);	
+		
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
-	
-	if(definitionEntity->hasAssociatedInstanceTemp)
-	{
-		//cout << "definitionEntity = definitionEntity->AssociatedInstanceNodeList.back()" << endl;
-		definitionEntity = definitionEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-	}
-	
-	//configure entity node
-	thingEntity->EntityNodeDefinitionList.push_back(definitionEntity);
-	
-	//configure entity definition node
-	definitionEntity->EntityNodeDefinitionReverseList.push_back(thingEntity);		
+	}					
+	#endif			
 }
 
 	//conditions required to be added [eg when, where, how, why]
 	//replace action if already existant
 void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity)
 {
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(subjectEntity->disabled))
+	{
+	if(!(objectEntity->disabled))
+	{	
+	if(!(actionEntity->disabled))
+	{					
+	#endif
+	
 	GIAEntityNode * newOrExistingAction;
 	newOrExistingAction = addActionToActionDefinition(actionEntity);
 	
 	addActionInstanceToSubject(subjectEntity, newOrExistingAction);
 
 	addActionInstanceToObject(objectEntity, newOrExistingAction);
+	
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	}
+	}
+	}					
+	#endif	
 }
 
 
 void addActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingAction)
-{	
+{		
 	if(subjectEntity->hasAssociatedInstanceTemp)
 	{
 		subjectEntity = subjectEntity->AssociatedInstanceNodeList.back();
@@ -542,9 +599,19 @@ void addActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * n
 
 void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity)
 {	
-	GIAEntityNode * newOrExistingAction;
-	newOrExistingAction = addActionToActionDefinition(actionEntity);
-	addActionInstanceToSubject(subjectEntity, newOrExistingAction);	
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(subjectEntity->disabled))
+	{
+	if(!(actionEntity->disabled))
+	{					
+	#endif
+		GIAEntityNode * newOrExistingAction;
+		newOrExistingAction = addActionToActionDefinition(actionEntity);
+		addActionInstanceToSubject(subjectEntity, newOrExistingAction);	
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	}
+	}					
+	#endif		
 }
 
 void addActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction)
@@ -564,80 +631,150 @@ void addActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * new
 
 void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity)
 {
-	GIAEntityNode * newOrExistingAction;
-	newOrExistingAction = addActionToActionDefinition(actionEntity);
-	addActionInstanceToObject(objectEntity, newOrExistingAction);	
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(objectEntity->disabled))
+	{	
+	if(!(actionEntity->disabled))
+	{					
+	#endif
+		GIAEntityNode * newOrExistingAction;
+		newOrExistingAction = addActionToActionDefinition(actionEntity);
+		addActionInstanceToObject(objectEntity, newOrExistingAction);	
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	}
+	}					
+	#endif
 }
 
 
 void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, GIAEntityNode * conditionTypeConceptEntity)
 {
-	if(entityNode->hasAssociatedInstanceTemp)
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(entityNode->disabled))
 	{
-		entityNode = entityNode->AssociatedInstanceNodeList.back();
+	if(!(conditionEntityNode->disabled))
+	{	
+	if(!(conditionTypeConceptEntity->disabled))
+	{					
+	#endif
+	
+		if(entityNode->hasAssociatedInstanceTemp)
+		{
+			entityNode = entityNode->AssociatedInstanceNodeList.back();
+		}
+		if(conditionEntityNode->hasAssociatedInstanceTemp)
+		{
+			conditionEntityNode = conditionEntityNode->AssociatedInstanceNodeList.back();
+		}										
+		addConditionToProperty(entityNode, conditionEntityNode, conditionTypeConceptEntity);
+		
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
-	if(conditionEntityNode->hasAssociatedInstanceTemp)
-	{
-		conditionEntityNode = conditionEntityNode->AssociatedInstanceNodeList.back();
-	}										
-	addConditionToProperty(entityNode, conditionEntityNode, conditionTypeConceptEntity);
+	}
+	}					
+	#endif		
 }
 
 void addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionDefinitionNode, GIAEntityNode * conditionTypeConceptEntity, bool negative)
 {
-	if(entityNode->hasAssociatedInstanceTemp)
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(entityNode->disabled))
 	{
-		entityNode = entityNode->AssociatedInstanceNodeList.back();
+	if(!(conditionDefinitionNode->disabled))
+	{	
+	if(!(conditionTypeConceptEntity->disabled))
+	{					
+	#endif
+	
+		if(entityNode->hasAssociatedInstanceTemp)
+		{
+			entityNode = entityNode->AssociatedInstanceNodeList.back();
+		}
+		if(conditionDefinitionNode->hasAssociatedInstanceTemp)
+		{
+			conditionDefinitionNode = conditionDefinitionNode->AssociatedInstanceNodeList.back();
+		}
+
+		GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
+		newCondition->negative = negative;	//overwrite negative with orrect one from context; ie that from "being" entity node
+		//cout << "negative = " << negative;
+
+		newCondition->conditionSubjectEntity = entityNode;	
+		entityNode->ConditionNodeList.push_back(newCondition);
+
+		newCondition->EntityNodeDefinitionList.push_back(conditionDefinitionNode);
+		conditionDefinitionNode->EntityNodeDefinitionReverseList.push_back(newCondition);	
+		
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
-	if(conditionDefinitionNode->hasAssociatedInstanceTemp)
-	{
-		conditionDefinitionNode = conditionDefinitionNode->AssociatedInstanceNodeList.back();
 	}
-	
-	GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
-	newCondition->negative = negative;	//overwrite negative with orrect one from context; ie that from "being" entity node
-	//cout << "negative = " << negative;
-	
-	newCondition->conditionSubjectEntity = entityNode;	
-	entityNode->ConditionNodeList.push_back(newCondition);
-	
-	newCondition->EntityNodeDefinitionList.push_back(conditionDefinitionNode);
-	conditionDefinitionNode->EntityNodeDefinitionReverseList.push_back(newCondition);		
+	}				
+	#endif			
 }
 
 void addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionPropertyNode, GIAEntityNode * conditionTypeConceptEntity, bool negative)
 {
-	if(entityNode->hasAssociatedInstanceTemp)
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(entityNode->disabled))
 	{
-		entityNode = entityNode->AssociatedInstanceNodeList.back();
+	if(!(conditionPropertyNode->disabled))
+	{	
+	if(!(conditionTypeConceptEntity->disabled))
+	{					
+	#endif
+	
+		if(entityNode->hasAssociatedInstanceTemp)
+		{
+			entityNode = entityNode->AssociatedInstanceNodeList.back();
+		}
+		if(conditionPropertyNode->hasAssociatedInstanceTemp)
+		{
+			conditionPropertyNode = conditionPropertyNode->AssociatedInstanceNodeList.back();
+		}	
+
+		GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
+		newCondition->negative = negative;	//overwrite negative with correct one from context; ie that from "having" entity node
+
+		newCondition->conditionSubjectEntity = entityNode;
+		entityNode->ConditionNodeList.push_back(newCondition);
+
+		conditionPropertyNode->PropertyNodeReverseList.push_back(newCondition);
+		//conditionPropertyNode->entityNodeContainingThisProperty = newCondition;	//added 26 Aug 11a, removed 8 Dec 2011
+
+		newCondition->PropertyNodeList.push_back(conditionPropertyNode);	
+
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
-	if(conditionPropertyNode->hasAssociatedInstanceTemp)
-	{
-		conditionPropertyNode = conditionPropertyNode->AssociatedInstanceNodeList.back();
-	}	
-	
-	GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
-	newCondition->negative = negative;	//overwrite negative with correct one from context; ie that from "having" entity node
-	
-	newCondition->conditionSubjectEntity = entityNode;
-	entityNode->ConditionNodeList.push_back(newCondition);
-	
-	conditionPropertyNode->PropertyNodeReverseList.push_back(newCondition);
-	//conditionPropertyNode->entityNodeContainingThisProperty = newCondition;	//added 26 Aug 11a, removed 8 Dec 2011
-	
-	newCondition->PropertyNodeList.push_back(conditionPropertyNode);	
+	}
+	}					
+	#endif		
 }
 
 
 void addConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, GIAEntityNode * conditionTypeConceptEntity)
-{	
-	GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
-	
-	newCondition->conditionSubjectEntity = propertyNode;
-	newCondition->conditionObjectEntity = propertyConditionEntity;
+{
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(propertyNode->disabled))
+	{
+	if(!(propertyConditionEntity->disabled))
+	{	
+	if(!(conditionTypeConceptEntity->disabled))
+	{					
+	#endif
 		
-	propertyNode->ConditionNodeList.push_back(newCondition);
-	propertyConditionEntity->IncomingConditionNodeList.push_back(newCondition);
+		GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
+
+		newCondition->conditionSubjectEntity = propertyNode;
+		newCondition->conditionObjectEntity = propertyConditionEntity;
+
+		propertyNode->ConditionNodeList.push_back(newCondition);
+		propertyConditionEntity->IncomingConditionNodeList.push_back(newCondition);
+		
+	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	}
+	}
+	}				
+	#endif		
 }
 
 GIAEntityNode * addCondition(GIAEntityNode * conditionEntity)
@@ -842,4 +979,132 @@ long * getCurrentEntityNodeIDInActionEntityNodesList()
 long * getCurrentEntityNodeIDInConditionEntityNodesList()
 {
 	return &currentEntityNodeIDInConditionEntityNodesList;
+}
+
+
+void applyEntityAlreadyExistsFunction(GIAEntityNode * entity)
+{
+	entity->disabled = false;	
+}
+
+void disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity)
+{
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+	/*not possible, as property construction routines rely upon concept entity disabled information;
+	if(entity->firstSentenceToAppearInNetwork)
+	{
+		entity->disabled = true;
+	}
+	*/
+	entity->disabled = true;
+	#endif
+}
+				
+void disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity)
+{
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+	entity->disabled = true;
+	
+	if(entity->hasAssociatedInstanceTemp)	//CHECKTHIS; only disable the instance if it was created in the current context (eg sentence)
+	//if(entity->AssociatedInstanceNodeList.size() >= 1)
+	{	
+		//cout << "entity->AssociatedInstanceNodeList.back()->disabled = " << entity->AssociatedInstanceNodeList.back()->entityName << endl;	
+		entity->AssociatedInstanceNodeList.back()->disabled = true;	//and disable their associated instances (property nodes)
+	}	
+	#endif
+}
+
+
+/*PLAN SOMETHING LIKE THIS FOR FUTURE;
+void applyEntityAlreadyExistsFunction(GIAEntityNode * entity)
+{
+	entity->disabled = false;	//probably not necessary [added 13 April 2012 for uniformity]
+	if(!(entity->globalDisabled))
+	{
+		entity->firstSentenceToAppearInNetwork = false;
+	}
+	else
+	{
+		entity->firstSentenceToAppearInNetwork = true;
+		entity->globalDisabled = false;
+	}	
+}
+
+void disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity)
+{
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+	if(entity->firstSentenceToAppearInNetwork)
+	{
+		entity->globalDisabled = true;
+	}
+	entity->disabled = true;
+	#endif
+}
+				
+void disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAEntityNode * entity)
+{
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+	if(entity->firstSentenceToAppearInNetwork)
+	{
+		//cout << "entity->disabled = " << entity->entityName << endl;
+		entity->globalDisabled = true;
+	}
+	entity->disabled = true;
+	
+	if(entity->hasAssociatedInstanceTemp)	//CHECKTHIS; only disable the instance if it was created in the current context (eg sentence)
+	//if(entity->AssociatedInstanceNodeList.size() >= 1)
+	{	
+		//cout << "entity->AssociatedInstanceNodeList.back()->disabled = " << entity->AssociatedInstanceNodeList.back()->entityName << endl;	
+		entity->AssociatedInstanceNodeList.back()->disabled = true;	//and disable their associated instances (property nodes)
+	}	
+	#endif
+}
+*/
+
+
+void recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+{
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAEntityNodeArrayFilled[i])
+		{ //condition required as GIAEntityNodeArrayFilled is not always true. With GRAMMATICAL_DEFINITE, eg "Mr" of "Mr Smith" will still be interpreted as a definite
+			GIAEntityNode * entity = GIAEntityNodeArray[i];
+			if(!(entity->disabled))
+			{
+				entity->permanentConcept = true;
+			}
+		}
+	}
+}
+
+//(used for printing/xml write purposes)
+void recordConceptNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap)
+{
+	unordered_map<string, GIAEntityNode*> ::iterator conceptEntityNodesListMapIter;
+	for(conceptEntityNodesListMapIter = conceptEntityNodesListMap->begin(); conceptEntityNodesListMapIter != conceptEntityNodesListMap->end(); conceptEntityNodesListMapIter++) 
+	{	
+		GIAEntityNode * entityNode = conceptEntityNodesListMapIter->second;
+		if(!(entityNode->permanentConcept))
+		{
+			entityNode->disabled = true;
+		}		
+	}	
+}
+
+//(used for printing/xml write purposes)
+void recordConceptNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListMap)
+{
+	unordered_map<string, GIAEntityNode*> ::iterator conceptEntityNodesListMapIter;
+	for(conceptEntityNodesListMapIter = conceptEntityNodesListMap->begin(); conceptEntityNodesListMapIter != conceptEntityNodesListMap->end(); conceptEntityNodesListMapIter++) 
+	{	
+		GIAEntityNode * entityNode = conceptEntityNodesListMapIter->second;
+		if(entityNode->disabled)
+		{
+			entityNode->permanentConcept = false;
+		}
+		else
+		{
+			entityNode->permanentConcept = true;
+		}		
+	}	
 }

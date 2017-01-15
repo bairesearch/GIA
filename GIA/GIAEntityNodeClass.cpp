@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i10d 12-Apr-2012
+ * Project Version: 1i11a 13-Apr-2012
  *
  *******************************************************************************/
 
@@ -125,8 +125,11 @@ GIAEntityNode::GIAEntityNode(void)
 	queryEntityTraced = false;
 	
 	disabled = false;
+	permanentConcept = false;
 
 	CXLdummyNode = false;	
+	
+	//firstSentenceToAppearInNetwork = true;
 }
 GIAEntityNode::~GIAEntityNode(void)
 {
@@ -290,8 +293,5 @@ string printQuantityNumberString(GIAEntityNode * entityNode)
 
 	return quantityNumberStringTemp;	
 }
-
-
-
 
 

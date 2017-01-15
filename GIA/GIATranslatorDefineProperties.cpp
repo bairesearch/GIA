@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineProperties.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i10d 12-Apr-2012
+ * Project Version: 1i11a 13-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -42,15 +42,22 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		if(currentRelationInList->relationType == RELATION_TYPE_NEGATIVE)
-		{
-			//eg The chicken has not eaten a pie.: neg(eaten-5, not-4)
-			
-			currentRelationInList->disabled = true;
-			GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->negative = true;
-			GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->disabled = true;
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{			
+		#endif	
+			if(currentRelationInList->relationType == RELATION_TYPE_NEGATIVE)
+			{
+				//eg The chicken has not eaten a pie.: neg(eaten-5, not-4)
 
-		}
+				currentRelationInList->disabled = true;
+				GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->negative = true;
+				disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationDependentIndex]);
+			}
+
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}			
+		#endif
 		currentRelationInList = currentRelationInList->next;		
 	}
 }
@@ -64,55 +71,68 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{	
-		//cout << "here1" << endl;
-		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{			
+		#endif
+			//cout << "here1" << endl;
+			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 
-		if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT)
-		{		
+			if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT)
+			{		
 
-			bool passed = false;
-			for(int j=0; j<RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES; j++)
-			{
-				if(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->entityName == relationContextNegativeNameArray[j])
+				bool passed = false;
+				for(int j=0; j<RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES; j++)
 				{
-					passed = true;
-				}
-			}
-			if(passed)
-			{
-				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
-				while(currentRelationInList2->next != NULL)
-				{							
-					//cout << "here1" << endl;
-					//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-
-					if(currentRelationInList2->relationType == RELATION_TYPE_SUBJECT)
-					{		
-
-						bool passed2 = false;
-						for(int j=0; j<RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES; j++)
-						{
-							if(GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]->entityName == relationContextNegativeNameArray[j])
-							{
-								passed2 = true;
-							}
-						}
-						if(passed2)
-						{
-							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
-							GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->disabled = true;
-							GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]->disabled = true;
-							#endif
-							GIAEntityNodeArray[currentRelationInList2->relationDependentIndex] = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
-							GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->negative = true;
-							currentRelationInList->disabled = true;
-
-						}
+					if(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->entityName == relationContextNegativeNameArray[j])
+					{
+						passed = true;
 					}
-					currentRelationInList2 = currentRelationInList2->next;
+				}
+				if(passed)
+				{
+					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+					while(currentRelationInList2->next != NULL)
+					{	
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						if(!(currentRelationInList2->disabled))
+						{			
+						#endif											
+							//cout << "here1" << endl;
+							//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+
+							if(currentRelationInList2->relationType == RELATION_TYPE_SUBJECT)
+							{		
+
+								bool passed2 = false;
+								for(int j=0; j<RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES; j++)
+								{
+									if(GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]->entityName == relationContextNegativeNameArray[j])
+									{
+										passed2 = true;
+									}
+								}
+								if(passed2)
+								{
+									disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]);
+									disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]);
+
+									GIAEntityNodeArray[currentRelationInList2->relationDependentIndex] = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+									GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->negative = true;
+									currentRelationInList->disabled = true;
+
+								}
+							}
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						}			
+						#endif							
+						currentRelationInList2 = currentRelationInList2->next;
+					}
 				}
 			}
-		}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}			
+		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
 }
@@ -193,36 +213,43 @@ void definePropertiesNounsWithAdjectives(Sentence * currentSentenceInList, GIAEn
 {	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
-	{	
-		bool passed = false;
-		for(int i=0; i<RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES; i++)
-		{
-			if(currentRelationInList->relationType == relationTypeAdjectiveWhichImplyEntityInstanceNameArray[i])
-			{		
-				passed = true;
-			}
-		}						
-		if(passed)
-		{
-			bool passed3 = isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(currentRelationInList, GIAEntityNodeArray, currentRelationInList->relationGovernorIndex, NLPdependencyRelationsType);
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{			
+		#endif	
+			bool passed = false;
+			for(int i=0; i<RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypeAdjectiveWhichImplyEntityInstanceNameArray[i])
+				{		
+					passed = true;
+				}
+			}						
+			if(passed)
+			{
+				bool passed3 = isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(currentRelationInList, GIAEntityNodeArray, currentRelationInList->relationGovernorIndex, NLPdependencyRelationsType);
 
-			if(passed3)
-			{	
-				//create a new property for the entity and assign a property definition entity if not already created
-				string thingName = currentRelationInList->relationGovernor;
-				string propertyName = currentRelationInList->relationDependent; 
-				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
-				int relationDependentIndex = currentRelationInList->relationDependentIndex;
+				if(passed3)
+				{	
+					//create a new property for the entity and assign a property definition entity if not already created
+					string thingName = currentRelationInList->relationGovernor;
+					string propertyName = currentRelationInList->relationDependent; 
+					int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
+					int relationDependentIndex = currentRelationInList->relationDependentIndex;
 
 
-				GIAEntityNode * thingEntity = GIAEntityNodeArray[relationGovernorIndex];
-				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
+					GIAEntityNode * thingEntity = GIAEntityNodeArray[relationGovernorIndex];
+					GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
 
-				//cout << "as2" << endl;
+					//cout << "as2" << endl;
 
-				addPropertyToPropertyDefinition(thingEntity);			
-			}
+					addPropertyToPropertyDefinition(thingEntity);			
+				}
+			}			
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
+		#endif
 		currentRelationInList = currentRelationInList->next;
 	}				
 }	
@@ -231,25 +258,32 @@ void definePropertiesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIA
 {		
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
-	{			
-		bool passed = false;
-		for(int i=0; i<RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES; i++)
-		{
-			if(currentRelationInList->relationType == relationTypeQuantityOrMeasureNameArray[i])
+	{		
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{			
+		#endif			
+			bool passed = false;
+			for(int i=0; i<RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES; i++)
 			{
-				passed = true;
+				if(currentRelationInList->relationType == relationTypeQuantityOrMeasureNameArray[i])
+				{
+					passed = true;
+				}
+			}						
+			if(passed)
+			{
+				//create a new property for the entity and assign a property definition entity if not already created
+				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationGovernorIndex];
+
+				//cout << "as3" << endl;
+
+				addPropertyToPropertyDefinition(propertyEntity);					
 			}
-		}						
-		if(passed)
-		{
-			//create a new property for the entity and assign a property definition entity if not already created
-			int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
-			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationGovernorIndex];
-
-			//cout << "as3" << endl;
-
-			addPropertyToPropertyDefinition(propertyEntity);					
-		}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}			
+		#endif	
 
 		currentRelationInList = currentRelationInList->next;
 	}
@@ -259,25 +293,32 @@ void definePropertiesQuantityModifiers(Sentence * currentSentenceInList, GIAEnti
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
-	{						
-		bool passed = false;
-		for(int i=0; i<RELATION_TYPE_QUANTITY_OR_MEASURE_SWITCHED_NUMBER_OF_TYPES; i++)
-		{
-			if(currentRelationInList->relationType == relationTypeQuantityOrMeasureSwitchedNameArray[i])
+	{	
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{			
+		#endif							
+			bool passed = false;
+			for(int i=0; i<RELATION_TYPE_QUANTITY_OR_MEASURE_SWITCHED_NUMBER_OF_TYPES; i++)
 			{
-				passed = true;
+				if(currentRelationInList->relationType == relationTypeQuantityOrMeasureSwitchedNameArray[i])
+				{
+					passed = true;
+				}
+			}						
+			if(passed)
+			{
+				//create a new property for the entity and assign a property definition entity if not already created
+				int relationDependentIndex = currentRelationInList->relationDependentIndex;
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
+
+				//cout << "as3" << endl;
+				addPropertyToPropertyDefinition(propertyEntity);					
 			}
-		}						
-		if(passed)
-		{
-			//create a new property for the entity and assign a property definition entity if not already created
-			int relationDependentIndex = currentRelationInList->relationDependentIndex;
-			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
-
-			//cout << "as3" << endl;
-			addPropertyToPropertyDefinition(propertyEntity);					
-		}
-
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}			
+		#endif	
+		
 		currentRelationInList = currentRelationInList->next;
 	}
 }
@@ -287,21 +328,28 @@ void definePropertiesExpletives(Sentence * currentSentenceInList, GIAEntityNode 
 	//eg There is 	_expl(be[2], there[1]) [Relex]	/ expl(is-2, There-1) [stanford]
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
-	{			
-		bool passed = false;
-		if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT_EXPLETIVE)
-		{
-			//create property definition
-			int relationDependentIndex = currentRelationInList->relationDependentIndex;
-			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
+	{	
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{			
+		#endif				
+			bool passed = false;
+			if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT_EXPLETIVE)
+			{
+				//create property definition
+				int relationDependentIndex = currentRelationInList->relationDependentIndex;
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
 
-			#ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
-			//cout << "as4" << endl;
-			addPropertyToPropertyDefinition(propertyEntity);	
-			#else
-			propertyEntity->disabled = true;
-			#endif				
+				#ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
+				//cout << "as4" << endl;
+				addPropertyToPropertyDefinition(propertyEntity);	
+				#else
+				disableEntityBasedUponFirstSentenceToAppearInNetwork(propertyEntity);
+				#endif				
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
+		#endif				
 		currentRelationInList = currentRelationInList->next;
 	}
 }
@@ -363,15 +411,23 @@ void definePropertiesToBe(Sentence * currentSentenceInList, GIAEntityNode * GIAE
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
-	{								
-		if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_BE)
-		{
-			//create a new property for the entity and assign a property definition entity if not already created
-			int relationDependentIndex = currentRelationInList->relationDependentIndex;
-			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
+	{	
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{			
+		#endif								
+			if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_BE)
+			{
+		
+				//create a new property for the entity and assign a property definition entity if not already created
+				int relationDependentIndex = currentRelationInList->relationDependentIndex;
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
 
-			addPropertyToPropertyDefinition(propertyEntity);
-		}
+				addPropertyToPropertyDefinition(propertyEntity);
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}			
+		#endif	
 
 		//cout << "as3" << endl;
 
@@ -384,15 +440,23 @@ void definePropertiesToDo(Sentence * currentSentenceInList, GIAEntityNode * GIAE
 	//cout << "0i pass; define properties (to_do);" << endl;
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
-	{						
-		if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO)
-		{
-			//create a new property for the entity and assign a property definition entity if not already created
-			int relationDependentIndex = currentRelationInList->relationDependentIndex;
-			GIAEntityNode * actionEntity = GIAEntityNodeArray[relationDependentIndex];
+	{	
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{			
+		#endif							
+			if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO)
+			{
+		
+				//create a new property for the entity and assign a property definition entity if not already created
+				int relationDependentIndex = currentRelationInList->relationDependentIndex;
+				GIAEntityNode * actionEntity = GIAEntityNodeArray[relationDependentIndex];
 
-			addActionToActionDefinition(actionEntity);
-		}
+				addActionToActionDefinition(actionEntity);
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}			
+		#endif	
 		//cout << "as3" << endl;
 
 		currentRelationInList = currentRelationInList->next;
