@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j15b 06-July-2015
+ * Project Version: 2j15c 06-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -1066,11 +1066,11 @@ void GIATHparseRelexRelationsText(string* relationsText, GIAsentence* currentSen
 				if(!NLPrelexCompatibilityMode)	//condition added 21 Jan 2014
 				{
 					//added 23 July 2013 - preprocess relex conj_or/conj_and as _conj_or/_conj_and
-					if(relationType == RELATION_TYPE_CONJUGATION_AND_RAW)
+					if(relationType == RELEX_RELATION_TYPE_CONJUGATION_AND)
 					{
 						relationType = RELATION_TYPE_CONJUGATION_AND;
 					}
-					else if(relationType == RELATION_TYPE_CONJUGATION_OR_RAW)
+					else if(relationType == RELEX_RELATION_TYPE_CONJUGATION_OR)
 					{
 						relationType = RELATION_TYPE_CONJUGATION_OR;
 					}
