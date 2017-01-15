@@ -23,7 +23,7 @@
  * File Name: GIAXMLconversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3e 13-October-2012
+ * Project Version: 1q4a 14-October-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -526,7 +526,8 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 	bool hasAssociatedSubstanceIsActionFound = false;
 	bool hasAssociatedSubstanceIsConditionFound = false;
 	bool hasAssociatedTimeFound = false;
-	bool hasQualityFound = false;
+	bool isSubstanceQualityFound = false;
+	bool isSubstanceConceptFound = false;
 	bool disabledFound = false;
 
 	bool grammaticalNumberFound = false;
@@ -644,12 +645,18 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			entityNode->hasAssociatedTime = attributeValue;
 			hasAssociatedTimeFound = true;
 		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasQuality)
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isSubstanceQuality)
 		{
 			bool attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->isSubstanceQuality = attributeValue;
-			hasQualityFound = true;
+			isSubstanceQualityFound = true;
 		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isSubstanceConcept)
+		{
+			bool attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->isSubstanceConcept = attributeValue;
+			isSubstanceConceptFound = true;
+		}		
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_disabled)
 		{
 			bool attributeValue = atoi(currentAttribute->value.c_str());
@@ -1249,13 +1256,21 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
 
-	currentAttribute->name = NET_XML_ATTRIBUTE_hasQuality;
+	currentAttribute->name = NET_XML_ATTRIBUTE_isSubstanceQuality;
 	sprintf(tempString, "%d", int(currentEntity->isSubstanceQuality));
 	currentAttribute->value = tempString;
 
 	newAttribute = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
+	
+	currentAttribute->name = NET_XML_ATTRIBUTE_isSubstanceConcept;
+	sprintf(tempString, "%d", int(currentEntity->isSubstanceConcept));
+	currentAttribute->value = tempString;
+
+	newAttribute = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute;
+	currentAttribute = currentAttribute->nextAttribute;	
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_disabled;
 	sprintf(tempString, "%d", int(currentEntity->disabled));

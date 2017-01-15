@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3e 13-October-2012
+ * Project Version: 1q4a 14-October-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -930,7 +930,7 @@ void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 
 	/*
 	Format:
-	idActiveList,entityName,confidence,isConcept,isSubstance,isAction,isCondition,hasAssociatedInstance,hasAssociatedInstanceIsAction,hasAssociatedSubstanceIsCondition,hasAssociatedTime,isSubstanceQuality,disabled,conditionType,grammaticalNumber,hasQuantity,hasMeasure
+	idActiveList,entityName,confidence,isConcept,isSubstance,isAction,isCondition,hasAssociatedInstance,hasAssociatedInstanceIsAction,hasAssociatedSubstanceIsCondition,hasAssociatedTime,isSubstanceQuality,isSubstanceConcept,disabled,conditionType,grammaticalNumber,hasQuantity,hasMeasure
 	//format derived from GIA XML file
 	*/
 
@@ -957,6 +957,7 @@ void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 		int hasAssociatedInstanceIsCondition;
 		int hasAssociatedTime;
 		int isSubstanceQuality;
+		int isSubstanceConcept;
 		int disabled;
 		//int conditionType;
 		//int grammaticalNumber;
@@ -966,7 +967,7 @@ void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 		char entityNameCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
 		char wordOrigCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
 		char aliasesCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
-		int result = fscanf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_READ, &(entity->idActiveList), entityNameCharStarTemp, wordOrigCharStarTemp, aliasesCharStarTemp, &(entity->confidence), &isConcept, &isSubstance, &isAction, &isCondition, &hasAssociatedInstance, &hasAssociatedInstanceIsAction, &hasAssociatedInstanceIsCondition, &hasAssociatedTime, &isSubstanceQuality, &disabled, &(entity->conditionType), &(entity->grammaticalNumber), &hasQuantity, &hasMeasure);
+		int result = fscanf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_READ, &(entity->idActiveList), entityNameCharStarTemp, wordOrigCharStarTemp, aliasesCharStarTemp, &(entity->confidence), &isConcept, &isSubstance, &isAction, &isCondition, &hasAssociatedInstance, &hasAssociatedInstanceIsAction, &hasAssociatedInstanceIsCondition, &hasAssociatedTime, &isSubstanceQuality, &isSubstanceConcept, &disabled, &(entity->conditionType), &(entity->grammaticalNumber), &hasQuantity, &hasMeasure);
 		if(result > 0)	//&& (result != EOF)
 		{
 			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
@@ -980,6 +981,7 @@ void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 			cout << "\tDBreadEntityNodeFile(): hasAssociatedInstanceIsCondition = " << hasAssociatedInstanceIsCondition << endl;
 			cout << "\tDBreadEntityNodeFile(): hasAssociatedTime = " << hasAssociatedTime << endl;
 			cout << "\tDBreadEntityNodeFile(): isSubstanceQuality = " << isSubstanceQuality << endl;
+			cout << "\tDBreadEntityNodeFile(): isSubstanceConcept = " << isSubstanceConcept << endl;
 			cout << "\tDBreadEntityNodeFile(): disabled = " << disabled << endl;
 			cout << "\tDBreadEntityNodeFile(): hasQuantity = " << hasQuantity << endl;
 			cout << "\tDBreadEntityNodeFile(): entity->hasMeasure = " << hasMeasure << endl;
@@ -1007,6 +1009,7 @@ void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 			entity->hasAssociatedInstanceIsCondition = bool(hasAssociatedInstanceIsCondition);
 			entity->hasAssociatedTime = bool(hasAssociatedTime);
 			entity->isSubstanceQuality = bool(isSubstanceQuality);
+			entity->isSubstanceConcept = bool(isSubstanceConcept);			
 			entity->disabled = bool(disabled);
 			//entity->conditionType = conditionType;
 			//entity->grammaticalNumber = grammaticalNumber;
@@ -1027,6 +1030,7 @@ void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 			cout << "\tDBreadEntityNodeFile(): entity->hasAssociatedInstanceIsCondition = " << int(entity->hasAssociatedInstanceIsCondition) << endl;
 			cout << "\tDBreadEntityNodeFile(): entity->hasAssociatedTime = " << int(entity->hasAssociatedTime) << endl;
 			cout << "\tDBreadEntityNodeFile(): entity->isSubstanceQuality = " << int(entity->isSubstanceQuality) << endl;
+			cout << "\tDBreadEntityNodeFile(): entity->isSubstanceConcept = " << int(entity->isSubstanceConcept) << endl;			
 			cout << "\tDBreadEntityNodeFile(): entity->disabled = " << int(entity->disabled) << endl;
 			cout << "\tDBreadEntityNodeFile(): entity->conditionType = " << entity->conditionType << endl;
 			cout << "\tDBreadEntityNodeFile(): entity->grammaticalNumber = " << entity->grammaticalNumber << endl;
@@ -1259,7 +1263,7 @@ void DBwriteEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 	#endif
 	/*
 	Format:
-	idActiveList,entityName,confidence,isConcept,isSubstance,isAction,isCondition,hasAssociatedInstance,hasAssociatedInstanceIsAction,hasAssociatedSubstanceIsCondition,hasAssociatedTime,isSubstanceQuality,disabled,conditionType,grammaticalNumber,hasQuantity,hasMeasure
+	idActiveList,entityName,confidence,isConcept,isSubstance,isAction,isCondition,hasAssociatedInstance,hasAssociatedInstanceIsAction,hasAssociatedSubstanceIsCondition,hasAssociatedTime,isSubstanceQuality,isSubstanceConcept,disabled,conditionType,grammaticalNumber,hasQuantity,hasMeasure
 	//format derived from GIA XML file
 	*/
 
@@ -1280,7 +1284,7 @@ void DBwriteEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 		#endif
 		aliasesString = DBaddBlankString(aliasesString);
 
-		fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str(), wordOrig.c_str(), aliasesString.c_str(), entity->confidence, int(entity->isConcept), int(entity->isSubstance), int(entity->isAction), int(entity->isCondition), int(entity->hasAssociatedInstance), int(entity->hasAssociatedInstanceIsAction), int(entity->hasAssociatedInstanceIsCondition), int(entity->hasAssociatedTime), int(entity->isSubstanceQuality), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), int(entity->hasMeasure));
+		fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str(), wordOrig.c_str(), aliasesString.c_str(), entity->confidence, int(entity->isConcept), int(entity->isSubstance), int(entity->isAction), int(entity->isCondition), int(entity->hasAssociatedInstance), int(entity->hasAssociatedInstanceIsAction), int(entity->hasAssociatedInstanceIsCondition), int(entity->hasAssociatedTime), int(entity->isSubstanceQuality), int(entity->isSubstanceConcept), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), int(entity->hasMeasure));
 		//fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str());
 		fclose(pFile);
 	}
