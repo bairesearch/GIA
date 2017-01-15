@@ -3,7 +3,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1i 26-May-2012
+ * Project Version: 1l2a 29-May-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes 
@@ -21,7 +21,27 @@
 
 GIAQueryTraceParameters::GIAQueryTraceParameters(void)
 {
+	foundAnswer = false;
+	queryAnswerNode = NULL;
+	queryAnswerContext = "";
+	#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS
+	numberAnswersFound = 0;
+	numberOfMatchedNodesAtPreviousAnswerNode = 0;	
+	#endif
+	thisIsInstanceAndPreviousNodeWasDefinition = false;
+	#ifdef GIA_QUERY_ALLOW_ANSWER_OF_NON_IDENTICAL_CONDITION_TYPES
+	nonMatchingSourceConditions = false;
+	#endif
 	
+	#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+	level = 0;
+	#endif	
+	
+	/*
+	queryTraceParametersTemp.isCondition;					//not required for testEntityNodeForQuery
+	queryTraceParametersTemp.sourceEntityNode;				//not required for testEntityNodeForQuery
+	queryTraceParametersTemp.sourceContext;					//not required for testEntityNodeForQuery
+	*/		
 }
 GIAQueryTraceParameters::~GIAQueryTraceParameters(void)
 {
@@ -30,16 +50,17 @@ GIAQueryTraceParameters::~GIAQueryTraceParameters(void)
 GIAQueryTraceParameters::GIAQueryTraceParameters(GIAQueryTraceParameters * queryTraceParametersToCopy)
 {
 	
-	detectComparisonVariable = queryTraceParametersToCopy->detectComparisonVariable;				//never changes
+	detectComparisonVariable = queryTraceParametersToCopy->detectComparisonVariable;		//never changes
 	comparisonVariableNode = queryTraceParametersToCopy->comparisonVariableNode;			//never changes
 						
 	foundAnswer = false;
 	queryAnswerNode = NULL;
 	queryAnswerContext = "";	
 	#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS
-	numberAnswersFound = 0;
+	//numberAnswersFound = 0;				//not used for queryTraceParametersToCopyTemp
+	//numberOfMatchedNodesAtPreviousAnswerNode = 0;		//not used for queryTraceParametersToCopyTemp
 	/*
-	vector<GIAEntityNode*> queryAnswerNodes;
+	vector<GIAEntityNode*> queryAnswerNodes;	
 	//vector<string> queryAnswerContexts;
 	*/
 	#endif
@@ -54,6 +75,11 @@ GIAQueryTraceParameters::GIAQueryTraceParameters(GIAQueryTraceParameters * query
 	isCondition = queryTraceParametersToCopy->isCondition;
 	sourceEntityNode = queryTraceParametersToCopy->sourceEntityNode;
 	sourceContext = queryTraceParametersToCopy->sourceContext;
+
+	#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+	level = queryTraceParametersToCopy->level;
+	#endif	
+	
 }
 
 
@@ -88,8 +114,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	
 	bool foundAtLeastOneMatch = false;
 		
-	unordered_map<string, GIAEntityNode*>::iterator entityIterQuery;
-	for(entityIterQuery = entityNodesActiveListConceptsQuery->begin(); entityIterQuery != entityNodesActiveListConceptsQuery->end(); entityIterQuery++) 
+	for(unordered_map<string, GIAEntityNode*>::iterator entityIterQuery = entityNodesActiveListConceptsQuery->begin(); entityIterQuery != entityNodesActiveListConceptsQuery->end(); entityIterQuery++) 
 	{//for each node in query semantic net;
 		
 		#ifdef GIA_QUERY_DEBUG
@@ -121,23 +146,8 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 			GIAQueryTraceParameters queryTraceParametersTemp;
 			queryTraceParametersTemp.detectComparisonVariable = detectComparisonVariable;
 			queryTraceParametersTemp.comparisonVariableNode = comparisonVariableNode;
-			queryTraceParametersTemp.foundAnswer = false;
-			queryTraceParametersTemp.queryAnswerNode = NULL;
-			queryTraceParametersTemp.queryAnswerContext = "";
-			#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS
-			queryTraceParametersTemp.numberAnswersFound = 0;
-			#endif
-			queryTraceParametersTemp.thisIsInstanceAndPreviousNodeWasDefinition = false;
-			#ifdef GIA_QUERY_ALLOW_ANSWER_OF_NON_IDENTICAL_CONDITION_TYPES
-			queryTraceParametersTemp.nonMatchingSourceConditions = false;
-			#endif
-			/*
-			queryTraceParametersTemp.isCondition;					//not required for testEntityNodeForQuery
-			queryTraceParametersTemp.sourceEntityNode;				//not required for testEntityNodeForQuery
-			queryTraceParametersTemp.sourceContext;					//not required for testEntityNodeForQuery
-			*/
+
 			GIAReferenceTraceParameters referenceTraceParameters;	//irrelevant
-					
 					
 			testEntityNodeForQueryOrReferenceSet(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParametersTemp, &referenceTraceParameters);
 			//queryAnswerNodeTemp = testEntityNodeForQuery(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodesTemp, false, &queryPreviousAnswerNodeTemp, &queryAnswerContextTemp, false, false);
@@ -188,6 +198,9 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	#ifdef GIA_QUERY_DEBUG
 	cout << "finished query round 1" << endl;
 	#endif
+	#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+	cout << "\n\n\nfinished query round 1" << endl;
+	#endif
 	
 	if(foundAtLeastOneMatch)
 	{
@@ -200,21 +213,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		GIAQueryTraceParameters queryTraceParameters;
 		queryTraceParameters.detectComparisonVariable = detectComparisonVariable;
 		queryTraceParameters.comparisonVariableNode = comparisonVariableNode;
-		queryTraceParameters.foundAnswer = false;
-		queryTraceParameters.queryAnswerNode = NULL;
-		queryTraceParameters.queryAnswerContext = "";			
-		#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS
-		queryTraceParameters.numberAnswersFound = 0;
-		#endif	
-		queryTraceParameters.thisIsInstanceAndPreviousNodeWasDefinition = false;
-		#ifdef GIA_QUERY_ALLOW_ANSWER_OF_NON_IDENTICAL_CONDITION_TYPES
-		queryTraceParameters.nonMatchingSourceConditions = false;
-		#endif
-		/*
-		queryTraceParameters.isCondition;					//not required for testEntityNodeForQuery
-		queryTraceParameters.sourceEntityNode;					//not required for testEntityNodeForQuery
-		queryTraceParameters.sourceContext;					//not required for testEntityNodeForQuery
-		*/
+
 		GIAReferenceTraceParameters referenceTraceParameters;	//irrelevant
 
 		//cout << "asf3" << endl;
@@ -237,6 +236,13 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 				queryAnswerNode = queryTraceParameters.queryAnswerNode;
 				*queryAnswerContext = queryTraceParameters.queryAnswerContext;
 				*foundAnswer = true;
+				
+				#ifndef GIA_DO_NOT_PRINT_RESULTS
+				for(vector<GIAEntityNode*>::iterator entityAnswerIter = queryTraceParameters.queryAnswerNodes.begin(); entityAnswerIter != queryTraceParameters.queryAnswerNodes.end(); entityAnswerIter++) 
+				{//for each node in answer list;
+					cout << "(Multiple) Answer: " << (*entityAnswerIter)->entityName << endl;
+				}
+				#endif
 			}
 		}
 
@@ -400,6 +406,31 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 				*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
 				#endif	
 				
+				#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS
+				bool answerAlreadyAddedToMultipleAnswers = false;
+				for(vector<GIAEntityNode*>::iterator entityAnswerIter = queryTraceParameters->queryAnswerNodes.begin(); entityAnswerIter != queryTraceParameters->queryAnswerNodes.end(); entityAnswerIter++)
+				{
+					if(((*entityAnswerIter)->entityName == entityNode->entityName) && ((*entityAnswerIter)->idInstance == entityNode->idInstance))
+					{
+						answerAlreadyAddedToMultipleAnswers = true;
+						#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+						cout << "2answerAlreadyAddedToMultipleAnswers: " << entityNode->entityName << endl;
+						#endif
+					}
+				}
+				if(!answerAlreadyAddedToMultipleAnswers)
+				{													
+					queryTraceParameters->queryAnswerNodes.push_back(entityNode);
+					#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+					for(int level=0; level<queryTraceParameters->level+1; level++)
+					{
+						cout << "\t";
+					}  					
+					cout << "addingAnswer:" << entityNode->entityName << endl;
+					#endif	
+				}			
+				#endif		
+				
 				#ifdef GIA_QUERY_DEBUG
 				cout << "\nfoundmatch AnumberOfMatchedNodes = " << *numberOfMatchedNodes << "\n" << endl; 			
 				#endif
@@ -531,6 +562,11 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 
 	if(!(entityNode->testedForQueryComparison) && !(entityNode->testedForQueryComparisonTemp) && !(queryEntityNode->testedForQueryComparison) && !(queryEntityNode->testedForQueryComparisonTemp))
 	{
+		#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+		queryTraceParameters->level = queryTraceParameters->level+1;
+		int currentLevel = queryTraceParameters->level;	
+		#endif
+		
 		/* this is set elsewhere;
 		if(knownBestMatch)
 		{
@@ -703,7 +739,6 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 					int numberOfMatchedNodesTempMax = 0;
 					int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax = 0;
 					GIAEntityNode * queryEntityCorrespondingBestMatch;
-					int numberOfMatchedNodesAtPreviousAnswerNode = 0;
 					
 					#ifdef GIA_USE_DATABASE
 					if(getUseDatabase())
@@ -712,11 +747,25 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 					}
 					#endif
 					
-					//cout << "connectionIterQuery = " << (*connectionIterQuery)->entity->entityName << endl;
+					#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+					for(int level=0; level<currentLevel; level++)
+					{
+						cout << "\t";
+					}  										
+					cout << "A. SDGG connectionIterQuery = " << (*connectionIterQuery)->entity->entityName << endl;
+					#endif	
 					
 					//for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 					for(vector<GIAEntityConnection*>::reverse_iterator connectionIter = entityNode->entityVectorConnectionsArray[i].rbegin(); connectionIter != entityNode->entityVectorConnectionsArray[i].rend(); connectionIter++)	//always search from end position first (to take the latest/newest reference/answer, if equal number of matched nodes is detected) 
 					{
+						#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+						for(int level=0; level<currentLevel; level++)
+						{
+							cout << "\t";
+						}  										
+						cout << "A2. SDGG connectionIter = " << (*connectionIter)->entity->entityName << endl;
+						#endif	
+										
 						//cout << "connectionIter = " << (*connectionIter)->entity->entityName << endl;
 						//cout << "connectionIterQuery = " << (*connectionIterQuery)->entity->entityName << endl;
 						
@@ -750,38 +799,114 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 							}
 							//cout << "fin2" << endl;
 							
-							#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS												
-							if(traceModeIsQuery)
-							{	
-								//if(queryTraceParametersTemp.detectComparisonVariable)
-								//{ 						
-									if(queryTraceParametersTemp.foundAnswer)
-									{
-										if(alreadyFoundAnAnswer)
+							#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS
+							if(knownBestMatch)
+							{//only are concerned about recording multiple answers for known best match...												
+								if(traceModeIsQuery)
+								{	
+									//if(queryTraceParametersTemp.detectComparisonVariable)
+									//{ 						
+										if(queryTraceParametersTemp.foundAnswer)
 										{
-											cout << "error: query error 1b: answer already found on alternate trace branch" << endl;							
-										}
-										else
-										{
-											if(numberOfMatchedNodesTemp > numberOfMatchedNodesAtPreviousAnswerNode)		//do not record deficient answers [those are known to provide less node matches than the previously recorded answer(s)]
+											#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+											for(int level=0; level<currentLevel; level++)
 											{
-												//current answer provides better match... clear previous answer nodes...
-												queryTraceParameters->queryAnswerNodes.clear();
-												queryTraceParameters->numberAnswersFound = 0;
+												cout << "\t";
+											}  										
+											cout << "queryTraceParametersTemp.foundAnswer: answer = " << queryTraceParametersTemp.queryAnswerNode->entityName << endl;
+											#endif
 
+											/*
+											//temp;
+											#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+											for(vector<GIAEntityNode*>::iterator entityAnswerIter = queryTraceParametersTemp.queryAnswerNodes.begin(); entityAnswerIter != queryTraceParametersTemp.queryAnswerNodes.end(); entityAnswerIter++)
+											{				
+												for(int level=0; level<currentLevel; level++)
+												{
+													cout << "\t";
+												}  
+												cout << "Multiple Answer Found:" << (*entityAnswerIter)->entityName << endl;												
 											}
-											if(numberOfMatchedNodesTemp >= numberOfMatchedNodesAtPreviousAnswerNode)
+											#endif
+											*/
+
+											if(alreadyFoundAnAnswer)
 											{
-												for(vector<GIAEntityNode*>::iterator entityAnswerIter = queryTraceParametersTemp.queryAnswerNodes.begin(); entityAnswerIter != queryTraceParametersTemp.queryAnswerNodes.begin(); entityAnswerIter++)
-												{							
-													queryTraceParameters->queryAnswerNodes.push_back(*entityAnswerIter);
-													queryTraceParameters->numberAnswersFound = queryTraceParameters->numberAnswersFound + 1;
+												cout << "error: query error 1b: answer already found on alternate trace branch" << endl;							
+											}
+											else
+											{
+												//cout << "qerty1b" << endl;
+												if(numberOfMatchedNodesTemp > queryTraceParameters->numberOfMatchedNodesAtPreviousAnswerNode)		//do not record deficient answers [those are known to provide less node matches than the previously recorded answer(s)]
+												{
+													#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+													for(vector<GIAEntityNode*>::iterator entityAnswerIter = queryTraceParameters->queryAnswerNodes.begin(); entityAnswerIter != queryTraceParameters->queryAnswerNodes.end(); entityAnswerIter++)
+													{		
+														for(int level=0; level<currentLevel; level++)
+														{
+															cout << "\t";
+														}  
+														cout << "numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << ", numberOfMatchedNodesAtPreviousAnswerNode = " << queryTraceParameters->numberOfMatchedNodesAtPreviousAnswerNode << endl;
+													
+														for(int level=0; level<currentLevel; level++)
+														{
+															cout << "\t";
+														}  
+														cout << "Multiple Answer Cleared:" << (*entityAnswerIter)->entityName << endl;												
+													}
+													#endif
+
+													//cout << "qerty2" << endl;
+													//current answer provides better match... clear previous answer nodes...
+													queryTraceParameters->queryAnswerNodes.clear();
+													queryTraceParameters->numberAnswersFound = 0;
 												}
-												numberOfMatchedNodesAtPreviousAnswerNode = numberOfMatchedNodesTemp;	
+
+												if(numberOfMatchedNodesTemp >= queryTraceParameters->numberOfMatchedNodesAtPreviousAnswerNode)
+												{
+													//cout << "\tStart" << endl;
+													for(vector<GIAEntityNode*>::iterator entityAnswerIterTemp = queryTraceParametersTemp.queryAnswerNodes.begin(); entityAnswerIterTemp != queryTraceParametersTemp.queryAnswerNodes.end(); entityAnswerIterTemp++)
+													{	
+														bool answerAlreadyAddedToMultipleAnswers = false;
+														for(vector<GIAEntityNode*>::iterator entityAnswerIter = queryTraceParameters->queryAnswerNodes.begin(); entityAnswerIter != queryTraceParameters->queryAnswerNodes.end(); entityAnswerIter++)
+														{
+															if(((*entityAnswerIter)->entityName == (*entityAnswerIterTemp)->entityName) && ((*entityAnswerIter)->idInstance == (*entityAnswerIterTemp)->idInstance))
+															{
+																answerAlreadyAddedToMultipleAnswers = true;
+																#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+																cout << "answerAlreadyAddedToMultipleAnswers: " << (*entityAnswerIterTemp)->entityName << endl;
+																#endif
+															}
+															/*
+															#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+															else if((*entityAnswerIter)->entityName == (*entityAnswerIterTemp)->entityName)
+															{
+																cout << "ASF" << endl;
+															}
+															#endif
+															*/
+														}
+														if(!answerAlreadyAddedToMultipleAnswers)
+														{					
+															queryTraceParameters->queryAnswerNodes.push_back(*entityAnswerIterTemp);
+															queryTraceParameters->numberAnswersFound = queryTraceParameters->numberAnswersFound + 1;
+															
+															#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+															for(int level=0; level<currentLevel; level++)
+															{
+																cout << "\t";
+															}  
+															cout << "Multiple Answer Found:" << (*entityAnswerIterTemp)->entityName << endl;
+															#endif																
+														}
+													}
+													//cout << "\tEnd" << endl;
+													queryTraceParameters->numberOfMatchedNodesAtPreviousAnswerNode = numberOfMatchedNodesTemp;	
+												}
 											}
 										}
-									}
-								//}
+									//}
+								}
 							}
 							#endif
 							//cout << "fin3" << endl;
@@ -803,6 +928,14 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 						//cout << "fin4" << endl;
 					}
 					
+					#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+					for(int level=0; level<currentLevel; level++)
+					{
+						cout << "\t";
+					}  
+					cout << "B. SDGG connectionIterQuery = " << (*connectionIterQuery)->entity->entityName << endl;
+					#endif
+															
 					//cout << "fin5" << endl;
 					
 					bool exactMatchFoundTemp = false;
@@ -837,7 +970,16 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 						//cout << "matchFoundEND" << endl;	
 					}
 					
-					//cout << "fin6" << endl;	
+					//cout << "fin6" << endl;
+					
+					#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+					for(int level=0; level<currentLevel; level++)
+					{
+						cout << "\t";
+					}  										
+					cout << "C. SDGG connectionIterQuery = " << (*connectionIterQuery)->entity->entityName << endl;
+					#endif	
+											
 				}
 			}
 		}

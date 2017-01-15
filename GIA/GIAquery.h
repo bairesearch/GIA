@@ -3,7 +3,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1i 26-May-2012
+ * Project Version: 1l2a 29-May-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
@@ -77,6 +77,7 @@ public:
 	int numberAnswersFound;					//record number of answers found (with equal number of matches to best answer node)
 	vector<GIAEntityNode*> queryAnswerNodes;		//record answers found (with equal number of matches to best answer node)
 	//vector<string> queryAnswerContexts;
+	int numberOfMatchedNodesAtPreviousAnswerNode;		//added 29 May 2012
 	#endif
 	
 	bool thisIsInstanceAndPreviousNodeWasDefinition;	//temp variable
@@ -87,6 +88,10 @@ public:
 	bool isCondition;					//temp variable	//not required for testEntityNodeForQuery	
 	GIAEntityNode* sourceEntityNode;			//temp variable	//not required for testEntityNodeForQuery
 	string sourceContext;					//temp variable	//not required for testEntityNodeForQuery	
+
+	#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+	int level;
+	#endif
 };
 
 //shared with GIATranslatorDefineReferencing.cpp

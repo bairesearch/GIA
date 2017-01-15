@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1i 26-May-2012
+ * Project Version: 1l2a 29-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -343,9 +343,7 @@ GIAEntityNode * addProperty(GIAEntityNode * entity)
 	}
 	
 	newProperty->entityName = entity->entityName;
-	#ifdef GIA_USE_DATABASE
 	newProperty->idInstance = determineNextIdInstance(entity); 
-	#endif	
 	newProperty->isProperty = true;
 
 	entity->hasAssociatedInstance = true;
@@ -560,9 +558,7 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 	}
 
 	newAction->entityName = actionEntity->entityName;
-	#ifdef GIA_USE_DATABASE
 	newAction->idInstance = determineNextIdInstance(actionEntity); 
-	#endif	
 		
 	writeVectorConnection(newAction, actionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);	
 	writeVectorConnection(actionEntity, newAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
@@ -890,9 +886,7 @@ GIAEntityNode * addCondition(GIAEntityNode * conditionEntity)
 	}
 	
 	newCondition->entityName = conditionEntity->entityName;		
-	#ifdef GIA_USE_DATABASE
-	newCondition->idInstance = determineNextIdInstance(conditionEntity); 
-	#endif	
+	newCondition->idInstance = determineNextIdInstance(conditionEntity); 	
 		
 	writeVectorConnection(newCondition, conditionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);	
 	writeVectorConnection(conditionEntity, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
@@ -1337,11 +1331,13 @@ void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNod
 
 long determineNextIdInstance(GIAEntityNode * entity)
 {
+	long nextIdInstance;	
+		
 	GIAEntityNode * conceptEntity;
-	if(!(conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE].empty()))
-	{
+	if(!(entity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE].empty()))
+	{	
 		//the current entity is a property of a concept entity
-		conceptEntity = conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE].back()->entity;		
+		conceptEntity = entity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE].back()->entity;		
 	}
 	else
 	{
@@ -1349,9 +1345,22 @@ long determineNextIdInstance(GIAEntityNode * entity)
 		conceptEntity = entity;
 	}
 	
-	long numberOfInstances =  conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE].size();
-	long indexOfNextInstance = numberOfInstances;
-	return indexOfNextInstance;
+	#ifdef GIA_ID_INSTANCE_ALLOW_INSTANCE_DELETIONS
+	if(!(conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].empty()))
+	{
+		long previousIdInstance = conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].back()->entity->idInstance;
+		nextIdInstance = previousIdInstance + 1;
+	}	
+	else
+	{
+		nextIdInstance = GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE + 1;
+	}	
+	#else
+	long numberOfInstances =  conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].size();
+	nextIdInstance = numberOfInstances;	
+	#endif
+	
+	return nextIdInstance;
 }
 
 

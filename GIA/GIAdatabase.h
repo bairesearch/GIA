@@ -3,7 +3,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1i 26-May-2012
+ * Project Version: 1l2a 29-May-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -30,6 +30,8 @@
 using namespace std;
 
 
+#define GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE (0)
+	
 #ifdef GIA_USE_DATABASE
 
 	#define GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH 64	//64 characters per word allowed (NB this must include conjunctions between names, prepositions, etc...)
@@ -59,9 +61,7 @@ using namespace std;
 	
 	#define GIA_DATABASE_FILENAME_TYPE_ENTITY (1)
 	#define GIA_DATABASE_FILENAME_TYPE_VECTOR_REFERENCE (1)
-	
-	#define GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE (0)
-	
+
 	/*
 	#define GIA_DATABASE_GENERATE_FILENAME_CONNECTION_VECTOR (true)
 	#define GIA_DATABASE_GENERATE_FILENAME_CONNECTION_BASIC (false)
