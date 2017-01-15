@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h5c 13-January-2015
+ * Project Version: 2h6a 18-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -916,12 +916,9 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 
 				int auxiliaryDependencyIndex = currentRelationInList->relationGovernorIndex;
 				string auxiliaryGovernerEntity = currentRelationInList->relationDependent;
-				for(int i=0; i<RELATION_TYPE_AUXILIARY_GOVERNER_INDICATES_FUTURE_TENSE_NUMBER_OF_TYPES; i++)
+				if(textInTextArray(auxiliaryGovernerEntity, relationAuxiliaryGovernerIndicatesFutureTenseArray, RELATION_TYPE_AUXILIARY_GOVERNER_INDICATES_FUTURE_TENSE_NUMBER_OF_TYPES))
 				{
-					if(relationAuxiliaryGovernerIndicatesFutureTenseArray[i] == auxiliaryGovernerEntity)
-					{
-						featureArrayTemp[auxiliaryDependencyIndex]->grammaticalTense = GRAMMATICAL_TENSE_FUTURE;
-					}
+					featureArrayTemp[auxiliaryDependencyIndex]->grammaticalTense = GRAMMATICAL_TENSE_FUTURE;
 				}
 			}
 
@@ -943,13 +940,21 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 				int entityIndexOfDeterminier = currentRelationInList->relationDependentIndex;
 				int entityIndexOfNoun = currentRelationInList->relationGovernorIndex;
 
-				if((determiner == GRAMMATICAL_DETERMINER_DEFINITE) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE))
+				bool definiteDeterminerFound = false;
+				#ifdef GIA_SUPPORT_MULTIPLE_DEFINITE_DETERMINERS
+				if(textInTextArray(determiner, relationDeterminerGovernorDefiniteArray, GRAMMATICAL_DETERMINER_GOVERNOR_DEFINITE_ARRAY_NUMBER_OF_TYPES))
+				{
+					definiteDeterminerFound = true;
+				}
+				#endif
+				
+				if(definiteDeterminerFound || (determiner == GRAMMATICAL_DETERMINER_DEFINITE) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE))
 				{//if condition added 4 July 2013 to ensure only real determiners (the, some, a) are disabled [and not "What" in det(time-2, What-1)]
 					//cout << "disabling feature temp entity" << endl;
 					GIAfeatureTempEntityNodeArray[entityIndexOfDeterminier]->disabled = true;
 				}
 
-				if(determiner == GRAMMATICAL_DETERMINER_DEFINITE)
+				if(definiteDeterminerFound)
 				{
 					featureArrayTemp[entityIndexOfNoun]->grammaticalIsDefinite = true;
 					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
