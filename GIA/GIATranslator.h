@@ -90,6 +90,7 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *indexOfTimeNodes, vector<long> *indexOfTimeNumbers, long * timeNodeNumber, bool * found, long * index, bool addIfNonexistant);
 
 void addPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity);
+void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense);
 
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity);
 

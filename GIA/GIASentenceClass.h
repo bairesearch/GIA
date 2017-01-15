@@ -22,6 +22,7 @@
 using namespace std;
 
 #define FEATURE_TENSE_DATE "date"
+#define FEATURE_TENSE_PAST "past"
 
 //#define DEBUG_TRAIN_NETWORK_WITH_NON_RANDOM_VARS
 

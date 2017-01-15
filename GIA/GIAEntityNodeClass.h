@@ -30,6 +30,8 @@ class GIAPropertyConditionNode;
 class GIAActionConditionNode;
 class GIATimeConditionNode;
 
+#define TENSE_UNDEFINED (0)
+
 class GIAEntityNode
 {
 public:
@@ -37,6 +39,8 @@ public:
 	GIAEntityNode(void);
 	~GIAEntityNode(void);
 
+	int tenseTemp; 	//temporary: used for GIA translator only
+	
 	bool initialisedForPrinting;
 	bool printed;
 	int printX;

@@ -15,6 +15,8 @@
 //~nouns
 GIAEntityNode::GIAEntityNode(void)
 {
+	tenseTemp = TENSE_UNDEFINED;
+	
 	initialisedForPrinting = false;
 	printed = false;
 	printX = 0;
