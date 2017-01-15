@@ -20,18 +20,18 @@
 
 
 
-void collapseRedundantRelationAndMakeNegative(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void collapseRedundantRelationAndMakeNegative(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], int NLPdependencyRelationsType)
 {
 	#ifdef GIA_USE_RELEX
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 	{
-		collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[]);	
+		collapseRedundantRelationAndMakeNegativeRelex(currentSentenceInList, GIAEntityNodeArray);	
 	}
 	#endif
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
 	{
-		collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[]);
+		collapseRedundantRelationAndMakeNegativeStanford(currentSentenceInList, GIAEntityNodeArray);
 	}
 	#endif
 }
@@ -47,8 +47,8 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 			//eg The chicken has not eaten a pie.: neg(eaten-5, not-4)
 			
 			currentRelationInList->disabled = true;
-			GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex]->negative = true;
-			GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex]->disabled = true;
+			GIAEntityNodeArray[currentRelationInList->relationFunctionIndex]->negative = true;
+			GIAEntityNodeArray[currentRelationInList->relationArgumentIndex]->disabled = true;
 
 		}		
 	}
@@ -188,7 +188,7 @@ void definePropertiesNounsWithDeterminates(bool GIAEntityNodeArrayFilled[], GIAE
 	}
 }		
 
-void definePropertiesNounsWithAdjectives(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void definePropertiesNounsWithAdjectives(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], int NLPdependencyRelationsType)
 {	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -203,7 +203,7 @@ void definePropertiesNounsWithAdjectives(Sentence * currentSentenceInList, GIAEn
 		}						
 		if(passed)
 		{
-			bool passed3 = isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(currentRelationInList, GIAEntityNodeArray, currentRelationInList->relationFunctionIndex);
+			bool passed3 = isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(currentRelationInList, GIAEntityNodeArray, currentRelationInList->relationFunctionIndex, NLPdependencyRelationsType);
 
 			if(passed3)
 			{	
@@ -394,61 +394,6 @@ void definePropertiesToDo(Sentence * currentSentenceInList, GIAEntityNode * GIAE
 	}			
 }	
 							
-										
-bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, Relation * currentRelationInList)
-{
-	bool passed2 = true;
-
-	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-	if(NLPparserType == GIA_NLP_PARSER_RELEX)
-	{
-	#endif	
-			
-		if(currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3)
-		{
-			Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
- 			while(currentRelationInList3->next != NULL)
-			{	
-				bool partnerTypeRequiredFound = false;
-
-				for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
-				{
-					if(currentRelationInList3->relationType == relationTypeSubjectNameArray[i])
-					{
-						partnerTypeRequiredFound = true;
-					}
-				}
-				for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
-				{
-					if(currentRelationInList3->relationType == relationTypeObjectNameArray[i])
-					{
-						partnerTypeRequiredFound = true;
-					}
-				}
-
-				if(partnerTypeRequiredFound)
-				{
-					if(currentRelationInList->relationArgumentIndex == currentRelationInList3->relationArgumentIndex)
-					{//do not add property, if _advmod argument (eg 'by') is connected to a subject/object
-						passed2 = false;
-						//cout << "ASFS" << endl;
-					}
-				}
-				currentRelationInList3 = currentRelationInList3->next;							
-			}
-		}
-		else
-		{
-			bool passed2 = true;
-		}
-	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-	}
-	#endif
-			
-	
-	return passed2;
-}
-	
 void definePropertiesHasTime(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])	
 {
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)

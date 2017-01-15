@@ -56,7 +56,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 }
 
 
-void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], int NLPdependencyRelationsType)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -72,8 +72,8 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 		//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_1) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_2) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3))
 		if(passed)
 		{				
-			bool passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList);
-			bool passed3 = isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(currentRelationInList, GIAEntityNodeArray, currentRelationInList->relationFunctionIndex);
+			bool passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList, NLPdependencyRelationsType);
+			bool passed3 = isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(currentRelationInList, GIAEntityNodeArray, currentRelationInList->relationFunctionIndex, NLPdependencyRelationsType);
 
 			if(passed2 && passed3)
 			{
@@ -136,7 +136,7 @@ void disableEntityAndInstance(GIAEntityNode * GIAEntityNode)
 }
 
 
-void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
+void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType)
 {
  	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 
@@ -215,7 +215,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 					bool subjectOrObjectIsConnectedToAnAdvMod = false;
 					
 					#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-					if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+					if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 					{
 					#endif					
 						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_RELATION_AS_ACTION_CONDITION
@@ -314,7 +314,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 	}
 }
 
-void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
+void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType)
 {
  	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	
@@ -408,7 +408,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 				}		
 
 				#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 				{
 				#endif	
 					#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
@@ -427,7 +427,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 	
 				#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 				{
 				#endif
 					#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TOBE_AND_SUBJECT_RELATION_AS_PROPERTY_LINK_AND_ACTION_DEFINITION
@@ -484,7 +484,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								{
 								
 									#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-									if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+									if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 									{
 									#endif									
 										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
@@ -550,8 +550,11 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											//create arbitrarySubjectSpecialConceptEntityNode
 											string arbitrarySubjectSpecialConceptEntityNodeName = ARBITRARY_SUBJECT_SPECIAL_CONCEPT_NODE_NAME;
 											long entityIndex = -1;
-											bool entityAlreadyExistant = false;											
-											GIAEntityNode * arbitrarySubjectSpecialConceptEntityNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &arbitrarySubjectSpecialConceptEntityNodeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+											bool entityAlreadyExistant = false;		
+											vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();	
+											long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+											long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();																			
+											GIAEntityNode * arbitrarySubjectSpecialConceptEntityNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &arbitrarySubjectSpecialConceptEntityNodeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
 											subjectEntityTemp = arbitrarySubjectSpecialConceptEntityNode;		//overwrites subjectEntityTemp
 											#endif
 
@@ -596,7 +599,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									#endif									
 								
 									#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-									if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+									if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 									{
 									#endif								
 										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
@@ -728,7 +731,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								else if(partnerTypeObjectSpecialConditionMeasureDistanceFound)
 								{
 									#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-									if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+									if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 									{
 									#endif									
 									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO
@@ -748,8 +751,11 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 										string conditionTypeName = "specialCondition";
 										long entityIndex = -1;
-										bool entityAlreadyExistant = false;									
-										GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+										bool entityAlreadyExistant = false;	
+										vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();	
+										long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+										long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();																	
+										GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
 
 										addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity);
 
@@ -767,8 +773,11 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 										string conditionTypeName = "specialCondition";
 										long entityIndex = -1;
-										bool entityAlreadyExistant = false;									
-										GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+										bool entityAlreadyExistant = false;			
+										vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();		
+										long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+										long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();														
+										GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
 
 										addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity);								
 									}
@@ -831,7 +840,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 							}
 							
 							#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-							if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+							if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 							{
 							#endif						
 							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
@@ -869,7 +878,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 						{//do not find matching object-subject relationship 
 							
 							#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-							if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+							if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 							{
 							#endif
 								#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A_RELATIONS_DISREGARD_REDUNDANT_DEFINITION_RELATIONS
@@ -1035,7 +1044,7 @@ void defineIndirectObjects(Sentence * currentSentenceInList, GIAEntityNode * GIA
 
 
 
-void defineObjectSubjectOfPrepositionRelex(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1146,11 +1155,12 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 		#endif
 
 		#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-		if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+		if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 		{
 		#endif
 			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3A_PREPOSITIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_PROPERTY_LINK_DEPENDING_UPON_ACTION_OR_PROPERTY
-			if(convertStanfordPrepositionToRelex(relationType, NLPdependencyRelationsType) == RELATION_TYPE_OF)
+			bool stanfordPrepositionFound = false;
+			if(convertStanfordPrepositionToRelex(&relationType, NLPdependencyRelationsType, &stanfordPrepositionFound) == RELATION_TYPE_OF)
 			{
 				passed = false;
 
@@ -1223,7 +1233,7 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 	*/
 	
 	bool stanfordPrepositionFound = false;
-	string prepositionName = convertStanfordPrepositionToRelex(relationType, NLPdependencyRelationsType, &stanfordPrepositionFound);
+	string prepositionName = convertStanfordPrepositionToRelex(&relationType, NLPdependencyRelationsType, &stanfordPrepositionFound);
 	
 	//cout << "prepositionName = " << prepositionName << endl;
 	
@@ -1314,7 +1324,10 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 		long entityIndex = -1;
 		bool entityAlreadyExistant = false;
 		//cout << "prepositionName = " << prepositionName << endl;
-		GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);	
+		vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+		long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+		long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();		
+		GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);	
 		//cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl; 
 	
 		//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
@@ -1398,30 +1411,7 @@ string performPrepositionReduction(string relationType)
 #endif
 	
 
-string convertStanfordPrepositionToRelex(string * preposition, int NLPdependencyRelationsType, bool * stanfordPrepositionFound)
-{
-	string relexPreposition = preposition;
-	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
-	{
-		int foundStanfordPrepositionPrepend = preposition->find(STANFORD_PARSER_PREPOSITION_PREPEND);	
-		if(foundStanfordPrepositionPrepend == string::npos)
-		{
-			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-			cout << "convertStanfordPrepositionToRelex(): error - preposition 'prep_...' not found" << endl;
-			cout << "the following dependency relation was expected to be a preposition = " << *preposition << endl;
-			exit(0);
-			#endif
-		}
-		else
-		{
-			int indexOfFirstUnderscoreInPreposition = STANFORD_PARSER_PREPOSITION_PREPEND_LENGTH;
-			int lengthOfPreposition = preposition->length() - (indexOfFirstUnderscoreInPreposition+1);
-			relexPreposition = preposition.substr(indexOfFirstUnderscoreInPreposition+1, lengthOfPreposition);
-			*stanfordPrepositionFound = true;
-		}
-	}
-	return relexPreposition;
-}
+
 
 
 /*

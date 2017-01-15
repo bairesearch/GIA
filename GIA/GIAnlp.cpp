@@ -110,13 +110,13 @@ void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPParse
 }
 
 
-bool parseNLPParserFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList, int NLPparserType)
+bool parseNLPParserFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList, int NLPparserType, bool NLPrelexCompatibilityMode)
 {
 	bool result = true;
 	#ifdef GIA_USE_RELEX
 	if(NLPparserType == GIA_NLP_PARSER_RELEX)
 	{
-		if(!parseRelexFile(inputTextNLPParsedXMLFileName, isQuery, firstParagraphInList))
+		if(!parseRelexFile(inputTextNLPParsedXMLFileName, isQuery, firstParagraphInList, NLPrelexCompatibilityMode))
 		{
 			result = false;
 		}

@@ -12,7 +12,7 @@
 
 
 #include "GIAParser.h"
-#include "GIATranslator.h"	//required for convertStanfordRelationToRelex
+#include "GIATranslatorOperations.h"	//required for convertStanfordRelationToRelex
 
 #define MAX_CHARACTERS_GIATH 150 //max characters of some word in input data. includes '\0' at end of a string
 

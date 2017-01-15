@@ -28,14 +28,14 @@ void fillGrammaticalArrays(Sentence * currentSentenceInList, bool GIAEntityNodeI
 	}
 	#endif
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
-	else if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
 	{
 		fillGrammaticalArraysStanford(currentSentenceInList, GIAEntityNodeIsDate, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray);
 	}
 	#endif
 	
 	#ifdef GIA_NLP_PARSER_STANFORD_CORENLP
-	else if(NLPparserType == GIA_NLP_PARSER_STANFORD_CORENLP)
+	if(NLPparserType == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
 		fillGrammaticalArraysStanfordCoreNLP(currentSentenceInList, GIAEntityNodeIsDate, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray);
 	}
@@ -159,13 +159,13 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList, bool GIAEntity
 }
 #endif
 
-void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, bool GIAEntityNodeIsDate[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsPersonArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], vector<GIAEntityNode*> *sentenceConceptEntityNodesList)
+void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, bool GIAEntityNodeIsDate[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsPersonArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType)
 {	
 	bool expectToFindComparisonVariable = false;
 	if(currentSentenceInList->isQuestion)
 	{
 		expectToFindComparisonVariable = true;
-		foundComparisonVariable = false;
+		setFoundComparisonVariable(false);
 		//cout << "expectToFindComparisonVariable" << endl;
 	}	
 		
@@ -224,7 +224,10 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 		{
 			if(!GIAEntityNodeArrayFilled[relationIndex[i]])
 			{
-				GIAEntityNode * entity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &(name[i]), &(entityAlreadyExistant[i]), &(entityIndex[i]), true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+				vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+				long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+				long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();				
+				GIAEntityNode * entity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &(name[i]), &(entityAlreadyExistant[i]), &(entityIndex[i]), true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
 				GIAEntityNodeArrayFilled[relationIndex[i]] = true;
 				GIAEntityNodeArray[relationIndex[i]] = entity;				
 				entity->hasAssociatedTime = GIAEntityNodeIsDate[relationIndex[i]]; 
@@ -251,8 +254,8 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 					if(argumentIsQuery)
 					{
 						GIAEntityNodeArray[relationIndex[i]]->isQuery = true;
-						foundComparisonVariable = true;
-						comparisonVariableNode = GIAEntityNodeArray[relationIndex[i]];					
+						setFoundComparisonVariable(true);
+						setComparisonVariableNode(GIAEntityNodeArray[relationIndex[i]]);				
 					}
 				}			
 			}		
@@ -299,7 +302,7 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 		*/
 		
 		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
-		if(!foundComparisonVariable)
+		if(!getFoundComparisonVariable())
 		{//define comparison variable; define required answer entity as the next noun after the question word/lemma eg "house/person" 
 			
 			bool foundComparisonVariableAlternateMethod = false;
@@ -332,18 +335,21 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 						//cout << "foundQueryWordAcceptedByAlternateMethod" << endl;
 						
 						/*
+						long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+						long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();						
+						vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
 						string queryComparisonVariableName = currentFeatureInList->word; 
 						long queryComparisonVariableEntityIndex = -1;
 						bool queryComparisonVariableEntityAlreadyExistant = false;						
-						GIAEntityNode * queryComparisonVariableEntityNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &queryComparisonVariableName, &queryComparisonVariableEntityAlreadyExistant, &queryComparisonVariableEntityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+						GIAEntityNode * queryComparisonVariableEntityNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &queryComparisonVariableName, &queryComparisonVariableEntityAlreadyExistant, &queryComparisonVariableEntityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
 						*/
 						if(GIAEntityNodeArrayFilled[currentFeatureInList->entityIndex])
 						{
 							GIAEntityNode * queryComparisonVariableEntityNode = GIAEntityNodeArray[currentFeatureInList->entityIndex];
 							queryComparisonVariableEntityNode->isQuery = true;
 							queryComparisonVariableEntityNode->isWhichQuery = true;
-							foundComparisonVariable = true;								
-							comparisonVariableNode = queryComparisonVariableEntityNode;
+							setFoundComparisonVariable(true);								
+							setComparisonVariableNode(queryComparisonVariableEntityNode);
 							#ifdef GIA_TRANSLATOR_DEBUG
 							cout << "foundComparisonVariable" << endl;
 							cout << "queryComparisonVariableEntityNode->entityName = " << queryComparisonVariableEntityNode->entityName << endl;
@@ -376,10 +382,10 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 
 
 
-void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList)
+void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList, int NLPdependencyRelationsType)
 {
 	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 	{
 	#endif	
 		if(GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_WHERE_NECESSARY)
@@ -467,7 +473,7 @@ void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList)
 	#endif		
 }
 
-void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], int NLPdependencyRelationsType)
 {	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -507,7 +513,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 		//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_1) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_2) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3))
 		if(passed)
 		{
-			bool passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList);
+			bool passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList, NLPdependencyRelationsType);
 
 			if(passed2)
 			{			
@@ -563,7 +569,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 
 
 #ifdef GIA_USE_STANFORD_CORENLP
-void linkReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList);	//Stanford Compatible [NOT YET CODED]
+void linkReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)	//Stanford Compatible [NOT YET CODED]
 {
 	cout << "linkReferencesStanfordCoreNLP(): error - function not yet coded" << endl;
 	exit(0); 
@@ -619,8 +625,11 @@ void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 
 							if(entityName != "")
 							{
-
-								GIAEntityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &entityName, &entityAlreadyExistant, &entityIndex, false, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+	
+								vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+								long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+								long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();								
+								GIAEntityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &entityName, &entityAlreadyExistant, &entityIndex, false, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
 
 								if(entityAlreadyExistant)
 								{
@@ -835,7 +844,7 @@ void redistributeStanfordRelationsClausalSubject(Sentence * currentSentenceInLis
 						
 						currentRelationInList2->relationType = RELATION_TYPE_SUBJECT;
 						currentRelationInList2->relationArgumentIndex = currentRelationInList->relationArgumentIndex;
-						currentRelationInList2->relationArgument = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+						currentRelationInList2->relationArgument = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex]->entityName;
 					}
 				}
 
@@ -864,7 +873,7 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 			governerEntity->entityName = governerEntity->entityName + "_" + dependencyEntity->entityName;
 			//cout << "governerEntity->entityName = " <<governerEntity->entityName << endl;
 
-			addOrConnectPropertyToEntity(actionEntity, propertyEntity);
+			dependencyEntity->disabled = true;
 		}			
 		currentRelationInList = currentRelationInList->next;
 	}
@@ -893,12 +902,8 @@ void redistributeStanfordRelationsNSubjAndPreposition(Sentence * currentSentence
 				bool stanfordPrepositionFound = false;
 				string relexPreposition = convertStanfordPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATION_FORMATION_STANFORD, &stanfordPrepositionFound);
 				
-				if(stanfordPrepositionFound)
-				{
-					partnerTypeRequiredFound = true;
-				}
 
-				if(partnerTypeRequiredFound)
+				if(stanfordPrepositionFound)
 				{		
 					if(currentRelationInList2->relationFunctionIndex == currentRelationInList->relationFunctionIndex)
 					{//found a matching preposition of object-subject relationship

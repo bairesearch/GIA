@@ -27,7 +27,7 @@ void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFille
 	}
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
-	else if(NLPparserType == GIA_USE_STANFORD_CORENLP)
+	if(NLPparserType == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
 		extractDatesStanfordCoreNLP(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 	}	
@@ -319,7 +319,7 @@ void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 				{//update comparison variable (set it to the quantity)	
 					quantityProperty->isQuery = true;
 					GIAEntityNodeArray[currentRelationInList->relationArgumentIndex]->isQuery = false;
-					comparisonVariableNode = quantityProperty;		
+					setComparisonVariableNode(quantityProperty);		
 				}
 
 				//now locate quantity modifiers and multiplicators
@@ -349,7 +349,10 @@ void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 							string conditionTypeName = "quantityModifier";	//quantityProperty->quantityModifierString //CHECKTHIS; 
 							long entityIndex = -1;
 							bool entityAlreadyExistant = false;
-							GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+							vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+							long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+							long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();
+							GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
 							
 							addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);
 
@@ -410,13 +413,17 @@ void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 						measureProperty->measureType = MEASURE_TYPE_PER;						
 
 						GIAEntityNode * newQuantityTimesEntity = new GIAEntityNode();
-						newQuantityTimesEntity->id = currentEntityNodeIDInCompleteList;
-						newQuantityTimesEntity->idSecondary = currentEntityNodeIDInPropertyEntityNodesList;
+						long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+						long * currentEntityNodeIDInPropertyEntityNodesList = getCurrentEntityNodeIDInPropertyEntityNodesList();
+						newQuantityTimesEntity->id = *currentEntityNodeIDInCompleteList;
+						newQuantityTimesEntity->idSecondary = *currentEntityNodeIDInPropertyEntityNodesList;
 
+						vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
 						entityNodesCompleteList->push_back(newQuantityTimesEntity);
-						currentEntityNodeIDInCompleteList++;
+						(*currentEntityNodeIDInCompleteList)++;
+						vector<GIAEntityNode*> * propertyEntityNodesList = getTranslatorPropertyEntityNodesList();
 						propertyEntityNodesList->push_back(newQuantityTimesEntity);
-						currentEntityNodeIDInPropertyEntityNodesList++;
+						(*currentEntityNodeIDInPropertyEntityNodesList)++;
 
 						newQuantityTimesEntity->entityName = "times";
 
@@ -434,7 +441,8 @@ void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 						string conditionTypeName = RELATION_TYPE_MEASURE_PER;
 						long entityIndex = -1;
 						bool entityAlreadyExistant = false;
-						GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+						long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();						
+						GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
 
 						//now add measure_per condition node
 						addOrConnectPropertyConditionToEntity(newQuantityTimesEntity, measureProperty, conditionTypeConceptEntity);
@@ -499,7 +507,10 @@ void extractMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntity
 				string conditionTypeName = relationTypeMeasureNameArray[measureTypeIndex];
 				long entityIndex = -1;
 				bool entityAlreadyExistant = false;
-				GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+				vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+				long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+				long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();				
+				GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
 
 				if(currentRelationInList->relationType == RELATION_TYPE_MEASURE_PER)
 				{
@@ -516,7 +527,7 @@ void extractMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntity
 	}
 }
 
-void extractQualities(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
+void extractQualities(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -534,7 +545,7 @@ void extractQualities(Sentence * currentSentenceInList, GIAEntityNode * GIAEntit
 		//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_1) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_2) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3))
 		if(passed)
 		{
-			bool passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList);
+			bool passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList, NLPdependencyRelationsType);
 
 			if(passed2)
 			{			
@@ -556,7 +567,7 @@ void extractQualities(Sentence * currentSentenceInList, GIAEntityNode * GIAEntit
 }
 
 
-void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType)
+void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -596,7 +607,10 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode
 						string conditionTypeEntityNodeName = currentRelationInList->relationType;
 						long EntityIndex = -1;
 						bool EntityAlreadyExistant = false;	
-						conditionTypeEntityNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeEntityNodeName, &EntityAlreadyExistant, &EntityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+						vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+						long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+						long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();						
+						conditionTypeEntityNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeEntityNodeName, &EntityAlreadyExistant, &EntityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
 
 						addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntityNode);				
 
@@ -637,13 +651,13 @@ void linkPropertiesParataxis(Sentence * currentSentenceInList, GIAEntityNode * G
 }
 
 #ifdef GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
-void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
+void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType)
 {//NB defineConjunctionConditions() currently performs the same function as defineActionPropertyConditions()
 
 	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 	{
-	#endif	
+	#endif
 			
 		Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
@@ -695,7 +709,10 @@ void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode
 				long entityIndex = -1;
 				bool entityAlreadyExistant = false;
 				//cout << "relationType = " << relationType << endl;
-				GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);	
+				vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+				long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+				long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();				
+				GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);	
 
 				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
@@ -703,7 +720,7 @@ void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode
 				cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl; 			
 				#endif
 
-				addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);				
+				addConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);				
 			}
 
 			currentRelationInList = currentRelationInList->next;

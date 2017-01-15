@@ -25,8 +25,10 @@
 #include <string>
 using namespace std;
 
+#define RELEX_DEPENDENCY_RELATION_PREPENDITION "_"
 
-string convertStanfordRelationToRelex(string stanfordRelation);
+
+string convertStanfordRelationToRelex(string * stanfordRelation);
 void GIATHparseRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode);
 void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList, bool * isQuestion);
 

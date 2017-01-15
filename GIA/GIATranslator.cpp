@@ -20,65 +20,12 @@
 #include "GIAdatabase.h"
 
 
-
-
+static int referenceTypeHasDeterminateCrossReferenceNumberArray[GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES] = {GRAMMATICAL_NUMBER_SINGULAR};
 
 
 void initialiseGIATranslatorForTexualContext()
 {
-	currentEntityNodeIDInCompleteList = 0;
-	currentEntityNodeIDInConceptEntityNodesList = 0;
-	currentEntityNodeIDInPropertyEntityNodesList = 0;
-	currentEntityNodeIDInActionEntityNodesList = 0;
-	currentEntityNodeIDInConditionEntityNodesList = 0;
-	
-	vector<GIAEntityNode*>::iterator indexOfEntityNodesIterator;
-	vector<string*>::iterator indexOfEntityNamesIterator;
-	vector<GIATimeConditionNode*>::iterator indexOfTimeNodesIterator;
-	vector<long*>::iterator indexOfTimeNumbersIterator;	
-
-	/*
-	//initialise conceptEntityNodesList;	[should be moved elsewhere]
-	string firstEntityNameInNetwork = "universe";
-	GIAEntityNode * firstEntityNodeInNetwork = new GIAEntityNode();
-	firstEntityNodeInNetwork->entityName = firstEntityNameInNetwork;
-	conceptEntityNodesList->push_back(firstEntityNodeInNetwork);
-	conceptEntityNamesList->push_back(firstEntityNameInNetwork);
-	
-	//DEBUG
-	//conceptEntityNamesList->push_back("za");
-	//conceptEntityNamesList->push_back("zb");
-	//conceptEntityNamesList->push_back("zc");
-	//conceptEntityNamesList->push_back("zd");
-	//conceptEntityNamesList->push_back("ze");
-	//conceptEntityNamesList->push_back("zf");
-	//conceptEntityNamesList->push_back("zg");
-	//conceptEntityNamesList->push_back("zh");
-	//conceptEntityNamesList->push_back("zi");
-	//conceptEntityNamesList->push_back("zj");
-	
-	
-	//initialise timeConditionNodesList;		[should be moved elsewhere]	
-	long firstTimeInNetwork = -14*(10^9)*SECONDS_IN_YEAR;
-	string firstTimeNameInNetwork = "beginning";
-	GIATimeConditionNode * firstTimeNodeInNetwork = new GIATimeConditionNode();
-	firstTimeNodeInNetwork->conditionName = firstTimeNameInNetwork;
-	firstTimeNodeInNetwork->totalTimeInSeconds = firstTimeInNetwork;
-	timeConditionNodesList->push_back(firstTimeNodeInNetwork);
-	timeConditionNumbersList->push_back(firstTimeInNetwork);		
-	
-	
-	//DEBUG	
-	//bool resultTemp = true;
-	//string tempName = "zh";
-	//long findIndex = -1;
-	//GIAEntityNode * tempEntity = findOrAddEntityNodeByName(conceptEntityNodesList, &tempName, &resultTemp, &findIndex);
-	//if(resultTemp)
-	//{
-	//	cout << "tempEntity->entityName = " << tempEntity->entityName << endl;
-	//}
-	//exit(0);
-	*/
+	initialiseGIATranslatorForTexualContextOperations();
 }
 
 
@@ -217,7 +164,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "fillGrammaticalArrays" << endl;
 	#endif
-	fillGrammaticalArrays(currentSentenceInList, GIAEntityNodeIsDate, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray);
+	fillGrammaticalArrays(currentSentenceInList, GIAEntityNodeIsDate, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, NLPparserType, NLPdependencyRelationsType);
 
 
 
@@ -226,7 +173,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	cout << "pass A;" << endl;
 	cout << "pass 1; locate/add all entities" << endl;
 	#endif
-	locateAndAddAllConceptEntities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, GIAEntityNodeIsDate, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, sentenceConceptEntityNodesList);
+	locateAndAddAllConceptEntities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, GIAEntityNodeIsDate, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, sentenceConceptEntityNodesList, NLPdependencyRelationsType);
 
 	
 	#ifdef GIA_USE_STANFORD_CORENLP
@@ -264,12 +211,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG	
 	cout << "pass 1c; switch argument/functions where necessary" << endl;
 	#endif
-	switchArgumentsAndFunctionsWhereNecessary(currentSentenceInList);
+	switchArgumentsAndFunctionsWhereNecessary(currentSentenceInList, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG		
 	cout << "pass 2; identify entity types [define entities as objects, subjects, and being possessive of properties];" << endl;
 	#endif
-	identifyEntityTypes(currentSentenceInList, GIAEntityNodeArray);
+	identifyEntityTypes(currentSentenceInList, GIAEntityNodeArray, NLPdependencyRelationsType);
 
 	#ifndef GIA_STANFORD_CORE_NLP_DO_NOT_USE_CODEPENDENCIES
 	if(NLPparserType == GIA_NLP_PARSER_RELEX)
@@ -297,7 +244,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	cout << "pass B;" << endl;
 	cout << "0z2 pass; collapseRedundantRelationAndMakeNegative (eg 'Space is saved by not having a bulky cart.'); _subj(not[5], by[4]), _subj(have[6], not[5])" << endl;
 	#endif
-	collapseRedundantRelationAndMakeNegative(currentSentenceInList, GIAEntityNodeArray);
+	collapseRedundantRelationAndMakeNegative(currentSentenceInList, GIAEntityNodeArray, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0z pass; define properties (objects/subjects with properties; eg 'Truffles which are picked are tasty.' - Truffle must be an instance/property in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
@@ -317,7 +264,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0c pass; define properties (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
 	#endif
-	definePropertiesNounsWithAdjectives(currentSentenceInList, GIAEntityNodeArray);
+	definePropertiesNounsWithAdjectives(currentSentenceInList, GIAEntityNodeArray, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0d pass; define properties (quantities [not quantity mods/multipiers, not measure pers] and measures);" << endl;
@@ -355,7 +302,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	definePropertiesHasTime(GIAEntityNodeArrayFilled, GIAEntityNodeArray);		
 
 	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 	{
 	#endif
 		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_PROPERTY			
@@ -376,7 +323,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "2a pass; link properties (descriptive relationships); eg joe is happy" << endl;
 	#endif
-	linkPropertiesDescriptiveRelationships(currentSentenceInList, GIAEntityNodeArray);
+	linkPropertiesDescriptiveRelationships(currentSentenceInList, GIAEntityNodeArray, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "2b pass; link entity definitions (appositive of nouns only)" << endl;
@@ -386,12 +333,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
  	cout <<"3a pass; define dependent subject-object definition/composition/action relationships" << endl;
 	#endif
-	defineSubjectObjectRelationships(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList);
+	defineSubjectObjectRelationships(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
  	cout <<"3aii pass; define independent subject/object action relationships" << endl;
 	#endif
-	defineSubjectOrObjectRelationships(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList);
+	defineSubjectOrObjectRelationships(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "3b pass; define indirect objects" << endl;
@@ -408,19 +355,19 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "3d pass; define conjunction conditions; eg Either Tom and/or Max eat the cake...." << endl;
 	#endif
-	defineConjunctionConditions(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList);	
+	defineConjunctionConditions(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList, NLPdependencyRelationsType);	
 #endif
 
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "4a pass; define action/property conditions" << endl;
 	#endif
-	defineActionPropertyConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList);
+	defineActionPropertyConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout <<"4b pass; extract dates" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
 	#endif
-	extractDates(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);	
+	extractDates(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, NLPparserType);	
 	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "4c pass; extract quantities" << endl;
@@ -440,7 +387,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "4g pass; extract qualities" << endl;
 	#endif
-	extractQualities(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList);
+	extractQualities(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "4h pass; link properties (parataxis); eg the guy, Akari said, left..." << endl;
