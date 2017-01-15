@@ -328,6 +328,11 @@ void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEnti
 {
 	GIAActionNode * newOrExistingAction;
 	
+	if(actionEntity->hasAssociatedPropertyTemp)
+	{
+		actionEntity = actionEntity->AssociatedPropertyNodeList.back();	//added 27 Aug 11a
+	}
+		
 	if(!(actionEntity->hasAssociatedActionTemp))
 	{
 		newOrExistingAction = addAction(actionEntity);
@@ -353,13 +358,7 @@ void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEnti
 
 	//conditions required to be added [eg when, where, how, why]
 GIAActionNode * addAction(GIAEntityNode * actionEntity)
-{
-	if(actionEntity->hasAssociatedPropertyTemp)
-	{
-		actionEntity = actionEntity->AssociatedPropertyNodeList.back();	//added 27 Aug 11a
-	}
-	
-		
+{		
 	//configure action node
 	GIAActionNode * newAction = new GIAActionNode();
 	actionNodesCompleteList.push_back(newAction);
@@ -385,6 +384,11 @@ GIAActionNode * addAction(GIAEntityNode * actionEntity)
 
 void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity)
 {	
+	if(actionEntity->hasAssociatedPropertyTemp)
+	{
+		actionEntity = actionEntity->AssociatedPropertyNodeList.back();	//added 27 Aug 11a
+	}
+	
 	GIAActionNode * newOrExistingAction;
 	if(!(actionEntity->hasAssociatedActionTemp))
 	{
@@ -412,6 +416,11 @@ void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEnt
 
 void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity)
 {	
+	if(actionEntity->hasAssociatedPropertyTemp)
+	{
+		actionEntity = actionEntity->AssociatedPropertyNodeList.back();	//added 27 Aug 11a
+	}
+	
 	GIAActionNode * newOrExistingAction;
 	if(!(actionEntity->hasAssociatedActionTemp))
 	{
