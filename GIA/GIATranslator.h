@@ -32,6 +32,8 @@ using namespace std;
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
+//#define GIA_TRANSLATOR_DEBUG
+
 #define GIA_TRANSLATOR_DISABLE_OBJ_SUB_QVARIABLE_ANOMALY
 
 #define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS

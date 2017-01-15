@@ -13,7 +13,8 @@
 #define HEADER_GIA_MAIN
 
 #include "GIAEntityNodeClass.h"
- 
+
+#define GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 //#define GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
 
 #define GIA_RELEX_EXECUTABLE_NAME "execute-relex.sh"

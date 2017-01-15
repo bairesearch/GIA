@@ -80,8 +80,10 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		}
 	}
 	
+	#ifdef GIA_QUERY_DEBUG
 	cout << "finished query round 1" << endl;
-
+	#endif
+	
 	if(!detectComparisonVariable || !(*foundAnswer))
 	{//now set draw parameters for optimium solution...
 	
@@ -99,8 +101,9 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		}
 		*confidence = (double)numberOfMatchedNodes;
 	}
-
+	#ifdef GIA_QUERY_DEBUG
 	cout << "finished query round 2" << endl;
+	#endif
 	return queryAnswerNode;
 				
 }
@@ -125,7 +128,9 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 				if(findBestInexactAnswerAndSetDrawParameters)
 				{
 					foundMatch = true;
+					#ifdef GIA_TRANSLATOR_DEBUG
 					cout << "foundBestInexactAnswerAndSetDrawParameters:" << comparisonVariableNode->entityName << endl;
+					#endif
 					//set queryAnswerNode if entityNode is an object;
 					/*eg;
 					Which house does did Jane buy?
@@ -153,7 +158,9 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 			entityNode->isAnswerToQuery = true;
 			*foundAnswer = true; 
 			queryAnswerNode = entityNode;
+			#ifdef GIA_TRANSLATOR_DEBUG
 			cout << "foundAnswer:" << comparisonVariableNode->entityName << endl;
+			#endif
 			//CHECKTHIS; need to take into account vector of answers (not just a single answer)
 			
 			if(findBestInexactAnswerAndSetDrawParameters)
@@ -190,7 +197,9 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 	{
 		if(comparisonVariableNode->entityName == queryEntityNode->entityName)
 		{
+			#ifdef GIA_TRANSLATOR_DEBUG
 			cout << "comparisonVariableNode->entityName = " << comparisonVariableNode->entityName << endl;	//should equal something like _$qVar
+			#endif
 			searchingForExactMatchAtThisQueryEntityNode = true;
 		}
 	}

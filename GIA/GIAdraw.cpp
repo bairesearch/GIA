@@ -51,8 +51,10 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesC
 	{		
 		if(!((*entityIter)->initialisedForPrinting))
 		{
+			#ifdef GIA_DRAW_DEBUG
 			cout << "tracing..." << endl;
-				
+			#endif
+			
 			//initiateMaxXAtAParticularY();
 			xInitial = maxXAtAParticularY[yInitial];
 								

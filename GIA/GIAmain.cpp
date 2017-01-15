@@ -327,9 +327,23 @@ int main(int argc,char **argv)
 		printf(errmessage);
 		exit(1);
 	}
-		
-		
+	
+	/*	
+	cout << "workingFolderCharStar = " << workingFolderCharStar << endl;
+	cout << "tempFolderCharStar = " << tempFolderCharStar << endl;
+	cout << "exeFolderCharStar = " << exeFolderCharStar << endl;
+	*/
+	
+	if(!parseGIARulesXMLFile())
+	{
+		cout << "error: no rules file detected" << endl;
+		exit(0);
+	}
+	fillInLDSpriteExternVariables();
+	///GIA specific rules.xml file is not used at the moment	[once right variables have been decided upon they will be fed to xml]
+	//fillInGIARulesExternVariables();
 
+	
 		
 	vector<GIAEntityNode*> * entityNodesCompleteList = new vector<GIAEntityNode*>;
 	vector<GIAEntityNode*> * conceptEntityNodesList = new vector<GIAEntityNode*>;
@@ -499,20 +513,6 @@ int main(int argc,char **argv)
 		}
 	}
 		
-		
-	if(!parseGIARulesXMLFile())
-	{
-		cout << "error: no rules file detected" << endl;
-		exit(0);
-	}
-	fillInLDSpriteExternVariables();
-	///GIA specific rules.xml file is not used at the moment	[once right variables have been decided upon they will be fed to xml]
-	//fillInGIARulesExternVariables();
-	#ifdef LINUX
-	chdir(tempFolderCharStar);						
-	#else
-	::SetCurrentDirectory(tempFolderCharStar);
-	#endif
 
 	if(useQuery)
 	{
@@ -537,22 +537,31 @@ int main(int argc,char **argv)
 				 
 		if(foundAnswer)
 		{	
+		
+			#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 			cout << "Answer Found." << endl;					
+			#endif
 			answerString = answerString + "\nAnswer found.";
 			if(foundComparisonVariable)
 			{
+				#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 				cout << "Exact Found Answer:" << queryAnswerNode->entityName << endl;
+				#endif
 				answerString = answerString + "\nExact Answer found: " + queryAnswerNode->entityName;	
 				if(comparisonVariableNode->hasQuantity)
 				{
+					#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 					cout << "Quantity number:" << queryAnswerNode->quantityNumber << endl;
+					#endif
 					char tempQuantityNumberStringCharStar[100]; 
 					sprintf(tempQuantityNumberStringCharStar, "%d", queryAnswerNode->quantityNumber);					
 					answerString = answerString + "\nQuantity number: " + tempQuantityNumberStringCharStar;	
 				}
 				if(queryAnswerNode->queryIsCondition)
 				{
+					#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 					cout << "Answer is a Condition of type/preposition:" << queryAnswerNode->queryConditionType << endl;
+					#endif
 					answerString = answerString + "\nAnswer is a Condition of type/preposition: " + queryAnswerNode->queryConditionType;	
 				}
 			}
@@ -560,13 +569,17 @@ int main(int argc,char **argv)
 		}
 		else
 		{
+			#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 			cout << "Answer Not Found." << endl;
+			#endif
 			answerString = answerString + "\nAnswer Not Found.";
 		}
 		
 		if(!(foundAnswer && foundComparisonVariable))
 		{
+			#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 			cout << "Best Inexact Answer Found:" << queryAnswerNode->entityName << endl;
+			#endif
 			answerString = answerString + "\nBest Inexact Answer Found:" + queryAnswerNode->entityName;
 			answerString = answerString + printEntityNode(queryAnswerNode);	
 		}
@@ -590,7 +603,11 @@ int main(int argc,char **argv)
 		cout << "error: output answer require a query to be set" << endl;
 	}
 	
-	
+	#ifdef LINUX
+	chdir(tempFolderCharStar);						
+	#else
+	::SetCurrentDirectory(tempFolderCharStar);
+	#endif	
 			
 	if(printOutput)
 	{	
@@ -620,7 +637,7 @@ void executeRelex(string inputPlainTXTFileName, string inputRelexXMLFileName)
 {
 	//execute Relex on plain text
 	string executeRelexCommand = "";	
-	executeRelexCommand = executeRelexCommand + exeFolderCharStar + "/" + GIA_RELEX_EXECUTABLE_NAME + " " + inputPlainTXTFileName + " " + inputRelexXMLFileName + " " + tempFolderCharStar;
+	executeRelexCommand = executeRelexCommand + exeFolderCharStar + "/" + GIA_RELEX_EXECUTABLE_NAME + " " + inputPlainTXTFileName + " " + inputRelexXMLFileName + " " + workingFolderCharStar + " " + tempFolderCharStar;
 
 	#ifdef LINUX
 	chdir(exeFolderCharStar);						
@@ -628,7 +645,9 @@ void executeRelex(string inputPlainTXTFileName, string inputRelexXMLFileName)
 	::SetCurrentDirectory(exeFolderCharStar);
 	#endif	
 
+	#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 	cout << "system(" << executeRelexCommand << ");" << endl;
+	#endif
 	system(executeRelexCommand.c_str());
 
 	#ifdef LINUX

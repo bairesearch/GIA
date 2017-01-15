@@ -12,7 +12,7 @@
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
-#define GIA_DATABASE_DEBUG
+//#define GIA_DATABASE_DEBUG
 
 //#define GIA_USE_TIME_NODE_INDEXING
 

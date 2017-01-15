@@ -12,7 +12,7 @@
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
-#define GIA_QUERY_DEBUG
+//#define GIA_QUERY_DEBUG
 #define GIA_QUERY_ADVANCED_DEBUG
 #define GIA_QUERY_FRACTION_MAX_CONFIDENCE_REQUIRED_FOR_UNPRECISE_ANSWER (0.5)
 

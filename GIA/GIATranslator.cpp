@@ -202,7 +202,9 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 	}
 	else
 	{	
+		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "addPropertyToPropertyDefinition: propertyEntity->entityName = " << propertyEntity->entityName << endl;
+		#endif
 		//configure property node
 		GIAEntityNode * newProperty = new GIAEntityNode();
 		newProperty->id = currentEntityNodeIDInCompleteList;
@@ -252,7 +254,9 @@ void addActionToActionDefinition(GIAEntityNode * actionEntity)
 	}
 	else
 	{	
+		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "addPropertyToPropertyDefinition: actionEntity->entityName = " << actionEntity->entityName << endl;
+		#endif
 		//configure property node
 		GIAEntityNode * newAction = new GIAEntityNode();
 		newAction->id = currentEntityNodeIDInCompleteList;
@@ -1073,9 +1077,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 										//}
 										if(entityPassesGrammaticalTestsForReference)
 										{	
-										
+											#ifdef GIA_TRANSLATOR_DEBUG
 											cout << "entityPassesGrammaticalTestsForReference" << endl;
-											
+											#endif
 											
 											//cout << "referenceTypePersonCrossReferenceNumberArray[i] = " << referenceTypePersonCrossReferenceNumberArray[i] << endl;
 											//cout << "referenceTypePersonCrossReferenceGenderArray[i] = " << referenceTypePersonCrossReferenceGenderArray[i] << endl;
@@ -1133,7 +1137,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 
 						if(referenceSourceHasBeenFound)
 						{//remap entity; eg He to John 
+							#ifdef GIA_TRANSLATOR_DEBUG
 							cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
+							#endif
 							//referenceSource->isReferenceEntityInThisSentence = true;
 							GIAEntityNodeArray[w] =	referenceSource;
 							GIAEntityNodeIsAReference[w] = true;
@@ -1425,8 +1431,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;				
 				GIAEntityNode * thingEntity = GIAEntityNodeArray[relationFunctionIndex];
 				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+				
+				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "thingEntity = " << thingEntity->entityName << endl;
 				cout << "propertyEntity = " << propertyEntity->entityName << endl;
+				#endif
 												
 				addOrConnectPropertyToEntity(thingEntity, propertyEntity);					
 			}			
@@ -1446,8 +1455,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 
 				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationFunctionIndex];
 				GIAEntityNode * definitionEntity = GIAEntityNodeArray[relationArgumentIndex];
+				
+				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "propertyName = " << propertyEntity->entityName << endl;
 				cout << "entityName = " << definitionEntity->entityName << endl;
+				#endif
 								
 				addDefinitionToEntity(propertyEntity, definitionEntity);									
 			}			
@@ -1538,7 +1550,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 					}
 					partnerTypeRequired = partnerTypeRequiredArray[secondIndex];
 					subjectObjectName[firstIndex] = currentRelationInList->relationArgument;
+					#ifdef GIA_TRANSLATOR_DEBUG
 					cout << partnerTypeRequiredArray[firstIndex] << " name = " << subjectObjectName[firstIndex] << endl;
+					#endif
 					subjectObjectEntityArray[firstIndex] = GIAEntityNodeArray[relationArgumentIndex];					
 					//cout << "subjectObjectEntityArray[firstIndex]->entityName = " << subjectObjectEntityArray[firstIndex]->entityName << endl;	
 
@@ -1610,7 +1624,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 												
 								subjectObjectName[secondIndex] = currentRelationInList2->relationArgument;
 								subjectObjectEntityArray[secondIndex] = GIAEntityNodeArray[relationArgumentIndex2];
+								#ifdef GIA_TRANSLATOR_DEBUG
 								cout << partnerTypeRequiredArray[secondIndex] << " name = " << subjectObjectName[secondIndex] << endl;
+								#endif
 								//cout << "subjectObjectEntityArray[secondIndex]->entityName = " << subjectObjectEntityArray[secondIndex]->entityName << endl;	
 
 								//cout << "subjectObjectEntityArray[SUBJECT_INDEX]->entityName = " << subjectObjectEntityArray[SUBJECT_INDEX]->entityName << endl;	
@@ -1957,29 +1973,37 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 																	
 			if(passedPropositionTime)
 			{
+				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
 				cout << "timeConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
-
+				#endif
+				
 				addTimeConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType);				
 			}
 			else if(passedPropositionLocation)
 			{
+				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
 				cout << "locationConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
-
+				#endif
+				
 				addLocationConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType);	
 			}		
 			else if(passedPropositionReasonOrCircumstances)
 			{
+				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
 				cout << "reasonConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
+				#endif
 									
 				addReasonConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType);		
 			}
 			else if(passedPropositionUnknown)
 			{
+				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
 				cout << "actionOrPropertyConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
+				#endif
 									
 				addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType);				
 				//currentRelationInList->relationType.substr(1, currentRelationInList->relationType.length()-1)
@@ -2022,13 +2046,21 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 						}
 						else
 						{
+							#ifdef GIA_TRANSLATOR_DEBUG
 							cout << "error: isolated date node found (not declared as a time condition)" << endl;
+							#else
+							cout << "error: [confidential]" << endl;	
+							#endif
 							exit(0);	//remove this later
 						}
 					}
 					else
 					{
+						#ifdef GIA_TRANSLATOR_DEBUG
 						cout << "error: isolated date node found (not declared as a time condition)" << endl;
+						#else
+						cout << "error: [confidential]" << endl;
+						#endif
 						exit(0);	//remove this later						
 					}
 
@@ -2067,8 +2099,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 											char * dayOfMonthStringcharstar = const_cast<char*>(dayOfMonthString.c_str());
 											int dayOfMonthInt = atoi(dayOfMonthStringcharstar);
 											timeConditionEntity->timeConditionNode->dayOfMonth = dayOfMonthInt;
+											
+											#ifdef GIA_TRANSLATOR_DEBUG
 											cout << "adding day of month: " << dayOfMonthInt << endl;
-
+											#endif
+											
 											//update/regenerate timeConditionName
 											timeConditionEntity->timeConditionNode->conditionName = generateDateTimeConditionName(timeConditionEntity->timeConditionNode->dayOfMonth, timeConditionEntity->timeConditionNode->month, timeConditionEntity->timeConditionNode->year);
 											//timeConditionEntity->entityName  =
@@ -2079,8 +2114,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 											char * yearStringcharstar = const_cast<char*>(yearString.c_str());
 											int yearInt = atoi(yearStringcharstar);
 											timeConditionEntity->timeConditionNode->year = yearInt;
+											
+											#ifdef GIA_TRANSLATOR_DEBUG
 											cout << "adding year: " << yearInt << endl;
-
+											#endif
+											
 											//update/regenerate timeConditionName
 											timeConditionEntity->timeConditionNode->conditionName = generateDateTimeConditionName(timeConditionEntity->timeConditionNode->dayOfMonth, timeConditionEntity->timeConditionNode->month, timeConditionEntity->timeConditionNode->year);
 											//tempTimeCondition->entityName
@@ -2094,7 +2132,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 								}
 								else
 								{
+									#ifdef GIA_TRANSLATOR_DEBUG
 									cout << "error: isolated date node found (not declared as a time condition)" << endl;
+									#else
+									cout << "error: [confidential]" << endl;
+									#endif
 									exit(0);	//remove this later						
 								}
 							}
@@ -2127,13 +2169,21 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 						}
 						else
 						{
+							#ifdef GIA_TRANSLATOR_DEBUG
 							cout << "error: isolated date node found (not declared as a time condition)" << endl;
+							#else
+							cout << "error: [confidential]" << endl;
+							#endif
 							exit(0);	//remove this later
 						}
 					}
 					else
 					{
+						#ifdef GIA_TRANSLATOR_DEBUG
 						cout << "error: isolated date node found (not declared as a time condition)" << endl;
+						#else
+						cout << "error: [confidential]" << endl;
+						#endif
 						exit(0);	//remove this later						
 					}
 
@@ -2318,10 +2368,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 					GIAEntityNode * measurePropertyEntity = measureEntity->AssociatedPropertyNodeList.back();
 					measurePropertyEntity->hasMeasure = true;
 					measurePropertyEntity->measureType = measureTypeIndex;
-														
+					
+					#ifdef GIA_TRANSLATOR_DEBUG									
 					cout << "measurePropertyName = " << measurePropertyEntity->entityName << endl;
 					cout << "quantityEntityName = " << quantityEntity->entityName << endl;
-
+					#endif
+					
 					if(currentRelationInList->relationType == RELATION_TYPE_MEASURE_PER)
 					{
 						addOrConnectPropertyConditionToEntity(quantityEntity, measurePropertyEntity, relationTypeMeasureNameArray[measureTypeIndex]);
