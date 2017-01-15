@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1a 31-August-2016
+ * Project Version: 2m1b 31-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -2458,7 +2458,6 @@ void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 	#endif
 
 	#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
-	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3A_PREPOSITIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_SUBSTANCE_LINK_DEPENDING_UPON_ACTION_OR_SUBSTANCE
 	/*
 	Interpret "of" preposition as property
 	NB this case "The house of Kriton is blue." should create 2 substance connections (not just 1)
@@ -2495,7 +2494,6 @@ void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 	paramB.defaultSameSetRelationID = REL1; paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;
 	#endif
 	genericDependecyRelationInterpretation(&paramB, REL1);
-	#endif
 	#endif
 
 	/*standard preposition;
@@ -2600,7 +2598,6 @@ void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 			*/
 
 			#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
-			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3A_PREPOSITIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_SUBSTANCE_LINK_DEPENDING_UPON_ACTION_OR_SUBSTANCE
 			bool prepositionFound = false;
 			bool foundPossessivePreposition = false;
 			for(int i=0; i<RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES; i++)
@@ -2658,7 +2655,6 @@ void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 					passed = false;
 				}
 			}
-			#endif
 			#endif
 
 			if(passed)

@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1a 31-August-2016
+ * Project Version: 2m1b 31-August-2016
  *
  *******************************************************************************/
 
@@ -236,6 +236,9 @@ GIAentityNode::GIAentityNode(void)
 	alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;		//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	mustSetIsSubstanceConceptBasedOnApposRelation = false;
 	isPronounReference = false;
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY
+	mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation = false;
+	#endif
 	#endif
 		//databasing:
 	#ifdef GIA_USE_DATABASE
@@ -462,6 +465,9 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;		//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	mustSetIsSubstanceConceptBasedOnApposRelation = false;
 	isPronounReference = false;
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY
+	mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation = false;
+	#endif	
 	#endif
 		//databasing:
 	#ifdef GIA_USE_DATABASE
@@ -976,6 +982,9 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 	testEntityCharacteristicIterationbool(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp, entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->mustSetIsSubstanceConceptBasedOnApposRelation, entityCharacteristic, "mustSetIsSubstanceConceptBasedOnApposRelation", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->isPronounReference, entityCharacteristic, "isPronounReference", &foundMatch);
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY
+	testEntityCharacteristicIterationbool(entity->mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation, entityCharacteristic, "mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation", &foundMatch);
+	#endif	
 
 
 	bool result = false;
@@ -1150,7 +1159,10 @@ bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	setEntityCharacteristicIterationbool(&(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp), entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->mustSetIsSubstanceConceptBasedOnApposRelation), entityCharacteristic, "mustSetIsSubstanceConceptBasedOnApposRelation", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->isPronounReference), entityCharacteristic, "isPronounReference", &foundMatch);
-
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY
+	setEntityCharacteristicIterationbool(&(entity->mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation), entityCharacteristic, "mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation", &foundMatch);
+	#endif
+	
 	if(!foundMatch)
 	{
 		cout << "setEntityCharacteristic{} error: entityCharacteristic not found:" << entityCharacteristic->name << endl;
@@ -1290,7 +1302,10 @@ bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	getEntityCharacteristicIterationbool(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp, entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->mustSetIsSubstanceConceptBasedOnApposRelation, entityCharacteristic, "mustSetIsSubstanceConceptBasedOnApposRelation", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->isPronounReference, entityCharacteristic, "isPronounReference", &foundMatch);
-
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY
+	getEntityCharacteristicIterationbool(entity->mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation, entityCharacteristic, "mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation", &foundMatch);
+	#endif
+	
 	if(!foundMatch)
 	{
 		cout << "getEntityCharacteristic{} error: entityCharacteristic not found:" << entityCharacteristic->name << endl;

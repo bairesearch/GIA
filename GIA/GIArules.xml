@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1a 31-August-2016
+ * Project Version: 2m1b 31-August-2016
  *
  *******************************************************************************/
 -->
@@ -3402,6 +3402,15 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="mustSetIsSubstanceConceptBasedOnApposRelation" value="true" REL="1" REL_ENT="2" />
 				</paramDepRel>
+				
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY -->
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_nn" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation" value="true" REL="1" REL_ENT="2" />
+				</paramDepRel>				
+				<!-- #endif -->
+				
 			</function>
 
 			<!-- #ifndefGIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE -->
@@ -3430,6 +3439,9 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" />
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation" value="false" />			
+				<!-- #endif -->				
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	<!-- added 2i22a -->
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceConcept" value="true" />
 				</paramEntity>
@@ -3780,8 +3792,10 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<!-- #else -->
+				<!--
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />		
+				-->
 				<!-- #endif -->
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" />
@@ -4386,9 +4400,10 @@
 				</paramDepRel>
 				<!-- #endif -->
 
-				<!-- XML only function (not hard coded): added 2i7e -->
 				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES -->
-				<!-- #ifndefGIA_DO_NOT_SUPPORT_SPECIAL_CASE_3A_PREPOSITIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_SUBSTANCE_LINK_DEPENDING_UPON_ACTION_OR_SUBSTANCE -->
+				
+				<!-- XML only function (not hard coded): added 2i7e -->
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_PLURAL_DEPENDENT
 				<example><!--
 				Interpret "of" preposition as property (reverse)
 				The box of berries is old.	prep_of(box-2, berries-4)
@@ -4414,8 +4429,36 @@
 				<!-- #endif -->
 				</paramDepRel>
 				<!-- #endif -->
-				<!-- #endif -->
 				
+				<!-- XML only function (not hard coded): added 2l9b -->
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_PLURAL_GOVERNOR
+				<example><!--
+				Interpret "of" preposition as property (reverse)
+				The gardens of Kriton are old.	prep_of(gardens-2, Kriton-4)
+				but ignore cases where the subject of the preposition is an action
+				--></example>
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="3" REL="1" REL_ENT="1" />	<!-- plural -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="2" />	<!-- indefinite -->
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceConcept" value="false" REL="1" REL_ENT="2" />	<!-- ensure not interpreted as a substance concept -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
+				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
+				<option functionToExecuteUponFind="4" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="1" />	{!-- added 2i26a: required for NLC --}
+				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
+				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
+				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
+				<option disableEntity="true" REL="1" REL_ENT="3" />
+				<!-- #endif -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
+				<!-- #endif -->
+				</paramDepRel>
+				<!-- #endif -->
+								
 				<!-- XML only function (not hard coded): added 2i7d -->
 				<!-- #ifdefGIA_TRANSLATOR_ADAPT_ENTITY_LINKING_FOR_SUBSTANCE_CONCEPTS -->
 				<!--
@@ -4446,48 +4489,52 @@
 				-->
 				<!-- #endif -->
 				
-				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES -->
-				<!-- #ifndefGIA_DO_NOT_SUPPORT_SPECIAL_CASE_3A_PREPOSITIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_SUBSTANCE_LINK_DEPENDING_UPON_ACTION_OR_SUBSTANCE -->
 				<example><!--
-				Interpret "of" preposition as property
+				For proper nouns: Interpret "of" preposition as property quality
 				NB this case "The house of Kriton is blue." should create 2 substance connections (not just 1)
 				of(house[2], Kriton[4])
 				_predadj(house[2], blue[6])
+				...
+				"the game of chess"/"the planet of Earth"/"the town of Kriton" [property quality {including names/aliases}; or formally definitions]
 				--></example>
 				<example><!--but ignore cases where the subject of the preposition is an action;
-				NB not in this case "She grew tired of the pie."
-				Relex:
-				of(tired[3], pie[6])
-				_to-be(grow[2], tired[3])
-				_subj(grow[2], she[1])
-				Stanford:
-				prep_of(grew-2, pie-6)
-				acomp(grew-2, tired-3)
+				NB not in this case "She grew tired of Kriton."
+				nmod:of(grew-2, Kriton-5)
+				xcomp(grew-2, tired-3)
 				nsubj(grew-2, She-1)
 				--></example>
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="2" />	<!-- not plural: added 2i7e -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="2" /> <!-- added 2i7e -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="1" /> <!-- added 2l9a -->
 				<!-- <option relationTestSpecialCaseIsNotAction="true" REL="1" REL_ENT="1" />
 				<!-- <option relationTestSpecialCaseIsNotToBeComplimentOfAction="true" REL="1" REL_ENT="1" />-->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="1" />	<!-- added 2i26a: required for NLC -->
 				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
 				<option functionToExecuteUponFind="4" />
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_SINGULAR_QUALITY -->	<!-- added 2l9a -->
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceQuality" value="true" REL="1" REL_ENT="2" />
+				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
+				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
+				<!-- #else -->
+				<!--
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="1" />	{!-- added 2i26a: required for NLC --}
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
+				-->
+				<!-- #endif -->
 				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="1" REL_ENT="3" />
 				<!-- #endif -->
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
-				</paramDepRel>
+				</paramDepRel>				
+				
 				<!-- #endif -->
-				<!-- #endif -->
-
+				
 				<example><!--standard preposition;
 				Joe is sad at the park. at(sad[3], park[6])
 				--></example>
