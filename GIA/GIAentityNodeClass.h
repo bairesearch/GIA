@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o7a 23-October-2016
+ * Project Version: 2o7b 23-October-2016
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -430,7 +430,7 @@ public:
 	#endif
 	#ifdef GIA_SUPPORT_PREDETERMINERS
 	int grammaticalPredeterminerTemp;
-	#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
+	#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS
 	unordered_map<int, int> grammaticalPredeterminerTempSentenceArray;	//only for instances (not for networkIndexes)	- required for GIA advanced referencing as different references to an entity may well have different predeterminers (eg each)
 	#endif
 	#endif
@@ -640,6 +640,8 @@ string getParentClassEntityNameFromSubClassEntityName(string subClassEntityName)
 string getChildClassEntityNameFromSubClassEntityName(string subClassEntityName);
 string createSubClassEntityName(string childEntityName, string parentEntityName);
 #endif
+
+bool detectPredeterminerNonReference(GIAentityNode* subjectEntity);
 
 #endif
 

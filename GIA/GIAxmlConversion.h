@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o7a 23-October-2016
+ * Project Version: 2o7b 23-October-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -165,7 +165,7 @@ static string entityTypeNodeContainerXMLtags[GIA_ENTITY_NUMBER_OF_TYPES] = {NET_
 #define NET_XML_ATTRIBUTE_grammaticalIndefinitePluralTemp ((string)"grammaticalIndefinitePluralTemp")	//this is only used for NLC
 #define NET_XML_ATTRIBUTE_grammaticalProperNounTemp ((string)"grammaticalProperNounTemp")	//this is only used for NLC
 #ifdef GIA_SUPPORT_PREDETERMINERS
-#define NET_XML_ATTRIBUTE_grammaticalPredeterminerTemp ((string)"grammaticalPredeterminerTemp")	//this is only used for NLC	//NB GIAxmlConversion does not properly support GIA_SUPPORT_PREDETERMINERS:!GIA_DISABLE_CROSS_SENTENCE_REFERENCING at present as it will not store grammaticalPredeterminerTempSentenceArray
+#define NET_XML_ATTRIBUTE_grammaticalPredeterminerTemp ((string)"grammaticalPredeterminerTemp")	//this is only used for NLC	//NB GIAxmlConversion does not properly support GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS (GIA_SUPPORT_PREDETERMINERS:!GIA_DISABLE_CROSS_SENTENCE_REFERENCING) at present as it will not store grammaticalPredeterminerTempSentenceArray
 #endif
 #define NET_XML_ATTRIBUTE_entityIndexTemp ((string)"entityIndexTemp")	//this is only used for NLC
 #define NET_XML_ATTRIBUTE_isQuery ((string)"isQuery")	//this is only used for NLC

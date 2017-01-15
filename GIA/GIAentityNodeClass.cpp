@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o7a 23-October-2016
+ * Project Version: 2o7b 23-October-2016
  *
  *******************************************************************************/
 
@@ -1247,5 +1247,13 @@ string createSubClassEntityName(string childEntityName, string parentEntityName)
 	string subClassEntityName = childEntityName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER + parentEntityName;
 	return subClassEntityName;
 }
+
+bool detectPredeterminerNonReference(GIAentityNode* entity)
+{
+	bool predeterminerDetected = false;
+	predeterminerDetected = intInIntArray(entity->grammaticalPredeterminerTemp, entityPredeterminerSmallArray, GRAMMATICAL_PREDETERMINER_SMALL_ARRAY_NUMBER_OF_TYPES);
+	return predeterminerDetected;
+}
+
 
 #endif
