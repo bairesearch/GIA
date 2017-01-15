@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10a 05-July-2013
+ * Project Version: 1s10b 05-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -485,12 +485,8 @@ void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLP
 		while(currentFeatureInList->next != NULL)
 		{
 			int currentFeatureIndex = currentFeatureInList->entityIndex;
-			extractGrammaticalInformationFromPOStag(&(currentFeatureInList->stanfordPOS), currentFeatureInList);
-
-			int wordNetPOS = GRAMMATICAL_WORD_TYPE_UNDEFINED;
-			convertStanfordPOStagToRelexPOStypeAndWordnetWordType(&(currentFeatureInList->stanfordPOS), &(currentFeatureInList->type), &wordNetPOS);
 			
-			currentFeatureInList->grammaticalWordType = wordNetPOS;
+			extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList);
 
 			if((currentFeatureInList->NER == FEATURE_NER_DATE) || (currentFeatureInList->NER == FEATURE_NER_TIME))
 			{
@@ -527,6 +523,12 @@ void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLP
 			currentFeatureInList = currentFeatureInList->next;
 		}
 	}
+}
+
+void extractPOSrelatedGrammaticalInformationStanford(Feature * currentFeature)
+{
+	extractGrammaticalInformationFromPOStag(&(currentFeature->stanfordPOS), currentFeature);
+	convertStanfordPOStagToRelexPOStypeAndWordnetWordType(&(currentFeature->stanfordPOS), &(currentFeature->type), &(currentFeature->grammaticalWordType));
 }
 
 void extractPastTense(Feature * featureWithEntityIndex, int entityIndexContainingTenseIndication, Feature * firstFeatureInList, int NLPfeatureParser)
@@ -801,33 +803,17 @@ void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentit
 
 			entity->hasAssociatedTime = currentFeatureInList->grammaticalIsDateOrTime;
 
-			for(int grammaticalTenseModifierIndex=0; grammaticalTenseModifierIndex<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
-			{
-				entity->grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = currentFeatureInList->grammaticalTenseModifierArray[grammaticalTenseModifierIndex];
-			}
-			entity->grammaticalTenseTemp = currentFeatureInList->grammaticalTense;
-			#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-			if(!(entity->isSubstanceConcept))
-			{
-			#endif
-				entity->grammaticalNumber = currentFeatureInList->grammaticalNumber;
-				//cout << "entity->grammaticalNumber = " << entity->grammaticalNumber << endl;
-				//cout << "GRAM w = " << w << endl;			
-			#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-			}
-			#endif
+			applyPOSrelatedGrammaticalInfoToEntity(entity, currentFeatureInList);
+
 			entity->grammaticalDefiniteTemp = currentFeatureInList->grammaticalIsDefinite;
 			entity->grammaticalRelexPersonOrStanfordProperNounTemp = currentFeatureInList->grammaticalIsProperNoun;
 			entity->grammaticalGenderTemp = currentFeatureInList->grammaticalGender;
-			entity->grammaticalPronounTemp = currentFeatureInList->grammaticalIsPronoun;
-			entity->wordNetPOS = currentFeatureInList->grammaticalWordType;
 			#ifdef GIA_USE_ADVANCED_REFERENCING
 			entity->grammaticalDefiniteIndexOfDeterminerTemp = currentFeatureInList->grammaticalIsDefiniteIndexOfDeterminer;
 			#endif
 
 			entity->NERTemp = currentFeatureInList->NER;
 			#ifdef GIA_USE_STANFORD_CORENLP
-			entity->stanfordPOStemp = currentFeatureInList->stanfordPOS;
 			entity->NormalizedNERtemp = currentFeatureInList->NormalizedNER;
 			entity->TimexTemp = currentFeatureInList->Timex;
 			#endif
@@ -839,5 +825,30 @@ void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentit
 	}
 }
 
+void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode * entity, Feature * currentFeatureInList)
+{
+	for(int grammaticalTenseModifierIndex=0; grammaticalTenseModifierIndex<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
+	{
+		entity->grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = currentFeatureInList->grammaticalTenseModifierArray[grammaticalTenseModifierIndex];
+	}
+	entity->grammaticalTenseTemp = currentFeatureInList->grammaticalTense;
+	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+	if(!(entity->isSubstanceConcept))
+	{
+	#endif
+		entity->grammaticalNumber = currentFeatureInList->grammaticalNumber;
+		//cout << "entity->grammaticalNumber = " << entity->grammaticalNumber << endl;
+		//cout << "GRAM w = " << w << endl;			
+	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+	}
+	#endif
+
+	entity->grammaticalPronounTemp = currentFeatureInList->grammaticalIsPronoun;
+	entity->wordNetPOS = currentFeatureInList->grammaticalWordType;
+
+	#ifdef GIA_USE_STANFORD_CORENLP
+	entity->stanfordPOStemp = currentFeatureInList->stanfordPOS;
+	#endif	
+}
 
 

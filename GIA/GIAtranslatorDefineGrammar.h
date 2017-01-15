@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10a 05-July-2013
+ * Project Version: 1s10b 05-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -74,10 +74,12 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 	void extractPastTenseFromPOStag(string * POStag, Feature * feature);
 	void extractGrammaticalInformationFromPOStag(string * POStag, Feature * feature);
 	void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLPfeatureParser);
+		void extractPOSrelatedGrammaticalInformationStanford(Feature * currentFeature);
 	void extractPastTense(Feature * featureWithEntityIndex, int entityIndexContainingTenseIndication, Feature * firstFeatureInList, int NLPfeatureParser);
 	#endif
 
 void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * firstFeatureInSentence);
+	void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode * entity, Feature * currentFeatureInList);
 
 #ifdef GIA_USE_ADVANCED_REFERENCING
 void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * currentSentenceInList, int subjectObjectEntityWithAuxillaryEntityIndex, string * subjectObjectEntityWithAuxillaryEntityName);
