@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5a 03-June-2012
+ * Project Version: 1l5b 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -763,6 +763,8 @@ GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEnt
 	#endif
 		if(!(conditionTypeConceptEntity->isConcept))
 		{
+			cout << "existingCondition" << endl;
+			
 			GIAEntityNode * existingCondition = conditionEntityNode;
 
 			//entityNode->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
@@ -778,7 +780,7 @@ GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEnt
 		}
 		else
 		{
-			//cout << "thingEntity = " << thingEntity->entityName << endl;
+			//cout << "newCondition" << endl;
 
 			GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
 			
@@ -795,7 +797,24 @@ GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEnt
 	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
-	}					
+	}
+	/*
+	}
+	else
+	{
+		cout << "(conditionTypeConceptEntity->disabled)" << endl;
+	}
+	}
+	else
+	{
+		cout << "(conditionEntityNode->disabled)" << endl;
+	}
+	}
+	else
+	{
+		cout << "(entityNode->disabled)" << endl;	
+	}
+	*/					
 	#endif
 	
 	return newOrExistingCondition;		

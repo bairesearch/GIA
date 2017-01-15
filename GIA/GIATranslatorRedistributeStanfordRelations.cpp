@@ -3,7 +3,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5a 03-June-2012
+ * Project Version: 1l5b 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -702,7 +702,8 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 															{
 																if((currentRelationInList4->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList3->relationDependentIndex))		//OLD: before 1 June 2012 code review: if((currentRelationInList4->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList->relationDependentIndex))
 																{
-																	auxillaryIndicatesDifferentReferenceSet = false;	
+																	auxillaryIndicatesDifferentReferenceSet = false;
+																	//cout << "AXE" << endl;	
 																}
 															}																			
 															currentRelationInList4 = currentRelationInList4->next;
@@ -723,7 +724,8 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 														currentRelationInList->relationGovernor =  GIAEntityNodeArray[currentRelationInList3->relationDependentIndex]->entityName;
 
 														currentRelationInList2->disabled = true;
-
+														currentRelationInList3->disabled = true;	//added 3 June 2012
+														
 														disableEntityBasedUponFirstSentenceToAppearInNetwork(entityContainingFirstWordOfMultiwordPreposition);										
 
 													}
@@ -773,7 +775,8 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 														currentRelationInList->prepositionCombinationAlreadyCreatedTemp = true;
 
 														currentRelationInList2->disabled = true;
-
+														currentRelationInList3->disabled = true;	//added 3 June 2012
+														
 														disableEntityBasedUponFirstSentenceToAppearInNetwork(entityContainingFirstWordOfMultiwordPreposition);
 													}
 

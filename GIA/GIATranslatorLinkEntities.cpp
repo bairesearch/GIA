@@ -3,7 +3,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5a 03-June-2012
+ * Project Version: 1l5b 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1554,6 +1554,21 @@ bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, string
 	while(currentFeatureInList->next != NULL)
 	{
 		string singleWordPreposition = *prepositionName;
+		int indexOfPrepositionDelimiter = prepositionName->rfind(STANFORD_PARSER_PREPOSITION_DELIMITER);	//find last occurance
+		if(indexOfPrepositionDelimiter != string::npos)
+		{
+			int lengthOfSingleWordPreposition = prepositionName->length() - indexOfPrepositionDelimiter - 1;
+			singleWordPreposition = prepositionName->substr(indexOfPrepositionDelimiter+1, lengthOfSingleWordPreposition);
+			if(indexOfPrepositionDelimiter == prepositionName->length()-1)
+			{
+				cout << "determineFeatureIndexOfPreposition: illegal multiword preposition; (indexOfPrepositionDelimiter == prepositionName->length()-1)" << endl;
+				cout << "prepositionName = " << *prepositionName << endl;
+				exit(0);
+			}
+		}
+		
+		/*OLD: find first occurance; not possible as the first word in multiword prepositions has often already been assigned an entity array index, eg He rode the carriage that is near to the horse. nsubj(near-7, carriage-4) / prep_to(near-7, horse-10) -> prep_near_to(carriage-4, horse-10) 
+		string singleWordPreposition = *prepositionName;
 		int indexOfPrepositionDelimiter = prepositionName->find(STANFORD_PARSER_PREPOSITION_DELIMITER);
 		if(indexOfPrepositionDelimiter != string::npos)
 		{
@@ -1566,6 +1581,7 @@ bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, string
 				exit(0);
 			}
 		}
+		*/		
 		
 		if(currentFeatureInList->lemma == singleWordPreposition)
 		{
@@ -1688,7 +1704,7 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 	if(passedPreposition)
 	{
 
-		//cout << "prepositionName = " << prepositionName << endl;
+		//cout << "3prepositionName = " << prepositionName << endl;
 		
 		#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
 		//added 3 June 2012 for advanced referencing of prepositions
@@ -1706,6 +1722,11 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			if(GIAEntityNodeArrayFilled[featureIndexOfPreposition])
 			{
 				conditionTypeConceptEntity = GIAEntityNodeArray[featureIndexOfPreposition];
+				/*OLD: not required any more as take last word in multword prepositions (eg 'to' in near_to)
+				//conditionTypeConceptEntity->disabled = false;	
+					//required in the case a preposition word has been added in initialisation becuase it occurs as a governor/dependent of a relation within the sentence (as opposed to being initialised as a reference by GIA in its advanced references)
+					//eg He rode the carriage that is near to the horse. nsubj(near-7, carriage-4) / prep_to(near-7, horse-10) -> prep_near_to(carriage-4, horse-10)
+				*/
 			}
 			else
 			{
@@ -1713,6 +1734,7 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 				bool entityAlreadyExistant = false;
 				conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);				
 				GIAEntityNodeArrayFilled[featureIndexOfPreposition] = true;
+				//cout << "2prepositionName = " << prepositionName << endl;
 			}
 		}
 		else
@@ -1787,7 +1809,9 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);				
 			#endif
 			//currentRelationInList->relationType.substr(1, currentRelationInList->relationType.length()-1)
-		}	
+		}
+		
+		//cout << "GIAEntityNodeArray[featureIndexOfPreposition]->entityName = " << GIAEntityNodeArray[featureIndexOfPreposition]->entityName << endl;	
 
 	}
 	else if(passedPropositionTime)
