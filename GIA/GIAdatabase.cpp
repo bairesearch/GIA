@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36b 10-May-2015
+ * Project Version: 2i37b 10-May-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -587,7 +587,7 @@ void DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unord
 		GIAconceptEntityLoaded* conceptEntityLoaded = conceptEntityNodesLoadedListIterator->second;
 		long numberOfInstances = conceptEntityLoaded->numberOfInstances;
 	#endif
-		//based on code from DBfindOrAddConceptEntityNodeByName()
+		//based on code from DBfindOrAddConceptEntityNodeByName
 		#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 		cout << "\n" << endl;
 		cout << "\t\tconceptEntityName = " << conceptEntityName << endl;
@@ -715,7 +715,7 @@ void initialiseDatabase(bool readFromDatabase, string newDatabaseFolderName, boo
 void DBreadConceptEntityNodesLoadedList()	//unordered_map<string, bool>* DBconceptEntityNodesLoadedListLocal
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBreadConceptEntityNodesLoadedList()" << endl;
+	cout << "DBreadConceptEntityNodesLoadedList{}" << endl;
 	#endif
 
 	string conceptEntityNodesListFileName = DBgenerateFileName(NULL, NULL, NULL, GIA_DATABASE_GENERATE_FILENAME_FILE_CONCEPT_ENTITY_NODES_LIST);
@@ -778,7 +778,7 @@ void DBreadConceptEntityNodesLoadedList()	//unordered_map<string, bool>* DBconce
 #endif
 
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	DBprintConceptEntityNodesLoadedList("DBprintConceptEntityNodesLoadedList()");
+	DBprintConceptEntityNodesLoadedList("DBprintConceptEntityNodesLoadedList{}");
 	#endif
 }
 
@@ -794,7 +794,7 @@ void DBreadVectorConnections(GIAentityNode* entityNode, int connectionType)
 	{
 	#endif
 		#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-		cout << "\tDBreadVectorConnections(): entity = " << entityNode->entityName << ", connectionType = " << connectionType << endl;
+		cout << "\tDBreadVectorConnections{}: entity = " << entityNode->entityName << ", connectionType = " << connectionType << endl;
 		#endif
 
 		if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
@@ -820,7 +820,7 @@ void DBreadVectorConnections(GIAentityNode* entityNode, int connectionType)
 void DBreadVectorConnectionsReferences(string* entityName, long idInstance, int connectionType, vector<GIAentityConnection*>* entityVectorConnections)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBreadVectorConnectionsReferences(): entityName = " <<* entityName << ", connectionType = " << connectionType << endl;
+	cout << "DBreadVectorConnectionsReferences{}: entityName = " <<* entityName << ", connectionType = " << connectionType << endl;
 	#endif
 
 	/*
@@ -833,7 +833,7 @@ void DBreadVectorConnectionsReferences(string* entityName, long idInstance, int 
 
 	string referencesFileName = DBgenerateFileName(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBreadVectorConnectionsReferences(): referencesFileName = " << referencesFileName << endl;
+	cout << "DBreadVectorConnectionsReferences{}: referencesFileName = " << referencesFileName << endl;
 	#endif
 	//now read file
 
@@ -863,9 +863,9 @@ void DBreadVectorConnectionsReferences(string* entityName, long idInstance, int 
 				newConnection->referenceLoaded = true;
 				entityVectorConnections->push_back(newConnection);
 				#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-				cout << "DBreadVectorConnectionsReferences(): newConnection->entityName = " << newConnection->entityName << endl;
-				cout << "DBreadVectorConnectionsReferences(): newConnection->idInstance = " << newConnection->idInstance << endl;
-				cout << "DBreadVectorConnectionsReferences(): newConnection->referenceLoaded = " << newConnection->referenceLoaded << endl;
+				cout << "DBreadVectorConnectionsReferences{}: newConnection->entityName = " << newConnection->entityName << endl;
+				cout << "DBreadVectorConnectionsReferences{}: newConnection->idInstance = " << newConnection->idInstance << endl;
+				cout << "DBreadVectorConnectionsReferences{}: newConnection->referenceLoaded = " << newConnection->referenceLoaded << endl;
 				#endif
 			}
 		}
@@ -879,7 +879,7 @@ void DBreadVectorConnectionsReferences(string* entityName, long idInstance, int 
 void DBreadVectorConnectionsReference(string* entityName, long idInstance, int connectionType, string* entityVectorConnectionsName, long* entityVectorConnectionsID, long referenceIndex)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBreadVectorConnectionsReference(): entityName = " <<* entityName << endl;
+	cout << "DBreadVectorConnectionsReference{}: entityName = " <<* entityName << endl;
 	#endif
 
 	/*
@@ -925,7 +925,7 @@ void DBreadVectorConnectionsReference(string* entityName, long idInstance, int c
 void DBreadVectorConnectionEntities(string* entityName, long idInstance, int connectionType, vector<GIAentityConnection*>* entityVectorConnections)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBreadVectorConnectionEntities(): entityName = " <<* entityName << ", idInstance = " << idInstance << ", connectionType = " << connectionType << endl;
+	cout << "DBreadVectorConnectionEntities{}: entityName = " <<* entityName << ", idInstance = " << idInstance << ", connectionType = " << connectionType << endl;
 	#endif
 
 	for(vector<GIAentityConnection*>::iterator connectionIter = entityVectorConnections->begin(); connectionIter != entityVectorConnections->end(); connectionIter++)
@@ -996,7 +996,7 @@ void DBreadVectorConnectionEntities(string* entityName, long idInstance, int con
 void DBreadConceptEntityNode(string* entityName, GIAentityNode* conceptEntityNode)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBreadConceptEntityNode()" << endl;
+	cout << "DBreadConceptEntityNode{}" << endl;
 	#endif
 
 	int idInstance = GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE;
@@ -1025,7 +1025,7 @@ void DBreadConceptEntityNode(string* entityName, GIAentityNode* conceptEntityNod
 void DBreadEntityNode(string* entityName, long idInstance, GIAentityNode* entityNode)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBreadEntityNode(): entityName = " <<* entityName << ", idInstance = " << idInstance << endl;
+	cout << "DBreadEntityNode{}: entityName = " <<* entityName << ", idInstance = " << idInstance << endl;
 	#endif
 
 	string entityFileName = DBgenerateFileName(entityName, idInstance, GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY);
@@ -1048,7 +1048,7 @@ void DBreadEntityNode(string* entityName, long idInstance, GIAentityNode* entity
 void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBreadEntityNodeFile(): entityFileName = " <<* entityFileName << ", entity = " << entity->entityName << endl;
+	cout << "DBreadEntityNodeFile{}: entityFileName = " <<* entityFileName << ", entity = " << entity->entityName << endl;
 	#endif
 
 	/*
@@ -1098,19 +1098,19 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 		{
 			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 			/*
-			cout << "\tDBreadEntityNodeFile(): isConcept = " << isConcept << endl;
-			cout << "\tDBreadEntityNodeFile(): isSubstance = " << isSubstance << endl;
-			cout << "\tDBreadEntityNodeFile(): isAction = " << isAction << endl;
-			cout << "\tDBreadEntityNodeFile(): isCondition = " << isCondition << endl;
-			cout << "\tDBreadEntityNodeFile(): hasAssociatedInstance = " << hasAssociatedInstance << endl;
-			cout << "\tDBreadEntityNodeFile(): hasAssociatedInstanceIsAction = " << hasAssociatedInstanceIsAction << endl;
-			cout << "\tDBreadEntityNodeFile(): hasAssociatedInstanceIsCondition = " << hasAssociatedInstanceIsCondition << endl;
-			cout << "\tDBreadEntityNodeFile(): hasAssociatedTime = " << hasAssociatedTime << endl;
-			cout << "\tDBreadEntityNodeFile(): isSubstanceQuality = " << isSubstanceQuality << endl;
-			cout << "\tDBreadEntityNodeFile(): isSubstanceConcept = " << isSubstanceConcept << endl;
-			cout << "\tDBreadEntityNodeFile(): disabled = " << disabled << endl;
-			cout << "\tDBreadEntityNodeFile(): hasQuantity = " << hasQuantity << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->hasMeasure = " << hasMeasure << endl;
+			cout << "\tDBreadEntityNodeFile{}: isConcept = " << isConcept << endl;
+			cout << "\tDBreadEntityNodeFile{}: isSubstance = " << isSubstance << endl;
+			cout << "\tDBreadEntityNodeFile{}: isAction = " << isAction << endl;
+			cout << "\tDBreadEntityNodeFile{}: isCondition = " << isCondition << endl;
+			cout << "\tDBreadEntityNodeFile{}: hasAssociatedInstance = " << hasAssociatedInstance << endl;
+			cout << "\tDBreadEntityNodeFile{}: hasAssociatedInstanceIsAction = " << hasAssociatedInstanceIsAction << endl;
+			cout << "\tDBreadEntityNodeFile{}: hasAssociatedInstanceIsCondition = " << hasAssociatedInstanceIsCondition << endl;
+			cout << "\tDBreadEntityNodeFile{}: hasAssociatedTime = " << hasAssociatedTime << endl;
+			cout << "\tDBreadEntityNodeFile{}: isSubstanceQuality = " << isSubstanceQuality << endl;
+			cout << "\tDBreadEntityNodeFile{}: isSubstanceConcept = " << isSubstanceConcept << endl;
+			cout << "\tDBreadEntityNodeFile{}: disabled = " << disabled << endl;
+			cout << "\tDBreadEntityNodeFile{}: hasQuantity = " << hasQuantity << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->hasMeasure = " << hasMeasure << endl;
 			*/
 			#endif
 
@@ -1147,31 +1147,31 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 
 			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 			/*
-			cout << "\tDBreadEntityNodeFile(): entity->idActiveList = " << entity->idActiveList << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->entityName = " << entity->entityName << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->confidence = " << entity->confidence << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->isConcept = " << int(entity->isConcept) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->isSubstance = " << int(entity->isSubstance) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->isAction = " << int(entity->isAction) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->isCondition = " << int(entity->isCondition) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->hasAssociatedInstance = " << int(entity->hasAssociatedInstance) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->hasAssociatedInstanceIsAction = " << int(entity->hasAssociatedInstanceIsAction) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->hasAssociatedInstanceIsCondition = " << int(entity->hasAssociatedInstanceIsCondition) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->hasAssociatedTime = " << int(entity->hasAssociatedTime) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->isSubstanceQuality = " << int(entity->isSubstanceQuality) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->isSubstanceConcept = " << int(entity->isSubstanceConcept) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->disabled = " << int(entity->disabled) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->conditionType = " << entity->conditionType << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->grammaticalNumber = " << entity->grammaticalNumber << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->hasQuantity = " << int(entity->hasQuantity) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->quantityNumber = " << int(entity->quantityNumber) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->quantityNumberString = " << entity->quantityNumberString) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->quantityModifier = " << entity->quantityModifier << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->quantityModifierString = " << entity->quantityModifierString << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->hasQuantity = " << int(entity->hasQuantity) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->hasQuantityMultiplier = " << int(entity->hasQuantityMultiplier) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->hasMeasure = " << int(entity->hasMeasure) << endl;
-			cout << "\tDBreadEntityNodeFile(): entity->measureType = " << entity->measureType << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->idActiveList = " << entity->idActiveList << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->entityName = " << entity->entityName << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->confidence = " << entity->confidence << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->isConcept = " << int(entity->isConcept) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->isSubstance = " << int(entity->isSubstance) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->isAction = " << int(entity->isAction) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->isCondition = " << int(entity->isCondition) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->hasAssociatedInstance = " << int(entity->hasAssociatedInstance) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->hasAssociatedInstanceIsAction = " << int(entity->hasAssociatedInstanceIsAction) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->hasAssociatedInstanceIsCondition = " << int(entity->hasAssociatedInstanceIsCondition) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->hasAssociatedTime = " << int(entity->hasAssociatedTime) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->isSubstanceQuality = " << int(entity->isSubstanceQuality) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->isSubstanceConcept = " << int(entity->isSubstanceConcept) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->disabled = " << int(entity->disabled) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->conditionType = " << entity->conditionType << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->grammaticalNumber = " << entity->grammaticalNumber << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->hasQuantity = " << int(entity->hasQuantity) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->quantityNumber = " << int(entity->quantityNumber) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->quantityNumberString = " << entity->quantityNumberString) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->quantityModifier = " << entity->quantityModifier << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->quantityModifierString = " << entity->quantityModifierString << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->hasQuantity = " << int(entity->hasQuantity) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->hasQuantityMultiplier = " << int(entity->hasQuantityMultiplier) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->hasMeasure = " << int(entity->hasMeasure) << endl;
+			cout << "\tDBreadEntityNodeFile{}: entity->measureType = " << entity->measureType << endl;
 			*/
 			#endif
 		}
@@ -1205,7 +1205,7 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 	*/
 
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBreadEntityNodeFile(): entityFileName = " <<* entityFileName << ", entity = " << entity->entityName << endl;
+	cout << "DBreadEntityNodeFile{}: entityFileName = " <<* entityFileName << ", entity = " << entity->entityName << endl;
 	#endif
 }
 
@@ -1213,7 +1213,7 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 void DBreadTimeConditionNodeFile(string* timeConditionFileName, GIAtimeConditionNode* timeCondition)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBreadTimeConditionNodeFile(): timeConditionFileName = " <<* timeConditionFileName << endl;		//UNTESTED AS YET
+	cout << "DBreadTimeConditionNodeFile{}: timeConditionFileName = " <<* timeConditionFileName << endl;		//UNTESTED AS YET
 	#endif
 
 	/*
@@ -1267,7 +1267,7 @@ void DBreadTimeConditionNodeFile(string* timeConditionFileName, GIAtimeCondition
 void writeAndCloseDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete)
 {
 	#ifdef GIA_DATABASE_DEBUG
-	cout << "writeAndCloseDatabase()" << endl;
+	cout << "writeAndCloseDatabase{}" << endl;
 	#endif
 
 	writeDatabase(entityNodesActiveListComplete);
@@ -1282,7 +1282,7 @@ void writeAndCloseDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete
 void writeDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete)
 {
 	#ifdef GIA_DATABASE_DEBUG
-	cout << "writeDatabase()" << endl;
+	cout << "writeDatabase{}" << endl;
 	#endif
 
 	for(vector<GIAentityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesActiveListComplete->begin(); entityNodesActiveCompleteListIterator != entityNodesActiveListComplete->end(); entityNodesActiveCompleteListIterator++)
@@ -1353,7 +1353,7 @@ void writeDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete)
 						//this may be the case when joining reference sets - so do not throw error
 						#ifdef GIA_DATABASE_DEBUG
 						/*
-						cout << "writeDatabase(): entityVectorConnectionsReferenceListLoadedArray[i] != true" << endl;
+						cout << "writeDatabase{}: entityVectorConnectionsReferenceListLoadedArray[i] != true" << endl;
 						cout << "entityNode = " << entityNode->entityName << endl;
 						*/
 						#endif
@@ -1389,7 +1389,7 @@ void writeDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete)
 void DBwriteEntityNode(string* entityName, long idInstance, GIAentityNode* entityNode)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBwriteEntityNode(): entityName = " <<* entityName << endl;
+	cout << "DBwriteEntityNode{}: entityName = " <<* entityName << endl;
 	#endif
 	string entityFileName = DBgenerateFileName(entityName, idInstance, GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY);
 	DBwriteEntityNodeFile(&entityFileName, entityNode);
@@ -1409,7 +1409,7 @@ void DBwriteEntityNode(string* entityName, long idInstance, GIAentityNode* entit
 void DBwriteEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBwriteEntityNodeFile(): entityFileName = " <<* entityFileName << ", entity = " << entity->entityName << endl;
+	cout << "DBwriteEntityNodeFile{}: entityFileName = " <<* entityFileName << ", entity = " << entity->entityName << endl;
 	#endif
 	/*
 	Format:
@@ -1475,7 +1475,7 @@ void DBwriteEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 void DBwriteTimeConditionNodeFile(string* timeConditionFileName, GIAtimeConditionNode* timeCondition)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBwriteTimeConditionNodeFile(): timeConditionFileName = " <<* timeConditionFileName << endl;
+	cout << "DBwriteTimeConditionNodeFile{}: timeConditionFileName = " <<* timeConditionFileName << endl;
 	#endif
 
 	/*
@@ -1505,7 +1505,7 @@ void DBwriteTimeConditionNodeFile(string* timeConditionFileName, GIAtimeConditio
 void DBwriteVectorConnectionsReferences(string* entityName, long idInstance, int connectionType, vector<GIAentityConnection*>* entityVectorConnections)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBwriteVectorConnectionsReferences(): entityName = " <<* entityName << endl;
+	cout << "DBwriteVectorConnectionsReferences{}: entityName = " <<* entityName << endl;
 	#endif
 
 	/*
@@ -1564,7 +1564,7 @@ void DBwriteVectorConnectionsReferences(string* entityName, long idInstance, int
 void DBmodifyVectorConnectionsReference(string* entityName, long idInstance, int connectionType, string* entityVectorConnectionsName, long entityVectorConnectionsID, long referenceIndex)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBmodifyVectorConnectionsReference(): entityName = " <<* entityName << endl;
+	cout << "DBmodifyVectorConnectionsReference{}: entityName = " <<* entityName << endl;
 	#endif
 
 	/*
@@ -1607,7 +1607,7 @@ void DBmodifyVectorConnectionsReference(string* entityName, long idInstance, int
 void DBappendVectorConnectionsReference(string* entityName, long idInstance, int connectionType, string* entityVectorConnectionsName, long entityVectorConnectionsID)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBappendVectorConnectionsReference(): entityName = " <<* entityName << endl;
+	cout << "DBappendVectorConnectionsReference{}: entityName = " <<* entityName << endl;
 	#endif
 
 	/*
@@ -1647,7 +1647,7 @@ void DBappendVectorConnectionsReference(string* entityName, long idInstance, int
 void DBwriteConceptEntityNodesLoadedList()	//unordered_map<string, bool>* DBconceptEntityNodesLoadedList
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBwriteConceptEntityNodesLoadedList()" << endl;
+	cout << "DBwriteConceptEntityNodesLoadedList{}" << endl;
 	#endif
 
 	string conceptEntityNodesListFileName = DBgenerateFileName(NULL, NULL, NULL, GIA_DATABASE_GENERATE_FILENAME_FILE_CONCEPT_ENTITY_NODES_LIST);
@@ -1728,7 +1728,7 @@ void closeDatabase()
 
 void DBprintConceptEntityNodesLoadedList(string executionStage)
 {
-	cout << "DBprintConceptEntityNodesLoadedList():" << executionStage << endl;
+	cout << "DBprintConceptEntityNodesLoadedList{}:" << executionStage << endl;
 
 #ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 	for(unordered_map<string, bool>::iterator conceptEntityNodesLoadedListIterator = DBconceptEntityNodesLoadedList->begin(); conceptEntityNodesLoadedListIterator != DBconceptEntityNodesLoadedList->end(); conceptEntityNodesLoadedListIterator++)
@@ -1759,7 +1759,7 @@ long DBreadConceptEntityNumberOfInstances(string* entityNodeName)		//OLD: GIAent
 	int connectionType = GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES;
 	long numberOfReferences = DBreadNumberOfReferencesInList(entityNodeName, idInstance, connectionType);
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "DBreadConceptEntityNumberOfInstances(): numberOfReferences = " << numberOfReferences << endl;
+	cout << "DBreadConceptEntityNumberOfInstances{}: numberOfReferences = " << numberOfReferences << endl;
 	#endif
 	return numberOfReferences;
 }
@@ -1838,7 +1838,7 @@ GIAentityNode* findEntityInActiveConceptList(string* entityName, long idInstance
 						if(currentConnection->idInstance == idInstance)		//OR currentInstance->idInstance
 						{
 							#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-							cout << "findEntityInActiveConceptList(): found alreadyInRAM" << endl;
+							cout << "findEntityInActiveConceptList{}: found alreadyInRAM" << endl;
 							cout << "currentInstance->entityName = " << currentInstance->entityName << endl;
 							cout << "currentInstance->idInstance = " << currentInstance->idInstance << endl;
 							#endif

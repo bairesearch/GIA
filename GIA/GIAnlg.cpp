@@ -26,7 +26,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36b 10-May-2015
+ * Project Version: 2i37b 10-May-2015
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -438,7 +438,7 @@ void generateThreeEntitySentenceFromEntityNode(GIAentityNode* entityNode0, strin
 	string nlgDependencyRelation2 = NLG2generateNLGinputViewLine(nlgSentenceThreeEntitiesDependencyRelationVectorConnectionsArray[connectionType2], entityIndex0string, entityIndex2string);
 
 	#ifdef GIA_NLG_DEBUG
-	cout << "generateThreeEntitySentenceFromEntityNode(): " << entityNode0->entityName << endl;
+	cout << "generateThreeEntitySentenceFromEntityNode{}: " << entityNode0->entityName << endl;
 	cout << "nlgDependencyRelation1 = " << nlgDependencyRelation1 << endl;
 	cout << "nlgDependencyRelation2 = " << nlgDependencyRelation2 << endl;
 	#endif
@@ -446,7 +446,7 @@ void generateThreeEntitySentenceFromEntityNode(GIAentityNode* entityNode0, strin
 	*generatedText = *generatedText + nlgDependencyRelation2;
 #else
 	#ifdef GIA_NLG_DEBUG
-	cout << "generateThreeEntitySentenceFromEntityNode(): " << entityNode0->entityName << endl;
+	cout << "generateThreeEntitySentenceFromEntityNode{}: " << entityNode0->entityName << endl;
 	cout << "entityTextExpandedArray[0] = " << entityTextExpandedArray[0] << endl;
 	cout << "entityTextExpandedArray[1] = " << entityTextExpandedArray[1] << endl;
 	cout << "entityTextExpandedArray[2] = " << entityTextExpandedArray[2] << endl;
@@ -682,7 +682,7 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 		string nlgDependencyRelation2 = NLG2generateNLGinputViewLine(nlgDependencyRelationType2, entityIndex0string, entityIndex2string);
 
 		#ifdef GIA_NLG_DEBUG
-		cout << "generateTwoEntitySentenceFromEntityConnection():" << endl;
+		cout << "generateTwoEntitySentenceFromEntityConnection{}:" << endl;
 		cout << "nlgDependencyRelation1 = " << nlgDependencyRelation1 << endl;
 		cout << "nlgDependencyRelation2 = " << nlgDependencyRelation2 << endl;
 		#endif
@@ -698,7 +698,7 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 		string nlgDependencyRelation1 = NLG2generateNLGinputViewLine(nlgDependencyRelationType1, entityIndex1string, entityIndex2string);
 
 		#ifdef GIA_NLG_DEBUG
-		cout << "generateTwoEntitySentenceFromEntityConnection():" << endl;
+		cout << "generateTwoEntitySentenceFromEntityConnection{}:" << endl;
 		cout << "nlgDependencyRelation1 = " << nlgDependencyRelation1 << endl;
 		#endif
 		*generatedText = *generatedText + nlgDependencyRelation1;
@@ -706,7 +706,7 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 #else
 
 	#ifdef GIA_NLG_DEBUG
-	cout << "generateTwoEntitySentenceFromEntityConnection():" << endl;
+	cout << "generateTwoEntitySentenceFromEntityConnection{}:" << endl;
 	cout << "entityTextExpandedArray[0] = " << entityTextExpandedArray[0] << endl;
 	cout << "entityTextExpandedArray[1] = " << entityTextExpandedArray[1] << endl;
 	cout << "entityTextExpandedArray[2] = " << entityTextExpandedArray[2] << endl;
@@ -755,7 +755,7 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 	}
 
 	#ifdef GIA_NLG_DEBUG
-	cout << "generateTwoEntitySentenceFromEntityConnection():" << endl;
+	cout << "generateTwoEntitySentenceFromEntityConnection{}:" << endl;
 	cout << "generatedText = " <<* generatedText << endl;
 	#endif
 #endif
@@ -803,7 +803,7 @@ void NLG2generateNLGinputViewFeatureTagsGenericPerSentence(string* generatedNLGi
 	string NLGInputViewFeatureTagPosPunctuationFullstop = NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_POS, NLG_INPUTVIEW_FEATURE_TAG_GOVERNOR_FULLSTOP, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_FULLSTOP);
 
 	#ifdef GIA_NLG_DEBUG
-	cout << "NLG2generateNLGinputViewFeatureTagsGenericPerSentence():" << endl;
+	cout << "NLG2generateNLGinputViewFeatureTagsGenericPerSentence{}:" << endl;
 	cout << "NLGInputViewFeatureTagPosDeterminateDefinite = " << NLGInputViewFeatureTagPosDeterminateDefinite << endl;
 	cout << "NLGInputViewFeatureTagPosDeterminateIndefinite = " << NLGInputViewFeatureTagPosDeterminateIndefinite << endl;
 	cout << "NLGInputViewFeatureTagPosPunctuationFullstop = " << NLGInputViewFeatureTagPosPunctuationFullstop << endl;
@@ -976,7 +976,7 @@ void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode
 
 
 	#ifdef GIA_NLG_DEBUG
-	cout << "NLG2generateNLGinputViewFeatureTagsFromEntityNode():" << endl;
+	cout << "NLG2generateNLGinputViewFeatureTagsFromEntityNode{}:" << endl;
 	cout << "NLGInputViewFeatureTagLemma = " << NLGInputViewFeatureTagLemma << endl;
 	cout << "NLGInputViewFeatureTagFlagDefinite = " << NLGInputViewFeatureTagFlagDefinite << endl;
 	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER

@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36b 10-May-2015
+ * Project Version: 2i37b 10-May-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -763,7 +763,7 @@ LDreference* createReferenceConnection(LDreference* currentReferenceInPrintList,
 
 		#ifdef GIA_DRAW_DEBUG
 		/*
-		cout << "createFileOrFunctionReferenceConnection():" << endl;
+		cout << "createFileOrFunctionReferenceConnection{}:" << endl;
 		cout << "currentReferenceInAboveList->name = " << currentReferenceInAboveList->name << endl;
 		cout << "reference->name = " << reference->name << endl;
 		cout << "newCurrentReferenceInPrintList->type = " << newCurrentReferenceInPrintList->type << endl;
@@ -824,7 +824,7 @@ LDreference* createBox(LDreference* currentReferenceInPrintList, vec* vect, doub
 
 		#ifdef GIA_DRAW_DEBUG
 		/*
-		cout << "createFileOrFunctionReferenceBox():" << endl;
+		cout << "createFileOrFunctionReferenceBox{}:" << endl;
 		cout << "reference->name = " << reference->name << endl;
 		cout << "newCurrentReferenceInPrintList->type = " << newCurrentReferenceInPrintList->type << endl;
 		cout << "newCurrentReferenceInPrintList->colour = " << newCurrentReferenceInPrintList->colour << endl;

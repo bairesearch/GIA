@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36b 10-May-2015
+ * Project Version: 2i37b 10-May-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1843,7 +1843,7 @@ void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSente
 															currentRelationInList->relationGovernor = GIAentityNodeArray[currentRelationInList3->relationDependentIndex]->entityName;
 
 															#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-															//cout << "redistributeStanfordRelationsMultiwordPreposition(): newPrepositionName = " << newPrepositionName << endl;
+															//cout << "redistributeStanfordRelationsMultiwordPreposition{}: newPrepositionName = " << newPrepositionName << endl;
 															//cout << "\t\t\t2currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 															//cout << "\t\t\t2auxiliaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxiliaryIndicatesDifferentReferenceSet << endl;
 															#endif
@@ -2026,7 +2026,7 @@ void redistributeStanfordRelationsInterpretOfAsPossessive(GIAsentence* currentSe
 				if(relexPreposition == RELATION_TYPE_PREPOSITION_OF)
 				{
 					#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-					cout << "DEBUG: redistributeStanfordRelationsInterpretOfAsPossessive(): RELATION_TYPE_PREPOSITION_OF" << endl;
+					cout << "DEBUG: redistributeStanfordRelationsInterpretOfAsPossessive{}: RELATION_TYPE_PREPOSITION_OF" << endl;
 					#endif
 					currentRelationInList->relationType = RELATION_TYPE_POSSESSIVE;
 				}
@@ -2339,7 +2339,7 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(GIAsentence* curre
 									if(currentRelationInList->relationDependent == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME)
 									{
 										#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-										cout << "DEBUG: redistributeStanfordRelationsInterpretNameOfAsDefinition(): relationDependent == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME" << endl;
+										cout << "DEBUG: redistributeStanfordRelationsInterpretNameOfAsDefinition{}: relationDependent == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME" << endl;
 										#endif
 
 										currentRelationInList->disabled =  true;
@@ -2359,7 +2359,7 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(GIAsentence* curre
 									else if(currentRelationInList->relationGovernor == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME)
 									{
 										#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-										cout << "DEBUG: redistributeStanfordRelationsInterpretNameOfAsDefinition(): relationGovernor == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME" << endl;
+										cout << "DEBUG: redistributeStanfordRelationsInterpretNameOfAsDefinition{}: relationGovernor == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME" << endl;
 										#endif
 
 										currentRelationInList->disabled =  true;
@@ -3146,7 +3146,7 @@ void redistributeStanfordRelationsConjunctionAndCoordinate(GIAsentence* currentS
 								}
 								else
 								{
-									cout << "error redistributeStanfordRelationsConjunctionAndCoordinate(): unknown coordination dependent - " << coordinationDependent << endl;
+									cout << "error redistributeStanfordRelationsConjunctionAndCoordinate{}: unknown coordination dependent - " << coordinationDependent << endl;
 								}
 								currentRelationInList2->relationType = newRelationType;
 
@@ -4083,7 +4083,7 @@ void redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy(GIAsentence* cu
 				if(!queryHowWhenWhereWhySpecialCaseRelationDependentFound || !foundMatchForSpecialCase)
 				{//how, when, why
 				*/
-				//the above commented out code is not required, because _predadj should be generated in this case in accordance with; redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(): advmod(is-3, where-6) / nsubj(is-3, rabbit-2) - > _predadj(rabbit-2, where-6)
+				//the above commented out code is not required, because _predadj should be generated in this case in accordance with; redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe{}: advmod(is-3, where-6) / nsubj(is-3, rabbit-2) - > _predadj(rabbit-2, where-6)
 
 					/* no longer required as GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD has been used here
 					if(currentRelationInList->relationGovernor != RELATION_ENTITY_BE)

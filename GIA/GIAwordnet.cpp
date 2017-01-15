@@ -26,7 +26,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36b 10-May-2015
+ * Project Version: 2i37b 10-May-2015
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -268,7 +268,7 @@ SynsetPtr findSynsets(string* word, bool* wordIsFound, int wordNetPOS, int simil
 
 	#ifdef GIA_WORDNET_DEBUG
 	/*
-	cout << "findSynsets()" << endl;
+	cout << "findSynsets{}" << endl;
 	cout << "wordCharStar = " << wordCharStar << endl;
 	cout << "wordNetPOS = " << wordNetPOS << endl;
 	*/

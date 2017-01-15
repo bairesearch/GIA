@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36b 10-May-2015
+ * Project Version: 2i37b 10-May-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -339,7 +339,7 @@ GIAentityNode* addSubstanceToSubstanceDefinition(GIAentityNode* substanceEntity)
 				newOrExistingSubstance = addSubstance(substanceEntity);
 				#ifdef GIA_TRANSLATOR_DEBUG
 				//cout << "\tbreak2; substanceEntity->entityName = " << substanceEntity->entityName << endl;
-				//cout << "addSubstanceToSubstanceDefinition():" << endl;
+				//cout << "addSubstanceToSubstanceDefinition{}:" << endl;
 				//cout << "\tnewOrExistingSubstance->entityName = " << newOrExistingSubstance->entityName << endl;
 				#endif
 			#endif
@@ -1536,7 +1536,7 @@ void convertRelexPOStypeToWordnetWordType(string* relexPOStype, int* grammatical
 
 	#ifdef GIA_WORDNET_DEBUG
 	/*
-	cout << "convertRelexPOStypeToWordnetWordType(): " << endl;
+	cout << "convertRelexPOStypeToWordnetWordType{}: " << endl;
 	cout << "relexPOStype = " <<* relexPOStype << endl;
 	cout << "grammaticalWordTypeTemp = " <<* grammaticalWordTypeTemp << endl;
 	*/
@@ -1558,7 +1558,7 @@ void convertStanfordPOStagToRelexPOStypeAndWordnetWordType(string* POStag, strin
 
 	#ifdef GIA_WORDNET_DEBUG
 	/*
-	cout << "convertStanfordPOStagToRelexPOStypeAndWordnetWordType(): " << endl;
+	cout << "convertStanfordPOStagToRelexPOStypeAndWordnetWordType{}: " << endl;
 	cout << "POStag = " <<* POStag << endl;
 	cout << "relexPOStype = " <<* relexPOStype << endl;
 	cout << "grammaticalWordTypeTemp = " <<* grammaticalWordTypeTemp << endl;
@@ -1667,7 +1667,7 @@ bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, GIArela
 	}
 
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-	cout << "\ndetermineSameReferenceSetValue():" << endl;
+	cout << "\ndetermineSameReferenceSetValue:" << endl;
 	cout << "\t" << relation->relationType << "(" << relation->relationGovernor << ", " << relation->relationDependent << ")" << endl;
 	cout << "\tauxiliaryIndicatesDifferentReferenceSet = " << auxiliaryIndicatesDifferentReferenceSet << endl;
 	cout << "\trcmodIndicatesSameReferenceSet = " << rcmodIndicatesSameReferenceSet << endl;
@@ -2381,11 +2381,11 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 		 {
 			if(minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence < indefiniteEntityNLCsentenceInList->indentation)
 			{
-				//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(): no reference found" << endl;
+				//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{}: no reference found" << endl;
 			}
 			else
 			{
-				//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(): entity declared in this function" << endl;
+				//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext{}: entity declared in this function" << endl;
 				foundIndefiniteEntity = true;
 			}
 		 }

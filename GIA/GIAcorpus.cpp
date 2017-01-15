@@ -26,7 +26,7 @@
  * File Name: GIAcorpus.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36b 10-May-2015
+ * Project Version: 2i37b 10-May-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -195,7 +195,7 @@ bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 								//#endif
 								int subsetSize = centralWord-firstWord+1;	//subsetSize aka maxSpread
 
-								//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes():
+								//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
 
 								if(loadCorpusFileSemanticDependencyRelations(currentSentenceInList, firstFeatureInSentenceSubset))
 								{

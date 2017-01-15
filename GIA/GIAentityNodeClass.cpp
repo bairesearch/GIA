@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36b 10-May-2015
+ * Project Version: 2i37b 10-May-2015
  *
  *******************************************************************************/
 
@@ -895,7 +895,7 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 	bool foundMatch = false;
 	bool illegalVariable = false;
 	
-	//cout << "testEntityCharacteristic():" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
+	//cout << "testEntityCharacteristic{}:" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
 
 	/*GIA Entity Type*/
 	testEntityCharacteristicIterationbool(entity->isConcept, entityCharacteristic, "isConcept", &foundMatch);
@@ -1030,7 +1030,7 @@ void testEntityCharacteristicIterationbool(bool entityVal, GIAentityCharacterist
 		//bool entityCharacteristicTestValue = atoi(entityCharacteristicTest->value.c_str());		//if GIA Translator XML file booleans are defined as '1'/'0' instead of 'true'/'false'
 		if(entityCharacteristicTestValue == entityVal)
 		{
-			//cout << "testEntityCharacteristicIterationbool(): " << entityCharacteristicTest->name << " = " << entityCharacteristicTestValue << endl;
+			//cout << "testEntityCharacteristicIterationbool{}: " << entityCharacteristicTest->name << " = " << entityCharacteristicTestValue << endl;
 			*foundMatch = true;
 		}
 	}
@@ -1042,7 +1042,7 @@ void testEntityCharacteristicIterationint(int entityVal, GIAentityCharacteristic
 		int entityCharacteristicTestValue = atoi(entityCharacteristicTest->value.c_str());
 		if(entityCharacteristicTestValue == entityVal)
 		{
-			//cout << "testEntityCharacteristicIterationint(): " << entityCharacteristicTest->name << " = " << entityCharacteristicTestValue << endl;
+			//cout << "testEntityCharacteristicIterationint{}: " << entityCharacteristicTest->name << " = " << entityCharacteristicTestValue << endl;
 			*foundMatch = true;
 		}
 	}
@@ -1054,7 +1054,7 @@ void testEntityCharacteristicIterationstring(string entityVal, GIAentityCharacte
 		string entityCharacteristicTestValue = entityCharacteristicTest->value;
 		if(entityCharacteristicTestValue == entityVal)
 		{
-			//cout << "testEntityCharacteristicIterationstring(): " << entityCharacteristicTest->name << " = " << entityCharacteristicTestValue << endl;
+			//cout << "testEntityCharacteristicIterationstring{}: " << entityCharacteristicTest->name << " = " << entityCharacteristicTestValue << endl;
 			*foundMatch = true;
 		}
 	}
@@ -1065,7 +1065,7 @@ bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 {
 	bool foundMatch = false;
 
-	//cout << "setEntityCharacteristic():" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
+	//cout << "setEntityCharacteristic{}:" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
 
 	/*GIA Entity Type*/
 	setEntityCharacteristicIterationbool(&(entity->isConcept), entityCharacteristic, "isConcept", &foundMatch);
@@ -1168,7 +1168,7 @@ void setEntityCharacteristicIterationbool(bool* entityVal, GIAentityCharacterist
 		{
 			cout << "testEntityCharacteristicIterationbool() error: illegal entityCharacteristicTestValue for " << iterationVariable << ": " << entityCharacteristicSet->value << endl;
 		}
-		//cout << "setEntityCharacteristicIterationbool(): " << entityCharacteristicSet->name << " = " << entityCharacteristicSetValue << endl;
+		//cout << "setEntityCharacteristicIterationbool{}: " << entityCharacteristicSet->name << " = " << entityCharacteristicSetValue << endl;
 
 		*entityVal = entityCharacteristicSetValue;
 		*foundMatch = true;
@@ -1179,7 +1179,7 @@ void setEntityCharacteristicIterationint(int* entityVal, GIAentityCharacteristic
 	if(entityCharacteristicSet->name == iterationVariable)
 	{
 		int entityCharacteristicSetValue = atoi(entityCharacteristicSet->value.c_str());
-		//cout << "setEntityCharacteristicIterationint(): " << entityCharacteristicSet->name << " = " << entityCharacteristicSetValue << endl;
+		//cout << "setEntityCharacteristicIterationint{}: " << entityCharacteristicSet->name << " = " << entityCharacteristicSetValue << endl;
 		*entityVal = entityCharacteristicSetValue;
 		*foundMatch = true;
 	}
@@ -1189,7 +1189,7 @@ void setEntityCharacteristicIterationstring(string* entityVal, GIAentityCharacte
 	if(entityCharacteristicSet->name == iterationVariable)
 	{
 		string entityCharacteristicSetValue = entityCharacteristicSet->value;
-		//cout << "setEntityCharacteristicIterationstring(): " << entityCharacteristicSet->name << " = " << entityCharacteristicSetValue << endl;
+		//cout << "setEntityCharacteristicIterationstring{}: " << entityCharacteristicSet->name << " = " << entityCharacteristicSetValue << endl;
 		*entityVal = entityCharacteristicSetValue;
 		*foundMatch = true;
 	}
@@ -1198,7 +1198,7 @@ void setEntityCharacteristicIterationstring(string* entityVal, GIAentityCharacte
 bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic)
 {
 	bool foundMatch = false;
-	//cout << "testEntityCharacteristic():" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
+	//cout << "testEntityCharacteristic{}:" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
 
 	/*GIA Entity Type*/
 	getEntityCharacteristicIterationbool(entity->isConcept, entityCharacteristic, "isConcept", &foundMatch);

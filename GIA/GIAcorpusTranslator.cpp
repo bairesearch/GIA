@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36b 10-May-2015
+ * Project Version: 2i37b 10-May-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -50,7 +50,7 @@
 
 #ifdef GIA_USE_CORPUS_DATABASE
 
-//based on convertSentenceSyntacticRelationsIntoGIAnetworkNodes():
+//based on convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
 void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, GIAsentence* firstSentenceInList, GIAsentence* currentSentenceInList, vector<GIAentityNode*>* sentenceConceptEntityNodesList, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, int NLPfeatureParser, bool linkPreestablishedReferencesGIA,  GIACoreference* firstGIACoreferenceInList)
 {
 	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
@@ -301,7 +301,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 
 void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAconceptNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* sentenceConceptEntityNodesList, int NLPfeatureParser)
 {
-	//code from locateAndAddAllFeatureTempEntities():
+	//code from locateAndAddAllFeatureTempEntities{}:
 
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -336,7 +336,7 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(GIAsentence* current
 			{
 				GIAentityNodeArrayFilled[relationIndex[i]] = true;
 
-				//code from locateAndAddAllConceptEntities():
+				//code from locateAndAddAllConceptEntities{}:
 
 				bool entityAlreadyExistant = false;
 				GIAentityNode* conceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(name[i]), &entityAlreadyExistant, entityNodesActiveListConcepts);
@@ -846,7 +846,7 @@ void defineQuantitiesBasedOnSemanticRelations(GIAsentence* currentSentenceInList
 
 				if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 				{
-					//code copied from extractQuantitiesStanfordCoreNLP():
+					//code copied from extractQuantitiesStanfordCoreNLP{}:
 					//if(quantitySubstance->NERTemp != FEATURE_NER_DATE)		//do not assume quantity entities when dealing with Stanford Dates (as they have already been parsed).
 					//{
 
@@ -934,14 +934,14 @@ void defineQualitiesBasedOnSemanticRelations(GIAsentence* currentSentenceInList,
 #ifdef GIA2_CONNECTIONIST_NETWORK
 bool generateAllPermutationsFromSemanticRelationsFile(string corpusFileName, int NLPfeatureParser)
 {
-	//code based on loadCorpusFileSemanticDependencyRelations():
+	//code based on loadCorpusFileSemanticDependencyRelations{}:
 	bool result = true;
 	GIAsentence* sentence = new GIAsentence();
 	bool createNewSentences = true;
 	bool parseGIA2file = true;
 	bool isQuery = false;	//irrelevant
 	#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
-	cout << "generateAllPermutationsFromSemanticRelationsFile():" << endl;
+	cout << "generateAllPermutationsFromSemanticRelationsFile{}:" << endl;
 	#endif
 	if(!parseStanfordParserFile(corpusFileName, isQuery, sentence, createNewSentences, parseGIA2file, false))		//CHECK THIS; need to account for corpus.txt having multiple entries [eg different text but identical layout]
 	{
@@ -972,7 +972,7 @@ bool generateAllPermutationsFromSemanticRelationsFile(string corpusFileName, int
 				#endif
 				int subsetSize = centralWord-firstWord+1;	//subsetSize aka maxSpread
 
-				//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes():
+				//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
 
 				string sentenceText = regenerateSentenceText(firstFeatureInSentenceSubset, true, NLPfeatureParser);
 				sentenceText = sentenceText + STRING_NEW_LINE;	//required to add new line at end of parsingWordsAndTags as per Stanford Parser specification (see parseStanfordParserFile)

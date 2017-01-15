@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36b 10-May-2015
+ * Project Version: 2i37b 10-May-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -125,7 +125,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											}
 											
 											/*
-											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "():" << endl;
+											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
 											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 											{
 												if(GIAentityNodeArrayFilled[w])
@@ -139,7 +139,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											*/
 											
 											/*
-											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "():" << endl;
+											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
 											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 											{
 												if(GIAentityNodeArrayFilled[w])
@@ -156,7 +156,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											*/
 
 											/*
-											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "():" << endl;
+											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
 											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 											{
 												if(GIAentityNodeArrayFilled[w])
@@ -172,7 +172,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											/*
 											if(currentSentenceInList->sentenceIndex == 20)
 											{
-												cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "():" << endl;
+												cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
 												unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListIter2;
 												for(conceptEntityNodesListIter2 = entityNodesActiveListConcepts->begin(); conceptEntityNodesListIter2 != entityNodesActiveListConcepts->end(); conceptEntityNodesListIter2++)
 												{
@@ -280,7 +280,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											/*
 											if(functionName == "defineSubstanceConcepts")
 											{
-												cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "():" << endl;
+												cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
 												for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 												{
 													if(GIAentityNodeArrayFilled[w])
@@ -560,7 +560,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 			}
 			else
 			{
-				cout << "applyGIATranslatorGenericXMLparam(): error - illegal param tag:" << currentConfigurationTag->name  << endl;
+				cout << "applyGIATranslatorGenericXMLparam{}: error - illegal param tag:" << currentConfigurationTag->name  << endl;
 				result = false;
 				//exit(0);
 			}
@@ -572,7 +572,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 		{
 			if(depRelOrEntity)
 			{
-				//cout << "genericDependecyRelationInterpretation()" << endl;
+				//cout << "genericDependecyRelationInterpretation{}" << endl;
 				if(genericDependecyRelationInterpretation(&paramDepRel, REL1))
 				{
 					result = true;
@@ -626,7 +626,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 	}
 	else
 	{
-		cout << "applyGIATranslatorGenericXMLparam(): error - param has no options/special case tags: currentParamTag->name" << currentParamTag->name << endl;
+		cout << "applyGIATranslatorGenericXMLparam{}: error - param has no options/special case tags: currentParamTag->name" << currentParamTag->name << endl;
 		result = false;
 		//exit(0);
 	}
@@ -905,7 +905,7 @@ bool genericEntityInterpretationApplyOptionbool(bool* paramVal, XMLParserAttribu
 		//bool paramOptionSetValue = atoi(xmlAttribute->value.c_str());		//if GIA Translator XML file booleans are defined as '1'/'0' instead of 'true'/'false'
 		*paramVal = paramOptionSetValue;
 
-		//cout << "genericEntityInterpretationApplyOptionbool(): " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
+		//cout << "genericEntityInterpretationApplyOptionbool{}: " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
 		*foundMatch = true;
 		result = true;
 	}
@@ -923,7 +923,7 @@ bool genericEntityInterpretationApplyOptionint(int* paramVal, XMLParserAttribute
 		}
 		*paramVal = paramOptionSetValue;
 
-		//cout << "genericEntityInterpretationApplyOptionint(): " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
+		//cout << "genericEntityInterpretationApplyOptionint{}: " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
 		*foundMatch = true;
 		result = true;
 	}
@@ -937,7 +937,7 @@ bool genericEntityInterpretationApplyOptionstring(string* paramVal, XMLParserAtt
 		string paramOptionSetValue = xmlAttribute->value;
 		*paramVal = paramOptionSetValue;
 
-		//cout << "testEntityCharacteristicIterationstring(): " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
+		//cout << "testEntityCharacteristicIterationstring{}: " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
 		*foundMatch = true;
 		result = true;
 	}
@@ -952,7 +952,7 @@ bool genericEntityInterpretationApplyOptionstringarray(string** paramVal, XMLPar
 
 		*paramVal = convertDelimitedStringToArray(paramOptionSetValue, GIA_TRANSLATOR_XML_INTERPRETATION_ARRAY_DELIMITER);
 
-		//cout << "testEntityCharacteristicIterationstringarray(): " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
+		//cout << "testEntityCharacteristicIterationstringarray{}: " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
 		*foundMatch = true;
 		result = true;
 	}

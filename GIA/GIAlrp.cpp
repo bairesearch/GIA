@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36b 10-May-2015
+ * Project Version: 2i37b 10-May-2015
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -1907,7 +1907,7 @@ void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, GIAsentence* curr
 							//feature->lemma = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP;			//lemma is not defined for prepositions
 							#ifdef GIA_LRP_DEBUG
 							cout << "(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex == indexOfPrepositionWithMinimumProximityOfGovernorDependentWords)" << endl;
-							cout << "revertNLPtagNameToOfficialLRPtagName(): foundCorrespondingLRPtag, wordWithLRPforNLPonly = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly << ", wordWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP << endl;
+							cout << "revertNLPtagNameToOfficialLRPtagName{}: foundCorrespondingLRPtag, wordWithLRPforNLPonly = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly << ", wordWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP << endl;
 							#endif
 							foundCorrespondingLRPtag = true;
 						}
@@ -1937,7 +1937,7 @@ void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, GIAsentence* curr
 						cout << "(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex == entityIndexForNonPrepositionsOnly)" << endl;
 						cout << "feature->word = " << feature->word << endl;
 						cout << "feature->lemma = " << feature->lemma << endl;
-						cout << "revertNLPtagNameToOfficialLRPtagName(): foundCorrespondingLRPtag, wordWithLRPforNLPonly = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly << ", wordWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP << endl;
+						cout << "revertNLPtagNameToOfficialLRPtagName{}: foundCorrespondingLRPtag, wordWithLRPforNLPonly = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly << ", wordWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP << endl;
 						#endif
 						foundCorrespondingLRPtag = true;
 					}
@@ -2354,14 +2354,14 @@ void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool* invers
 					{
 						*twoWayConditionRequired = true;
 						#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
-						cout << "detectIfInverseOrTwoWayConditionRequired(): twoWayConditionRequired: conditionName = " << conditionName << endl;
+						cout << "detectIfInverseOrTwoWayConditionRequired{}: twoWayConditionRequired: conditionName = " << conditionName << endl;
 						#endif
 					}
 					else
 					{
 						foundConditionToInvert = true;
 						#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
-						cout << "detectIfInverseOrTwoWayConditionRequired(): foundConditionToInvert: conditionName = " << conditionName << endl;
+						cout << "detectIfInverseOrTwoWayConditionRequired{}: foundConditionToInvert: conditionName = " << conditionName << endl;
 						#endif
 					}
 				}
@@ -2375,7 +2375,7 @@ void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool* invers
 						*inverseConditionRequired = true;
 						*inverseConditionName = conditionNameNew;
 						#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
-						cout << "detectIfInverseOrTwoWayConditionRequired(): inverseConditionRequired: conditionNameNew = " << conditionNameNew << endl;
+						cout << "detectIfInverseOrTwoWayConditionRequired{}: inverseConditionRequired: conditionNameNew = " << conditionNameNew << endl;
 						#endif
 					}
 				}
@@ -2412,7 +2412,7 @@ bool identifyConditionType(GIAentityNode* conditionEntity)
 				{
 					conditionEntity->conditionType2 = currentTagInPrepositionsInverseListSentence->tagName;
 					#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
-					cout << "identifyConditionTypeAndInvertIfNecessary(): conditionEntity->conditionType2 = " << conditionEntity->conditionType2 << endl;
+					cout << "identifyConditionTypeAndInvertIfNecessary{}: conditionEntity->conditionType2 = " << conditionEntity->conditionType2 << endl;
 					#endif
 					conditionTypeIdentified = true;
 				}		

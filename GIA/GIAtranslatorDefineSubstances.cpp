@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36b 10-May-2015
+ * Project Version: 2i37b 10-May-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -399,7 +399,7 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(GIAsentence* curren
 			if(currentRelationInList->relationType == RELATION_TYPE_APPOSITIVE_OF_NOUN)
 			{
 				#ifdef GIA_TRANSLATOR_DEBUG
-				//cout << "defineSubstancesBasedOnDeterminatesOfDefinitionEntities(): RELATION_TYPE_APPOSITIVE_OF_NOUN" << endl;
+				//cout << "defineSubstancesBasedOnDeterminatesOfDefinitionEntities{}: RELATION_TYPE_APPOSITIVE_OF_NOUN" << endl;
 				#endif
 
 				int thingIndex = currentRelationInList->relationGovernorIndex;
@@ -1228,7 +1228,7 @@ void defineSubstanceConcepts(GIAsentence* currentSentenceInList, bool GIAentityN
 					//cout << "thingIndex = " << thingIndex << endl;
 
 					#ifdef GIA_TRANSLATOR_DEBUG
-					//cout << "defineSubstancesBasedOnDeterminatesOfDefinitionEntities(): RELATION_TYPE_APPOSITIVE_OF_NOUN" << endl;
+					//cout << "defineSubstancesBasedOnDeterminatesOfDefinitionEntities{}: RELATION_TYPE_APPOSITIVE_OF_NOUN" << endl;
 					#endif
 
 					bool thingFeatureHasDeterminate = false;
@@ -1441,7 +1441,7 @@ void defineSubstancesActions(GIAsentence* currentSentenceInList, GIAentityNode* 
 	/*
 	eg 'run' in 'Tom runs' _subj(run[2], Tom[1])
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-	exceptions required for linkHavingPropertyConditionsAndBeingDefinitionConditions():
+	exceptions required for linkHavingPropertyConditionsAndBeingDefinitionConditions{}:
 		'having a chicken'/being a chicken': dobj(having-5, chicken-7) / dobj(be-5, chicken-7)]
 	#endif
 	no exceptions required for linkSubjectObjectRelationships(); this will cause no problems:

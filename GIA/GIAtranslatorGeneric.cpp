@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36b 10-May-2015
+ * Project Version: 2i37b 10-May-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -76,7 +76,7 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	#else
 	initialiseIntArray2D(&relationEntityIndexOriginal[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION, INT_DEFAULT_VALUE);
 	#endif
-		//for further manipulation of variables after successful (match found) recursive execution of genericDependecyRelationInterpretation():
+		//for further manipulation of variables after successful (match found) recursive execution of genericDependecyRelationInterpretation{}:
 	//relationFinalResult = {NULL, NULL, NULL, NULL, NULL};
 	//relationEntityFinalResult = {{"", "", ""}, {"", "", ""}, {"", "", ""}, {"", "", ""}}; 	//internal compiler error: Segmentation fault
 	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
@@ -1312,7 +1312,7 @@ bool determineFeatureIndexOfPreposition(GIAsentence* currentSentenceInList, GIAr
 		if(numberOfPrepositionFeaturesFound > 1)
 		{
 			#ifdef GIA_ENABLE_WARNINGS
-			cout << "determineFeatureIndexOfPreposition(): !centredPrepositionFeatureFound && (numberOfPrepositionFeaturesFound > 1); cannot guarantee correct preposition feature index has been assigned" << endl;
+			cout << "determineFeatureIndexOfPreposition{}: !centredPrepositionFeatureFound && (numberOfPrepositionFeaturesFound > 1); cannot guarantee correct preposition feature index has been assigned" << endl;
 			#endif
 		}
 		*indexOfPreposition = featureIndexOfNonCentredPrepositionFeature;

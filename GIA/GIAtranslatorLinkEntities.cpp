@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i36b 10-May-2015
+ * Project Version: 2i37b 10-May-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -391,7 +391,7 @@ void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFil
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	linkEntityDefinitionsAppositiveOfNouns(currentSentenceInList, GIAentityNodeArray, linkPreestablishedReferencesGIA);
 	#else
-	linkEntityDefinitionsAppositiveOfNouns(currentSentenceInList, GIAentityNodeArray);
+	linkEntityDefinitionsAppositiveOfNouns(currentSentenceInList, GIAentityNodeArray, BOOL_IRRELEVANT);
 	#endif
 
 	#ifdef GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_TYPE1
@@ -749,11 +749,7 @@ void linkPropertiesDescriptiveRelationships(GIAsentence* currentSentenceInList, 
 }
 
 
-#ifdef GIA_USE_ADVANCED_REFERENCING
 void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], bool linkPreestablishedReferencesGIA)
-#else
-void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
-#endif
 {
 	/*
 	The fish, a carp, swam deeply.	_appo(fish[2], carp[5])
@@ -3364,7 +3360,7 @@ void linkDependentActionsType2(GIAsentence* currentSentenceInList, bool GIAentit
 				#endif
 
 
-				/*OLD linkPropertiesDependentActions():
+				/*OLD linkPropertiesDependentActions{}:
 				GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(ownerEntity, substanceEntity, sameReferenceSet);
 				//GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(ownerEntity, substanceEntity, sameReferenceSet);	- check if this might ever be required instead
 				*/
