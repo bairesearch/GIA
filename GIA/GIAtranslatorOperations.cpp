@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l6a 29-December-2016
+ * Project Version: 2l6b 29-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -46,7 +46,7 @@
 #endif
 
 #ifdef GIA_SUPPORT_NLC_INTEGRATION
-NLCsentence* firstNLCsentenceInList;
+NLCsentence* firstNLCsentenceInListLocal;
 #endif
 
 static long currentEntityNodeIDinCompleteList;				//For GIA XML generation only
@@ -2321,11 +2321,11 @@ GIAentityNode* getPrimaryConceptNodeDefiningInstance(GIAentityNode* instanceEnti
 #ifdef GIA_SUPPORT_NLC_INTEGRATION
 NLCsentence* getFirstNLCsentenceInList()
 {
-	return firstNLCsentenceInList;
+	return firstNLCsentenceInListLocal;
 }
 void setFirstNLCsentenceInList(NLCsentence* firstNLCsentenceInListNew)
 {
-	firstNLCsentenceInList = firstNLCsentenceInListNew;
+	firstNLCsentenceInListLocal = firstNLCsentenceInListNew;
 }
 #ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNode* indefiniteEntity, GIAentityNode* definiteEntity)
@@ -2337,7 +2337,7 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 	//{
 	if(indefiniteEntity->sentenceIndexTemp < definiteEntity->sentenceIndexTemp)
 	{					 
-		 NLCsentence* currentNLCsentenceInList = firstNLCsentenceInList;
+		 NLCsentence* currentNLCsentenceInList = firstNLCsentenceInListLocal;
 		 bool foundIndefiniteEntitySentence = false;
 		 while((currentNLCsentenceInList->next != NULL) && !foundIndefiniteEntitySentence)
 		 {
@@ -2401,7 +2401,7 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 bool checkIfSentenceIsMathTextParsablePhrase(GIAsentence* currentSentenceInList)
 {
 	bool sentenceIsMathTextParsablePhrase = false;
-	NLCsentence* currentNLCsentenceInList = firstNLCsentenceInList;
+	NLCsentence* currentNLCsentenceInList = firstNLCsentenceInListLocal;
 	while(currentNLCsentenceInList->next != NULL)
 	{
 		if(currentNLCsentenceInList->sentenceIndex == currentSentenceInList->sentenceIndex)
