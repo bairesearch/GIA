@@ -74,7 +74,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 	//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
 	if(!(entityNode->initialisedForPrinting))
 	{
-		
+		#ifdef GIA_DRAW_DEBUG
 		if(entityNode->isProperty)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is property)" << endl;		
@@ -99,6 +99,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		{
 			cout << "entityNode = " << entityNode->entityName << endl;
 		}
+		#endif
 
 		
 		/*
@@ -472,6 +473,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		
 		//cout << "a8" << endl;	
 		
+		#ifdef GIA_DRAW_DEBUG
 		if(entityNode->isProperty)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (is property)" << endl;		
@@ -496,6 +498,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << endl;
 		}
+		#endif
 							
 	}
 	//cout << "a0c" << endl;

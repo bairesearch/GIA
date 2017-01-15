@@ -537,15 +537,13 @@ int main(int argc,char **argv)
 		string answerString = "";
 				 
 		if(foundAnswer)
-		{
-			cout << "foundAnswer" << endl;
-			
+		{			
 			answerString = answerString + "\nAnswer found";
 			if(foundComparisonVariable)
 			{
 				answerString = answerString + "Exact Answer found: " + queryAnswerNode->entityName;	
 			}
-			cout << "ahsd2" << endl;
+			//cout << "ahsd2" << endl;
 		}
 		else
 		{
@@ -566,7 +564,7 @@ int main(int argc,char **argv)
 		answerString = answerString + "\nconfidence = " + tempConfidenceStringCharStar;			
 		answerString = answerString + "\nmax confidence = " + tempMaxConfidenceStringCharStar;	
 		
-		cout << "ahsd" << endl;
+		//cout << "ahsd" << endl;
 								
 		char * fileByteArray = const_cast<char*>(answerString.c_str());
 		char * outputAnswerPlainTXTFileNameCharStar = const_cast<char*>(outputAnswerPlainTXTFileName.c_str());	

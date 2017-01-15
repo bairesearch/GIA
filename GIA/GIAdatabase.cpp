@@ -36,8 +36,10 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 		{
 			//cout << "vectorSize = "  << vectorSize << endl;
 			//cout << "as" << endl;
+			#ifdef GIA_DATABASE_DEBUG
 			cout << "adding entity node; " << *entityNodeName << endl;
-
+			#endif
+			
 			entityNodeFound = new GIAEntityNode();
 			entityNodeFound->id = *currentEntityNodeIDInCompleteList;
 			entityNodeFound->idSecondary = *currentEntityNodeIDInConceptEntityNodesList;
@@ -195,7 +197,10 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 			
 			if((searchOptionsAvailable == false) && (*found == false) && (addIfNonexistant))
 			{
+				#ifdef GIA_DATABASE_DEBUG
 				cout << "\t\tadding entity node; " << *entityNodeName << endl;
+				#endif
+				
 				//cout << "previousFindIndex = " << previousFindIndex << endl;
 				
 				entityNodeFound = new GIAEntityNode();

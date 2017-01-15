@@ -12,6 +12,8 @@
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
+#define GIA_DATABASE_DEBUG
+
 //#define GIA_USE_TIME_NODE_INDEXING
 
 GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList);

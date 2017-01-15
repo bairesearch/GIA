@@ -205,7 +205,11 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 							exit(0);
 						}
 						#endif
+						
+						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 						cout << "Concept Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;	
+						#endif
+						
 						conceptEntityNamesList->push_back(currentTagUpdatedL3->firstAttribute->nextAttribute->value);		
 										
 										
@@ -269,9 +273,10 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 						currentEntityNodeIDInCompleteList++;
 						propertyEntityNodesList->push_back(newEntity);
 						currentEntityNodeIDInPropertyEntityNodesList++;	
-												
+						
+						#ifdef GIA_SEMANTIC_NET_XML_DEBUG						
 						cout << "Property Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;	
-											
+						#endif
 						/*
 						GIAEntityNode * newEntity = new GIAEntityNode();
 						currentEntity->next = newEntity;
@@ -333,8 +338,10 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 						actionEntityNodesList->push_back(newEntity);
 						currentEntityNodeIDInActionEntityNodesList++;	
 						
+						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 						cout << "Action Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;	
-											
+						#endif
+										
 						/*
 						GIAEntityNode * newEntity = new GIAEntityNode();
 						currentEntity->next = newEntity;
@@ -745,12 +752,12 @@ bool parseActionNodeListTag(XMLParserTag * firstTagInActionNodeList, GIAEntityNo
 	{
 		if(currentTagUpdatedL1->name == NET_XML_TAG_actionNodeReference)
 		{
-			cout << "actionNodeReference: " << endl;
+			//cout << "actionNodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
 			long attributeValue = atol(currentAttribute->value.c_str());
 			entityNode->ActionNodeList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
-			cout << "attributeValue = " << attributeValue << endl;
-			cout << "refID = " << findEntityNodeByID(attributeValue, entityNodesCompleteList)->id << endl;
+			//cout << "attributeValue = " << attributeValue << endl;
+			//cout << "refID = " << findEntityNodeByID(attributeValue, entityNodesCompleteList)->id << endl;
 		}
 		else
 		{

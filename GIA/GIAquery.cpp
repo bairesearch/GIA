@@ -13,12 +13,14 @@
 #include "GIAquery.h"
 #include "GIAdatabase.h"
 
-void answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, vector<GIAEntityNode*> *conceptEntityNodesListQuery, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, double * confidence)
+GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, vector<GIAEntityNode*> *conceptEntityNodesListQuery, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, double * confidence)
 {
 	double bestConfidence = 0.0;
 	double bestConfidenceAssumingFoundAnswer = 0.0;
 	
+	//#ifdef GIA_QUERY_DEBUG
 	cout << "comparisonVariableNode->entityName = " << comparisonVariableNode->entityName << endl;
+	//#endif
 	
 	GIAEntityNode * networkEntityNodeWhenSearchedResultsInBestConfidence = NULL;
 	GIAEntityNode * queryEntityNodeWhenSearchedResultsInBestConfidence = NULL;
@@ -29,7 +31,9 @@ void answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(ve
 		
 		GIAEntityNode* currentQueryEntityNode = *entityIterQuery;
 		
+		//#ifdef GIA_QUERY_DEBUG
 		cout << "currentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
+		//#endif
 		
 		bool foundQueryEntityNodeName = false;
 		long queryEntityNodeIndex = -1;
@@ -44,7 +48,7 @@ void answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(ve
 			bool foundAnswerTemp = false;
 			GIAEntityNode* queryAnswerNodeTemp;
 
-			testEntityNodeForQuery(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodes, false);
+			queryAnswerNodeTemp = testEntityNodeForQuery(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodes, false);
 
 			double currentConfidence = (double)numberOfMatchedNodes;	//NB confidence value definition for query network structure matching is currently very simple; it is just equal to the number of matched nodes found 
 
@@ -93,10 +97,11 @@ void answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(ve
 	}
 
 	cout << "finished query round 2" << endl;
+	return queryAnswerNode;
 				
 }
 
-void testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode * comparisonVariableNode,  bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters, bool isSuitableNodeTypeForInexactAnswer)
+GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode * comparisonVariableNode,  bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters, bool isSuitableNodeTypeForInexactAnswer)
 {
 	bool foundMatch = false;
 	
@@ -108,7 +113,7 @@ void testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntityNode, GIAEn
 		}
 		else
 		{
-			testEntityNodeForQuery(queryEntityNode, entityNode, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
+			queryAnswerNode = testEntityNodeForQuery(queryEntityNode, entityNode, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
 			
 			if(isSuitableNodeTypeForInexactAnswer)
 			{
@@ -138,18 +143,32 @@ void testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntityNode, GIAEn
 	
 	if(foundMatch)
 	{
-		entityNode->isAnswerToQuery = true;
-		*foundAnswer = true; 
-		queryAnswerNode = entityNode;
-		cout << "foundAnswer:" << comparisonVariableNode->entityName << endl;
-		//CHECKTHIS; need to take into account vector of answers (not just a single answer)	
+		if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters && !(entityNode->isAnswerContextToQuery)))
+		{
+			entityNode->isAnswerToQuery = true;
+			*foundAnswer = true; 
+			queryAnswerNode = entityNode;
+			cout << "foundAnswer:" << comparisonVariableNode->entityName << endl;
+			//CHECKTHIS; need to take into account vector of answers (not just a single answer)
+			
+			if(findBestInexactAnswerAndSetDrawParameters)
+			{
+				entityNode->isAnswerContextToQuery = true;			 
+			}
+			else
+			{
+				entityNode->testedForQueryComparison = true;		//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]				
+			}			
+		}	
 	}
+	
+	return queryAnswerNode;
 	
 	
 }
 				
 //current queryEntityNode, currentEntityNode
-void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters)
+GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters)
 {
 	*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
 		
@@ -178,6 +197,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			entityNode->testedForQueryComparison = true;		//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]				
 		}
 		
+		#ifdef GIA_QUERY_DEBUG
 		if(entityNode->isProperty)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is property)" << endl;		
@@ -202,7 +222,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 		{
 			cout << "entityNode = " << entityNode->entityName << endl;
 		}
-
+		#endif
 		
 		/*
 		cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
@@ -219,7 +239,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			for(actionIter = entityNode->IncomingActionNodeList.begin(); actionIter != entityNode->IncomingActionNodeList.end(); actionIter++) 
 			{
 				//cout << "A" << endl;
-				testReferencedEntityNodeForNameMatch(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
 			
 				//cout << "AA" << endl;
 			}
@@ -229,7 +249,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			for(actionIter = entityNode->ActionNodeList.begin(); actionIter != entityNode->ActionNodeList.end(); actionIter++) 
 			{
 				//cout << "AAA" << endl;	
-				testReferencedEntityNodeForNameMatch(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);				
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);				
 				//cout << "AAAA" << endl;
 			}
 		}	
@@ -245,7 +265,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 				//cout << "entityNode->actionSubjectEntity->testedForQueryComparison = " << entityNode->actionSubjectEntity->testedForQueryComparison << endl;
 				//cout << "entityNode->actionSubjectEntity->entityName = " << entityNode->actionSubjectEntity->entityName << endl;
 				//cout << "entityNode->actionObjectEntity->entityName = " << entityNode->actionObjectEntity->entityName << endl;
-				testReferencedEntityNodeForNameMatch(queryEntityNode->actionSubjectEntity, entityNode->actionSubjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->actionSubjectEntity, entityNode->actionSubjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
 							
 				//cout << "b6" << endl;		
 			}	
@@ -256,7 +276,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			{		
 				//cout << "b7" << endl;
 
-				testReferencedEntityNodeForNameMatch(queryEntityNode->actionObjectEntity, entityNode->actionObjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, true);
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->actionObjectEntity, entityNode->actionObjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, true);
 				
 				//cout << "b8" << endl;		
 			}	
@@ -278,7 +298,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			ConditionNodeTypeListIterator = entityNode->ConditionNodeTypeList.begin();		
 			for(ConditionIter = entityNode->ConditionNodeList.begin(); ConditionIter != entityNode->ConditionNodeList.end(); ConditionIter++) 
 			{	
-				testReferencedEntityNodeForNameMatch(*ConditionIterQuery, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*ConditionIterQuery, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
 				
 				ConditionNodeTypeListIterator++;			
 			}			
@@ -311,7 +331,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			ConditionNodeTypeListIterator = entityNode->ConditionNodeTypeReverseList.begin();
 			for(ConditionIter = entityNode->ConditionNodeReverseList.begin(); ConditionIter != entityNode->ConditionNodeReverseList.end(); ConditionIter++) 
 			{	
-				testReferencedEntityNodeForNameMatch(*ConditionIterQuery, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*ConditionIterQuery, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
 				ConditionNodeTypeListIterator++;		
 			}	
 			ConditionNodeTypeListIteratorQuery++;		
@@ -329,7 +349,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			for(entityIter = entityNode->PropertyNodeList.begin(); entityIter != entityNode->PropertyNodeList.end(); entityIter++) 
 			{//DRAW SHOULD NOT BE REQUIRED	
 				//cout << "a31" << endl;
-				testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
 			}		
 		}
 		/*this has been removed 25 Sept - use entityNodeContainingThisProperty instead
@@ -347,7 +367,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			if(entityNode->entityNodeDefiningThisPropertyOrAction != NULL)
 			{
 				//cout << "a33" << endl;
-				testReferencedEntityNodeForNameMatch(queryEntityNode->entityNodeDefiningThisPropertyOrAction, entityNode->entityNodeDefiningThisPropertyOrAction, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->entityNodeDefiningThisPropertyOrAction, entityNode->entityNodeDefiningThisPropertyOrAction, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
 			}		
 		}
 		//cout << "a3c" << endl;
@@ -356,7 +376,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			if(entityNode->entityNodeContainingThisProperty != NULL)
 			{
 				//cout << "a34" << endl;
-				testReferencedEntityNodeForNameMatch(queryEntityNode->entityNodeContainingThisProperty, entityNode->entityNodeContainingThisProperty, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->entityNodeContainingThisProperty, entityNode->entityNodeContainingThisProperty, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
 			}
 		}
 		//cout << "a4" << endl;
@@ -368,7 +388,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 		{
 			for(entityIter = entityNode->EntityNodeDefinitionList.begin(); entityIter != entityNode->EntityNodeDefinitionList.end(); entityIter++) 
 			{
-				testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);				
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);				
 			}
 		}
 		//go reverse also...	
@@ -376,7 +396,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 		{//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
 			for(entityIter = entityNode->EntityNodeDefinitionReverseList.begin(); entityIter != entityNode->EntityNodeDefinitionReverseList.end(); entityIter++) 
 			{//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
-				testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);						
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);						
 			}
 		}
 		//cout << "a6" << endl;
@@ -389,7 +409,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			for(entityIter = entityNode->AssociatedPropertyNodeList.begin(); entityIter != entityNode->AssociatedPropertyNodeList.end(); entityIter++) 
 			{
 				//cout << "as0" << endl;
-				testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);						
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);						
 				//cout << "as1" << endl;
 			}
 		}	
@@ -488,7 +508,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 		*/
 		
 		//cout << "a8" << endl;	
-		
+		#ifdef GIA_QUERY_DEBUG
 		if(entityNode->isProperty)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (is property)" << endl;		
@@ -513,9 +533,12 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << endl;
 		}
+		#endif
 							
 	}
 	//cout << "a0c" << endl;
+	
+	return queryAnswerNode;
 		
 }
 
@@ -525,131 +548,4 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 
 
 
-
-
-
-
-
-
-
-/*
-void answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, vector<GIAEntityNode*> *entityNodesCompleteListQuery, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, double * confidence)
-{
-	#ifdef GIA_QUERY_ADVANCED_DEBUG
-	int numberOfQueryEntities = entityNodesCompleteListQuery->end() - entityNodesCompleteListQuery->begin();
-	double bestConfidenceForCurrentQueryEntityArray = new double[numberOfQueryEntities];
-	int queryEntityIndex = 0;
-	#endif
-	
-	double bestConfidence = 0.0;
-	
-	GIAEntityNode * networkEntityNodeWhenSearchedResultsInBestConfidence = NULL;
-	GIAEntityNode * queryEntityNodeWhenSearchedResultsInBestConfidence = NULL;
-		
-	vector<GIAEntityNode*>::iterator entityIterQuery;
-	for(entityIterQuery = entityNodesCompleteListQuery->begin(); entityIterQuery != entityNodesCompleteListQuery->end(); entityIterQuery++) 
-	{//for each node in query semantic net;
-		
-		GIAEntityNode* currentQueryEntityNode = *entityIterQuery;
-		
-		bool foundQueryEntityNodeName = false;
-		int queryEntityNodeIndex = -1;
-		string queryEntityNodeName = currentQueryEntityNode->entityName;
-		GIAEntityNode * conceptEntityMatchingCurrentQueryEntity = findOrAddEntityNodeByName(conceptEntityNodesList, conceptEntityNamesList, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false);
-		
-		#ifdef GIA_QUERY_ADVANCED_DEBUG
-		double bestConfidenceForCurrentQueryEntity = 0.0;
-		#endif
-		if(foundQueryEntityNodeName)
-		{
-			//now start matching structure search for all properties of the identical concept node (to current query entity name) in Semantic Network
-			
-			#ifdef GIA_QUERY_ADVANCED_DEBUG
-			int numberOfPropertyEntities = conceptEntityMatchingCurrentQueryEntity->PropertyNodeList.end() - conceptEntityMatchingCurrentQueryEntity->PropertyNodeList.begin();
-			double confidenceForCurrentPropertyEntityArray = new double[numberOfPropertyEntities];
-			int propertyEntityIndex = 0;
-			#endif
-			
-			for(conceptEntityMatchingCurrentQueryEntity->PropertyNodeListIterator = conceptEntityMatchingCurrentQueryEntity->PropertyNodeList.begin(); conceptEntityMatchingCurrentQueryEntity->PropertyNodeListIterator < conceptEntityMatchingCurrentQueryEntity->PropertyNodeList.end(); conceptEntityMatchingCurrentQueryEntity->PropertyNodeListIterator++)
-			{
-				int numberOfMatchedNodes = 0;	
-				bool foundAnswerTemp = false;
-				GIAEntityNode* queryAnswerNodeTemp;
-				
-				
-				GIAEntityNode* currentNetworkEntityPropertyNode = *(conceptEntityMatchingCurrentQueryEntity->PropertyNodeListIterator);
-				
-				testEntityNodeForQuery(currentQueryEntityNode, currentNetworkEntityPropertyNode, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, &queryAnswerNodeTemp, &numberOfMatchedNodes, false);
-
-				currentConfidence = (double)numberOfMatchedNodes;	//NB confidence value definition for query network structure matching is currently very simple; it is just equal to the number of matched nodes found 
-					
-				if(detectComparisonVariable)
-				{
-					if(!foundAnswer)
-					{//if comparisonVariable is identified within the query, then an exact answer is required... 
-						currentConfidence = 0.0;
-					}
-					else
-					{
-						if(currentConfidence > bestConfidence)
-						{
-							queryAnswerNode = queryAnswerNodeTemp;
-							*foundAnswer = true;
-						}
-					}
-				}
-				
-				if(currentConfidence > bestConfidence)
-				{
-					bestConfidence = currentConfidence;
-					networkEntityNodeWhenSearchedResultsInBestConfidence = currentNetworkEntityPropertyNode;
-					queryEntityNodeWhenSearchedResultsInBestConfidence = currentQueryEntityNode;
-				}				
-				
-				#ifdef GIA_QUERY_ADVANCED_DEBUG
-				confidenceForCurrentPropertyEntityArray[propertyEntityIndex] = currentConfidence;
-				propertyEntityIndex++;			
-				#endif
-			}
-			
-			#ifdef GIA_QUERY_ADVANCED_DEBUG
-			highestConfidenceAcrossAllProperties = 0.0;
-			for(int propertyEntityIndex=0; propertyEntityIndex<numberOfPropertyEntities;propertyEntityIndex++)
-			{
-				if(confidenceForCurrentPropertyEntityArray[propertyEntityIndex] > highestConfidenceAcrossAllProperties)
-				{
-					highestConfidenceAcrossAllProperties = confidenceForCurrentPropertyEntityArray[propertyEntityIndex];
-				}
-			}
-			bestConfidenceForCurrentQueryEntityArray[queryEntityIndex] = highestConfidenceAcrossAllProperties;					
-			#endif
-		}
-		#ifdef GIA_QUERY_ADVANCED_DEBUG
-		else
-		{
-			bestConfidenceForCurrentQueryEntityArray[queryEntityIndex] = 0.0;
-		}
-		
-		queryEntityIndex++;
-		#endif
-	}
-
-	#ifdef GIA_QUERY_ADVANCED_DEBUG
-	highestConfidenceAcrossAllQueryEntities = 0.0;
-	for(int queryEntityIndex=0; queryEntityIndex<numberOfQueryEntities;queryEntityIndex++)
-	{
-		if(bestConfidenceForCurrentQueryEntityArray[queryEntityIndex] > highestConfidenceAcrossAllQueryEntities)
-		{
-			highestConfidenceAcrossAllQueryEntities = bestConfidenceForCurrentQueryEntityArray[queryEntityIndex];
-		}
-	}
-	#endif
-	
-	if(detectComparisonVariable || !(*foundAnswer))
-	{//now set draw parameters for optimium solution...
-		testEntityNodeForQuery(queryEntityNodeWhenSearchedResultsInBestConfidence, networkEntityNodeWhenSearchedResultsInBestConfidence, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, &queryAnswerNodeTemp, &numberOfMatchedNodes, true);
-	}
-				
-}
-*/
 
