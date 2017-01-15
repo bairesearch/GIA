@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammarAndReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i10c 12-Apr-2012
+ * Project Version: 1i10d 12-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1111,6 +1111,292 @@ void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 
+
+void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+{
+	
+#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION
+	//look for nsubj/prep combination, eg nsubj(next-4, garage-2) / prep_to(next-4, house-7)	=> prep_subj(next_to, house) / prep_subj(next_to, garage) 
+	
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{	
+		//cout << "here1" << endl;
+		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+
+		if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT)
+		{					
+			//now find the associated object..
+ 			Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+			while(currentRelationInList2->next != NULL)
+			{	
+				bool stanfordPrepositionFound = false;
+				string relexPreposition = convertStanfordPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+				
+				if(stanfordPrepositionFound)
+				{		
+					if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
+					{//found a matching preposition of object-subject relationship
+					
+						if(!(currentRelationInList2->prepositionCombinationAlreadyCreatedTemp))
+						{																	
+							string newPrepositionName = "";
+							newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
+
+							//cout << "newPrepositionName = " << newPrepositionName << endl;
+
+							Relation * subjectOfPrepositionRelation = currentRelationInList;
+							Relation * objectOfPrepositionRelation = currentRelationInList2;
+							subjectOfPrepositionRelation->relationType = RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION;
+							objectOfPrepositionRelation->relationType = RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION;
+							GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName = newPrepositionName;
+							currentRelationInList2->prepositionCombinationAlreadyCreatedTemp = true;
+						}
+					}
+				}
+
+				currentRelationInList2 = currentRelationInList2->next;
+			}
+		}
+		//cout << "here2" << endl;
+		currentRelationInList = currentRelationInList->next;
+	}
+#else
+
+	/*
+	//stanford parser prepositition reduction check (based upon http://en.wikipedia.org/wiki/List_of_English_prepositions);
+	Y The woman is white according to John.
+	Y The job was complete apart from the axel.
+	Y As for Tim, he knew no other way.
+	Y As per physics, the ball fell.
+	N As regards the apple.
+	Y Aside from that, all was good.
+	N They went back to the mall.
+	Y It grew tall because of the water.
+	N He is close to the house.
+	N The computer broke due to the fire.
+	Y All is fine except for the carrot.
+	Y The house is far from the beach.
+	Y The man fell into the boat.
+	Y The kitten is inside of the box.
+	Y The kettle is noisy instead of quite.
+	N The house is left of the bank.
+	N The carriage is near to the horse.
+	N The farmer is next to the plank.
+	N The chicken goes on to the plank.
+	N The chicken when out of the box.
+	N The man is outside of the house.
+	N Owing to the weather, he bought the paint.
+	Y Prior to the fall, he ate a pie.
+
+	Y Regardless of the time, it will be done.
+	N Right of the house, is the beach.
+	N Subsequent to the holidays, it will be done.
+	N Thanks to his results, he will watch tv.
+	N is that of Tom's doing?
+	N He reached up to the sky.
+	N He eats chocolate, where as he is skinny.	[Only possible for stanford core nlp - not for stanford parser]
+
+	N As far as they are concerned, nothing could be better. [Only possible for stanford core nlp - not for stanford parser]
+	Y He bought a pie as well as the cake.
+
+	collapse these prepositions;
+
+	nsubj(broke-3, computer-2)
+	acomp(broke-3, due-4)
+	prep_to(due-4, fire-7)
+
+	nsubj(went-2, They-1)
+	advmod(went-2, back-3)
+	prep_to(went-2, mall-6)
+
+	nsubj(close-3, He-1)
+	cop(close-3, is-2)
+	prep_to(close-3, house-6)
+
+	nsubjpass(left-4, house-2)
+	auxpass(left-4, is-3)
+	prep_of(left-4, bank-7)
+
+	nsubj(near-4, carriage-2)
+	cop(near-4, is-3)
+	prep_to(near-4, horse-7)
+
+	nsubj(next-4, farmer-2)
+	cop(next-4, is-3)
+	prep_to(next-4, plank-7
+
+	nsubj(goes-3, chicken-2)
+	prt(goes-3, on-4)
+	prep_to(goes-3, plank-7)
+
+	nsubj(outside-4, man-2)
+	cop(outside-4, is-3)
+	prep_of(outside-4, house-7)
+
+	dobj(bought-7, paint-9)	
+	partmod(bought-7, Owing-1)	//NB currently interpreted as obj	
+	prep_to(Owing-1, weather-4)
+
+	nsubj(beach-8, Right-1)
+	cop(beach-8, is-6)
+	prep_of(Right-1, house-4)
+
+	nsubjpass(done-9, it-6)
+	partmod(done-9, Subsequent-1)
+	prep_to(Subsequent-1, holidays-4)
+
+	partmod(watch-8, Thanks-1)
+	prep_to(Thanks-1, results-4)
+	nsubj(watch-8, he-6)
+
+	nsubj(doing-6, that-2)
+	aux(doing-6, is-1)
+	prep_of(that-2, Tom-4)
+
+	nsubj(reached-2, He-1)
+	prt(reached-2, up-3)
+	prep_to(reached-2, sky-6)
+
+
+	summary of multiword preposition contraction process;
+	3. obj/subj (a, b)  
+	2. aux, auxpass, cop, acomp, partmod, prt ) (a, z)  	    
+	1. prep_x (a, c)
+	->
+	3. obj/subj
+	1. prep_z_c(a, c)
+	*/	
+		
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{	
+		//cout << "here1" << endl;
+		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+
+		bool stanfordPrepositionFound = false;
+		string relexPreposition = convertStanfordPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+	
+		if(stanfordPrepositionFound)
+		{		
+			//cout << "redistributeStanfordRelationsMultiwordPreposition(): stanfordPrepositionFound relexPreposition = " << relexPreposition << endl;
+			
+ 			Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+			while(currentRelationInList2->next != NULL)
+			{	
+				bool multiwordPrepositionIntermediaryRelationTypeAFound = false;
+				for(int i=0; i<GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA; i++)
+				{
+					if(currentRelationInList2->relationType == redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeA[i])
+					{
+						multiwordPrepositionIntermediaryRelationTypeAFound = true;
+					}
+				}
+				
+				bool multiwordPrepositionIntermediaryRelationTypeBFound = false;
+				for(int i=0; i<GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEB; i++)
+				{
+					if(currentRelationInList2->relationType == redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeB[i])
+					{
+						multiwordPrepositionIntermediaryRelationTypeBFound = true;
+					}
+				}
+								
+				
+				if(multiwordPrepositionIntermediaryRelationTypeAFound || multiwordPrepositionIntermediaryRelationTypeBFound)
+				{
+					//cout << "redistributeStanfordRelationsMultiwordPreposition(): multiwordPrepositionIntermediaryRelationFound relexPreposition = " << relexPreposition << ", intermediaryrelation = " << currentRelationInList2->relationType << endl;
+				
+					if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
+					{//found a matching preposition of object-subject relationship
+						
+ 						Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+						while(currentRelationInList3->next != NULL)
+						{	
+							bool multiwordPrepositionSubjectOrObjectRelationFound = false;
+							for(int i=0; i<GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_SUBJOBJ_RELATIONS; i++)
+							{
+								//cout << "currentRelationInList3->relationType = " << currentRelationInList3->relationType << endl;
+								if(currentRelationInList3->relationType == redistributionStanfordRelationsMultiwordPrepositionSubjObjRelations[i])
+								{
+									multiwordPrepositionSubjectOrObjectRelationFound = true;
+								}
+							}
+							
+							//cout << "SD1" << endl;
+							
+							if(multiwordPrepositionSubjectOrObjectRelationFound)
+							{	
+								//cout << "SD" << endl;
+															
+								if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
+								{//found a matching preposition of object-subject relationship								
+										
+									//cout << "SD2" << endl;						
+									if(!(currentRelationInList->prepositionCombinationAlreadyCreatedTemp))
+									{		
+										if(multiwordPrepositionIntermediaryRelationTypeAFound)
+										{
+											GIAEntityNode * entityContainingFirstWordOfMultiwordPreposition = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex];
+
+											string newPrepositionName = "";
+											newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
+
+											//cout << "redistributeStanfordRelationsMultiwordPreposition(): newPrepositionName = " << newPrepositionName << endl;
+											currentRelationInList->relationType = newPrepositionName;
+											currentRelationInList->prepositionCombinationAlreadyCreatedTemp = true;
+											
+											currentRelationInList->relationGovernorIndex = currentRelationInList3->relationDependentIndex;
+											currentRelationInList->relationGovernor =  GIAEntityNodeArray[currentRelationInList3->relationDependentIndex]->entityName;
+											
+											currentRelationInList2->disabled = true;
+											
+											#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+											entityContainingFirstWordOfMultiwordPreposition->disabled = true;
+											#endif
+											
+										
+										}
+										else if(multiwordPrepositionIntermediaryRelationTypeBFound)
+										{
+											GIAEntityNode * entityContainingFirstWordOfMultiwordPreposition = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
+
+											string newPrepositionName = "";
+											newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
+
+											//cout << "redistributeStanfordRelationsMultiwordPreposition(): newPrepositionName = " << newPrepositionName << endl;
+											currentRelationInList->relationType = newPrepositionName;
+											currentRelationInList->prepositionCombinationAlreadyCreatedTemp = true;
+
+											currentRelationInList2->disabled = true;
+											#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+											entityContainingFirstWordOfMultiwordPreposition->disabled = true;
+											#endif
+										}
+										
+									}
+								}
+							}							
+
+							currentRelationInList3 = currentRelationInList3->next;
+						}
+					}
+				}
+
+				currentRelationInList2 = currentRelationInList2->next;
+			}
+		}
+		//cout << "here2" << endl;
+		currentRelationInList = currentRelationInList->next;
+	}
+	
+		
+#endif
+	//cout << "asd" << endl;
+}
+
+
+
 void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
 	//eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - > _predadj(rabbit-2, away-6) 
@@ -1345,58 +1631,6 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 		}			
 		currentRelationInList = currentRelationInList->next;
 	}
-}
-
-
-
-void redistributeStanfordRelationsNSubjAndPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
-{
-	//look for nsubj/prep combination, eg nsubj(next-4, garage-2) / prep_to(next-4, house-7)	=> prep_subj(next_to, house) / prep_subj(next_to, garage) 
-	
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
-	while(currentRelationInList->next != NULL)
-	{	
-		//cout << "here1" << endl;
-		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-
-		if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT)
-		{					
-			//now find the associated object..
- 			Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
-			while(currentRelationInList2->next != NULL)
-			{	
-				bool stanfordPrepositionFound = false;
-				string relexPreposition = convertStanfordPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
-				
-				if(stanfordPrepositionFound)
-				{		
-					if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
-					{//found a matching preposition of object-subject relationship
-					
-						if(!(currentRelationInList2->prepositionCombinationAlreadyCreatedTemp))
-						{																	
-							string newPrepositionName = "";
-							newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
-
-							//cout << "newPrepositionName = " << newPrepositionName << endl;
-
-							Relation * subjectOfPrepositionRelation = currentRelationInList;
-							Relation * objectOfPrepositionRelation = currentRelationInList2;
-							subjectOfPrepositionRelation->relationType = RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION;
-							objectOfPrepositionRelation->relationType = RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION;
-							GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName = newPrepositionName;
-							currentRelationInList2->prepositionCombinationAlreadyCreatedTemp = true;
-						}
-					}
-				}
-
-				currentRelationInList2 = currentRelationInList2->next;
-			}
-		}
-		//cout << "here2" << endl;
-		currentRelationInList = currentRelationInList->next;
-	}
-	//cout << "asd" << endl;
 }
 
 

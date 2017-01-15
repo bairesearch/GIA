@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i10c 12-Apr-2012
+ * Project Version: 1i10d 12-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -30,7 +30,7 @@ using namespace std;
 #include "GIAConditionNodeClass.h"
 
 
-//#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION	//NO; SOLUTION; preprocess "two word prepositions" eg from http://en.wikipedia.org/wiki/List_of_English_prepositions
+//#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION	//NO; pre-process "two word prepositions" eg from http://en.wikipedia.org/wiki/List_of_English_prepositions, or post process (currently implemented)
 
 #ifndef GIA_DISABLE_REFERENCING
 	#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS	//default: enabled
@@ -197,13 +197,13 @@ using namespace std;
 //actions (obj/subj relationships):
 #define RELATION_TYPE_OBJECT "_obj"			//eg eats y	[? be y]
 #define RELATION_TYPE_OBJECT_THAT "_that"		//there is a place that we go
-#define RELATION_TYPE_OBJECT_NUMBER_OF_TYPES (2)
+#define RELATION_TYPE_OBJECT_NUMBER_OF_TYPES (3)
 #define RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES (1)
 #define STANFORD_RELATION_TYPE_OBJECT "dobj"
 #define STANFORD_RELATION_TYPE_INFINITIVAL_MODIFIER "infmod"				//Relex usually generates a plain _obj
 #define STANFORD_RELATION_TYPE_PASSIVE_NOMINAL_SUBJECT "nsubjpass" 			//nsubjpass(thrown, rocks) 	rocks were thrown 				Relex: RelEx identifies these as _obj, and marks verb with passive feature. 
-#define STANFORD_RELATION_TYPE_PARTICIPIAL_MODIFIER "partmod" 				//RelEx usually generates a plain _obj.  
-
+#define STANFORD_RELATION_TYPE_PARTICIPIAL_MODIFIER "partmod" 				//RelEx usually generates a plain _obj. [however GIA keeps it as a separate relation, as it uses it elsewhere for multiword preposition collapse purposes] 
+#define RELATION_TYPE_PARTICIPIAL_MODIFIER "_partmod"
 
 #define RELATION_TYPE_SUBJECT "_subj"	//eg x eats 	[? be x]
 #define RELATION_TYPE_SUBJECT_EXPLETIVE "_expl"		//eg goes there	//NB "there" is currently interpreted as a subject of an action
@@ -217,7 +217,7 @@ using namespace std;
 
 
 
-//stanford specific (non Relex) relations implemented in redistributeStanfordRelationsAdverbalClauseModifierAndComplement()/redistributeStanfordRelationsClausalSubject()/redistributeStanfordRelationsPhrasalVerbParticle()/redistributeStanfordRelationsNSubjAndPreposition():
+//stanford specific (non Relex) relations implemented in redistributeStanfordRelationsAdverbalClauseModifierAndComplement()/redistributeStanfordRelationsClausalSubject()/redistributeStanfordRelationsPhrasalVerbParticle()/redistributeStanfordRelationsMultiwordPreposition():
 #define STANFORD_RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER "advcl" 			//advcl(happen, fall)	The accident happened as the night was falling. 	Relex: as(happen, fall) 
 #define STANFORD_RELATION_TYPE_COMPLEMENT_OF_ADVERBAL_CLAUSE_MODIFIER "mark"		//mark(fall, as)  	The accident happened as the night was falling. 	Relex: as(happen, fall) 
 #define STANFORD_RELATION_TYPE_CLAUSAL_COMPLEMENT "ccomp" 				//ccomp(say, like)	He says that you like to swim				Relex: that(say, like) 		GIA: implement this as an action property
@@ -465,8 +465,12 @@ static string featureNERindicatesNormalisedNERavailableTypeArray[FEATURE_NER_IND
 #define STANFORD_PARSER_PREPOSITION_DELIMITER "_"
 
 
-
-
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA (3)
+static string redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeA[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA] = {RELATION_TYPE_MODAL_AUX, RELATION_TYPE_PASSIVE_AUX, RELATION_TYPE_COPULA};
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEB (3)
+static string redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeB[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEB] = {RELATION_TYPE_COMPLIMENT_TO_BE, RELATION_TYPE_PARTICIPIAL_MODIFIER, RELATION_TYPE_PHRASAL_VERB_PARTICLE};
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_SUBJOBJ_RELATIONS (2)
+static string redistributionStanfordRelationsMultiwordPrepositionSubjObjRelations[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_SUBJOBJ_RELATIONS] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_OBJECT};
 
 
 
@@ -499,7 +503,7 @@ static string relationTypeConjugationNameArray[RELATION_TYPE_CONJUGATION_NUMBER_
 static string relationTypeConjugationBasicNameArray[RELATION_TYPE_CONJUGATION_BASIC_NUMBER_OF_TYPES] = {RELATION_TYPE_CONJUGATION_AND_BASIC, RELATION_TYPE_CONJUGATION_OR_BASIC};
 #endif
 	
-static string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_THAT};
+static string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_PARTICIPIAL_MODIFIER, RELATION_TYPE_OBJECT_THAT};
 #ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
 static string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_SUBJECT_EXPLETIVE};
 #else
@@ -553,8 +557,8 @@ static bool referenceTypePersonCrossReferencePersonArray[REFERENCE_TYPE_PERSON_N
 
 
 
-#define GIA_NUMBER_OF_RELEX_VERSUS_STANFORD_DEPENDENCY_RELATION_DISCREPANCIES (13)
-static string relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_NUMBER_OF_TYPES][GIA_NUMBER_OF_RELEX_VERSUS_STANFORD_DEPENDENCY_RELATION_DISCREPANCIES] = {{RELATION_TYPE_COMPLIMENT_TO_BE, RELATION_TYPE_COMPLIMENT_TO_DO, RELATION_TYPE_APPOSITIVE_OF_NOUN, RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT, RELATION_TYPE_SUBJECT, RELATION_TYPE_POSSESSIVE, RELATION_TYPE_QUANTITY, RELATION_TYPE_QUANTITY, RELATION_TYPE_QUANTITY_MOD, RELATION_TYPE_SUBJECT}, {STANFORD_RELATION_TYPE_COMPLIMENT_TO_BE, STANFORD_RELATION_TYPE_COMPLIMENT_TO_DO, STANFORD_RELATION_TYPE_APPOSITIVE_OF_NOUN, STANFORD_RELATION_TYPE_OBJECT, STANFORD_RELATION_TYPE_INFINITIVAL_MODIFIER, STANFORD_RELATION_TYPE_PASSIVE_NOMINAL_SUBJECT, STANFORD_RELATION_TYPE_PARTICIPIAL_MODIFIER, STANFORD_RELATION_TYPE_SUBJECT, STANFORD_RELATION_TYPE_POSS2, STANFORD_RELATION_TYPE_QUANTITY, STANFORD_RELATION_TYPE_ELEMENT_OF_COMPOUND_NUMBER, STANFORD_RELATION_TYPE_QUANTITY_MOD, STANFORD_RELATION_TYPE_AGENT}};
+#define GIA_NUMBER_OF_RELEX_VERSUS_STANFORD_DEPENDENCY_RELATION_DISCREPANCIES (12)
+static string relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_NUMBER_OF_TYPES][GIA_NUMBER_OF_RELEX_VERSUS_STANFORD_DEPENDENCY_RELATION_DISCREPANCIES] = {{RELATION_TYPE_COMPLIMENT_TO_BE, RELATION_TYPE_COMPLIMENT_TO_DO, RELATION_TYPE_APPOSITIVE_OF_NOUN, RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT, RELATION_TYPE_SUBJECT, RELATION_TYPE_POSSESSIVE, RELATION_TYPE_QUANTITY, RELATION_TYPE_QUANTITY, RELATION_TYPE_QUANTITY_MOD, RELATION_TYPE_SUBJECT}, {STANFORD_RELATION_TYPE_COMPLIMENT_TO_BE, STANFORD_RELATION_TYPE_COMPLIMENT_TO_DO, STANFORD_RELATION_TYPE_APPOSITIVE_OF_NOUN, STANFORD_RELATION_TYPE_OBJECT, STANFORD_RELATION_TYPE_INFINITIVAL_MODIFIER, STANFORD_RELATION_TYPE_PASSIVE_NOMINAL_SUBJECT, STANFORD_RELATION_TYPE_SUBJECT, STANFORD_RELATION_TYPE_POSS2, STANFORD_RELATION_TYPE_QUANTITY, STANFORD_RELATION_TYPE_ELEMENT_OF_COMPOUND_NUMBER, STANFORD_RELATION_TYPE_QUANTITY_MOD, STANFORD_RELATION_TYPE_AGENT}};
 
 
 /*
