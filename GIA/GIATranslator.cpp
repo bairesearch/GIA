@@ -24,7 +24,7 @@ string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES]
 string relationFunctionCompositionNameArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_COMPOSITION_1, RELATION_FUNCTION_COMPOSITION_2, RELATION_FUNCTION_COMPOSITION_3, RELATION_FUNCTION_COMPOSITION_4};
 string relationFunctionDefinitionNameArray[RELATION_FUNCTION_DEFINITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_DEFINITION_1};
 
-
+string relationTypeObjectSpecialConditionNameArray[RELATION_TYPE_OBJECT_SPECIAL_CONDITION_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE};
 
 int referenceTypeHasDeterminateCrossReferenceNumberArray[GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES] = {GRAMMATICAL_NUMBER_SINGULAR};
 string relationTypeAdjectiveWhichImplyEntityInstanceNameArray[RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_1, RELATION_TYPE_ADJECTIVE_3};
@@ -348,8 +348,18 @@ void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode 
 	propertyConditionEntity->ConditionNodeTypeReverseList.push_back(conditionName);
 }
 
-
-
+void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, string conditionName)
+{
+	if(entityNode->hasAssociatedPropertyTemp)
+	{
+		entityNode = entityNode->AssociatedPropertyNodeList.back();
+	}
+	if(conditionEntityNode->hasAssociatedPropertyTemp)
+	{
+		conditionEntityNode = conditionEntityNode->AssociatedPropertyNodeList.back();
+	}									
+	addPropertyConditionToProperty(entityNode, conditionEntityNode, conditionName);
+}
 
 
 
@@ -1254,6 +1264,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						//cout << "currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
 
 						bool partnerTypeRequiredFound = false;
+						bool partnerTypeObjectSpecialConditionFound = false;
+						
 						if(partnerTypeRequired == RELATION_TYPE_SUBJECT)
 						{
 							for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
@@ -1273,6 +1285,15 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 									partnerTypeRequiredFound = true;
 								}
 							}
+							
+							for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_CONDITION_NUMBER_OF_TYPES; i++)
+							{
+								if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionNameArray[i])
+								{
+									partnerTypeRequiredFound = true;
+									partnerTypeObjectSpecialConditionFound = true;
+								}
+							}							
 						}
 						if(partnerTypeRequiredFound)
 						{
@@ -1307,6 +1328,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 								{//subject-object relationship is a composition [property]
 									addOrConnectPropertyToEntity(subjectObjectEntityArray[SUBJECT_INDEX], subjectObjectEntityArray[OBJECT_INDEX]);
 										//check can use properties for composition/comprises ; ie, does "tom is happy" = "tom comprises happiness" ?
+								}
+								else if(partnerTypeObjectSpecialConditionFound)
+								{
+									GIAEntityNode * subjectEntityOrProperty = subjectObjectEntityArray[SUBJECT_INDEX];
+									GIAEntityNode * specialConditionNode = GIAEntityNodeArray[relationFunctionIndex2];
+									//cout << "subjectEntityOrProperty->entityName = " << subjectEntityOrProperty->entityName << endl;
+									//cout << "specialConditionNode->entityName = " << specialConditionNode->entityName << endl;			
+									addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, specialConditionNode->entityName);
 								}
 								else
 								{//assume that the subject-object relationships is an action

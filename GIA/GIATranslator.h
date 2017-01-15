@@ -102,6 +102,8 @@ using namespace std;
 	//? DOING NOW: references: yet to integrate - see http://wiki.opencog.org/w/Ideas#Improved_reference_resolution for integration (also check for the existence of the "person" tag in the feature "tense" data block)
 	//? #define RELATION_TYPE_QUANTITY "_quantity"	//eg his bike	[bike him]		/its bike
 
+#define RELATION_TYPE_OBJECT_SPECIAL_CONDITION_NUMBER_OF_TYPES (1)
+
 //predicates????
 //action/property conditions
 #define RELATION_TYPE_PREPOSITION_ON "on"		//eg rides on tuesday		[ride tuesday]		//this forms the action condition; "when"
@@ -193,13 +195,15 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity);
 
 void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
-GIAEntityNode * addAction(GIAEntityNode * actionEntity);
-void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity);
-void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
+	GIAEntityNode * addAction(GIAEntityNode * actionEntity);
+	void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity);
+	void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
 
-void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity, string conditionName);
-void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, string conditionName);
-void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, string conditionName);
+void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, string conditionName);
+	void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity, string conditionName);
+	void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, string conditionName);
+	void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, string conditionName);
+
 	//property to property relationship - these they in actual fact represent different levels of detail in information to property to action / action to action nodes - direct property to property relationships are missing the action/connectivity information
 
 

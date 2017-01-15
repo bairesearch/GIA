@@ -236,11 +236,11 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		}
 				
 		//go reverse also...
-		q = DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
-		r = DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
+		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		r = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
 		for(ConditionIter = entityNode->ConditionNodeReverseList.begin(); ConditionIter != entityNode->ConditionNodeReverseList.end(); ConditionIter++) 
 		{	
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y-q, x-r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		
 			if(initialiseOrPrint == DRAW_PRINT)
@@ -278,6 +278,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			q = q+DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE;			//this was - not +
 		}
 		*/	
+		//cout << "a3b" << endl;
 		//go upwards also...
 		q = -DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;
 		r = -DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;		
@@ -296,6 +297,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			}
 				
 		}
+		//cout << "a3c" << endl;
 		q = -DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES;		//this used to be - not +
 		r = -DRAW_X_SPACE_BETWEEN_PROPERTY_NODES;			
 		if(entityNode->entityNodeContainingThisProperty != NULL)
