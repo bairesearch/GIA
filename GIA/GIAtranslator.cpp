@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1a 14-November-2014
+ * Project Version: 2h1b 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -744,7 +744,11 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		#endif
 	}
 	#endif
-
+	
+	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+	invertOrDuplicateConditionsIfRequired(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
+	#endif
+	
 	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
 	botSwitchFirstAndSecondPerson(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPdependencyRelationsType);
 	#endif
@@ -1246,6 +1250,70 @@ void createAndLinkNonSpecificConceptsForAllEntities(vector<GIAentityNode*> * ent
 }
 #endif
 
+#endif
+
+#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+void invertOrDuplicateConditionsIfRequired(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+{
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		if(!(currentRelationInList->disabled))
+		{
+			bool prepositionFound = false;
+			string conditionName = convertPrepositionToRelex(&(currentRelationInList->relationType), &prepositionFound);
+			if(prepositionFound)
+			{
+				if(!(currentRelationInList->inverseRelation))
+				{
+					bool inverseConditionRequired = false;
+					bool twoWayConditionRequired = false;
+					string inverseConditionName = "";
+					detectIfInverseOrTwoWayConditionRequired(conditionName, &inverseConditionRequired, &twoWayConditionRequired, &inverseConditionName);
+
+					if(inverseConditionRequired)
+					{
+						//#ifdef GIA_TRANSLATOR_DEBUG
+						cout << "invertOrDuplicateConditionsIfRequired(): inverseConditionRequired: conditionName = " << conditionName  << endl;
+						//#endif
+						createNewInverseConditionEntity(currentRelationInList, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, inverseConditionName);
+					}
+					else if(twoWayConditionRequired)
+					{
+						//#ifdef GIA_TRANSLATOR_DEBUG
+						cout << "invertOrDuplicateConditionsIfRequired(): twoWayConditionRequired: conditionName = " << conditionName << endl;
+						//#endif
+						Relation * lastRelationInList = currentSentenceInList->firstRelationInList;
+						while(lastRelationInList->next != NULL)
+						{	
+							lastRelationInList = lastRelationInList->next;
+						}
+						createNewInverseConditionEntity(lastRelationInList, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, conditionName);
+						lastRelationInList->relationGovernor = currentRelationInList->relationDependent;
+						lastRelationInList->relationDependent = currentRelationInList->relationGovernor;
+						lastRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
+						lastRelationInList->relationDependentIndex = currentRelationInList->relationGovernorIndex;
+						lastRelationInList->next = new Relation();
+					}
+				}
+			}
+		}
+		currentRelationInList = currentRelationInList->next;
+	}
+}
+
+void createNewInverseConditionEntity(Relation * currentRelationInList, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], string inverseConditionName)
+{
+	int inverseConditionEntityIndex = currentSentenceInList->conditionEntityArtificialIndexCurrent;
+	GIAentityNodeArrayFilled[inverseConditionEntityIndex] = true;
+	GIAentityNode * inverseConditionEntity = new GIAentityNode();
+	inverseConditionEntity->entityName = inverseConditionName; 
+	inverseConditionEntity->wordOrig = inverseConditionName;	//is this necessary?
+	currentRelationInList->relationType = string(STANFORD_PARSER_PREPOSITION_PREPEND) + inverseConditionName;
+	currentRelationInList->inverseRelation = true;	//not required
+	GIAentityNodeArray[inverseConditionEntityIndex] = inverseConditionEntity;
+	currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
+}					
 #endif
 
 

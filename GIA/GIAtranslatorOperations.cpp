@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1a 14-November-2014
+ * Project Version: 2h1b 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -909,10 +909,11 @@ void eraseSubstanceFromSubstanceList(GIAentityNode * existingEntity)
 	*/
 }
 
+
 GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * conditionSubjectEntity, GIAentityNode * conditionObjectEntity, GIAentityNode * conditionEntity, bool sameReferenceSet)
 {
 	GIAentityNode * newOrExistingCondition = conditionEntity;
-
+	
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(conditionSubjectEntity->disabled))
 	{
@@ -921,9 +922,6 @@ GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * conditionSubjectEn
 	if(!(conditionEntity->disabled))
 	{
 	#endif
-		#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
-		identifyConditionTypeAndInvertIfNecessary(&conditionSubjectEntity, &conditionObjectEntity, conditionEntity);
-		#endif
 		
 		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
 		//see if relevant link already exists between the two nodes, and if so use that
@@ -957,6 +955,10 @@ GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * conditionSubjectEn
 		//configure entity node containing this substance
 		connectConditionInstanceToSubject(conditionSubjectEntity, newOrExistingCondition, sameReferenceSet);
 		connectConditionInstanceToObject(conditionObjectEntity, newOrExistingCondition, sameReferenceSet);
+		
+		#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
+		identifyConditionType(newOrExistingCondition);
+		#endif
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
@@ -2352,4 +2354,3 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 	return foundIndefiniteEntity;
 }
 #endif
-
