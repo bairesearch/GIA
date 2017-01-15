@@ -1,0 +1,82 @@
+<rules>
+	<sprite>
+		<miscellaneousItem name="SPRITE_SUBMODEL_RANGE_SCALE_FACTOR" stringValue="" fractionalValue="1" />
+		
+		<miscellaneousItem name="SPRITE_CHAR_PIXEL_TO_LDRAW_UNIT_RATIO" stringValue="" fractionalValue="0.1" />
+		<miscellaneousItem name="SPRITE_TEXT_SCALE_FACTOR" stringValue="" fractionalValue="1.0" />
+		<miscellaneousItem name="SPRITE_TEXT_DICE_SCALE_FACTOR" stringValue="" fractionalValue="1.0" />
+		<miscellaneousItem name="SPRITE_CHAR_HEIGHT_IN_PIXELS" stringValue="" fractionalValue="80" />
+		<miscellaneousItem name="SPRITE_LINE_SPACING_RATIO_WITHOUT_DICE_PRESENT" stringValue="" fractionalValue="1.5" />
+		
+		<miscellaneousItem name="SPRITE_CHAR_WIDTH_IN_PIXELS" stringValue="" fractionalValue="100" />
+		<miscellaneousItem name="SPRITE_SMALL_CHAR_WIDTH_IN_PIXELS" stringValue="" fractionalValue="55" />
+		<miscellaneousItem name="SPRITE_DICE_WIDTH_IN_LDRAW_UNITS" stringValue="" fractionalValue="100" />
+		<miscellaneousItem name="SPRITE_CHAR_SPACING_RATIO" stringValue="" fractionalValue="0.7" />
+		
+		<miscellaneousItem name="SPRITES_FLOATING_WIDTH_IN_LDRAW_UNITS" stringValue="" fractionalValue="0" />
+		<miscellaneousItem name="SPRITES_FLOATING_HEIGHT_IN_LDRAW_UNITS" stringValue="" fractionalValue="0" />
+		
+		<miscellaneousItem name="SPRITE_TEXT_DICE_Y_OFFSET" stringValue="" fractionalValue="11.5" />
+		
+		<miscellaneousItem name="SPRITE_NAME_START" stringValue="sprite" fractionalValue="" />
+		<miscellaneousItem name="SPRITE_EXTENSION" stringValue=".ldr" fractionalValue="" />
+		<miscellaneousItem name="SPRITE_CHARACTER_START" stringValue="spritetext" fractionalValue="" />
+		<miscellaneousItem name="SPRITE_CHARACTER_EXTENSION" stringValue=".dat" fractionalValue="" />
+	</sprite>
+	<draw>
+		<miscellaneousItem name="GIA_OUTPUT_Z_POSITION_FILE_CONNECTIONS" stringValue="" fractionalValue="0.6" />
+		<miscellaneousItem name="GIA_OUTPUT_Z_POSITION_FILE_CONTAINER_BIG_BOX" stringValue="" fractionalValue="0.5" />
+		<miscellaneousItem name="GIA_OUTPUT_Z_POSITION_FUNCTION_CONNECTIONS" stringValue="" fractionalValue="0.4" />
+		<miscellaneousItem name="GIA_OUTPUT_Z_POSITION_FILE_AND_FUNCTION_BOX" stringValue="" fractionalValue="0.3" />
+		<miscellaneousItem name="GIA_OUTPUT_Z_POSITION_FILE_AND_FUNCTION_TEXT" stringValue="" fractionalValue="0.2" />
+		
+		<miscellaneousItem name="GIA_FILE_OR_FUNCTION_TEXT_BOX_SCALE_FACTOR_X" stringValue="" fractionalValue="0.4" />
+		<miscellaneousItem name="GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_Y_LDR" stringValue="" fractionalValue="0.05" />
+		<miscellaneousItem name="GIA_FILE_OR_FUNCTION_TEXT_BOX_TEXT_SCALE_FACTOR_Y_SVG" stringValue="" fractionalValue="0.03" />
+		<miscellaneousItem name="GIA_FILE_OR_FUNCTION_TEXT_BOX_TEXT_SCALE_FACTOR_Y_SVG_B" stringValue="" fractionalValue="0.067" />
+		<miscellaneousItem name="GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_X_SPACING_FRACTION_SVG" stringValue="" fractionalValue="0.8" />
+		<miscellaneousItem name="GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_SVG" stringValue="" fractionalValue="0.1" />
+		
+		<miscellaneousItem name="GIA_FILE_FUNCTIONS_DISABLED_VECTOROBJECTS_SCALE_FACTOR" stringValue="" fractionalValue="500" />
+		<miscellaneousItem name="GIA_FILE_FUNCTIONS_ENABLED_VECTOROBJECTS_SCALE_FACTOR" stringValue="" fractionalValue="200" />
+		<miscellaneousItem name="GIA_FILE_MAX_TEXT_LENGTH" stringValue="" fractionalValue="20" />
+		<miscellaneousItem name="GIA_FILE_TEXT_BOX_PADDING_FRACTION_OF_TEXT_LENGTH" stringValue="" fractionalValue="1.25" />
+		<miscellaneousItem name="GIA_FILE_FUNCTIONS_DISABLED_TEXT_BOX_SCALE_FACTOR_X_SPACING_FRACTION" stringValue="" fractionalValue="0.9" />
+		<miscellaneousItem name="GIA_FILE_FUNCTIONS_DISABLED_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION" stringValue="" fractionalValue="0.3" />
+		<miscellaneousItem name="GIA_FILE_FUNCTIONS_ENABLED_TEXT_BOX_SCALE_FACTOR_X_SPACING_FRACTION" stringValue="" fractionalValue="0.7" />
+		<miscellaneousItem name="GIA_FILE_FUNCTIONS_ENABLED_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION" stringValue="" fractionalValue="1.0" />
+		<miscellaneousItem name="GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_X" stringValue="" fractionalValue="5.0" />
+		<miscellaneousItem name="GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_X_SPACING_FRACTION_B" stringValue="" fractionalValue="0.65" />
+		<miscellaneousItem name="GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_B" stringValue="" fractionalValue="0.9" />
+		<miscellaneousItem name="GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_C" stringValue="" fractionalValue="0.4" />
+		<miscellaneousItem name="GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG" stringValue="" fractionalValue="1.0" />
+		
+		<miscellaneousItem name="GIA_FUNCTION_VECTOROBJECTS_SCALE_FACTOR" stringValue="" fractionalValue="50" />
+		<miscellaneousItem name="GIA_FUNCTION_MAX_TEXT_LENGTH" stringValue="" fractionalValue="25" />
+		<miscellaneousItem name="GIA_FUNCTION_TEXT_BOX_PADDING_FRACTION_OF_TEXT_LENGTH" stringValue="" fractionalValue="1.00" />
+		<miscellaneousItem name="GIA_FUNCTION_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION" stringValue="" fractionalValue="0.7" />
+		<miscellaneousItem name="GIA_FUNCTION_TEXT_BOX_OUTLINE_WIDTH_SVG" stringValue="" fractionalValue="0.3" />
+		
+		<miscellaneousItem name="GIA_BASIC_ENTITY_NODE_COLOUR" stringValue="" fractionalValue="6" />
+		<miscellaneousItem name="GIA_PROPERTY_NODE_COLOUR" stringValue="" fractionalValue="1" />
+		<miscellaneousItem name="GIA_ACTION_NODE_COLOUR" stringValue="" fractionalValue="2" />
+		<miscellaneousItem name="GIA_CONDITION_NODE_COLOUR" stringValue="" fractionalValue="3" />
+		
+	
+		<!--not used... -->
+	
+		<miscellaneousItem name="GIA_LAYER_4_COLOUR" stringValue="" fractionalValue="4" />
+		<miscellaneousItem name="GIA_LAYER_5_COLOUR" stringValue="" fractionalValue="22" />
+		<miscellaneousItem name="GIA_LAYER_6_COLOUR" stringValue="" fractionalValue="25" />
+		<miscellaneousItem name="GIA_LAYER_7_COLOUR" stringValue="" fractionalValue="14" />
+		<miscellaneousItem name="GIA_LAYER_8_COLOUR" stringValue="" fractionalValue="5" />
+		<miscellaneousItem name="GIA_LAYER_9_COLOUR" stringValue="" fractionalValue="7" />
+		<miscellaneousItem name="GIA_LAYER_10_COLOUR" stringValue="" fractionalValue="8" />
+		<miscellaneousItem name="GIA_LAYER_11_COLOUR" stringValue="" fractionalValue="0" />
+		<miscellaneousItem name="GIA_LAYER_12_COLOUR" stringValue="" fractionalValue="15" />
+		
+		<miscellaneousItem name="GIA_ENTITY_CONNECTION_HIGHLIGHT_COLOUR" stringValue="" fractionalValue="5" />
+		<miscellaneousItem name="GIA_ENTITY_BOX_HIGHLIGHT_COLOUR" stringValue="" fractionalValue="5" />
+		
+	</draw>
+</rules>
