@@ -26,7 +26,7 @@
  * File Name: GIAcxlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  *
@@ -35,7 +35,7 @@
 
 #include "GIAcxlConversion.h"
 
-bool writeCmapToolsCXLFileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions)
+bool writeCmapToolsCXLFileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts)
 {
 	vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs = new vector<GIAentityNode*>;
 	for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListMapIter = networkIndexEntityNodesListMap->begin(); networkIndexEntityNodesListMapIter != networkIndexEntityNodesListMap->end(); networkIndexEntityNodesListMapIter++)
@@ -45,7 +45,7 @@ bool writeCmapToolsCXLFileOptimised(string xmlFileName, vector<GIAentityNode*>* 
 	}
 
 	bool result;
-	result = writeCmapToolsCXLfile(xmlFileName, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions);
+	result = writeCmapToolsCXLfile(xmlFileName, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListConditions);
 
 	#ifdef GIA_FREE_MEMORY1
 	delete entityNodesActiveListNetworkIndexs;
@@ -54,7 +54,7 @@ bool writeCmapToolsCXLFileOptimised(string xmlFileName, vector<GIAentityNode*>* 
 	return result;
 }
 
-bool writeCmapToolsCXLfile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions)
+bool writeCmapToolsCXLfile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts)
 {
 	bool result = true;
 
@@ -102,7 +102,7 @@ bool writeCmapToolsCXLfile(string xmlFileName, vector<GIAentityNode*>* entityNod
 
 	currentCmapNodeIDinCmapNodeList = 0;
 	long firstCmapNodeIDInNetworkIndexList = currentCmapNodeIDinCmapNodeList;
-	if(!generateCXLentityNodeTagList(currentTagL2, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, &currentCmapNodeIDinCmapNodeList, true, false))
+	if(!generateCXLentityNodeTagList(currentTagL2, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListConcepts, &currentCmapNodeIDinCmapNodeList, true, false))
 	{
 		result = false;
 	}
@@ -113,7 +113,7 @@ bool writeCmapToolsCXLfile(string xmlFileName, vector<GIAentityNode*>* entityNod
 	currentTagL2->nextTag = newTag2;
 
 	long firstCmapNodeIDInLinkingPhraseList = currentCmapNodeIDinCmapNodeList;	//NOT NECESSARY: redundant
-	if(!generateCXLentityNodeTagList(currentTagL2, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, &currentCmapNodeIDinCmapNodeList, false, false))
+	if(!generateCXLentityNodeTagList(currentTagL2, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListConcepts, &currentCmapNodeIDinCmapNodeList, false, false))
 	{
 		result = false;
 
@@ -126,7 +126,7 @@ bool writeCmapToolsCXLfile(string xmlFileName, vector<GIAentityNode*>* entityNod
 	currentTagL2->nextTag = newTag2;
 
 	currentCmapNodeIDinCmapNodeList = firstCmapNodeIDInNetworkIndexList;
-	if(!generateCXLentityNodeTagList(currentTagL2, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, &currentCmapNodeIDinCmapNodeList, true, true))
+	if(!generateCXLentityNodeTagList(currentTagL2, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListConcepts, &currentCmapNodeIDinCmapNodeList, true, true))
 	{
 		result = false;
 	}
@@ -137,7 +137,7 @@ bool writeCmapToolsCXLfile(string xmlFileName, vector<GIAentityNode*>* entityNod
 
 
 	currentCmapNodeIDinCmapNodeList = firstCmapNodeIDInLinkingPhraseList;	//NOT NECESSARY: redundant
-	if(!generateCXLentityNodeTagList(currentTagL2, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, &currentCmapNodeIDinCmapNodeList, false, true))
+	if(!generateCXLentityNodeTagList(currentTagL2, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListConcepts, &currentCmapNodeIDinCmapNodeList, false, true))
 	{
 		result = false;
 	}
@@ -162,7 +162,7 @@ bool writeCmapToolsCXLfile(string xmlFileName, vector<GIAentityNode*>* entityNod
 	XMLparserTag* lastTagInLinkingPhraseList = currentTagInLinkingPhraseList;
 	XMLparserTag* lastTagInLinkingPhraseAppearanceList = currentTagInLinkingPhraseAppearanceList;
 
-	if(!generateCXLconnectionNodeTagList(currentTagL2, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, &currentCmapNodeIDinCmapNodeList, lastTagInLinkingPhraseList, lastTagInLinkingPhraseAppearanceList))
+	if(!generateCXLconnectionNodeTagList(currentTagL2, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListConcepts, &currentCmapNodeIDinCmapNodeList, lastTagInLinkingPhraseList, lastTagInLinkingPhraseAppearanceList))
 	{
 		result = false;
 	}
@@ -188,7 +188,7 @@ bool writeCmapToolsCXLfile(string xmlFileName, vector<GIAentityNode*>* entityNod
 }
 
 //generateCXLentityNodeTagList{}: generates and fills <networkIndex-list>, <networkIndex-appearance-list>, <linking-phrase-list> and <linking-phrase-appearance-list> tags.
-bool generateCXLentityNodeTagList(XMLparserTag* firstTagInMap, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, long* currentCmapNodeIDinCmapNodeList, bool networkIndexOrLinkingPhraseList, bool appearanceList)
+bool generateCXLentityNodeTagList(XMLparserTag* firstTagInMap, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts, long* currentCmapNodeIDinCmapNodeList, bool networkIndexOrLinkingPhraseList, bool appearanceList)
 {
 	bool result = true;
 
@@ -231,6 +231,7 @@ bool generateCXLentityNodeTagList(XMLparserTag* firstTagInMap, vector<GIAentityN
 		currentTagL1 = addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListSubstances, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList);
 		currentTagL1 = addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListActions, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList);
 		currentTagL1 = addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListConditions, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList);
+		currentTagL1 = addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListConcepts, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList);
 	}
 	*/
 
@@ -238,6 +239,7 @@ bool generateCXLentityNodeTagList(XMLparserTag* firstTagInMap, vector<GIAentityN
 	if(networkIndexOrLinkingPhraseList)
 	{
 		currentTagL1 = addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListSubstances, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList);
+		currentTagL1 = addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListConcepts, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList);
 		currentTagL1 = addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListNetworkIndexs, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList);
 	}
 	else
@@ -250,6 +252,7 @@ bool generateCXLentityNodeTagList(XMLparserTag* firstTagInMap, vector<GIAentityN
 	currentTagL1 = addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListSubstances, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList);
 	currentTagL1 = addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListActions, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList);
 	currentTagL1 = addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListConditions, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList);
+	currentTagL1 = addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListConcepts, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList);
 	#endif
 
 
@@ -373,7 +376,7 @@ XMLparserTag* generateCXLentityNodeTag(XMLparserTag* currentTagL1, string entity
 }
 
 //generateCXLconnectionNodeTagList{}: generates <connection-list> tag, and fills <linking-phrase-list>, and  <linking-phrase-appearance-list> tags
-bool generateCXLconnectionNodeTagList(XMLparserTag* firstTagInMap, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, long* currentCmapNodeIDinCmapNodeList, XMLparserTag* firstTagInLinkingPhraseList, XMLparserTag* firstTagInLinkingPhraseAppearanceList)
+bool generateCXLconnectionNodeTagList(XMLparserTag* firstTagInMap, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts, long* currentCmapNodeIDinCmapNodeList, XMLparserTag* firstTagInLinkingPhraseList, XMLparserTag* firstTagInLinkingPhraseAppearanceList)
 {
 	bool result = true;
 
@@ -397,6 +400,7 @@ bool generateCXLconnectionNodeTagList(XMLparserTag* firstTagInMap, vector<GIAent
 	currentTagL1 = addToCXLconnectionNodeTagList(currentTagL1, entityNodesActiveListSubstances, currentCmapNodeIDinCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
 	currentTagL1 = addToCXLconnectionNodeTagList(currentTagL1, entityNodesActiveListActions, currentCmapNodeIDinCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
 	currentTagL1 = addToCXLconnectionNodeTagList(currentTagL1, entityNodesActiveListConditions, currentCmapNodeIDinCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
+	currentTagL1 = addToCXLconnectionNodeTagList(currentTagL1, entityNodesActiveListConcepts, currentCmapNodeIDinCmapNodeList, firstTagL1, &currentTagInLinkingPhraseList, &currentTagInLinkingPhraseAppearanceList, firstTagL1);
 
 	return result;
 }
@@ -409,7 +413,7 @@ bool checkIfPassedRedundantNetworkIndexNodeRemoval(GIAentityNode* currentEntity)
 	#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_NETWORK_INDEX_NODES_OLD
 	if(currentEntity->associatedInstanceNodeList->empty())
 	{//if GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_NETWORK_INDEX_NODES; then do not add a networkIndex entity if it has an associated instance (substance node)
-	//if((currentEntity->isAction) || (currentEntity->isSubstance) || (currentEntity->isCondition))
+	//if((currentEntity->isAction) || (currentEntity->isSubstance) || (currentEntity->isConcept) || (currentEntity->isCondition))
 	//{//do not add raw networkIndex nodes
 		result = true;
 	}

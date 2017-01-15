@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1463,7 +1463,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 															#ifdef GIA_TRANSLATOR_DEBUG
 															//cout << "actionOrSubstanceConditionObjectEntity = " << actionOrSubstanceConditionObjectEntity->entityName << endl;
 															#endif
-															GIAentityNodeArray[actionIndex] = addActionToActionDefinition(actionOrSubstanceConditionObjectEntity);	//not required is done later?
+															GIAentityNodeArray[actionIndex] = addInstanceToInstanceDefinition(actionOrSubstanceConditionObjectEntity, GIA_ENTITY_TYPE_TYPE_ACTION);	//not required is done later?
 															actionOrSubstanceConditionObjectEntity = GIAentityNodeArray[actionIndex];
 															#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS_RELEX_SPECIFIC
 															GIAentityNodeArray[subjectObjectEntityIndexArray[SUBJECT_INDEX]] = addOrConnectConditionToEntity(actionOrSubstanceConditionSubjectEntity, actionOrSubstanceConditionObjectEntity, conditionNetworkIndexEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
@@ -1510,7 +1510,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 															#ifdef GIA_TRANSLATOR_DEBUG
 															//cout << "actionOrSubstanceConditionObjectEntity = " << actionOrSubstanceConditionObjectEntity->entityName << endl;
 															#endif
-															GIAentityNodeArray[actionIndex] = addActionToActionDefinition(actionOrSubstanceConditionObjectEntity);	//not required is done later?
+															GIAentityNodeArray[actionIndex] = addInstanceToInstanceDefinition(actionOrSubstanceConditionObjectEntity, GIA_ENTITY_TYPE_TYPE_ACTION);	//not required is done later?
 														}
 
 														#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_AN_ARBITRARY_SUBJECT_DEFINITION
@@ -2143,7 +2143,7 @@ void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAent
 											conditionNetworkIndexEntity->disableParsingAsPrepositionRelationTemp = true;		//Added 30 Oct 2011a
 											#endif
 
-											GIAentityNodeArray[actionIndex] = addActionToActionDefinition(actionOrSubstanceConditionObjectEntity);
+											GIAentityNodeArray[actionIndex] = addInstanceToInstanceDefinition(actionOrSubstanceConditionObjectEntity, GIA_ENTITY_TYPE_TYPE_ACTION);
 											actionOrSubstanceConditionObjectEntity = GIAentityNodeArray[actionIndex];
 
 											#ifdef GIA_TRANSLATOR_DEBUG

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -71,8 +71,15 @@ bool isAdjectiveNotConnectedToObjectOrSubject(GIAsentence* currentSentenceInList
 GIAentityNode* addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet);
 	GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet);
 	GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet);	//WRONG: Not used anymore
-GIAentityNode* addSubstanceToSubstanceDefinition(GIAentityNode* substanceEntity);
-	GIAentityNode* addSubstance(GIAentityNode* entity);
+
+GIAentityNode* addInstanceToInstanceDefinition(GIAentityNode* entity, int instanceType);
+	GIAentityNode* addInstance(GIAentityNode* entity, int instanceType);
+	void upgradeSubstanceToAction(GIAentityNode* substance);
+	void upgradeSubstanceToConcept(GIAentityNode* substance);
+	void upgradeSubstanceToCondition(GIAentityNode* substance);
+	void downgradeConceptToSubstance(GIAentityNode* concept);
+		void eraseSubstanceFromSubstanceList(GIAentityNode* existingEntity);
+		void eraseConceptFromConceptList(GIAentityNode* existingEntity);
 
 void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstance);
 
@@ -88,19 +95,12 @@ GIAentityNode* addOrConnectActionToSubject(GIAentityNode* subjectEntity, GIAenti
 GIAentityNode* addOrConnectActionToObject(GIAentityNode* objectEntity, GIAentityNode* actionEntity, bool sameReferenceSet);
 	void connectActionInstanceToSubject(GIAentityNode* subjectEntity, GIAentityNode* newOrExistingAction, bool sameReferenceSet);
 	void connectActionInstanceToObject(GIAentityNode* objectEntity, GIAentityNode* newOrExistingAction, bool sameReferenceSet);
-GIAentityNode* addActionToActionDefinition(GIAentityNode* actionEntity);
-GIAentityNode* addActionToActionDefinitionDefineSubstances(GIAentityNode* actionEntity);
-	GIAentityNode* addAction(GIAentityNode* actionEntity);
-	void upgradeSubstanceToAction(GIAentityNode* substance);
-		void eraseSubstanceFromSubstanceList(GIAentityNode* existingEntity);
 
 GIAentityNode* addOrConnectConditionToEntity(GIAentityNode* conditionSubjectEntity, GIAentityNode* conditionObjectEntity, GIAentityNode* conditionEntity, bool sameReferenceSet);
 GIAentityNode* addOrConnectConditionToSubject(GIAentityNode* conditionSubjectEntity, GIAentityNode* conditionEntity, bool sameReferenceSet);
 GIAentityNode* addOrConnectConditionToObject(GIAentityNode* conditionObjectEntity, GIAentityNode* conditionEntity, bool sameReferenceSet);
 	void connectConditionInstanceToSubject(GIAentityNode* subjectEntity, GIAentityNode* newOrExistingCondition, bool sameReferenceSet);
 	void connectConditionInstanceToObject(GIAentityNode* objectEntity, GIAentityNode* newOrExistingCondition, bool sameReferenceSet);
-GIAentityNode* addConditionToConditionDefinition(GIAentityNode* conditionEntity);
-	GIAentityNode* addCondition(GIAentityNode* conditionEntity);
 
 #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 GIAentityNode* addOrConnectBeingDefinitionConditionToEntity(GIAentityNode* conditionSubjectEntity, GIAentityNode* conditionDefinitionNode, GIAentityNode* conditionEntity, bool negative, bool sameReferenceSet);
@@ -116,12 +116,14 @@ void setTranslatorEntityNodesCompleteList(vector<GIAentityNode*>* newEntityNodes
 void setTranslatorSubstanceEntityNodesList(vector<GIAentityNode*>* newSubstanceEntityNodesList);
 void setTranslatorActionEntityNodesList(vector<GIAentityNode*>* newActionEntityNodesList);
 void setTranslatorConditionEntityNodesList(vector<GIAentityNode*>* newConditionEntityNodesList);
+void setTranslatorConceptEntityNodesList(vector<GIAentityNode*>* newConceptEntityNodesList);
 
 vector<GIAentityNode*>* getTranslatorEntityNodesCompleteList();
 //vector<GIAentityNode*>* getTranslatorNetworkIndexEntityNodesList();
 vector<GIAentityNode*>* getTranslatorSubstanceEntityNodesList();
 vector<GIAentityNode*>* getTranslatorActionEntityNodesList();
 vector<GIAentityNode*>* getTranslatorConditionEntityNodesList();
+vector<GIAentityNode*>* getTranslatorConceptEntityNodesList();
 
 void setSaveNetwork(bool val);
 bool getSaveNetwork();
@@ -140,6 +142,7 @@ long* getCurrentEntityNodeIDinNetworkIndexEntityNodesList();
 long* getCurrentEntityNodeIDinSubstanceEntityNodesList();
 long* getCurrentEntityNodeIDinActionEntityNodesList();
 long* getCurrentEntityNodeIDinConditionEntityNodesList();
+long* getCurrentEntityNodeIDinConceptEntityNodesList();
 
 long* getCurrentEntityNodeIDinSentenceCompleteList();
 long* getCurrentEntityNodeIDinSentenceNetworkIndexEntityNodesList();

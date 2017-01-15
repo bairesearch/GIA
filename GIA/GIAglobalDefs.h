@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -1056,7 +1056,7 @@
 	//#define GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS	//added 1q10a [activated 1q10c] //removed 1t2d
 	//#define GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS	//added 1q10a [activated 1q10c]	//removed 1s8c	//check this does not undo advanced referencing/quering...
 #endif
-	//NB the phrase 'substance networkIndex'/'substance quality' is a misnomer, as networkIndexs and qualities are not really substances [NB networkIndexs are considered secondary substances in Aristotle's categories, but GIA has a separate Entity class for networkIndexs marked by isNetworkIndex: which is confusingly not being used in this case of 'specific networkIndexs' - a software development/history artefact]" << endl;
+	//NB the phrase 'concept'/'substance quality' is a misnomer, as networkIndexs and qualities are not really substances [NB networkIndexs are considered secondary substances in Aristotle's categories, but GIA has a separate Entity class for networkIndexs marked by isNetworkIndex: which is confusingly not being used in this case of 'specific networkIndexs' - a software development/history artefact]" << endl;
 
 #ifndef GIA_STORE_CONNECTION_SENTENCE_INDEX
 	#define GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
@@ -1229,11 +1229,11 @@
 				#ifndef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL
 					#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION		//if using non-advanced referencing, only use pronominal coreferences from Stanford (it, she, he, etc) [optional]
 					#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
-						#define GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
+						#define GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING	//depreciated 1n2b
 					#endif
 				#endif
 			#else
-				#define GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
+				#define GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING	//depreciated 1n2b
 			#endif
 			#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 				#define GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN		/*to prevent the ambiguous blue chicken(s) being linked; eg A blue chicken is small. / A red chicken is fat. / The green chicken ate the pie. / A blue chicken is late.*/

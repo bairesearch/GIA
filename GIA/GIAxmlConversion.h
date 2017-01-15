@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -65,6 +65,7 @@
 	#define NET_XML_TAG_substanceEntityNodeContainer ((string)"substanceEntityNodeContainer")
 	#define NET_XML_TAG_actionEntityNodeContainer ((string)"actionEntityNodeContainer")
 	#define NET_XML_TAG_conditionEntityNodeContainer ((string)"conditionEntityNodeContainer")
+	#define NET_XML_TAG_conceptEntityNodeContainer ((string)"conceptEntityNodeContainer")	
 		#define NET_XML_TAG_timeConditionNode ((string)"timeConditionNode")
 		#define NET_XML_TAG_entityNode ((string)"entityNode")
 	/*
@@ -78,6 +79,8 @@
 		#define NET_XML_TAG_actionNode ((string)"actionNode")
 	#define NET_XML_TAG_conditionNodeContainer ((string)"conditionNodeContainer")
 		#define NET_XML_TAG_conditionNode ((string)"conditionNode")
+	#define NET_XML_TAG_conceptNodeContainer ((string)"conceptNodeContainer")
+		#define NET_XML_TAG_conceptNode ((string)"conceptNode")		
 	*/
 
 
@@ -87,6 +90,8 @@
 #define NET_XML_ATTRIBUTE_entityNodeID ((string)"entityNodeID")
 #define NET_XML_TAG_conditionNodeReference ((string)"conditionNodeReference")
 #define NET_XML_ATTRIBUTE_conditionNodeID ((string)"conditionNodeID")
+#define NET_XML_TAG_conceptNodeReference ((string)"conceptNodeReference")
+#define NET_XML_ATTRIBUTE_conceptNodeID ((string)"conceptNodeID")
 
 /*CXL*/
 
@@ -127,8 +132,6 @@
 #define NET_XML_ATTRIBUTE_isAction ((string)"isAction")
 #define NET_XML_ATTRIBUTE_isCondition ((string)"isCondition")
 #define NET_XML_ATTRIBUTE_hasAssociatedInstance ((string)"hasAssociatedInstance")
-#define NET_XML_ATTRIBUTE_hasAssociatedInstanceIsAction ((string)"hasAssociatedInstanceIsAction")
-#define NET_XML_ATTRIBUTE_hasAssociatedInstanceIsCondition ((string)"hasAssociatedInstanceIsCondition")
 #define NET_XML_ATTRIBUTE_hasAssociatedTime ((string)"hasAssociatedTime")
 #define NET_XML_ATTRIBUTE_isSubstanceQuality ((string)"isSubstanceQuality")
 #define NET_XML_ATTRIBUTE_isConcept ((string)"isConcept")
@@ -235,11 +238,11 @@ static string entityVectorConnectionXMLtagNameCrossReferenceNodeTypeArray[GIA_EN
 #ifdef GIA_XML_DEBUG
 #define GIA_SEMANTIC_NET_XML_FILE_NAME1 "tempsemanticNet1.xml"
 bool testReadSemanticNetXMLFile1();
-bool testReadSemanticNetXMLFile2(vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions);
+bool testReadSemanticNetXMLFile2(vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts);
 #endif
 
-bool writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions);
-	bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions);
+bool writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts);
+	bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts);
 		bool generateXMLentityNodeTagList(XMLparserTag* firstTagInSemanticNet, vector<GIAentityNode*>* entityNodesList, string entityContainerTagName, long* currentEntityNodeIDinEntityNodesActiveCompleteList);
 			XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode* currentEntity, long currentEntityNodeIDinEntityNodesActiveCompleteList);
 				bool generateXMLconditionTimeNodeTagList(XMLparserTag* firstTagInConditionTimeNode, GIAtimeConditionNode* conditionTimeNode);
@@ -248,12 +251,13 @@ bool writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAentityNode*>
 		//void resetIDsForNodeMap(unordered_map<string, GIAentityNode*>* entityNodesMap, long* currentEntityNodeIDinEntityNodesActiveCompleteList);
 		#endif
 
-bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences);
-	bool readSemanticNetXMLfile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions);
-		bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, bool linkConnections);
+bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences);
+	bool readSemanticNetXMLfile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts);
+		bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts, bool linkConnections);
 			bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entityNode, vector<GIAentityNode*>* entityNodesActiveListComplete);
-				bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVectorConnectionNodeList, GIAentityNode* entityNode, vector<GIAentityNode*>* entityNodesActiveListComplete, int entityVectorConnectionIndex);
-				bool parseTimeConditionNodeTag(XMLparserTag* firstTagInTimeConditionNode, GIAtimeConditionNode* timeConditionNode);
+				bool parseSemanticEntityTypeNodeContainerTag(XMLparserTag* currentTagUpdatedL2, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListType, bool linkConnections, long* currentEntityNodeIDinCompleteList);
+					bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVectorConnectionNodeList, GIAentityNode* entityNode, vector<GIAentityNode*>* entityNodesActiveListComplete, int entityVectorConnectionIndex);
+					bool parseTimeConditionNodeTag(XMLparserTag* firstTagInTimeConditionNode, GIAtimeConditionNode* timeConditionNode);
 
 
 				/*

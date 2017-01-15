@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -289,14 +289,6 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 			{
 				cout << "entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
 			}
-			else if(entityNode->hasAssociatedInstanceIsAction)
-			{
-				cout << "entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
-			}
-			else if(entityNode->hasAssociatedInstanceIsCondition)
-			{
-				cout << "entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
-			}
 			else if(entityNode->hasAssociatedTime)
 			{
 				cout << "entityNode = " << entityNode->entityName << " (has associated time)" << endl;
@@ -308,7 +300,6 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 			//cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
 			//cout << "\tentityNode->isSubstance = " << entityNode->isSubstance << endl;
 			//cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
-			//cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;
 			#endif
 
 
@@ -475,15 +466,14 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 					entityColour = GIA_DRAW_QUERY_ANSWER_CONTEXT_NODE_COLOUR;
 				}
 				#endif
+				/*
 				else if(entityNode->hasAssociatedInstanceIsAction)
 				{
 					#ifdef GIA_DRAW_DEBUG
-					/*
-					if(entityNode->isAction)
-					{
-						cout << "(entityNode->hasAssociatedInstanceIsAction) && (entityNode->isAction)" << endl;
-					}
-					*/
+					//if(entityNode->isAction)
+					//{
+					//	cout << "(entityNode->hasAssociatedInstanceIsAction) && (entityNode->isAction)" << endl;
+					//}
 					#endif
 					if(entityNode->hasMeasure)
 					{
@@ -498,6 +488,7 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 				{
 					entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
 				}
+				*/
 				else if(entityNode->isActionNetworkIndex)
 				{
 					entityColour = GIA_DRAW_ACTION_NETWORK_INDEX_NODE_COLOUR;
@@ -628,14 +619,6 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 			else if(entityNode->hasAssociatedInstance)
 			{
 				cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
-			}
-			else if(entityNode->hasAssociatedInstanceIsAction)
-			{
-				cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
-			}
-			else if(entityNode->hasAssociatedInstanceIsCondition)
-			{
-				cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
 			}
 			else if(entityNode->hasAssociatedTime)
 			{

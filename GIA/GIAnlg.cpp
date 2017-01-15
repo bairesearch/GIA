@@ -26,7 +26,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -67,14 +67,6 @@ GIANLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, GIANLG
 		{
 			cout << "entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
 		}
-		else if(entityNode->hasAssociatedInstanceIsAction)
-		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
-		}
-		else if(entityNode->hasAssociatedInstanceIsCondition)
-		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
-		}
 		else if(entityNode->hasAssociatedTime)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (has associated time)" << endl;
@@ -86,7 +78,6 @@ GIANLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, GIANLG
 		//cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
 		//cout << "\tentityNode->isSubstance = " << entityNode->isSubstance << endl;
 		//cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
-		//cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;
 		#endif
 
 
@@ -182,14 +173,6 @@ GIANLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, GIANLG
 		else if(entityNode->hasAssociatedInstance)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
-		}
-		else if(entityNode->hasAssociatedInstanceIsAction)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
-		}
-		else if(entityNode->hasAssociatedInstanceIsCondition)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
 		}
 		else if(entityNode->hasAssociatedTime)
 		{

@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -1051,7 +1051,7 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 
 	/*
 	Format:
-	idActiveList,entityName,confidence,isNetworkIndex,isSubstance,isAction,isCondition,hasAssociatedInstance,hasAssociatedInstanceIsAction,hasAssociatedSubstanceIsCondition,hasAssociatedTime,isSubstanceQuality,isConcept,disabled,conditionType,grammaticalNumber,hasQuantity,quantityNumber,quantityNumberString,quantityModifier,quantityModifierString,hasQuantityMultiplier,hasMeasure,measureType
+	idActiveList,entityName,confidence,isNetworkIndex,isSubstance,isAction,isCondition,hasAssociatedInstance,hasAssociatedTime,isSubstanceQuality,isConcept,disabled,conditionType,grammaticalNumber,hasQuantity,quantityNumber,quantityNumberString,quantityModifier,quantityModifierString,hasQuantityMultiplier,hasMeasure,measureType
 	//format derived from GIA XML file
 	*/
 
@@ -1077,8 +1077,6 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 		int isAction;
 		int isCondition;
 		int hasAssociatedInstance;
-		int hasAssociatedInstanceIsAction;
-		int hasAssociatedInstanceIsCondition;
 		int hasAssociatedTime;
 		int isSubstanceQuality;
 		int isConcept;
@@ -1091,7 +1089,7 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 		int hasQuantityMultiplier;
 		int hasMeasure;
 
-		int result = fscanf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_READ, &(entity->idActiveList), entityNameCharStarTemp, wordOrigCharStarTemp, aliasesCharStarTemp, &(entity->confidence), &isNetworkIndex, &isSubstance, &isAction, &isCondition, &hasAssociatedInstance, &hasAssociatedInstanceIsAction, &hasAssociatedInstanceIsCondition, &hasAssociatedTime, &isSubstanceQuality, &isConcept, &disabled, &(entity->conditionType), &(entity->grammaticalNumber), &hasQuantity, &(entity->quantityNumber), quantityNumberStringCharStarTemp, &(entity->quantityModifier), quantityModifierStringCharStarTemp, &hasQuantityMultiplier, &hasMeasure, &(entity->measureType));
+		int result = fscanf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_READ, &(entity->idActiveList), entityNameCharStarTemp, wordOrigCharStarTemp, aliasesCharStarTemp, &(entity->confidence), &isNetworkIndex, &isSubstance, &isAction, &isCondition, &hasAssociatedInstance, &hasAssociatedTime, &isSubstanceQuality, &isConcept, &disabled, &(entity->conditionType), &(entity->grammaticalNumber), &hasQuantity, &(entity->quantityNumber), quantityNumberStringCharStarTemp, &(entity->quantityModifier), quantityModifierStringCharStarTemp, &hasQuantityMultiplier, &hasMeasure, &(entity->measureType));
 		if(result > 0)	//&& (result != EOF)
 		{
 			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
@@ -1101,8 +1099,6 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 			cout << "\tDBreadEntityNodeFile{}: isAction = " << isAction << endl;
 			cout << "\tDBreadEntityNodeFile{}: isCondition = " << isCondition << endl;
 			cout << "\tDBreadEntityNodeFile{}: hasAssociatedInstance = " << hasAssociatedInstance << endl;
-			cout << "\tDBreadEntityNodeFile{}: hasAssociatedInstanceIsAction = " << hasAssociatedInstanceIsAction << endl;
-			cout << "\tDBreadEntityNodeFile{}: hasAssociatedInstanceIsCondition = " << hasAssociatedInstanceIsCondition << endl;
 			cout << "\tDBreadEntityNodeFile{}: hasAssociatedTime = " << hasAssociatedTime << endl;
 			cout << "\tDBreadEntityNodeFile{}: isSubstanceQuality = " << isSubstanceQuality << endl;
 			cout << "\tDBreadEntityNodeFile{}: isConcept = " << isConcept << endl;
@@ -1129,8 +1125,6 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 			entity->isAction = bool(isAction);
 			entity->isCondition = bool(isCondition);
 			entity->hasAssociatedInstance = bool(hasAssociatedInstance);
-			entity->hasAssociatedInstanceIsAction = bool(hasAssociatedInstanceIsAction);
-			entity->hasAssociatedInstanceIsCondition = bool(hasAssociatedInstanceIsCondition);
 			entity->hasAssociatedTime = bool(hasAssociatedTime);
 			entity->isSubstanceQuality = bool(isSubstanceQuality);
 			entity->isConcept = bool(isConcept);
@@ -1153,8 +1147,6 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 			cout << "\tDBreadEntityNodeFile{}: entity->isAction = " << int(entity->isAction) << endl;
 			cout << "\tDBreadEntityNodeFile{}: entity->isCondition = " << int(entity->isCondition) << endl;
 			cout << "\tDBreadEntityNodeFile{}: entity->hasAssociatedInstance = " << int(entity->hasAssociatedInstance) << endl;
-			cout << "\tDBreadEntityNodeFile{}: entity->hasAssociatedInstanceIsAction = " << int(entity->hasAssociatedInstanceIsAction) << endl;
-			cout << "\tDBreadEntityNodeFile{}: entity->hasAssociatedInstanceIsCondition = " << int(entity->hasAssociatedInstanceIsCondition) << endl;
 			cout << "\tDBreadEntityNodeFile{}: entity->hasAssociatedTime = " << int(entity->hasAssociatedTime) << endl;
 			cout << "\tDBreadEntityNodeFile{}: entity->isSubstanceQuality = " << int(entity->isSubstanceQuality) << endl;
 			cout << "\tDBreadEntityNodeFile{}: entity->isConcept = " << int(entity->isConcept) << endl;
@@ -1411,7 +1403,7 @@ void DBwriteEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 	#endif
 	/*
 	Format:
-	idActiveList,entityName,confidence,isNetworkIndex,isSubstance,isAction,isCondition,hasAssociatedInstance,hasAssociatedInstanceIsAction,hasAssociatedSubstanceIsCondition,hasAssociatedTime,isSubstanceQuality,isConcept,disabled,conditionType,grammaticalNumber,hasQuantity,quantityNumber,quantityNumberString,quantityModifier,quantityModifierString,hasQuantityMultiplier,hasMeasure,measureType
+	idActiveList,entityName,confidence,isNetworkIndex,isSubstance,isAction,isCondition,hasAssociatedInstance,hasAssociatedTime,isSubstanceQuality,isConcept,disabled,conditionType,grammaticalNumber,hasQuantity,quantityNumber,quantityNumberString,quantityModifier,quantityModifierString,hasQuantityMultiplier,hasMeasure,measureType
 	//format derived from GIA XML file
 	*/
 
@@ -1463,7 +1455,7 @@ void DBwriteEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 			quantityModifierString = quantityModifierString.substr(0, GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_STRING_MAX_LENGTH-1);
 		}
 
-		fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, entityName.c_str(), wordOrig.c_str(), aliasesString.c_str(), entity->confidence, int(entity->isNetworkIndex), int(entity->isSubstance), int(entity->isAction), int(entity->isCondition), int(entity->hasAssociatedInstance), int(entity->hasAssociatedInstanceIsAction), int(entity->hasAssociatedInstanceIsCondition), int(entity->hasAssociatedTime), int(entity->isSubstanceQuality), int(entity->isConcept), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), entity->quantityNumber, quantityNumberString.c_str(), entity->quantityModifier, quantityModifierString.c_str(), int(entity->hasQuantityMultiplier), int(entity->hasMeasure), entity->measureType);
+		fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, entityName.c_str(), wordOrig.c_str(), aliasesString.c_str(), entity->confidence, int(entity->isNetworkIndex), int(entity->isSubstance), int(entity->isAction), int(entity->isCondition), int(entity->hasAssociatedInstance), int(entity->hasAssociatedTime), int(entity->isSubstanceQuality), int(entity->isConcept), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), entity->quantityNumber, quantityNumberString.c_str(), entity->quantityModifier, quantityModifierString.c_str(), int(entity->hasQuantityMultiplier), int(entity->hasMeasure), entity->measureType);
 		//fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str());
 		fclose(pFile);
 	}

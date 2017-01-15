@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  *
  *******************************************************************************/
 -->
@@ -3520,7 +3520,7 @@
 
 			<!-- #ifdefGIA_SUPPORT_SPECIFIC_CONCEPTS -->
 			<function name="defineConcepts">
-				<paramEntity mode="redistribute">
+				<paramEntity mode="execute">
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="1" />
 				<!-- #ifdefGIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_CONCEPT_TO_REFERENCES -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wasReference" value="false" />
@@ -3536,10 +3536,10 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="mustNotSetIsConceptBasedOnPrenomonalModifierRelation" value="false" />			
 				<!-- #endif -->				
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	<!-- added 2i22a -->
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isConcept" value="true" />
+				<option functionToExecuteUponFind="21" />
 				</paramEntity>
 
-				<paramEntity mode="redistribute">
+				<paramEntity mode="execute">
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="1" />
 				<!-- #ifdefGIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_CONCEPT_TO_REFERENCES -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wasReference" value="false" />
@@ -3549,33 +3549,33 @@
 				<!-- #endif -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	<!-- added 2i22a -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="mustSetIsConceptBasedOnApposRelation" value="true" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isConcept" value="true" />
+				<option functionToExecuteUponFind="21" />
 				</paramEntity>
 
 				<!-- #ifdefGIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS -->
 				<!--
-				<paramEntity mode="redistribute">
+				<paramEntity mode="execute">
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="1" />
 				{!-- #ifdefGIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_CONCEPT_TO_REFERENCES --}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wasReference" value="false" />
 				{!-- #endif --}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalPronounTemp" value="true" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	{!--added 2i22a --}
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isConcept" value="true" />
+				<option functionToExecuteUponFind="21" />
 				</paramEntity>
 				-->
 				<!-- #endif -->
 
 				<!-- #ifdefGIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS -->
 				<!--
-				<paramEntity mode="redistribute">
+				<paramEntity mode="execute">
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="1" />
 				{!-- #ifdefGIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_CONCEPT_TO_REFERENCES --}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wasReference" value="false" />
 				{!-- #endif --}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="true" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	{!--added 2i22a --}
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isConcept" value="true" />
+				<option functionToExecuteUponFind="21" />
 				</paramEntity>
 				-->
 				<!-- #endif -->
@@ -4531,11 +4531,10 @@
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="3" REL="1" REL_ENT="2" />	<!-- plural -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="2" />	<!-- indefinite -->
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isConcept" value="false" REL="1" REL_ENT="2" />	<!-- ensure not interpreted as a substance networkIndex -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
 				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
-				<option functionToExecuteUponFind="4" />
+				<option functionToExecuteUponFind="15" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
@@ -4559,11 +4558,10 @@
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="3" REL="1" REL_ENT="1" />	<!-- plural -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="2" />	<!-- indefinite -->
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isConcept" value="false" REL="1" REL_ENT="2" />	<!-- ensure not interpreted as a substance networkIndex -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
 				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
-				<option functionToExecuteUponFind="4" />
+				<option functionToExecuteUponFind="15" />
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="1" />	{!-- added 2i26a: required for NLC --}
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
@@ -4616,7 +4614,7 @@
 				<!--
 				<example>
 				{!--
-				Interpret "of" preposition as definition (substance networkIndexs only)
+				Interpret "of" preposition as definition (concepts only)
 				The game of chess is good.	prep_of(game-2, chess-4)
 				but ignore cases where the subject of the preposition is an action;
 				--}

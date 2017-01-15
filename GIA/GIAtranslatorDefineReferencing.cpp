@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1234,7 +1234,7 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		referenceTraceParameters.testReferenceSetContext = false;
 		#endif
 		#ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
-		referenceTraceParameters.doNotParseQuerySubnetsWithConcepts = false;	//unnecessary as sentences with substance networkIndexs will never contain intrasentence referencing... (eg "black birds are really fast, and black birds are really tall" does not require intrasentence referencing; where as "a black bird lives is really fast, and the black bird is tall" requires intrasentence referencing)
+		referenceTraceParameters.doNotParseQuerySubnetsWithConcepts = false;	//unnecessary as sentences with concepts will never contain intrasentence referencing... (eg "black birds are really fast, and black birds are really tall" does not require intrasentence referencing; where as "a black bird lives is really fast, and the black bird is tall" requires intrasentence referencing)
 		#endif
 		bool foundAtLeastOneMatchIntraSentence = false;
 		createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(sentenceNetworkIndexEntityNodesList, sentenceNetworkIndexEntityNodesList, &referenceTraceParameters, &maxNumberOfMatchedNodes, &queryEntityWithMaxNumberNodesMatched, &networkEntityWithMaxNumberNodesMatched, &foundAtLeastOneMatchIntraSentence);	//always perform intrasentence reference detection last (as this takes priority)
@@ -1745,7 +1745,7 @@ void linkAdvancedReferencesGIA(GIAsentence* currentSentenceInList, bool GIAentit
 							GIAentityNodeArray[referenceEntityIndex]->wasReferenceTemp = true;
 							#endif
 							*/
-							GIAentityNodeArray[referenceEntityIndex] = addSubstanceToSubstanceDefinition(GIAentityNodeArray[referenceEntityIndex]);
+							GIAentityNodeArray[referenceEntityIndex] = addInstanceToInstanceDefinition(GIAentityNodeArray[referenceEntityIndex], GIA_ENTITY_TYPE_TYPE_SUBSTANCE);
 							GIAentityNodeArray[intrasentenceReferenceSourceIndex] = GIAentityNodeArray[referenceEntityIndex];
 
 							/*Removed GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
@@ -1997,7 +1997,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithConcepts(vector<GIAentityNo
 												#endif
 
 												/*
-												//this method may not be appropriate for GIA_USE_ADVANCED_REFERENCING; if substance networkIndexs advanced reference each other in the future:
+												//this method may not be appropriate for GIA_USE_ADVANCED_REFERENCING; if concepts advanced reference each other in the future:
 												if(!(entityNode->entityNodeDefinitionReverseList->empty())
 												{
 													GIAentityNode* instanceEntity = (entityNode->entityNodeDefinitionReverseList->begin())->entity;	//take the first entity, and ensure its sentenceID is identical to that of its substance; indicated it was the original definition declared in the sentence
@@ -2029,7 +2029,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithConcepts(vector<GIAentityNo
 												//eg1 Blue pies have bikes. The blue pie is happy.
 												//eg2 The yellow banana is a fruit. The yellow fruit is tasty.
 
-												//found instance in network matching substance networkIndex...
+												//found instance in network matching concept...
 												addDefinitionToEntity(entityNode, currentSpecificConcept, sameReferenceSet);
 												#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 												cout << "identifyReferenceSetsSpecificConceptsAndLinkWithConcepts{}: addDefinitionToEntity" << endl;

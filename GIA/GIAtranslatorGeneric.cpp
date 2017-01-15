@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -723,11 +723,11 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								#endif
 								if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition)
 								{
-									param->GIAentityNodeArray[functionEntityIndex1] = addSubstanceToSubstanceDefinition(param->GIAentityNodeArray[functionEntityIndex1]);
+									param->GIAentityNodeArray[functionEntityIndex1] = addInstanceToInstanceDefinition(param->GIAentityNodeArray[functionEntityIndex1], GIA_ENTITY_TYPE_TYPE_SUBSTANCE);
 								}
-								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addActionToActionDefinitionDefineSubstances)
+								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addActionToActionDefinition)
 								{
-									param->GIAentityNodeArray[functionEntityIndex1] = addActionToActionDefinitionDefineSubstances(param->GIAentityNodeArray[functionEntityIndex1]);
+									param->GIAentityNodeArray[functionEntityIndex1] = addInstanceToInstanceDefinition(param->GIAentityNodeArray[functionEntityIndex1], GIA_ENTITY_TYPE_TYPE_ACTION);
 								}
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty)
 								{
@@ -957,7 +957,18 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									param->GIAentityNodeArray[functionEntityIndex2] = param->GIAentityNodeArray[functionEntityIndex1];
 									#endif
 								}
-
+								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntityEnsureDependentNotConcept)
+								{
+									#ifdef GIA_DEBUG
+									//cout << "param->GIAentityNodeArray[functionEntityIndex1]->entityName = " << param->GIAentityNodeArray[functionEntityIndex1]->entityName << endl;
+									//cout << "param->GIAentityNodeArray[functionEntityIndex2]->entityName = " << param->GIAentityNodeArray[functionEntityIndex2]->entityName << endl;
+									#endif
+									param->GIAentityNodeArray[functionEntityIndex2] = addOrConnectPropertyToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
+									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
+									#endif
+									downgradeConceptToSubstance(param->GIAentityNodeArray[functionEntityIndex2]);
+								}
 								else
 								{
 									cout << "illegal functionToExecuteUponFind: " << param->functionToExecuteUponFind << endl;
@@ -1335,15 +1346,19 @@ bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters* param
 					{
 						if(param->functionToExecuteUponFind == GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition)
 						{
-							param->GIAentityNodeArray[i] = addSubstanceToSubstanceDefinition(param->GIAentityNodeArray[i]);
+							param->GIAentityNodeArray[i] = addInstanceToInstanceDefinition(param->GIAentityNodeArray[i], GIA_ENTITY_TYPE_TYPE_SUBSTANCE);
 						}
-						else if(param->functionToExecuteUponFind == GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addActionToActionDefinitionDefineSubstances)
+						else if(param->functionToExecuteUponFind == GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addActionToActionDefinition)
 						{
-							param->GIAentityNodeArray[i] = addActionToActionDefinitionDefineSubstances(param->GIAentityNodeArray[i]);
+							param->GIAentityNodeArray[i] = addInstanceToInstanceDefinition(param->GIAentityNodeArray[i], GIA_ENTITY_TYPE_TYPE_ACTION);
 						}
 						else if(param->functionToExecuteUponFind == GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addTenseOnlyTimeConditionToSubstance)
 						{
 							addTenseOnlyTimeConditionToSubstance(param->GIAentityNodeArray[i], param->GIAentityNodeArray[i]->grammaticalTenseTemp, param->GIAentityNodeArray[i]->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE]);
+						}
+						else if(param->functionToExecuteUponFind == GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_upgradeSubstanceToConcept)
+						{
+							upgradeSubstanceToConcept(param->GIAentityNodeArray[i]);
 						}
 						else
 						{

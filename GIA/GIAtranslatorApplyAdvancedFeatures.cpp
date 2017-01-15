@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1365,7 +1365,7 @@ void defineActionNetworkIndexs2(GIAsentence* currentSentenceInList, bool GIAenti
 
 						if(foundActionNetworkIndex)
 						{
-							//GIAentityNodeArray[i] = addActionToActionDefinition(entity);	//is this required?
+							//GIAentityNodeArray[i] = addInstanceToInstanceDefinition(entity, GIA_ENTITY_TYPE_TYPE_ACTION);	//is this required?
 							GIAentityNodeArray[i]->isActionNetworkIndex = true;
 						}
 					}
@@ -1385,7 +1385,7 @@ void updateConceptDesignationBasedPropertyOwnerContext(GIAsentence* currentSente
 	updateConceptDesignationBasedPropertyOwnerContext() is designed to distinguish between;
 		knights substance (plural): Africa has a castle with knights.
 			and;
-		knights substance networkIndex: Knights are tall.
+		knights concept: Knights are tall.
 	*/
 
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)

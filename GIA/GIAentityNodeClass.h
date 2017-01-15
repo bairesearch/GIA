@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -53,6 +53,12 @@
 #include <utility> // make_pair	//required for GIA_USE_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR
 using namespace std;
 
+
+#define GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX (0)
+#define GIA_ENTITY_TYPE_TYPE_SUBSTANCE (1)
+#define GIA_ENTITY_TYPE_TYPE_ACTION (2)
+#define GIA_ENTITY_TYPE_TYPE_CONDITION (3)
+#define GIA_ENTITY_TYPE_TYPE_CONCEPT (4)
 
 //#ifdef GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION (0)
@@ -325,7 +331,7 @@ public:
 
 
 	/*GIA Entity Type*/
-	bool isNetworkIndex;			//is this entity a networkIndex? [added 10 May 2012]
+	bool isNetworkIndex;		//is this entity a networkIndex? [added 10 May 2012]
 	bool isSubstance;		//is this entity a substance?
 	bool isAction;			//is this entity an action?
 	bool isCondition;		//is this entity a condition?

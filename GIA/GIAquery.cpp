@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -1293,14 +1293,6 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAent
 		{
 			cout << "entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
 		}
-		else if(entityNode->hasAssociatedInstanceIsAction)
-		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
-		}
-		else if(entityNode->hasAssociatedInstanceIsCondition)
-		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
-		}
 		else if(entityNode->hasAssociatedTime)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (has associated time)" << endl;
@@ -1314,7 +1306,6 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAent
 		cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
 		cout << "\tentityNode->isSubstance = " << entityNode->isSubstance << endl;
 		cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
-		cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;
 		*/
 		#endif
 
@@ -1825,14 +1816,6 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAent
 		else if(entityNode->hasAssociatedInstance)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
-		}
-		else if(entityNode->hasAssociatedInstanceIsAction)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
-		}
-		else if(entityNode->hasAssociatedInstanceIsCondition)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
 		}
 		else if(entityNode->hasAssociatedTime)
 		{
@@ -2649,7 +2632,7 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 								((entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)))
 								{
 									if(!(entityNode->isConcept && queryEntityNode->isConcept))	//condition added 29 Sept 2013
-									{//if they are substance networkIndexs, ignore plural (in fact substance networkIndexs should not be assigned plural in the first place; this is an artefact of the english grammmar system: eg "blue chickens are strong")
+									{//if they are concepts, ignore plural (in fact concepts should not be assigned plural in the first place; this is an artefact of the english grammmar system: eg "blue chickens are strong")
 										passPluralityMatch = false;
 									}
 								}

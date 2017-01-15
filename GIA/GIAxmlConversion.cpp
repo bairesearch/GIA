@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -48,13 +48,14 @@ bool testReadSemanticNetXMLFile1()
 	vector<GIAentityNode*>* entityNodesActiveListSubstances;
 	vector<GIAentityNode*>* entityNodesActiveListActions;
 	vector<GIAentityNode*>* entityNodesActiveListConditions;
-
-	if(!readSemanticNetXMLfile(GIA_SEMANTIC_NET_XML_FILE_NAME, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
+	vector<GIAentityNode*>* entityNodesActiveListConcepts;
+	
+	if(!readSemanticNetXMLfile(GIA_SEMANTIC_NET_XML_FILE_NAME, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListConcepts))
 	{
 		result = false;
 	}
 
-	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
+	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListConcepts))
 	{
 		result = false;
 	}
@@ -62,11 +63,11 @@ bool testReadSemanticNetXMLFile1()
 	return result;
 }
 
-bool testReadSemanticNetXMLFile2(vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions)
+bool testReadSemanticNetXMLFile2(vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts)
 {
 	bool result = true;
 
-	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions))
+	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListConcepts))
 	{
 		result = false;
 	}
@@ -76,13 +77,14 @@ bool testReadSemanticNetXMLFile2(vector<GIAentityNode*>* entityNodesActiveListCo
 	vector<GIAentityNode*> tempentityNodesActiveListSubstances;
 	vector<GIAentityNode*> tempentityNodesActiveListActions;
 	vector<GIAentityNode*> tempentityNodesActiveListConditions;
+	vector<GIAentityNode*> tempentityNodesActiveListConcepts;
 
-	if(!readSemanticNetXMLfile(GIA_SEMANTIC_NET_XML_FILE_NAME, &tempentityNodesActiveListComplete, &tempentityNodesActiveListNetworkIndexs, &tempentityNodesActiveListSubstances, &tempentityNodesActiveListActions, &tempentityNodesActiveListConditions))
+	if(!readSemanticNetXMLfile(GIA_SEMANTIC_NET_XML_FILE_NAME, &tempentityNodesActiveListComplete, &tempentityNodesActiveListNetworkIndexs, &tempentityNodesActiveListSubstances, &tempentityNodesActiveListActions, &tempentityNodesActiveListConditions, &tempentityNodesActiveListConcepts))
 	{
 		result = false;
 	}
 
-	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, &tempentityNodesActiveListComplete, &tempentityNodesActiveListNetworkIndexs, &tempentityNodesActiveListSubstances, &tempentityNodesActiveListActions, &tempentityNodesActiveListConditions))
+	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, &tempentityNodesActiveListComplete, &tempentityNodesActiveListNetworkIndexs, &tempentityNodesActiveListSubstances, &tempentityNodesActiveListActions, &tempentityNodesActiveListConditions, &tempentityNodesActiveListConcepts))
 	{
 		result = false;
 	}
@@ -90,12 +92,12 @@ bool testReadSemanticNetXMLFile2(vector<GIAentityNode*>* entityNodesActiveListCo
 }
 #endif
 
-bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences)
+bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences)
 {
 	bool result = false;
 
 	vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs = new vector<GIAentityNode*>;
-	readSemanticNetXMLfile(xmlFileName, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions);
+	readSemanticNetXMLfile(xmlFileName, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListConcepts);
 
 	//now convert entityNodesActiveListComplete to entityNodesCompleteListMap;
 	long vectorSize = entityNodesActiveListNetworkIndexs->size();
@@ -129,7 +131,7 @@ bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*>*
 }
 
 
-bool readSemanticNetXMLfile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions)
+bool readSemanticNetXMLfile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts)
 {
 	bool result = true;
 
@@ -140,12 +142,12 @@ bool readSemanticNetXMLfile(string xmlFileName, vector<GIAentityNode*>* entityNo
 		result = false;
 	}
 
-	if(!parseSemanticNetTag(firstTagInXMLFile, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, false))
+	if(!parseSemanticNetTag(firstTagInXMLFile, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListConcepts, false))
 	{
 		result = false;
 	}
 
-	if(!parseSemanticNetTag(firstTagInXMLFile, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, true))
+	if(!parseSemanticNetTag(firstTagInXMLFile, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListConcepts, true))
 	{
 		result = false;
 	}
@@ -158,7 +160,7 @@ bool readSemanticNetXMLfile(string xmlFileName, vector<GIAentityNode*>* entityNo
 }
 
 //Top Level
-bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, bool linkConnections)
+bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts, bool linkConnections)
 {
 	bool result = true;
 
@@ -180,355 +182,172 @@ bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>
 		XMLparserTag* currentTagUpdatedL2 = currentTagUpdatedL1->firstLowerLevelTag;
 		if(currentTagUpdatedL2->name == NET_XML_TAG_networkIndexEntityNodeContainer)
 		{
-			long currentEntityNodeIDinEntityNodesActiveCompleteList = 0;
-
-			XMLparserTag* currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
-			while(currentTagUpdatedL3->nextTag != NULL)
+			if(!parseSemanticEntityTypeNodeContainerTag(currentTagUpdatedL2, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, linkConnections, &currentEntityNodeIDinCompleteList))
 			{
-				if(currentTagUpdatedL3->name == NET_XML_TAG_entityNode)
+				result = false;
+			}
+			currentTagUpdatedL2 = currentTagUpdatedL2->nextTag;
+		}
+		else
+		{
+			cout << "parseSemanticNetTag error: no networkIndex entity container node tag detected" << endl;
+		}		
+		if(currentTagUpdatedL2->name == NET_XML_TAG_substanceEntityNodeContainer)
+		{
+			if(!parseSemanticEntityTypeNodeContainerTag(currentTagUpdatedL2, entityNodesActiveListComplete, entityNodesActiveListSubstances, linkConnections, &currentEntityNodeIDinCompleteList))
+			{
+				result = false;
+			}
+			currentTagUpdatedL2 = currentTagUpdatedL2->nextTag;
+		}
+		else
+		{
+			cout << "parseSemanticNetTag error: no substance entity container node tag detected" << endl;
+		}	
+		if(currentTagUpdatedL2->name == NET_XML_TAG_actionEntityNodeContainer)
+		{
+			if(!parseSemanticEntityTypeNodeContainerTag(currentTagUpdatedL2, entityNodesActiveListComplete, entityNodesActiveListActions, linkConnections, &currentEntityNodeIDinCompleteList))
+			{
+				result = false;
+			}
+			currentTagUpdatedL2 = currentTagUpdatedL2->nextTag;
+		}
+		else
+		{
+			cout << "parseSemanticNetTag error: no action entity container node tag detected" << endl;
+		}
+		if(currentTagUpdatedL2->name == NET_XML_TAG_conditionEntityNodeContainer)
+		{
+			if(!parseSemanticEntityTypeNodeContainerTag(currentTagUpdatedL2, entityNodesActiveListComplete, entityNodesActiveListConditions, linkConnections, &currentEntityNodeIDinCompleteList))
+			{
+				result = false;
+			}
+			currentTagUpdatedL2 = currentTagUpdatedL2->nextTag;
+		}
+		else
+		{
+			cout << "parseSemanticNetTag error: no action entity container node tag detected" << endl;
+		}
+		if(currentTagUpdatedL2->name == NET_XML_TAG_conceptEntityNodeContainer)
+		{
+			if(!parseSemanticEntityTypeNodeContainerTag(currentTagUpdatedL2, entityNodesActiveListComplete, entityNodesActiveListConcepts, linkConnections, &currentEntityNodeIDinCompleteList))
+			{
+				result = false;
+			}
+			currentTagUpdatedL2 = currentTagUpdatedL2->nextTag;
+		}
+		else
+		{
+			cout << "parseSemanticNetTag error: no concept entity container node tag detected" << endl;
+		}		
+	}
+
+	return result;
+}
+
+
+bool parseSemanticEntityTypeNodeContainerTag(XMLparserTag* currentTagUpdatedL2, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListType, bool linkConnections, long* currentEntityNodeIDinCompleteList)
+{
+	bool result = true;
+	long currentEntityNodeIDinEntityTypeNodeList = 0;
+
+	XMLparserTag* currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
+	while(currentTagUpdatedL3->nextTag != NULL)
+	{
+		if(currentTagUpdatedL3->name == NET_XML_TAG_entityNode)
+		{
+			#ifdef GIA_SEMANTIC_NET_XML_DEBUG
+			if(currentTagUpdatedL3->firstAttribute->name == NET_XML_ATTRIBUTE_id)
+			{
+				//cout << "Entity Node ID: " << currentTagUpdatedL3->firstAttribute->value << endl;
+			}
+			#endif
+
+			if(linkConnections)
+			{
+				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
+				//cout << "currentEntityNodeIDinCompleteList = " << currentEntityNodeIDinCompleteList << endl;
+				#endif
+				GIAentityNode* currentEntity = entityNodesActiveListComplete->at(*currentEntityNodeIDinCompleteList);
+				currentEntityNodeIDinCompleteList++;
+				if(!parseEntityNodeTag(currentTagUpdatedL3, currentEntity, entityNodesActiveListComplete))
 				{
-					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-					if(currentTagUpdatedL3->firstAttribute->name == NET_XML_ATTRIBUTE_id)
-					{
-						//cout << "Entity Node ID: " << currentTagUpdatedL3->firstAttribute->value << endl;
-					}
-					#endif
+					result = false;
+				}
+			}
+			else
+			{
+				GIAentityNode* newEntity = new GIAentityNode();
 
-					if(linkConnections)
-					{
-						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						//cout << "currentEntityNodeIDinCompleteList = " << currentEntityNodeIDinCompleteList << endl;
-						#endif
+				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
+				int attributeValue = convertStringToInt(currentTagUpdatedL3->firstAttribute->value);
+				newEntity->idActiveList = attributeValue;
+				newEntity->entityName = currentTagUpdatedL3->firstAttribute->nextAttribute->value.c_str();
+				//cout << "newEntity->entityName = " << newEntity->entityName << endl;
+				#endif
 
-						GIAentityNode* currentEntity = entityNodesActiveListComplete->at(currentEntityNodeIDinCompleteList);
-						currentEntityNodeIDinCompleteList++;
-						if(!parseEntityNodeTag(currentTagUpdatedL3, currentEntity, entityNodesActiveListComplete))
+				entityNodesActiveListComplete->push_back(newEntity);
+				currentEntityNodeIDinCompleteList++;
+				entityNodesActiveListType->push_back(newEntity);
+				currentEntityNodeIDinEntityTypeNodeList++;
+
+				#ifdef GIA_ENABLE_XML_READ_DEBUG
+				if(currentTagUpdatedL3->firstAttribute != NULL)
+				{
+					if(currentTagUpdatedL3->firstAttribute->nextAttribute->name != NET_XML_ATTRIBUTE_id)
+					{
+						if(currentTagUpdatedL3->firstAttribute->nextAttribute != NULL)
 						{
-							result = false;
-						}
-					}
-					else
-					{
-						GIAentityNode* newEntity = new GIAentityNode();
-
-						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						int attributeValue = convertStringToInt(currentTagUpdatedL3->firstAttribute->value);
-						newEntity->idActiveList = attributeValue;
-						newEntity->entityName = currentTagUpdatedL3->firstAttribute->nextAttribute->value.c_str();
-						//cout << "newEntity->entityName = " << newEntity->entityName << endl;
-						#endif
-
-						entityNodesActiveListComplete->push_back(newEntity);
-						currentEntityNodeIDinCompleteList++;
-
-						bool foundTemp = false;
-						long indexTemp = 0;
-
-						/*
-						string networkIndexEntityName = currentTagUpdatedL3->firstAttribute->nextAttribute->value;
-						GIAentityNode* tempNode = findOrAddNetworkIndexEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, &networkIndexEntityName, &foundTemp, &indexTemp, true, &currentEntityNodeIDinCompleteList, &currentEntityNodeIDinEntityNodesActiveCompleteList);
-						*/
-
-
-						entityNodesActiveListNetworkIndexs->push_back(newEntity);
-						currentEntityNodeIDinEntityNodesActiveCompleteList++;
-
-						#ifdef GIA_ENABLE_XML_READ_DEBUG
-						if(currentTagUpdatedL3->firstAttribute != NULL)
-						{
-							if(currentTagUpdatedL3->firstAttribute->nextAttribute->name != NET_XML_ATTRIBUTE_id)
+							if(currentTagUpdatedL3->firstAttribute->nextAttribute->name != NET_XML_ATTRIBUTE_name)
 							{
-								if(currentTagUpdatedL3->firstAttribute->nextAttribute != NULL)
-								{
-									if(currentTagUpdatedL3->firstAttribute->nextAttribute->name != NET_XML_ATTRIBUTE_name)
-									{
 
-									}
-									else
-									{
-										cout << "error: networkIndex entityTag does not have name as second attribute" << endl;
-										exit(0);
-									}
-								}
-								else
-								{
-									cout << "error: networkIndex entityTag does not have name" << endl;
-									exit(0);
-								}
 							}
 							else
 							{
-								cout << "error: networkIndex entityTag does not have idActiveList as first attribute" << endl;
+								cout << "error: networkIndex entityTag does not have name as second attribute" << endl;
 								exit(0);
 							}
 						}
 						else
 						{
-							cout << "error: networkIndex entityTag does not have ID" << endl;
+							cout << "error: networkIndex entityTag does not have name" << endl;
 							exit(0);
 						}
-						#endif
-
-						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						cout << "NetworkIndex Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;
-						#endif
-
-						//networkIndexEntityNamesList->push_back(currentTagUpdatedL3->firstAttribute->nextAttribute->value);
-
-
-						/*
-						GIAentityNode* newEntity = new GIAentityNode();
-						currentEntity->next = newEntity;
-						currentEntity = currentEntity->next;
-						*/
-					}
-				}
-				else
-				{
-					if(currentTagUpdatedL3->name != "")
-					{//NB networkIndex entities nodes should always exist, so this condition is not required (at the moment)
-						cout << "parseSemanticNetTag error 1: entity node tag not detected" << endl;
-						#ifdef GIA_DEBUG
-						//cout << "tag found: " << currentTagUpdatedL3->name << endl;
-						//cout << "tag expected: " << NET_XML_TAG_entityNode << endl;
-						#endif
-					}
-				}
-				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
-			}
-			currentTagUpdatedL2=currentTagUpdatedL2->nextTag;
-		}
-		else
-		{
-			cout << "parseSemanticNetTag error: no networkIndex entity container node tag detected" << endl;
-		}
-
-		if(currentTagUpdatedL2->name == NET_XML_TAG_substanceEntityNodeContainer)
-		{
-			long currentEntityNodeIDInSubstanceEntityNodesList = 0;
-
-			XMLparserTag* currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
-			while(currentTagUpdatedL3->nextTag != NULL)
-			{
-				if(currentTagUpdatedL3->name == NET_XML_TAG_entityNode)
-				{
-					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-					if(currentTagUpdatedL3->firstAttribute->name == NET_XML_ATTRIBUTE_id)
-					{
-						//cout << "Entity Node ID: " << currentTagUpdatedL3->firstAttribute->value << endl;
-					}
-					#endif
-
-					if(linkConnections)
-					{
-						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						//cout << "currentEntityNodeIDinCompleteList = " << currentEntityNodeIDinCompleteList << endl;
-						#endif
-						GIAentityNode* currentEntity = entityNodesActiveListComplete->at(currentEntityNodeIDinCompleteList);
-						currentEntityNodeIDinCompleteList++;
-						if(!parseEntityNodeTag(currentTagUpdatedL3, currentEntity, entityNodesActiveListComplete))
-						{
-							result = false;
-						}
 					}
 					else
 					{
-						GIAentityNode* newEntity = new GIAentityNode();
-
-						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						int attributeValue = convertStringToInt(currentTagUpdatedL3->firstAttribute->value);
-						newEntity->idActiveList = attributeValue;
-						newEntity->entityName = currentTagUpdatedL3->firstAttribute->nextAttribute->value.c_str();
-						//cout << "newEntity->entityName = " << newEntity->entityName << endl;
-						#endif
-
-						entityNodesActiveListComplete->push_back(newEntity);
-						currentEntityNodeIDinCompleteList++;
-						entityNodesActiveListSubstances->push_back(newEntity);
-						currentEntityNodeIDInSubstanceEntityNodesList++;
-
-						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						cout << "Substance Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;
-						#endif
-						/*
-						GIAentityNode* newEntity = new GIAentityNode();
-						currentEntity->next = newEntity;
-						currentEntity = currentEntity->next;
-						*/
+						cout << "error: networkIndex entityTag does not have idActiveList as first attribute" << endl;
+						exit(0);
 					}
 				}
 				else
 				{
-					if(currentTagUpdatedL2->name != "")
-					{
-						cout << "parseSemanticNetTag error 2: entity node tag not detected" << endl;
-						#ifdef GIA_DEBUG
-						//cout << "tag found: " << currentTagUpdatedL3->name << endl;
-						//cout << "tag expected: " << NET_XML_TAG_entityNode << endl;
-						#endif
-					}
+					cout << "error: networkIndex entityTag does not have ID" << endl;
+					exit(0);
 				}
-				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
+				#endif
+
+				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
+				cout << "NetworkIndex Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;
+				#endif
 			}
-			currentTagUpdatedL2=currentTagUpdatedL2->nextTag;
 		}
 		else
 		{
-			cout << "parseSemanticNetTag error: no substance entity container node tag detected" << endl;
-		}
-
-		if(currentTagUpdatedL2->name == NET_XML_TAG_actionEntityNodeContainer)
-		{
-			long currentEntityNodeIDInActionEntityNodesList = 0;
-
-			XMLparserTag* currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
-			while(currentTagUpdatedL3->nextTag != NULL)
-			{
-				if(currentTagUpdatedL3->name == NET_XML_TAG_entityNode)
-				{
-					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-					if(currentTagUpdatedL3->firstAttribute->name == NET_XML_ATTRIBUTE_id)
-					{
-						//cout << "Entity Node ID: " << currentTagUpdatedL3->firstAttribute->value << endl;
-					}
-					#endif
-
-					if(linkConnections)
-					{
-						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						//cout << "currentEntityNodeIDinCompleteList = " << currentEntityNodeIDinCompleteList << endl;
-						#endif
-
-						GIAentityNode* currentEntity = entityNodesActiveListComplete->at(currentEntityNodeIDinCompleteList);
-						currentEntityNodeIDinCompleteList++;
-						if(!parseEntityNodeTag(currentTagUpdatedL3, currentEntity, entityNodesActiveListComplete))
-						{
-							result = false;
-						}
-					}
-					else
-					{
-						GIAentityNode* newEntity = new GIAentityNode();
-
-						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						int attributeValue = convertStringToInt(currentTagUpdatedL3->firstAttribute->value);
-						newEntity->idActiveList = attributeValue;
-						newEntity->entityName = currentTagUpdatedL3->firstAttribute->nextAttribute->value.c_str();
-						//cout << "newEntity->entityName = " << newEntity->entityName << endl;
-						#endif
-
-						entityNodesActiveListComplete->push_back(newEntity);
-						currentEntityNodeIDinCompleteList++;
-						entityNodesActiveListActions->push_back(newEntity);
-						currentEntityNodeIDInActionEntityNodesList++;
-
-						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						cout << "Action Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;
-						#endif
-
-						/*
-						GIAentityNode* newEntity = new GIAentityNode();
-						currentEntity->next = newEntity;
-						currentEntity = currentEntity->next;
-						*/
-					}
-				}
-				else
-				{
-					if(currentTagUpdatedL3->name != "")
-					{
-						cout << "parseSemanticNetTag error 3: entity node tag not detected" << endl;
-						#ifdef GIA_DEBUG
-						//cout << "tag found: " << currentTagUpdatedL3->name << endl;
-						//cout << "tag expected: " << NET_XML_TAG_entityNode << endl;
-						#endif
-					}
-				}
-				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
+			if(currentTagUpdatedL3->name != "")
+			{//NB networkIndex entities nodes should always exist, so this condition is not required (at the moment)
+				cout << "parseSemanticEntityTypeNodeContainerTag error 1: entity node tag not detected" << endl;
+				#ifdef GIA_DEBUG
+				//cout << "tag found: " << currentTagUpdatedL3->name << endl;
+				//cout << "tag expected: " << NET_XML_TAG_entityNode << endl;
+				#endif
 			}
-			currentTagUpdatedL2=currentTagUpdatedL2->nextTag;
 		}
-		else
-		{
-			cout << "parseSemanticNetTag error: no action entity container node tag detected" << endl;
-		}
-
-		if(currentTagUpdatedL2->name == NET_XML_TAG_conditionEntityNodeContainer)
-		{
-			long currentEntityNodeIDInConditionEntityNodesList = 0;
-
-			XMLparserTag* currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
-			while(currentTagUpdatedL3->nextTag != NULL)
-			{
-				if(currentTagUpdatedL3->name == NET_XML_TAG_entityNode)
-				{
-					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-					if(currentTagUpdatedL3->firstAttribute->name == NET_XML_ATTRIBUTE_id)
-					{
-						//cout << "Entity Node ID: " << currentTagUpdatedL3->firstAttribute->value << endl;
-					}
-					#endif
-
-					if(linkConnections)
-					{
-						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						//cout << "currentEntityNodeIDinCompleteList = " << currentEntityNodeIDinCompleteList << endl;
-						#endif
-						GIAentityNode* currentEntity = entityNodesActiveListComplete->at(currentEntityNodeIDinCompleteList);
-						currentEntityNodeIDinCompleteList++;
-						if(!parseEntityNodeTag(currentTagUpdatedL3, currentEntity, entityNodesActiveListComplete))
-						{
-							result = false;
-						}
-					}
-					else
-					{
-						GIAentityNode* newEntity = new GIAentityNode();
-
-						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						int attributeValue = convertStringToInt(currentTagUpdatedL3->firstAttribute->value);
-						newEntity->idActiveList = attributeValue;
-						#endif
-
-						entityNodesActiveListComplete->push_back(newEntity);
-						currentEntityNodeIDinCompleteList++;
-						entityNodesActiveListConditions->push_back(newEntity);
-						currentEntityNodeIDInConditionEntityNodesList++;
-
-						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						cout << "Condition Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;
-						#endif
-
-						/*
-						GIAentityNode* newEntity = new GIAentityNode();
-						currentEntity->next = newEntity;
-						currentEntity = currentEntity->next;
-						*/
-					}
-				}
-				else
-				{
-					if(currentTagUpdatedL3->name != "")
-					{
-						cout << "parseSemanticNetTag error 4: entity node tag not detected" << endl;
-						#ifdef GIA_DEBUG
-						//cout << "tag found: " << currentTagUpdatedL3->name << endl;
-						//cout << "tag expected: " << NET_XML_TAG_entityNode << endl;
-						#endif
-					}
-				}
-				currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
-			}
-			currentTagUpdatedL2=currentTagUpdatedL2->nextTag;
-		}
-		else
-		{
-			cout << "parseSemanticNetTag error: no action entity container node tag detected" << endl;
-		}
+		currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
 	}
-
 	return result;
 }
+
 
 
 
@@ -685,18 +504,6 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->hasAssociatedInstance = attributeValue;
 			hasAssociatedSubstanceFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedInstanceIsAction)
-		{
-			bool attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->hasAssociatedInstanceIsAction = attributeValue;
-			hasAssociatedSubstanceIsActionFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedInstanceIsCondition)
-		{
-			bool attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->hasAssociatedInstanceIsCondition = attributeValue;
-			hasAssociatedSubstanceIsConditionFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedTime)
 		{
@@ -1222,7 +1029,7 @@ bool parseTimeConditionNodeTag(XMLparserTag* firstTagInTimeConditionNode, GIAtim
 
 
 
-bool writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions)
+bool writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts)
 {
 	vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs = new vector<GIAentityNode*>;
 	for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListMapIter = networkIndexEntityNodesListMap->begin(); networkIndexEntityNodesListMapIter != networkIndexEntityNodesListMap->end(); networkIndexEntityNodesListMapIter++)
@@ -1232,7 +1039,7 @@ bool writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAentityNode*>
 	}
 
 	bool result;
-	result = writeSemanticNetXMLFile(xmlFileName, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions);
+	result = writeSemanticNetXMLFile(xmlFileName, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexs, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListConcepts);
 
 	#ifdef GIA_FREE_MEMORY1
 	delete entityNodesActiveListNetworkIndexs;
@@ -1242,7 +1049,7 @@ bool writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAentityNode*>
 }
 
 
-bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions)
+bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, vector<GIAentityNode*>* entityNodesActiveListConcepts)
 {
 	bool result = true;
 
@@ -1268,6 +1075,7 @@ bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*>* entityN
 	resetIDsForNodeList(entityNodesActiveListSubstances, &currentEntityNodeIDinEntityNodesActiveCompleteList);
 	resetIDsForNodeList(entityNodesActiveListActions, &currentEntityNodeIDinEntityNodesActiveCompleteList);
 	resetIDsForNodeList(entityNodesActiveListConditions, &currentEntityNodeIDinEntityNodesActiveCompleteList);
+	resetIDsForNodeList(entityNodesActiveListConcepts, &currentEntityNodeIDinEntityNodesActiveCompleteList);
 	#endif
 
 	currentEntityNodeIDinEntityNodesActiveCompleteList = 0;
@@ -1320,6 +1128,19 @@ bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*>* entityN
 		result = false;
 	}
 
+	#ifdef GIA_SEMANTIC_NET_XML_DEBUG
+	//cout << "(!generateXMLentityNodeTagList(currentTagL1, entityNodesActiveListConcepts, NET_XML_TAG_conceptEntityNodeContainer, &currentEntityNodeIDinEntityNodesActiveCompleteList))" << endl;
+	#endif
+
+	currentTagL1 = currentTagL1->nextTag;
+	XMLparserTag* newTag5 = new XMLparserTag();	//had to add a null tag
+	currentTagL1->nextTag = newTag5;
+
+	if(!generateXMLentityNodeTagList(currentTagL1, entityNodesActiveListConcepts, NET_XML_TAG_conceptEntityNodeContainer, &currentEntityNodeIDinEntityNodesActiveCompleteList))
+	{
+		result = false;
+	}
+	
  	if(!writeXMLfile(xmlFileName, firstTagInXMLFile))
  	{
 		result = false;
@@ -1457,14 +1278,6 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedInstance;
 	currentAttribute->value = convertIntToString(int(currentEntity->hasAssociatedInstance));
-	currentAttribute = createNewAttribute(currentAttribute);
-
-	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedInstanceIsAction;
-	currentAttribute->value = convertIntToString(int(currentEntity->hasAssociatedInstanceIsAction));
-	currentAttribute = createNewAttribute(currentAttribute);
-
-	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedInstanceIsCondition;
-	currentAttribute->value = convertIntToString(int(currentEntity->hasAssociatedInstanceIsCondition));
 	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedTime;

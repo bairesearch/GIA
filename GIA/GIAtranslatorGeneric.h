@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1a 12-September-2016
+ * Project Version: 2n1b 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -54,7 +54,7 @@
 
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_undefined -1
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition 1
-#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addActionToActionDefinitionDefineSubstances 2
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addActionToActionDefinition 2
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty 3
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity 4
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity 5
@@ -75,10 +75,13 @@
 //#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 	#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias 14
 //#endif
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntityEnsureDependentNotConcept 15
+
 
 #define GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition 1
-#define GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addActionToActionDefinitionDefineSubstances 2
+#define GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addActionToActionDefinition 2
 #define GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addTenseOnlyTimeConditionToSubstance 20
+#define GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_upgradeSubstanceToConcept 21
 
 
 #define REL1 (0)	//GIA_GENERIC_DEP_REL_INTERP_REL
