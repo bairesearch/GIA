@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f10a 12-July-2014
+ * Project Version: 2f11a 13-July-2014
  *
  *******************************************************************************/
 
@@ -121,12 +121,13 @@ GIAentityNode::GIAentityNode(void)
 	}
 	grammaticalTenseTemp = GRAMMATICAL_TENSE_UNDEFINED;
 	grammaticalDefiniteTemp = false;
+	grammaticalIndefinitePluralTemp = false;
 	grammaticalProperNounTemp = false;
 	grammaticalGenderTemp = GRAMMATICAL_GENDER_UNDEFINED;
 	//grammaticalCountTemp = GRAMMATICAL_COUNT_UNDEFINED;
 	grammaticalPronounTemp = false;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	grammaticalDefiniteIndexOfDeterminerTemp = GIA_ENTITY_INDEX_UNDEFINED;
+	grammaticalIndexOfDeterminerTemp = GIA_ENTITY_INDEX_UNDEFINED;
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
 	/*
@@ -679,11 +680,12 @@ bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * ent
 	testEntityCharacteristicIterationbool(entity->grammaticalTenseModifierArrayTemp[entityCharacteristic->arrayIndex], entityCharacteristic, "grammaticalTenseModifierArrayTemp", &foundMatch);
 	testEntityCharacteristicIterationint(entity->grammaticalTenseTemp, entityCharacteristic, "grammaticalTenseTemp", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->grammaticalDefiniteTemp, entityCharacteristic, "grammaticalDefiniteTemp", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->grammaticalIndefinitePluralTemp, entityCharacteristic, "grammaticalIndefinitePluralTemp", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->grammaticalProperNounTemp, entityCharacteristic, "grammaticalProperNounTemp", &foundMatch);
 	testEntityCharacteristicIterationint(entity->grammaticalGenderTemp, entityCharacteristic, "grammaticalGenderTemp", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->grammaticalPronounTemp, entityCharacteristic, "grammaticalPronounTemp", &foundMatch);
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	testEntityCharacteristicIterationint(entity->grammaticalDefiniteIndexOfDeterminerTemp, entityCharacteristic, "grammaticalDefiniteIndexOfDeterminerTemp", &foundMatch);
+	testEntityCharacteristicIterationint(entity->grammaticalIndexOfDeterminerTemp, entityCharacteristic, "grammaticalIndexOfDeterminerTemp", &foundMatch);
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
 	testEntityCharacteristicIterationstring(entity->stanfordPOStemp, entityCharacteristic, "stanfordPOStemp", &foundMatch);
@@ -835,11 +837,12 @@ bool setEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * enti
 	setEntityCharacteristicIterationbool(&(entity->grammaticalTenseModifierArrayTemp[entityCharacteristic->arrayIndex]), entityCharacteristic, "grammaticalTenseModifierArrayTemp", &foundMatch);
 	setEntityCharacteristicIterationint(&(entity->grammaticalTenseTemp), entityCharacteristic, "grammaticalTenseTemp", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->grammaticalDefiniteTemp), entityCharacteristic, "grammaticalDefiniteTemp", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->grammaticalIndefinitePluralTemp), entityCharacteristic, "grammaticalIndefinitePluralTemp", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->grammaticalProperNounTemp), entityCharacteristic, "grammaticalProperNounTemp", &foundMatch);
 	setEntityCharacteristicIterationint(&(entity->grammaticalGenderTemp), entityCharacteristic, "grammaticalGenderTemp", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->grammaticalPronounTemp), entityCharacteristic, "grammaticalPronounTemp", &foundMatch);
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	setEntityCharacteristicIterationint(&(entity->grammaticalDefiniteIndexOfDeterminerTemp), entityCharacteristic, "grammaticalDefiniteIndexOfDeterminerTemp", &foundMatch);
+	setEntityCharacteristicIterationint(&(entity->grammaticalIndexOfDeterminerTemp), entityCharacteristic, "grammaticalIndexOfDeterminerTemp", &foundMatch);
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
 	setEntityCharacteristicIterationstring(&(entity->stanfordPOStemp), entityCharacteristic, "stanfordPOStemp", &foundMatch);
@@ -964,11 +967,12 @@ bool getEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * enti
 	getEntityCharacteristicIterationbool(entity->grammaticalTenseModifierArrayTemp[entityCharacteristic->arrayIndex], entityCharacteristic, "grammaticalTenseModifierArrayTemp", &foundMatch);
 	getEntityCharacteristicIterationint(entity->grammaticalTenseTemp, entityCharacteristic, "grammaticalTenseTemp", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->grammaticalDefiniteTemp, entityCharacteristic, "grammaticalDefiniteTemp", &foundMatch);
+	getEntityCharacteristicIterationbool(entity->grammaticalIndefinitePluralTemp, entityCharacteristic, "grammaticalIndefinitePluralTemp", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->grammaticalProperNounTemp, entityCharacteristic, "grammaticalProperNounTemp", &foundMatch);
 	getEntityCharacteristicIterationint(entity->grammaticalGenderTemp, entityCharacteristic, "grammaticalGenderTemp", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->grammaticalPronounTemp, entityCharacteristic, "grammaticalPronounTemp", &foundMatch);
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	getEntityCharacteristicIterationint(entity->grammaticalDefiniteIndexOfDeterminerTemp, entityCharacteristic, "grammaticalDefiniteIndexOfDeterminerTemp", &foundMatch);
+	getEntityCharacteristicIterationint(entity->grammaticalIndexOfDeterminerTemp, entityCharacteristic, "grammaticalIndexOfDeterminerTemp", &foundMatch);
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
 	getEntityCharacteristicIterationstring(entity->stanfordPOStemp, entityCharacteristic, "stanfordPOStemp", &foundMatch);

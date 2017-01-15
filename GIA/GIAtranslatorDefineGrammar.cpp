@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f10a 12-July-2014
+ * Project Version: 2f11a 13-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -386,7 +386,27 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 			//cout << "isDefinite currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 			#endif
 		}
-
+		if(currentFeatureInList->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
+		{//added 2f11a 13-July-2014
+			Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+			while(currentRelationInList->next != NULL)
+			{
+				if(currentRelationInList->relationType == RELATION_TYPE_QUANTITY)
+				{
+					if(currentRelationInList->relationDependent == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL)
+					{
+						if(currentRelationInList->relationGovernorIndex == currentFeatureInList->entityIndex)
+						{
+							cout << "relex GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL detected" << endl;
+							//eg found _quantity(chicken[2], some[1]) in "Some chickens are happy."
+							currentFeatureInList->grammaticalIsIndefinitePlural = true;
+						}
+					}
+					
+				}
+				currentRelationInList = currentRelationInList->next;
+			}
+		}
 
 		for(int grammaticalGenderIndex = 0; grammaticalGenderIndex < GRAMMATICAL_GENDER_NUMBER_OF_TYPES; grammaticalGenderIndex++)
 		{
@@ -872,17 +892,24 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 					GIAfeatureTempEntityNodeArray[entityIndexOfDeterminier]->disabled = true;
 				}
 
-				if((determiner == GRAMMATICAL_DETERMINER_DEFINITE) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL))
+				if(determiner == GRAMMATICAL_DETERMINER_DEFINITE)
 				{
 					featureArrayTemp[entityIndexOfNoun]->grammaticalIsDefinite = true;
 					#ifdef GIA_USE_ADVANCED_REFERENCING
-					featureArrayTemp[entityIndexOfNoun]->grammaticalIsDefiniteIndexOfDeterminer = currentRelationInList->relationDependentIndex;
+					featureArrayTemp[entityIndexOfNoun]->grammaticalIndexOfDeterminer = currentRelationInList->relationDependentIndex;
 					#endif
 
 					#ifdef GIA_TRANSLATOR_DEBUG
 					//cout << "(determiner == GRAMMATICAL_DETERMINER_DEFINITE)" << endl;
 					//cout << "GIAentityNodeArray[entityIndexOfDeterminier]->entityName = " << GIAentityNodeArray[entityIndexOfDeterminier]->entityName << endl;
 					//cout << "GIAentityNodeArray[entityIndexOfNoun]->entityName = " << GIAentityNodeArray[entityIndexOfNoun]->entityName << endl;
+					#endif
+				}
+				else if(determiner == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL)
+				{//added 2f11a 13-July-2014
+					featureArrayTemp[entityIndexOfNoun]->grammaticalIsIndefinitePlural = true;
+					#ifdef GIA_USE_ADVANCED_REFERENCING
+					featureArrayTemp[entityIndexOfNoun]->grammaticalIndexOfDeterminer = currentRelationInList->relationDependentIndex;
 					#endif
 				}
 				/*
@@ -929,11 +956,12 @@ void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentit
 				applyPOSrelatedGrammaticalInfoToEntity(entity, currentFeatureInList);
 
 				entity->grammaticalDefiniteTemp = currentFeatureInList->grammaticalIsDefinite;
+				entity->grammaticalIndefinitePluralTemp = currentFeatureInList->grammaticalIsIndefinitePlural;
 				entity->grammaticalProperNounTemp = currentFeatureInList->grammaticalIsProperNoun;
 				entity->grammaticalGenderTemp = currentFeatureInList->grammaticalGender;
 				#ifdef GIA_USE_ADVANCED_REFERENCING
-				entity->grammaticalDefiniteIndexOfDeterminerTemp = currentFeatureInList->grammaticalIsDefiniteIndexOfDeterminer;
-				//cout << "entity->grammaticalDefiniteIndexOfDeterminerTemp = " << entity->grammaticalDefiniteIndexOfDeterminerTemp << endl;
+				entity->grammaticalIndexOfDeterminerTemp = currentFeatureInList->grammaticalIndexOfDeterminer;
+				//cout << "entity->grammaticalIndexOfDeterminerTemp = " << entity->grammaticalIndexOfDeterminerTemp << endl;
 				#endif
 
 				entity->NERTemp = currentFeatureInList->NER;

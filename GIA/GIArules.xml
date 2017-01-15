@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f10a 12-July-2014
+ * Project Version: 2f11a 13-July-2014
  *
  *******************************************************************************/
 -->
@@ -2497,6 +2497,7 @@
 				<!-- <specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" /> -->
 				<!-- #endif -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="true" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePlural" value="true" />
 				<option functionToExecuteUponFind="1" />
 				</paramEntity>
 			</function>
@@ -2527,6 +2528,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="2" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="true" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp" value="false" REL="1" REL_ENT="1" />
 				</paramDepRel>
@@ -2536,6 +2538,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="2" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="true" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp" value="false" REL="1" REL_ENT="2" />
 				</paramDepRel>
@@ -2545,6 +2548,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="2" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="mustSetIsSubstanceConceptBasedOnApposRelation" value="true" REL="1" REL_ENT="1" />
 				</paramDepRel>
@@ -2554,6 +2558,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="2" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="mustSetIsSubstanceConceptBasedOnApposRelation" value="true" REL="1" REL_ENT="2" />
 				</paramDepRel>
@@ -2682,6 +2687,7 @@
 				<!-- #endif -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="2" negative="true" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" />
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceConcept" value="true" />
 				</paramEntity>

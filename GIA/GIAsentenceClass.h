@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f10a 12-July-2014
+ * Project Version: 2f11a 13-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -235,12 +235,13 @@ public:
 	bool grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];
 	int grammaticalNumber;
 	bool grammaticalIsDefinite;
+	bool grammaticalIsIndefinitePlural;
 	bool grammaticalIsProperNoun;
 	int grammaticalGender;
 	bool grammaticalIsPronoun;
 	int grammaticalWordType;	//grammaticalWordTypeTemp
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	int grammaticalIsDefiniteIndexOfDeterminer;
+	int grammaticalIndexOfDeterminer;
 	#endif
 	bool previousWordInSentenceIsTo;
 

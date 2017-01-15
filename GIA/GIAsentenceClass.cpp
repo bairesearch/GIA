@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f10a 12-July-2014
+ * Project Version: 2f11a 13-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -208,12 +208,13 @@ Feature::Feature(void)
 	}
 	grammaticalNumber = GRAMMATICAL_NUMBER_UNDEFINED;
 	grammaticalIsDefinite = false;
+	grammaticalIsIndefinitePlural = false;
 	grammaticalIsProperNoun = false;
 	grammaticalGender = GRAMMATICAL_GENDER_UNDEFINED;
 	grammaticalIsPronoun = false;
 	grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	grammaticalIsDefiniteIndexOfDeterminer = GIA_ENTITY_INDEX_UNDEFINED;
+	grammaticalIndexOfDeterminer = GIA_ENTITY_INDEX_UNDEFINED;
 	#endif
 	previousWordInSentenceIsTo = false;
 

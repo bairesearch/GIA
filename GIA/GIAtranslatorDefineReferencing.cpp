@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f10a 12-July-2014
+ * Project Version: 2f11a 13-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1098,7 +1098,7 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 					int minimumEntityIndexOfReferenceSet;
 					if(haveSentenceEntityIndexOfDeterminers)
 					{
-						minimumEntityIndexOfReferenceSet = currentInstance->grammaticalDefiniteIndexOfDeterminerTemp;
+						minimumEntityIndexOfReferenceSet = currentInstance->grammaticalIndexOfDeterminerTemp;
 						cout << "\n1minimumEntityIndexOfReferenceSet = " << minimumEntityIndexOfReferenceSet << endl;
 					}
 					else
@@ -1112,7 +1112,7 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 					//currentInstance->minimumEntityIndexOfReferenceSet = minimumEntityIndexOfReferenceSet;	//added 28 Sept 2013
 
 					#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
-					cout << "minimumSentenceIndexOfReferenceSet1 = " << currentInstance->grammaticalDefiniteIndexOfDeterminerTemp << endl;
+					cout << "minimumSentenceIndexOfReferenceSet1 = " << currentInstance->grammaticalIndexOfDeterminerTemp << endl;
 					cout << "minimumSentenceIndexOfReferenceSet2 = " << currentInstance->entityIndexTemp << endl;
 					#endif
 
@@ -1798,7 +1798,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 				int minimumEntityIndexOfReferenceSet = currentSpecificConcept->entityIndexTemp;
 
 				#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
-				cout << "minimumSentenceIndexOfReferenceSet1 = " << currentSpecificConcept->grammaticalDefiniteIndexOfDeterminerTemp << endl;
+				cout << "minimumSentenceIndexOfReferenceSet1 = " << currentSpecificConcept->grammaticalIndexOfDeterminerTemp << endl;
 				cout << "minimumSentenceIndexOfReferenceSet2 = " << currentSpecificConcept->entityIndexTemp << endl;
 				#endif
 

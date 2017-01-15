@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f10a 12-July-2014
+ * Project Version: 2f11a 13-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -268,11 +268,13 @@ void defineSubstancesDefiniteNouns(Sentence * currentSentenceInList, bool GIAent
 	EntityCharacteristic entityCharacteristicsTest2("grammaticalProperNounTemp", "false");
 	#endif
 	EntityCharacteristic entityCharacteristicsTest3("grammaticalDefiniteTemp", "true");
+	EntityCharacteristic entityCharacteristicsTest4("grammaticalIndefinitePluralTemp", "true");
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
 	#ifndef GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest2);
 	#endif
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest3);
+	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest4);
 	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	genericEntityInterpretation(&param);
 #else
@@ -286,7 +288,7 @@ void defineSubstancesDefiniteNouns(Sentence * currentSentenceInList, bool GIAent
 				if(!(featureArrayTemp[i]->grammaticalIsProperNoun))	//&& !GIAEntityNodeIsDateOrTime[i]
 				{
 				#endif
-					if(featureArrayTemp[i]->grammaticalIsDefinite)
+					if((featureArrayTemp[i]->grammaticalIsDefinite) || (featureArrayTemp[i]->grammaticalIsIndefinitePlural))
 					{
 						#ifdef GIA_TRANSLATOR_DEBUG
 						//cout << "addSubstanceToSubstanceDefinition: GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
@@ -341,10 +343,12 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
 	EntityCharacteristic entityCharacteristicsTest1("grammaticalNumber", GRAMMATICAL_NUMBER_SINGULAR_STRING);
 	EntityCharacteristic entityCharacteristicsTest2("grammaticalDefiniteTemp", "false");
-	EntityCharacteristic entityCharacteristicsTest3("grammaticalProperNounTemp", "true");
+	EntityCharacteristic entityCharacteristicsTest3("grammaticalIndefinitePluralTemp", "false");
+	EntityCharacteristic entityCharacteristicsTest4("grammaticalProperNounTemp", "true");
 	paramA.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1);
 	paramA.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest2);
 	paramA.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest3);
+	paramA.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest4);
 	EntityCharacteristic entityCharacteristicsSetAB("alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", "false");
 	paramA.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&entityCharacteristicsSetAB);
 	genericDependecyRelationInterpretation(&paramA, REL1);
@@ -421,8 +425,8 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 				bool thingFeatureIsProperNoun = featureArrayTemp[thingIndex]->grammaticalIsProperNoun;
 				bool definitionFeatureIsProperNoun = featureArrayTemp[definitionIndex]->grammaticalIsProperNoun;
 
-				bool thingIsDefinite =  featureArrayTemp[thingIndex]->grammaticalIsDefinite;
-				bool definitionIsDefinite = featureArrayTemp[definitionIndex]->grammaticalIsDefinite;
+				bool thingIsDefinite =  featureArrayTemp[thingIndex]->grammaticalIsDefinite || featureArrayTemp[thingIndex]->grammaticalIsIndefinitePlural;
+				bool definitionIsDefinite = featureArrayTemp[definitionIndex]->grammaticalIsDefinite || featureArrayTemp[definitionIndex]->grammaticalIsIndefinitePlural;
 
 				GIAentityNode * thingEntity = GIAentityNodeArray[thingIndex];
 				GIAentityNode * definitionEntity = GIAentityNodeArray[definitionIndex];
@@ -1152,8 +1156,10 @@ void defineSubstanceConcepts(Sentence * currentSentenceInList, bool GIAentityNod
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA4);
 	EntityCharacteristic entityCharacteristicsTestA5("grammaticalDefiniteTemp", "false");
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA5);
-	EntityCharacteristic entityCharacteristicsTestA6("grammaticalProperNounTemp", "false");
+	EntityCharacteristic entityCharacteristicsTestA6("grammaticalIndefinitePluralTemp", "false");
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA6);
+	EntityCharacteristic entityCharacteristicsTestA7("grammaticalProperNounTemp", "false");
+	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA7);
 	EntityCharacteristic entityCharacteristicsSetA("isSubstanceConcept", "true");
 	paramA.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetA);
 	genericEntityInterpretation(&paramA);
@@ -1235,7 +1241,7 @@ void defineSubstanceConcepts(Sentence * currentSentenceInList, bool GIAentityNod
 					}
 
 					bool thingFeatureIsProperNoun = featureArrayTemp[thingIndex]->grammaticalIsProperNoun;
-					bool thingIsDefinite =  featureArrayTemp[thingIndex]->grammaticalIsDefinite;
+					bool thingIsDefinite =  featureArrayTemp[thingIndex]->grammaticalIsDefinite || featureArrayTemp[thingIndex]->grammaticalIsIndefinitePlural;
 
 					bool thingFeatureIsPronoun = false;
 					if(featureArrayTemp[thingIndex]->grammaticalIsPronoun == GRAMMATICAL_PRONOUN)
