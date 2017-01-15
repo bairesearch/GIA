@@ -38,7 +38,7 @@ using namespace std;
 #define GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS (1)		//NB must make this 0 for large.xml to work (NB this bug was issue introduced after GIA Archive - 1a5d - 04May11a, eg GIA Archive - 1a5e - 04May11a)
 #define GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_NOUNS_WITH_DETERMINATES (1)
 #define GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS_OR_DATES (1)
-#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_PRONOUNS (1)
+#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_PRONOUNS (1)		//IMPORTANT
 #define GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY (0)
 #define GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY (0)
 #define GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_WHERE_NECESSARY (1)
@@ -86,9 +86,9 @@ using namespace std;
 
 
 //
-#define RELATION_TYPE_UNKNOWN_TO_BE "_to-be"		//eg grows tired / The rose smelled sweet / _to-be(smell, sweet) - CHECK THIS
-#define RELATION_TYPE_UNKNOWN_TO_DO "_to-do"		//eg Linas likes to row / _to-do(like, row) - CHECK THIS
-
+#define RELATION_TYPE_COMPLIMENT_TO_BE "_to-be"		//eg grows tired / The rose smelled sweet / _to-be(smell, sweet) - CHECK THIS
+#define RELATION_TYPE_COMPLIMENT_TO_DO "_to-do"		//eg Linas likes to row / _to-do(like, row) - CHECK THIS
+#define RELATION_TYPE_COMPLEMENTS_NUMBER_OF_TYPES (2)
 
 //dates, measures, quantities
 #define RELATION_TYPE_DATE_DAY "_date_day" 
@@ -191,6 +191,7 @@ GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *
 
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity);
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
+void addActionToActionDefinition(GIAEntityNode * actionEntity);
 
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense);
 

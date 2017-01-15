@@ -26,6 +26,8 @@ string relationFunctionDefinitionNameArray[RELATION_FUNCTION_DEFINITION_NUMBER_O
 
 string relationTypeObjectSpecialConditionNameArray[RELATION_TYPE_OBJECT_SPECIAL_CONDITION_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE};
 
+string relationTypeComplementsNameArray[RELATION_TYPE_COMPLEMENTS_NUMBER_OF_TYPES] = {RELATION_TYPE_COMPLIMENT_TO_BE, RELATION_TYPE_COMPLIMENT_TO_DO};
+
 int referenceTypeHasDeterminateCrossReferenceNumberArray[GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES] = {GRAMMATICAL_NUMBER_SINGULAR};
 string relationTypeAdjectiveWhichImplyEntityInstanceNameArray[RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_1, RELATION_TYPE_ADJECTIVE_3};
 string relationTypeRequireSwitchingNameArray[RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT_THAT};
@@ -175,6 +177,50 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 		propertyEntity->AssociatedPropertyNodeList.push_back(newProperty);	
 		
 		propertyEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
+	}	
+}
+
+
+void addActionToActionDefinition(GIAEntityNode * actionEntity)
+{
+	if(((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY != 1) && (actionEntity->hasAssociatedActionTemp)) || ((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY != 1) && (actionEntity->entityAlreadyDeclaredInThisContext)))
+	{
+		if(!(actionEntity->hasAssociatedActionTemp))
+		{
+			actionEntity->hasAssociatedActionTemp = true;
+		}
+			
+		//cout << "break; actionEntity->entityName = " << actionEntity->entityName << endl;
+		actionEntity = actionEntity->AssociatedActionNodeList.back();	//added 4 May 11a
+	}
+	else
+	{	
+		cout << "addPropertyToPropertyDefinition: actionEntity->entityName = " << actionEntity->entityName << endl;
+		//configure property node
+		GIAEntityNode * newAction = new GIAEntityNode();
+		entityNodesCompleteList.push_back(newAction);
+		newAction->id = currentEntityNodeIDInCompleteList++;
+		newAction->entityName = actionEntity->entityName;
+		newAction->isAction = true;
+		newAction->entityNodeContainingThisProperty = NULL;
+		newAction->entityNodeDefiningThisPropertyOrAction = actionEntity;
+		actionEntity->hasAssociatedAction = true;
+		actionEntity->hasAssociatedActionTemp = true;
+
+		//if(actionEntity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
+		//{
+		newAction->grammaticalNumber = actionEntity->grammaticalNumberTemp;
+		//}				
+
+		if(actionEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
+		{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
+			addTenseOnlyTimeConditionToProperty(newAction, actionEntity->grammaticalTenseTemp);
+		}
+
+		//configure property definition node
+		actionEntity->AssociatedActionNodeList.push_back(newAction);	
+		
+		actionEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
 	}	
 }
 
@@ -358,7 +404,15 @@ void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntity
 	if(conditionEntityNode->hasAssociatedPropertyTemp)
 	{
 		conditionEntityNode = conditionEntityNode->AssociatedPropertyNodeList.back();
-	}									
+	}
+	if(entityNode->hasAssociatedActionTemp)
+	{
+		entityNode = entityNode->AssociatedActionNodeList.back();
+	}
+	if(conditionEntityNode->hasAssociatedActionTemp)
+	{
+		conditionEntityNode = conditionEntityNode->AssociatedActionNodeList.back();
+	}										
 	addPropertyConditionToProperty(entityNode, conditionEntityNode, conditionName);
 }
 
@@ -1015,7 +1069,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}				
 		
-		//cout << "0d/e pass; define properties (quantities [not quantity mods/multipiers] and measures);" << endl;
+		//cout << "0d pass; define properties (quantities [not quantity mods/multipiers] and measures);" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{			
@@ -1037,9 +1091,15 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				
 				addPropertyToPropertyDefinition(propertyEntity);					
 			}
-			
-			
-			passed = false;
+						
+			currentRelationInList = currentRelationInList->next;
+		}
+		
+		//cout << "0e pass; define properties (quantity mods);" << endl;
+		currentRelationInList = currentSentenceInList->firstRelationInList;
+ 		while(currentRelationInList->next != NULL)
+		{						
+			bool passed = false;
 			for(int i=0; i<RELATION_TYPE_QUANTITY_OR_MEASURE_SWITCHED_NUMBER_OF_TYPES; i++)
 			{
 				if(currentRelationInList->relationType == relationTypeQuantityOrMeasureSwitchedNameArray[i])
@@ -1058,7 +1118,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			}
 						
 			currentRelationInList = currentRelationInList->next;
-		}				
+		}
+								
 		
 		//cout << "0f pass; define properties (expletives eg "there" in "there is a place");" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -1095,7 +1156,42 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				}
 			}
 		}
+		
+		//cout << "0h pass; define properties (to_be);" << endl;
+		currentRelationInList = currentSentenceInList->firstRelationInList;
+ 		while(currentRelationInList->next != NULL)
+		{								
+			if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_BE)
+			{
+				//create a new property for the entity and assign a property definition entity if not already created
+				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+
+				addPropertyToPropertyDefinition(propertyEntity);
+			}
+
+			//cout << "as3" << endl;
 						
+			currentRelationInList = currentRelationInList->next;
+		}	
+		
+		//cout << "0i pass; define properties (to_do);" << endl;
+		currentRelationInList = currentSentenceInList->firstRelationInList;
+ 		while(currentRelationInList->next != NULL)
+		{						
+			if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO)
+			{
+				//create a new property for the entity and assign a property definition entity if not already created
+				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
+				GIAEntityNode * actionEntity = GIAEntityNodeArray[relationArgumentIndex];
+
+				addActionToActionDefinition(actionEntity);
+			}
+			//cout << "as3" << endl;
+		
+			currentRelationInList = currentRelationInList->next;
+		}			
+									
 					
 										
 		//cout << "1 pass; link properties (possessive relationships); eg joe's bike" << endl;
@@ -1526,7 +1622,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 		
 						
-		//cout << "4 pass; define action conditions" << endl;
+		//cout << "4a pass; define action/property conditions" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{	
@@ -1841,7 +1937,26 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;		
 		}
 		//cout << "4d2 pass; extract measures" << endl;
-				
+
+
+		 //cout << "4e/4f pass; define to_be/to_do conditions" << endl;
+		 currentRelationInList = currentSentenceInList->firstRelationInList;
+		while(currentRelationInList->next != NULL)
+		{	
+			//cout << "here1" << endl;
+			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+
+			if((currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_BE) || (currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO))
+			{					
+				GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
+				GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+				string conditionName = currentRelationInList->relationType;
+
+				addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionName);
+			}
+			currentRelationInList = currentRelationInList->next;
+		}
+		
 		/*
 		//restore critical variables; temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
 		for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -1853,8 +1968,6 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 		*/
 		
-
-
 			
 	
 		currentSentenceInList = currentSentenceInList->next;
