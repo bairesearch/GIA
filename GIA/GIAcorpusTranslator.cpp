@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b6c 09-January-2014
+ * Project Version: 2b7a 10-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -109,7 +109,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 
 		//past tense [preliminary only; aux/cop takes precedence], progressive tense, isDate, plurality, isProperNoun extraction
 		extractGrammaticalInformationStanford(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
-		fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+		fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
 	}
 	#endif
 
@@ -248,7 +248,6 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	}
 	#endif
 	//cout << "Q11" << endl;
-
 }
 
 									
@@ -259,6 +258,15 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(Sentence * currentSe
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
+		bool isDependencyRelationSecondary = false;
+		for(int i=0; i<GIA2_SEMANTIC_DEPENDENCY_RELATION_SECONDARY_NUMBER_OF_TYPES; i++)
+		{
+			if(currentRelationInList->relationType == GIA2semanticDependencyRelationSecondaryNameArray[i])
+			{
+				isDependencyRelationSecondary = true;
+			}
+		}
+
 		string name[2];
 		name[0] = currentRelationInList->relationGovernor;
 		name[1] =  currentRelationInList->relationDependent; 	//argumentName
@@ -273,7 +281,7 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(Sentence * currentSe
 		//cout << "name[0]  = " << name[0] << endl;
 		//cout << "name[1]  = " << name[1] << endl;
 		#endif
-		
+
 		for(int i=0; i<2; i++)
 		{
 			if(!GIAentityNodeArrayFilled[relationIndex[i]])
@@ -281,21 +289,29 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(Sentence * currentSe
 				GIAentityNodeArrayFilled[relationIndex[i]] = true;
 
 				//code from locateAndAddAllConceptEntities():
-				
+
 				bool entityAlreadyExistant = false;
 				GIAentityNode * conceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(name[i]), &entityAlreadyExistant, entityNodesActiveListConcepts);
 				GIAconceptNodeArray[relationIndex[i]] = conceptEntity;
-				
-				cout << "creating concept = " << conceptEntity->entityName << endl;
 
+				//cout << "creating concept = " << conceptEntity->entityName << endl;
+				
+				if(isDependencyRelationSecondary)
+				{
+					if(i == 1)
+					{
+						conceptEntity->disabled = true;	//disable is/have etc nodes
+					}
+				}
+				
 				conceptEntity->hasAssociatedInstanceTemp = false;
 
 				sentenceConceptEntityNodesList->push_back(conceptEntity);
-				
+
 				/*
 				//temporarily disabled this code;
 				//TODO: detect isQuery and negative from GIA semanticRelation argument (yet to implement)
-				
+
 				#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 				if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
 				{
@@ -315,7 +331,7 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(Sentence * currentSe
 					conceptEntity->negative = true;
 				}
 				*/
-			
+
 				/*
 				//cout << "filling: " << relationIndex[i] << " " << name[i] << endl;
 				#ifdef GIA_USE_ADVANCED_REFERENCING
@@ -334,7 +350,7 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(Sentence * currentSe
 
 
 
-void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -347,7 +363,7 @@ void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(Sentence * curre
 				int thingIndex = currentRelationInList->relationGovernorIndex;
 				int auxiliaryIndex = currentRelationInList->relationDependentIndex;
 				GIAentityNode * entity = GIAentityNodeArray[thingIndex];
-				string auxiliaryString = GIAentityNodeArray[auxiliaryIndex]->wordOrig;
+				string auxiliaryString = GIAentityNodeArray[auxiliaryIndex]->wordOrig;	//featureArrayTemp[auxiliaryIndex]->word;
 
 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
  				while(currentRelationInList2->next != NULL)
@@ -361,7 +377,7 @@ void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(Sentence * curre
 							if(auxiliaryIndex2 == auxiliaryIndex)
 							{
 								//modal auxiliary found; eg modalAuxiliary(had-5, must-3) / modalAuxiliary(had-5, have-4) The dog must have had it.
-								string modalAuxiliaryString = GIAentityNodeArray[modalAuxiliaryIndex2]->wordOrig;
+								string modalAuxiliaryString = GIAentityNodeArray[modalAuxiliaryIndex2]->wordOrig;	//featureArrayTemp[modalAuxiliaryIndex2]->word;
 								
 								updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(entity, modalAuxiliaryString);
 								currentRelationInList2->disabled = true;
@@ -389,7 +405,7 @@ void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(Sentence * curre
 				int thingIndex = currentRelationInList->relationGovernorIndex;
 				int modalAuxiliaryIndex = currentRelationInList->relationDependentIndex;
 				GIAentityNode * entity = GIAentityNodeArray[thingIndex];
-				string modalAuxiliaryString = GIAentityNodeArray[modalAuxiliaryIndex]->wordOrig;
+				string modalAuxiliaryString = GIAentityNodeArray[modalAuxiliaryIndex]->wordOrig;	//featureArrayTemp[modalAuxiliaryIndex]->word;
 				
 				updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(entity, modalAuxiliaryString);
 				currentRelationInList->disabled = true;
