@@ -3,7 +3,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5c 03-June-2012
+ * Project Version: 1l5d 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -423,7 +423,8 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 											currentRelationInList3 = currentRelationInList3->next;
 										}
 										currentRelationInList2->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;
-										//cout << "\n\n\n\n\n\n\nauxillaryIndicatesDifferentReferenceSet = " << auxillaryIndicatesDifferentReferenceSet << endl;
+										//cout << "\t\t\t0currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;														
+										//cout << "\t\t\t0auxillaryIndicatesDifferentReferenceSet = " << auxillaryIndicatesDifferentReferenceSet << endl;
 										#endif
 																								
 										currentRelationInList->disabled = true;
@@ -744,7 +745,9 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 							}
 						}
 						
+						
 						bool multiwordPrepositionIntermediaryRelationTypeEFound = false;
+						/*
 						for(int i=0; i<GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEE; i++)
 						{
 							if(currentRelationInList2->relationType == redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeE[i])
@@ -755,6 +758,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 								}															
 							}
 						}
+						*/
 																		
 
 						if(multiwordPrepositionIntermediaryRelationTypeAFound || multiwordPrepositionIntermediaryRelationTypeBFound || multiwordPrepositionIntermediaryRelationTypeDFound || multiwordPrepositionIntermediaryRelationTypeEFound)
@@ -782,34 +786,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 
 									if(multiwordPrepositionSubjectOrObjectRelationFound)
 									{
-										/*this shouldnt be required; it should be covered elsewhere... [eg same reference set is implied for all prepositions/conditions; eg "the computer near the house ate a tree" == "the computer that is near the house ate a tree"
-										#ifdef GIA_USE_ADVANCED_REFERENCING											
-										//[case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING]
-										//He rode the carriage that is near to the horse.
-										//nsubj(near-7, carriage-4)
-										//cop(near-7, is-6)
-										//rcmod(carriage-4, near-7)
-										//prep_to(near-7, horse-10)
-										bool auxillaryIndicatesDifferentReferenceSet = true;
-										Relation * currentRelationInList4 = currentSentenceInList->firstRelationInList;
-										while(currentRelationInList4->next != NULL)
-										{
-											if(currentRelationInList4->relationType == RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER)
-											{
-												if((currentRelationInList4->relationDependentIndex == currentRelationInList3->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList3->relationDependentIndex))		//OLD: before 1 June 2012 code review: if((currentRelationInList4->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList->relationDependentIndex))
-												{
-													auxillaryIndicatesDifferentReferenceSet = false;
-													//cout << "AXE" << endl;	
-												}
-											}																			
-											currentRelationInList4 = currentRelationInList4->next;
-										}
-										currentRelationInList3->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;	
-										#endif
-										*/
-
 														
-																								
 										//cout << "SD" << endl;								
 
 											//cout << "SD2" << endl;						
@@ -830,6 +807,40 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 													if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
 													{//found a matching relationship													
 
+														#ifdef GIA_USE_ADVANCED_REFERENCING											
+														//[case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING]
+														//He rode the carriage that is near to the horse.
+														//nsubj(near-7, carriage-4)
+														//cop(near-7, is-6)
+														//rcmod(carriage-4, near-7)
+														//prep_to(near-7, horse-10)
+														bool auxillaryIndicatesDifferentReferenceSet = true;
+														Relation * currentRelationInList4 = currentSentenceInList->firstRelationInList;
+														while(currentRelationInList4->next != NULL)
+														{
+															if(currentRelationInList4->relationType == RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER)
+															{
+																if((currentRelationInList4->relationDependentIndex == currentRelationInList3->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList3->relationDependentIndex))		//OLD: before 1 June 2012 code review: if((currentRelationInList4->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList->relationDependentIndex))
+																{
+																	auxillaryIndicatesDifferentReferenceSet = false;
+																	//cout << "AXE" << endl;	
+																}
+															}																			
+															currentRelationInList4 = currentRelationInList4->next;
+														}
+														#ifdef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILLARY_AND_SET_DIFFERENT_REFERENCE_SET
+														//need to reset same reference set values on the preposition
+
+														currentRelationInList->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;	
+														//currentRelationInList3->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;
+
+														//cout << "\t\t\t1currentRelationInList->relationType = " << currentRelationInList->relationType << endl;	
+														//cout << "\t\t\t1currentRelationInList->auxillaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxillaryIndicatesDifferentReferenceSet << endl;	
+
+
+														#endif
+														#endif
+										
 														
 														GIAEntityNode * entityContainingFirstWordOfMultiwordPreposition = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex];
 
@@ -842,7 +853,9 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 
 														currentRelationInList->relationGovernorIndex = currentRelationInList3->relationDependentIndex;
 														currentRelationInList->relationGovernor =  GIAEntityNodeArray[currentRelationInList3->relationDependentIndex]->entityName;
-
+														
+														//cout << "\t\t\t2currentRelationInList->relationType = " << currentRelationInList->relationType << endl;														
+														//cout << "\t\t\t2auxillaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxillaryIndicatesDifferentReferenceSet << endl;
 														currentRelationInList2->disabled = true;
 														currentRelationInList3->disabled = true;	//added 3 June 2012
 														
@@ -855,7 +868,6 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 												/*
 												[CaseB]
 												The chicken goes on to the plank.
-												He is close to the house.
 												nsubj(goes-3, chicken-2)
 												prt(goes-3, on-4)
 												prep_to(goes-3, plank-7)
@@ -1049,6 +1061,9 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 											currentRelationInList3 = currentRelationInList3->next;
 										}
 										currentRelationInList2->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;	//was currentRelationInList before 1 June 2012 code check 
+										//cout << "\t\t\t3currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;	
+										//cout << "\t\t\t3currentRelationInList2->auxillaryIndicatesDifferentReferenceSet = " << currentRelationInList2->auxillaryIndicatesDifferentReferenceSet << endl;	
+
 										#endif
 																								
 										currentRelationInList2->relationType = RELATION_TYPE_ADJECTIVE_PREDADJ;
@@ -1139,6 +1154,9 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 
 									#ifdef GIA_USE_ADVANCED_REFERENCING
 									currentRelationInList->auxillaryIndicatesDifferentReferenceSet = true;
+									//cout << "\t\t\t4currentRelationInList->relationType = " << currentRelationInList->relationType << endl;	
+									//cout << "\t\t\t4currentRelationInList->auxillaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxillaryIndicatesDifferentReferenceSet << endl;	
+									
 									#endif																								
 
 

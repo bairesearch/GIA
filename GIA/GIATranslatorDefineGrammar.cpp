@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5c 03-June-2012
+ * Project Version: 1l5d 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -471,7 +471,6 @@ void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * cu
 				}
 			}
 
-			passed = false;
 			for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
 			{
 				if(currentRelationInList->relationType == relationTypeObjectNameArray[i])
@@ -479,14 +478,24 @@ void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * cu
 					passed = true;
 				}
 			}			
-						
-			if(subjectObjectEntityWithAuxillary->entityIndexTemp = currentRelationInList->relationGovernorIndex)	//CHECK THIS; this used to be currentRelationInList->relationDependentIndex [before 1 June 2012]
+			
+			#ifndef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILLARY_AND_SET_DIFFERENT_REFERENCE_SET	
+			if(passed)
 			{
-				if(subjectObjectEntityWithAuxillary->entityName == currentRelationInList->relationGovernor)	//CHECK THIS; this used to be currentRelationInList->relationDependent [before 1 June 2012]
-				{//this check is redundant
-					currentRelationInList->auxillaryIndicatesDifferentReferenceSet = true;
-				}				
+			#endif			
+				if(subjectObjectEntityWithAuxillary->entityIndexTemp = currentRelationInList->relationGovernorIndex)	//CHECK THIS; this used to be currentRelationInList->relationDependentIndex [before 1 June 2012]
+				{
+					if(subjectObjectEntityWithAuxillary->entityName == currentRelationInList->relationGovernor)	//CHECK THIS; this used to be currentRelationInList->relationDependent [before 1 June 2012]
+					{//this check is redundant
+						currentRelationInList->auxillaryIndicatesDifferentReferenceSet = true;
+						//cout << "\t\t\t-2currentRelationInList->relationType = " << currentRelationInList->relationType << endl; 
+						//cout << "\t\t\t-2auxillaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxillaryIndicatesDifferentReferenceSet << endl;
+
+					}				
+				}
+			#ifndef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILLARY_AND_SET_DIFFERENT_REFERENCE_SET
 			}
+			#endif
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS	
 		}
 		#endif

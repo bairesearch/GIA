@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5c 03-June-2012
+ * Project Version: 1l5d 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -763,7 +763,7 @@ GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEnt
 	#endif
 		if(!(conditionTypeConceptEntity->isConcept))
 		{
-			cout << "existingCondition" << endl;
+			//cout << "existingCondition" << endl;
 			
 			GIAEntityNode * existingCondition = conditionEntityNode;
 
@@ -1278,7 +1278,7 @@ bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relatio
 		sameReferenceSet = true;
 	}	
 	
-	/*
+	
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "\ndetermineSameReferenceSetValue():" << endl;
 	cout << "\t" << relation->relationType << "(" << relation->relationGovernor << ", " << relation->relationDependent << ")" << endl;
@@ -1287,7 +1287,7 @@ bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relatio
 	cout << "\tdefaultSameSetValueForRelation = " << defaultSameSetValueForRelation << endl;
 	cout << "\tsameReferenceSet = " << sameReferenceSet << endl;
 	#endif
-	*/
+	
 		
 	return sameReferenceSet;
 }
