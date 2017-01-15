@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j4a 28-Apr-2012
+ * Project Version: 1j5a 30-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
@@ -195,7 +195,7 @@ int main(int argc,char **argv)
 	time(&now);
 	current = localtime(&now);
 	char timeAndDateString[100];
-	sprintf(timeAndDateString, "%i:%i:%i %i/%.2i/%i", current->tm_hour, current->tm_min, current->tm_sec, current->tm_mday, current->tm_mon, (current->tm_year + GIA_TM_STRUCT_YEAR_OFFSET));
+	sprintf(timeAndDateString, "%i:%i:%i %i/%.2i/%i", current->tm_hour, current->tm_min, current->tm_sec, current->tm_mday, (current->tm_mon+1), (current->tm_year + GIA_TM_STRUCT_YEAR_OFFSET));
 	cout << "GIA execution time: " << timeAndDateString << " (start)" << endl;
 		 
 	bool result = true;
@@ -574,7 +574,7 @@ int main(int argc,char **argv)
 								
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe - Project Version: 1j4a 28-Apr-2012" << endl;
+			cout << "GIA.exe - Project Version: 1j5a 30-Apr-2012" << endl;
 			exit(1);
 		}
 
