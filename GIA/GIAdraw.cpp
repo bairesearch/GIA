@@ -44,7 +44,7 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *indexOfEntit
 	initiateMaxXAtAParticularY();
 	int xInitial = DRAW_X_INITIAL_OFFSET;
 	int yInitial = DRAW_Y_INITIAL_OFFSET;
-	
+	maxXAtAParticularY[yInitial] = xInitial;
 	//first pass; determine maxXAtAParticularY	[and use these to centre each row {at a given y} respectively]
 	for (entityIter = indexOfEntityNodes->begin(); entityIter != indexOfEntityNodes->end(); entityIter++) 
 	{

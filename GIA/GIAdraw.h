@@ -60,8 +60,8 @@ using namespace std;
 #define GIA_DRAW_PROPERTY_NODE_HEIGHT (5)
 #define GIA_DRAW_PROPERTY_NODE_WIDTH (20)
 
-#define DRAW_X_INITIAL_OFFSET (200)
-#define DRAW_Y_INITIAL_OFFSET (100)
+#define DRAW_X_INITIAL_OFFSET (300)
+#define DRAW_Y_INITIAL_OFFSET (150)
 
 #define DRAW_Y_SPACE_BETWEEN_ENTITIES (0)				//OLD: should really be 1 for initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_ENTITIES (200)
