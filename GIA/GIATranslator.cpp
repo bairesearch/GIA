@@ -1118,7 +1118,7 @@ void fillGrammaticalArrays(Sentence * currentSentenceInList, bool GIAEntityNodeI
 			}			
 		}
 		
-	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2A
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2A_GRAMMAR_TREAT_PRESENT_PERFECT_AS_PAST_TENSE
 		//interpret "present_perfect" relex flag as past tense
 		if(GIAEntityNodeGrammaticalTenseArray[currentFeatureInList->entityIndex] == GRAMMATICAL_TENSE_PRESENT)
 		{
@@ -1625,7 +1625,7 @@ void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 						cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
 						#endif
 						//referenceSource->isReferenceEntityInThisSentence = true;
-						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 						GIAEntityNodeArray[w]->disabled = true;
 						#endif
 						GIAEntityNodeArray[w] =	referenceSource;
@@ -2043,10 +2043,10 @@ bool isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(Relation * currentRelation
 {
 	bool result = true;
 	
-	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2C
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES_ADVANCED
 	if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3) && (GIAEntityNodeArray[relationFunctionIndex]->entityName == RELATION_FUNCTION_DEFINITION_1))
 	{//added condition Fri 27 Jan - remove 'be' node artefacts
-		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 		GIAEntityNodeArray[relationFunctionIndex]->disabled = true;
 		#endif		
 		result = false;
@@ -2293,7 +2293,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 							}
 						}		
 
-						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
 						for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_TO_DO_PROPERTY_NUMBER_OF_TYPES; i++)
 						{
 							if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionToDoPropertyNameArray[i])
@@ -2304,7 +2304,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 						}
 						#endif
 						
-						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TOBE_AND_SUBJECT_RELATION_AS_PROPERTY_LINK_AND_ACTION_DEFINITION
 						for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_TO_BE_PROPERTY_NUMBER_OF_TYPES; i++)						
 						{
 							if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionToBePropertyNameArray[i])
@@ -2348,7 +2348,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 							{
 								if(currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_3)
 								{
-									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C
+									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
 									if(subjectEntityTemp->entityName == currentRelationInList3->relationArgument)
 									{//subject is connected to an _advmod
 										
@@ -2359,6 +2359,8 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 										GIAEntityNode * conditionTypeConceptEntity = subjectEntityTemp;										
 										
 										subjectIsConnectedToAnAdvMod = true;
+										
+										//cout << "here15" << endl;
 										
 										/*eg;  Space is saved by having a chicken.
 										_obj(save[3], space[1]) 	[IRRELEVANT]
@@ -2455,7 +2457,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									#endif
 									
 								
-									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F
+									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
 									//cout << "qsd0" << endl;
 									if(currentRelationInList3->relationFunction == RELATION_FUNCTION_DEFINITION_1)
 									{//subject is connected to an _advmod
@@ -2466,10 +2468,6 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 										{
 											//cout << "qsd2" << endl;
 											
-											GIAEntityNode * actionOrPropertyConditionEntity;
-											GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[currentRelationInList3->relationFunctionIndex];
-											GIAEntityNode * conditionTypeConceptEntity = subjectEntityTemp;										
-
 											subjectIsConnectedToAnAdvMod = true;
 										
 											/*eg; The chicken is 3 minutes late.
@@ -2479,28 +2477,34 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											_quantity(minutes[5], 3[4]) [IRRELEVANT]
 											*/
 											
-											GIAEntityNode * measureEntity = objectEntityTemp;
-											GIAEntityNode * baseEntity = subjectEntityTemp;
-											GIAEntityNode * propertyEntity = GIAEntityNodeArray[currentRelationInList3->relationArgumentIndex];
+											#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO
+											
+												GIAEntityNode * measureEntity = objectEntityTemp;
+												GIAEntityNode * baseEntity = subjectEntityTemp;
+												GIAEntityNode * propertyEntity = GIAEntityNodeArray[currentRelationInList3->relationArgumentIndex];
 
-											addOrConnectPropertyToEntity(baseEntity, propertyEntity);			
-											addOrConnectPropertyToEntity(propertyEntity, objectEntityTemp);
-											
-											#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
-											#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2C
-											disableEntityAndInstance(GIAEntityNodeArray[currentRelationInList3->relationFunctionIndex]);
-											#endif
-											#endif
-											
-											/*
-											GIAEntityNode * baseEntity = subjectEntityTemp;
-											GIAEntityNode * definitionEntity = GIAEntityNodeArray[currentRelationInList3->relationArgumentIndex];
-											GIAEntityNode * propertyEntity = objectEntityTemp;
-											
-											addDefinitionToEntity(baseEntity, definitionEntity);
+												addOrConnectPropertyToEntity(baseEntity, propertyEntity);			
+												addOrConnectPropertyToEntity(propertyEntity, objectEntityTemp);
 
-											addOrConnectPropertyToEntity(definitionEntity, propertyEntity);	
-											*/											
+												#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+												#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES_ADVANCED
+												disableEntityAndInstance(GIAEntityNodeArray[currentRelationInList3->relationFunctionIndex]);
+												#endif
+												#endif
+											
+											#else
+											
+												cout << "warning: GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_... defined - source may require review" << endl;
+											
+												GIAEntityNode * baseEntity = subjectEntityTemp;
+												GIAEntityNode * definitionEntity = GIAEntityNodeArray[currentRelationInList3->relationArgumentIndex];
+												GIAEntityNode * propertyEntity = objectEntityTemp;
+
+												addDefinitionToEntity(baseEntity, definitionEntity);
+
+												addOrConnectPropertyToEntity(definitionEntity, propertyEntity);	
+
+											#endif											
 																				
 										}
 									}
@@ -2550,7 +2554,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 										//cout << "h2" << endl;
 										addDefinitionToEntity(subjectEntityTemp, objectEntityTemp);
 										
-										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 										GIAEntityNodeArray[currentRelationInList->relationFunctionIndex]->disabled = true;	//remove lone 'be' artefacts (blue entity nodes). NB these occur because of the nature of the 'is' -> entity definitional substitution procedure	
 										#endif
 									}
@@ -2567,7 +2571,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								#endif
 								else if(partnerTypeObjectSpecialConditionMeasureDistanceFound)
 								{
-									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2D_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO
+									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO
 										//eg The rabbit is 20 meters away.	[away is a property of rabbit, not a condition of rabbit]
 										GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;	//aka subjectObjectEntityArray[SUBJECT_INDEX];
 										GIAEntityNode * propertyEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
@@ -2590,13 +2594,13 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 									#endif
 								}
-								#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D
+								#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
 								else if(partnerTypeObjectSpecialConditionToDoPropertyFound)
 								{
 								
 								}
 								#endif
-								#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E
+								#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TOBE_AND_SUBJECT_RELATION_AS_PROPERTY_LINK_AND_ACTION_DEFINITION
 								else if(partnerTypeObjectSpecialConditionToBePropertyFound)
 								{
 									
@@ -2648,7 +2652,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								}
 							}
 							
-						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
 							#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
 							if(!partnerTypeObjectSpecialConditionToDoPropertyFound || subjectIsConnectedToAnAdvMod)
 							{
@@ -2666,7 +2670,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 						else
 						{//do not find matching object-subject relationship 
 							
-							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A
+							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A_RELATIONS_DISREGARD_REDUNDANT_DEFINITION_RELATIONS
 							//[search for intermediary {ie redundant} relations, and if so create a condition link between subject and object] 
 							if(!foundPartner)
 							{//do not overwrite usage of subj/obj if a direct link [ie action] has been found (this condition probably/mau not be required)
@@ -2733,7 +2737,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								}
 							}
 							#endif
-							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D
+							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
 							//[search for special relation _to-do AND _subj, and if so create a property link between subject and object] 
 							if(!foundPartner)
 							{//do not overwrite usage of subj/obj if a direct link [ie action] has been found (this condition probably/may not be required)
@@ -2788,7 +2792,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 						GIAEntityNode * actionEntity = GIAEntityNodeArray[relationFunctionIndex];
 
 
-						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_RELATION_AS_ACTION_CONDITION
 						//find out if the subject is connected to an _advmod, if so assign it as an action condition instead of a subject+action
 						bool subjectOrObjectIsConnectedToAnAdvMod = false;
 						Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
@@ -2875,7 +2879,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								addActionToObject(objectEntityTemp, actionEntity);
 							}
 							
-						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B	
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_RELATION_AS_ACTION_CONDITION	
 						}
 						#endif									
 
@@ -3144,7 +3148,7 @@ void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFille
 								{									
 									if(currentRelationInList->relationType == RELATION_TYPE_DATE_DAY)
 									{
-										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 										GIAEntityNodeArray[currentRelationInList->relationArgumentIndex]->disabled = true;
 										#endif
 				
@@ -3165,7 +3169,7 @@ void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFille
 									}
 									if(currentRelationInList->relationType == RELATION_TYPE_DATE_YEAR)
 									{
-										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 										GIAEntityNodeArray[currentRelationInList->relationArgumentIndex]->disabled = true;
 										#endif	
 																		
@@ -3284,7 +3288,7 @@ void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 				GIAEntityNode * quantityProperty = quantityEntity->AssociatedInstanceNodeList.back();
 				quantityProperty->hasQuantity = true;
 				quantityProperty->quantityNumberString = currentRelationInList->relationArgument;
-				#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+				#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 				GIAEntityNodeArray[currentRelationInList->relationArgumentIndex]->disabled = true;
 				#endif
 				int quantityNumberInt = calculateQuantityNumberInt(quantityProperty->quantityNumberString);
@@ -3335,7 +3339,7 @@ void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 					{
 						if(currentRelationInList2->relationFunction == currentRelationInList->relationArgument)
 						{
-							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 							GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex]->disabled = true;
 							#endif
 							
@@ -3550,9 +3554,9 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode
 		if(pass)
 		{		
 			#ifndef GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_PROPERTY_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE 
-			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D
+			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
 			if(GIAEntityNodeArray[currentRelationInList->relationFunctionIndex]->entityName != RELATION_FUNCTION_DEFINITION_1)
-			{//this condition is required to support GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D			
+			{//this condition is required to support GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK			
 			#endif
 			#endif
 				
@@ -3561,7 +3565,7 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode
 			
 				addOrConnectPropertyToEntity(entityNode, propertyEntity);
 			#ifndef GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_PROPERTY_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
-			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D
+			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
 			}
 			#endif
 			#endif
