@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r12e 28-November-2012
+ * Project Version: 1s1a 12-April-2013
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -171,7 +171,7 @@ static bool entityVectorConnectionThisIsInstanceAndPreviousNodeWasDefinitionArra
 //ORIG: static bool entityVectorConnectionIsConditionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, true, true, false, false, false, false, false, false, false, true, true, false};
 static bool entityVectorConnectionIsConditionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, true, true, false, false, false, false, false, false, false, false, false, false};
 static bool entityVectorConnectionIsBasicArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false,false,false,false,false,false,false,false,false,true,true,true,true,true};
-static string entityVectorConnectionDrawConnectionNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"NA", "NA", "NA", "NA", "NA", "property", "definition", "NA", "NA", "subject", "object", "subject", "object", "instance"};
+static string entityVectorConnectionDrawConnectionNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"NA", "NA", "NA", "NA", "NA", "property", "NA", "definition", "NA", "subject", "object", "subject", "object", "instance"};
 #define GIA_ENTITY_TIME_CONDITION_NODE_NAME "timeCondition"
 #define GIA_ENTITY_NODE_NAME "entity"
 /*

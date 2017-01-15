@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r12e 28-November-2012
+ * Project Version: 1s1a 12-April-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -357,7 +357,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 			{
 				currentFeatureInList->grammaticalIsProperNoun = true;
 				#ifdef GIA_WORDNET_DEBUG
-				//cout << "isProperNoun currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+				cout << "isProperNoun currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 				#endif
 			}
 		}
@@ -495,6 +495,20 @@ void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLP
 			{
 				currentFeatureInList->grammaticalIsDateOrTime = true;
 			}
+			
+			#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_ASSIGNMENT_BUG_USE_NER_VALUES
+			for(int i=0; i<FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_TYPES; i++)
+			{
+				if(currentFeatureInList->NER == featureNERindicatesProperNounTypeArray[i])
+				{
+					currentFeatureInList->grammaticalIsProperNoun = true;
+					#ifdef GIA_WORDNET_DEBUG
+					cout << "isProperNoun currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+					#endif
+				}
+			}
+			#endif
+					
 			/*//NB the GIAEntityNodeGrammaticalIsProperNounArray array for stanford core nlp does not relate to persons (only proper nouns)
 			if(currentFeatureInList->NER == FEATURE_NER_PERSON)
 			{

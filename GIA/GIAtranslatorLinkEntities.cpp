@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r12e 28-November-2012
+ * Project Version: 1s1a 12-April-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -323,6 +323,14 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				#endif
 				if(treatDefinitionAsEquality)
 				{
+					#ifdef GIA_TRANSLATOR_DEBUG
+					cout << "adding equality:" << endl;
+					cout << "thingName = " << thingEntity->entityName << endl;
+					cout << "definitionEntity = " << definitionEntity->entityName << endl;						
+					cout << "thingEntity->isSubstance = " << thingEntity->isSubstance << endl;
+					cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;						
+					#endif
+					
 					if(definitionEntity->idActiveList == thingEntity->idActiveList)
 					{
 						#ifdef GIA_ALIASES_DEBUG
@@ -354,7 +362,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				else
 				{
 				#endif
-					/*
+					
 					#ifdef GIA_TRANSLATOR_DEBUG
 					cout << "adding definition:" << endl;
 					cout << "thingName = " << thingEntity->entityName << endl;
@@ -362,7 +370,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 					cout << "thingEntity->isSubstance = " << thingEntity->isSubstance << endl;
 					cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;					
 					#endif
-					*/
+					
 					addDefinitionToEntity(thingEntity, definitionEntity, sameReferenceSet);
 				#ifdef GIA_SUPPORT_ALIASES
 				}

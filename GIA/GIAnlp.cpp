@@ -23,7 +23,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r12e 28-November-2012
+ * Project Version: 1s1a 12-April-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -615,13 +615,23 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 							revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentence, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
 						}
 						#endif
-						#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PRONOUN_LEMMA_CASE_ASSIGNMENT_BUG_MAKE_ALL_LEMMAS_LOWER_CASE
-						string lemma = currentFeatureInList->lemma;
-						char firstCharacterOfLemma = lemma[0];
-						firstCharacterOfLemma = tolower(firstCharacterOfLemma);
-						lemma[0] = firstCharacterOfLemma;
-						currentFeatureInList->lemma = lemma;
-						#endif					
+
+						#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_LEMMA_CASE_ASSIGNMENT_BUG_USE_ORIGINAL_WORD
+						//eg Stanford CoreNLP converts GIA->gium when it is tagged as NN (instead of NNP)
+						for(int i=0; i<FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_TYPES; i++)
+						{
+							if(currentFeatureInList->NER == featureNERindicatesProperNounTypeArray[i])
+							{
+								currentFeatureInList->lemma = currentFeatureInList->word;
+							}
+						}
+						#endif							
+						#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_LEMMA_CASE_ASSIGNMENT_BUG_MAKE_ALL_LEMMAS_LOWER_CASE
+						for(int i=0; i<FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_TYPES; i++)
+						{
+							currentFeatureInList->lemma[i] = tolower(currentFeatureInList->lemma[i]);				
+						}
+						#endif										
 					}
 					#ifdef GIA_NLP_DEBUG
 					//cout << "currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
