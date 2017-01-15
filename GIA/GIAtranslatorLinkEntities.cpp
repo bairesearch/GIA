@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t7b 09-August-2013
+ * Project Version: 1t7d 09-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1032,7 +1032,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramB.defaultSameSetReferenceValue = false;
 	#endif	
-	paramB.disableEntity[REL1][REL_ENT1];	//disable "be" entity	
+	paramB.disableEntity[REL1][REL_ENT1] = true;	//disable "be" entity	
 	genericDependecyRelationInterpretation(&paramB, REL1);	
 	#endif
 				
@@ -1051,7 +1051,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramC.defaultSameSetReferenceValue = false;
 	#endif	
-	paramC.disableEntity[REL1][REL_ENT1];	//disable "have" entity
+	paramC.disableEntity[REL1][REL_ENT1] = true;	//disable "have" entity
 	genericDependecyRelationInterpretation(&paramC, REL1);	
 	#endif	
 	

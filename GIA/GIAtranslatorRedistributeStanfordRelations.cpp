@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t7b 09-August-2013
+ * Project Version: 1t7d 09-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -2517,7 +2517,10 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;	
 			paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1;
 			paramA.disableRelation[REL2] = true;
-			genericDependecyRelationInterpretation(&paramA, REL1);
+			if(genericDependecyRelationInterpretation(&paramA, REL1))
+			{
+				//cout << "passA" << endl;
+			}
 			
 			GIAgenericDepRelInterpretationParameters paramB = param;
 			//paramB.useRelationArrayTest[REL1][REL_ENT1] = true; paramB.relationArrayTest[REL1][REL_ENT1] = featurePOSindicatesNounTypeArray; paramB.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_OF_TYPES; paramB.relationArrayTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
@@ -2535,7 +2538,10 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;	
 			paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1;
 			paramB.disableRelation[REL2] = true;
-			genericDependecyRelationInterpretation(&paramB, REL1);
+			if(genericDependecyRelationInterpretation(&paramB, REL1))
+			{
+				//cout << "passB" << endl;
+			}
 
 			//must switch subject to object;
 			/*eg;
@@ -2557,7 +2563,10 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			EntityCharacteristic relationTestSpecialCasePOStemp("stanfordPOStemp", FEATURE_POS_TAG_VBN);
 			param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCasePOStemp);
 			paramC.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramC.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_OBJECT;
-			genericDependecyRelationInterpretation(&paramC, REL1);
+			if(genericDependecyRelationInterpretation(&paramC, REL1))
+			{
+				//cout << "passC" << endl;
+			}
 		}
 		else
 		{
@@ -3994,7 +4003,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhat(Sentence * currentSentence
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 1;
-	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DETERMINER;  param.relationTestIsNegative[REL1][REL_ENT3] = true;	//OR if(GIAentityNodeArray[currentRelationInList->relationDependentIndex]->stanfordPOStemp != FEATURE_POS_TAG_WDT)	//to distinguish standard what queries from equivalent which queries eg "what time is it?"
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DETERMINER; param.relationTestIsNegative[REL1][REL_ENT3] = true;	//OR if(GIAentityNodeArray[currentRelationInList->relationDependentIndex]->stanfordPOStemp != FEATURE_POS_TAG_WDT)	//to distinguish standard what queries from equivalent which queries eg "what time is it?"
 	param.useRelationArrayTest[REL1][REL_ENT2] = true; param.relationArrayTest[REL1][REL_ENT2] = featureQueryWordWhatNameArray; param.relationArrayTestSize[REL1][REL_ENT2] = FEATURE_QUERY_WORD_WHAT_NUMBER_OF_TYPES;
 	param.useRedistributeRelationEntityReassignment[REL1][REL_ENT2] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT2] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What" to _$qVar
 	genericDependecyRelationInterpretation(&param, REL1);	

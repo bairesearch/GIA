@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t7b 09-August-2013
+ * Project Version: 1t7d 09-August-2013
  *
  *******************************************************************************/
 
@@ -483,6 +483,45 @@ vector<string> explode(const string& str, const char& ch)
 	return result;
 }
 
+string * convertDelimitedStringToArray(string str, char delimiter)
+{
+	int delimiterCount = 0;
+	
+	for(int i=0; i<str.length(); i++)
+	{
+		if(str[i] == delimiter)
+		{
+			delimiterCount++;
+		}
+	}
+	string * stringArray = new string[delimiterCount+1];
+	string currentString = "";
+	delimiterCount = 0;
+	for(int i=0; i<str.length(); i++)
+	{
+		if(str[i] == delimiter)
+		{
+			stringArray[delimiterCount] = currentString;
+			//cout << "convertDelimitedStringToArray: " << currentString << endl;
+			currentString = "";
+			delimiterCount++;
+		}
+		else
+		{
+			currentString = currentString + str[i];
+		}
+	}
+	//add last array item;
+	stringArray[delimiterCount] = currentString;
+	//cout << "convertDelimitedStringToArray: " << currentString << endl;
+	currentString = "";
+	delimiterCount++;
+
+	return stringArray;
+}
+
+
+
 
 
 #endif
@@ -537,8 +576,10 @@ bool testEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacterist
 		vectorHasItems = true;
 		EntityCharacteristic * entityCharacteristic = *entityCharacteristicIter;
 		//cout << "entityCharacteristic = " << entityCharacteristic->name << ", " << entityCharacteristic->value << endl;
+		//cout << "entity->stanfordPOStemp = " << entity->stanfordPOStemp << endl;
 		if(testEntityCharacteristic(entity, entityCharacteristic))
 		{
+			//cout << "passFound" << endl;
 			passFound = true;	
 		}
 		else
@@ -547,6 +588,7 @@ bool testEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacterist
 		}
 		//cout << "done" << endl;
 	}
+	//cout << "done" << endl;
 	
 	bool passedRelation = true;
 	if(vectorHasItems)

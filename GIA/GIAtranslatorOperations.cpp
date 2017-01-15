@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t7b 09-August-2013
+ * Project Version: 1t7d 09-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -2126,7 +2126,8 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 		!relationPreviouslyUsed is to prevent reusing a relation
 		*/
 		if((param->parseDisabledRelation[currentRelationID] || !(currentRelationInList->disabled)) && (param->parseDisabledRelationDuringLink[currentRelationID] || !(currentRelationInList->disabledDuringLink)) && !relationPreviouslyUsed)
-		{			
+		{	
+			//cout << "passed disabled rel" << endl;		
 			param->relation[currentRelationID] = currentRelationInList;
 			
 			//predefined values tests
@@ -2158,6 +2159,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 				}	
 				if(!testEntityCharacteristics(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]], &(param->specialCaseCharacteristicsTestOrVector[currentRelationID][relationEntityID]), false))				
 				{
+					//cout << "failed specialCaseCharacteristicsTestOrVector" << endl;
 					passedRelation = false;	
 				}
 				if(!testEntityCharacteristics(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]], &(param->specialCaseCharacteristicsTestOr2Vector[currentRelationID][relationEntityID]), false))				
@@ -2729,6 +2731,7 @@ GIAgenericEntityInterpretationParameters::~GIAgenericEntityInterpretationParamet
 
 bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * param)
 {
+	bool result = false;
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
 		if(param->GIAentityNodeArrayFilled[i])
@@ -2797,6 +2800,8 @@ bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * para
 
 				if(passedEntity)
 				{
+					result = true;
+					
 					if(param->executeOrReassign)
 					{
 						#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
@@ -2833,6 +2838,7 @@ bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * para
 			}	
 		}
 	}
+	return result;
 }
 			
 #endif
