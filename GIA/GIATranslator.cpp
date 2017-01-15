@@ -122,7 +122,7 @@ void collapseRedundantRelationAndMakeNegative()
 
 	
 GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
-{
+{	
 	//configure property node
 	GIAEntityNode * newProperty = new GIAEntityNode();
 	newProperty->id = currentEntityNodeIDInCompleteList;
@@ -218,6 +218,8 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 				
 			thingEntity = thingEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
 		}
+		
+		//cout << "thingEntity = " << thingEntity->entityName << endl;
 		
 		GIAEntityNode * newProperty = addProperty(propertyEntity);		
 
@@ -1766,23 +1768,30 @@ void definePropertiesNounsWithAdjectives(Sentence * currentSentenceInList, GIAEn
 		for(int i=0; i<RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES; i++)
 		{
 			if(currentRelationInList->relationType == relationTypeAdjectiveWhichImplyEntityInstanceNameArray[i])
-			{
+			{		
 				passed = true;
 			}
 		}						
 		if(passed)
 		{
-			//create a new property for the entity and assign a property definition entity if not already created
-			string thingName = currentRelationInList->relationFunction;
-			string propertyName = currentRelationInList->relationArgument; 
-			int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
-			int relationArgumentIndex = currentRelationInList->relationArgumentIndex;				
-			GIAEntityNode * thingEntity = GIAEntityNodeArray[relationFunctionIndex];
-			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+			bool passed3 = isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(currentRelationInList, GIAEntityNodeArray, currentRelationInList->relationFunctionIndex);
 
-			//cout << "as2" << endl;
+			if(passed3)
+			{	
+				//create a new property for the entity and assign a property definition entity if not already created
+				string thingName = currentRelationInList->relationFunction;
+				string propertyName = currentRelationInList->relationArgument; 
+				int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
+				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
 
-			addPropertyToPropertyDefinition(thingEntity);					
+
+				GIAEntityNode * thingEntity = GIAEntityNodeArray[relationFunctionIndex];
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+
+				//cout << "as2" << endl;
+
+				addPropertyToPropertyDefinition(thingEntity);			
+			}
 		}			
 		currentRelationInList = currentRelationInList->next;
 	}				
@@ -2008,6 +2017,24 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 	}
 }
 
+bool isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(Relation * currentRelationInList, GIAEntityNode * GIAEntityNodeArray[], int relationFunctionIndex)
+{
+	bool result = true;
+	
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2C
+	if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3) && (GIAEntityNodeArray[relationFunctionIndex]->entityName == RELATION_FUNCTION_DEFINITION_1))
+	{//added condition Fri 27 Jan - remove 'be' node artefacts
+		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+		GIAEntityNodeArray[relationFunctionIndex]->disabled = true;
+		#endif		
+		result = false;
+		//cout << "GIAEntityNodeArray[relationFunctionIndex]->disabled = true" << endl;		
+	}
+	#endif
+	
+	return result;
+}
+
 void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -2025,8 +2052,9 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 		if(passed)
 		{				
 			bool passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList);
+			bool passed3 = isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(currentRelationInList, GIAEntityNodeArray, currentRelationInList->relationFunctionIndex);
 
-			if(passed2)
+			if(passed2 && passed3)
 			{
 				//create a new property for the entity and assign a property definition entity if not already created
 				string thingName = currentRelationInList->relationFunction;
@@ -2073,6 +2101,18 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 		currentRelationInList = currentRelationInList->next;
 	}
 }
+
+void disableEntityAndInstance(GIAEntityNode * GIAEntityNode)
+{
+	cout << "GIAEntityNode->disabled = " << GIAEntityNode->entityName << endl;
+	GIAEntityNode->disabled = true;		//remove redundant 'be' artefacts 
+
+	if(GIAEntityNode->hasAssociatedInstanceTemp)
+	{		
+		GIAEntityNode->AssociatedInstanceNodeList.back()->disabled = true;	//and disable their associated instances (property nodes)
+	}
+}
+
 
 void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList)
 {
@@ -2416,13 +2456,29 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											_quantity(minutes[5], 3[4]) [IRRELEVANT]
 											*/
 											
+											GIAEntityNode * measureEntity = objectEntityTemp;
+											GIAEntityNode * baseEntity = subjectEntityTemp;
+											GIAEntityNode * propertyEntity = GIAEntityNodeArray[currentRelationInList3->relationArgumentIndex];
+
+											addOrConnectPropertyToEntity(baseEntity, propertyEntity);			
+											addOrConnectPropertyToEntity(propertyEntity, objectEntityTemp);
+											
+											#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+											#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2C
+											disableEntityAndInstance(GIAEntityNodeArray[currentRelationInList3->relationFunctionIndex]);
+											#endif
+											#endif
+											
+											/*
 											GIAEntityNode * baseEntity = subjectEntityTemp;
 											GIAEntityNode * definitionEntity = GIAEntityNodeArray[currentRelationInList3->relationArgumentIndex];
 											GIAEntityNode * propertyEntity = objectEntityTemp;
 											
 											addDefinitionToEntity(baseEntity, definitionEntity);
 
-											addOrConnectPropertyToEntity(definitionEntity, propertyEntity);			
+											addOrConnectPropertyToEntity(definitionEntity, propertyEntity);	
+											*/											
+																				
 										}
 									}
 									#endif
@@ -2435,19 +2491,20 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 							#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
 							if(!subjectIsConnectedToAnAdvMod)
+							//cout << "h-2" << endl;
 							#else
-							if(1)
+							if(true)
 							#endif
 							{
-								if(0)
+								if(false)
 								{
-
+								
 								}
 								#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_DEFINITION_BASIC
 								//if(currentRelationInList->relationFunction == RELATION_FUNCTION_DEFINITION_1) 
 								else if(passdefinition)
 								{//expected subject-object relationship is a definition "is"
-
+																		
 									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 										//NB definitions are only assigned to entities, not properties (instances of entities)
 
@@ -2467,6 +2524,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									}
 									else
 									{
+										cout << "h2" << endl;
 										addDefinitionToEntity(subjectEntityTemp, objectEntityTemp);
 										
 										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B

@@ -53,6 +53,7 @@ using namespace std;
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2A
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2C
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A
 	#define GIA_IGNORE_MEANINGLESS_RELATIONS
 #endif
@@ -308,6 +309,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 	void defineToBeAndToDoProperties(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList);
 	void extractQualities(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList);
 
+bool isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(Relation * currentRelationInList, GIAEntityNode * GIAEntityNodeArray[], int relationFunctionIndex);
 
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity);
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
