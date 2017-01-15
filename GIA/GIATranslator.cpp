@@ -13,12 +13,15 @@
 
 #include "GIATranslator.h"
 
-string relationTypePropositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {"in", "at", "on", "after", "ago", "before", "between", "by", "during", "for", "to", "till", "until", "past", "since", "up_to", "within",  REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
-	//http://www.englisch-hilfen.de/en/grammar/preposition_time.htm
+string relationTypePropositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {"in", "at", "on", "after", "ago", "before", "between", "by", "during", "for", "to", "till", "until", "past", "since", "up_to", "within", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
+	//http://www.englisch-hilfen.de/en/grammar/preposition_time.htm + is [time is] etc
 string relationTypePropositionLocationNameArray[RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES] = {"in", "on", "at", "by", "near", "nearby", "above", "below", "over", "under", "around", "through", "inside", "inside_of", "outside", "between", "beside", "beyond", "in_front_of", "in_front", "in_back_of", "behind", "next_to", "on_top_of", "within", "beneath", "underneath", "among", "along", "against", "before", "after", "behind", "to", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE};		
 	//http://www.eslgold.com/grammar/prepositions_location.html + before, after, behind, to, etc
 string relationTypePropositionReasonOrCircumstanceNameArray[RELATION_TYPE_PREPOSITION_REASON_OR_CIRCUMSTANCE_NUMBER_OF_TYPES] = {"because", "on_account_of", "for", "out_of", "when",  REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY};
 	//http://vlc.polyu.edu.hk/vlc/GrammarCourse/Lesson2_Preposition/CausePurpose.htm
+string relationContextPropositionTimeNameArray[REFERENCE_TYPE_QUESTION_WHEN_CONTEXT_NUMBER_OF_TYPES] = {"time", "period", "era", "millenia", "decade", "day", "month", "year", "hour", "minute", "second", "millisecond", "microsecond", "nanosecond", "picosecond"};
+string relationContextPropositionLocationNameArray[REFERENCE_TYPE_QUESTION_WHERE_CONTEXT_NUMBER_OF_TYPES] = {"location", "place", "position"};	//coordinates?
+string relationContextPropositionReasonNameArray[REFERENCE_TYPE_QUESTION_WHY_CONTEXT_NUMBER_OF_TYPES] = {"reason", "basis", "argument"};
 	
 string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_THAT};
 string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_SUBJECT_EXPLETIVE};
@@ -1505,8 +1508,68 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 									
 									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 										//NB definitions are only assigned to entities, not properties (instances of entities)
+									
+									if(subjectObjectEntityArray[SUBJECT_INDEX]->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+									{//added 20 October 2011 [what is the time?]
+									
+										bool passedPropositionTime = false;
+										bool passedPropositionLocation = false;
+										bool passedPropositionReason = false;
+										string context = subjectObjectEntityArray[OBJECT_INDEX]->entityName;
+										for(int i=0; i<REFERENCE_TYPE_QUESTION_WHEN_CONTEXT_NUMBER_OF_TYPES; i++)
+										{
+											if(context == relationContextPropositionTimeNameArray[i])
+											{
+												passedPropositionTime = true;
+											}
+										}
+										for(int i=0; i<REFERENCE_TYPE_QUESTION_WHERE_CONTEXT_NUMBER_OF_TYPES; i++)
+										{
+											if(context == relationContextPropositionLocationNameArray[i])
+											{
+												passedPropositionLocation = true;
+											}
+										}
+										for(int i=0; i<REFERENCE_TYPE_QUESTION_WHY_CONTEXT_NUMBER_OF_TYPES; i++)
+										{
+											if(context == relationContextPropositionReasonNameArray[i])
+											{
+												passedPropositionReason = true;
+											}
+										}
 										
-									addDefinitionToEntity(subjectObjectEntityArray[SUBJECT_INDEX], subjectObjectEntityArray[OBJECT_INDEX]);
+										GIAEntityNode * actionOrPropertyEntity = subjectObjectEntityArray[OBJECT_INDEX];				
+										GIAEntityNode * actionOrPropertyConditionEntity = subjectObjectEntityArray[SUBJECT_INDEX];
+										if(actionOrPropertyEntity->hasAssociatedPropertyTemp)
+										{
+											actionOrPropertyEntity = actionOrPropertyEntity->AssociatedPropertyNodeList.back();	
+										}				
+										if(actionOrPropertyConditionEntity->hasAssociatedPropertyTemp)
+										{
+											actionOrPropertyConditionEntity = actionOrPropertyConditionEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
+										}
+																									
+										if(passedPropositionTime)
+										{
+											addTimeConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationFunction);								
+										}
+										else if(passedPropositionLocation)
+										{
+											addLocationConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationFunction);
+										}
+										else if(passedPropositionReason)
+										{
+											addReasonConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationFunction);
+										}
+										else
+										{
+											addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationFunction);
+										}
+									}
+									else
+									{	
+										addDefinitionToEntity(subjectObjectEntityArray[SUBJECT_INDEX], subjectObjectEntityArray[OBJECT_INDEX]);
+									}
 								}
 								//else if((currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_1) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_2) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_3))
 								else if(passcomposition)
@@ -1716,7 +1779,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			{
 				if(currentRelationInList->relationType == relationTypePropositionTimeNameArray[i])
 				{
-					passedPropositionTime = true;
+					GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
+					if(actionOrPropertyConditionEntity->hasAssociatedTime)
+					{
+						passedPropositionTime = true;
+					}
 				}
 			}			
 			for(int i=0; i<RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES; i++)
@@ -1734,7 +1801,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			{
 				if(currentRelationInList->relationType == relationTypePropositionReasonOrCircumstanceNameArray[i])
 				{
-					passedPropositionReasonOrCircumstances = true;
+					GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
+					if(!actionOrPropertyConditionEntity->hasAssociatedTime)	
+					{//NB in case "_" and "_" are shared for reason and time prepositions				
+						passedPropositionReasonOrCircumstances = true;
+					}
 				}
 			}
 			
