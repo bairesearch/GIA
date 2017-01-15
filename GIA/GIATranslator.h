@@ -238,6 +238,8 @@ void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntity
 
 
 vector<GIAEntityNode*> * getTranslatorEntityNodesCompleteList();
+bool getFoundComparisonVariable();
+GIAEntityNode* getComparisonVariableNode();
 
 long maxLong(long a, long b);
 

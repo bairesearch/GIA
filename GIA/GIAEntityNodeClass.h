@@ -145,7 +145,7 @@ public:
 	vector<GIAEntityNode*> PropertyNodeList;
 	vector<GIAEntityNode*>::iterator PropertyNodeListIterator;
 	
-		//properties only
+		//properties only [is this possible for actions also? - may require upgrade in future]
 	GIAEntityNode * entityNodeContainingThisProperty;				//if property/action only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
 	
 		//actions and properties only

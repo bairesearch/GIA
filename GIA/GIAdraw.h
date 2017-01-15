@@ -5,7 +5,7 @@
  * Project: General Intelligence Algorithm
  * Project Version: 1b10b 28-Sept-11
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
- * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
+ * Description: Draws GIA nodes in GIA network/tree
  *
  *******************************************************************************/
 

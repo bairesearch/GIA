@@ -9,6 +9,58 @@
  *
  *******************************************************************************/
  
+/* Additional Dependencies: Relex
+install relex as per relex installation instructions	"relex installation procedure EL6.txt"
+su root
+cp -rf relex-1.3.0 /home/baiappserver/bin
+cd /home/baiappserver/bin
+chown -R baiappserver:baiappserver /home/baiappserver/bin/relex-1.3.0
+
+NB execute-relex.sh contains the following text;
+
+	export LANG=en_US.UTF-8
+
+	VM_OPTS="-Xmx1024m"
+
+	RELEX_OPTS="\
+		-Djava.library.path=/usr/lib:/usr/local/lib \
+		-Drelex.algpath=data/relex-semantic-algs.txt \
+		-Dwordnet.configfile=data/wordnet/file_properties.xml \
+		"
+
+	CLASSPATH="-classpath \
+	bin:\
+	/usr/local/share/java/opennlp-tools-1.4.3.jar:\
+	/usr/local/share/java/opennlp-tools-1.3.0.jar:\
+	/usr/local/share/java/maxent-2.5.2.jar:\
+	/usr/local/share/java/maxent-2.4.0.jar:\
+	/usr/local/share/java/trove.jar:\
+	/usr/local/share/java/jwnl.jar:\
+	/usr/local/share/java/jwnl-1.3.3.jar:\
+	/usr/share/java/commons-logging.jar:\
+	/usr/share/java/gnu-getopt.jar:\
+	/usr/local/share/java/linkgrammar.jar:\
+	/usr/share/java/linkgrammar.jar:\
+	/usr/share/java/xercesImpl.jar:\
+	/usr/share/java/xml-apis.jar:\
+	/opt/GATE-4.0/lib/PDFBox-0.7.2.jar:\
+	#/opt/GATE-4.0/bin/gate.jar:\
+	/opt/GATE-4.0/lib/jdom.jar:\
+	/opt/GATE-4.0/lib/jasper-compiler-jdt.jar:\
+	/opt/GATE-4.0/lib/nekohtml-0.9.5.jar:\
+	/opt/GATE-4.0/lib/ontotext.jar:\
+	"
+
+	cat $3/$1 | java $VM_OPTS $RELEX_OPTS $CLASSPATH relex.WebFormat -g --url "$3/$1" > $3/$2
+
+Make sure to set the exefolder to the folder where relex-1.3.0 presides, eg;
+
+./GIA.exe -itxt text.txt -oxml semanticNet.xml -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -exefolder "/home/rich/soft/BAISource/relex/relex-1.3.0"
+OR
+./GIA.exe -itxt text.txt -oxml semanticNet.xml -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -exefolder "/home/rich/soft/BAISource/relex/relex-1.3.0"  -tempfolder '/tmp/baiappserver/BAIGIA' -workingfolder '/var/www/html/user/104' 
+
+*/	
+	
 
 
 #include <ctime>
@@ -42,13 +94,18 @@ using namespace std;
 #define CFF_XML_TAG_features ((string)"features")
 
 static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any of the following\n"
-"\n\n\t-irelex [string] : RelEx compact output .xml input filename (def: relexCompactOuput.xml)"
+"\n\n\t-itxt [string]  : Plain text .txt input filename to be parsed by Relex (def: text.txt)"
+"\n\n\t-irelex [string] : RelEx compact output .xml input filename (def: relexCompactOutput.xml)"
 "\n\n\t-ixml [string]   : semantic network definition .xml input filename (def: semanticNet.xml)"
+"\n\n\t-qtxt [string]  : plain text .txt query filename to be parsed by Relex (def: textQuery.txt)"
+"\n\n\t-qrelex [string] : RelEx compact output .xml query filename (def: relexCompactOutputQuery.xml)"
+"\n\n\t-qxml [string]   : semantic network query .xml query filename (def: semanticNetQuery.xml)"
 "\n\n\t-oxml [string]   : semantic network definition .xml output filename (def: semanticNet.xml)"
 "\n\t-osvg [string]     : semantic network display .svg 2D vector graphics output filename (def: semanticNet.svg)"
 "\n\t-oldr [string]     : semantic network display .ldr 3D vector graphics output filename (def: semanticNet.ldr)"
 "\n\t-oppm [string]     : semantic network display .ppm raster graphics output filename (def: semanticNet.ppm)"
 "\n\t-oall [string]     : semantic network display xml/.svg/.ldr/.ppm default generic output filename (def: semanticNet)"
+"\n\t-oanswer [string]  : Plain text .txt file containing the answer to the query (def: answer.txt)"
 "\n\t-notshow           : do not display output in opengl"
 "\n\t-width [int]       : raster graphics width in pixels (def: 640)"
 "\n\t-height [int]      : raster graphics height in pixels (def: 480)"
@@ -65,13 +122,25 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 int main(int argc,char **argv)
 {
 	bool result = true;
-	
+
+	bool useInputPlainTXTFile = false;
+	string inputPlainTXTFileName = "text.txt";
+		
 	bool useInputRelexXMLFile = false;
-	string inputRelexXMLFileName = "relexCompactOuput.xml";
+	string inputRelexXMLFileName = "relexCompactOutput.xml";
 	
 	bool useInputXMLFile = false;
 	string inputXMLFileName = "semanticNet.xml";
+
+	bool useQueryPlainTXTFile = false;
+	string queryPlainTXTFileName = "textQuery.txt";
+		
+	bool useQueryRelexXMLFile = false;
+	string queryRelexXMLFileName = "relexCompactOutputQuery.xml";
 	
+	bool useQueryXMLFile = false;
+	string queryXMLFileName = "semanticNetQuery.xml";
+		
 	bool useOutputXMLFile = false;
 	string outputXMLFileName = "semanticNet.xml";
 	
@@ -87,21 +156,30 @@ int main(int argc,char **argv)
 	bool useOutputAllFile = false;
 	string outputAllFileName = "semanticNet";
 	
+	bool useOutputAnswerPlainTXTFile = false;
+	string outputAnswerPlainTXTFileName = "answer.txt";
+			
 	bool printOutput = false;
 	bool displayInOpenGLAndOutputScreenshot = true;
 
 	int rasterImageWidth = 640;
 	int rasterImageHeight = 480; 
 	
+	bool useQuery = false;
 	
-
 	//bool train = false;
 	//bool form = true;
 
 	//basic execution flow outline; if no dataset or xml input file is specified, just form network - do not train network
 
-	if(exists_argument(argc,argv,"-irelex") || exists_argument(argc,argv,"-ixml"))
+	if(exists_argument(argc,argv,"-itxt") || exists_argument(argc,argv,"-irelex") || exists_argument(argc,argv,"-ixml"))
 	{
+		if(exists_argument(argc,argv,"-itxt"))
+		{
+			inputPlainTXTFileName=get_char_argument(argc,argv,"-itxt");
+			useInputPlainTXTFile = true;
+		}
+	
 		if(exists_argument(argc,argv,"-irelex"))
 		{
 			inputRelexXMLFileName=get_char_argument(argc,argv,"-irelex");
@@ -115,6 +193,27 @@ int main(int argc,char **argv)
 			useInputXMLFile = true;
 		}
 
+		if(exists_argument(argc,argv,"-qtxt"))
+		{
+			queryPlainTXTFileName=get_char_argument(argc,argv,"-qtxt");
+			useQueryPlainTXTFile = true;
+			useQuery = true;
+		}
+
+		if(exists_argument(argc,argv,"-qrelex"))
+		{
+			queryRelexXMLFileName=get_char_argument(argc,argv,"-qrelex");
+			useQueryRelexXMLFile = true;
+			useQuery = true;
+		}
+
+		if(exists_argument(argc,argv,"-qxml"))
+		{
+			queryXMLFileName=get_char_argument(argc,argv,"-qxml");
+			useQueryXMLFile = true;
+			useQuery = true;
+		}
+		
 		if(exists_argument(argc,argv,"-oxml"))
 		{
 			outputXMLFileName=get_char_argument(argc,argv,"-oxml");
@@ -148,6 +247,12 @@ int main(int argc,char **argv)
 			useOutputAllFile = true;
 			printOutput = true;
 		}
+		
+		if(exists_argument(argc,argv,"-oanswer"))
+		{
+			outputAnswerPlainTXTFileName=get_char_argument(argc,argv,"-oanswer");
+			useOutputAnswerPlainTXTFile = true;
+		}		
 		
 		/*
 		if(exists_argument(argc,argv,"-train"))
@@ -217,14 +322,14 @@ int main(int argc,char **argv)
 	}
 	else
 	{
-		cout << "error: GIA requires either a relex input file (.xml) or GIA semantic network (.xml) to be defined" << endl;
+		cout << "error: GIA requires either a plain text input file (.txt), a relex input file (.xml) or GIA semantic network (.xml) to be defined" << endl;
 		printf(errmessage);
 		exit(1);
 	}
 		
 	vector<GIAEntityNode*> * entityNodesCompleteList;
-	vector<GIAActionNode*> * actionNodesCompleteList;
-	vector<GIAConditionNode*> * conditionNodesCompleteList;
+	vector<GIAEntityNode*> * entityNodesCompleteListQuery;
+	
 
 	if(printOutput)
 	{
@@ -258,10 +363,65 @@ int main(int argc,char **argv)
 			}
 		}		
 	}
-	
+
 					
+	if(useInputPlainTXTFile)
+	{
+		if(useInputRelexXMLFile)
+		{
+			cout << "error: useInputPlainTXTFile && useInputRelexXMLFile" << endl;
+			exit(0);
+		}
+		else if(useInputXMLFile)
+		{
+			cout << "error: useInputPlainTXTFile && useInputXMLFile" << endl;
+			exit(0);
+		}
+		else
+		{	
+			//execute Relex on plain text
+			string executeRelexCommand = "";	
+			executeRelexCommand = executeRelexCommand + exeFolderCharStar + "/" + GIA_RELEX_EXECUTABLE_NAME + " " + inputPlainTXTFileName + " " + inputRelexXMLFileName + " " + tempFolderCharStar;
+
+			#ifdef LINUX
+			chdir(exeFolderCharStar);						
+			#else
+			::SetCurrentDirectory(exeFolderCharStar);
+			#endif	
+
+			cout << "system(" << executeRelexCommand << ");" << endl;
+			system(executeRelexCommand.c_str());
+
+			#ifdef LINUX
+			chdir(tempFolderCharStar);						
+			#else
+			::SetCurrentDirectory(tempFolderCharStar);
+			#endif	
+			
+			useInputRelexXMLFile = true;	//now will parse the relex file
+		}
+	}
+	
+	if(useInputRelexXMLFile)
+	{
+		if(useInputXMLFile)
+		{
+			cout << "error: useInputXMLFile && useInputRelexXMLFile" << endl;
+			exit(0);
+		}
+		else
+		{
+			entityNodesCompleteList = parseRelexFile(inputRelexXMLFileName);
+		}
+	}
+	
 	if(useInputXMLFile)
 	{
+		if(useInputPlainTXTFile)
+		{
+			cout << "error: useInputXMLFile && useInputPlainTXTFile" << endl;
+			exit(0);		
+		}
 		if(useInputRelexXMLFile)
 		{
 			cout << "error: useInputXMLFile && useInputRelexXMLFile" << endl;
@@ -277,91 +437,81 @@ int main(int argc,char **argv)
 			
 		}
 	}
-	
-	if(useInputRelexXMLFile)
+			
+	if(useQueryPlainTXTFile)
 	{
-		if(useInputXMLFile)
+		if(useQueryRelexXMLFile)
 		{
-			cout << "error: useInputXMLFile && useInputRelexXMLFile" << endl;
+			cout << "error: useQueryPlainTXTFile && useQueryRelexXMLFile" << endl;
+			exit(0);
+		}
+		else if(useQueryXMLFile)
+		{
+			cout << "error: useQueryPlainTXTFile && useQueryXMLFile" << endl;
+			exit(0);
+		}
+		else
+		{	
+			//execute Relex on plain text
+			string executeRelexCommand = "";	
+			executeRelexCommand = executeRelexCommand + exeFolderCharStar + "/" + GIA_RELEX_EXECUTABLE_NAME + " " + queryPlainTXTFileName + " " + queryRelexXMLFileName + " " + tempFolderCharStar;
+
+			#ifdef LINUX
+			chdir(exeFolderCharStar);						
+			#else
+			::SetCurrentDirectory(exeFolderCharStar);
+			#endif	
+
+			cout << "system(" << executeRelexCommand << ");" << endl;
+			system(executeRelexCommand.c_str());
+
+			#ifdef LINUX
+			chdir(tempFolderCharStar);						
+			#else
+			::SetCurrentDirectory(tempFolderCharStar);
+			#endif	
+			
+			useQueryRelexXMLFile = true;	//now will parse the relex file
+		}
+	}
+			
+	if(useQueryRelexXMLFile)
+	{
+		if(useQueryXMLFile)
+		{
+			cout << "error: useQueryXMLFile && useQueryRelexXMLFile" << endl;
 			exit(0);
 		}
 		else
 		{
-			Sentence * firstSentenceInList = new Sentence();
-			Relation * newRelation = new Relation();
-			Feature * newFeature = new Feature();
-			firstSentenceInList->firstRelationInList = newRelation;
-			firstSentenceInList->firstFeatureInList = newFeature;
-			Sentence * currentSentence = firstSentenceInList;
-
-			XMLParserTag * firstTagInXMLFile = new XMLParserTag();
-			readXMLFile(inputRelexXMLFileName, firstTagInXMLFile);
-
-			XMLParserTag * currentTag = firstTagInXMLFile;
-			currentTag = parseTagDownALevel(currentTag, CFF_XML_TAG_nlparse, &result);
-			if(result)
-			{
-
-				//now for every sentence;
-				while(currentTag->nextTag != NULL)
-				{
-					if(currentTag->name == CFF_XML_TAG_sentence)
-					{
-						XMLParserTag * firstTagInSentence;
-						firstTagInSentence = parseTagDownALevel(currentTag, CFF_XML_TAG_sentence, &result);	
-						XMLParserTag * firstTagInFirstParse;
-						firstTagInFirstParse = parseTagDownALevel(firstTagInSentence, CFF_XML_TAG_parse, &result);
-
-						if(result)
-						{
-							XMLParserTag * currentTagInParse = firstTagInFirstParse;
-							while(currentTagInParse->nextTag != NULL)
-							{
-
-								if(currentTagInParse->name == CFF_XML_TAG_relations)
-								{
-									//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
-									int maxNumberOfWordsInSentence = 0;
-									GIATHparseRelationsText(&(currentTagInParse->value), currentSentence->firstRelationInList, &maxNumberOfWordsInSentence);
-									currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
-								}
-								else if(currentTagInParse->name == CFF_XML_TAG_features)
-								{
-									//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
-									GIATHparseFeaturesText(&(currentTagInParse->value), currentSentence->firstFeatureInList);
-								}
-
-								currentTagInParse = currentTagInParse->nextTag;
-							}
-
-						}
-						Sentence * newSentence = new Sentence();
-						Relation * newRelation = new Relation();
-						Feature * newFeature = new Feature();
-						newSentence->previous = currentSentence;				
-						newSentence->firstRelationInList = newRelation;
-						newSentence->firstFeatureInList = newFeature;					
-						currentSentence->next = newSentence;
-						currentSentence = currentSentence->next;
-
-					}
-					currentTag = currentTag->nextTag;
-				}
-
-			}
-
-			vector<GIAEntityNode*> indexOfEntityNodes;
-			vector<string> indexOfEntityNames;
-			vector<GIATimeConditionNode*> indexOfTimeNodes;
-			vector<long> indexOfTimeNumbers;
-
-			convertSentenceRelationsIntoGIAnetworkNodes(&indexOfEntityNodes, &indexOfEntityNames, &indexOfTimeNodes, &indexOfTimeNumbers, firstSentenceInList);
-			
-			entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+			entityNodesCompleteListQuery = parseRelexFile(queryRelexXMLFileName);
 		}
 	}
-	
-	
+		
+	if(useQueryXMLFile)
+	{
+		if(useQueryPlainTXTFile)
+		{
+			cout << "error: useQueryXMLFile && useQueryPlainTXTFile" << endl;
+			exit(0);		
+		}
+		if(useQueryRelexXMLFile)
+		{
+			cout << "error: useQueryXMLFile && useQueryRelexXMLFile" << endl;
+			exit(0);
+		}
+		else
+		{		
+			entityNodesCompleteListQuery = new vector<GIAEntityNode*>;
+			if(!readSemanticNetXMLFile(queryXMLFileName, entityNodesCompleteListQuery))
+			{
+				result = false;
+			}
+			
+		}
+	}
+		
+		
 	if(!parseGIARulesXMLFile())
 	{
 		cout << "error: no rules file detected" << endl;
@@ -376,7 +526,61 @@ int main(int argc,char **argv)
 	::SetCurrentDirectory(tempFolderCharStar);
 	#endif
 	
-				
+
+
+	if(useQuery)
+	{
+		/*
+		implement comparison of question semantic net to semanic net - locate the question semantic net as a subset of the semantic net, and;
+			1. highlight it 
+			2. return missing variables 
+			3. NB for which/what questions, make the software just locate the identical structure, and if necessary return the parent of the primary property (eg the parent of the "object" of the question)
+		*/
+
+		bool foundComparisonVariable = getFoundComparisonVariable();
+		GIAEntityNode* comparisonVariableNode = getComparisonVariableNode();
+		bool foundAnswer = false;
+		double confidence = 0.0;
+		
+		//GIAEntityNode * queryAnswerNode = answerQueryOrFindAndHighlightMatchingStructureInSemanticNetwork(entityNodesCompleteList, entityNodesCompleteListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, &confidence);
+		GIAEntityNode * queryAnswerNode;
+		
+		string answerString = "";
+		 
+		if(foundAnswer)
+		{
+			answerString = answerString + "Answer found";
+			
+			if(foundComparisonVariable)
+			{//if the question contained a comparisonVariable, just set the answer to the question as the name of located queryAnswerNode
+				answerString = answerString + "Answer = " + queryAnswerNode->entityName;
+			}
+			else
+			{//if question does not contain a comparisonVariable, set the answer to the question as the parent of the primary property (eg the parent of the "object" of the question)
+				answerString = answerString + "Answer = " + queryAnswerNode->entityName;
+				answerString = answerString + printEntityNode(queryAnswerNode);												
+			}
+			
+			//add confidence to answer
+			char tempConfidenceStringCharStar[100]; 
+			sprintf(tempConfidenceStringCharStar, "%0.6f", confidence);
+			answerString = answerString + "\nconfidence = " + tempConfidenceStringCharStar;			
+		}
+		else
+		{
+			answerString = answerString + "Answer Not Found";
+		}
+		
+		char * fileByteArray = const_cast<char*>(answerString.c_str());
+		char * outputAnswerPlainTXTFileNameCharStar = const_cast<char*>(outputAnswerPlainTXTFileName.c_str());	
+		writeByteArrayToFile(outputAnswerPlainTXTFileNameCharStar, fileByteArray, answerString.length());		
+	}
+	else if(useOutputAnswerPlainTXTFile)
+	{
+		cout << "error: output answer require a query to be set" << endl;
+	}
+	
+					
 	if(printOutput)
 	{	
 		printGIAnetworkNodes(entityNodesCompleteList, rasterImageWidth, rasterImageHeight, outputLDRFileName, outputSVGFileName, outputPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputLDRFile, useOutputPPMFile);
@@ -389,6 +593,8 @@ int main(int argc,char **argv)
 			result = false;
 		}
 	}
+	
+
 		
 	#ifdef GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
 	if(!testReadSemanticNetXMLFile2(entityNodesCompleteList))
@@ -397,4 +603,181 @@ int main(int argc,char **argv)
 	}
 	#endif
 	
+}
+
+string printEntityNode(GIAEntityNode * queryAnswerNode)
+{
+	string printEntityNodeString = "";
+	
+	if(queryAnswerNode->isProperty)
+	{
+		if(queryAnswerNode->entityNodeContainingThisProperty != NULL)
+		{
+			printEntityNodeString = printEntityNodeString + "Context: entityNodeContainingThisProperty (parent) = " + queryAnswerNode->entityNodeContainingThisProperty->entityName;			
+		}	
+		if(queryAnswerNode->entityNodeDefiningThisPropertyOrAction != NULL)
+		{
+			printEntityNodeString = printEntityNodeString + "Context: entityNodeDefiningThisPropertyOrAction = " + queryAnswerNode->entityNodeDefiningThisPropertyOrAction->entityName;			
+		}
+	}	
+	if(queryAnswerNode->hasAssociatedPropertyIsAction)
+	{
+		if(queryAnswerNode->actionSubjectEntity != NULL)
+		{
+			printEntityNodeString = printEntityNodeString + "Context: actionSubjectEntity = " + queryAnswerNode->actionSubjectEntity->entityName;			
+		}
+		if(queryAnswerNode->actionObjectEntity != NULL)
+		{
+			printEntityNodeString = printEntityNodeString + "Context: actionObjectEntity = " + queryAnswerNode->actionObjectEntity->entityName;			
+		}
+	}
+	if(!(queryAnswerNode->hasAssociatedPropertyIsAction))
+	{
+		if(queryAnswerNode->ActionNodeList.begin() != queryAnswerNode->ActionNodeList.end())
+		{
+			for(queryAnswerNode->ActionNodeListIterator = queryAnswerNode->ActionNodeList.begin(); queryAnswerNode->ActionNodeListIterator < queryAnswerNode->ActionNodeList.end(); queryAnswerNode->ActionNodeListIterator++)
+			{
+				printEntityNodeString = printEntityNodeString + "Context: outgoingAction(s) = " + (*(queryAnswerNode->ActionNodeListIterator))->entityName;				
+			}				
+		}
+		if(queryAnswerNode->IncomingActionNodeList.begin() != queryAnswerNode->IncomingActionNodeList.end())
+		{
+			for(queryAnswerNode->IncomingActionNodeListIterator = queryAnswerNode->IncomingActionNodeList.begin(); queryAnswerNode->IncomingActionNodeListIterator < queryAnswerNode->IncomingActionNodeList.end(); queryAnswerNode->IncomingActionNodeListIterator++)
+			{
+				printEntityNodeString = printEntityNodeString + "Context: incomingAction(s) = " + (*(queryAnswerNode->IncomingActionNodeListIterator))->entityName;				
+			}				
+		}
+	}
+	if(queryAnswerNode->PropertyNodeList.begin() != queryAnswerNode->PropertyNodeList.end())
+	{
+		for(queryAnswerNode->PropertyNodeListIterator = queryAnswerNode->PropertyNodeList.begin(); queryAnswerNode->PropertyNodeListIterator < queryAnswerNode->PropertyNodeList.end(); queryAnswerNode->PropertyNodeListIterator++)
+		{
+			printEntityNodeString = printEntityNodeString + "Context: propertyNode(s) = " + (*(queryAnswerNode->PropertyNodeListIterator))->entityName;				
+		}				
+	}
+	if(queryAnswerNode->ConditionNodeList.begin() != queryAnswerNode->ConditionNodeList.end())
+	{
+		vector<string>::iterator ConditionNodeTypeListIterator = queryAnswerNode->ConditionNodeTypeList.begin();
+		for(queryAnswerNode->ConditionNodeListIterator = queryAnswerNode->ConditionNodeList.begin(); queryAnswerNode->ConditionNodeListIterator < queryAnswerNode->ConditionNodeList.end(); queryAnswerNode->ConditionNodeListIterator++)
+		{
+			printEntityNodeString = printEntityNodeString + "Context: conditionNode(s) = " + (*(queryAnswerNode->ConditionNodeListIterator))->entityName + ", type = " + *ConditionNodeTypeListIterator;			
+			ConditionNodeTypeListIterator++;
+		}				
+	}
+	if(queryAnswerNode->ConditionNodeReverseList.begin() != queryAnswerNode->ConditionNodeReverseList.end())
+	{
+		vector<string>::iterator ConditionNodeTypeListIterator = queryAnswerNode->ConditionNodeTypeReverseList.begin();
+		for(queryAnswerNode->ConditionNodeReverseListIterator = queryAnswerNode->ConditionNodeReverseList.begin(); queryAnswerNode->ConditionNodeReverseListIterator < queryAnswerNode->ConditionNodeReverseList.end(); queryAnswerNode->ConditionNodeReverseListIterator++)
+		{
+			printEntityNodeString = printEntityNodeString + "Context: incomingConditionNode(s) = " + (*(queryAnswerNode->ConditionNodeReverseListIterator))->entityName + ", type = " + *ConditionNodeTypeListIterator;				
+			ConditionNodeTypeListIterator++;
+		}				
+	}
+	
+	if(!(queryAnswerNode->isProperty))
+	{
+		if(queryAnswerNode->EntityNodeDefinitionReverseList.begin() != queryAnswerNode->EntityNodeDefinitionReverseList.end())
+		{
+			for(queryAnswerNode->EntityNodeDefinitionReverseListIterator = queryAnswerNode->EntityNodeDefinitionReverseList.begin(); queryAnswerNode->EntityNodeDefinitionReverseListIterator < queryAnswerNode->EntityNodeDefinitionReverseList.end(); queryAnswerNode->EntityNodeDefinitionReverseListIterator++)
+			{
+				printEntityNodeString = printEntityNodeString + "Context: incomingEntityNodeDefinition(s) = " + (*(queryAnswerNode->EntityNodeDefinitionReverseListIterator))->entityName;				
+			}				
+		}
+		if(queryAnswerNode->EntityNodeDefinitionReverseList.begin() != queryAnswerNode->EntityNodeDefinitionReverseList.end())
+		{
+			for(queryAnswerNode->EntityNodeDefinitionReverseListIterator = queryAnswerNode->EntityNodeDefinitionReverseList.begin(); queryAnswerNode->EntityNodeDefinitionReverseListIterator < queryAnswerNode->EntityNodeDefinitionReverseList.end(); queryAnswerNode->EntityNodeDefinitionReverseListIterator++)
+			{
+				printEntityNodeString = printEntityNodeString + "Context: incomingEntityNodeDefinition(s) = " + (*(queryAnswerNode->EntityNodeDefinitionReverseListIterator))->entityName;				
+			}				
+		}
+	}
+	
+	if(queryAnswerNode->conditionType == CONDITION_NODE_TYPE_TIME)
+	{
+		if(queryAnswerNode->timeConditionNode != NULL)
+		{
+			printEntityNodeString = printEntityNodeString + "Context: timeConditionNode = " + queryAnswerNode->timeConditionNode->conditionName;			
+		}
+	}	
+			
+	return printEntityNodeString;
+
+
+}
+vector<GIAEntityNode*> * parseRelexFile(string inputRelexXMLFileName)
+{
+	bool result = true;
+	
+	Sentence * firstSentenceInList = new Sentence();
+	Relation * newRelation = new Relation();
+	Feature * newFeature = new Feature();
+	firstSentenceInList->firstRelationInList = newRelation;
+	firstSentenceInList->firstFeatureInList = newFeature;
+	Sentence * currentSentence = firstSentenceInList;
+
+	XMLParserTag * firstTagInXMLFile = new XMLParserTag();
+	readXMLFile(inputRelexXMLFileName, firstTagInXMLFile);
+
+	XMLParserTag * currentTag = firstTagInXMLFile;
+	currentTag = parseTagDownALevel(currentTag, CFF_XML_TAG_nlparse, &result);
+	if(result)
+	{
+		//now for every sentence;
+		while(currentTag->nextTag != NULL)
+		{
+			if(currentTag->name == CFF_XML_TAG_sentence)
+			{
+				XMLParserTag * firstTagInSentence;
+				firstTagInSentence = parseTagDownALevel(currentTag, CFF_XML_TAG_sentence, &result);	
+				XMLParserTag * firstTagInFirstParse;
+				firstTagInFirstParse = parseTagDownALevel(firstTagInSentence, CFF_XML_TAG_parse, &result);
+
+				if(result)
+				{
+					XMLParserTag * currentTagInParse = firstTagInFirstParse;
+					while(currentTagInParse->nextTag != NULL)
+					{
+
+						if(currentTagInParse->name == CFF_XML_TAG_relations)
+						{
+							//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
+							int maxNumberOfWordsInSentence = 0;
+							GIATHparseRelationsText(&(currentTagInParse->value), currentSentence->firstRelationInList, &maxNumberOfWordsInSentence);
+							currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
+						}
+						else if(currentTagInParse->name == CFF_XML_TAG_features)
+						{
+							//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
+							GIATHparseFeaturesText(&(currentTagInParse->value), currentSentence->firstFeatureInList);
+						}
+
+						currentTagInParse = currentTagInParse->nextTag;
+					}
+
+				}
+				Sentence * newSentence = new Sentence();
+				Relation * newRelation = new Relation();
+				Feature * newFeature = new Feature();
+				newSentence->previous = currentSentence;				
+				newSentence->firstRelationInList = newRelation;
+				newSentence->firstFeatureInList = newFeature;					
+				currentSentence->next = newSentence;
+				currentSentence = currentSentence->next;
+
+			}
+			currentTag = currentTag->nextTag;
+		}
+
+	}
+
+	vector<GIAEntityNode*> indexOfEntityNodes;
+	vector<string> indexOfEntityNames;
+	vector<GIATimeConditionNode*> indexOfTimeNodes;
+	vector<long> indexOfTimeNumbers;
+
+	convertSentenceRelationsIntoGIAnetworkNodes(&indexOfEntityNodes, &indexOfEntityNames, &indexOfTimeNodes, &indexOfTimeNumbers, firstSentenceInList);
+
+	vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+	
+	return entityNodesCompleteList;
 }

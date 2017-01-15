@@ -63,10 +63,25 @@ bool referenceTypePersonCrossReferencePersonArray[REFERENCE_TYPE_PERSON_NUMBER_O
 static long currentEntityNodeIDInCompleteList;
 static vector<GIAEntityNode*> entityNodesCompleteList;
 
+static bool foundComparisonVariable;
+static GIAEntityNode* comparisonVariableNode;
+
 vector<GIAEntityNode*> * getTranslatorEntityNodesCompleteList()
 {
 	return &entityNodesCompleteList;
 }
+	
+bool getFoundComparisonVariable()
+{
+	return foundComparisonVariable;
+}
+
+GIAEntityNode* getComparisonVariableNode()
+{
+	return comparisonVariableNode;
+}
+
+
 	
 	
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity)
@@ -679,6 +694,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				if(argumentIsQuery)
 				{
 					GIAEntityNodeArray[relationArgumentIndex]->isQuery = true;
+					foundComparisonVariable = true;
+					comparisonVariableNode = GIAEntityNodeArray[relationArgumentIndex];					
 				}
 			}
 			
@@ -2001,8 +2018,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					quantityProperty->quantityNumber = quantityNumberInt;
 					
 					if(currentRelationInList->relationArgument == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
-					{
+					{//update comparison variable (set it to the quantity)	
 						quantityProperty->isQuery = true;
+						GIAEntityNodeArray[currentRelationInList->relationArgumentIndex]->isQuery = false;
+						comparisonVariableNode = quantityProperty;		
 					}
 					
 					//now locate quantity modifiers and multiplicators
