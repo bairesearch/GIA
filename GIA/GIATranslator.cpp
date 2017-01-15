@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o4d 17-August-2012
+ * Project Version: 1o5a 21-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -632,13 +632,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass B;" << endl;
-	cout << "0z pass; define substances (objects/subjects with substances; eg 'Truffles which are picked are tasty.' - Truffle must be an instance/substance in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
+	cout << "0a pass; define substances (objects/subjects with substances; eg 'Truffles which are picked are tasty.' - Truffle must be an instance/substance in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
 	#endif
 	defineSubstancesObjectsAndSubjectsWithSubstances(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAFeatureTempEntityNodeArray);
 
 	#ifdef GIA_ASSIGN_SUBSTANCE_TO_ALL_DEFINITIVE_NOUNS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0a pass; define substances (definite nouns); eg the house" << endl;
+	cout << "0b pass; define substances (definite nouns); eg the house" << endl;
 	#endif
 	defineSubstancesDefiniteNouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
 	#endif
@@ -656,70 +656,70 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 			
 	#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0b pass; define substances based upon definitions" << endl;
+	cout << "0c pass; define substances based on determinates of definition entities" << endl;
 	#endif
 	defineSubstancesBasedOnDeterminatesOfDefinitionEntities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
 	#endif
 	
 	#ifdef GIA_ASSIGN_SUBSTANCE_TO_ALL_NOUNS_WITH_DETERMINATES
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0b pass; define substances (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore substances]" << endl;
+	cout << "0d pass; define substances (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore substances]" << endl;
 	#endif
 	defineSubstancesNounsWithDeterminates(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
 	#endif
 	
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0c pass; define substances (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
+	cout << "0e pass; define substances (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
 	#endif
 	defineSubstancesNounsWithAdjectives(currentSentenceInList, GIAEntityNodeArray, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0d pass; define substances (quantities [not quantity mods/multipiers, not measure pers] and measures);" << endl;
+	cout << "0f pass; define substances (quantities [not quantity mods/multipiers, not measure pers] and measures);" << endl;
 	#endif
 	defineSubstancesQuantitiesAndMeasures(currentSentenceInList, GIAEntityNodeArray);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0e pass; define substances (quantity mods);" << endl;
+	cout << "0g pass; define substances (quantity mods);" << endl;
 	#endif
 	defineSubstancesQuantityModifiers(currentSentenceInList, GIAEntityNodeArray);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0f pass; define substances (expletives eg 'there' in 'there is a place');" << endl;
+	cout << "0h pass; define substances (expletives eg 'there' in 'there is a place');" << endl;
 	#endif
 	defineSubstancesExpletives(currentSentenceInList, GIAEntityNodeArray);
 
 	#ifdef GIA_ASSIGN_SUBSTANCE_TO_ALL_PRONOUNS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0g pass; define substances (pronouns eg 'we'/'I');" << endl;
+	cout << "0i pass; define substances (pronouns eg 'we'/'I');" << endl;
 	#endif
 	defineSubstancesPronouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
 	#endif
 	
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0h pass; define substances (to_be);" << endl;
+	cout << "0j pass; define substances (to_be);" << endl;
 	#endif
 	defineSubstancesToBe(currentSentenceInList, GIAEntityNodeArray);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0i pass; define substances (to_do);" << endl;
+	cout << "0k pass; define substances (to_do);" << endl;
 	#endif
 	defineActionsToDo(currentSentenceInList, GIAEntityNodeArray);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0j pass; define substances (has time);" << endl;
+	cout << "0l pass; define substances (has time);" << endl;
 	#endif
 	defineSubstancesHasTime(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
 
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0k pass; define substances (non explicit pronouns eg 'that');" << endl;
+	cout << "0m pass; define substances (non explicit pronouns eg 'that');" << endl;
 	#endif
 	defineSubstancesNonExplicitPronouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 	#endif
 
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_4A_RELATIONS_DEFINE_SUBSTANCES_BASED_UPON_INDIRECT_OBJECTS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0l pass; define substances indirect objects;" << endl;
+	cout << "0n pass; define substances indirect objects;" << endl;
 	#endif
 	defineSubstancesIndirectObjects(currentSentenceInList, GIAEntityNodeArray);
 	#endif
@@ -758,14 +758,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "2a pass; link substances (possessive relationships); eg joe's bike" << endl;
+	cout << "2a pass; link properties (possessive relationships); eg joe's bike" << endl;
 	#endif
-	linkSubstancesPossessiveRelationships(currentSentenceInList, GIAEntityNodeArray);
+	linkPropertiesPossessiveRelationships(currentSentenceInList, GIAEntityNodeArray);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "2b pass; link substances (descriptive relationships); eg joe is happy" << endl;
+	cout << "2b pass; link properties (descriptive relationships); eg joe is happy" << endl;
 	#endif
-	linkSubstancesDescriptiveRelationships(currentSentenceInList, GIAEntityNodeArray, NLPdependencyRelationsType);
+	linkPropertiesDescriptiveRelationships(currentSentenceInList, GIAEntityNodeArray, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "2c pass; link entity definitions (appositive of nouns only)" << endl;
@@ -787,7 +787,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	linkSubjectOrObjectRelationships(currentSentenceInList, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "3c pass; link substances (define indirect objects)" << endl;
+	cout << "3c pass; link properties (define indirect objects)" << endl;
 	#endif
 	linkIndirectObjects(currentSentenceInList, GIAEntityNodeArray);
 
@@ -795,26 +795,26 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	{
 		#ifdef GIA_USE_STANFORD_CORENLP
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "3c2 pass; link Having Substance Conditions And Being Definition Conditions; eg Space is saved through having a chicken	prepc_through(saved-3, having-5) / dobj(having-5, chicken-7)" << endl;
+		cout << "3d pass; link Having Substance Conditions And Being Definition Conditions; eg Space is saved through having a chicken	prepc_through(saved-3, having-5) / dobj(having-5, chicken-7)" << endl;
 		#endif
-		linkHavingSubstanceConditionsAndBeingDefinitionConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts);
+		linkHavingPropertyConditionsAndBeingDefinitionConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts);
 		#endif
 	}
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "3d pass; link object/subject of preposition" << endl;
+	cout << "3e pass; link object/subject of preposition" << endl;
 	#endif
 	linkObjectSubjectOfPreposition(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
 #ifdef GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "3e pass; define conjunction conditions; eg Either Tom and/or Max eat the cake...." << endl;
+	cout << "3f pass; define conjunction conditions; eg Either Tom and/or Max eat the cake...." << endl;
 	#endif
 	linkConjunctionConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts);
 #endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "3f pass; define action/substance conditions" << endl;
+	cout << "3g pass; define conditions" << endl;
 	#endif
 	linkConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
@@ -841,7 +841,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	extractQuantities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPfeatureParser);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4d pass; extract measures and link substances (measure-quantity relationships)" << endl;
+	cout << "4d pass; extract measures and link properties (measure-quantity relationships)" << endl;
 	#endif
 	extractMeasures(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts);
 
@@ -856,17 +856,17 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	extractQualities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4h pass; link substances (parataxis); eg the guy, Akari said, left..." << endl;
+	cout << "4h pass; link properties (parataxis); eg the guy, Akari said, left..." << endl;
 	#endif
-	linkSubstancesParataxis(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+	linkPropertiesParataxis(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
 		#ifdef GIA_USE_STANFORD_CORENLP
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "4i pass; define Clausal Complement Substances (ccomp); eg ccomp(say, like)	He says that you like to swim" << endl;
+		cout << "4i pass; define Clausal Complement Properties (ccomp); eg ccomp(say, like)	He says that you like to swim" << endl;
 		#endif
-		defineClausalComplementSubstances(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+		defineClausalComplementProperties(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 		#endif
 	}
 
