@@ -18,9 +18,12 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	double bestConfidence = 0.0;
 	double bestConfidenceAssumingFoundAnswer = 0.0;
 	
-	//#ifdef GIA_QUERY_DEBUG
-	cout << "comparisonVariableNode->entityName = " << comparisonVariableNode->entityName << endl;
-	//#endif
+	#ifdef GIA_QUERY_DEBUG
+	if(detectComparisonVariable)
+	{
+		cout << "comparisonVariableNode->entityName = " << comparisonVariableNode->entityName << endl;
+	}
+	#endif
 	
 	GIAEntityNode * networkEntityNodeWhenSearchedResultsInBestConfidence = NULL;
 	GIAEntityNode * queryEntityNodeWhenSearchedResultsInBestConfidence = NULL;
@@ -31,9 +34,9 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		
 		GIAEntityNode* currentQueryEntityNode = *entityIterQuery;
 		
-		//#ifdef GIA_QUERY_DEBUG
+		#ifdef GIA_QUERY_DEBUG
 		cout << "currentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
-		//#endif
+		#endif
 		
 		bool foundQueryEntityNodeName = false;
 		long queryEntityNodeIndex = -1;
@@ -90,6 +93,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	
 		if(!detectComparisonVariable && foundAnswerTemp)
 		{
+			cout << "asf" << endl;
 			*foundAnswer = true;
 			queryAnswerNode = queryAnswerNodeTemp;
 		}

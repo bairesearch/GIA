@@ -81,7 +81,7 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 		{
 			nameTemp = conceptEntityNamesList->at(findIndex);
 			
-			
+			/*
 			if(*entityNodeName == "Jane")
 			{
 				cout << "vectorSize = "  << vectorSize << endl;
@@ -90,6 +90,7 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 				cout << "nameTemp = " << nameTemp << endl;
 				cout << "*entityNodeName = " << *entityNodeName << endl;		      
 			}
+			*/
 			
 			
 			//cout << "vectorSize = "  << vectorSize << endl;
@@ -188,7 +189,9 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 				*index = findIndex;
 				entityNodeFound = conceptEntityNodesList->at(findIndex);
 
+				#ifdef GIA_DATABASE_DEBUG
 				cout << "\tentity node found; " << *entityNodeName << endl;
+				#endif
 				//cout << "findIndex = " << findIndex << endl;
 				
 				searchOptionsAvailable = false;

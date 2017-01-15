@@ -1624,7 +1624,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 										//NB definitions are only assigned to entities, not properties (instances of entities)
 									
 									if(subjectObjectEntityArray[SUBJECT_INDEX]->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
-									{//added 20 October 2011 [what is the time?]
+									{
+									#ifdef GIA_TRANSLATOR_DISABLE_OBJ_SUB_QVARIABLE_ANOMALY
+										//switch object/subject variables [transform question into answer form]
+										addDefinitionToEntity(subjectObjectEntityArray[OBJECT_INDEX], subjectObjectEntityArray[SUBJECT_INDEX]);
+									#else
+										//added 20 October 2011 [what is the time?]
 									
 										bool passedPropositionTime = false;
 										bool passedPropositionLocation = false;
@@ -1679,9 +1684,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 										{
 											addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationFunction);
 										}
+									#endif	
 									}
 									else
-									{	
+									{
+										
 										addDefinitionToEntity(subjectObjectEntityArray[SUBJECT_INDEX], subjectObjectEntityArray[OBJECT_INDEX]);
 									}
 								}

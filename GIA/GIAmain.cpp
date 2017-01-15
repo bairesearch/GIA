@@ -514,7 +514,6 @@ int main(int argc,char **argv)
 	::SetCurrentDirectory(tempFolderCharStar);
 	#endif
 
-
 	if(useQuery)
 	{
 		/*
@@ -590,7 +589,9 @@ int main(int argc,char **argv)
 	{
 		cout << "error: output answer require a query to be set" << endl;
 	}
-				
+	
+	
+			
 	if(printOutput)
 	{	
 		printGIAnetworkNodes(entityNodesCompleteList, rasterImageWidth, rasterImageHeight, outputLDRFileName, outputSVGFileName, outputPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputLDRFile, useOutputPPMFile);
