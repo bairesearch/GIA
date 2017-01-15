@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g6b 08-September-2014
+ * Project Version: 2g7a 10-September-2014
  *
  *******************************************************************************/
 -->
@@ -2151,8 +2151,8 @@
 				</paramDepRel>
 			</function>	
 			-->	
-			<!-- #endif -->	
-			
+			<!-- #endif -->
+
 			<!-- NLC Only -->
 			<function name="redistributeStanfordRelationsDisablePredeterminers">
 				<paramDepRel mode="redistribute">
@@ -3764,7 +3764,18 @@
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isAction" value="true" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isActionConcept" value="true" REL="1" REL_ENT="1" />
 				</paramDepRel>
-			</function>										
+			</function>	
+			
+			<!-- NLC Only -->
+			<function name="redistributeStanfordRelationsSetPluralBasedOnPredeterminers">
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option parseDisabledRelation="true" REL="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_det|_predet" relationArrayTestSize="2" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="2" relationArrayTest="each|every|all" relationArrayTestSize="3" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="grammaticalNumber" value="3" REL="1" REL_ENT="1" />	<!-- required for NLC_USE_PREPROCESSOR+NLC_CATEGORIES_TEST_PLURALITY_ENFORCE -->
+				</paramDepRel>
+			</function>									
 		</file>								
 	</translator>
 </rules>
