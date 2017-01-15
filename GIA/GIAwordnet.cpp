@@ -100,7 +100,11 @@ bool checkIfQueryWordIsContainedWithinAnotherWordsSynsets(string * word, string 
 {
 	bool wordIsFound = false;
 	bool entityNamesAreSynonymous = false;
-	//cout << "wordType = " << wordType << endl;
+	
+	/*
+	cout << "wordType = " << wordType << endl;
+	cout << "word = " << word << endl;
+	*/
 	SynsetPtr firstSenseInList = findSynsets(*word, &wordIsFound, wordType);
 	
 	if(wordIsFound)
@@ -115,8 +119,10 @@ bool checkIfQueryWordIsContainedWithinAnotherWordsSynsets(string * word, string 
 		{
 			for(int w=0; w<currentSenseInList->wcount; w++)
 			{
-				//cout << "word = " << currentSenseInList->words[w] << endl;
-				//cout << "queryWord = " << *queryWord << endl;
+				#ifdef GIA_WORDNET_DEBUG_OUTPUT_SYNONYMNS
+				cout << "synonymn = " << currentSenseInList->words[w] << endl;
+				cout << "queryWord = " << *queryWord << endl;
+				#endif
 				string currentWord = currentSenseInList->words[w];
 				if(currentWord == *queryWord)
 				{

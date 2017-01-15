@@ -410,6 +410,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	definePropertiesNonExplicitPronouns(GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 	#endif
 	
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_4A_RELATIONS_DEFINE_PROPERTIES_BASED_UPON_INDIRECT_OBJECTS			
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "0l pass; define properties indirect objects;" << endl;
+	#endif
+	definePropertiesIndirectObjects(currentSentenceInList, GIAEntityNodeArray);
+	#endif	
+	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "1 pass; link properties (possessive relationships); eg joe's bike" << endl;
 	#endif

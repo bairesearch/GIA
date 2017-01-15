@@ -481,3 +481,59 @@ void definePropertiesHasTime(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GI
 		}
 	}
 }			
+
+void definePropertiesIndirectObjects(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+{
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{	
+		//cout << "here1" << endl;
+		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{			
+		#endif	
+			if(currentRelationInList->relationType == RELATION_TYPE_INDIRECT_OBJECT)
+			{							
+				//now find the associated object..
+ 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				while(currentRelationInList2->next != NULL)
+				{	
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					if(!(currentRelationInList2->disabled))
+					{			
+					#endif				
+						bool partnerTypeRequiredFound = false;
+						for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
+						{
+							if(currentRelationInList2->relationType == relationTypeObjectNameArray[i])
+							{
+								partnerTypeRequiredFound = true;
+							}
+						}	
+						if(partnerTypeRequiredFound)
+						{
+
+							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
+							{//found a matching object-indirectobject relationship
+								//cout << "partnerTypeRequiredFound: currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
+
+								GIAEntityNode * propertyEntity = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
+								GIAEntityNode * thingEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+
+								addPropertyToPropertyDefinition(propertyEntity);			
+							}
+						}
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					}		
+					#endif
+
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}			
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}			
+}
