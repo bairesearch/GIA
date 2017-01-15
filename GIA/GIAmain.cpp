@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4a 21-July-2012
+ * Project Version: 1n4b 21-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -664,7 +664,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe - Project Version: 1n4a 21-July-2012" << endl;
+			cout << "GIA.exe - Project Version: 1n4b 21-July-2012" << endl;
 			exit(1);
 		}
 
@@ -1268,13 +1268,20 @@ int main(int argc,char **argv)
 		}
 	}
 	#ifdef GIA_USE_NLG
+	NLGSentence * firstNLGsentence = new NLGSentence();
+	NLGSentence * currentNLGsentence = firstNLGsentence;
 	string generatedText = "";
 	for(unordered_map<string, GIAEntityNode*> ::iterator conceptEntityNodesListMapIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListMapIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListMapIter++)
 	{
 		GIAEntityNode * entityNode = conceptEntityNodesListMapIter->second;
-		generateLanguageFromEntityNode(entityNode, &generatedText); 
+		currentNLGsentence = generateLanguageFromEntityNode(entityNode, currentNLGsentence); 
 	}
-	cout << "DEBUG: NLG generated text = " << generatedText << endl;
+	currentNLGsentence = firstNLGsentence;
+	while(currentNLGsentence->next != NULL)
+	{
+		cout << "DEBUG: NLG generated text = " << currentNLGsentence->NLGInputViewText << endl;
+		//execute NLG2 on this text
+	}
 	#endif
 	
 	#ifdef GIA_USE_DATABASE

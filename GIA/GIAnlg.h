@@ -3,7 +3,7 @@
  * File Name: GIAnlg.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4a 21-July-2012
+ * Project Version: 1n4b 21-July-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -17,6 +17,19 @@
 #include "GIAEntityNodeClass.h"
 #include "GIATranslatorOperations.h"
 
+class NLGSentence
+{
+public:
+
+	NLGSentence(void);
+	~NLGSentence(void);
+
+	string NLGInputViewText;
+
+	NLGSentence * next;
+};
+
+#define NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS
 #define NLG_INPUTVIEW_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
 #define NLG_INPUTVIEW_TWO_ENTITY_SENTENCES_SUPPORT_TWO_DEPENDENCY_RELATIONS
 
@@ -35,6 +48,12 @@
 #define NLG_INPUTVIEW_FEATURE_TAG_NAME_INFLECTION "inflection-TAG"
 
 static bool nlgSentenceThreeEntitiesGenerateVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, false, false, false, false, false, true, true, true, true, false};
+//static bool nlgSentenceThreeEntitiesGenerateAdditionsVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, true, false, false, false, false, false, false, true, false, false};
+static bool nlgSentenceThreeEntitiesGenerateAdditionsVectorConnectionsArray[NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT};
+static bool nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityConnection[NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS] = {false, true};
+
+#define NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS (2)
+
 static bool nlgSentenceTwoEntitiesGenerateVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, true, false, true, false, false, false, false, false, false, false};
 
 static string nlgSentenceThreeEntitiesDependencyRelationVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"", "", "", "", "", "", "", "", "", RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION, RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION, RELATION_TYPE_SUBJECT, RELATION_TYPE_OBJECT, ""};
@@ -55,7 +74,7 @@ static string grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_
 #include <string>
 using namespace std;
 
-void generateLanguageFromEntityNode(GIAEntityNode * entityNode, string * generatedText);
+NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSentence * currentNLGsentence);
 	void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode, string * generatedText, int connectionType1, int connectionType2);
 	void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode, GIAEntityConnection * entityConnection, string * generatedText, int connectionType);
 		void generateRelexFeatureTagsGenericPerSentence(string * generatedRelexTags);
