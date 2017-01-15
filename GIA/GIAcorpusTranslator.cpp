@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b7b 12-January-2014
+ * Project Version: 2b7c 12-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -182,11 +182,8 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	defineConnectionsBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 
 	//cout << "Q10" << endl;
-	
-	//measure, dates, and quantities??
-	defineTenseOnlyTimeConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 
-	defineQuantitiesBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
+	applyAdvancedFeaturesBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
 	
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	//record entityIndexTemp + sentenceIndexTemp for all substances in sentence (allows for referencing)...
@@ -677,6 +674,16 @@ void defineConnectionsBasedOnSemanticRelations(Sentence * currentSentenceInList,
 	}	
 }
 
+void applyAdvancedFeaturesBasedOnSemanticRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
+{
+	defineQuantitiesBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
+
+	defineQualitiesBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
+	
+	//measure, dates, and quantities??
+	defineTenseOnlyTimeConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+}
+
 void defineQuantitiesBasedOnSemanticRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -746,6 +753,26 @@ void defineQuantitiesBasedOnSemanticRelations(Sentence * currentSentenceInList, 
 		currentRelationInList = currentRelationInList->next;
 	}
 }
+
+void defineQualitiesBasedOnSemanticRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
+{
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{
+		if(GIAentityNodeArrayFilled[w])
+		{
+			GIAentityNode * entity = GIAentityNodeArray[w];
+			if(!(entity->disabled))
+			{
+				if((entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ) || (entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADV))
+				{
+					entity->isSubstanceQuality = true;
+				}
+			}
+		}
+	}
+}
+
+
 
 
 #endif
