@@ -264,6 +264,7 @@ int main(int argc,char **argv)
 		{
 			inputTextCodeextensionsTXTFileName=get_char_argument(argc,argv,"-icodeextensions");
 			useInputTextCodeextensionsTXTFileName = true;
+			cout << "inputTextCodeextensionsTXTFileName = " << inputTextCodeextensionsTXTFileName << endl;	//print input file name required for diagnosis
 		}
 	#endif
 
