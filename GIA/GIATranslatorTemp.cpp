@@ -13,18 +13,6 @@
 
 #include "GIATranslator.h"
 
-
-string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_TO, RELATION_TYPE_OBJECT_TO_BE, RELATION_TYPE_OBJECT_TO_DO};
-//int relationTypeObjectNameLengthsArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {4, 2, 6, 6};
-string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_SUBJECT_EXPLETIVE};
-//int relationTypeSubjectNameLengthsArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {5, 5};
-string relationTypeAdjectiveNameArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_1, RELATION_TYPE_ADJECTIVE_2, RELATION_TYPE_ADJECTIVE_3};
-//int relationTypeAdjectiveNameLengthsArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] = {5, 8, 7};
-string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_POSSESSIVE, RELATION_TYPE_PRENOMIAL_MODIFIER};
-//int relationTypePossessiveNameLengthsArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {5, 3};
-string relationFunctionCompositionNameArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_COMPOSITION_1, RELATION_FUNCTION_COMPOSITION_2, RELATION_FUNCTION_COMPOSITION_3};
-//int relationFunctionCompositionNameLengthsArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {8, 9, 3};
-/* ORIGINAL v1a;
 string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_TO};
 //int relationTypeObjectNameLengthsArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {4, 2, 6, 6};
 string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT};
@@ -33,9 +21,27 @@ string relationTypeAdjectiveNameArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] =
 //int relationTypeAdjectiveNameLengthsArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] = {5, 8, 7};
 string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_POSSESSIVE};
 //int relationTypePossessiveNameLengthsArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {5, 3};
+
+string relationFunctionCompositionNameArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_COMPOSITION_1, RELATION_FUNCTION_COMPOSITION_2, RELATION_FUNCTION_COMPOSITION_3};
+//int relationFunctionCompositionNameLengthsArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {8, 9, 3};
+
+
+/* TO DO: RESTORE THIS:
+string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_TO, RELATION_TYPE_OBJECT_TO_BE, RELATION_TYPE_OBJECT_TO_DO};
+//int relationTypeObjectNameLengthsArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {4, 2, 6, 6};
+string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_SUBJECT_EXPLETIVE};
+//int relationTypeSubjectNameLengthsArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {5, 5};
+string relationTypeAdjectiveNameArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_1, RELATION_TYPE_ADJECTIVE_2, RELATION_TYPE_ADJECTIVE_3};
+//int relationTypeAdjectiveNameLengthsArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] = {5, 8, 7};
+string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_POSSESSIVE, RELATION_TYPE_PRENOMIAL_MODIFIER};
+//int relationTypePossessiveNameLengthsArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {5, 3};
+
 string relationFunctionCompositionNameArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_COMPOSITION_1, RELATION_FUNCTION_COMPOSITION_2, RELATION_FUNCTION_COMPOSITION_3};
 //int relationFunctionCompositionNameLengthsArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {8, 9, 3};
 */
+
+
+
 
 
 string referenceTypePossessiveNameArray[REFERENCE_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {"undefined", "his", "her", "them", "its"};
@@ -896,8 +902,6 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			//if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
 			if(passed == true)
 			{
-				cout << "RELATION_TYPE_POSSESSIVE" << endl;
-				
 				string propertyName = currentRelationInList->relationFunction; 
 				string ownerName = currentRelationInList->relationArgument; 
 				int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
