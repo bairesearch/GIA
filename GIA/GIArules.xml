@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a1b 27-October-2013
+ * Project Version: 2a2a 27-October-2013
  *
  *******************************************************************************/
 -->
@@ -1050,6 +1050,7 @@
 			<function name="redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos">
 				<example><!--
 				eg1 Kane is late. nsubj(late-3, Kane-1) + cop(late-3, is-2) -> _predadj(kane-1, late-3) [NB non-determinate of governer and dependent of subject relation; take as indicator of substance]
+				eg1b Riding in the park is good csubj(good-6, Riding-1) + cop(good-6, is-5) -> _predadj(Riding-1, good-6) 	//added 27 October 2013
 				or
 				eg2 She is the one. nsubj(one-4, She-1) + cop(one-4, is-2) + det(one-4, the-3) -> appos(She-1, one-4) [NB determinate of dependent of subject relation; take as an indicator of definition]
 				or
@@ -1067,7 +1068,11 @@
 					<!-- #ifndefGIA_COLLAPSE_COP_RELATION_DEPENDENT_BE_TO_APPOS_NOT_PREDADJ_OLD -->
 						<paramDepRel mode="redistribute">
 						<assert variable="NLPfeatureParserStanfordCoreNLP" />
-						<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_subj" />
+						<!-- #ifdefGIA_TRANSLATOR_SUPPORT_CSUB_AND_COP_GENERATE_ADJECTIVES-->
+						<option useRelationArrayTest="true" REL="0" REL_ENT="2" relationArrayTest="_subj|_csubj" relationArrayTestSize="2" />	<!-- added 27 October 2013 -->
+						<!-- #else -->
+						<!-- <option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_subj" /> -->
+						<!-- #endif -->
 						<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="_cop" />
 						<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
 						<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" /> <!-- redundant test -->

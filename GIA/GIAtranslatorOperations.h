@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a1b 27-October-2013
+ * Project Version: 2a2a 27-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -456,7 +456,8 @@ static string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES
 //substances (actions)
 #define RELATION_TYPE_SUBJECT_OBJECT_NUMBER_OF_TYPES 2
 static string relationTypeSubjectObjectNameArray[RELATION_TYPE_SUBJECT_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_OBJECT};
-
+#define RELATION_TYPE_SUBJECT_CSUBJ_NUMBER_OF_TYPES 2
+static string relationTypeSubjectCsubjNameArray[RELATION_TYPE_SUBJECT_CSUBJ_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, STANFORD_RELATION_TYPE_CLAUSAL_SUBJECT};
 
 //substances (descriptive relationships)
 #define RELATION_TYPE_ADJECTIVE_AMOD "_amod"	  //eg x is happy

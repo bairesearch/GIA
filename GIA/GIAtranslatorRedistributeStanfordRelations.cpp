@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a1b 27-October-2013
+ * Project Version: 2a2a 27-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -2475,6 +2475,7 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 {
 	/*
 	eg1 Kane is late. 		nsubj(late-3, Kane-1) + cop(late-3, is-2) -> _predadj(kane-1, late-3) 				[NB non-determinate of governer and dependent of subject relation; take as indicator of substance]
+	eg1b Riding in the park is good. csubj(good-6, Riding-1) + cop(good-6, is-5) -> _predadj(Riding-1, good-6) 	//added 27 October 2013
 	or
 	eg2 She is the one.	      nsubj(one-4, She-1) + cop(one-4, is-2) + det(one-4, the-3) -> appos(She-1, one-4) 	      [NB determinate of dependent of subject relation; take as an indicator of definition]
 	or
@@ -2505,8 +2506,13 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 		if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 		{
 			param.numberOfRelations = 2;
-
+			
 			GIAgenericDepRelInterpretationParameters paramA = param;
+			#ifdef GIA_TRANSLATOR_SUPPORT_CSUB_AND_COP_GENERATE_ADJECTIVES
+			paramA.useRelationTest[REL1][REL_ENT3] = false;
+			paramA.useRelationArrayTest[REL1][REL_ENT3] = true; paramA.relationArrayTest[REL1][REL_ENT3] = relationTypeSubjectCsubjNameArray; paramA.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_CSUBJ_NUMBER_OF_TYPES;
+			#endif
+		
 			//paramA.useRelationArrayTest[REL1][REL_ENT1] = true; paramA.relationArrayTest[REL1][REL_ENT1] = featurePOSindicatesAdjectiveOrAdverbTypeArray; paramA.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_OF_TYPES; paramA.relationArrayTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
 			EntityCharacteristic relationArrayTestSpecialCasePOStemp1A("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE);
 			EntityCharacteristic relationArrayTestSpecialCasePOStemp1B("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE_COMPARATIVE);
