@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n8a 03-October-2016
+ * Project Version: 2o1a 10-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -126,6 +126,10 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	#ifdef GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES
 	initialiseIntArray2D(&redistributeSpecialCaseRelationEntityReassignmentConcatonateType[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, INT_DEFAULT_VALUE);
 	#endif
+	initialiseBoolArray2D(&useRedistributeSpecialCaseRelationEntityNameReassignment[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false);	
+	initialiseIntArray2D(&redistributeSpecialCaseRelationEntityNameReassignmentRelationID[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, INT_DEFAULT_VALUE);
+	initialiseIntArray2D(&redistributeSpecialCaseRelationEntityNameReassignmentRelationEntityID[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, INT_DEFAULT_VALUE);
+	initialiseBoolArray2D(&redistributeSpecialCaseRelationEntityNameReassignmentUseOriginalValues[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false);
 	initialiseBoolArray2D(&useRedistributeSpecialCaseDisableInstanceAndNetworkIndex[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false);
 	initialiseBoolArray2D(&useSpecialCaseCharacteristicsRelationEntityIndexReassignment[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false); 	//not used often
 	initialiseIntArray2D(&specialCaseCharacteristicsRelationEntityIndexReassignmentRelationID[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, INT_DEFAULT_VALUE);					//not used often
@@ -1116,6 +1120,53 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 												if(param->relationEntityIndex[relationID][relationEntityID] != INT_DEFAULT_VALUE)
 												{//preposition entity has been initialised
 													param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = concatonatedEntityName;
+												}
+												#endif
+											}
+										}
+									}
+								}
+								for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
+								{
+									for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION; relationEntityID++)
+									{
+										if(param->useRedistributeSpecialCaseRelationEntityNameReassignment[relationID][relationEntityID])
+										{
+											#ifdef GIA_DEBUG
+											//cout << "relationID = " << relationID << ", relationEntityID = " << relationEntityID << endl;
+											#endif
+											//reassign entity values
+											if(param->redistributeSpecialCaseRelationEntityNameReassignmentUseOriginalValues[relationID][relationEntityID])
+											{
+												param->relationEntity[relationID][relationEntityID] = param->relationEntityOriginal[param->redistributeSpecialCaseRelationEntityNameReassignmentRelationID[relationID][relationEntityID]][param->redistributeSpecialCaseRelationEntityNameReassignmentRelationEntityID[relationID][relationEntityID]];
+											}
+											else
+											{
+												param->relationEntity[relationID][relationEntityID] = param->relationEntity[param->redistributeSpecialCaseRelationEntityNameReassignmentRelationID[relationID][relationEntityID]][param->redistributeSpecialCaseRelationEntityNameReassignmentRelationEntityID[relationID][relationEntityID]];
+											}
+
+											if(relationEntityID == REL_ENT1)
+											{
+												param->relation[relationID]->relationGovernor = param->relationEntity[relationID][relationEntityID];
+												param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = param->relationEntity[relationID][relationEntityID];
+											}
+											else if(relationEntityID == REL_ENT2)
+											{
+												param->relation[relationID]->relationDependent = param->relationEntity[relationID][relationEntityID];
+												param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = param->relationEntity[relationID][relationEntityID];
+											}
+											else if(relationEntityID == REL_ENT3)
+											{//governor/dependent can become preposition
+												string newPrepositionName = "";
+												newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + param->relationEntity[relationID][relationEntityID];
+												param->relation[relationID]->relationType = newPrepositionName;
+												#ifdef GIA_DEBUG
+												//cout << "param->relation[relationID]->relationType = " << param->relation[relationID]->relationType << endl;
+												#endif
+												#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
+												if(param->relationEntityIndex[relationID][relationEntityID] != INT_DEFAULT_VALUE)
+												{//preposition entity has been initialised
+													param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = param->relationEntity[relationID][relationEntityID];
 												}
 												#endif
 											}
