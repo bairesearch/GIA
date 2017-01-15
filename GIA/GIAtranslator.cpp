@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m4b 06-September-2016
+ * Project Version: 2m5a 08-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1309,7 +1309,7 @@ void createParentsOfSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentityN
 					sentenceConceptEntityNodesList->push_back(parentClassConceptEntity);
 
 					#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
-					//parentClassConceptEntity->entityIndexTemp = subclassConceptEntity->entityIndexTemp;	//there is no entity index associated with the artifically added subclass parent concept
+					parentClassConceptEntity->entityIndexTemp = GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ARTIFICAL_ENTITY_INDEX;	//there is no entity index associated with the artifically added subclass parent concept
 					parentClassConceptEntity->sentenceIndexTemp = subclassConceptEntity->sentenceIndexTemp;
 					#endif		
 				}			
@@ -1363,7 +1363,7 @@ void createAdditionalSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentity
 							sentenceConceptEntityNodesList->push_back(subClassConceptEntity);
 
 							#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
-							//subClassConceptEntity->entityIndexTemp = entity->entityIndexTemp;	//there is no entity index associated with the artifically added subclass parent concept
+							subClassConceptEntity->entityIndexTemp = GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ARTIFICAL_ENTITY_INDEX;	//there is no entity index associated with the artifically added subclass parent concept
 							subClassConceptEntity->sentenceIndexTemp = entity->sentenceIndexTemp;
 							#endif	
 
@@ -1462,7 +1462,7 @@ GIAentityNode* createNewNonspecificSubstanceConcept(GIAentityNode* conceptEntity
 	nonspecificSubstanceConcept->isSubstanceConcept = true;
 	#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 	//this enables GIA drawing of substance concept
-	//nonspecificSubstanceConcept->entityIndexTemp = conceptEntity->entityIndexTemp;	//there is no entity index associated with the artifically added substance concept
+	nonspecificSubstanceConcept->entityIndexTemp = GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ARTIFICAL_ENTITY_INDEX;	//there is no entity index associated with the artifically added substance concept
 	nonspecificSubstanceConcept->sentenceIndexTemp = conceptEntity->sentenceIndexTemp;
 	#endif
 	return nonspecificSubstanceConcept;
