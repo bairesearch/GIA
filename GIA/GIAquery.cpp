@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d5a 16-February-2014
+ * Project Version: 2d6a 16-February-2014
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -213,10 +213,21 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode * queryEntityNode, GIAe
 
 	bool pass = false;
 
-	//cout << "testEntityNodeForQueryOrReferenceSet2: entityNode = " << entityNode->entityName << endl;
+	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+	if(!(referenceTraceParameters->intrasentenceReference))
+	{
+		queryDebugIndentOutputForLevel(queryTraceParameters->level);
+		cout << "testEntityNodeForQueryOrReferenceSet2: entityNode = " << entityNode->entityName << convertIntToString(entityNode->idInstance) << ", queryEntityNode = " << queryEntityNode->entityName << convertIntToString(queryEntityNode->idInstance) << endl;
+
+	}
+	#endif
 
 	if(!(entityNode->testedForQueryComparison) && !(entityNode->testedForQueryComparisonTemp) && !(queryEntityNode->testedForQueryComparison) && !(queryEntityNode->testedForQueryComparisonTemp))
 	{
+		#ifdef GIA_QUERY_DEBUG_LEVEL
+		queryTraceParameters->level = queryTraceParameters->level+1;
+		#endif
+
 		entityNode->testedForQueryComparison = true;
 		queryEntityNode->testedForQueryComparison = true;
 		entityNode->testedForQueryComparisonTemp = false;
@@ -225,8 +236,16 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode * queryEntityNode, GIAe
 		*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
 
 		#ifdef GIA_QUERY_DEBUG
-		cout << "\n\t\ttestEntityNodeForQueryOrReferenceSet:" << endl;
-		cout << "\t\tentityNode = " << entityNode->entityName << endl;
+		queryDebugIndentOutputForLevel(queryTraceParameters->level);
+		cout << "PASS testEntityNodeForQueryOrReferenceSet2: entityNode = " << entityNode->entityName << convertIntToString(entityNode->idInstance) << ", queryEntityNode = " << queryEntityNode->entityName << convertIntToString(queryEntityNode->idInstance) << endl;
+		#endif
+
+		#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+		if(!(referenceTraceParameters->intrasentenceReference))
+		{
+			queryDebugIndentOutputForLevel(queryTraceParameters->level);
+			cout << "PASS testEntityNodeForQueryOrReferenceSet2: entityNode = " << entityNode->entityName << convertIntToString(entityNode->idInstance) << ", queryEntityNode = " << queryEntityNode->entityName << convertIntToString(queryEntityNode->idInstance) << endl;
+		}
 		#endif
 
 
@@ -373,6 +392,10 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode * queryEntityNode, GIAe
 		queryEntityNode->testedForQueryComparison = false;
 		entityNode->testedForQueryComparisonTemp = true;
 		queryEntityNode->testedForQueryComparisonTemp = true;
+
+		#ifdef GIA_QUERY_DEBUG_LEVEL
+		queryTraceParameters->level = queryTraceParameters->level-1;
+		#endif
 	}
 	/*
 	else
@@ -397,6 +420,15 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode * queryEntityNode,
 	#ifdef GIA_QUERY_DEBUG
 	cout << "testReferencedEntityNodeForExactNameMatch: queryEntityNode = " << queryEntityNode->entityName << ", entityNode = " << entityNode->entityName << endl;
 	#endif
+	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+	if(!(referenceTraceParameters->intrasentenceReference))
+	{
+		queryDebugIndentOutputForLevel(queryTraceParameters->level);
+		cout << "testReferencedEntityNodeForExactNameMatch2: entityNode = " << entityNode->entityName << convertIntToString(entityNode->idInstance) << ", queryEntityNode = " << queryEntityNode->entityName << convertIntToString(queryEntityNode->idInstance) << endl;
+
+	}
+	#endif
+
 	if((entityNode->testedForQueryComparison) && !(queryEntityNode->testedForQueryComparison))
 	{
 		//KB entity traced, but query entity not traced... implies have chosen wrong trace path
@@ -1144,10 +1176,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode * queryEntityNode, G
 						queryTraceParameters->queryAnswerNodes.push_back(entityNode);
 						queryTraceParameters->queryAnswerContexts.push_back("");
 						#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
-						for(int level=0; level<queryTraceParameters->level+1; level++)
-						{
-							cout << "\t";
-						}
+						queryDebugIndentOutputForLevel(queryTraceParameters->level);
 						cout << "addingAnswer:" << entityNode->entityName << endl;
 						#endif
 					}
@@ -1319,10 +1348,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode * queryEntityNode, G
 								if(compareEntityNamesResult)
 								{
 									#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-									for(int level=0; level<queryTraceParameters->level+1; level++)
-									{
-										cout << "\t";
-									}
+									queryDebugIndentOutputForLevel(queryTraceParameters->level);
 									cout << "compareEntityNamesResult: queryEntityNode->entityName = " << queryEntityNode->entityName << ", entityNode->entityName = " << entityNode->entityName << endl;
 									/*
 									cout << "queryEntityNode->isSubstance = " << queryEntityNode->isSubstance << endl;
@@ -1470,7 +1496,6 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 	{
 		#ifdef GIA_QUERY_DEBUG_LEVEL
 		queryTraceParameters->level = queryTraceParameters->level+1;
-		int currentLevel = queryTraceParameters->level;
 		#endif
 
 		/* this is set elsewhere;
@@ -1490,10 +1515,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
 		if(queryTraceParameters->level < 10)
 		{
-			for(int level=0; level<queryTraceParameters->level+1; level++)
-			{
-				cout << "\t";
-			}
+			queryDebugIndentOutputForLevel(queryTraceParameters->level);
 			cout << queryEntityNode->entityName << ", entityNode->entityName = " << entityNode->entityName << endl;
 		}
 		#endif
@@ -1528,10 +1550,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 		{
 			*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-			for(int level=0; level<currentLevel; level++)
-			{
-				cout << "\t";
-			}
+			queryDebugIndentOutputForLevel(queryTraceParameters->level);
 			cout << "numberOfMatchedNodes = " << *numberOfMatchedNodes << ", entityNode->entityName = " << entityNode->entityName << endl;
 			#endif
 		}
@@ -1700,10 +1719,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 					#endif
 
 					#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
-					for(int level=0; level<currentLevel; level++)
-					{
-						cout << "\t";
-					}
+					queryDebugIndentOutputForLevel(queryTraceParameters->level);
 					cout << "A. SDGG connectionIterQuery = " << (*connectionIterQuery)->entity->entityName << endl;
 					#endif
 
@@ -1715,18 +1731,12 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 						#endif
 
 						#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
-						for(int level=0; level<currentLevel; level++)
-						{
-							cout << "\t";
-						}
+						queryDebugIndentOutputForLevel(queryTraceParameters->level);
 						cout << "A2. SDGG connectionIter = " << (*connectionIter)->entity->entityName << endl;
 						#endif
 						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 						cout << "" << endl;
-						for(int level=0; level<currentLevel; level++)
-						{
-							cout << "\t";
-						}
+						queryDebugIndentOutputForLevel(queryTraceParameters->level);
 						cout << "tracing: (*connectionIterQuery) = " << (*connectionIterQuery)->entity->entityName << ", (*connectionIter) = " << (*connectionIter)->entity->entityName << ", i = " << i <<  endl;
 						#endif
 
@@ -1790,10 +1800,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 								#endif
 
 								#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-								for(int level=0; level<currentLevel; level++)
-								{
-									cout << "\t";
-								}
+								queryDebugIndentOutputForLevel(queryTraceParameters->level);
 								cout << "bestAnswerCandidate: (*connectionIter)->entity->entityName = " << (*connectionIter)->entity->entityName << endl;
 								#endif
 								queryEntityCorrespondingBestMatch = (*connectionIter)->entity;
@@ -1803,10 +1810,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 							else
 							{
 								#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-								for(int level=0; level<currentLevel; level++)
-								{
-									cout << "\t";
-								}
+								queryDebugIndentOutputForLevel(queryTraceParameters->level);
 								cout << "nobestAnswerCandidate: (*connectionIter) = " << (*connectionIter)->entity->entityName << ", exactMatchTemp = " << exactMatchTemp << ", numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
 								#endif
 							}
@@ -1821,10 +1825,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 										if(queryTraceParametersTemp.foundAnswer)
 										{
 											#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
-											for(int level=0; level<currentLevel; level++)
-											{
-												cout << "\t";
-											}
+											queryDebugIndentOutputForLevel(queryTraceParameters->level);
 											cout << "queryTraceParametersTemp.foundAnswer: answer = " << queryTraceParametersTemp.queryAnswerNode->entityName << endl;
 											#endif
 
@@ -1832,10 +1833,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 											#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
 											for(vector<GIAentityNode*>::iterator entityAnswerIter = queryTraceParametersTemp.queryAnswerNodes.begin(); entityAnswerIter != queryTraceParametersTemp.queryAnswerNodes.end(); entityAnswerIter++)
 											{
-												for(int level=0; level<currentLevel; level++)
-												{
-													cout << "\t";
-												}
+												queryDebugIndentOutputForLevel(queryTraceParameters->level);
 												cout << "Multiple Answer Found:" << (*entityAnswerIter)->entityName << endl;
 											}
 											#endif
@@ -1856,21 +1854,12 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 													vector<string>::iterator entityAnswerContextsIter = queryTraceParameters->queryAnswerContexts.begin();
 													for(vector<GIAentityNode*>::iterator entityAnswerIter = queryTraceParameters->queryAnswerNodes.begin(); entityAnswerIter != queryTraceParameters->queryAnswerNodes.end(); entityAnswerIter++)
 													{
-														for(int level=0; level<currentLevel; level++)
-														{
-															cout << "\t";
-														}
+														queryDebugIndentOutputForLevel(queryTraceParameters->level);
 														cout << "numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << ", numberOfMatchedNodesAtPreviousAnswerNode = " << queryTraceParameters->numberOfMatchedNodesAtPreviousAnswerNode << endl;
 
-														for(int level=0; level<currentLevel; level++)
-														{
-															cout << "\t";
-														}
+														queryDebugIndentOutputForLevel(queryTraceParameters->level);
 														cout << "Multiple Answer Cleared:" << (*entityAnswerIter)->entityName << endl;
-														for(int level=0; level<currentLevel; level++)
-														{
-															cout << "\t";
-														}
+														queryDebugIndentOutputForLevel(queryTraceParameters->level);
 														cout << "Multiple Answer Context Cleared:" << (*entityAnswerContextsIter) << endl;
 														entityAnswerContextsIter++;
 													}
@@ -1923,15 +1912,9 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 															queryTraceParameters->numberAnswersFound = queryTraceParameters->numberAnswersFound + 1;
 
 															#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
-															for(int level=0; level<currentLevel; level++)
-															{
-																cout << "\t";
-															}
+															queryDebugIndentOutputForLevel(queryTraceParameters->level);
 															cout << "Multiple Answer Found:" << (*entityAnswerIterTemp)->entityName << endl;
-															for(int level=0; level<currentLevel; level++)
-															{
-																cout << "\t";
-															}
+															queryDebugIndentOutputForLevel(queryTraceParameters->level);
 															cout << "Multiple Answer Context Found:" << (*entityAnswerContextsIterTemp) << endl;
 															#endif
 														}
@@ -1953,10 +1936,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 						else
 						{
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-							for(int level=0; level<currentLevel; level++)
-							{
-								cout << "\t";
-							}
+							queryDebugIndentOutputForLevel(queryTraceParameters->level);
 							cout << "MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS: (*connectionIter)->entity->entityName = " << (*connectionIter)->entity->entityName << endl;
 							#endif
 						}
@@ -1974,10 +1954,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 					}
 
 					#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
-					for(int level=0; level<currentLevel; level++)
-					{
-						cout << "\t";
-					}
+					queryDebugIndentOutputForLevel(queryTraceParameters->level);
 					cout << "B. SDGG connectionIterQuery = " << (*connectionIterQuery)->entity->entityName << endl;
 					#endif
 
@@ -2031,10 +2008,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 					if(matchFound)
 					{
 						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-						for(int level=0; level<currentLevel; level++)
-						{
-							cout << "\t";
-						}
+						queryDebugIndentOutputForLevel(queryTraceParameters->level);
 						cout << "matchFound" << endl;
 						#endif
 
@@ -2066,29 +2040,20 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 						#endif
 
 						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-						for(int level=0; level<currentLevel; level++)
-						{
-							cout << "\t";
-						}
+						queryDebugIndentOutputForLevel(queryTraceParameters->level);
 						cout << "numberOfMatchedNodes = " << *numberOfMatchedNodes << endl;
 						#endif
 					}
 					else
 					{
 						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-						for(int level=0; level<currentLevel; level++)
-						{
-							cout << "\t";
-						}
+						queryDebugIndentOutputForLevel(queryTraceParameters->level);
 						cout << "nomatchFound" << endl;
 						#endif
 					}
 
 					#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
-					for(int level=0; level<currentLevel; level++)
-					{
-						cout << "\t";
-					}
+					queryDebugIndentOutputForLevel(queryTraceParameters->level);
 					cout << "C. SDGG connectionIterQuery = " << (*connectionIterQuery)->entity->entityName << endl;
 					#endif
 
@@ -2166,6 +2131,10 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 		queryEntityNode->testedForQueryComparison = false;
 		entityNode->testedForQueryComparisonTemp = true;
 		queryEntityNode->testedForQueryComparisonTemp = true;
+
+		#ifdef GIA_QUERY_DEBUG_LEVEL
+		queryTraceParameters->level = queryTraceParameters->level-1;
+		#endif
 
 	}
 	#ifdef GIA_QUERY_DEBUG
@@ -2764,12 +2733,13 @@ void traceEntityNode(GIAentityNode * entityNode, int function, int * numberOfMat
 	}
 }
 
-
-
-
-
-
-
+void queryDebugIndentOutputForLevel(int currentLevel)
+{
+	for(int level=0; level<currentLevel; level++)
+	{
+		cout << "\t";
+	}
+}
 
 
 

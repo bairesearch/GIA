@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d5a 16-February-2014
+ * Project Version: 2d6a 16-February-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -109,6 +109,13 @@ void applyAdvancedFeatures(Sentence * currentSentenceInList, bool GIAentityNodeA
 	cout << "4l pass; define action concepts (ie specific action concepts)" << endl;
 	#endif
 	defineActionConcepts2(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#endif
+	
+	#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "4m pass; remove substance concept tag for all entities with a property owner that is a substance (a non-substance concept)" << endl;
+	#endif
+	updateSubstanceConceptDesignationBasedPropertyOwnerContext(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 }
 
@@ -1312,5 +1319,35 @@ void defineActionConcepts2(Sentence * currentSentenceInList, bool GIAentityNodeA
 }
 #endif
 
+#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
+void updateSubstanceConceptDesignationBasedPropertyOwnerContext(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+{
+	/*
+	updateSubstanceConceptDesignationBasedPropertyOwnerContext() is designed to distinguish between;
+		knights substance (plural): Africa has a castle with knights.
+			and;
+		knights substance concept: Knights are tall.
+	*/
+
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAentityNodeArrayFilled[i])
+		{
+			GIAentityNode * entity = GIAentityNodeArray[i];
+			if(entity->isSubstanceConcept)
+			{
+				if(!(entity->propertyNodeReverseList->empty()))
+				{
+					GIAentityNode * propertyOwner = (entity->propertyNodeReverseList->back())->entity;
+					if(!(propertyOwner->isSubstanceConcept))
+					{
+						entity->isSubstanceConcept = false;
+					}
+				}
+			}
+		}	
+	}
+}
+#endif
 
 

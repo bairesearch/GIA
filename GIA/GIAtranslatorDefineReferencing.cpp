@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d5a 16-February-2014
+ * Project Version: 2d6a 16-February-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1143,7 +1143,9 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 
 	for(int referenceSetID=0; referenceSetID<numberReferenceSets; referenceSetID++)
 	{
-		//cout << "\n ****************************************** referenceSetID = " << referenceSetID << endl;
+		#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+		cout << "\n ****************************************** referenceSetID = " << referenceSetID << endl;
+		#endif
 
 		GIAreferenceTraceParameters referenceTraceParameters;
 		referenceTraceParameters.referenceSetID = referenceSetID;

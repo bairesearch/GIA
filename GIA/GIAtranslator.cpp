@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d5a 16-February-2014
+ * Project Version: 2d6a 16-February-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -517,6 +517,9 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (3createGIACoreferenceInListBasedUponIdentifiedReferenceSets)\n" << endl;
 	#endif
 
+	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+	cout << "createGIAcoreferenceInListBasedUponIdentifiedReferenceSets:" << endl;
+	#endif
 	createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(sentenceConceptEntityNodesList, entityNodesActiveListConcepts, firstGIACoreferenceInList, numberReferenceSets);
 
 	#ifndef GIA_FREE_MEMORY2
@@ -601,6 +604,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 			//only works with single sentence input (ie inputText.txt contains a single sentence)
 			int numberReferenceSetsTemp = identifyReferenceSets(entityNodesActiveListConcepts, NLPdependencyRelationsType);
 		#endif
+	cout << "End for colours only...\n\n" << endl;
 	#endif
 	
 	//cout << "ak2" << endl;

@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d5a 16-February-2014
+ * Project Version: 2d6a 16-February-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -582,7 +582,7 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 				}
 				#ifdef GIA_INSTANCE_OR_REFERENCE_SET_ID_DEBUG
 				//nameOfBox = convertIntToString(entityNode->referenceSetID);
-				nameOfBox = convertIntToString(entityNode->idInstance);
+				nameOfBox = nameOfBox + convertIntToString(entityNode->idInstance);
 				#endif
 				//cout << "entityColour = " << entityColour << endl;
 				currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, currentTag, boxThickness, printType);
