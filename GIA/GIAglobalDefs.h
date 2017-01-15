@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t3b 25-July-2013
+ * Project Version: 1t4a 26-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -514,10 +514,6 @@
 #include "SHAREDglobalDefs.h"
 
 //variables currently being tested (1t1a+)
-
-//#define GIA_1T2D_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_REMOVE_ASSSIGNMENT_OF_SPECIFIC_CONCEPTS_TO_PROPERNOUNS
-#define GIA_1S8C_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_REMOVE_ASSSIGNMENT_OF_SPECIFIC_CONCEPTS_TO_PRONOUNS
-
 #define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
 #define GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
@@ -532,7 +528,6 @@
 //variables currently being tested (1s1a+)
 #define GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER	//disable this if using previously tested version of Stanford CoreNLP (stanford-corenlp-2012-04-03)
 #define GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_WORKAROUND_STANFORD_BUG_SINGLE_DIGIT_TIMES_MARKED_AS_ADJECTIVE
-#define GIA_1S8E_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_REMOVE_TIME_QUERY_ALIAS_ANSWERS
 #define GIA_1S8D_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_APPLY_FIX_TO_IS_NAME_QUERY_PROPOGATION
 //#define GIA_1S3A_ADD_INTERPRETION_OF_IN_AS_POSSESSIVE_FOR_SUBSTANCES	//disabled in GIA 1s10d due to misinterpretation of "in" in "Apples are used for eating in the forest."
 
@@ -558,12 +553,8 @@
 
 #define GIA_SUPPORT_SPECIFIC_CONCEPTS	//added 1q4a to take into account specific concepts eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
 #ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-	#ifndef GIA_1T2D_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_REMOVE_ASSSIGNMENT_OF_SPECIFIC_CONCEPTS_TO_PROPERNOUNS
-		#define GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS		//added 1q10a [activated 1q10c] //removed 1t2d
-	#endif
-	#ifndef GIA_1S8C_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_REMOVE_ASSSIGNMENT_OF_SPECIFIC_CONCEPTS_TO_PRONOUNS
-		#define GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS	//added 1q10a [activated 1q10c]	//removed GIA 1s8c	//check this does not undo advanced referencing/quering...
-	#endif
+	//#define GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS	//added 1q10a [activated 1q10c] //removed 1t2d
+	//#define GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS	//added 1q10a [activated 1q10c]	//removed 1s8c	//check this does not undo advanced referencing/quering...
 #endif
 	//NB the phrase 'substance concept'/'substance quality' is a misnomer, as concepts and qualities are not really substances [NB concepts are considered secondary substances in Aristotle's categories, but GIA has a separate Entity class for concepts marked by isConcept: which is confusingly not being used in this case of 'specific concepts' - a software development/history artefact]" << endl;
 	

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t3b 25-July-2013
+ * Project Version: 1t4a 26-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -315,29 +315,26 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				#ifdef GIA_USE_ADVANCED_REFERENCING
 				if(linkPreestablishedReferencesGIA)
 				{
-				#endif
-					//cout << "at1" << endl;
+				#endif			
 					//cout << "thingEntity->isNameQuery = " << thingEntity->isNameQuery << endl;
-					//cout << "definitionEntity->isNameQuery = " << definitionEntity->isNameQuery << endl;										
+					//cout << "definitionEntity->isNameQuery = " << definitionEntity->isNameQuery << endl;	
+					//cout << "thingEntity->isSubstance = " << thingEntity->isSubstance << endl;
+					//cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;										
 					if((thingEntity->isSubstance || thingEntity->isNameQuery) && (definitionEntity->isSubstance || definitionEntity->isNameQuery))
 					{//equality link found - add alias instead
-						//cout << "at2" << endl;					
+										
 						//cout << "thingEntity->isSubstanceConcept = " << thingEntity->isSubstance << endl;
 						//cout << "definitionEntity->isSubstanceConcept = " << definitionEntity->isSubstance << endl;
-						//cout << "definitionEntity->isName = " << definitionEntity->isName << endl;						
-						//cout << "((thingEntity->isSubstance || thingEntity->isNameQuery) && (definitionEntity->isSubstance || definitionEntity->isNameQuery))" << endl;
 						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-						if(!(thingEntity->isSubstanceConcept) && (!(definitionEntity->isSubstanceConcept) || (definitionEntity->isName)))
+						if(!(thingEntity->isSubstanceConcept) && (!(definitionEntity->isSubstanceConcept))) 	//only required with GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS: || (definitionEntity->isName)))
 						{
 						#endif
 							#ifdef GIA_TRANSLATOR_DEBUG
 							cout << "treatDefinitionAsEquality" << endl;
 							#endif
 
-							#ifndef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS_ONLY_WORK_WITH_STANFORD
 							if(!(definitionEntity->hasAssociatedTime))
 							{
-							#endif
 								treatDefinitionAsEquality = true;
 								if(definitionEntity->grammaticalRelexPersonOrStanfordProperNounTemp || definitionEntity->isNameQuery)
 								{
@@ -361,33 +358,11 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 									#endif
 									//if no proper noun (or query) detected, each node is equal, eg the brown dog == the happy wolf]
 								}
-							#ifndef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS_ONLY_WORK_WITH_STANFORD
 							}
-							#endif
 						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 						}
 						#endif							
 					}
-					#ifdef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS_ONLY_WORK_WITH_STANFORD
-					else if((thingEntity->isSubstance && thingEntity->entityName == FEATURE_RELEX_FLAG_TIME_NAME) && (definitionEntity->isQuery))
-					{
-						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-						if(!(thingEntity->isSubstanceConcept))
-						{
-						#endif		
-							//cout << "should be flagged" << endl;
-										
-							#ifdef GIA_ALIASES_DEBUG
-							cout << "linkEntityDefinitionsAppositiveOfNouns4" << endl;
-							#endif
-							//eg what is the time
-							treatDefinitionAsEquality = true;
-							definitionEntity->isNameQuery = true;
-						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-						}
-						#endif							
-					}
-					#endif
 				#ifdef GIA_USE_ADVANCED_REFERENCING
 				}
 				#endif
@@ -446,6 +421,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 		currentRelationInList = currentRelationInList->next;
 	}
 }
+
 
 //Stanford Only
 void linkDependentActionsType1(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
