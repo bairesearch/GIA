@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7h 03-July-2013
+ * Project Version: 1s8c 03-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -897,7 +897,9 @@ void defineSubstanceConcepts(bool GIAentityNodeArrayFilled[], GIAentityNode * GI
 				if(!(thingEntity->wasReference))
 				{
 				#endif
-				
+					cout << "thingEntity->entityName = " << thingEntity->entityName << endl;
+					cout << "thingIndex = " << thingIndex << endl;
+					
 					#ifdef GIA_TRANSLATOR_DEBUG				
 					//cout << "defineSubstancesBasedOnDeterminatesOfDefinitionEntities(): RELATION_TYPE_APPOSITIVE_OF_NOUN" << endl;
 					#endif
@@ -913,29 +915,36 @@ void defineSubstanceConcepts(bool GIAentityNodeArrayFilled[], GIAentityNode * GI
 
 					bool thingFeatureIsProperNoun = featureArrayTemp[thingIndex]->grammaticalIsProperNoun;
 					bool thingIsDefinite =  featureArrayTemp[thingIndex]->grammaticalIsDefinite;
-
-					if(!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)
-					{
-						/*
-						cout << "thingEntity->entityName = " << i << ", " << thingEntity->entityName << endl;			
-						cout << "\t(!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)" << endl;
-						*/
-						thingEntity->isSubstanceConcept = true;
-					}
-					if(featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation)
-					{
-						/*
-						cout << "thingEntity->entityName = " << i << ", " << thingEntity->entityName << endl;
-						cout << "\t(featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation)" << endl;			
-						*/
-						thingEntity->isSubstanceConcept = true;
-					}
-					#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS_AND_PROPERNOUNS
+					
 					bool thingFeatureIsPronoun = false;
 					if(featureArrayTemp[thingIndex]->grammaticalIsPronoun == GRAMMATICAL_PRONOUN)
 					{
 						thingFeatureIsPronoun = true;	
-					}			
+					}
+					#ifndef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS					
+					if(!thingFeatureIsPronoun)
+					{
+					#endif
+						if(!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)
+						{
+							/*
+							cout << "thingEntity->entityName = " << i << ", " << thingEntity->entityName << endl;			
+							cout << "\t(!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)" << endl;
+							*/
+							thingEntity->isSubstanceConcept = true;
+						}
+						if(featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation)
+						{
+							/*
+							cout << "thingEntity->entityName = " << i << ", " << thingEntity->entityName << endl;
+							cout << "\t(featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation)" << endl;			
+							*/
+							thingEntity->isSubstanceConcept = true;
+						}
+					#ifndef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS					
+					}
+					#endif
+					#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS		
 					if(thingFeatureIsPronoun)
 					{
 						/*
@@ -944,6 +953,8 @@ void defineSubstanceConcepts(bool GIAentityNodeArrayFilled[], GIAentityNode * GI
 						*/
 						thingEntity->isSubstanceConcept = true;
 					}
+					#endif
+					#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS					
 					if(thingFeatureIsProperNoun)
 					{
 						/*

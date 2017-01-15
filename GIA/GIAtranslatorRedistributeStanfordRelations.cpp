@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7h 03-July-2013
+ * Project Version: 1s8c 03-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -3214,15 +3214,15 @@ void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSenten
 void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
 {
 	/*
-	She is the one.		_obj(be[2], one[4]) + _subj(be[2], she[1]) -> appos(She-1, one-4)
-	Bikes are machines. 	_obj(be[2], machine[3]) + _subj(be[2], bike[1])	-> appos(bike-1, machine-3)		 
-	That is Jim. 		_obj(be[2], Jim[3]) + _subj(be[2], that[1]) -> appos(that-1, Jim-3)		
-	The time is 06:45.	_obj(be[3], 06:45[4]) + _subj(be[3], time[2]) -> appos(time-2, 06:45-4)	
+	She is the one.		_subj(be[2], she[1]) + _obj(be[2], one[4]) -> appos(She-1, one-4)
+	Bikes are machines. 	_subj(be[2], bike[1]) + _obj(be[2], machine[3]) -> appos(bike-1, machine-3)		 
+	That is Jim. 		_subj(be[2], that[1]) + _obj(be[2], Jim[3]) -> appos(that-1, Jim-3)		
+	The time is 06:45.	_subj(be[3], time[2]) + _obj(be[3], 06:45[4])  -> appos(time-2, 06:45-4)	
 	...	
 	Kane is late.  No change required (Relex parses this correctly)
 		_predadj(Kane[1], late[3])
 	She is the one.
-		_obj(be[2], one[4]) + _subj(be[2], she[1]) -> appos(She-1, one-4)		 
+		_subj(be[2], she[1]) + _obj(be[2], one[4]) -> appos(She-1, one-4)		 
 	The girl is tall. No change required (Relex parses this correctly)
 		_predadj(girl[2], tall[4])		
 	Bikes are machines. 
@@ -3230,10 +3230,18 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 	the wheels are green. No change required (Relex parses this correctly)
 		_predadj(wheel[2], green[4])		
 	That is Jim. 	
-		_obj(be[2], Jim[3]) + _subj(be[2], that[1]) -> appos(that-1, Jim-3)		  
+		_subj(be[2], that[1]) + _obj(be[2], Jim[3]) +  -> appos(that-1, Jim-3)		  
 	The time is 06:45.
-		_obj(be[3], 06:45[4]) + _subj(be[3], time[2]) -> appos(time-2, 06:45-4)	
+		_subj(be[3], time[2]) + _obj(be[3], 06:45[4]) +  -> appos(time-2, 06:45-4)	
 	*/
+	
+	/*Also deal with special case queries (required to support aliasing / consistency with Stanford parser)
+	What is the time? _subj(be[2], _$qVar[1]) + _obj(be[2], time[4]) -> appos(time[4], $qVar[1])
+	Who is that?	_subj(be[2], _$qVar[1]) + _obj(be[2], that[3]) -> appos(that[3], _$qVar[1])	
+	What time is it?	_subj(be[3], time[2]) + _obj(be[3], it[4]) -> appos(time[2], $qVar[4])
+		note query comparison node used to be identified via identifyComparisonVariableAlternateMethod()
+	*/
+	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -3241,7 +3249,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
-			if(currentRelationInList->relationType == RELATION_TYPE_OBJECT)
+			if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT)
 			{
 				//now find the associated object..
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
@@ -3251,17 +3259,65 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 					if(!(currentRelationInList2->disabled))
 					{
 					#endif
-						if(currentRelationInList2->relationType == RELATION_TYPE_SUBJECT)
+						if(currentRelationInList2->relationType == RELATION_TYPE_OBJECT)
 						{
-							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
+							if((currentRelationInList->relationGovernor == RELATION_ENTITY_BE) && (currentRelationInList2->relationGovernor == RELATION_ENTITY_BE))
 							{//found a matching preposition of object-subject relationship
 								
-								currentRelationInList->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-								currentRelationInList->relationGovernorIndex = currentRelationInList2->relationDependentIndex;
-								currentRelationInList->relationGovernor = GIAentityNodeArray[currentRelationInList2->relationDependentIndex]->entityName;
+								//deal with special case relex queries:
+								#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
+								if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+								{		
+									/*
+									What is the time? _subj(be[2], _$qVar[1]) + _obj(be[2], time[4]) -> appos(time[4], $qVar[1])
+									Who is that?	_subj(be[2], _$qVar[1]) + _obj(be[2], that[3]) -> appos(that[3], _$qVar[1])	
+									*/	
+									
+									currentRelationInList2->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+									currentRelationInList2->relationGovernorIndex = currentRelationInList2->relationDependentIndex;
+									currentRelationInList2->relationGovernor = GIAentityNodeArray[currentRelationInList2->relationDependentIndex]->entityName;
+									currentRelationInList2->relationDependentIndex = currentRelationInList->relationDependentIndex;
+									currentRelationInList2->relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
+									
+									currentRelationInList->disabled =  true;
+									currentRelationInList->relationType = "dummyRelationCollapseSubjectAndObjectGenerateAppos";	//required to prevent use by GIA (when !GIA_DO_NOT_PARSE_DISABLED_RELATIONS)
+								
+								}
+								else
+								#endif
+								if(currentRelationInList2->relationDependent == RELATION_ENTITY_IT)
+								{
+									/*
+									What time is it?	_subj(be[3], time[2]) + _obj(be[3], it[4]) -> appos(time[2], $qVar[4])
+										note query comparison node used to be identified via identifyComparisonVariableAlternateMethod())
+									*/	
+									currentRelationInList2->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+									currentRelationInList2->relationGovernorIndex = currentRelationInList->relationDependentIndex;
+									currentRelationInList2->relationGovernor = GIAentityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
 
-								currentRelationInList2->disabled =  true;
-								currentRelationInList2->relationType = "dummyRelationCollapseSubjectAndObjectGenerateAppos";	//required to prevent use by GIA (when !GIA_DO_NOT_PARSE_DISABLED_RELATIONS)
+									currentRelationInList2->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "it" -> "$qvar"
+									GIAentityNodeArray[currentRelationInList->relationDependentIndex]->entityName = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+									
+									currentRelationInList->disabled =  true;
+									currentRelationInList->relationType = "dummyRelationCollapseSubjectAndObjectGenerateAppos";	//required to prevent use by GIA (when !GIA_DO_NOT_PARSE_DISABLED_RELATIONS)
+																
+								}
+								else
+								{
+									/*
+									She is the one.		_subj(be[2], she[1]) + _obj(be[2], one[4]) -> appos(She-1, one-4)
+									Bikes are machines. 	_subj(be[2], bike[1]) + _obj(be[2], machine[3]) -> appos(bike-1, machine-3)		 
+									That is Jim. 		_subj(be[2], that[1]) + _obj(be[2], Jim[3]) -> appos(that-1, Jim-3)		
+									The time is 06:45.	_subj(be[3], time[2]) + _obj(be[3], 06:45[4])  -> appos(time-2, 06:45-4)
+									*/								
+								
+									currentRelationInList2->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+									currentRelationInList2->relationGovernorIndex = currentRelationInList->relationDependentIndex;
+									currentRelationInList2->relationGovernor = GIAentityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
+
+									currentRelationInList->disabled =  true;
+									currentRelationInList->relationType = "dummyRelationCollapseSubjectAndObjectGenerateAppos";	//required to prevent use by GIA (when !GIA_DO_NOT_PARSE_DISABLED_RELATIONS)
+								}
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
