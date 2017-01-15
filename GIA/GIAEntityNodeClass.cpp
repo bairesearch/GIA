@@ -94,8 +94,6 @@ GIAEntityNode::GIAEntityNode(void)
 	isAnswerToQuery = false;
 	isAnswerContextToQuery = false;
 	testedForQueryComparison = false;
-	queryIsCondition = false;
-	queryConditionType = "";
 
 	negative = false;
 }

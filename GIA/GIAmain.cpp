@@ -540,7 +540,8 @@ int main(int argc,char **argv)
 		double confidence = 0.0;
 		
 		GIAEntityNode* queryAnswerNode;
-		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(conceptEntityNodesList, conceptEntityNamesList, conceptEntityNodesListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence);
+		GIAEntityNode* queryAnswerPreviousNode;
+		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(conceptEntityNodesList, conceptEntityNamesList, conceptEntityNodesListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerPreviousNode);
 		
 		double maxConfidence = entityNodesCompleteListQuery->size();
 	
@@ -568,12 +569,12 @@ int main(int argc,char **argv)
 					sprintf(tempQuantityNumberStringCharStar, "%d", queryAnswerNode->quantityNumber);					
 					answerString = answerString + "\nQuantity number: " + tempQuantityNumberStringCharStar;	
 				}
-				if(queryAnswerNode->queryIsCondition)
+				if(queryAnswerPreviousNode->isCondition)
 				{
 					#ifndef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
-					cout << "Answer is a Condition of type/preposition:" << queryAnswerNode->queryConditionType << endl;
+					cout << "Answer is a Condition of type/preposition:" << queryAnswerPreviousNode->entityName << endl;
 					#endif
-					answerString = answerString + "\nAnswer is a Condition of type/preposition: " + queryAnswerNode->queryConditionType;	
+					answerString = answerString + "\nAnswer is a Condition of type/preposition: " + queryAnswerPreviousNode->entityName;	
 				}
 			}
 			//cout << "ahsd2" << endl;

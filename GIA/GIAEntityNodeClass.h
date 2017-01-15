@@ -220,8 +220,6 @@ public:
 	bool isAnswerToQuery;
 	bool isAnswerContextToQuery;
 	bool testedForQueryComparison;
-	bool queryIsCondition;
-	string queryConditionType;
 	
 	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for properties and actions; but relex does not appear to output this information]
 	
