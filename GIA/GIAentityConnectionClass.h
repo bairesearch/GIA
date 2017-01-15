@@ -23,7 +23,7 @@
  * File Name: GIAentityConnectionClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t8c 31-August-2013
+ * Project Version: 1t8d 31-August-2013
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -78,6 +78,10 @@ public:
 	//long referenceIndex; 	//OLD [now assume referenceIndex equals the index of the connection in the connection vector] added 24 May 2012 (needs to be populated)
 	#endif
 
+	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
+	bool initialisedForPrinting;
+	#endif
+	
 	/*
 	#ifdef GIA_USE_NLG
 	bool parsedForLanguageGeneration;

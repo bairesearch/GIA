@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t8c 31-August-2013
+ * Project Version: 1t8d 31-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -216,10 +216,18 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesA
 	}
 }
 
-Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityNode * entityNodeToConnect, Reference * currentReferenceInPrintList, bool printType[], string connectionName, int entityDefinitionConnectionColour, XMLparserTag ** currentTag)
+Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityConnection * entityConnection, Reference * currentReferenceInPrintList, bool printType[], string connectionName, int entityDefinitionConnectionColour, XMLparserTag ** currentTag)
 {
+	GIAentityNode * entityNodeToConnect = entityConnection->entity;
+	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
+	if((entityNodeToConnect->initialisedForPrinting) && !(entityConnection->initialisedForPrinting) && !(entityNodeToConnect->disabled))
+	//added condition 31 August 2013: only print connection if node has been printed
+	#else
 	if(!(entityNodeToConnect->disabled))
+	#endif
 	{
+		entityConnection->initialisedForPrinting = true;
+		
 		//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
 		vec pos2;
 		pos2.x = entityNodeToConnect->printX;
@@ -384,9 +392,10 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 							}
 							#endif
 							//cout << "entityConnectionColour = " << entityConnectionColour << endl;
-							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, (*connectionIter)->entity, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);
+							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, *connectionIter, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);
 						}
 					}
+					
 					q = q + entityVectorConnectionDrawPosYspacingArray[i];
 				}
 			}

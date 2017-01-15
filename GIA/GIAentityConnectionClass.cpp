@@ -23,7 +23,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t8c 31-August-2013
+ * Project Version: 1t8d 31-August-2013
  *
  *******************************************************************************/
 
@@ -48,6 +48,10 @@ GIAentityConnection::GIAentityConnection(void)
 	added = false;
 	#endif
 
+	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
+	initialisedForPrinting = false;
+	#endif
+	
 	/*
 	#ifdef GIA_USE_NLG
 	parsedForLanguageGeneration = false;

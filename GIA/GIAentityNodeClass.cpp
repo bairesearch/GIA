@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t8c 31-August-2013
+ * Project Version: 1t8d 31-August-2013
  *
  *******************************************************************************/
 
@@ -694,7 +694,9 @@ bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * ent
 	#endif
 
 	/*GIA Miscellaneous Internal Variables*/
+	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	testEntityCharacteristicIterationbool(entity->wasReference, entityCharacteristic, "wasReference", &foundMatch);
+	#endif
 	testEntityCharacteristicIterationbool(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp, entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->mustSetIsSubstanceConceptBasedOnApposRelation, entityCharacteristic, "mustSetIsSubstanceConceptBasedOnApposRelation", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->isPronounReference, entityCharacteristic, "isPronounReference", &foundMatch);
@@ -850,7 +852,9 @@ bool setEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * enti
 	#endif
 	
 	/*GIA Miscellaneous Internal Variables*/
+	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	setEntityCharacteristicIterationbool(&(entity->wasReference), entityCharacteristic, "wasReference", &foundMatch);
+	#endif
 	setEntityCharacteristicIterationbool(&(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp), entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->mustSetIsSubstanceConceptBasedOnApposRelation), entityCharacteristic, "mustSetIsSubstanceConceptBasedOnApposRelation", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->isPronounReference), entityCharacteristic, "isPronounReference", &foundMatch);
@@ -977,7 +981,9 @@ bool getEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * enti
 	#endif
 
 	/*GIA Miscellaneous Internal Variables*/
+	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	getEntityCharacteristicIterationbool(entity->wasReference, entityCharacteristic, "wasReference", &foundMatch);
+	#endif
 	getEntityCharacteristicIterationbool(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp, entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->mustSetIsSubstanceConceptBasedOnApposRelation, entityCharacteristic, "mustSetIsSubstanceConceptBasedOnApposRelation", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->isPronounReference, entityCharacteristic, "isPronounReference", &foundMatch);
