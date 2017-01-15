@@ -26,7 +26,7 @@
  * File Name: GIAconditionNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  *
  *******************************************************************************/
 
@@ -44,14 +44,14 @@ GIAtimeConditionNode::GIAtimeConditionNode(void)
 	tenseOnlyTimeCondition = false;
 	tense = GRAMMATICAL_TENSE_UNDEFINED;
 	//tense = tenseundefined;
-	second = -1.0;
-	hour = -1;
+	second = INT_DEFAULT_VALUE;
+	hour = INT_DEFAULT_VALUE;
 	dayOfWeek = TIME_DAY_OF_WEEK_UNDEFINED;
 	dayOfMonth = TIME_DAY_OF_MONTH_UNDEFINED;
 	month = TIME_MONTH_UNDEFINED;
 	//month = monthundefined;
 	year = TIME_YEAR_UNDEFINED;
-	period = -1;
+	period = INT_DEFAULT_VALUE;
 	totalTimeInSeconds = 0;
 
 	isProgressive = false;

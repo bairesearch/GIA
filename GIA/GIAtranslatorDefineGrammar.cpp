@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -167,7 +167,7 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 		string prepositionName = convertPrepositionToRelex(&(currentRelationInList->relationType), &prepositionFound);
 		if(prepositionFound)
 		{
-			int prepositionEntityIndex = -1;
+			int prepositionEntityIndex = INT_DEFAULT_VALUE;
 			//cout << "prepositionName = " << prepositionName << endl;
 			bool prepositionFeatureFound = determineFeatureIndexOfPreposition(currentSentenceInList, &prepositionName, &prepositionEntityIndex);
 			if(prepositionFeatureFound)
@@ -313,9 +313,9 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 
 		//this date code probably requires an update [there appear to be multiple ways in which dates are defined in relex...
 		#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5A_RELATIONS_ASSIGN_TIME_NODES_IN_RELEX_THE_SAME_AS_STANFORD
-		if((currentFeatureInList->grammar).find(FEATURE_RELEX_FLAG_DATE_NAME) != -1)
+		if((currentFeatureInList->grammar).find(FEATURE_RELEX_FLAG_DATE_NAME) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 		#else
-		if(((currentFeatureInList->grammar).find(FEATURE_RELEX_FLAG_DATE_NAME) != -1) || ((currentFeatureInList->grammar).find(FEATURE_RELEX_FLAG_TIME_NAME) != -1))
+		if(((currentFeatureInList->grammar).find(FEATURE_RELEX_FLAG_DATE_NAME) != CPP_STRING_FIND_RESULT_FAIL_VALUE) || ((currentFeatureInList->grammar).find(FEATURE_RELEX_FLAG_TIME_NAME) != CPP_STRING_FIND_RESULT_FAIL_VALUE))
 		#endif
 		{
 			currentFeatureInList->grammaticalIsDateOrTime = true;
@@ -327,7 +327,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 		for(int grammaticalTenseIndex = 0; grammaticalTenseIndex < GRAMMATICAL_TENSE_NUMBER_OF_TYPES; grammaticalTenseIndex++)
 		{
 			//NB only the first characters of currentFeatureInList->grammar contain the tense type name
-			if((currentFeatureInList->grammar).find(grammaticalTenseNameArray[grammaticalTenseIndex]) != -1)
+			if((currentFeatureInList->grammar).find(grammaticalTenseNameArray[grammaticalTenseIndex]) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 			//if((currentFeatureInList->grammar).substr(0, grammaticalTenseNameLengthsArray[grammaticalTenseIndex]) == grammaticalTenseNameArray[grammaticalTenseIndex])
 			{
 				currentFeatureInList->grammaticalTense = grammaticalTenseIndex;
@@ -339,7 +339,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 		for(int grammaticalTenseModifierIndex = 0; grammaticalTenseModifierIndex < GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
 		{
 			//NB only the first characters of currentFeatureInList->grammar contain the tense type name
-			if((currentFeatureInList->grammar).find(grammaticalTenseModifierNameArray[grammaticalTenseModifierIndex]) != -1)
+			if((currentFeatureInList->grammar).find(grammaticalTenseModifierNameArray[grammaticalTenseModifierIndex]) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 			{
 				currentFeatureInList->grammaticalTenseModifierArray[grammaticalTenseModifierIndex] = true;
 				#ifdef GIA_TRANSLATOR_DEBUG
@@ -362,7 +362,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 		for(int grammaticalNumberIndex = 0; grammaticalNumberIndex < GRAMMATICAL_NUMBER_NUMBER_OF_TYPES; grammaticalNumberIndex++)
 		{
 			//NB only the first characters of currentFeatureInList->grammar contain the grammatical number type name
-			if((currentFeatureInList->grammar).find(grammaticalNumberNameArray[grammaticalNumberIndex]) != -1)
+			if((currentFeatureInList->grammar).find(grammaticalNumberNameArray[grammaticalNumberIndex]) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 			{
 				currentFeatureInList->grammaticalNumber = grammaticalNumberIndex;
 				#ifdef GIA_TRANSLATOR_DEBUG
@@ -370,7 +370,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 				#endif
 			}
 		}
-		if((currentFeatureInList->grammar).find(GRAMMATICAL_DEFINITE_NAME) != -1)
+		if((currentFeatureInList->grammar).find(GRAMMATICAL_DEFINITE_NAME) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 		{
 			#ifdef GIA_RELEX_FIX_DO_NOT_ASSIGN_DEFINITE_IF_UNCOUNTABLE
 			if(currentFeatureInList->grammaticalNumber != GRAMMATICAL_NUMBER_UNCOUNTABLE)
@@ -389,7 +389,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 		for(int grammaticalGenderIndex = 0; grammaticalGenderIndex < GRAMMATICAL_GENDER_NUMBER_OF_TYPES; grammaticalGenderIndex++)
 		{
 			//NB only the first characters of currentFeatureInList->grammar contain the grammatical Gender type name
-			if((currentFeatureInList->grammar).find(grammaticalGenderNameArray[grammaticalGenderIndex]) != -1)
+			if((currentFeatureInList->grammar).find(grammaticalGenderNameArray[grammaticalGenderIndex]) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 			{
 				//NB it will always find "person" in relex grammar string if "person" is existant, but this will be overwritten by "feminine" or "masculine" if this is specified (not possible for bigender names like "joe")
 				currentFeatureInList->grammaticalGender = grammaticalGenderIndex;
@@ -401,7 +401,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 
 		/*
 		//this date code probably requires an update [there appear to be multiple ways in which dates are defined in relex...
-		if((currentFeatureInList->grammar).find(FEATURE_GRAMMATICAL_COUNT) != -1)
+		if((currentFeatureInList->grammar).find(FEATURE_GRAMMATICAL_COUNT) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 		{
 			currentFeatureInList->grammaticalHasCount = true;
 			#ifdef GIA_TRANSLATOR_DEBUG
@@ -410,7 +410,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 		}
 		*/
 
-		if((currentFeatureInList->grammar).find(GRAMMATICAL_PRONOUN_NAME) != -1)
+		if((currentFeatureInList->grammar).find(GRAMMATICAL_PRONOUN_NAME) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 		{
 			currentFeatureInList->grammaticalIsPronoun = true;
 			#ifdef GIA_TRANSLATOR_DEBUG
@@ -427,7 +427,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 		//fill NER array after Relex Parse for Stanford equivalent proper noun detection - added 26 April 2012
 		for(int featureRelexFlagIndex = 0; featureRelexFlagIndex < FEATURE_RELEX_FLAG_NUMBER_OF_TYPES; featureRelexFlagIndex++)
 		{
-			if((currentFeatureInList->grammar).find(featureRelexFlagTypeArray[featureRelexFlagIndex]) != -1)
+			if((currentFeatureInList->grammar).find(featureRelexFlagTypeArray[featureRelexFlagIndex]) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 			{
 				currentFeatureInList->NER = featureRelexFlagIndex;
 				#ifdef GIA_WORDNET_DEBUG
@@ -446,7 +446,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 			}
 		}
 		#else
-		if((currentFeatureInList->grammar).find(GRAMMATICAL_PERSON_NAME) != -1)
+		if((currentFeatureInList->grammar).find(GRAMMATICAL_PERSON_NAME) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 		{
 			currentFeatureInList->grammaticalIsProperNoun = true;
 			#ifdef GIA_TRANSLATOR_DEBUG

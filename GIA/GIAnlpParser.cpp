@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -99,7 +99,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 				//eg actionObject(6-cake, 4-eaten) [sameReferenceSet=false]
 				string sameReferenceSetString = currentItemString;
 				//cout << "sameReferenceSetString = " << sameReferenceSetString << endl;
-				if(sameReferenceSetString.find(createSameReferenceSetRecord2(true)) != -1)
+				if(sameReferenceSetString.find(createSameReferenceSetRecord2(true)) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 				{
 					currentRelation->sameReferenceSet = true;
 				}
@@ -476,7 +476,7 @@ bool compareRelations(Relation * relation1, Relation * relation2)
 bool findString(string entityName, string stringToFind)
 {
 	bool foundqVar = false;
-	if(entityName.find(stringToFind) != -1)
+	if(entityName.find(stringToFind) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 	{
 		foundqVar = true;
 	}

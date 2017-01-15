@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -137,7 +137,7 @@ using namespace std;
 #define QUANTITY_NUMBER_LOW_NUMBER_OF_TYPES (20)
 #define QUANTITY_NUMBER_TENS_NUMBER_OF_TYPES (10)
 #define QUANTITY_MULTIPLIER_NUMBER_OF_TYPES (7)		//do: work out what these are/can be
-#define QUANTITY_MODIFIER_UNDEFINED (-1)		//WARNING: not yet implemented
+#define QUANTITY_MODIFIER_UNDEFINED (INT_DEFAULT_VALUE)		//WARNING: not yet implemented
 #define QUANTITY_MODIFIER_NUMBER_OF_TYPES (1)		//WARNING: not yet implemented	//do: work out what these are/can be
 
 #define MEASURE_TYPE_DISTANCE (0)	//see relationTypeMeasureNameArray
@@ -146,7 +146,7 @@ using namespace std;
 #define MEASURE_TYPE_PER (3)
 #define MEASURE_TYPE_UNKNOWN (4)
 #define MEASURE_DEPENDENCY_UNKNOWN (5)
-#define MEASURE_TYPE_UNDEFINED (-1)
+#define MEASURE_TYPE_UNDEFINED (INT_DEFAULT_VALUE)
 
 #define FEATURE_NER_UNDEFINED (0)
 #define FEATURE_NER_DATE (1)
@@ -220,9 +220,9 @@ static int entityVectorConnectionEqualitiesArray[GIA_ENTITY_NUMBER_OF_VECTOR_CON
 
 #define VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN (true)
 #define BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN (true)
-#define GIA_REFERENCE_SET_ID_UNDEFINED (-1)
-#define GIA_ENTITY_INDEX_UNDEFINED (-1)
-#define GIA_SENTENCE_INDEX_UNDEFINED (-1)
+#define GIA_REFERENCE_SET_ID_UNDEFINED (INT_DEFAULT_VALUE)
+#define GIA_ENTITY_INDEX_UNDEFINED (INT_DEFAULT_VALUE)
+#define GIA_SENTENCE_INDEX_UNDEFINED (INT_DEFAULT_VALUE)
 
 class GIAentityConnection;
 
@@ -446,6 +446,8 @@ public:
 	bool NLCisSingularArgument;
 	bool NLClocalListVariableHasBeenDeclared;
 	bool NLCconditionLogicalOperations;
+	bool NLCconjunctionCondition;
+	int NLClogicalConditionConjunctionIndex;
 	#endif
 };
 

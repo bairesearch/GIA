@@ -26,7 +26,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  *
  *******************************************************************************/
 
@@ -45,7 +45,7 @@ GIAentityConnection::GIAentityConnection(void)
 	#ifdef GIA_USE_DATABASE
 	referenceLoaded = false;
 	entityName = "";
-	idInstance = -1;
+	idInstance = INT_DEFAULT_VALUE;
 	loaded = false;
 	modified = false;
 	added = false;

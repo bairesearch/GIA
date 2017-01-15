@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -139,8 +139,8 @@ GIALRPtagTextCorrespondenceInfo::GIALRPtagTextCorrespondenceInfo(void)
 	wordWithLRP = "";
 	wordWithLRPforNLPonly = "";
 
-	entityIndex = -1;
-	sentenceIndex = -1;
+	entityIndex = INT_DEFAULT_VALUE;
+	sentenceIndex = INT_DEFAULT_VALUE;
 
 	next = NULL;
 }

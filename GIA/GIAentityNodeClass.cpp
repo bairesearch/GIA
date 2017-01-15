@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  *
  *******************************************************************************/
 
@@ -130,8 +130,8 @@ GIAentityNode::GIAentityNode(void)
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
 	/*
-	CharacterOffsetBeginTemp = -1;
-	CharacterOffsetEndTemp = -1;
+	CharacterOffsetBeginTemp = INT_DEFAULT_VALUE;
+	CharacterOffsetEndTemp = INT_DEFAULT_VALUE;
 	*/
 	stanfordPOStemp = "";
 	NERTemp = FEATURE_NER_UNDEFINED;
@@ -253,6 +253,8 @@ GIAentityNode::GIAentityNode(void)
 	NLCisSingularArgument = false;
 	NLClocalListVariableHasBeenDeclared = false;
 	NLCconditionLogicalOperations = false;
+	NLCconjunctionCondition = false;
+	NLClogicalConditionConjunctionIndex = INT_DEFAULT_VALUE;
 	#endif
 }
 GIAentityNode::~GIAentityNode(void)

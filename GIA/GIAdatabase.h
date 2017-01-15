@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -123,7 +123,7 @@ using namespace std;
 	#define GIA_DATABASE_GENERATE_FILENAME_CONNECTION_BASIC (false)
 	#define GIA_DATABASE_GENERATE_FILENAME_CONNECTION_IRRELEVANT (false)
 	*/
-	#define GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT (-1)
+	#define GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT (INT_DEFAULT_VALUE)
 	#define GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY (1)
 	#define GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES (2)
 	#define GIA_DATABASE_GENERATE_FILENAME_FILE_TIME_CONDITION_NODE (3)

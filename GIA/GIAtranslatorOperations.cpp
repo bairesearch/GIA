@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -462,7 +462,7 @@ void addTenseOnlyTimeConditionToSubstance(GIAentityNode * substanceNode, int ten
 
 	/*
 	#ifdef GIA_USE_TIME_NODE_INDEXING
-	int timeConditionEntityIndex = -1;
+	int timeConditionEntityIndex = INT_DEFAULT_VALUE;
 	bool argumentEntityAlreadyExistant = false;
 	long timeConditionTotalTimeInSeconds = 0; //cannot assign absolute time to an event which occurs in the past.... //calculateTotalTimeInSeconds();
 	GIAtimeConditionNode * newTimeCondition = findOrAddTimeNodeByNumber(timeConditionNodesActiveList, conceptEntityNamesList, timeConditionAbsoluteTimeValue, &argumentEntityAlreadyExistant, &timeConditionEntityIndex, true);
@@ -1645,7 +1645,7 @@ GIAentityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNod
 	}
 	*/
 
-	long entityIndex = -1;
+	long entityIndex = INT_DEFAULT_VALUE;
 	entityNodeFound = findOrAddConceptEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodeName, entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDinCompleteList, &currentEntityNodeIDinConceptEntityNodesList, saveNetwork);
 
 	applyConceptEntityAlreadyExistsFunction(entityNodeFound, *entityAlreadyExistant, tempEntityEnabled);
@@ -2188,11 +2188,18 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 
 bool textInTextArray(string text, string * textArray, int arraySize)
 {
+	int arrayIndexOfResultFound = INT_DEFAULT_VALUE;
+	return textInTextArray(text, textArray, arraySize, &arrayIndexOfResultFound);
+}
+
+bool textInTextArray(string text, string * textArray, int arraySize, int * arrayIndexOfResultFound)
+{
 	bool result = false;
 	for(int i=0; i<arraySize; i++)
 	{
 		if(text == textArray[i])
 		{
+			*arrayIndexOfResultFound = i;
 			result = true;
 		}
 	}

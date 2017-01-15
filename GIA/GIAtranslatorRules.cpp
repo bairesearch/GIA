@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -240,8 +240,8 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 		bool passedAssert = true;
 		bool assertdisableRelationAfterFinish = false;
 		bool asssertsetDefiniteAfterFinish = false;
-		int asssertPostProcessingREL_ENT = -1;
-		int asssertPostProcessingREL = -1;
+		int asssertPostProcessingREL_ENT = INT_DEFAULT_VALUE;
+		int asssertPostProcessingREL = INT_DEFAULT_VALUE;
 
 		XMLparserTag * firstConfigurationTag = currentParamTag->firstLowerLevelTag;
 		XMLparserTag * currentConfigurationTag = firstConfigurationTag;
@@ -256,10 +256,10 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 			string REL_ENTstring = "";
 			string FUNC_ENTstring = "";
 			string swapIndexstring = "";
-			int REL = -1;
-			int REL_ENT = -1;
-			int FUNC_ENT = -1;
-			int swapIndex = -1;
+			int REL = INT_DEFAULT_VALUE;
+			int REL_ENT = INT_DEFAULT_VALUE;
+			int FUNC_ENT = INT_DEFAULT_VALUE;
+			int swapIndex = INT_DEFAULT_VALUE;
 			if(getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_REL, &RELstring))
 			{
 				REL = atoi(RELstring.c_str()) - 1;

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -645,7 +645,7 @@ static string relationContextNegativeNameArray[RELATION_TYPE_NEGATIVE_CONTEXT_NU
 #define RELATION_COORDINATION_DEPENDENT_YET "yet"	//added 2b3a
 #define RELATION_COORDINATION_DEPENDENT_NOR "nor"	//added 2b3a
 #define RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES 5
-static string relationTypeConjugationNameArray[RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES] = {RELATION_TYPE_CONJUGATION_AND, RELATION_TYPE_CONJUGATION_OR};
+static string relationTypeConjugationNameArray[RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES] = {RELATION_TYPE_CONJUGATION_AND, RELATION_TYPE_CONJUGATION_OR, RELATION_COORDINATION_DEPENDENT_BUT, RELATION_COORDINATION_DEPENDENT_YET, RELATION_COORDINATION_DEPENDENT_NOR};
 #define GIA_TRANSLATOR_USE_BASIC_CONJUNCTION_CONDITION_TYPE_NAMES
 #ifdef GIA_TRANSLATOR_USE_BASIC_CONJUNCTION_CONDITION_TYPE_NAMES
 	#define RELATION_TYPE_CONJUGATION_AND_BASIC "and"
@@ -1048,8 +1048,10 @@ static string featurePOSindicatesNounTypeArray[FEATURE_POS_TAG_INDICATES_NOUN_NU
 
 
 
-#define ENTITY_COORDINATINGCONJUNCTION_ARRAY_NUMBER_OF_TYPES (7)
-static string entityCoordinatingConjunctionArray[ENTITY_COORDINATINGCONJUNCTION_ARRAY_NUMBER_OF_TYPES] = {"and", "but", "or", "yet", "nor"};	//removed "for" +  "so" as conj is not generated for these by Stanford //http://grammar.ccc.commnet.edu/grammar/conjunctions.htm
+#define ENTITY_COORDINATINGCONJUNCTION_ARRAY_NUMBER_OF_TYPES (RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES)
+static string entityCoordinatingConjunctionArray[ENTITY_COORDINATINGCONJUNCTION_ARRAY_NUMBER_OF_TYPES] = {"and", "or", "but", "yet", "nor"};	//removed "for" +  "so" as conj is not generated for these by Stanford //http://grammar.ccc.commnet.edu/grammar/conjunctions.htm
+#define ENTITY_COORDINATINGCONJUNCTION_ARRAY_INDEX_AND (0)
+#define ENTITY_COORDINATINGCONJUNCTION_ARRAY_INDEX_OR (1)
 	/*
 	Tom rides the bike so he can go to lunch.
 	Tom likes the chicken but prefers the apple.

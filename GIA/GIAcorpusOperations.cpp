@@ -26,7 +26,7 @@
  * File Name: GIAcorpusOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -502,7 +502,7 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(Feature * currentFeatureIn
 	}
 	for(int i=0; i<ENTITY_CARDINALNUMBER_ARRAY_NUMBER_OF_TYPES; i++)
 	{
-		if((currentFeatureInSentence->lemma).find(entityCardinalNumberArray[i]) != -1)
+		if((currentFeatureInSentence->lemma).find(entityCardinalNumberArray[i]) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 		{
 			GIAconnectionistNetworkPOStype = GIA_CONNECTIONIST_NETWORK_POS_TYPE_NUMBER;
 		}

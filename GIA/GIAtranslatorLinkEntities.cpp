@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -2738,7 +2738,7 @@ void createConditionBasedUponPreposition(GIAentityNode * actionOrSubstanceCondit
 	{
 		//added 3 June 2012 for advanced referencing of prepositions
 		GIAentityNode * conditionConceptEntity;
-		int featureIndexOfPreposition = -1;
+		int featureIndexOfPreposition = INT_DEFAULT_VALUE;
 		bool prepositionFeatureFound = determineFeatureIndexOfPreposition(currentSentenceInList, &prepositionName, &featureIndexOfPreposition);
 		if(!prepositionFeatureFound)
 		{
@@ -2853,7 +2853,7 @@ GIAentityNode * addTimeConditionToEntity(GIAentityNode * substanceNode, GIAentit
 
 	/*
 	#ifdef GIA_USE_TIME_NODE_INDEXING
-	int timeConditionEntityIndex = -1;
+	int timeConditionEntityIndex = INT_DEFAULT_VALUE;
 	bool argumentEntityAlreadyExistant = false;
 	long timeConditionTotalTimeInSeconds = calculateTotalTimeInSeconds(timeConditionEntity->entityName);
 	GIAtimeConditionNode * newTimeCondition = findOrAddTimeNodeByNumber(timeConditionNodesActiveList, conceptEntityNamesList, timeConditionAbsoluteTimeValue, &argumentEntityAlreadyExistant, &timeConditionEntityIndex, true);

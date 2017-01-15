@@ -26,7 +26,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *

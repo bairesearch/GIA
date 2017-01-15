@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -44,10 +44,10 @@
 StanfordCoreNLPmention::StanfordCoreNLPmention(void)
 {
 	representative = false;
-	sentence = -1;
-	start = -1;
-	end = -1;
-	head = -1;
+	sentence = INT_DEFAULT_VALUE;
+	start = INT_DEFAULT_VALUE;
+	end = INT_DEFAULT_VALUE;
+	head = INT_DEFAULT_VALUE;
 
 	next = NULL;
 }
@@ -85,8 +85,8 @@ StanfordCoreNLPcoreference::~StanfordCoreNLPcoreference(void)
 GIAMention::GIAMention(void)
 {
 	representative = false;
-	idActiveList = -1;
-	entityIndex = -1;	//ie, "head"
+	idActiveList = INT_DEFAULT_VALUE;
+	entityIndex = INT_DEFAULT_VALUE;	//ie, "head"
 	entityName = "";
 	intrasentenceReference = false;		//only applies to representative/source mentions (specifies whether reference source is contained within current sentence)
 
@@ -192,8 +192,8 @@ Feature::Feature(void)
 
 	NER = FEATURE_NER_UNDEFINED;
 	#ifdef GIA_USE_STANFORD_CORENLP
-	CharacterOffsetBegin = -1;
-	CharacterOffsetEnd = -1;
+	CharacterOffsetBegin = INT_DEFAULT_VALUE;
+	CharacterOffsetEnd = INT_DEFAULT_VALUE;
 	stanfordPOS = "";
 	NormalizedNER = "";
 	Timex = "";

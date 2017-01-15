@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -553,7 +553,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 					while(currentTagInTokens->nextTag != NULL)
 					{
 						#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
-						int lastFeatureEntityIndex = -1;
+						int lastFeatureEntityIndex = INT_DEFAULT_VALUE;
 						string lastFeatureWord = "";
 						#endif
 

@@ -26,7 +26,7 @@
  * File Name: GIAconditionNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f5a 04-July-2014
+ * Project Version: 2f6a 04-July-2014
  *
  *******************************************************************************/
 
@@ -87,8 +87,8 @@ using namespace std;
 #define GRAMMATICAL_TENSE_UNDEFINED (0)
 
 #define TIME_YEAR_UNDEFINED (-15000000000)	//before start of universe
-#define TIME_DAY_OF_MONTH_UNDEFINED (-1)
-#define TIME_MONTH_UNDEFINED (-1)	//OLD: 13th month
+#define TIME_DAY_OF_MONTH_UNDEFINED (INT_DEFAULT_VALUE)
+#define TIME_MONTH_UNDEFINED (INT_DEFAULT_VALUE)	//OLD: 13th month
 
 
 class GIAtimeConditionNode
