@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j5a 08-June-2015
+ * Project Version: 2j5b 08-June-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -37,6 +37,7 @@
 #include "GIAtranslatorDefineGrammar.h"
 #include "GIAtranslatorRedistributeRelations.h"
 #include "GIAtranslatorDefineReferencing.h"
+#include "GIAtranslatorLinkEntitiesDynamic.h"
 #include "GIAtranslatorDefineSubstances.h"
 #include "GIAtranslatorApplyAdvancedFeatures.h"
 #ifdef GIA2_CONNECTIONIST_NETWORK
@@ -191,37 +192,79 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	#endif
 	
 	defineConnectionsBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
-
+	
+	#ifdef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "linkEntitiesDynamic{}:" << endl;
+	#endif
+	linkEntitiesDynamic(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, entityNodesActiveListSentences);
+	#endif
+	
 	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
 	cout << "applyAdvancedFeaturesBasedOnSemanticRelations" << endl;
 	#endif
 	
 	applyAdvancedFeaturesBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
 
+	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
+	cout << "set sentenceIndexTemp/entityIndexTemp" << endl;
+	#endif
+	
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	//record entityIndexTemp + sentenceIndexTemp for all substances in sentence (allows for referencing)...
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
 		if(GIAentityNodeArrayFilled[w])
 		{
-			//record sentenceIndex for concept entity nodes also (NB can GIAconceptNodeArray here as it will include concept entity nodes for prepositions)
+			//#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION	//concept sentenceIndex information is also required for GIAdraw.cpp
+			#ifdef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
+			if(GIAentityNodeArray[w]->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)	//added condition 2j5b [check this is required]
+			{
+				GIAentityNodeArray[w]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
+			}
+			//record sentenceIndex for concept entity nodes also (NB cannot use GIAconceptNodeArray here as it won't necessarily include concept entity nodes for prepositions [for dynamic linking])
+			if(!(GIAentityNodeArray[w]->entityNodeDefiningThisInstance->empty()))
+			{
+				#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+				GIAentityNode* instanceEntity = GIAentityNodeArray[w];
+				for(vector<GIAentityConnection*>::iterator connectionIter = instanceEntity->entityNodeDefiningThisInstance->begin(); connectionIter != instanceEntity->entityNodeDefiningThisInstance->end(); connectionIter++)
+				{
+					GIAentityNode* conceptNode = (*connectionIter)->entity;
+				#else
+					GIAentityNode* conceptNode = getPrimaryConceptNodeDefiningInstance(GIAentityNodeArray[w]);
+				#endif
+
+					if(conceptNode->entityIndexTemp == GIA_ENTITY_INDEX_UNDEFINED)	//added condition 2j5b [check this is required]
+					{
+						conceptNode->entityIndexTemp = w;
+					}
+					if(conceptNode->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
+					{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network
+						//cout << "assigning: " <<  currentSentenceInList->sentenceIndex << endl;
+						conceptNode->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
+						//cout << "conceptNode->sentenceIndexTemp = " << conceptNode->sentenceIndexTemp << endl;
+					}
+
+				#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+				}
+				#endif
+			}
+			#else
+			//record sentenceIndex for concept entity nodes also (NB can use GIAconceptNodeArray here as it will include concept entity nodes for prepositions)
 			GIAconceptNodeArray[w]->entityIndexTemp = w;
-			//GIAentityNodeArray[w]->entityIndexTemp = w;	//why isnt this used?
 			GIAentityNodeArray[w]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
 			if(GIAconceptNodeArray[w]->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
 			{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network
-				//cout << "assigning: " <<  currentSentenceInList->sentenceIndex << endl;
 				GIAconceptNodeArray[w]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
 			}
-			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-			cout << GIAconceptNodeArray[w]->entityName << ", w = " << w << endl;
-			cout << "GIAconceptNodeArray[w]->disabled = " << GIAconceptNodeArray[w]->disabled << endl;
 			#endif
+			//#endif
+
 		}
 	}
 	#endif
 
-	#ifdef GIA_TRANSLATOR_DEBUG
+	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
 	cout << "record sentence nodes as permanent if they are still enabled" << endl;
 	#endif
 	//recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(GIAentityNodeArrayFilled, GIAconceptNodeArray);		//this method is not sufficient, as some concept entity nodes (eg prepositions/conditions) are not contained within GIAconceptNodeArray
@@ -249,6 +292,10 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	#endif
 	#endif
 
+	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
+	cout << "prevent double links" << endl;
+	#endif
+	
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	//required to reset wasReferenceTemp for next time
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -338,7 +385,8 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(GIAsentence* current
 				GIAentityNode* conceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(name[i]), &entityAlreadyExistant, entityNodesActiveListConcepts);
 				GIAconceptNodeArray[relationIndex[i]] = conceptEntity;
 
-				//cout << "creating concept = " << conceptEntity->entityName << endl;
+				//cout << "\tcreating concept = " << conceptEntity->entityName << endl;
+				//cout << "relationIndex[i] = " << relationIndex[i] << endl;
 
 				if(isDependencyRelationSecondary)
 				{
