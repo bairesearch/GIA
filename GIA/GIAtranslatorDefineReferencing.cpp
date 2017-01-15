@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u9b 02-October-2013
+ * Project Version: 1u9c 02-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1166,12 +1166,12 @@ bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode,
 
 void identifyReferenceSet(GIAentityNode * entityNode, int referenceSetID, int minimumEntityIndexOfReferenceSet)
 {
-	//#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "identifyReferenceSet(): entityNode being traced = " << entityNode->entityName << endl;
 	cout << "identifyReferenceSet(): referenceSetID = " << referenceSetID << endl;
 	cout << "identifyReferenceSet(): isSubstanceConcept = " << entityNode->isSubstanceConcept << endl;	
 	cout << "identifyReferenceSet(): isConcept = " << entityNode->isConcept << endl;	
-	//#endif
+	#endif
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
 	cout << "identifyReferenceSet(): " << entityNode->entityName << endl;
 	#endif
@@ -1203,8 +1203,9 @@ void identifyReferenceSet(GIAentityNode * entityNode, int referenceSetID, int mi
 
 void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GIAentityNode*> * entityNodesActiveListComplete)
 {
-	//resetReferenceSets(entityNodesActiveListComplete);
+	#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 	cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts" << endl;
+	#endif
 	int referenceSetID = 0;
 
 	for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
@@ -1224,7 +1225,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 
 				int minimumEntityIndexOfReferenceSet = currentSpecificConcept->entityIndexTemp;
 
-				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
+				#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 				cout << "minimumSentenceIndexOfReferenceSet1 = " << currentSpecificConcept->grammaticalDefiniteIndexOfDeterminerTemp << endl;
 				cout << "minimumSentenceIndexOfReferenceSet2 = " << currentSpecificConcept->entityIndexTemp << endl;
 				#endif
@@ -1285,7 +1286,9 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 											#endif
 
 											addDefinitionToEntity(entityNode, currentSpecificConcept, sameReferenceSet);
+											#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 											cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(): addDefinitionToEntity" << endl; 
+											#endif
 										#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
 										}
 										#endif
