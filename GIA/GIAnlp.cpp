@@ -23,7 +23,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p7a 22-September-2012
+ * Project Version: 1p7b 22-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -408,6 +408,8 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 {
 	bool result = true;
 
+	//cout << "inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
+	
 	Paragraph * currentParagraph = firstParagraphInList;
 	Paragraph * newParagraph = new Paragraph();
 	newParagraph->previous = currentParagraph;
@@ -437,10 +439,9 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 			XMLParserTag * currentTagInSentences = firstTagInSentences;
 			while(currentTagInSentences->nextTag != NULL)
 			{
-				//cout << "currentSentence->sentenceIndex = " << currentSentence->sentenceIndex << endl;
-
 				string sentenceIndexString = currentTagInSentences->firstAttribute->value;
 				currentSentence->sentenceIndex = atoi(sentenceIndexString.c_str());
+				//cout << "currentSentence->sentenceIndex = " << currentSentence->sentenceIndex << endl;
 
 				XMLParserTag * firstTagInSentence = parseTagDownALevel(currentTagInSentences, StanfordCoreNLP_XML_TAG_sentence, &result);
 
@@ -457,11 +458,30 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 				XMLParserTag * currentTagInTokens = firstTagInTokens;
 				bool isQuestion = false;
 
+				//cout << "parseFeatures: " << endl;
 				while(currentTagInTokens->nextTag != NULL)
 				{
-					string entityIndexString = currentTagInTokens->firstAttribute->value;
-					currentFeatureInList->entityIndex = atoi(entityIndexString.c_str());
-
+					#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+					int lastFeatureEntityIndex = -1;
+					string lastFeatureWord = "";
+					#endif
+					
+					if(parseFeatures)
+					{				
+						string entityIndexString = currentTagInTokens->firstAttribute->value;
+						currentFeatureInList->entityIndex = atoi(entityIndexString.c_str());
+						#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+						lastFeatureEntityIndex = currentFeatureInList->entityIndex;
+						#endif
+					}
+					#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+					else
+					{
+						string entityIndexString = currentTagInTokens->firstAttribute->value;
+						lastFeatureEntityIndex = atoi(entityIndexString.c_str());					
+					}
+					#endif						
+					
 					XMLParserTag * firstTagInToken = parseTagDownALevel(currentTagInTokens, StanfordCoreNLP_XML_TAG_token, &result);
 					XMLParserTag * currentTagInToken = firstTagInToken;
 					while(currentTagInToken->nextTag != NULL)
@@ -480,6 +500,9 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 								}
 								#endif
 								#endif
+								#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+								lastFeatureWord = TagValue;						
+								#endif									
 							}
 							else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_lemma)
 							{
@@ -535,9 +558,17 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 						{//only interested in POS tags if not parsing features (as POS tags in GIA must always match dependency relation POS tags)
 							if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_POS)	//overwrite pos tag values if necessary...
 							{
+								//cout << "StanfordCoreNLP_XML_TAG_POS = " << currentTagInToken->value << endl;
 								string TagValue = currentTagInToken->value;
 								currentFeatureInList->stanfordPOS = TagValue;
-							}						
+							}
+							#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+							else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_word)
+							{
+								string TagValue = currentTagInToken->value;
+								lastFeatureWord = TagValue;
+							}							
+							#endif						
 						}
 						currentTagInToken = currentTagInToken->nextTag;
 					}
@@ -555,19 +586,20 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 						firstCharacterOfLemma = tolower(firstCharacterOfLemma);
 						lemma[0] = firstCharacterOfLemma;
 						currentFeatureInList->lemma = lemma;
-						#endif
-
-						#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
-						if(currentFeatureInList->entityIndex == 1)
-						{
-							if(lemma == string(STRING_FULLSTOP))
-							{
-								invalidSentenceFoundIsolatedFullStop = true;
-							}
-						}
-						#endif						
+						#endif					
 					}
-
+					//cout << "currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+					//cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
+					
+					#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+					if(lastFeatureEntityIndex == 1)
+					{
+						if(lastFeatureWord == string(STRING_FULLSTOP))
+						{
+							invalidSentenceFoundIsolatedFullStop = true;
+						}
+					}
+					#endif						
 
 					if(parseFeatures)		//OR if(createNewSentences)
 					{//all sentences created must have feature list, as feature NLP file is always parsed first
@@ -612,6 +644,7 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 
 				if(parseRelations)
 				{
+					//scout << "parseRelations: " << endl;			
 					for(int dependenciesSetIndex=0; dependenciesSetIndex< StanfordCoreNLP_numberOfDependencySetsPerSentence; dependenciesSetIndex++)
 					{
 						Relation * firstRelationInList = currentSentence->firstRelationInList;
@@ -639,6 +672,10 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 									currentRelationInList->relationType = currentTagInDependencies->firstAttribute->value;
 									convertStanfordRelationToRelex(currentRelationInList, currentSentence);
 
+									//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+									//cout << "currentRelationInList->relationGovernorIndex = " << currentRelationInList->relationGovernorIndex << endl;
+									//cout << "currentRelationInList->relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
+									
 									/*
 									//don't use these, use lemmas instead (as per Stanford Core NLP/Relex dependency relation definitions)
 									currentRelationInList->relationGovernor = governerTagInDep->value;
@@ -657,6 +694,10 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 									}
 									currentRelationInList->relationGovernor = currentFeatureInList->lemma;
 
+									//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+									//cout << "currentRelationInList->relationGovernor = " << currentRelationInList->relationGovernor << endl;
+									//cout << "currentRelationInList->relationDependent = " << currentRelationInList->relationDependent << endl;
+									
 									Relation * newRelation = new Relation();
 									currentRelationInList->next = newRelation;
 									currentRelationInList = currentRelationInList->next;
@@ -672,6 +713,7 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 				#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 				if(invalidSentenceFoundIsolatedFullStop)
 				{
+					//cout << "\n\ninvalidSentenceFoundIsolatedFullStop\n\n" << endl;
 					//currentSentence->firstFeatureInList = new Feature();	//shouldn't be required, it will be overwritten automatically
 				}
 				else
