@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g12a 01-November-2014
+ * Project Version: 2g13a 04-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -418,7 +418,14 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 							}
 							#endif
 							//cout << "entityConnectionColour = " << entityConnectionColour << endl;
-							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, *connectionIter, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);
+							
+							#ifdef GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDICES
+							//string connectionName = convertIntToString((*connectionIter)->sentenceIndexTemp);
+							string connectionName = string("s") + convertIntToString((*connectionIter)->sentenceIndexTemp) + entityVectorConnectionNameArray[i];
+							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, *connectionIter, currentReferenceInPrintList, printType, connectionName, entityConnectionColour, currentTag);	
+							#else
+							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, *connectionIter, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);	
+							#endif
 						}
 					}
 
