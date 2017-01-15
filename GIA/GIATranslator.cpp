@@ -761,7 +761,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1b; identify comparison variable" << endl;
 		#endif
-		identifyComparisonVariable(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+		identifyComparisonVariableAlternateMethod(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 							
 		#ifdef GIA_TRANSLATOR_DEBUG	
 		cout << "pass 1c; switch argument/functions where necessary" << endl;
@@ -1208,6 +1208,14 @@ void fillGrammaticalArrays(Sentence * currentSentenceInList, bool GIAEntityNodeI
 
 void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, bool GIAEntityNodeIsDate[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsPersonArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[])
 {	
+	bool expectToFindComparisonVariable = false;
+	if(currentSentenceInList->isQuestion)
+	{
+		expectToFindComparisonVariable = true;
+		foundComparisonVariable = false;
+		//cout << "expectToFindComparisonVariable" << endl;
+	}	
+		
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{			
@@ -1226,6 +1234,14 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 
 		//cout << "relationFunctionIndex = " << relationFunctionIndex << endl;
 		//cout << "relationArgumentIndex = " << relationArgumentIndex << endl;
+
+		bool argumentIsQuery = false;
+		if(argumentName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+		{//modify relation index [to prevent overlapping of comparison variable indicies with other indicies]
+			relationArgumentIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_ARGUMENT_INDEX;
+			currentRelationInList->relationArgumentIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_ARGUMENT_INDEX;
+			argumentIsQuery = true;
+		}
 
 		if(!GIAEntityNodeArrayFilled[relationFunctionIndex])
 		{
@@ -1274,6 +1290,13 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 			GIAEntityNodeArray[relationArgumentIndex]->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[relationArgumentIndex];
 
 			GIAEntityNodeArray[relationArgumentIndex]->hasAssociatedInstanceTemp = false;
+			
+			if(argumentIsQuery)
+			{
+				GIAEntityNodeArray[relationArgumentIndex]->isQuery = true;
+				foundComparisonVariable = true;
+				comparisonVariableNode = GIAEntityNodeArray[relationArgumentIndex];					
+			}			
 		}
 
 		currentRelationInList = currentRelationInList->next;
@@ -1281,7 +1304,7 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 }
 
 
-void identifyComparisonVariable(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])	//vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList
+void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])	//vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList
 {	
 	bool expectToFindComparisonVariable = false;
 	if(currentSentenceInList->isQuestion)
@@ -1292,6 +1315,7 @@ void identifyComparisonVariable(Sentence * currentSentenceInList, bool GIAEntity
 	
 	if(expectToFindComparisonVariable)
 	{
+		/* moved back to locateAndAddAllConceptEntities
 		foundComparisonVariable = false;
 		
 		//cout << "here1" << endl;
@@ -1312,6 +1336,7 @@ void identifyComparisonVariable(Sentence * currentSentenceInList, bool GIAEntity
 				}
 			}			
 		}
+		*/
 		
 		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
 		if(!foundComparisonVariable)
@@ -3090,9 +3115,16 @@ void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntit
 						//cout << "partnerTypeRequiredFound: currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
 
 						GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex];
-						GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+						GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];						
 						GIAEntityNode * conditionTypeConceptEntity = GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex];
-
+						
+						/*
+						cout << "entityNode->entityName = " << entityNode->entityName << endl;
+						cout << "conditionEntityNode->entityName = " << conditionEntityNode->entityName << endl;		//this is wrong
+						cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl;
+						cout << "currentRelationInList->relationArgumentIndex = " << currentRelationInList->relationArgumentIndex << endl;
+						*/
+						
 						//should really take into account the boolean and of both values: bool relationNegative = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex]->negative & GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex]->negative;
 
 						addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);							

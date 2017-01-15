@@ -12,7 +12,7 @@
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
-#define GIA_QUERY_DEBUG
+//#define GIA_QUERY_DEBUG
 
 #define GIA_QUERY_TRACE_FIND_MAXIMUM_NUMBER_OF_MATCHED_NODES		//experimental
 //#define GIA_QUERY_TRACE_PAST_ANSWER	//default: disabled [temporarily testing enabled]
