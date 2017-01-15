@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f15d 16-July-2014
+ * Project Version: 2f16a 16-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -47,9 +47,6 @@ using namespace std;
 #include "GIAglobalDefs.h"
 #include "GIAentityNodeClass.h"
 #include "GIAentityConnectionClass.h"
-
-#define GIA_NLP_START_ENTITY_INDEX (1)
-#define GIA_NLP_START_SENTENCE_INDEX (1)
 
 //#define FEATURE_GRAMMATICAL_TENSE_DATE "date"
 #define FEATURE_WORD_QUESTIONMARK "?"

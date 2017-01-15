@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f15d 16-July-2014
+ * Project Version: 2f16a 16-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -184,7 +184,7 @@ GIAentityNode * findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAentityNo
 	GIAentityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts);
 		GIAentityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, bool tempEntityEnabled);
 
-void writeVectorConnection(GIAentityNode * entityNode, GIAentityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet);
+GIAentityConnection * writeVectorConnection(GIAentityNode * entityNode, GIAentityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet);
 	GIAentityConnection * findEntityNodePointerInVector(GIAentityNode * entityNode, GIAentityNode * entityNodeToFind, int connectionType, bool * foundNode);
 	GIAentityConnection * findEntityNodeNameInVector(GIAentityNode * entityNode, string * entityNodeNameToFind, int connectionType, bool * foundNode);
 

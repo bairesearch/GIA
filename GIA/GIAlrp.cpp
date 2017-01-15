@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f15d 16-July-2014
+ * Project Version: 2f16a 16-July-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -1784,11 +1784,11 @@ void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentS
 					string relationDependent = currentRelationInListForPrepositionsOnly->relationDependent;
 					Feature * firstFeatureInList = currentSentenceInList->firstFeatureInList;
 					Feature * currentFeatureInList = firstFeatureInList;
-					int indexOfPrepositionWithMinimumProximityOfGovernorDependentWords = ENTITY_INDEX_UNDEFINED;
+					int indexOfPrepositionWithMinimumProximityOfGovernorDependentWords = GIA_ENTITY_INDEX_UNDEFINED;
 					int minimumProximityOfGovernorDependentWords = MAXIMUM_NUMBER_WORDS_PER_SENTENCE;
-					int indexOfLastInstanceOfPreposition = ENTITY_INDEX_UNDEFINED;
-					int indexOfLastInstanceOfGovernor = ENTITY_INDEX_UNDEFINED;
-					int indexOfLastInstanceOfDependent = ENTITY_INDEX_UNDEFINED;
+					int indexOfLastInstanceOfPreposition = GIA_ENTITY_INDEX_UNDEFINED;
+					int indexOfLastInstanceOfGovernor = GIA_ENTITY_INDEX_UNDEFINED;
+					int indexOfLastInstanceOfDependent = GIA_ENTITY_INDEX_UNDEFINED;
 					bool foundPrepositionGovernorAndDependentInFeatureList = false;
 					#ifdef GIA_LRP_DEBUG2
 					cout << "relationGovernor = " << relationGovernor << endl;
@@ -1822,10 +1822,10 @@ void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentS
 							#endif
 
 							indexOfLastInstanceOfDependent = currentFeatureInList->entityIndex;
-							if((indexOfLastInstanceOfPreposition != ENTITY_INDEX_UNDEFINED) && (indexOfLastInstanceOfGovernor != ENTITY_INDEX_UNDEFINED))
+							if((indexOfLastInstanceOfPreposition != GIA_ENTITY_INDEX_UNDEFINED) && (indexOfLastInstanceOfGovernor != GIA_ENTITY_INDEX_UNDEFINED))
 							{
 								#ifdef GIA_LRP_DEBUG2
-								//cout << "(indexOfLastInstanceOfPreposition != ENTITY_INDEX_UNDEFINED) && (indexOfLastInstanceOfGovernor != ENTITY_INDEX_UNDEFINED)" << endl;
+								//cout << "(indexOfLastInstanceOfPreposition != GIA_ENTITY_INDEX_UNDEFINED) && (indexOfLastInstanceOfGovernor != GIA_ENTITY_INDEX_UNDEFINED)" << endl;
 								#endif
 
 								int proximityOfPrepositionToGovernor = indexOfLastInstanceOfPreposition - indexOfLastInstanceOfGovernor;

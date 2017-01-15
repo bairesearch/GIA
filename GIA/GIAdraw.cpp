@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f15d 16-July-2014
+ * Project Version: 2f16a 16-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -190,7 +190,7 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesA
 		printFromXMLcoordinatesAlreadyDefined = true;
 		maxNumberSentences = 1;
 	}
-	for(int sentenceIndex=1; sentenceIndex <= maxNumberSentences; sentenceIndex++)
+	for(int sentenceIndex=GIA_NLP_START_SENTENCE_INDEX; sentenceIndex <= maxNumberSentences; sentenceIndex++)
 	{
 		//cout << "*** sentenceIndex = " << sentenceIndex << endl;
 		for(entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
@@ -232,6 +232,9 @@ Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityConnectio
 		pos2.x = entityNodeToConnect->printX;
 		pos2.y = entityNodeToConnect->printY;
 		pos2.z = DRAW_CONNECTION_Z;
+		
+		//connectionName = connectionName + convertIntToString(entityConnection->sentenceIndexTemp);
+
 		currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, pos1, &pos2, entityConnectionColour, currentTag, connectionName, printType);
 	}
 
@@ -587,6 +590,9 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 				//nameOfBox = convertIntToString(entityNode->referenceSetID);
 				nameOfBox = nameOfBox + convertIntToString(entityNode->idInstance);
 				#endif
+				
+				//nameOfBox = nameOfBox + convertIntToString(entityNode->grammaticalDefiniteTemp);
+
 				//cout << "entityColour = " << entityColour << endl;
 				currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, currentTag, boxThickness, printType);
 

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f15d 16-July-2014
+ * Project Version: 2f16a 16-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -267,7 +267,6 @@ GIAentityNode * addOrConnectPropertyToEntity(GIAentityNode * thingEntity, GIAent
 
 	return newOrExistingSubstance;
 }
-
 
 GIAentityNode * addSubstanceToSubstanceDefinition(GIAentityNode * substanceEntity)
 {
@@ -1672,8 +1671,9 @@ GIAentityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNod
 
 /*these functions have been added for GIA Database compatibility*/
 //this function does write to database, but prepares data structures for write to database (at the end of the user sequence, writeDatabase() is written...)
-void writeVectorConnection(GIAentityNode * entityNode, GIAentityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet)
+GIAentityConnection * writeVectorConnection(GIAentityNode * entityNode, GIAentityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet)
 {
+	GIAentityConnection * newConnection = NULL;
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	if(!(entityNode->wasReferenceTemp && entityNodeToAdd->wasReferenceTemp))
 	{
@@ -1702,7 +1702,7 @@ void writeVectorConnection(GIAentityNode * entityNode, GIAentityNode * entityNod
 				#endif
 			}
 
-			GIAentityConnection * newConnection = new GIAentityConnection();
+			newConnection = new GIAentityConnection();
 			newConnection->entity = entityNodeToAdd;
 			vectorConnection->push_back(newConnection);
 
@@ -1737,7 +1737,7 @@ void writeVectorConnection(GIAentityNode * entityNode, GIAentityNode * entityNod
 			#endif
 			
 			#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
-			newConnection->sentenceIndexTemp = getCurrentSentenceIndex(); 
+			newConnection->sentenceIndexTemp = getCurrentSentenceIndex();
 			#endif
 			
 		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_PROPERTIES_AND_DEFINITIONS
@@ -1746,6 +1746,7 @@ void writeVectorConnection(GIAentityNode * entityNode, GIAentityNode * entityNod
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	}
 	#endif
+	return newConnection;
 }
 
 
