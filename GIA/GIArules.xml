@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j15c 06-July-2015
+ * Project Version: 2j16a 06-July-2015
  *
  *******************************************************************************/
 -->
@@ -1246,7 +1246,9 @@
 				<!-- Supports Stanford Parser/CoreNLP version 2+ e.g. 2013-04-04 --> 
 				<!-- <option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_to-be|_partmod" relationArrayTestSize="2" /> -->
 				<!-- Supports Stanford Parser/CoreNLP version 3+ e.g. 2014-01-04 --> 
-				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_to-be|_vmod" relationArrayTestSize="2" />
+				<!-- <option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_to-be|_vmod" relationArrayTestSize="2" /> -->
+				<!-- Supports Stanford Parser/CoreNLP version 3.5+ e.g. 2015-04-20 --> 
+				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_to-be|_vmod|_advcl" relationArrayTestSize="3" />
 				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
 				<!-- <option disableRelation="true" REL="2" /> //removed 15 July 2013 to allow double use of partmod eg "The Co-cart is a high quality, ultra compact, lightweight cart, also known as a trolley or buggie.: partmod(quality-6, known-15) + prep_as(known-15, trolley-18) + prep_as(known-15, buggie-20) -> prep_know_as(quality[6], trolley[18]) + prep_know_as(quality[6], buggie[20]) -->
