@@ -814,7 +814,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 		cout << "0i pass; define properties (to_do);" << endl;
 		#endif		
 		definePropertiesToDo(currentSentenceInList, GIAEntityNodeArray);
-		
+
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "0j pass; define properties (has time);" << endl;
+		#endif		
+		definePropertiesHasTime(GIAEntityNodeArrayFilled, GIAEntityNodeArray);		
 					
 		
 										
@@ -1935,7 +1939,7 @@ void definePropertiesToDo(Sentence * currentSentenceInList, GIAEntityNode * GIAE
 		currentRelationInList = currentRelationInList->next;
 	}			
 }	
-		
+							
 										
 bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, Relation * currentRelationInList)
 {
@@ -1980,7 +1984,25 @@ bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, 
 	
 	return passed2;
 }
+	
+void definePropertiesHasTime(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])	
+{
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{	
+		//cout << "w = " << w << endl;
 
+		if(GIAEntityNodeArrayFilled[w])
+		{
+			if(GIAEntityNodeArray[w]->hasAssociatedTime)
+			{
+				GIAEntityNode * currentGIAEntityNode = GIAEntityNodeArray[w];
+				//cout << "currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
+
+				addPropertyToPropertyDefinition(currentGIAEntityNode);			
+			}
+		}
+	}
+}				
 
 void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
 {
@@ -2107,7 +2129,8 @@ void disableEntityAndInstance(GIAEntityNode * GIAEntityNode)
 	cout << "GIAEntityNode->disabled = " << GIAEntityNode->entityName << endl;
 	GIAEntityNode->disabled = true;		//remove redundant 'be' artefacts 
 
-	if(GIAEntityNode->hasAssociatedInstanceTemp)
+	if(GIAEntityNode->hasAssociatedInstanceTemp)	//CHECKTHIS; only disable the instance if it was created in the current context (eg sentence)
+	//if(GIAEntityNode->AssociatedInstanceNodeList.size() >= 1)
 	{		
 		GIAEntityNode->AssociatedInstanceNodeList.back()->disabled = true;	//and disable their associated instances (property nodes)
 	}
@@ -2524,7 +2547,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									}
 									else
 									{
-										cout << "h2" << endl;
+										//cout << "h2" << endl;
 										addDefinitionToEntity(subjectEntityTemp, objectEntityTemp);
 										
 										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
@@ -3021,12 +3044,26 @@ void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFille
 			GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
 			if(currentEntity->hasAssociatedTime)
 			{
-				if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
+				GIAEntityNode * timeEntity = currentEntity;
+				if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was created in the current context (eg sentence)
+				//if(timeEntity->AssociatedInstanceNodeList.size() >= 1)
 				{
-					if(currentEntity->timeConditionNode != NULL)
+					timeEntity = timeEntity->AssociatedInstanceNodeList.back();
+				}
+				else
+				{
+					#ifdef GIA_TRANSLATOR_DEBUG
+					cout << "error: isolated date concept node found (ie has no instance)" << endl;
+					#else
+					cout << "error: [confidential 0]" << endl;	
+					#endif
+				}	
+				
+				if(timeEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
+				{
+					if(timeEntity->timeConditionNode != NULL)
 					{
-
-						GIAEntityNode * timeConditionEntity = currentEntity;
+						GIAEntityNode * timeConditionEntity = timeEntity;
 						//cout << "as1" << endl;
 
 						string monthString = timeConditionEntity->entityName;
@@ -3049,7 +3086,7 @@ void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFille
 						#ifdef GIA_TRANSLATOR_DEBUG
 						cout << "error: isolated date node found (not declared as a time condition)" << endl;
 						#else
-						cout << "error: [confidential]" << endl;	
+						cout << "error: [confidential 1]" << endl;	
 						#endif
 						exit(0);	//remove this later
 					}
@@ -3059,11 +3096,10 @@ void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFille
 					#ifdef GIA_TRANSLATOR_DEBUG
 					cout << "error: isolated date node found (not declared as a time condition)" << endl;
 					#else
-					cout << "error: [confidential]" << endl;
+					cout << "error: [confidential 2]" << endl;
 					#endif
 					exit(0);	//remove this later						
 				}
-
 			}
 		}
 	}	
@@ -3082,17 +3118,36 @@ void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFille
 				{
 					GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
 					if(currentEntity->hasAssociatedTime)
-					{			
-						GIAEntityNode * timeConditionEntity = currentEntity;
+					{	
+						GIAEntityNode * timeEntity = currentEntity;			
+						if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was created in the current context (eg sentence)
+						//if(timeEntity->AssociatedInstanceNodeList.size() >= 1)
+						{
+							timeEntity = timeEntity->AssociatedInstanceNodeList.back();
+						}
+						else
+						{
+							#ifdef GIA_TRANSLATOR_DEBUG
+							cout << "error: isolated date concept node found (ie has no instance)" << endl;
+							#else
+							cout << "error: [confidential 0]" << endl;	
+							#endif
+						}
+											
+						GIAEntityNode * timeConditionEntity = timeEntity;
 
 						if(timeConditionEntity->entityName == currentRelationInList->relationFunction)
 						{	
-							if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
+							if(timeEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
 							{
-								if(currentEntity->timeConditionNode != NULL)
+								if(timeEntity->timeConditionNode != NULL)
 								{									
 									if(currentRelationInList->relationType == RELATION_TYPE_DATE_DAY)
 									{
+										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+										GIAEntityNodeArray[currentRelationInList->relationArgumentIndex]->disabled = true;
+										#endif
+				
 										//http://www.cplusplus.com/reference/clibrary/cstdlib/atoi/
 											//The string can contain additional characters after those that form the integral number, which are ignored and have no effect on the behavior of this function.	[eg "3rd" -> 3]
 										string dayOfMonthString = currentRelationInList->relationArgument;
@@ -3110,6 +3165,10 @@ void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFille
 									}
 									if(currentRelationInList->relationType == RELATION_TYPE_DATE_YEAR)
 									{
+										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+										GIAEntityNodeArray[currentRelationInList->relationArgumentIndex]->disabled = true;
+										#endif	
+																		
 										string yearString = currentRelationInList->relationArgument;
 										char * yearStringcharstar = const_cast<char*>(yearString.c_str());
 										int yearInt = atoi(yearStringcharstar);
@@ -3135,7 +3194,7 @@ void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFille
 								#ifdef GIA_TRANSLATOR_DEBUG
 								cout << "error: isolated date node found (not declared as a time condition)" << endl;
 								#else
-								cout << "error: [confidential]" << endl;
+								cout << "error: [confidential 3]" << endl;
 								#endif
 								exit(0);	//remove this later						
 							}
@@ -3155,16 +3214,31 @@ void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFille
 			GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
 			if(currentEntity->hasAssociatedTime)
 			{
-				if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
+				GIAEntityNode * timeEntity = currentEntity;			
+				if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was created in the current context (eg sentence)
+				//if(timeEntity->AssociatedInstanceNodeList.size() >= 1)
 				{
-					if(currentEntity->timeConditionNode != NULL)
+					timeEntity = timeEntity->AssociatedInstanceNodeList.back();
+				}
+				else
+				{
+					#ifdef GIA_TRANSLATOR_DEBUG
+					cout << "error: isolated date concept node found (ie has no instance)" << endl;
+					#else
+					cout << "error: [confidential 0]" << endl;	
+					#endif
+				}	
+							
+				if(timeEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
+				{
+					if(timeEntity->timeConditionNode != NULL)
 					{
 						//replace current entity time condition node with generated time condition node.
 
 						int timeConditionEntityIndex = -1;
 						bool argumentEntityAlreadyExistant = false;
 						long timeConditionTotalTimeInSeconds = calculateTotalTimeInSeconds(timeConditionEntity->timeConditionNode->dayOfMonth, timeConditionEntity->timeConditionNode->month, timeConditionEntity->timeConditionNode->year);
-						currentEntity->timeConditionNode = findOrAddTimeNodeByNumber(timeConditionNodesList, conceptEntityNamesList, timeConditionTotalTimeInSeconds, &argumentEntityAlreadyExistant, &timeConditionEntityIndex, true, currentEntity->timeConditionNode);
+						timeEntity->timeConditionNode = findOrAddTimeNodeByNumber(timeConditionNodesList, conceptEntityNamesList, timeConditionTotalTimeInSeconds, &argumentEntityAlreadyExistant, &timeConditionEntityIndex, true, timeEntity->timeConditionNode);
 
 					}
 					else
@@ -3172,7 +3246,7 @@ void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFille
 						#ifdef GIA_TRANSLATOR_DEBUG
 						cout << "error: isolated date node found (not declared as a time condition)" << endl;
 						#else
-						cout << "error: [confidential]" << endl;
+						cout << "error: [confidential 4]" << endl;
 						#endif
 						exit(0);	//remove this later
 					}
@@ -3182,7 +3256,7 @@ void extractDates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFille
 					#ifdef GIA_TRANSLATOR_DEBUG
 					cout << "error: isolated date node found (not declared as a time condition)" << endl;
 					#else
-					cout << "error: [confidential]" << endl;
+					cout << "error: [confidential 5]" << endl;
 					#endif
 					exit(0);	//remove this later						
 				}
