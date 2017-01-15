@@ -3,7 +3,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1g 24-May-2012
+ * Project Version: 1l1h 25-May-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes 
@@ -102,7 +102,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		string queryEntityNodeName = currentQueryEntityNode->entityName;
 		//cout << "saf1" << endl;
 		
-		GIAEntityNode * conceptEntityMatchingCurrentQueryEntity = findOrAddEntityNodeByName(NULL, entityNodesActiveListConcepts, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
+		GIAEntityNode * conceptEntityMatchingCurrentQueryEntity = findOrAddConceptEntityNodeByName(NULL, entityNodesActiveListConcepts, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
 		
 		//cout << "saf2" << endl;
 		
@@ -445,6 +445,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 			#endif
 
 		}
+		#ifdef GIA_USE_ADVANCED_REFERENCING
 		else
 		{
 			if((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))	//only trace paths of same reference set ID
@@ -470,6 +471,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 				 result = EXACT_MATCH_OUT_OF_BOUNDS;
 			}
 		}
+		#endif
 	}
 	else
 	{
@@ -652,7 +654,14 @@ bool testEntityNodeForReferenceSet(GIAEntityNode * queryEntityNode, GIAEntityNod
 					int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax = 0;
 					GIAEntityNode * queryEntityCorrespondingBestMatch;
 					int numberOfMatchedNodesAtPreviousAnswerNode = 0;
-					readVectorConnection(entityNode, i);
+					
+					#ifdef GIA_USE_DATABASE
+					if(getUseDatabase())
+					{					
+						DBreadVectorConnections(entityNode, i);		//this is important, as it will read all of the vector connections from the database for this node (conferred 25 May 2012)
+					}
+					#endif
+					
 					for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].end(); connectionIter != entityNode->entityVectorConnectionsArray[i].begin(); connectionIter--)	//always search from end position first (to take the latest/newest reference/answer, if equal number of matched nodes is detected) 
 					{
 						GIAQueryTraceParameters queryTraceParametersTemp(queryTraceParameters);
@@ -738,10 +747,12 @@ bool testEntityNodeForReferenceSet(GIAEntityNode * queryEntityNode, GIAEntityNod
 
 					if(matchFound)
 					{	
+						#ifdef GIA_USE_ADVANCED_REFERENCING
 						if(knownBestMatch)
 						{
 							(*connectionIterQuery)->entity->entityCorrespondingBestMatch = queryEntityCorrespondingBestMatch;		//this shouldn't be required for queries....
 						}
+						#endif
 						//now set the matched nodes as already passed (required such that they are not retraced...)	
 
 						int exactMatchTemp = testReferencedEntityNodeForExactNameMatch((*connectionIterQuery)->entity, queryEntityCorrespondingBestMatch, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters);			//numberOfMatchedNodesTemp, numberOfMatchedNodesRequiredSynonymnDetectionTemp			
@@ -872,7 +883,7 @@ bool verifyThatAnswerEntityIsDefinedByComparisonVariableNode(GIAEntityNode * ent
 	{
 		if(!(entityNode->entityNodeDefiningThisInstance->empty()))
 		{
-			if(verifyThatAnswerEntityIsDefinedByComparisonVariableNode(entityNode->entityNodeDefiningThisInstance->being()->entity, comparisonVariableNodeName))
+			if(verifyThatAnswerEntityIsDefinedByComparisonVariableNode((entityNode->entityNodeDefiningThisInstance->back())->entity, comparisonVariableNodeName))
 			{
 				definitionFound = true;
 			}		
@@ -1066,9 +1077,9 @@ void printEntityNodeQualitiesOnly(GIAEntityNode * entityNode, string * printEnti
 {	
 	int numberQualities = 0;
 	//cout << "entityNode->entityName = " << entityNode->entityName << endl;
-	for(vector<GIAEntityNode*>::iterator connectionIter = entityNode->PropertyNodeList.begin(); connectionIter < entityNode->PropertyNodeList.end(); connectionIter++)
+	for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->PropertyNodeList->begin(); connectionIter < entityNode->PropertyNodeList->end(); connectionIter++)
 	{
-		GIAEntityNode * propertyNode = *(connectionIter);
+		GIAEntityNode * propertyNode = (*connectionIter)->entity;
 		if(propertyNode->hasQuality)
 		{
 			if(numberQualities > 0)
@@ -1208,9 +1219,9 @@ void traceEntityNode(GIAEntityNode * entityNode, int function, int * numberOfMat
 			}
 			if(pass)
 			{			
-				for(vector<GIAEntityNode*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++) 
+				for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++) 
 				{		
-					traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*(connectionIter)), entityVectorConnectionContextArray[i], function, numberOfMatchedNodes, entityVectorConnectionThisIsInstanceAndPreviousNodeWasDefinitionArray[i], referenceSetID, traceInstantiations);			
+					traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*connectionIter)->entity, entityVectorConnectionContextArray[i], function, numberOfMatchedNodes, entityVectorConnectionThisIsInstanceAndPreviousNodeWasDefinitionArray[i], referenceSetID, traceInstantiations);			
 				}
 			}
 		}

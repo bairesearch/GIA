@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1g 24-May-2012
+ * Project Version: 1l1h 25-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -569,11 +569,11 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAEntity
 						//cout << "ad3" << endl;
 						bool conceptHasAProperty = false;
 						//now find the property in the referenceSource concept entity that matches the referenceSource sentence/entity index
-						for(vector<GIAEntityConnection*>::iterator connectionIter = referenceSource->AssociatedInstanceNodeList.begin(); connectionIter != referenceSource->AssociatedInstanceNodeList.end(); connectionIter++) 
+						for(vector<GIAEntityConnection*>::iterator connectionIter = referenceSource->AssociatedInstanceNodeList->begin(); connectionIter != referenceSource->AssociatedInstanceNodeList->end(); connectionIter++) 
 						{	
 							//cout << "ad4" << endl;
 
-							GIAEntityNode * property = *connectionIter;
+							GIAEntityNode * property = (*connectionIter)->entity;
 							/*
 							cout << "property->sentenceIndexTemp = " << property->sentenceIndexTemp << endl;
 							cout << "property->entityIndexTemp = " << property->entityIndexTemp << endl;
@@ -723,7 +723,8 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 									coreferenceIsPronoun = true;
 								}
 							}
-							
+						
+							/*
 							#ifdef GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_PROPERTIES_TAKE_CONCEPTS_ONLY
 							if(coreferenceIsPronoun)
 							{
@@ -738,82 +739,113 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 
 								applyEntityAlreadyExistsFunction(referenceSource);
 							}
+							#ifndef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
 							else
 							{
-							#endif
-								#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
-								if(coreferenceIsPronoun)
+								//cout << "ad3" << endl;
+								
+								//now find the property in the referenceSource concept entity that matches the referenceSource sentence/entity index
+								for(vector<GIAEntityConnection*>::iterator connectionIter = referenceSource->AssociatedInstanceNodeList.begin(); connectionIter != referenceSource->AssociatedInstanceNodeList.end(); connectionIter++) 
 								{
-								#endif							
-									//cout << "ad3" << endl;
-									bool conceptHasAProperty = false;
-									//now find the property in the referenceSource concept entity that matches the referenceSource sentence/entity index
-									for(vector<GIAEntityConnection*>::iterator connectionIter = referenceSource->AssociatedInstanceNodeList.begin(); connectionIter != referenceSource->AssociatedInstanceNodeList.end(); connectionIter++) 
-									{
-										//cout << "ad4" << endl;
-
-										GIAEntityNode * property = (*connectionIter)->entity;
-										/*
-										cout << "property->sentenceIndexTemp = " << property->sentenceIndexTemp << endl;
-										cout << "property->entityIndexTemp = " << property->entityIndexTemp << endl;
-										cout << "referenceSourceSentenceIndex = " << referenceSourceSentenceIndex << endl;
-										cout << "referenceSourceEntityNodeIndex = " << referenceSourceEntityNodeIndex << endl;
-										*/
-										if((property->sentenceIndexTemp == referenceSourceSentenceIndex) && (property->entityIndexTemp == referenceSourceEntityNodeIndex))
-										{
-											#ifdef GIA_TRANSLATOR_DEBUG
-											cout << "NonPronoun/property referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
-											#endif
-
-											//found the property in the referenceSource concept entity that matches the referenceSource sentence/entity index 
-											//now only link them
-											#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
-											if(reference->grammaticalDefiniteTemp || reference->grammaticalRelexPersonOrStanfordProperNounTemp)
-											{
-												GIAEntityNodeArray[currentSentenceEntityNodeIndex] = property;
-											}
-											#else
-											GIAEntityNodeArray[currentSentenceEntityNodeIndex] = property;
-											#endif
-											
-											#ifndef GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_PROPERTIES_TAKE_CONCEPTS_ONLY
-											if(coreferenceIsPronoun)
-											{
-												featureArrayTemp[currentSentenceEntityNodeIndex]->isPronounReference = true;
-											}
-											#endif
-										}	
-										conceptHasAProperty = true;
-									}
-									#ifndef GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_PROPERTIES_TAKE_CONCEPTS_ONLY
-									if(!conceptHasAProperty)
+									//cout << "ad4" << endl;
+									
+									GIAEntityNode * property = (*connectionIter)->entity;
+									
+									//cout << "property->sentenceIndexTemp = " << property->sentenceIndexTemp << endl;
+									//cout << "property->entityIndexTemp = " << property->entityIndexTemp << endl;
+									//cout << "referenceSourceSentenceIndex = " << referenceSourceSentenceIndex << endl;
+									//cout << "referenceSourceEntityNodeIndex = " << referenceSourceEntityNodeIndex << endl;
+									
+									if((property->sentenceIndexTemp == referenceSourceSentenceIndex) && (property->entityIndexTemp == referenceSourceEntityNodeIndex))
 									{
 										#ifdef GIA_TRANSLATOR_DEBUG
-										cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
+										cout << "NonPronoun/property referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
 										#endif
 										
-										#ifndef GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_PROPERTIES_TAKE_CONCEPTS_ONLY
+										//found the property in the referenceSource concept entity that matches the referenceSource sentence/entity index 
+										//now only link them
+										#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
+										if(reference->grammaticalDefiniteTemp || reference->grammaticalRelexPersonOrStanfordProperNounTemp)
+										{
+											GIAEntityNodeArray[currentSentenceEntityNodeIndex] = property;
+										}
+										#else
+										GIAEntityNodeArray[currentSentenceEntityNodeIndex] = property;
+										#endif
+									}	
+								}
+							}
+							#endif
+							#else
+							*/
+							#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
+							if(coreferenceIsPronoun)
+							{
+							#endif							
+								//cout << "ad3" << endl;
+								bool conceptHasAProperty = false;
+								//now find the property in the referenceSource concept entity that matches the referenceSource sentence/entity index
+								for(vector<GIAEntityConnection*>::iterator connectionIter = referenceSource->AssociatedInstanceNodeList->begin(); connectionIter != referenceSource->AssociatedInstanceNodeList->end(); connectionIter++) 
+								{
+									//cout << "ad4" << endl;
+
+									GIAEntityNode * property = (*connectionIter)->entity;
+									/*
+									cout << "property->sentenceIndexTemp = " << property->sentenceIndexTemp << endl;
+									cout << "property->entityIndexTemp = " << property->entityIndexTemp << endl;
+									cout << "referenceSourceSentenceIndex = " << referenceSourceSentenceIndex << endl;
+									cout << "referenceSourceEntityNodeIndex = " << referenceSourceEntityNodeIndex << endl;
+									*/
+									if((property->sentenceIndexTemp == referenceSourceSentenceIndex) && (property->entityIndexTemp == referenceSourceEntityNodeIndex))
+									{
+										#ifdef GIA_TRANSLATOR_DEBUG
+										cout << "NonPronoun/property referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
+										#endif
+
+										//found the property in the referenceSource concept entity that matches the referenceSource sentence/entity index 
+										//now only link them
+										#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
+										if(reference->grammaticalDefiniteTemp || reference->grammaticalRelexPersonOrStanfordProperNounTemp)
+										{
+											GIAEntityNodeArray[currentSentenceEntityNodeIndex] = property;
+										}
+										#else
+										GIAEntityNodeArray[currentSentenceEntityNodeIndex] = property;
+										#endif
+
 										if(coreferenceIsPronoun)
 										{
-											disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAConceptNodeArray[currentSentenceEntityNodeIndex]);
 											featureArrayTemp[currentSentenceEntityNodeIndex]->isPronounReference = true;
 										}
-										#endif										
-
-										GIAEntityNodeArray[currentSentenceEntityNodeIndex] = referenceSource;		//GIAConceptNodeArray[currentSentenceEntityNodeIndex] = referenceSource;
-
-										applyEntityAlreadyExistsFunction(referenceSource);
-										
-																				
-									}
+									}	
+									conceptHasAProperty = true;
+								}
+								#ifndef GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_PROPERTIES_TAKE_CONCEPTS_ONLY
+								if(!conceptHasAProperty)
+								{
+									#ifdef GIA_TRANSLATOR_DEBUG
+									cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
 									#endif
-									
-								#ifndef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
+
+									if(coreferenceIsPronoun)
+									{
+										disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAConceptNodeArray[currentSentenceEntityNodeIndex]);
+										featureArrayTemp[currentSentenceEntityNodeIndex]->isPronounReference = true;
+									}
+
+									GIAEntityNodeArray[currentSentenceEntityNodeIndex] = referenceSource;		//GIAConceptNodeArray[currentSentenceEntityNodeIndex] = referenceSource;
+
+									applyEntityAlreadyExistsFunction(referenceSource);
+
+
 								}
 								#endif
-							#ifdef GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_PROPERTIES_TAKE_CONCEPTS_ONLY								
-							}	
+							#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
+							}
+							#endif
+							/*
 							#endif							
+							*/
 						}
 					}
 				}
@@ -985,13 +1017,11 @@ void identityReferenceSet(GIAEntityNode * entityNode, int referenceSetID)
 
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 	{
-		if(entityNode->entityVectorConnectionsArray[i].begin() != entityNode->entityVectorConnectionsArray[i].end())
+		if(!(entityNode->entityVectorConnectionsArray[i].empty()))
 		{
-			vector<int>::iterator entityNodeListParametersIterator = entityNode->entityVectorConnectionsParametersSameReferenceSetArray[i].begin();
-			for(vector<GIAEntityNode*>::iterator entityNodeListIterator = entityNode->entityVectorConnectionsArray[i].begin(); entityNodeListIterator < entityNode->entityVectorConnectionsArray[i].end(); entityNodeListIterator++)
+			for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter < entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 			{
-				identityReferenceSetDetermineNextCourseOfAction((*(entityNodeListIterator)), (*(entityNodeListParametersIterator)), referenceSetID);
-				entityNodeListParametersIterator++;
+				identityReferenceSetDetermineNextCourseOfAction((*connectionIter)->entity, ((*connectionIter)->sameReferenceSet), referenceSetID);
 			}				
 		}	
 	}
@@ -1039,7 +1069,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 				string queryEntityNodeName = currentQueryEntityNode->entityName;
 				//cout << "saf1" << endl;
 
-				GIAEntityNode * conceptEntityMatchingCurrentQueryEntity = findOrAddEntityNodeByName(NULL, entityNodesActiveListConcepts, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
+				GIAEntityNode * conceptEntityMatchingCurrentQueryEntity = findOrAddConceptEntityNodeByName(NULL, entityNodesActiveListConcepts, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
 
 				//cout << "saf2" << endl;
 
@@ -1159,7 +1189,7 @@ GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIA
 		{
 			for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++) 
 			{		
-				currentGIACoreferenceInList = generateCoreferenceListBasedUponPreviouslyMatchedEntityNodeDetermineNextCourseOfAction((*connectionIter)->entity), currentGIACoreferenceInList);			
+				currentGIACoreferenceInList = generateCoreferenceListBasedUponPreviouslyMatchedEntityNodeDetermineNextCourseOfAction((*connectionIter)->entity, currentGIACoreferenceInList);			
 			}
 		}
 	}	
@@ -1197,7 +1227,7 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 						//assumes references have already been loaded into RAM (during their establishment)				
 						#endif
 						//now find the property in the referenceSource concept entity that matches the referenceSource idActiveList
-						for(vector<GIAEntityConnection*>::iterator connectionIter = referenceSourceConceptEntity->AssociatedInstanceNodeList.begin(); connectionIter != referenceSourceConceptEntity->AssociatedInstanceNodeList.end(); connectionIter++) 
+						for(vector<GIAEntityConnection*>::iterator connectionIter = referenceSourceConceptEntity->AssociatedInstanceNodeList->begin(); connectionIter != referenceSourceConceptEntity->AssociatedInstanceNodeList->end(); connectionIter++) 
 						{
 							//cout << "ad4" << endl;
 

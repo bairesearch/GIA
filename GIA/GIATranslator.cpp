@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1g 24-May-2012
+ * Project Version: 1l1h 25-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -34,14 +34,14 @@ void initialiseGIATranslatorForTexualContext()
 
 
 #ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIATimeConditionNode*> *timeConditionNodesActiveList, vector<long> *timeConditionNumbersActiveList, Paragraph * firstParagraphInList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations)
+void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIATimeConditionNode*> *timeConditionNodesActiveList, vector<long> *timeConditionNumbersActiveList, Paragraph * firstParagraphInList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations, bool readFromDatabase)
 {
 	Paragraph * currentParagraphInList = firstParagraphInList;
 	while(currentParagraphInList->next != NULL)
 	{
 		Sentence * firstSentenceInList = currentParagraphInList->firstSentenceInList;
 
-		convertSentenceListRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, timeConditionNumbersActiveList, firstSentenceInList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
+		convertSentenceListRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, timeConditionNumbersActiveList, firstSentenceInList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, readFromDatabase);
 
 		#ifdef GIA_ENABLE_REFERENCE_LINKING_CLEAR_REFERENCES_EVERY_PARAGRAPH	
 		//restore critical variables: used for GIA translator reference paser only - cleared every time a new paragraph is parsed
@@ -67,7 +67,7 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, 
 #endif
 
 #ifdef USE_CE
-void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIATimeConditionNode*> *timeConditionNodesActiveList, vector<long> *timeConditionNumbersActiveList, Sentence * firstSentenceInList, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations)
+void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIATimeConditionNode*> *timeConditionNodesActiveList, vector<long> *timeConditionNumbersActiveList, Sentence * firstSentenceInList, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations, bool readFromDatabase)
 {
 	Sentence * currentSentenceInList;
 	
@@ -93,23 +93,28 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(unord
 		Sentence * firstSentenceInArtificialList = currentSentenceInList;
 		generateArtificialSentenceListBasedUponParentClaims(currentClaimInHeirachy, firstSentenceInArtificialList);
 		
-		convertSentenceRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, timeConditionNumbersActiveList, firstSentenceInList, currentSentenceInList, sentenceConceptEntityNodesList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
+		convertSentenceRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, timeConditionNumbersActiveList, firstSentenceInList, currentSentenceInList, sentenceConceptEntityNodesList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, readFromDatabase);
 						
 		currentSentenceInList = currentSentenceInList->next;
 	}
 }
 #endif
 
-void convertSentenceListRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIATimeConditionNode*> *timeConditionNodesActiveList, vector<long> *timeConditionNumbersActiveList, Sentence * firstSentenceInList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations)
+void convertSentenceListRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIATimeConditionNode*> *timeConditionNodesActiveList, vector<long> *timeConditionNumbersActiveList, Sentence * firstSentenceInList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations, bool readFromDatabase)
 {
 	Sentence * currentSentenceInList = firstSentenceInList;
 	while(currentSentenceInList->next != NULL)
 	{
 		#ifdef GIA_USE_ADVANCED_REFERENCING
+
 		cout << "error: GIA_USE_ADVANCED_REFERENCING is under development" << endl;
 		
 		setSaveNetwork(false);
-		
+		if(readFromDatabase)
+		{
+			setUseDatabase(false);
+		}
+				
 		GIACoreference * firstGIACoreferenceInList;
 		unordered_map<string, GIAEntityNode*> * sentenceConceptEntityNodesList = new unordered_map<string, GIAEntityNode*>;
 		vector<GIATimeConditionNode*> * sentenceTimeConditionNodesList = new vector<GIATimeConditionNode*>;
@@ -128,21 +133,39 @@ void convertSentenceListRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEn
 		int numberReferenceSets = identifyReferenceSets(sentenceConceptEntityNodesList);
 		#endif
 		
+		if(readFromDatabase)
+		{
+			setUseDatabase(true);	//optional: use database to determine references (else will just use the active list of entity nodes) 
+		}		
 		createGIACoreferenceInListBasedUponIdentifiedReferenceSets(sentenceConceptEntityNodesList, entityNodesActiveListConcepts, firstGIACoreferenceInList, numberReferenceSets);
 		
 		//cout << "bf2" << endl;
-		setSaveNetwork(true);		
-		#endif
-			
+		setSaveNetwork(true);	
+		if(readFromDatabase)
+		{
+			setUseDatabase(false);
+		}			
+		
 		vector<GIAEntityNode*> sentenceConceptEntityNodesListTempNotUsed;
 		convertSentenceRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, timeConditionNumbersActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, true, firstGIACoreferenceInList);
+		
+		#else
+		
+		vector<GIAEntityNode*> sentenceConceptEntityNodesListTempNotUsed;
+		convertSentenceRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, timeConditionNumbersActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
+		
+		#endif
 		
 		currentSentenceInList = currentSentenceInList->next;
 	}
 }
 
 //NB vector<GIAEntityNode*> *sentenceConceptEntityNodesList is for GIA_USE_CE only
+#ifdef GIA_USE_ADVANCED_REFERENCING
 void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIATimeConditionNode*> *timeConditionNodesActiveList, vector<long> *timeConditionNumbersActiveList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations, bool linkPreestablishedReferencesGIA,  GIACoreference * firstGIACoreferenceInList)
+#else
+void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIATimeConditionNode*> *timeConditionNodesActiveList, vector<long> *timeConditionNumbersActiveList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations)
+#endif
 {
 	Relation * currentRelationInList;
 	/*
@@ -408,12 +431,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		}
 	}		
 	
+	#ifdef GIA_USE_ADVANCED_REFERENCING
 	if(!linkPreestablishedReferencesGIA)
 	{
 		//identify explicit same set linkages
 		//eg "the guy that robbed the bank" in "the guy that robbed the bank is tall" 
 		fillExplicitReferenceSameSetTags(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);	
 	}
+	#endif
 					
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1b; identify comparison variable" << endl;
@@ -436,15 +461,15 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		GIAEntityNodeArray[w] = GIAConceptNodeArray[w];		//set default values of GIAEntityNodeArray 
 	}
 
+	#ifdef GIA_USE_ADVANCED_REFERENCING
 	if(linkPreestablishedReferencesGIA)
 	{
-		#ifdef GIA_USE_ADVANCED_REFERENCING
 		cout << "error: GIA_USE_ADVANCED_REFERENCING not yet coded" << endl;
 		linkAdvancedReferencesGIA(currentSentenceInList, GIAEntityNodeArrayFilled, GIAConceptNodeArray, GIAEntityNodeArray, entityNodesActiveListConcepts, firstGIACoreferenceInList, featureArrayTemp);
-		#endif
 	}
 	else
 	{
+	#endif
 		#ifdef GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING
 		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
 		if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
@@ -467,7 +492,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		#endif
 		#endif
 		#endif
+	#ifdef GIA_USE_ADVANCED_REFERENCING	
 	}
+	#endif
 	
 	
 							

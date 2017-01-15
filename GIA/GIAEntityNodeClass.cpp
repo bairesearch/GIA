@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1g 24-May-2012
+ * Project Version: 1l1h 25-May-2012
  *
  *******************************************************************************/
 
@@ -114,7 +114,7 @@ GIAEntityNode::GIAEntityNode(void)
 	entityNodeDefiningThisInstance = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE]);
 
 	#ifdef GIA_USE_DATABASE
-	setEntityConnectionsLoaded(true);	//for now, assume that a new entity will be configured with its connections loaded into RAM
+	DBsetEntityConnectionsLoaded(this, true);	//for now, assume that a new entity will be configured with its connections loaded into RAM
 	#endif
 	
 	/*
@@ -182,6 +182,15 @@ GIAEntityNode::~GIAEntityNode(void)
 {
 }
 
+#ifdef GIA_USE_DATABASE
+void DBsetEntityConnectionsLoaded(GIAEntityNode * entityNode, bool loaded)
+{
+	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+	{
+		entityNode->entityVectorConnectionsReferenceListLoadedArray[i] = loaded;
+	}
+}
+#endif
 
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode)

@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1g 24-May-2012
+ * Project Version: 1l1h 25-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -86,7 +86,7 @@ void initialiseGIATranslatorForTexualContextOperations()
 	//bool resultTemp = true;
 	//string tempName = "zh";
 	//long findIndex = -1;
-	//GIAEntityNode * tempEntity = findOrAddEntityNodeByName(entityNodesActiveListConcepts, &tempName, &resultTemp, &findIndex);
+	//GIAEntityNode * tempEntity = findOrAddConceptEntityNodeByName(entityNodesActiveListConcepts, &tempName, &resultTemp, &findIndex);
 	//if(resultTemp)
 	//{
 	//	cout << "tempEntity->entityName = " << tempEntity->entityName << endl;
@@ -388,7 +388,7 @@ void upgradePropertyToAction(GIAEntityNode * property)
 	GIAEntityNode * existingAction = property;
 
 	//CHECK THIS; must remove from property list, and add to action list 
-	existingAction->entityNodeDefiningThisInstance->hasAssociatedInstanceIsAction = true;
+	(existingAction->entityNodeDefiningThisInstance->back())->entity->hasAssociatedInstanceIsAction = true;
 	existingAction->isProperty = false;
 	existingAction->isAction = true;
 
@@ -658,7 +658,7 @@ void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definiti
 
 		//configure entity node and entity definition node
 		writeVectorConnection(thingEntity, definitionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);
-		writeVectorConnection(definitionEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);	
+		writeVectorConnection(definitionEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet);	
 		
 	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
@@ -870,7 +870,7 @@ GIAEntityNode * addCondition(GIAEntityNode * conditionEntity)
 	
 	GIAEntityNode * newCondition = new GIAEntityNode();
 	#ifdef GIA_USE_DATABASE
-	newAction->added = true;
+	newCondition->added = true;
 	#endif
 		
 	if(saveNetwork)
@@ -894,7 +894,7 @@ GIAEntityNode * addCondition(GIAEntityNode * conditionEntity)
 	newCondition->idInstance = determineNextIdInstance(conditionEntity); 
 	#endif	
 		
-	writeVectorConnection(newCondition, conditionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);	
+	writeVectorConnection(newCondition, conditionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);	
 	writeVectorConnection(conditionEntity, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
 	
 	conditionEntity->hasAssociatedInstance = true;
@@ -1079,7 +1079,7 @@ void disableEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAEntityNo
 	//if(entity->AssociatedInstanceNodeList.size() >= 1)
 	{	
 		//cout << "entity->AssociatedInstanceNodeList.back()->disabled = " << entity->AssociatedInstanceNodeList.back()->entityName << endl;	
-		entity->AssociatedInstanceNodeList.back()->disabled = true;	//and disable their associated instances (property nodes)
+		(entity->AssociatedInstanceNodeList->back())->entity->disabled = true;	//and disable their associated instances (property nodes)
 	}	
 	#endif
 }
@@ -1232,9 +1232,9 @@ GIAEntityNode * getEntityPropertyThatWasDeclaredInContext(GIAEntityNode * entity
 	
 	if(entityNode->entityAlreadyDeclaredInThisContext)
 	{
-		if(entityNode->AssociatedInstanceNodeList.size() >= 1)
+		if(!(entityNode->AssociatedInstanceNodeList->empty()))
 		{
-			entityNodeAssociatedInstance = entityNode->AssociatedInstanceNodeList.back();
+			entityNodeAssociatedInstance = (entityNode->AssociatedInstanceNodeList->back())->entity;
 		}
 		else
 		{
@@ -1287,7 +1287,7 @@ GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapper(string * entityNodeName, 
 	}
 
 	long entityIndex = -1;
-	entityNodeFound = findOrAddEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodeName, entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList, saveNetwork);
+	entityNodeFound = findOrAddConceptEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodeName, entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList, saveNetwork);
 	if(entityAlreadyExistant)
 	{
 		applyEntityAlreadyExistsFunction(entityNodeFound);
@@ -1302,7 +1302,7 @@ GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapper(string * entityNodeName, 
 //this function does write to database, but prepares data structures for write to database (at the end of the user sequence, writeDatabase() is written...)
 void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet)
 {
-	vector<GIAEntityConnection*> * vectorConnection = entityNode->entityVectorConnectionsArray[connectionType];
+	vector<GIAEntityConnection*> * vectorConnection = &(entityNode->entityVectorConnectionsArray[connectionType]);
 	if(entityVectorConnectionIsBasicArray[connectionType])
 	{
 		vectorConnection->clear();	//clear the vector (basic connections only support 1 node)
@@ -1335,36 +1335,21 @@ void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNod
 	#endif
 }
 
-void readVectorConnections(GIAEntityNode * entityNode, int connectionType)
-{	
-	#ifdef GIA_USE_DATABASE
-	if(getUseDatabase())
-	{
-		#ifdef GIA_USE_DATABASE_FILESYSTEM
-		if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
-		{
-			DBreadVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsArray[connectionType]);
-			entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType] = true;
-		}
-
-		DBreadVectorConnections(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsArray[connectionType]));	
-
-		#else
-		cout << "error: must use GIA_USE_DATABASE_FILESYSTEM" << endl;
-		#endif	
-	}	
-	#endif
-}
-
-long determineNextIdInstance(GIAEntityNode * entity);
+long determineNextIdInstance(GIAEntityNode * entity)
 {
-	GIAEntityNode * conceptEntity = entity;
-	if(!(conditionEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE]->empty()))
+	GIAEntityNode * conceptEntity;
+	if(!(conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE].empty()))
 	{
-		conceptEntity = entity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE]->begin();		
+		//the current entity is a property of a concept entity
+		conceptEntity = conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE].back()->entity;		
+	}
+	else
+	{
+		//the current entity is a concept entity
+		conceptEntity = entity;
 	}
 	
-	long numberOfInstances =  conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE]->size();
+	long numberOfInstances =  conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE].size();
 	long indexOfNextInstance = numberOfInstances;
 	return indexOfNextInstance;
 }

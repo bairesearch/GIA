@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1g 24-May-2012
+ * Project Version: 1l1h 25-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -27,6 +27,7 @@ using namespace std;
 #include "GIAglobalDefs.h"					
 #include "GIASentenceClass.h"
 #include "GIAEntityNodeClass.h"
+#include "GIAEntityConnectionClass.h"
 #include "GIAConditionNodeClass.h"
 
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_PARTMOD_DEAL_WITH_PROGRESSIVE_ANOMALY
@@ -51,10 +52,14 @@ using namespace std;
 		#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
 			#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_EXPLICIT_SUBJECT_ONLY
 		#endif
+		#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
+		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
+			#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION		//if using advanced referencing, only use the pronominal coreferences from Stanford (it, she, he, etc)
+		#endif
 	#else
 		#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES	//default: on	
 		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
-			#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL	//Not fully tested, but appears to work at least in simple scenarios		
+			//#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL	//Not fully tested, but appears to work at least in simple scenarios		
 			#ifndef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL
 				#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION	
 				#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
@@ -795,6 +800,7 @@ static string relationTypeAdjectiveImpliesSameSetNameArray[RELATION_TYPE_ADJECTI
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PARATAXIS (false)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CCCOMP (true)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE (true)
+#define IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING (false)
 #define OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET (DEFAULT_SAME_REFERENCE_SET_VALUE)
 
 /*************************************************************************************/
@@ -931,9 +937,6 @@ bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relatio
 GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts);
 
 void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int vectorConnectionType, bool sameReferenceSet);
-void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int basicConnectionType, bool sameReferenceSet);
-void readVectorConnections(GIAEntityNode * entityNode, int connectionType);
-void readBasicConnections(GIAEntityNode * entityNode, int connectionType);
 
 long determineNextIdInstance(GIAEntityNode * entity);
 

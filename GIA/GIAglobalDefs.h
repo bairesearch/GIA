@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1g 24-May-2012
+ * Project Version: 1l1h 25-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific version of shared globals (replace if compiling other projects)
  *
@@ -14,18 +14,20 @@
 
 #include "SHAREDglobalDefs.h"
 
-//variables currently under attention for testing purposes
-#define GIA_USE_DATABASE			//untested (added 1l1b+)
+//variables currently been tested (1lXy)
+//#define GIA_USE_DATABASE		
 #ifdef GIA_USE_DATABASE
-	#define GIA_USE_DATABASE_FILESYSTEM	//untested (added 1l1d)
+	#define GIA_USE_DATABASE_FILESYSTEM
 #endif
-#define GIA_USE_ADVANCED_REFERENCING		//untested (added 1l1a)
+//#define GIA_USE_ADVANCED_REFERENCING
+
+//variables currently under attention for testing purposes
 #define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING			//default: on	//this enables pronoun detection	//OLD: {this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}
 #define WORDNET_SEARCH_RELATED_SYNSETS
 #define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		//{//this should only be enabled with Relex??} 	//this was (effectively) disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
 #define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 //#define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE2
-//#define GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_PROPERTIES_TAKE_CONCEPTS_ONLY	//untested (removed 1l1c)
+/*#define GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_PROPERTIES_TAKE_CONCEPTS_ONLY	//untested (removed 1l1c)*/	//commented out completely
 
 //variables passed testing:
 #define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE

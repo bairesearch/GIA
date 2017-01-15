@@ -3,7 +3,7 @@
  * File Name: GIACXLconversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1g 24-May-2012
+ * Project Version: 1l1h 25-May-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  *
@@ -72,15 +72,15 @@ bool writeCMapToolsCXLFile(string xmlFileName, vector<GIAEntityNode*> *entityNod
 
 	long currentCmapNodeIDInCmapNodeList;
 	
-	/*
-	#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_THIS_SHOULDNT_EVER_BE_USED
+	
+	#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_OLD
 	currentCmapNodeIDInCmapNodeList = 0;
 	resetIDsForNodeList2(entityNodesActiveListConcepts, &currentCmapNodeIDInCmapNodeList);
 	resetIDsForNodeList2(entityNodesActiveListProperties, &currentCmapNodeIDInCmapNodeList);
 	resetIDsForNodeList2(entityNodesActiveListActions, &currentCmapNodeIDInCmapNodeList);
 	resetIDsForNodeList2(entityNodesActiveListConditions, &currentCmapNodeIDInCmapNodeList);
 	#endif
-	*/
+	
 	
 	//cout << "z" << endl;
 	
@@ -254,9 +254,9 @@ XMLParserTag * addToCXLEntityNodeTagList(XMLParserTag * currentTagL1, vector<GIA
 
 	bool result = true;
 		
-	for(vector<GIAEntityNode*>::iterator entityNodesCompleteListIterator = entityNodesList->begin(); entityNodesCompleteListIterator < entityNodesList->end(); entityNodesCompleteListIterator++)	
+	for(vector<GIAEntityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesList->begin(); entityNodesActiveCompleteListIterator < entityNodesList->end(); entityNodesActiveCompleteListIterator++)	
 	{
-		GIAEntityNode * currentEntity = *entityNodesCompleteListIterator;
+		GIAEntityNode * currentEntity = *entityNodesActiveCompleteListIterator;
 
 		//cout << "h4" << endl;
 		
@@ -264,7 +264,7 @@ XMLParserTag * addToCXLEntityNodeTagList(XMLParserTag * currentTagL1, vector<GIA
 		if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
 		{//this exception is required because timeCondition nodes have a separate idActiveList in Cmap maps / CXL
 			//cout << "asd" << endl;
-			currentEntity->timeConditionNode->idActiveList = (*currentCmapNodeIDInCmapNodeList);			
+			currentEntity->timeConditionNode->idActiveListReorderdIDforXMLsave = (*currentCmapNodeIDInCmapNodeList);			
 			currentTagL1 = generateCXLEntityNodeTag(currentTagL1, currentEntity->timeConditionNode->conditionName, *currentCmapNodeIDInCmapNodeList, currentEntity->timeConditionNode->printX, currentEntity->timeConditionNode->printY, conceptOrLinkingPhraseList, appearanceList);		
 			(*currentCmapNodeIDInCmapNodeList) = (*currentCmapNodeIDInCmapNodeList) + 1;
 		}
@@ -273,21 +273,23 @@ XMLParserTag * addToCXLEntityNodeTagList(XMLParserTag * currentTagL1, vector<GIA
 		if(!(currentEntity->disabled))
 		{
 			#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
-			if(currentEntity->AssociatedInstanceNodeList.begin() == currentEntity->AssociatedInstanceNodeList.end())
+			if(currentEntity->AssociatedInstanceNodeList->empty())
 			{//if GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES; then do not add a concept entity if it has an associated instance (property node)
 			#endif
 				//cout << "DEBUG: currentEntity->entityName = " << currentEntity->entityName << endl;
 
-				currentEntity->idActiveListReorderdIDforXMLsave = *currentCmapNodeIDInCmapNodeList;
-				/*
 				#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
 				currentEntity->idActiveListReorderdIDforXMLsave = *currentCmapNodeIDInCmapNodeList;
+				long currentEntityID = currentEntity->idActiveListReorderdIDforXMLsave;
 				//cout << "currentEntity->idActiveListReorderdIDforXMLsave = " << currentEntity->idActiveListReorderdIDforXMLsave << endl;
-				long currentEntityID = *currentCmapNodeIDInCmapNodeList;
+				#elif defined GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_OLD
+				//idActiveListReorderdIDforXMLsave already set
+				long currentEntityID = currentEntity->idActiveListReorderdIDforXMLsave;
 				#else	
 				long currentEntityID = currentEntity->idActiveList;
 				#endif
-				*/
+				
+				
 				
 				currentTagL1 = generateCXLEntityNodeTag(currentTagL1, currentEntity->entityName, currentEntityID, currentEntity->printX, currentEntity->printY, conceptOrLinkingPhraseList, appearanceList);				
 				(*currentCmapNodeIDInCmapNodeList) = (*currentCmapNodeIDInCmapNodeList) + 1;
@@ -426,7 +428,7 @@ bool checkIfPassedRedundantConceptNodeRemoval(GIAEntityNode * currentEntity)
 	bool result = false;
 
 	#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES_OLD
-	if(currentEntity->AssociatedInstanceNodeList.begin() == currentEntity->AssociatedInstanceNodeList.end())
+	if(currentEntity->AssociatedInstanceNodeList->empty())
 	{//if GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES; then do not add a concept entity if it has an associated instance (property node) 
 	//if((currentEntity->isAction) || (currentEntity->isProperty) || (currentEntity->isCondition))
 	//{//do not add raw concept nodes
@@ -434,7 +436,7 @@ bool checkIfPassedRedundantConceptNodeRemoval(GIAEntityNode * currentEntity)
 	}
 	#else
 			
-	if((currentEntity->AssociatedInstanceNodeList.begin() == currentEntity->AssociatedInstanceNodeList.end()))
+	if(currentEntity->AssociatedInstanceNodeList->empty())
 	{
 		//entity does not have an associated instance [entity is either a raw/isolated concept node, or it is a property]
 		result = true;
@@ -527,9 +529,9 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 
 	bool result = true;
 		
-	for(vector<GIAEntityNode*>::iterator entityNodesCompleteListIterator = entityNodesList->begin(); entityNodesCompleteListIterator < entityNodesList->end(); entityNodesCompleteListIterator++)	
+	for(vector<GIAEntityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesList->begin(); entityNodesActiveCompleteListIterator < entityNodesList->end(); entityNodesActiveCompleteListIterator++)	
 	{
-		GIAEntityNode * currentEntity = *entityNodesCompleteListIterator;
+		GIAEntityNode * currentEntity = *entityNodesActiveCompleteListIterator;
 
 		
 		#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
@@ -613,11 +615,11 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 					else
 					{
 					#endif
-						if(currentEntity->entityVectorConnectionsArray[i].begin() != currentEntity->entityVectorConnectionsArray[i].end())
+						if(!(currentEntity->entityVectorConnectionsArray[i].empty()))
 						{
-							for(vector<GIAEntityConnectionClass*>::iterator connectionIter = currentEntity->entityVectorConnectionsArray[i].begin(); connectionIter < currentEntity->entityVectorConnectionsArray[i].end(); connectionIter++)
+							for(vector<GIAEntityConnection*>::iterator connectionIter = currentEntity->entityVectorConnectionsArray[i].begin(); connectionIter < currentEntity->entityVectorConnectionsArray[i].end(); connectionIter++)
 							{	
-								pass = true;
+								bool pass = true;
 								#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES_OLD
 								if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
 								{
@@ -627,7 +629,7 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 								if(pass)
 								{
 									GIAEntityNode * entity = (*connectionIter)->entity;
-									string connectionTypeName = "property";
+									string connectionTypeName = entityVectorConnectionDrawConnectionNameArray[i];
 									currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, entity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);							
 								}
 							} 
@@ -646,14 +648,14 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 				fakeTimeEntity.entityName = currentEntity->timeConditionNode->conditionName;
 				fakeTimeEntity.printX = currentEntity->timeConditionNode->printX;
 				fakeTimeEntity.printY = currentEntity->timeConditionNode->printY;
-				fakeTimeEntity.idActiveListReorderdIDforXMLsave = currentEntity->timeConditionNode->idActiveListReorderdIDforXMLsave;
-				/*
 				#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
+				fakeTimeEntity.idActiveListReorderdIDforXMLsave = currentEntity->timeConditionNode->idActiveListReorderdIDforXMLsave;
+				#elif defined GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_OLD
 				fakeTimeEntity.idActiveListReorderdIDforXMLsave = currentEntity->timeConditionNode->idActiveList;
 				#else
 				fakeTimeEntity.idActiveList = currentEntity->timeConditionNode->idActiveList;				
 				#endif
-				*/
+				
 				string connectionTypeName = "time";
 				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, &fakeTimeEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);
 			}
@@ -675,10 +677,10 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 
 XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * currentTagL1, GIAEntityNode * entity1, GIAEntityNode * entity2, string connectionTypeName, long * currentCmapNodeIDInCmapNodeList, XMLParserTag ** currentTagInLinkingPhraseList, XMLParserTag ** currentTagInLinkingPhraseAppearanceList, XMLParserTag * firstTagInConnectionsList, bool alreadyMadeLinkingPhrase)
 {
-	int entity1ID = entity1->idActiveListReorderdIDforXMLsave;
-	int entity2ID = entity2->idActiveListReorderdIDforXMLsave;	
-	/*		
 	#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
+	int entity1ID = entity1->idActiveListReorderdIDforXMLsave;
+	int entity2ID = entity2->idActiveListReorderdIDforXMLsave;		
+	#elif defined GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_OLD
 	//cout << "entity1->idActiveListReorderdIDforXMLsave = " << entity1->idActiveListReorderdIDforXMLsave << endl;
 	//cout << "entity2->idActiveListReorderdIDforXMLsave = " << entity2->idActiveListReorderdIDforXMLsave << endl;
 	int entity1ID = entity1->idActiveListReorderdIDforXMLsave;
@@ -687,7 +689,7 @@ XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * c
 	int entity1ID = entity1->idActiveList;
 	int entity2ID = entity2->idActiveList;	
 	#endif
-	*/
+	
 	//cout << "entity1ID = " << entity1ID << endl;
 	//cout << "entity2ID = " << entity2ID << endl;
 		
@@ -819,16 +821,17 @@ XMLParserTag * generateCXLConnectionNodeTag(XMLParserTag * currentTagL1, long fr
 }
 
 
-/*
-#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_THIS_SHOULDNT_EVER_BE_USED
+
+#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_OLD
+//this method is insufficient due to time condition nodes
 void resetIDsForNodeList2(vector<GIAEntityNode*> *entityNodesList, long * currentEntityNodeIDInConceptEntityNodesList)
 {
 	//cout << "h3" << endl;
 
-	for(vector<GIAEntityNode*>::iterator entityNodesCompleteListIterator = entityNodesList->begin(); entityNodesCompleteListIterator < entityNodesList->end(); entityNodesCompleteListIterator++)	
+	for(vector<GIAEntityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesList->begin(); entityNodesActiveCompleteListIterator < entityNodesList->end(); entityNodesActiveCompleteListIterator++)	
 	{
-		GIAEntityNode * currentEntity = *entityNodesCompleteListIterator;
-		currentEntity->idActiveList = *currentEntityNodeIDInConceptEntityNodesList;
+		GIAEntityNode * currentEntity = *entityNodesActiveCompleteListIterator;
+		currentEntity->idActiveListReorderdIDforXMLsave = *currentEntityNodeIDInConceptEntityNodesList;
 		(*currentEntityNodeIDInConceptEntityNodesList) = (*currentEntityNodeIDInConceptEntityNodesList) + 1;
 
 		//cout << "h5f" << endl;
@@ -837,5 +840,6 @@ void resetIDsForNodeList2(vector<GIAEntityNode*> *entityNodesList, long * curren
 	//cout << "h6" << endl;
 }
 #endif
-*/
+
+
 

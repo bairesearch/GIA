@@ -3,7 +3,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1g 24-May-2012
+ * Project Version: 1l1h 25-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -52,7 +52,11 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 				//cout << "propertyName = " << propertyEntity->entityName << endl;
 				//cout << "ownerName = " << ownerEntity->entityName << endl;
 				
+				#ifdef GIA_USE_ADVANCED_REFERENCING
 				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES, currentRelationInList);
+				#else
+				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+				#endif
 				GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(ownerEntity, propertyEntity, sameReferenceSet);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -123,7 +127,11 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 					}
 					*/
 					
+					#ifdef GIA_USE_ADVANCED_REFERENCING
 					bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES, currentRelationInList);
+					#else
+					bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+					#endif
 					GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(thingEntity, propertyEntity, sameReferenceSet);		
 				}			
 			}
@@ -158,7 +166,11 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				cout << "definitionEntity = " << definitionEntity->entityName << endl;
 				#endif
 				
+				#ifdef GIA_USE_ADVANCED_REFERENCING
 				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_APPOS, currentRelationInList);
+				#else
+				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+				#endif
 				addDefinitionToEntity(propertyEntity, definitionEntity, sameReferenceSet);									
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -352,7 +364,11 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 							if(passsubject)
 							{//fired by joe..???? [is there a possible example of this?]
 								
+								#ifdef GIA_USE_ADVANCED_REFERENCING
 								bool sameReferenceSetSubject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
+								#else
+								bool sameReferenceSetSubject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+								#endif
 								
 								//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 								GIAEntityNode * subjectEntityTemp = subjectObjectEntity;
@@ -363,7 +379,11 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 							else if(passobject)
 							{//eg the bow was fired
 								
+								#ifdef GIA_USE_ADVANCED_REFERENCING
 								bool sameReferenceSetSubject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
+								#else
+								bool sameReferenceSetSubject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+								#endif
 								
 								//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 								GIAEntityNode * objectEntityTemp = subjectObjectEntity;
@@ -881,7 +901,11 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											GIAEntityNode * actionEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
 											int actionIndex = subjectObjectFunctionEntityIndexArray[SUBJECT_INDEX];
 											
+											#ifdef GIA_USE_ADVANCED_REFERENCING
 											bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);	//subject relation
+											#else
+											bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+											#endif
 											GIAEntityNodeArray[actionIndex] = addActionToObject(objectEntityTempUpdated, actionEntity, sameReferenceSet);
 
 											//create a property link between the subject and object
@@ -890,8 +914,12 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											GIAEntityNode * ownerEntity = actionEntity;
 											//cout << "propertyName = " << propertyEntity->entityName << endl;
 											//cout << "ownerName = " << ownerEntity->entityName << endl;
-
+											
+											#ifdef GIA_USE_ADVANCED_REFERENCING
 											sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES, currentRelationInList);	//subject relation
+											#else
+											sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+											#endif
 											GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(ownerEntity, propertyEntity, sameReferenceSet);
 
 										}	
@@ -915,9 +943,14 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											cout << "relationDependentIndex = " << relationDependentIndex << endl;
 											cout << "relationDependentIndex2 = " << relationDependentIndex2 << endl;
 											*/
-
+											
+											#ifdef GIA_USE_ADVANCED_REFERENCING
 											bool sameReferenceSetSubject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
 											bool sameReferenceSetObject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
+											#else
+											bool sameReferenceSetSubject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+											bool sameReferenceSetObject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;											
+											#endif
 											GIAEntityNodeArray[actionIndex] = addActionToEntity(subjectEntityTemp, objectEntityTemp, actionEntity, sameReferenceSetSubject, sameReferenceSetObject);
 										}
 									}
@@ -1214,7 +1247,11 @@ void defineHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * curre
 									GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
 									GIAEntityNode * conditionPropertyNode = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
 									
+									#ifdef GIA_USE_ADVANCED_REFERENCING
 									bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_PROPERTY_CONDITIONS, currentRelationInList2);	//check relation to use here...
+									#else
+									bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+									#endif
 									addOrConnectHavingPropertyConditionToEntity(entityNode, conditionPropertyNode, conditionTypeConceptEntity, negative, sameReferenceSet);	
 									
 									disableEntityBasedUponFirstSentenceToAppearInNetwork(haveEntity);								
@@ -1243,7 +1280,11 @@ void defineHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * curre
 									GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
 									GIAEntityNode * conditionDefinitionNode = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
 									
+									#ifdef GIA_USE_ADVANCED_REFERENCING
 									bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS, currentRelationInList2);	//check relation to use here...								
+									#else
+									bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+									#endif
 									addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative, sameReferenceSet);																
 								
 									disableEntityBasedUponFirstSentenceToAppearInNetwork(beEntity);
@@ -1473,7 +1514,11 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 						of(house[2], Kriton[4])
 						_predadj(house[2], blue[6])
 						*/	
+						#ifdef GIA_USE_ADVANCED_REFERENCING
 						bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS, currentRelationInList);			
+						#else
+						bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+						#endif
 						GIAEntityNodeArray[actionOrPropertyIndex] = addOrConnectPropertyToEntity(actionOrPropertyConditionEntity, actionOrPropertyEntity, sameReferenceSet);			
 					}			
 				}		
@@ -1484,7 +1529,11 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 
 			if(passed)
 			{
+				#ifdef GIA_USE_ADVANCED_REFERENCING
 				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS, currentRelationInList);
+				#else
+				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+				#endif
 				createConditionBasedUponPreposition(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType, false, entityNodesActiveListConcepts, NLPdependencyRelationsType, sameReferenceSet);
 			}
 		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS

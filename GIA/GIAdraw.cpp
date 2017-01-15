@@ -3,7 +3,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1g 24-May-2012
+ * Project Version: 1l1h 25-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -202,7 +202,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				q = q + entityVectorConnectionDrawPosYspacingArray[i];			
 			}
 		}		
-						
+		
+		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;				
 		if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
 		{
 			//cout << "b7" << endl;

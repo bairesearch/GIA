@@ -3,12 +3,12 @@
  * File Name: GIAEntityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1g 24-May-2012
+ * Project Version: 1l1h 25-May-2012
  *
  *******************************************************************************/
 
 
-#include "GIAEntityNodeClass.h"
+#include "GIAEntityConnectionClass.h"
 
 
 GIAEntityConnection::GIAEntityConnection(void)
@@ -29,7 +29,7 @@ GIAEntityConnection::GIAEntityConnection(void)
 GIAEntityConnection::~GIAEntityConnection(void)
 {
 }
-GIAEntityConnection::GIAEntityConnection(string * entityName, long idInstance)
+GIAEntityConnection::GIAEntityConnection(string * startEntityName, long startIdInstance)
 {
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	sameReferenceSet = false;	//CHECK THIS default value
@@ -37,8 +37,8 @@ GIAEntityConnection::GIAEntityConnection(string * entityName, long idInstance)
 
 	#ifdef GIA_USE_DATABASE
 	referenceLoaded = false;
-	entityName = "";
-	idInstance = -1;
+	entityName = *startEntityName;
+	idInstance = startIdInstance;
 	loaded = false;
 	modified = false;
 	added = false;

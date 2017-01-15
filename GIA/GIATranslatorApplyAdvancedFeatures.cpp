@@ -3,7 +3,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1g 24-May-2012
+ * Project Version: 1l1h 25-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -60,7 +60,7 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntit
 							if(!(timeEntity->entityNodeDefiningThisInstance->empty()))
 							{//required for anomaly
 								//cout << "timeEntity->entityNodeDefiningThisInstance->NormalizedNERTemp = " << timeEntity->entityNodeDefiningThisInstance->NormalizedNERTemp << endl;
-								timeEntity->timeConditionNode->conditionName = timeEntity->entityNodeDefiningThisInstance->begin()->entity->NormalizedNERTemp;
+								timeEntity->timeConditionNode->conditionName = (timeEntity->entityNodeDefiningThisInstance->back())->entity->NormalizedNERTemp;
 							}
 							else
 							{
@@ -598,7 +598,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, GIAEntityNode * GI
 
 						if(newQuantityTimesEntity->hasAssociatedInstanceTemp)
 						{//assumed true since its property was just explicitly created
-							newQuantityTimesEntity = newQuantityTimesEntity->AssociatedInstanceNodeList.back();
+							newQuantityTimesEntity = (newQuantityTimesEntity->AssociatedInstanceNodeList->back())->entity;
 						}
 						newQuantityTimesEntity->hasQuantity = true;
 						newQuantityTimesEntity->quantityNumber = 1;
@@ -889,7 +889,11 @@ void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode
 				cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl; 			
 				#endif
 
+				#ifdef GIA_USE_ADVANCED_REFERENCING
 				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE, currentRelationInList);	//eg "and that has a house" versus "and has a house" ??? [untested]
+				#else
+				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+				#endif
 				addConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity, sameReferenceSet);				
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
