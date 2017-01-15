@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q2b 28-Sept-2013
+ * Project Version: 1q2c 28-Sept-2013
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -697,7 +697,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode * queryEntityNode, G
 								#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 								bool passSpecificConcepts = true;
 								if(((queryEntityNode->isSubstanceConcept) && !(entityNode->isSubstanceConcept)) || 
-								((queryEntityNode->isSubstanceConcept) && !(entityNode->isSubstanceConcept)))
+								((entityNode->isSubstanceConcept) && !(queryEntityNode->isSubstanceConcept)))
 								{
 									passSpecificConcepts = false;
 									cout << "\t\t\t !passSpecificConcepts" << endl;
@@ -706,7 +706,13 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode * queryEntityNode, G
 								{
 								#endif
 									#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
-									if(queryEntityNode->grammaticalNumber == entityNode->grammaticalNumber)
+									bool passPluralityMatch = true;
+									if(((queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)) || 
+									((entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)))
+									{
+										passPluralityMatch = false;
+									}
+									if(passPluralityMatch)
 									{
 									#endif
 									//cout << "passed isSubstanceConcept tests" << endl;
@@ -731,6 +737,16 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode * queryEntityNode, G
 											result = EXACT_MATCH_FAIL;
 										}
 									#ifdef GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES
+									}
+									else
+									{
+										/*
+										cout << "\t\t\t !passPluralityMatch" << endl;
+										cout << "entityName = " << queryEntityNode->entityName << endl;
+										cout << "queryEntityNode->isConcept = " << queryEntityNode->isConcept << endl;
+										cout << "queryEntityNode->grammaticalNumber = " << queryEntityNode->grammaticalNumber << endl;
+										cout << "entityNode->grammaticalNumber = " << entityNode->grammaticalNumber << endl;
+										*/
 									}
 									#endif										
 								#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS

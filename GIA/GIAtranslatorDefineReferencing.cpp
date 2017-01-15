@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q2b 28-Sept-2013
+ * Project Version: 1q2c 28-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -978,7 +978,7 @@ void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList)
 
 int identifyReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, bool NLPdependencyRelationsType)
 {
-	cout << "\n******************** identifyReferenceSets *******************\n" << endl;
+	//cout << "\n******************** identifyReferenceSets *******************\n" << endl;
 	
 	bool haveSentenceEntityIndexOfDeterminers = false;
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
@@ -1141,7 +1141,7 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 					if(identifyReferenceSetDetermineNextCourseOfAction(currentInstance, true, *referenceSetID, minimumEntityIndexOfReferenceSet, false))
 					{
 						*referenceSetID	= *referenceSetID + 1;
-						cout << "*referenceSetID++ = " << *referenceSetID << endl;
+						//cout << "*referenceSetID++ = " << *referenceSetID << endl;
 					}
 
 			#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
@@ -1171,15 +1171,14 @@ bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode,
 			referenceSetAlreadyAssigned = true;
 		}
 		
-		//if(entityNode->entityName == "tom")
-		//{
-			cout << "\nentityNode->entityName = " << entityNode->entityName << endl;
-			cout << "entityNode->referenceSetID = " << entityNode->referenceSetID << "(" << referenceSetAlreadyAssigned << ")" << endl;
-			cout << "entityNode->isConcept = " << entityNode->isConcept << endl;
-			cout << "minimumEntityIndexOfReferenceSet = " << minimumEntityIndexOfReferenceSet << endl;
-			cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
-			cout << "entityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
-		//}
+		/*
+		cout << "\nentityNode->entityName = " << entityNode->entityName << endl;
+		cout << "entityNode->referenceSetID = " << entityNode->referenceSetID << "(" << referenceSetAlreadyAssigned << ")" << endl;
+		cout << "entityNode->isConcept = " << entityNode->isConcept << endl;
+		cout << "minimumEntityIndexOfReferenceSet = " << minimumEntityIndexOfReferenceSet << endl;
+		cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
+		cout << "entityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
+		*/
 		
 		#ifdef GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET
 		if((!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)) && ((entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) || isProperty))
@@ -1198,7 +1197,7 @@ bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode,
 		if(!referenceSetAlreadyAssigned)
 		#endif
 		{
-			cout << "\tpass" << endl;
+			//cout << "\tpass" << endl;
 			result =  true;
 			identifyReferenceSet(entityNode, referenceSetID, minimumEntityIndexOfReferenceSet);
 		}
@@ -1220,8 +1219,8 @@ void identifyReferenceSet(GIAentityNode * entityNode, int referenceSetID, int mi
 	entityNode->referenceSetID = referenceSetID;
 	entityNode->minimumEntityIndexOfReferenceSet = minimumEntityIndexOfReferenceSet;
 
-	cout << "\tentityNode->referenceSetID = " << entityNode->referenceSetID << endl;
-	cout << "\tentityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
+	//cout << "\tentityNode->referenceSetID = " << entityNode->referenceSetID << endl;
+	//cout << "\tentityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 	{
 		if(!(entityNode->entityVectorConnectionsArray[i].empty()))
