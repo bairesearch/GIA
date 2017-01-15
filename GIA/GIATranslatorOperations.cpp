@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7a 07-May-2012
+ * Project Version: 1j7b 07-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -385,12 +385,34 @@ GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity)
 				newOrExistingAction->isAction = true;
 
 				//cout << "newOrExistingAction->idSecondary = " << newOrExistingAction->idSecondary << endl;
-
+				int i=0;
+				bool propertyEntityNodesListIteratorIsFound = false;
+ 				vector<GIAEntityNode*>::iterator propertyEntityNodesListIteratorFound;
+				for(vector<GIAEntityNode*>::iterator propertyEntityNodesListIterator = propertyEntityNodesList->begin(); propertyEntityNodesListIterator != propertyEntityNodesList->end(); propertyEntityNodesListIterator++) 
+				{
+					if((*propertyEntityNodesListIterator)->idSecondary == newOrExistingAction->idSecondary)
+					{
+						propertyEntityNodesListIteratorFound = propertyEntityNodesListIterator;
+						propertyEntityNodesListIteratorIsFound = true;
+					}
+					//cout << "i = " << i << endl;
+					//cout << "(*propertyEntityNodesListIterator)->entityName = " << (*propertyEntityNodesListIterator)->entityName << endl;
+					i++;
+				}
+				if(!propertyEntityNodesListIteratorIsFound)
+				{
+					cout << "error: !...EntityNodesListIteratorIsFound" << endl;
+					exit(0);
+				}
+				propertyEntityNodesList->erase(propertyEntityNodesListIteratorFound);
+				
+				/*//removed 8 May 2012
 				vector<GIAEntityNode*>::iterator propertyEntityNodesListIterator = propertyEntityNodesList->begin();
 				advance(propertyEntityNodesListIterator,newOrExistingAction->idSecondary);
 				propertyEntityNodesList->erase(propertyEntityNodesListIterator);
-				currentEntityNodeIDInPropertyEntityNodesList--;
-
+				currentEntityNodeIDInPropertyEntityNodesList--;	
+				*/
+				
 				actionEntityNodesList->push_back(newOrExistingAction);
 				currentEntityNodeIDInActionEntityNodesList++;
 			}
@@ -647,7 +669,9 @@ void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntit
 	{					
 	#endif
 		GIAEntityNode * newOrExistingAction;
+		//cout << "vf3a" << endl;
 		newOrExistingAction = addActionToActionDefinition(actionEntity);
+		//cout << "vf3b" << endl;
 		addActionInstanceToObject(objectEntity, newOrExistingAction);	
 	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}

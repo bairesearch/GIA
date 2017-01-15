@@ -3,7 +3,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7a 07-May-2012
+ * Project Version: 1j7b 07-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -163,8 +163,8 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 			int relationDependentIndex = currentRelationInList->relationDependentIndex;
 			subjectObjectName = currentRelationInList->relationDependent;
 			subjectObjectEntity = GIAEntityNodeArray[relationDependentIndex];
-			subjectObjectFunctionEntity = GIAEntityNodeArray[relationGovernorIndex]; 	
-
+			subjectObjectFunctionEntity = GIAEntityNodeArray[relationGovernorIndex]; 
+			
 			bool passed = false;
 			bool passsubject = false;
 			bool passobject = false;
@@ -310,15 +310,22 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 
 						if(!subjectOrObjectIsConnectedToAnAdvMod)
 						{
-
+							/*
+							cout << "relationGovernorIndex = " << relationGovernorIndex << endl;	
+							cout << "relationDependentIndex = " << relationDependentIndex << endl;
+							cout << "subjectObjectName = " << subjectObjectName << endl;
+							cout << "subjectObjectEntity->entityName = " << subjectObjectEntity->entityName << endl;
+							cout << "subjectObjectFunctionEntity->entityName = " << subjectObjectFunctionEntity->entityName << endl;
+							*/
+							
 							if(passsubject)
 							{//fired by joe..???? [is there a possible example of this?]
 
 								//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 								GIAEntityNode * subjectEntityTemp = subjectObjectEntity;
-
+								//cout << "vf1" << endl;
 								addActionToSubject(subjectObjectEntity, actionEntity);	
-
+								//cout << "vf2" << endl;
 							}
 							else if(passobject)
 							{//eg the bow was fired
@@ -326,7 +333,9 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 								//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 								GIAEntityNode * objectEntityTemp = subjectObjectEntity;
 
+								//cout << "vf3" << endl;
 								addActionToObject(objectEntityTemp, actionEntity);
+								//cout << "vf4" << endl;
 							}
 
 						}

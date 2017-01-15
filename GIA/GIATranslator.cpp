@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7a 07-May-2012
+ * Project Version: 1j7b 07-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -171,7 +171,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
  	applyGrammaticalInfoToAllConceptEntities(GIAEntityNodeArrayFilled, GIAEntityNodeArray, currentSentenceInList->firstFeatureInList);
 
 	
-		
+	/*	
 	#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG	
 	cout << "dependency relations: " << endl;
 	currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -199,7 +199,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 			{	
 				Feature * currentFeature = featureArrayTemp[w];
 				
-				cout << "Sentence Word Index = " << w;					
+				cout << "Sentence Word Index = " << w;	
+				cout << "Word = " << currentFeature->word;				
+				cout << "Lemma = " << currentFeature->lemma;								
 				cout << "Is Date or Time = " << convertBoolToString(currentFeature->grammaticalIsDateOrTime);
 				cout << "Tense = " << grammaticalTenseNameArray[currentFeature->grammaticalTense];
 				for(int q=0; q<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES;q++)
@@ -221,7 +223,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		}
 	}
 	#endif
-		
+	*/	
 			
 
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
@@ -326,7 +328,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 			{	
 				Feature * currentFeature = featureArrayTemp[w];
 				
-				cout << "Sentence Word Index = " << w;					
+				cout << "Sentence Word Index = " << w;		
+				cout << "Word = " << currentFeature->word;				
+				cout << "Lemma = " << currentFeature->lemma;
 				cout << "Is Date or Time = " << convertBoolToString(currentFeature->grammaticalIsDateOrTime);
 				cout << "Tense = " << grammaticalTenseNameArray[currentFeature->grammaticalTense];
 				for(int q=0; q<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES;q++)

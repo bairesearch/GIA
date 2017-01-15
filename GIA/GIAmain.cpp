@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j7a 07-May-2012
+ * Project Version: 1j7b 07-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
@@ -83,7 +83,7 @@ NB execute-stanfordParser.sh contains the following text;
 
 	#!/usr/bin/env bash
 	scriptdir=`dirname $0`
-	java -mx150m -cp "$scriptdir/*:" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz $3/$1 > $4/$2
+	java -mx2000m -cp "$scriptdir/*:" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz $3/$1 > $4/$2
 
 ./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlpstanfordparserfolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -nlprelation 2 -notshow
 
@@ -608,7 +608,7 @@ int main(int argc,char **argv)
 								
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe - Project Version: 1j7a 07-May-2012" << endl;
+			cout << "GIA.exe - Project Version: 1j7b 07-May-2012" << endl;
 			exit(1);
 		}
 
