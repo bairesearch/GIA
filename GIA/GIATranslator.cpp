@@ -1301,7 +1301,51 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		
 			currentRelationInList = currentRelationInList->next;
 		}
+		
+		
+		 //3b pass; define indirect objects
+		 currentRelationInList = currentSentenceInList->firstRelationInList;
+		while(currentRelationInList->next != NULL)
+		{	
+			//cout << "here1" << endl;
+			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+														
+			if(currentRelationInList->relationType == RELATION_TYPE_INDIRECT_OBJECT)
+			{	
+									
+				//now find the associated object..
+ 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				while(currentRelationInList2->next != NULL)
+				{	
+					bool partnerTypeRequiredFound = false;
+					for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
+					{
+						if(currentRelationInList2->relationType == relationTypeObjectNameArray[i])
+						{
+							partnerTypeRequiredFound = true;
+						}
+					}	
+					if(partnerTypeRequiredFound)
+					{
+							
+						if(currentRelationInList2->relationFunctionIndex == currentRelationInList->relationFunctionIndex)
+						{//found a matching object-indirectobject relationship
+							//cout << "partnerTypeRequiredFound: currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
+						
+							
+							GIAEntityNode * propertyEntity = GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex];
+							GIAEntityNode * thingEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+				
+							addOrConnectPropertyToEntity(thingEntity, propertyEntity);
+						}
+					}
 					
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+			}
+			currentRelationInList = currentRelationInList->next;
+		}			
+				
 		//4 pass; define action conditions
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)

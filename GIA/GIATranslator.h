@@ -123,8 +123,11 @@ using namespace std;
 #define RELATION_TYPE_OBJECT_TO_DO "_to-do"		//eg Linas likes to row / _to-do(like, row) - CHECK THIS
 #define RELATION_TYPE_OBJECT_THAT "_that"	//there is a place that we go
 
+#define RELATION_TYPE_INDIRECT_OBJECT "_iobj"
+
 #define RELATION_TYPE_SUBJECT "_subj"	//eg x eats 	[? be x]
 #define RELATION_TYPE_SUBJECT_EXPLETIVE "_expl"		//eg goes there	//NB "there" is currently interpreted as a subject of an action
+
 
 	//predicates????
 //action/property conditions
