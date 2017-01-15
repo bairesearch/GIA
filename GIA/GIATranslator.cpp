@@ -34,8 +34,10 @@ string relationTypeRequireSwitchingNameArray[RELATION_TYPE_REQUIRE_SWITCHING_NUM
 
 string relationTypeQuantityOrMeasureNameArray[RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES] = {RELATION_TYPE_QUANTITY, RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME};
 string relationTypeQuantityOrMeasureSwitchedNameArray[RELATION_TYPE_QUANTITY_OR_MEASURE_SWITCHED_NUMBER_OF_TYPES] = {RELATION_TYPE_QUANTITY_MOD, RELATION_TYPE_MEASURE_PER};
-string relationTypeMeasureNameArray[RELATION_TYPE_MEASURE_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME};
+string relationTypeMeasureNameArray[RELATION_TYPE_MEASURE_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_PER, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME};
+int relationTypeMeasureNameTypeIndexArray[RELATION_TYPE_MEASURE_NUMBER_OF_TYPES] = {MEASURE_TYPE_DISTANCE, MEASURE_TYPE_PER, MEASURE_TYPE_SIZE, MEASURE_TYPE_TIME};
 
+string relationTypeQuantityArgumentImplyMeasurePerNameArray[RELATION_TYPE_QUANTITY_ARGUMENT_IMPLY_MEASURE_PER_NUMBER_OF_TYPES] = {"every"};
 
 //int timeMonthIntArray[TIME_MONTH_NUMBER_OF_TYPES] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 string timeMonthStringArray[TIME_MONTH_NUMBER_OF_TYPES] = {TIME_MONTH_JANUARY, TIME_MONTH_FEBRUARY, TIME_MONTH_MARCH, TIME_MONTH_APRIL, TIME_MONTH_MAY, TIME_MONTH_JUNE, TIME_MONTH_JULY, TIME_MONTH_AUGUST, TIME_MONTH_SEPTEMBER, TIME_MONTH_OCTOBER, TIME_MONTH_NOVEMBER, TIME_MONTH_DECEMBER};
@@ -1848,7 +1850,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					quantityProperty->hasQuantity = true;
 					int quantityNumberInt = calculateQuantityNumberInt(currentRelationInList->relationArgument);
 					quantityProperty->quantityNumber = quantityNumberInt;
-
+					
 					//now locate quantity modifiers and multiplicators
 					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 					while(currentRelationInList2->next != NULL)
@@ -1889,7 +1891,59 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						}						
 
 						currentRelationInList2 = currentRelationInList2->next;
-					}		
+					}	
+					
+					
+					bool relationTypeQuantityArgumentImplyMeasurePer = false;
+					for(int i=0; i<RELATION_TYPE_QUANTITY_ARGUMENT_IMPLY_MEASURE_PER_NUMBER_OF_TYPES; i++)
+					{
+						if(currentRelationInList->relationArgument == relationTypeQuantityArgumentImplyMeasurePerNameArray[i])
+						{
+							relationTypeQuantityArgumentImplyMeasurePer = true;
+						}
+					}																		
+					if(relationTypeQuantityArgumentImplyMeasurePer)
+					{//eg "every hour" or "every day"
+						
+						GIAEntityNode * entityToConnectMeasurePerEntity;
+						
+						bool foundQuantityOwner = false;
+						Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+						while(currentRelationInList2->next != NULL)
+						{	
+							if(currentRelationInList2->relationArgument == currentRelationInList->relationFunction)
+							{		
+								entityToConnectMeasurePerEntity = GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex];	//eg row
+								foundQuantityOwner = true;
+							}	
+												
+							currentRelationInList2 = currentRelationInList2->next;
+						}	
+					
+						//disconnect quantity node from existing connections (not including definitions).
+						disconnectNodeFromAllButDefinitions(quantityProperty);
+						
+						GIAEntityNode * newQuantityTimesEntity = new GIAEntityNode();
+						newQuantityTimesEntity->entityName = "times";
+						newQuantityTimesEntity->hasQuantity = true;
+						newQuantityTimesEntity->quantityNumber = 1;
+						addPropertyToPropertyDefinition(newQuantityTimesEntity);
+						if(newQuantityTimesEntity->hasAssociatedPropertyTemp)
+						{//assumed true since its property was just explicitly created
+							newQuantityTimesEntity = newQuantityTimesEntity->AssociatedPropertyNodeList.back();
+						}						
+						
+						//reconnect refreshed quanity (times) node;
+						addOrConnectPropertyToEntity(entityToConnectMeasurePerEntity, newQuantityTimesEntity);
+						
+						//now add measure_per condition node
+						quantityProperty->hasQuantity = false;
+						quantityProperty->hasMeasure = true;
+						quantityProperty->measureType = MEASURE_TYPE_PER;						
+						addOrConnectPropertyConditionToEntity(newQuantityTimesEntity, quantityProperty, "measurePer");
+
+					}
+											
 				}								
 			}
 			currentRelationInList = currentRelationInList->next;		
@@ -1913,27 +1967,41 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			}																		
 			if(pass)
 			{
-				GIAEntityNode * measureEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
+				int relationQuantityIndex = 0;
+				int relationMeasureIndex = 0;
+				if(currentRelationInList->relationType == RELATION_TYPE_MEASURE_PER)
+				{
+					relationQuantityIndex = currentRelationInList->relationFunctionIndex;
+					relationMeasureIndex = currentRelationInList->relationArgumentIndex;			
+				}
+				else
+				{
+	
+					relationQuantityIndex = currentRelationInList->relationArgumentIndex;
+					relationMeasureIndex = currentRelationInList->relationFunctionIndex;										
+				}
+				
+				GIAEntityNode * measureEntity = GIAEntityNodeArray[relationMeasureIndex];
+				GIAEntityNode * quantityEntity = GIAEntityNodeArray[relationQuantityIndex];
 				if(measureEntity->AssociatedPropertyNodeList.size() >= 1)
 				//if(measureEntity->AssociatedPropertyNodeList.back() != NULL) - this is dangerous/impossible to use; it will not return NULL if pop_back() has been executed on the vector
 				{
-					GIAEntityNode * measureProperty = measureEntity->AssociatedPropertyNodeList.back();
-					measureProperty->hasMeasure = true;
-					measureProperty->measureType = measureTypeIndex;
-					
-					cout << "tsdf2" << endl;
-					
-					//string measurePropertyName = currentRelationInList->relationFunction; 
-					//string quantityName = currentRelationInList->relationArgument; 
-					int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
-					int relationArgumentIndex = currentRelationInList->relationArgumentIndex;				
-					
-					GIAEntityNode * measurePropertyEntity = GIAEntityNodeArray[relationFunctionIndex];
-					GIAEntityNode * quantityPropertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+					GIAEntityNode * measurePropertyEntity = measureEntity->AssociatedPropertyNodeList.back();
+					measurePropertyEntity->hasMeasure = true;
+					measurePropertyEntity->measureType = measureTypeIndex;
+														
 					cout << "measurePropertyName = " << measurePropertyEntity->entityName << endl;
-					cout << "quantityPropertyName = " << quantityPropertyEntity->entityName << endl;
+					cout << "quantityEntityName = " << quantityEntity->entityName << endl;
 
-					addOrConnectPropertyToEntity(measurePropertyEntity, quantityPropertyEntity);	
+					if(currentRelationInList->relationType == RELATION_TYPE_MEASURE_PER)
+					{
+						addOrConnectPropertyConditionToEntity(quantityEntity, measurePropertyEntity, relationTypeMeasureNameArray[measureTypeIndex]);
+					}
+					else
+					{
+						addOrConnectPropertyConditionToEntity(measurePropertyEntity, quantityEntity, relationTypeMeasureNameArray[measureTypeIndex]);
+
+					}
 				}								
 			}
 			currentRelationInList = currentRelationInList->next;		
@@ -1969,8 +2037,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			}
 		}
 		*/
-		
-			
+
+					
 	
 		currentSentenceInList = currentSentenceInList->next;
 	}

@@ -62,6 +62,10 @@ using namespace std;
 #define QUANTITY_MODIFIER_UNDEFINED (-1)		//WARNING: not yet implemented
 #define QUANTITY_MODIFIER_NUMBER_OF_TYPES (1)		//WARNING: not yet implemented	//do: work out what these are/can be	
 
+#define MEASURE_TYPE_DISTANCE (0)	//see relationTypeMeasureNameArray
+#define MEASURE_TYPE_SIZE (1)
+#define MEASURE_TYPE_TIME (2)
+#define MEASURE_TYPE_PER (3)
 #define MEASURE_TYPE_UNDEFINED (-1)
 
 extern string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
@@ -198,6 +202,8 @@ public:
 
 	
 };
+
+void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode);
 
 /*
 class GIAEntityNodeContainer

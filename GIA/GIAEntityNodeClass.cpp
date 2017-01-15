@@ -105,7 +105,10 @@ GIAEntityNodeContainer::~GIAEntityNodeContainer(void)
 }
 */
 
-
+void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode)
+{
+	cout << "error: disconnectNodeFromAllButDefinitions() not programmed yet" << endl;
+}
 
 
 
