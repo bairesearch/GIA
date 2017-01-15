@@ -1,19 +1,19 @@
 /*******************************************************************************
  * 
- * This file is part of BAIPROJECT.
+ * This file is part of OpenGIA.
  * 
- * BAIPROJECT is free software: you can redistribute it and/or modify
+ * OpenGIA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
  * 
- * BAIPROJECT is distributed in the hope that it will be useful,
+ * OpenGIA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
  * 
  * You should have received a copy of the GNU Affero General Public License
- * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
+ * version 3 along with OpenGIA.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
  * 
  *******************************************************************************/
@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n7c 31-July-2012
+ * Project Version: 1n8a 03-August-2012
  *
  *******************************************************************************/
 
@@ -90,8 +90,6 @@ GIAEntityNode::GIAEntityNode(void)
 	//entityNodeContainingThisProperty = NULL;				//if property only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a Basic
 	entityNodeDefiningThisInstance = NULL;
 
-	grammaticalNumber = GRAMMATICAL_NUMBER_UNDEFINED;
-
 	hasQuantity = false;
 	quantityNumber = QUANTITY_NUMBER_UNDEFINED;
 	quantityModifier = QUANTITY_MODIFIER_UNDEFINED;	//not yet implemented
@@ -114,7 +112,7 @@ GIAEntityNode::GIAEntityNode(void)
 		grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = false;
 	}
 	grammaticalTenseTemp = GRAMMATICAL_TENSE_UNDEFINED;
-	grammaticalNumberTemp = GRAMMATICAL_NUMBER_UNDEFINED;
+	grammaticalNumber = GRAMMATICAL_NUMBER_UNDEFINED;
 	grammaticalDefiniteTemp = GRAMMATICAL_DEFINITE_UNDEFINED;
 	grammaticalRelexPersonOrStanfordProperNounTemp = GRAMMATICAL_PERSON_UNDEFINED;
 	grammaticalGenderTemp = GRAMMATICAL_GENDER_UNDEFINED;

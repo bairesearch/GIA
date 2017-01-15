@@ -1,19 +1,19 @@
 /*******************************************************************************
  * 
- * This file is part of BAIPROJECT.
+ * This file is part of OpenGIA.
  * 
- * BAIPROJECT is free software: you can redistribute it and/or modify
+ * OpenGIA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
  * 
- * BAIPROJECT is distributed in the hope that it will be useful,
+ * OpenGIA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
  * 
  * You should have received a copy of the GNU Affero General Public License
- * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
+ * version 3 along with OpenGIA.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
  * 
  *******************************************************************************/
@@ -23,7 +23,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n7c 31-July-2012
+ * Project Version: 1n8a 03-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -521,11 +521,6 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		acomp(broke-6, due-7)
 		prep_to(due-7, fire-10)
 
-	[CaseB]
-	nsubj(went-2, They-1)
-	advmod(went-2, back-3)
-	prep_to(went-2, mall-6)
-
 	[CaseA]
 	nsubj(close-3, He-1)
 	cop(close-3, is-2)
@@ -568,6 +563,16 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	cop(outside-4, is-3)
 	prep_of(outside-4, house-7)
 
+		-------------------
+		All removed cases:
+		-------------------
+		
+		[Removed 3 August 2012]
+		[CaseB]
+		nsubj(went-2, They-1)
+		advmod(went-2, back-3)
+		prep_to(went-2, mall-6)
+	
 		[Removed because (currentRelationInList3->relationGovernorIndex != currentRelationInList->relationGovernorIndex)]
 		dobj(bought-7, paint-9)
 		partmod(bought-7, Owing-1)	//NB currently interpreted as obj
@@ -637,8 +642,10 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	det(house-9, the-8)
 	prep_of(right-6, house-9)
 
-
-
+		-------------------
+		All original cases:
+		-------------------
+			
 		[CaseA]
 		nsubj(close-3, He-1)
 		cop(close-3, is-2)

@@ -1,19 +1,19 @@
 /*******************************************************************************
  * 
- * This file is part of BAIPROJECT.
+ * This file is part of OpenGIA.
  * 
- * BAIPROJECT is free software: you can redistribute it and/or modify
+ * OpenGIA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
  * 
- * BAIPROJECT is distributed in the hope that it will be useful,
+ * OpenGIA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
  * 
  * You should have received a copy of the GNU Affero General Public License
- * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
+ * version 3 along with OpenGIA.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
  * 
  *******************************************************************************/
@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n7c 31-July-2012
+ * Project Version: 1n8a 03-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -198,7 +198,7 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 "\n\t-ocffq [string]    : query NLP parser generated .cff output filename (def: outputNLPQuery.cff)"
 "\n\t-oall [string]     : semantic network display xml/.svg/.ldr/.ppm default generic output filename (def: semanticNet)"
 "\n\t-oanswer [string]  : plain text .txt file containing the answer to the query (def: answer.txt)"
-"\n\t-notshow           : do not display outputText in opengl"
+"\n\t-notshow           : do not display output in opengl"
 "\n\t-width [int]       : raster graphics width in pixels (def: 640)"
 "\n\t-height [int]      : raster graphics height in pixels (def: 480)"
 "\n\t-nlprelation [int] : NLP dependency relation parser to be executed by GIA (0 - Relex, 1 - Stanford Core NLP, 2 - Stanford Parser [def])"
@@ -216,10 +216,10 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 "\n\t-nlprelexfolder [string]           : directory name for Relex (def: same as exe)"
 "\n\t-nlpstanfordcorenlpfolder [string] : directory name for Stanford Parser (def: same as nlprelexefolder)"
 "\n\t-nlpstanfordparserfolder [string]  : directory name for Stanford CoreNLP (def: same as nlprelexefolder)"
-"\n\t-tempfolder [string]               : temp directory name for temporary and outputText files (def: same as exe)"
+"\n\t-tempfolder [string]               : temp directory name for temporary and output files (def: same as exe)"
 "\n"
 "\n\n\t-version         : print version"
-"\n\n\tThis program performs GIA (General Intelligence Algorithm) operations - creates semantic network based upon NPL dependencies file (.xml) or GIA semantic network file (.xml); outputTexts semantic network to GIA semantic network file (.xml); displays semantic network (using opengl); prints semantic network to raster image (.ppm), 3D vector graphics (.ldr), or 2D vector graphics (.svg).\n\n";
+"\n\n\tThis program performs GIA (General Intelligence Algorithm) operations - creates semantic network based upon NLP dependencies file (.xml) or GIA semantic network file (.xml); outputs semantic network to GIA semantic network file (.xml); displays semantic network (using opengl); prints semantic network to raster image (.ppm), 3D vector graphics (.ldr), or 2D vector graphics (.svg).\n\n";
 #endif
 
 //Dependency Relationship Extractor
@@ -660,7 +660,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1n7c 31-July-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1n8a 03-August-2012" << endl;
 			exit(1);
 		}
 

@@ -1,19 +1,19 @@
 /*******************************************************************************
  * 
- * This file is part of BAIPROJECT.
+ * This file is part of OpenGIA.
  * 
- * BAIPROJECT is free software: you can redistribute it and/or modify
+ * OpenGIA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
  * 
- * BAIPROJECT is distributed in the hope that it will be useful,
+ * OpenGIA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
  * 
  * You should have received a copy of the GNU Affero General Public License
- * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
+ * version 3 along with OpenGIA.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
  * 
  *******************************************************************************/
@@ -23,7 +23,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n7c 31-July-2012
+ * Project Version: 1n8a 03-August-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -443,7 +443,8 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 	{//is a condition link; add copular- eg the dog is near the park.
 		if((connectionType1 == nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[0]) && (connectionType2 == nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[1]))
 		{
-			entityTextExpandedArray[0] = string(NLG_DEFINITION_TEXT) + NLG_TEXT_SPACE + entityTextExpandedArray[0];
+			string nlgDefinitionText = determineNLGdefinitionText(entityNode1);	//added 03 August 2012
+			entityTextExpandedArray[0] = nlgDefinitionText + NLG_TEXT_SPACE + entityTextExpandedArray[0];
 		}
 	}
 	if(entityNodeAvailableArray[1])
@@ -586,7 +587,7 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 				#endif
 				#else
 				generateLinkingWord = true;
-				linkingWord = NLG_POSSESSIVE_TEXT;
+				linkingWord = determineNLGpossessionText(entityNode1);	//added 03 August 2012
 				#endif
 			#ifdef NLG_INPUTVIEW_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
 			}
@@ -611,7 +612,7 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 		#endif
 		#else
 		generateLinkingWord = true;
-		linkingWord = NLG_DEFINITION_TEXT;
+		linkingWord = determineNLGdefinitionText(entityNode1);	//added 03 August 2012
 		#endif
 	}
 
@@ -669,7 +670,8 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 		{
 			addDeterminate(entityNode1, &(entityTextExpandedArray[1]));
 			//*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[2] + NLG_TEXT_SPACE + entityTextExpandedArray[1];
-			*generatedText = *generatedText + entityTextExpandedArray[1] + NLG_TEXT_SPACE + string(NLG_DEFINITION_TEXT) + NLG_TEXT_SPACE + entityTextExpandedArray[2];
+			string nlgDefinitionText = determineNLGdefinitionText(entityNode1);	//added 03 August 2012
+			*generatedText = *generatedText + entityTextExpandedArray[1] + NLG_TEXT_SPACE + nlgDefinitionText + NLG_TEXT_SPACE + entityTextExpandedArray[2];
 		}
 	}
 	else
@@ -958,6 +960,37 @@ void addDeterminate(GIAEntityNode * entityNode, string * entityTextExpanded)
 
 string calcDeterminate(GIAEntityNode * entityNode)
 {
+	
+	//first letter is vowel		//added 03 August 2012
+	bool firstLetterIsVowel = false;
+	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
+	string wordOrig = "";
+	if(entityNode->wordOrig != "")
+	{
+		wordOrig = entityNode->wordOrig;		//IMPORTANT; due to bug in nlg2, nlg2 currently requires the original word, not the lemma
+	}
+	else
+	{
+		wordOrig = entityNode->entityName;
+	}
+	#else
+	wordOrig = generateMorphology(entityNode);
+	#endif
+	for(int i=0; i<NLG_NUMBER_OF_VOWELS; i++)
+	{
+		if(tolower(wordOrig[0]) == vowelArray[i])
+		{
+		 	firstLetterIsVowel = true;
+		}
+	}
+	
+	//noun_number
+	bool isPlural = false;	//added 03 August 2012
+	if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
+	{
+		isPlural = true;
+	}
+	
 	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
 	//gender
 	bool isPerson = false;
@@ -1022,7 +1055,21 @@ string calcDeterminate(GIAEntityNode * entityNode)
 			else
 			{	if(!(entityNode->hasQuantity))
 				{
-					determinate = GRAMMATICAL_DETERMINER_INDEFINITE;	//a
+					if(isPlural)	//added 03 August 2012
+					{
+						determinate = GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL;	//some
+					}
+					else
+					{
+						if(firstLetterIsVowel)
+						{
+							determinate = GRAMMATICAL_DETERMINER_INDEFINITE_FIRST_LETTER_VOWEL;	//an					
+						}
+						else
+						{
+							determinate = GRAMMATICAL_DETERMINER_INDEFINITE;	//a
+						}
+					}
 					addDeterminate = true;
 				}
 			}
@@ -1097,6 +1144,46 @@ string getWordOrig(GIAEntityNode * entityNode)
 
 	return wordOrig;
 }
+
+
+string determineNLGdefinitionText(GIAEntityNode * entityNode)
+{
+	string nlgDefinitionText = "";	
+	bool isPlural = false;
+	if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
+	{
+		isPlural = true;
+	}
+	if(isPlural)
+	{
+		nlgDefinitionText = NLG_DEFINITION_TEXT_PLURAL;
+	}
+	else
+	{
+		nlgDefinitionText = NLG_DEFINITION_TEXT;
+	}
+	return nlgDefinitionText;
+}
+
+string determineNLGpossessionText(GIAEntityNode * entityNode)
+{
+	string nlgPossessionText = "";	
+	bool isPlural = false;
+	if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
+	{
+		isPlural = true;
+	}
+	if(isPlural)
+	{
+		nlgPossessionText = NLG_POSSESSIVE_TEXT_PLURAL;
+	}
+	else
+	{
+		nlgPossessionText = NLG_POSSESSIVE_TEXT;
+	}
+	return nlgPossessionText;
+}
+
 
 #endif
 

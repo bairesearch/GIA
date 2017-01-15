@@ -1,19 +1,19 @@
 /*******************************************************************************
  * 
- * This file is part of BAIPROJECT.
+ * This file is part of OpenGIA.
  * 
- * BAIPROJECT is free software: you can redistribute it and/or modify
+ * OpenGIA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
  * 
- * BAIPROJECT is distributed in the hope that it will be useful,
+ * OpenGIA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
  * 
  * You should have received a copy of the GNU Affero General Public License
- * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
+ * version 3 along with OpenGIA.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
  * 
  *******************************************************************************/
@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineGrammar.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n7c 31-July-2012
+ * Project Version: 1n8a 03-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -52,6 +52,9 @@ using namespace std;
 
 #define GRAMMATICAL_DETERMINER_DEFINITE "the"
 #define GRAMMATICAL_DETERMINER_INDEFINITE "a"
+#define GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL "some"			//required for nlg
+#define GRAMMATICAL_DETERMINER_INDEFINITE_FIRST_LETTER_VOWEL "an"	//required for nlg
+
 //#define GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILLARY_TO_SET_TENSE_OF_VERB	//this seems theoretically possible pased upon the examples given (ie because the tense stanfordPOS information is replicated in both the auxillary and the verb)
 
 
