@@ -3,7 +3,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5f 03-June-2012
+ * Project Version: 1l6a 09-June-2012
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -14,13 +14,7 @@
 #include "GIAwordnet.h"
 
 
-#define CHAR_COMMA ','
-#define CHAR_SPACE ' '
-#define CHAR_NEW_LINE '\n'
-#define CHAR_DASH '-'
-#define CHAR_END_OF_STRING '\0'
-#define CHAR_DEL (127)
-#define CHAR_IRRELEVANT (CHAR_DEL)
+
 
 #define WORDNET_SENSE_STRING "Sense"
 
@@ -400,7 +394,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 	cout << "numberSenses = " << numberSenses << endl;
 	#endif
 	
-	if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, lineString, CHAR_NEW_LINE, CHAR_END_OF_STRING))	//wait till end of header
+	if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of header
 	{
 		cout << "findSynonyms error: new line not found" << endl;
 		cout << "charIndex = " << charIndex << endl;
@@ -414,7 +408,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 	for(int sense=1; sense <= numberSenses; sense++)
 	{
 		char c = output[charIndex];
-		if(c != CHAR_NEW_LINE)
+		if(c != CHAR_NEWLINE)
 		{
 			cout << "findSynonyms error: deformation (double new line not found)" << endl;
 			cout << "charIndex = " << charIndex << endl;
@@ -424,7 +418,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 		charIndex++;
 		lineIndex++;
 		
-		if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, lineString, CHAR_NEW_LINE, CHAR_END_OF_STRING))	//wait till end of header
+		if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of header
 		{
 			cout << "findSynonyms error: new line not found" << endl;
 			cout << "charIndex = " << charIndex << endl;
@@ -476,7 +470,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 			numberOfSynonyms = synonymnIndex;
 		}		
 
-		if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, lineString, CHAR_NEW_LINE, CHAR_END_OF_STRING))	//wait till end of line
+		if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of line
 		{
 			cout << "findSynonyms error: new line not found" << endl;
 			cout << "charIndex = " << charIndex << endl;

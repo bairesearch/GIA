@@ -3,7 +3,7 @@
  * File Name: GIAParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5f 03-June-2012
+ * Project Version: 1l6a 09-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of CFF File
  *
@@ -16,17 +16,6 @@
 
 #define MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA 150 //max characters of some word in input data. includes '\0' at end of a string
 
-#define CHAR_TAB '\t'
-#define CHAR_COMMA ','
-#define CHAR_NEW_LINE '\n'
-#define CHAR_OPEN_BRACKET '('
-#define CHAR_CLOSE_BRACKET ')'
-#define CHAR_OPEN_SQUARE_BRACKET '['
-#define CHAR_CLOSE_SQUARE_BRACKET ']'
-#define CHAR_DASH '-'
-#define CHAR_VERTICAL_BAR '|'
-#define CHAR_UNDERSCORE '_'
-#define CHAR_SPACE ' '
 
 string convertStanfordRelationToRelex(string * stanfordRelation)
 {
@@ -89,7 +78,7 @@ void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelati
 		
 		switch(c)
 		{
-			case CHAR_NEW_LINE:
+			case CHAR_NEWLINE:
 			{
 				/*
 				cout << "relation added;" << endl;
@@ -223,7 +212,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 		char c = (*relationsText)[characterIndex];
 		//cout << "c = " << c << endl;
 		
-		if(c == CHAR_NEW_LINE)
+		if(c == CHAR_NEWLINE)
 		{
 			currentRelation->relationType = relationType;
 			currentRelation->relationGovernorIndex = relationGovernorIndex;
@@ -378,7 +367,7 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList,
 		
 		switch(c)
 		{
-			case CHAR_NEW_LINE:
+			case CHAR_NEWLINE:
 			{
 				switch(currentFeaturePart)
 				{
