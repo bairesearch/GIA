@@ -136,7 +136,7 @@ int main(int argc,char **argv)
 	#endif
 
 	#ifdef USE_WORDNET
-	#ifndef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES
+	#ifndef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES_NOT_DURING_ADVANCED_REFERENCING
 	initialiseWordNet();
 	#endif
 	#endif
@@ -1209,7 +1209,7 @@ int main(int argc,char **argv)
 		*/
 
 		#ifdef USE_WORDNET
-		#ifdef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES
+		#ifdef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES_NOT_DURING_ADVANCED_REFERENCING
 		initialiseWordNet();
 		#endif
 		#endif

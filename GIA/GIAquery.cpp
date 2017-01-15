@@ -371,7 +371,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 		#ifdef GIA_USE_SYNONYMN_DETECTION
 		else
 		{
-			#ifdef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES
+			#ifdef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES_NOT_DURING_ADVANCED_REFERENCING
 			if(traceModeIsQuery)
 			{
 			#endif
@@ -380,7 +380,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 					compareEntityNamesResult = true;
 					*numberOfMatchedNodesRequiredSynonymnDetection = *numberOfMatchedNodesRequiredSynonymnDetection + 1;
 				}
-			#ifdef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES	
+			#ifdef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES_NOT_DURING_ADVANCED_REFERENCING	
 			}
 			#endif
 		}

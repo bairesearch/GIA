@@ -71,7 +71,7 @@ bool checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(string * word, str
 	bool checkIfWordIsContainedWithinAnotherWordsSynsets(string * word, string * otherWord, int wordNetPOS);
 SynsetPtr findMostPopularSynsets(string * word, bool * wordIsFound, int wordNetPOS);
 		SynsetPtr findSynsets(string * word, bool * wordIsFound, int wordNetPOS, int similarityType);
-		SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(SynsetPtr firstSenseInList, int wordNetPOS, int * maximumNumberOfTags, bool * entityNamesAreSynonymous, string * word, string * otherWord, bool compareEntityNames);
+		SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(SynsetPtr firstSenseInList, int wordNetPOS, int * maximumNumberOfTags, bool * entityNamesAreSynonymous, string * word, string * otherWord, bool compareEntityNames, bool * senseOutputWithHighestTagsPassedNewSynsetMustFree);
 
 
 
