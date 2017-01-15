@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u9c 02-October-2013
+ * Project Version: 1u10a 10-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -700,7 +700,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#endif
 	
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "pass 4; disable Concept Entities Based On Feature Temp Entity Node Array" << endl;
+	cout << "pass 4; disable concept entities based on feature temp entity node array" << endl;
 	#endif
 	//transfer disabled substances across execution#1 [this is required since GIAtranslatorRedistributeStanfordRelations operations are now done on temporary entity nodes GIAfeatureTempEntityNodeArray instead of concept entity nodes {whose values would have been automatically transferred their instances upon creation}...]
 	disableConceptEntitiesBasedOnFeatureTempEntityNodeArray(GIAentityNodeArrayFilled, GIAconceptNodeArray, GIAfeatureTempEntityNodeArray);
@@ -806,7 +806,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	identifyComparisonVariableAlternateMethod(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "pass 1c; disable Entities Based On Feature Temp Entity Node Array" << endl;
+	cout << "pass 1c; disable entities based on feature temp entity node array" << endl;
 	#endif
 	//transfer disabled substances across execution#2 [this is required since GIAtranslatorRedistributeStanfordRelations operations are now done on temporary entity nodes GIAfeatureTempEntityNodeArray instead of concept entity nodes {whose values would have been automatically transferred their instances upon creation}...]
 	disableEntitiesBasedOnFeatureTempEntityNodeArray(GIAentityNodeArrayFilled, GIAentityNodeArray, GIAfeatureTempEntityNodeArray);

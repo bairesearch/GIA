@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u9c 02-October-2013
+ * Project Version: 1u10a 10-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * ?TO DO: extract date information of entities from relex <features> tag area
@@ -86,8 +86,7 @@ void applyAdvancedFeatures(Sentence * currentSentenceInList, bool GIAentityNodeA
 	cout << "4i pass; define tense only time conditions" << endl;
 	#endif
 	defineTenseOnlyTimeConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
-#endif
-
+	
 	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -95,7 +94,10 @@ void applyAdvancedFeatures(Sentence * currentSentenceInList, bool GIAentityNodeA
 	#endif
 	defineActionConcepts1(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
+	#endif
+#endif
 	
+	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "4k pass; define action concepts (ie specific action concepts)" << endl;
 	#endif
@@ -1201,6 +1203,7 @@ void defineActionConcepts1(Sentence * currentSentenceInList, bool GIAentityNodeA
 	param.numberOfRelations = 1;
 	param.parseDisabledRelation[REL1] = true;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_MODAL_AUX;
+	param.useRelationTest[REL1][REL_ENT2] = true; param.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_CAN;
 	EntityCharacteristic entityCharacteristicsTest("isAction", "true");	
 	param.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest);
 	EntityCharacteristic useRedistributeSpecialCaseAssignment("isActionConcept", "true");

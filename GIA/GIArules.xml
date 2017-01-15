@@ -3124,6 +3124,7 @@
 				<option numberOfRelations="1" />
 				<option parseDisabledRelation="true" REL="0" /> <!-- aux will have been disabled, so must explicitly allow it to be parsed -->
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_aux" />
+				<option useRelationTest="true" REL="0" REL_ENT="1" relationTest="can" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isAction" value="true" REL="0" REL_ENT="0" />
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isActionConcept" value="true" REL="0" REL_ENT="0" />
 				</paramDepRel>
