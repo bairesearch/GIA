@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h14b 25-January-2015
+ * Project Version: 2h15a 25-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -363,6 +363,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 		bool asssertsetDefiniteAfterFinish = false;
 		int asssertPostProcessingREL_ENT = INT_DEFAULT_VALUE;
 		int asssertPostProcessingREL = INT_DEFAULT_VALUE;
+		bool assertassignPluralAfterFinish = false;
 
 		XMLparserTag * firstConfigurationTag = currentParamTag->firstLowerLevelTag;
 		XMLparserTag * currentConfigurationTag = firstConfigurationTag;
@@ -522,6 +523,12 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 							passedAssert = false;
 						}
 					}
+					else if(assertAttribute->value == "assignPluralAfterFinish")
+					{
+						assertassignPluralAfterFinish = true;
+						asssertPostProcessingREL = REL;
+						asssertPostProcessingREL_ENT = REL_ENT;
+					}
 				}
 			}
 			else
@@ -550,6 +557,11 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 					{
 						//cout << "A1" << endl;
 						paramDepRel.relationFinalResult[asssertPostProcessingREL]->disabled =  true;
+						//cout << "A2" << endl;
+					}
+					if(assertassignPluralAfterFinish)
+					{
+						featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;
 						//cout << "A2" << endl;
 					}
 				}
