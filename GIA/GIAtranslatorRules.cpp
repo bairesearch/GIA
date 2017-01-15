@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i33a 13-February-2015
+ * Project Version: 2i34a 14-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -163,7 +163,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 												{
 													if(!(GIAentityNodeArray[w]->disabled))
 													{
-														cout << GIAentityNodeArray[w]->entityName << " !disabled" << endl;
+														cout << "GIAentityNodeArray[" << w << "]->grammaticalPredeterminerTemp = " << GIAentityNodeArray[w]->grammaticalPredeterminerTemp << endl;
 													}
 												}
 											}
@@ -362,7 +362,11 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 		bool asssertsetDefiniteAfterFinish = false;
 		int asssertPostProcessingREL_ENT = INT_DEFAULT_VALUE;
 		int asssertPostProcessingREL = INT_DEFAULT_VALUE;
+		string assertPostProcessingValue = "";
 		bool assertassignPluralAfterFinish = false;
+		#ifdef GIA_SUPPORT_PREDETERMINERS
+		bool assertassignPredeterminerAfterFinish = false;
+		#endif
 
 		XMLparserTag* firstConfigurationTag = currentParamTag->firstLowerLevelTag;
 		XMLparserTag* currentConfigurationTag = firstConfigurationTag;
@@ -528,6 +532,25 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 						asssertPostProcessingREL = REL;
 						asssertPostProcessingREL_ENT = REL_ENT;
 					}
+					#ifdef GIA_SUPPORT_PREDETERMINERS
+					else if(assertAttribute->value == "assignPredeterminerAfterFinish")
+					{
+						assertassignPredeterminerAfterFinish = true;
+						asssertPostProcessingREL = REL;
+						asssertPostProcessingREL_ENT = REL_ENT;
+					}
+					#endif
+				}
+				
+				//added assertPostProcessingValue 2i34a:
+				assertAttribute = currentConfigurationTag->firstAttribute;
+				while(assertAttribute->nextAttribute != NULL)
+				{
+					if(assertAttribute->name == "assertPostProcessingValue")
+					{
+						assertPostProcessingValue = assertAttribute->value;
+					}
+					assertAttribute = assertAttribute->nextAttribute;
 				}
 			}
 			else
@@ -554,15 +577,24 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 					}
 					if(assertdisableRelationAfterFinish)
 					{
-						//cout << "A1" << endl;
 						paramDepRel.relationFinalResult[asssertPostProcessingREL]->disabled =  true;
-						//cout << "A2" << endl;
 					}
 					if(assertassignPluralAfterFinish)
 					{
 						featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;
-						//cout << "A2" << endl;
 					}
+					#ifdef GIA_SUPPORT_PREDETERMINERS
+					if(assertassignPredeterminerAfterFinish)
+					{
+						int arrayIndexOfResultFound = GRAMMATICAL_PREDETERMINER_UNDEFINED;
+						if(textInTextArray(assertPostProcessingValue, entityPredeterminerSmallNameArray, GRAMMATICAL_PREDETERMINER_SMALL_ARRAY_NUMBER_OF_TYPES, &arrayIndexOfResultFound))
+						{
+							//cout << "arrayIndexOfResultFound = " << arrayIndexOfResultFound << endl;
+							//cout << featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->word << endl;
+							featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalPredeterminer = arrayIndexOfResultFound;
+						}
+					}
+					#endif
 				}
 				else
 				{

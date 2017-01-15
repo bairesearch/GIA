@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i33a 13-February-2015
+ * Project Version: 2i34a 14-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -250,7 +250,10 @@ public:
 	int grammaticalIndexOfDeterminer;
 	#endif
 	bool previousWordInSentenceIsTo;
-
+	#ifdef GIA_SUPPORT_PREDETERMINERS
+	int grammaticalPredeterminer;
+	#endif
+	
 	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	bool alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	bool mustSetIsSubstanceConceptBasedOnApposRelation;
@@ -266,7 +269,7 @@ public:
 	#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
 	bool determinerPotentiallySingularDetected;
 	#endif
-
+	
 	GIAfeature* next;
 	GIAfeature* previous;	//used for reference lookup
 };

@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i33a 13-February-2015
+ * Project Version: 2i34a 14-February-2015
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -187,6 +187,9 @@
 #define NET_XML_ATTRIBUTE_grammaticalDefiniteTemp ((string)"grammaticalDefiniteTemp")	//this is only used for NLC
 #define NET_XML_ATTRIBUTE_grammaticalIndefinitePluralTemp ((string)"grammaticalIndefinitePluralTemp")	//this is only used for NLC
 #define NET_XML_ATTRIBUTE_grammaticalProperNounTemp ((string)"grammaticalProperNounTemp")	//this is only used for NLC
+#ifdef GIA_SUPPORT_PREDETERMINERS
+#define NET_XML_ATTRIBUTE_grammaticalPredeterminerTemp ((string)"grammaticalPredeterminerTemp")	//this is only used for NLC	//NB GIAxmlConversion does not properly support GIA_SUPPORT_PREDETERMINERS:!GIA_DISABLE_CROSS_SENTENCE_REFERENCING at present as it will not store grammaticalPredeterminerTempSentenceArray
+#endif
 #define NET_XML_ATTRIBUTE_entityIndexTemp ((string)"entityIndexTemp")	//this is only used for NLC
 #define NET_XML_ATTRIBUTE_isQuery ((string)"isQuery")	//this is only used for NLC
 #ifdef GIA_USE_ADVANCED_REFERENCING

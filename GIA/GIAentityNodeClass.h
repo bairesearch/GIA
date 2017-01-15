@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i33a 13-February-2015
+ * Project Version: 2i34a 14-February-2015
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -52,6 +52,19 @@
 #include <unordered_map>		//required for GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
 #include <utility> // make_pair	//required for GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
 using namespace std;
+
+
+#ifdef GIA_SUPPORT_PREDETERMINERS
+	//added 2i34a
+	//must be synced with GIAtranslatorDefs.h entityPredeterminerSmallArray;
+	#define GRAMMATICAL_PREDETERMINER_UNDEFINED (INT_DEFAULT_VALUE)	//-1
+	#define GRAMMATICAL_PREDETERMINER_EACH 0
+	#define GRAMMATICAL_PREDETERMINER_EVERY 1
+	#define GRAMMATICAL_PREDETERMINER_ALL 2
+	#define GRAMMATICAL_PREDETERMINER_SMALL_ARRAY_NUMBER_OF_TYPES (3)
+	static int entityPredeterminerSmallArray[GRAMMATICAL_PREDETERMINER_SMALL_ARRAY_NUMBER_OF_TYPES] = {GRAMMATICAL_PREDETERMINER_EACH, GRAMMATICAL_PREDETERMINER_EVERY, GRAMMATICAL_PREDETERMINER_ALL};	//added 2i34a
+
+#endif
 
 #define GIA_NLP_START_ENTITY_INDEX (1)
 #define GIA_NLP_START_SENTENCE_INDEX (1)
@@ -377,6 +390,12 @@ public:
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	int grammaticalIndexOfDeterminerTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	#endif
+	#ifdef GIA_SUPPORT_PREDETERMINERS
+	int grammaticalPredeterminerTemp;
+	#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
+	unordered_map<int, int> grammaticalPredeterminerTempSentenceArray;	//only for instances (not for concepts)	- required for GIA advanced referencing as different references to an entity may well have different predeterminers (eg each)
+	#endif
+	#endif	
 	#ifdef GIA_USE_STANFORD_CORENLP
 	string stanfordPOStemp;
 	string NormalizedNERtemp;

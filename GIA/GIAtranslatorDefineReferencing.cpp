@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i33a 13-February-2015
+ * Project Version: 2i34a 14-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1823,6 +1823,15 @@ void linkAdvancedReferencesGIA(GIAsentence* currentSentenceInList, bool GIAentit
 							referenceSource->wasReference = true;
 							#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 							referenceSourceConcept->wasReference = true;
+							#endif
+							#endif
+							#ifdef GIA_SUPPORT_PREDETERMINERS
+							if(referenceSource->grammaticalPredeterminerTemp == GRAMMATICAL_PREDETERMINER_UNDEFINED)
+							{
+								referenceSource->grammaticalPredeterminerTemp = featureArrayTemp[referenceEntityIndex]->grammaticalPredeterminer;	//only update the default (sentence independent) predeterminer of reference if no predeterminer found previously - NB the default (sentence independent) predeterminer is used by GIAxmlConversion only at present and shouldnt be used at all by !GIA_DISABLE_CROSS_SENTENCE_REFERENCING
+							}
+							#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
+							referenceSource->grammaticalPredeterminerTempSentenceArray.insert(make_pair<int,int>(currentSentenceInList->sentenceIndex, featureArrayTemp[referenceEntityIndex]->grammaticalPredeterminer));	//added 2i34a
 							#endif
 							#endif
 
