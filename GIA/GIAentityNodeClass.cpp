@@ -247,6 +247,7 @@ GIAentityNode::GIAentityNode(void)
 	//parsedForNLPIcodeBlocksActionRound = false;
 	//parsedForNLPIclassHeirarchy = false;
 	NLPIisSingularArgument = false;
+	NLPIlocalListVariableHasBeenDeclared = false;
 	#endif
 }
 GIAentityNode::~GIAentityNode(void)

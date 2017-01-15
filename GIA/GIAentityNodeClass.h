@@ -432,6 +432,7 @@ public:
 	//bool parsedForNLPIcodeBlocksActionRound;
 	//bool parsedForNLPIclassHeirarchy;
 	bool NLPIisSingularArgument;
+	bool NLPIlocalListVariableHasBeenDeclared;
 	#endif
 };
 
