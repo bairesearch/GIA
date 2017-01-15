@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2h 23-July-2013
+ * Project Version: 1t2i 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -295,7 +295,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 	param.useRelationTest[REL1][REL_ENT1] = true; param.relationTest[REL1][REL_ENT1] = RELATION_ENTITY_BE;
 	param.useRelationTest[REL2][REL_ENT1] = true; param.relationTest[REL2][REL_ENT1] = RELATION_ENTITY_BE;
 
-	#ifndef GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+	#ifndef GIA_DEPENDENCY_RELATIONS_TYPE_RELEX_PARSE_QUESTIONS_IN_NON_QUERY_INPUTTEXT
 	if(currentSentenceInList->isQuestion)
 	{
 	#endif
@@ -348,7 +348,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 			paramB.disableEntityUseOriginalValues[REL2][REL_ENT2] = true;
 			genericDependecyRelationInterpretation(&paramB, REL1);	
 		}
-	#ifndef GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG	
+	#ifndef GIA_DEPENDENCY_RELATIONS_TYPE_RELEX_PARSE_QUESTIONS_IN_NON_QUERY_INPUTTEXT	
 	}
 	#endif
 
@@ -389,7 +389,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 								
 								bool foundSpecialCaseQuery = false;
 								
-								#ifndef GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG								
+								#ifndef GIA_DEPENDENCY_RELATIONS_TYPE_RELEX_PARSE_QUESTIONS_IN_NON_QUERY_INPUTTEXT								
 								if(currentSentenceInList->isQuestion)
 								{
 								#endif
@@ -467,7 +467,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * 
 																				
 										}							
 									}
-								#ifndef GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG	
+								#ifndef GIA_DEPENDENCY_RELATIONS_TYPE_RELEX_PARSE_QUESTIONS_IN_NON_QUERY_INPUTTEXT	
 								}
 								#endif
 								

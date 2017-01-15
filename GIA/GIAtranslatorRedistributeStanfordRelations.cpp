@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2h 23-July-2013
+ * Project Version: 1t2i 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -210,10 +210,10 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 
 		//opt1
 	GIAgenericDepRelInterpretationParameters paramOpt1 = param;	
-
+	paramOpt1.expectToFindPrepositionTest[REL1] = true;
+	
 		//opt1a
 	GIAgenericDepRelInterpretationParameters paramOpt1a = paramOpt1;		
-	paramOpt1.expectToFindPrepositionTest[REL1] = true;
 	/*
 	What is yarn used in the making of?
 	dobj(used-4, What-1)
@@ -238,11 +238,12 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	paramOpt1a.disableRelation[REL2] = true;
 	paramOpt1a.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT3] = true; paramOpt1a.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT3] = REL3; paramOpt1a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT3] = REL_ENT2; paramOpt1a.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL3][REL_ENT3] = true;	
 	paramOpt1a.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT2] = true; paramOpt1a.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT2] = REL2; paramOpt1a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT2] = REL_ENT2;	
-	genericDependecyRelationInterpretation(&paramOpt1a, REL1);
+	if(genericDependecyRelationInterpretation(&paramOpt1a, REL1))
+	{	
+		//cout << "opt1a" << endl;
+	}
 				
 		//opt1b
-	GIAgenericDepRelInterpretationParameters paramOpt1b = paramOpt1a;
-	paramOpt1b.useRelationTest[REL1][REL_ENT3] = true; paramOpt1b.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
 	/*	
 	What is the cart designed to integrate with?
 	dep(designed-5, What-1)
@@ -255,12 +256,15 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	xcomp(designed-5, integrate-7)
 	prep(integrate-7, with-8)	
 	xcomp(designed-5, integrate-7) + dep(designed, what) + prep(integrate-7, with-8)	-> prep_with(integrate[7], what[1])
-	*/
-	genericDependecyRelationInterpretation(&paramOpt1b, REL1);			
+	*/		
+	GIAgenericDepRelInterpretationParameters paramOpt1b = paramOpt1a;
+	paramOpt1b.useRelationTest[REL1][REL_ENT3] = true; paramOpt1b.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
+	if(genericDependecyRelationInterpretation(&paramOpt1b, REL1))
+	{
+		//cout << "opt1b" << endl;
+	}		
 							
 		//opt1c
-	GIAgenericDepRelInterpretationParameters paramOpt1c = paramOpt1;
-	paramOpt1.expectToFindPrepositionTest[REL1] = true;
 	/*
 	x(y, _$qVar[1]) + prep_q(y, a) -> x(a, _$qVar[1])
 	eg1; 
@@ -290,10 +294,14 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 		_obj(use[4], apple[3])
 		prepc_for(use[4], eat[6])			
 		_%atLocation(use[4], _$qVar[1]) + prepc_for(use[4], eat[6]) -> _%atLocation(eat[6], _$qVar[1])
-	*/
+	*/		
+	GIAgenericDepRelInterpretationParameters paramOpt1c = paramOpt1;
 	paramOpt1c.numberOfRelations = 2;
 	paramOpt1c.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt1c.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt1c.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
-	genericDependecyRelationInterpretation(&paramOpt1c, REL1);
+	if(genericDependecyRelationInterpretation(&paramOpt1c, REL1))
+	{
+		//cout << "opt1c" << endl;
+	}
 				
 	#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP
 		//opt2
@@ -302,20 +310,22 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	paramOpt2.useRelationTest[REL1][REL_ENT3] = true; paramOpt2.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
 		
 		//opt2a
-	GIAgenericDepRelInterpretationParameters paramOpt2a = paramOpt2;						
 	/*
 	What is the Co-cart designed to do?
 	interpret; _to-do(design[5], do[7]) + _dep(design[5], what[1]) -> _to-do(design[5], do[7]) + _dep(design[5], do[7]) [see 2c] -> _to-do(design[5], what[1]) [2a]
-	*/	
+	*/		
+	GIAgenericDepRelInterpretationParameters paramOpt2a = paramOpt2;							
 	paramOpt2a.useRelationTest[REL1][REL_ENT2] = true; paramOpt2a.relationTest[REL1][REL_ENT2] = RELATION_DEPENDENT_DO;
 	paramOpt2a.disableEntity[REL1][REL_ENT2] = true; paramOpt2a.disableEntityUseOriginalValues[REL1][REL_ENT2] = true;
 	paramOpt2a.disableRelation[REL2] = true;
 	paramOpt2a.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
 	paramOpt2a.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT2;	
-	genericDependecyRelationInterpretation(&paramOpt2a, REL1);	
+	if(genericDependecyRelationInterpretation(&paramOpt2a, REL1))
+	{
+		//cout << "opt2a" << endl;
+	}	
 		
 		//opt2b
-	GIAgenericDepRelInterpretationParameters paramOpt2b = paramOpt2;		
 	/*
 	eg 
 	What is yarn used to make?
@@ -327,24 +337,32 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	aux(make-6, to-5)
 	xcomp(used-4, make-6)
 	interpret; _to-do(used-4, make-6) + dep(used-4, What-1) -> _to-do(used-4, make-6) + dep(make-6, What-1) [see 2c] -> _to-do(used-4, make-6) + obj(make-6, What-1) [2b]
-	*/
+	*/		
+	GIAgenericDepRelInterpretationParameters paramOpt2b = paramOpt2;		
 	paramOpt2b.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt2b.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt2b.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
 	paramOpt2b.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramOpt2b.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
-	genericDependecyRelationInterpretation(&paramOpt2b, REL1);
+	if(genericDependecyRelationInterpretation(&paramOpt2b, REL1))
+	{
+		//cout << "opt2b" << endl;
+	}
 	
 		//opt2c
 	//interpret; ...
 	GIAgenericDepRelInterpretationParameters paramOpt2c = paramOpt2;
 	paramOpt2c.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt2c.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt2c.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
-	genericDependecyRelationInterpretation(&paramOpt2c, REL1);				
+	if(genericDependecyRelationInterpretation(&paramOpt2c, REL1))
+	{
+		//cout << "opt2c" << endl;
+	}
+					
 	#endif	
 		
 #else
 	//cout << "\n" << endl;
 	
 	//added 28 October 2012
- 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
-	bool foundPreposition = false;
+ 	currentRelationInList = currentSentenceInList->firstRelationInList;
+	bool foundFirstPreposition = false;
 	while(currentRelationInList->next != NULL)
 	{
 		//cout << "Relation: " << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
@@ -361,7 +379,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 			#else
 			if(prepositionFound)
 			#endif
-			{				
+			{						
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{	
@@ -371,10 +389,13 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 					if(!(currentRelationInList2->disabled))
 					{
 					#endif
+						cout << "a1" << endl;
 						if(currentRelationInList->relationType != currentRelationInList2->relationType)
 						{
+							cout << "a2" << endl;
 							if(currentRelationInList->relationGovernorIndex == currentRelationInList2->relationGovernorIndex)
 							{
+								cout << "a3" << endl;
 								bool queryEquivalentQueryVariableFound = false;
 								for(int i=0; i<FEATURE_QUERY_ACTION_PREPOSITION_ACTION_EQUIVALENT_QUERY_VARIABLE_NUMBER_OF_TYPES; i++)
 								{
@@ -385,8 +406,10 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 								}							
 								if(queryEquivalentQueryVariableFound)
 								{
-									if(!foundPreposition)
+									cout << "a4" << endl;
+									if(!foundFirstPreposition)
 									{
+										cout << "a5" << endl;
 										bool foundSecondPreposition = false;
  										Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
 										while(currentRelationInList3->next != NULL)
@@ -401,7 +424,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 													{//ensure unique preposition found
 														if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationDependentIndex)
 														{//opt1a
-															//cout << "(foundSecondPreposition)" << endl;
+															//cout << "opt1a" << endl;
 
 															/*
 															What is yarn used in the making of?
@@ -440,7 +463,8 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 										}
 
 										if(!foundSecondPreposition)
-										{//opt1b/opt2c
+										{//opt1c/2c
+											cout << "1c/2c" << endl;
 											//cout << "(!foundSecondPreposition)" << endl;
 
 											/*
@@ -481,6 +505,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 											{//opt2a+b
 												if(currentRelationInList->relationDependent == RELATION_DEPENDENT_DO)
 												{//opt2a	
+													//cout << "opt2a" << endl;
 													/*
 													What is the Co-cart designed to do?
 													interpret; _to-do(design[5], do[7]) + _dep(design[5], what[1]) -> {IRRELEVANT: _to-do(design[5], do[7]) + _dep(design[5], do[7]) [2a] } -> _to-do(design[5], what[1]) [2b]
@@ -494,6 +519,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 												}
 												else
 												{//opt2b
+													//cout << "opt2b" << endl;
 													/*
 													eg 
 													What is yarn used to make?
@@ -512,7 +538,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 											#endif
 										}
 
-										foundPreposition = true;
+										foundFirstPreposition = true;
 									}
 								}
 							}

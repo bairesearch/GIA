@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2h 23-July-2013
+ * Project Version: 1t2i 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1022,6 +1022,7 @@ GIAentityNode * addCondition(GIAentityNode * conditionEntity)
 //assumes prepositions have previously been converted to stanford prep_preposition format during preprocessor (for robustness)
 string convertPrepositionToRelex(string * preposition, bool * prepositionFound)
 {
+	*prepositionFound = false;
 	string relexPreposition = *preposition;
 	for(int i=0; i<REFERENCE_TYPE_STANFORD_PARSER_PREPOSITION_PREPEND_NUMBER_OF_TYPES; i++)
 	{
@@ -2261,7 +2262,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 				//cout << "currentRelationID = " << currentRelationID << endl;
 				if(currentRelationID < (param->numberOfRelations - 1))
 				{
-					#ifdef GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+					#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 					cout << currentRelationID << ": " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
 					#endif
 					GIAgenericDepRelInterpretationParameters paramTemp = *param;	//this shouldnt be required anymore with relationFinalResult/relationEntityFinalResult/relationEntityIndexFinalResult... 	//only record parameters (eg relationEntity/relationEntityIndex) if successfully recused - this is required if additional commands are required to be executed based on the successful (result==true) recursion of genericDependecyRelationInterpretation (e.g. in GIAtranslatorRedistributeStanfordRelations.cpp)  
@@ -2273,7 +2274,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 				}
 				else
 				{
-					#ifdef GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+					#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 					cout << currentRelationID << ": " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;				
 					cout << "passedRelations = " << passedRelation << endl;
 					#endif
@@ -2341,7 +2342,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 					}
 					if(passedEntityMatchTests)
 					{
-						#ifdef GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+						#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 						cout << "passedEntityMatchTests" << endl;
 						#endif
 						result = true;
@@ -2575,7 +2576,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								{
 									if(param->useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck[relationID])
 									{
-										#ifdef GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+										#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 										cout << currentRelationID << ": [SpecialCaseAuxCheck]: " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
 										#endif
 										bool auxillaryIndicatesDifferentReferenceSet = true;
@@ -2584,7 +2585,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										{
 											auxillaryIndicatesDifferentReferenceSet = false;
 										}
-										#ifdef GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+										#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 										cout << "auxillaryIndicatesDifferentReferenceSet = " << auxillaryIndicatesDifferentReferenceSet << endl;									
 										#endif
 										param->relation[relationID]->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;									
