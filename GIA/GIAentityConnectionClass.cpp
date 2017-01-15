@@ -23,7 +23,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  *
  *******************************************************************************/
 
@@ -34,7 +34,7 @@
 GIAentityConnection::GIAentityConnection(void)
 {
 	confidence = GIA_ENTITY_CONNECTION_CONFIDENCE_BASE;
-	
+
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	sameReferenceSet = false;	//CHECK THIS default value
 	#endif
@@ -51,11 +51,11 @@ GIAentityConnection::GIAentityConnection(void)
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
 	initialisedForPrinting = false;
 	#endif
-	
+
 	#ifdef USE_NLPI
 	parsedForNLPIcodeBlocks = false;
-	#endif	
-	
+	#endif
+
 	/*
 	#ifdef GIA_USE_NLG
 	parsedForLanguageGeneration = false;
@@ -68,7 +68,7 @@ GIAentityConnection::~GIAentityConnection(void)
 GIAentityConnection::GIAentityConnection(string * startEntityName, long startIdInstance)
 {
 	confidence = GIA_ENTITY_CONNECTION_CONFIDENCE_BASE;
-	
+
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	sameReferenceSet = false;	//CHECK THIS default value
 	#endif

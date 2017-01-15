@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -220,9 +220,9 @@ int main(int argc,char **argv)
 	bool useOutputTextAnswerPlainTXTFile = false;
 	string outputTextAnswerPlainTXTFileName = "answer.txt";
 
-#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS
 	bool inputFileList = false;
-#endif	
+#endif
 	bool printOutput = false;
 	bool printOutputQuery = false;
 	bool displayInOpenGLAndOutputScreenshot = true;
@@ -326,13 +326,13 @@ int main(int argc,char **argv)
 			useInputQueryXMLFile = true;
 			useInputQuery = true;
 		}
-		
-	#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
+
+	#ifdef GIA_SUPPORT_INPUT_FILE_LISTS
 		if(argumentExists(argc,argv,"-ilist"))
 		{
 			inputFileList = true;
 		}
-	#endif		
+	#endif
 
 		if(argumentExists(argc,argv,"-ocff"))
 		{
@@ -538,7 +538,7 @@ int main(int argc,char **argv)
 		{
 			databaseFolderName=getCharArgument(argc,argv,"-dbfolder");
 			databaseFolderName = databaseFolderName + '/';
-		}		
+		}
 	#endif
 
 	#ifdef GIA_USE_LRP
@@ -574,7 +574,7 @@ int main(int argc,char **argv)
 		else
 		{
 			lrpDataFolderName = currentFolder;
-		}		
+		}
 	#endif
 	#ifdef USE_WORDNET
 		if(argumentExists(argc,argv,"-syndet"))
@@ -653,9 +653,9 @@ int main(int argc,char **argv)
 	vector<GIAentityNode*> * entityNodesActiveListActions = new vector<GIAentityNode*>;
 	vector<GIAentityNode*> * entityNodesActiveListConditions = new vector<GIAentityNode*>;
 	unordered_map<long, GIAtimeConditionNode*> * timeConditionNodesActiveList = new unordered_map<long, GIAtimeConditionNode*>;
-	
+
 	int maxNumberSentences;
-		
+
 	executeGIA(
 
 		NLPfeatureParser,
@@ -721,9 +721,9 @@ int main(int argc,char **argv)
 		useOutputTextAnswerPlainTXTFile,
 		outputTextAnswerPlainTXTFileName,
 
-	#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
+	#ifdef GIA_SUPPORT_INPUT_FILE_LISTS
 		inputFileList,
-	#endif	
+	#endif
 		printOutput,
 		printOutputQuery,
 		displayInOpenGLAndOutputScreenshot,
@@ -756,23 +756,23 @@ int main(int argc,char **argv)
 	#ifdef USE_WORDNET
 		synonymnDetectionStatus,
 	#endif
-		
+
 		entityNodesActiveListComplete,
-		entityNodesActiveListConcepts, 
-		entityNodesActiveListSubstances, 
-		entityNodesActiveListActions, 
-		entityNodesActiveListConditions, 
+		entityNodesActiveListConcepts,
+		entityNodesActiveListSubstances,
+		entityNodesActiveListActions,
+		entityNodesActiveListConditions,
 		timeConditionNodesActiveList,
-		
+
 		&maxNumberSentences
 	);
-	
+
 	//print execution time (end)
 	time(&now);
 	current = localtime(&now);
 	sprintf(timeAndDateString, "%i:%i:%i %.2i/%.2i/%i", current->tm_hour, current->tm_min, current->tm_sec, current->tm_mday, (current->tm_mon+1), (current->tm_year + TM_STRUCT_YEAR_OFFSET));
-	cout << "GIA execution time: " << timeAndDateString << " (finish)" << endl;	
-}	
+	cout << "GIA execution time: " << timeAndDateString << " (finish)" << endl;
+}
 #endif
 
 
@@ -841,9 +841,9 @@ bool executeGIA(
 	bool useOutputTextAnswerPlainTXTFile,
 	string outputTextAnswerPlainTXTFileName,
 
-#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS
 	bool inputFileList,
-#endif	
+#endif
 	bool printOutput,
 	bool printOutputQuery,
 	bool displayInOpenGLAndOutputScreenshot,
@@ -883,8 +883,8 @@ bool executeGIA(
 	vector<GIAentityNode*> * entityNodesActiveListActions,
 	vector<GIAentityNode*> * entityNodesActiveListConditions,
 	unordered_map<long, GIAtimeConditionNode*> * timeConditionNodesActiveList,
-	
-	int * maxNumberSentences	
+
+	int * maxNumberSentences
 	)
 {
 #ifdef USE_CS_WORKAROUND
@@ -893,115 +893,115 @@ int main2(int argc,char **argv)
 {
 #endif
 	/*
-	cout << NLPfeatureParser << endl; 
-	cout << NLPdependencyRelationsParser << endl; 
-	cout << NLPrelexCompatibilityMode << endl; 
-	cout << NLPassumePreCollapsedStanfordRelations << endl; 
+	cout << NLPfeatureParser << endl;
+	cout << NLPdependencyRelationsParser << endl;
+	cout << NLPrelexCompatibilityMode << endl;
+	cout << NLPassumePreCollapsedStanfordRelations << endl;
 
-	cout << queryNLPfeatureParser << endl; 
-	cout << queryNLPdependencyRelationsParser << endl; 
-	cout << queryNLPrelexCompatibilityMode	 << endl; 
-	cout << queryNLPassumePreCollapsedStanfordRelations << endl; 
+	cout << queryNLPfeatureParser << endl;
+	cout << queryNLPdependencyRelationsParser << endl;
+	cout << queryNLPrelexCompatibilityMode	 << endl;
+	cout << queryNLPassumePreCollapsedStanfordRelations << endl;
 
-	cout << NLPexeFolderArray[0] << endl; 
-	cout << NLPexeFolderArray[1] << endl; 
+	cout << NLPexeFolderArray[0] << endl;
+	cout << NLPexeFolderArray[1] << endl;
 
-	cout << useInputTextPlainTXTFile << endl; 
-	cout << inputTextPlainTXTfileName << endl; 
+	cout << useInputTextPlainTXTFile << endl;
+	cout << inputTextPlainTXTfileName << endl;
 
 #ifdef USE_CE
-	cout << useInputTextCodeextensionsTXTFileName << endl; 
-	cout << inputTextCodeextensionsTXTFileName << endl; 
+	cout << useInputTextCodeextensionsTXTFileName << endl;
+	cout << inputTextCodeextensionsTXTFileName << endl;
 #endif
 
-	cout << useInputTextNLPrelationXMLFile << endl; 
-	cout << inputTextNLPrelationXMLfileName << endl; 
-	cout << useInputTextNLPfeatureXMLFile << endl; 
-	cout << inputTextNLPfeatureXMLfileName << endl; 
-	cout << useOutputTextCFFFile << endl; 
-	cout << outputTextCFFFileName << endl; 
-	cout << useInputTextXMLFile << endl; 
-	cout << inputTextXMLFileName << endl; 
-	cout << useOutputTextXMLFile << endl; 
-	cout << outputTextXMLFileName << endl; 
-	cout << useOutputTextCXLFile << endl; 
-	cout << outputTextCXLFileName << endl; 
-	cout << useOutputTextLDRFile << endl; 
-	cout << outputTextLDRFileName << endl; 
-	cout << useOutputTextPPMFile << endl; 
-	cout << outputTextPPMFileName << endl; 
-	cout << useOutputTextSVGFile << endl; 
-	cout << outputTextSVGFileName << endl; 
-	cout << useInputQueryPlainTXTFile << endl; 
-	cout << inputQueryPlainTXTFileName << endl; 
-	cout << useInputQueryNLPrelationXMLFile << endl; 
-	cout << inputQueryNLPrelationXMLFileName << endl; 
-	cout << useInputQueryNLPfeatureXMLFile << endl; 
-	cout << inputQueryNLPfeatureXMLFileName << endl; 
-	cout << useOutputQueryCFFFile << endl; 
-	cout << outputQueryCFFFileName << endl; 
-	cout << useInputQueryXMLFile << endl; 
-	cout << inputQueryXMLFileName << endl; 
-	cout << useOutputQueryXMLFile << endl; 
-	cout << outputQueryXMLFileName << endl; 
-	cout << useOutputQueryCXLFile << endl; 
-	cout << outputQueryCXLFileName << endl; 
-	cout << useOutputQueryLDRFile << endl; 
-	cout << outputQueryLDRFileName << endl; 
-	cout << useOutputQueryPPMFile << endl; 
-	cout << outputQueryPPMFileName << endl; 
-	cout << useOutputQuerySVGFile << endl; 
-	cout << outputQuerySVGFileName << endl; 
-	cout << useOutputTextAllFile << endl; 
-	cout << outputTextAllFileName << endl; 
-	cout << useOutputTextAnswerPlainTXTFile << endl; 
-	cout << outputTextAnswerPlainTXTFileName << endl; 
+	cout << useInputTextNLPrelationXMLFile << endl;
+	cout << inputTextNLPrelationXMLfileName << endl;
+	cout << useInputTextNLPfeatureXMLFile << endl;
+	cout << inputTextNLPfeatureXMLfileName << endl;
+	cout << useOutputTextCFFFile << endl;
+	cout << outputTextCFFFileName << endl;
+	cout << useInputTextXMLFile << endl;
+	cout << inputTextXMLFileName << endl;
+	cout << useOutputTextXMLFile << endl;
+	cout << outputTextXMLFileName << endl;
+	cout << useOutputTextCXLFile << endl;
+	cout << outputTextCXLFileName << endl;
+	cout << useOutputTextLDRFile << endl;
+	cout << outputTextLDRFileName << endl;
+	cout << useOutputTextPPMFile << endl;
+	cout << outputTextPPMFileName << endl;
+	cout << useOutputTextSVGFile << endl;
+	cout << outputTextSVGFileName << endl;
+	cout << useInputQueryPlainTXTFile << endl;
+	cout << inputQueryPlainTXTFileName << endl;
+	cout << useInputQueryNLPrelationXMLFile << endl;
+	cout << inputQueryNLPrelationXMLFileName << endl;
+	cout << useInputQueryNLPfeatureXMLFile << endl;
+	cout << inputQueryNLPfeatureXMLFileName << endl;
+	cout << useOutputQueryCFFFile << endl;
+	cout << outputQueryCFFFileName << endl;
+	cout << useInputQueryXMLFile << endl;
+	cout << inputQueryXMLFileName << endl;
+	cout << useOutputQueryXMLFile << endl;
+	cout << outputQueryXMLFileName << endl;
+	cout << useOutputQueryCXLFile << endl;
+	cout << outputQueryCXLFileName << endl;
+	cout << useOutputQueryLDRFile << endl;
+	cout << outputQueryLDRFileName << endl;
+	cout << useOutputQueryPPMFile << endl;
+	cout << outputQueryPPMFileName << endl;
+	cout << useOutputQuerySVGFile << endl;
+	cout << outputQuerySVGFileName << endl;
+	cout << useOutputTextAllFile << endl;
+	cout << outputTextAllFileName << endl;
+	cout << useOutputTextAnswerPlainTXTFile << endl;
+	cout << outputTextAnswerPlainTXTFileName << endl;
 
-#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
-	cout << inputFileList << endl; 
-#endif	
-	cout << printOutput << endl; 
-	cout << printOutputQuery << endl; 
-	cout << displayInOpenGLAndOutputScreenshot << endl; 
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS
+	cout << inputFileList << endl;
+#endif
+	cout << printOutput << endl;
+	cout << printOutputQuery << endl;
+	cout << displayInOpenGLAndOutputScreenshot << endl;
 
-	cout << rasterImageWidth << endl; 
-	cout << rasterImageHeight << endl; 
+	cout << rasterImageWidth << endl;
+	cout << rasterImageHeight << endl;
 
-	cout << useInputQuery << endl; 
+	cout << useInputQuery << endl;
 
 #ifdef GIA_USE_DATABASE
-	cout << readFromDatabase << endl; 
-	cout << writeToDatabase << endl; 
-	cout << useDatabase << endl; 
-	cout << databaseFolderName << endl; 
+	cout << readFromDatabase << endl;
+	cout << writeToDatabase << endl;
+	cout << useDatabase << endl;
+	cout << databaseFolderName << endl;
 #endif
 
 #ifdef GIA_USE_LRP
-	cout << useLRP << endl; 
-	cout << useOutputLRPTextPlainTXTFile << endl; 
-	cout << outputLRPTextPlainTXTFileName << endl; 
-	cout << useOutputLRPTextForNLPonlyPlainTXTFile << endl; 
-	cout << outputLRPTextForNLPonlyPlainTXTFileName << endl; 
-	cout << useOutputQueryLRPTextPlainTXTFile << endl; 
-	cout << outputQueryLRPTextPlainTXTFileName << endl; 
-	cout << useOutputQueryLRPTextForNLPonlyPlainTXTFile << endl; 
-	cout << outputQueryLRPTextForNLPonlyPlainTXTFileName << endl; 
-	cout << lrpDataFolderName << endl; 
+	cout << useLRP << endl;
+	cout << useOutputLRPTextPlainTXTFile << endl;
+	cout << outputLRPTextPlainTXTFileName << endl;
+	cout << useOutputLRPTextForNLPonlyPlainTXTFile << endl;
+	cout << outputLRPTextForNLPonlyPlainTXTFileName << endl;
+	cout << useOutputQueryLRPTextPlainTXTFile << endl;
+	cout << outputQueryLRPTextPlainTXTFileName << endl;
+	cout << useOutputQueryLRPTextForNLPonlyPlainTXTFile << endl;
+	cout << outputQueryLRPTextForNLPonlyPlainTXTFileName << endl;
+	cout << lrpDataFolderName << endl;
 #endif
 
 #ifdef USE_WORDNET
-	cout << synonymnDetectionStatus << endl; 
+	cout << synonymnDetectionStatus << endl;
 #endif
 	exit(0);
-	*/	
-	
-	
+	*/
+
+
 	bool result = true;
-	
+
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	*maxNumberSentences = 0;		//variable only used with GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	#endif
-	
+
 
 	#ifdef GIA_MAIN_DEBUG
 	//cout << "workingFolderCharStar = " << workingFolderCharStar << endl;
@@ -1018,7 +1018,7 @@ int main2(int argc,char **argv)
 	fillInLDspriteExternVariables();
 	///GIA specific rules.xml file is not used at the moment	[once right variables have been decided upon they will be fed to xml]
 	//fillInGIARulesExternVariables();
-	
+
 	vector<GIAentityNode*> * entityNodesActiveListCompleteQuery = new vector<GIAentityNode*>;
 	unordered_map<string, GIAentityNode*> * entityNodesActiveListConceptsQuery = new unordered_map<string, GIAentityNode*>;
 	vector<GIAentityNode*> * entityNodesActiveListSubstancesQuery = new  vector<GIAentityNode*>;			//not required - declared for symmetry
@@ -1032,12 +1032,12 @@ int main2(int argc,char **argv)
 	chdir(workingFolderCharStar);
 	#else
 	::SetCurrentDirectory(workingFolderCharStar);
-	#endif		
 	#endif
-	
+	#endif
+
 	#ifdef USE_WORDNET
 	initialiseWordNet(synonymnDetectionStatus);
-	#endif	
+	#endif
 
 	#ifdef GIA_USE_LRP
 	if(!initialiseLRP(lrpDataFolderName, useLRP))
@@ -1045,7 +1045,7 @@ int main2(int argc,char **argv)
 		result = false;
 	}
 	#endif
-	
+
 	if(printOutput)
 	{
 		if(!useOutputTextXMLFile)
@@ -1217,7 +1217,7 @@ int main2(int argc,char **argv)
 	#endif
 
 
-	
+
 #ifdef GIA_SUPPORT_INPUT_FILE_LISTS
 	int numberOfInputFilesInList = 1;
 	string * inputTextPlainTXTFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
@@ -1253,8 +1253,8 @@ int main2(int argc,char **argv)
 
 		if(useInputTextXMLFile)
 		{
-			numberOfInputFilesInList = getFilesFromFileList(inputTextXMLFileName, inputTextXMLFileNameArray);	
-		}			
+			numberOfInputFilesInList = getFilesFromFileList(inputTextXMLFileName, inputTextXMLFileNameArray);
+		}
 	}
 
 	for(int inputFileNameIndex=0; inputFileNameIndex<numberOfInputFilesInList; inputFileNameIndex++)	//CHECKTHIS: change back to 0
@@ -1263,8 +1263,8 @@ int main2(int argc,char **argv)
 		chdir(workingFolderCharStar);
 		#else
 		::SetCurrentDirectory(workingFolderCharStar);
-		#endif	
-			
+		#endif
+
 		if(inputFileList)
 		{
 			if(useInputTextPlainTXTFile)
@@ -1288,21 +1288,21 @@ int main2(int argc,char **argv)
 
 			if(useInputTextXMLFile)
 			{
-				inputTextXMLFileName = inputTextXMLFileNameArray[inputFileNameIndex];	
-			}	
-			
+				inputTextXMLFileName = inputTextXMLFileNameArray[inputFileNameIndex];
+			}
+
 			char inputFileNameIndexStringCharStar[10];
 			sprintf(inputFileNameIndexStringCharStar, "%d", inputFileNameIndex);
-			outputTextCFFFileName = outputTextCFFFileNameBase + "." + inputFileNameIndexStringCharStar;	
+			outputTextCFFFileName = outputTextCFFFileNameBase + "." + inputFileNameIndexStringCharStar;
 			outputLRPTextPlainTXTFileName = outputLRPTextPlainTXTFileNameBase + "." + inputFileNameIndexStringCharStar;
 			outputLRPTextForNLPonlyPlainTXTFileName = outputLRPTextForNLPonlyPlainTXTFileNameBase + "." + inputFileNameIndexStringCharStar;
 		}
-#endif	
-		
+#endif
+
 		#ifdef GIA_USE_LRP
 		if(useLRP)
 		{
-			initialiseCurrentGIALRPtagTextCorrespondenceInfo(false);	
+			initialiseCurrentGIALRPtagTextCorrespondenceInfo(false);
 			setCurrentGIALRPtagTextCorrespondenceInfo(false);	//required for local variable access
 			if(!parseTextFileAndReduceLanguage(inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, outputLRPTextForNLPonlyPlainTXTFileName))
 			{
@@ -1395,7 +1395,7 @@ int main2(int argc,char **argv)
 				#else
 				::SetCurrentDirectory(tempFolderCharStar);
 				#endif
-	
+
 				/*
 				#ifdef GIA_USE_LRP
 				convertRevertNLPtagNamesToOfficialLRPOutput(NLPdependencyRelationsParser, NLPfeatureParser, LRPTextForNLPonlyPlainTXTFileName, LRPTextPlainTXTFileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName);
@@ -1428,7 +1428,7 @@ int main2(int argc,char **argv)
 				#ifdef GIA_MAIN_DEBUG
 				//cout << "tempCurrentFolder = " << tempCurrentFolder << endl;
 				#endif
-				
+
 				#ifdef USE_CE
 				if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, firstCodeextensionInHeirachy, codeextensionsList, useCodeextensionsHeirachy))
 				#else
@@ -1468,22 +1468,22 @@ int main2(int argc,char **argv)
 
 			}
 		}
-		
+
 		#ifdef GIA_USE_LRP
 		if(useLRP)
 		{
 			deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(false);	//required for local variable access
 		}
-		#endif	
-#ifdef GIA_SUPPORT_INPUT_FILE_LISTS					
+		#endif
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS
 	}
-#endif	
+#endif
 
 	#ifdef LINUX
 	chdir(workingFolderCharStar);
 	#else
 	::SetCurrentDirectory(workingFolderCharStar);
-	#endif	
+	#endif
 
 #ifdef GIA_USE_LRP
 	if(useLRP)
@@ -1493,7 +1493,7 @@ int main2(int argc,char **argv)
 			//cout << "inputQueryPlainTXTFileName = " << inputQueryPlainTXTFileName << endl;
 			//cout << "outputQueryLRPTextPlainTXTFileName = " << outputQueryLRPTextPlainTXTFileName << endl;
 			//cout << "outputQueryLRPTextForNLPonlyPlainTXTFileName = " << outputQueryLRPTextForNLPonlyPlainTXTFileName << endl;
-			
+
 			initialiseCurrentGIALRPtagTextCorrespondenceInfo(true);
 			setCurrentGIALRPtagTextCorrespondenceInfo(true);	//required for local variable access
 			if(!parseTextFileAndReduceLanguage(inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, outputQueryLRPTextForNLPonlyPlainTXTFileName))
@@ -1537,7 +1537,7 @@ int main2(int argc,char **argv)
 			#else
 			::SetCurrentDirectory(tempFolderCharStar);
 			#endif
-				
+
 			/*
 			#ifdef GIA_USE_LRP
 			convertRevertNLPtagNamesToOfficialLRPOutput(queryNLPdependencyRelationsParser, queryNLPfeatureParser, outputQueryLRPTextForNLPonlyPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, inputQueryTextNLPrelationXMLFileName, inputQueryTextNLPfeatureXMLFileName);
@@ -1631,14 +1631,14 @@ int main2(int argc,char **argv)
 			2. return missing variables
 			3. NB for which/what questions, make the software just locate the identical structure, and if necessary return the parent of the primary substance (eg the parent of the "object" of the question)
 		*/
-		
+
 		bool foundComparisonVariable = getFoundComparisonVariable();
 		GIAentityNode* comparisonVariableNode = getComparisonVariableNode();
 		bool foundAnswer = false;
 		double confidence = 0.0;
 		char tempConfidenceStringCharStar[100];
 		char tempMaxConfidenceStringCharStar[100];
-		
+
 		GIAentityNode* queryAnswerNode;
 		string queryAnswerContext = "";
 		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(entityNodesActiveListConcepts, entityNodesActiveListConceptsQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerContext);
@@ -1812,7 +1812,7 @@ int main2(int argc,char **argv)
 		#else
 		::SetCurrentDirectory(tempFolderCharStar);
 		#endif
-	
+
 		/*
 		char * fileByteArray = const_cast<char*>(answerString.c_str());
 		char * outputTextAnswerPlainTXTFileNameCharStar = const_cast<char*>(outputTextAnswerPlainTXTFileName.c_str());
@@ -1830,7 +1830,7 @@ int main2(int argc,char **argv)
 	#else
 	::SetCurrentDirectory(tempFolderCharStar);
 	#endif
-	
+
 	if(printOutput)
 	{
 		printGIAnetworkNodes(entityNodesActiveListComplete, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile, useOutputTextSVGFile, *maxNumberSentences);
@@ -1896,7 +1896,7 @@ int main2(int argc,char **argv)
 			}
 		}
 		#endif
-		
+
 		if(writeToDatabase)
 		{
 			//NB currently uses entityNodesActiveListComplete to record which nodes might possibly require an update on the server
@@ -1946,7 +1946,7 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 	#else
 	::SetCurrentDirectory(tempFolderCharStar);
 	#endif
-	
+
 	#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 	string originalInputFileName = "";
 	originalInputFileName = originalInputFileName + inputTextNLPrelationXMLfileName + " " + inputTextNLPfeatureXMLfileName;
@@ -1965,11 +1965,11 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 		currentSentenceInList = currentSentenceInList->next;
 	}
 	#endif
-	
+
 	#ifdef GIA_FREE_MEMORY1
 	delete firstParagraphInList;
 	#endif
-	
+
 	return result;
 }
 
@@ -2062,7 +2062,7 @@ bool fileExists(string * fileName)
 }
 
 #ifdef GIA_SUPPORT_INPUT_FILE_LISTS
-int getFilesFromFileList(string inputListFileName, string * inputFileNameArray)	
+int getFilesFromFileList(string inputListFileName, string * inputFileNameArray)
 {
 	bool result = true;
 	int numberOfInputFilesInList = 0;
@@ -2097,7 +2097,7 @@ int getFilesFromFileList(string inputListFileName, string * inputFileNameArray)
 			charCount++;
 		}
 		numberOfInputFilesInList = fileNameIndex;
-	}	
+	}
 	#ifdef GIA_MAIN_DEBUG
 	//cout << "numberOfInputFilesInList = " << numberOfInputFilesInList << endl;
 	#endif

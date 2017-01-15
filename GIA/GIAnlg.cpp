@@ -23,7 +23,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -84,7 +84,7 @@ NLGSentence * generateLanguageFromEntityNode(GIAentityNode * entityNode, NLGSent
 		//cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
 		//cout << "\tentityNode->isSubstance = " << entityNode->isSubstance << endl;
 		//cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
-		//cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;		
+		//cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;
 		#endif
 
 
@@ -243,26 +243,26 @@ void generateThreeEntitySentenceFromEntityNode(GIAentityNode * entityNode0, stri
 		entityNodeAvailableArray[1] = true;
 		entityNodeAvailableArray[2] = true;
 		entityNode1 = (entityNode0->entityVectorConnectionsArray[connectionType1]).back()->entity;
-		entityNode2 = (entityNode0->entityVectorConnectionsArray[connectionType2]).back()->entity;		
+		entityNode2 = (entityNode0->entityVectorConnectionsArray[connectionType2]).back()->entity;
 	}
 	else if(!inputNodeFound && outputNodeFound)
-	{	
+	{
 		//if((entityNode0->entityVectorConnectionsArray[connectionType2]).back()->entity->isSubjectTemp)	[not possible as isSubjectTemp is not set officially based on NLP relations, but on GIA semantic relationships ie action input/output]
 		if((entityNode0->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS]).empty())
 		{//added 28 Oct 2012; to handle case "Corn is eaten by.."
 			entityNodeAvailableArray[1] = true;
-			entityNode1 = (entityNode0->entityVectorConnectionsArray[connectionType2]).back()->entity;	
+			entityNode1 = (entityNode0->entityVectorConnectionsArray[connectionType2]).back()->entity;
 		}
 		else
 		{
 			entityNodeAvailableArray[2] = true;
-			entityNode2 = (entityNode0->entityVectorConnectionsArray[connectionType2]).back()->entity;			
+			entityNode2 = (entityNode0->entityVectorConnectionsArray[connectionType2]).back()->entity;
 		}
 	}
 	else if(inputNodeFound && !outputNodeFound)
 	{
 		entityNodeAvailableArray[1] = true;
-		entityNode1 = (entityNode0->entityVectorConnectionsArray[connectionType1]).back()->entity;		
+		entityNode1 = (entityNode0->entityVectorConnectionsArray[connectionType1]).back()->entity;
 	}
 
 	if(entityNodeAvailableArray[0])
@@ -405,7 +405,7 @@ void generateThreeEntitySentenceFromEntityNode(GIAentityNode * entityNode0, stri
 									{
 									#endif
 										#ifdef GIA_NLG_DEBUG
-										cout << "\t\t(!(entityNodeArray[entityNodeIndex]->sourceAddedInLanguageGeneration))" << endl;									
+										cout << "\t\t(!(entityNodeArray[entityNodeIndex]->sourceAddedInLanguageGeneration))" << endl;
 										#endif
 										#ifdef GIA_USE_NLG2
 										generateTwoEntitySentenceFromEntityConnection(entityNodeArray[entityNodeIndex], entityConnectionAdditional, generatedText, nlgSentenceThreeEntitiesGenerateAdditionsVectorConnectionsArray[i], currentEntityIndexAdditional, true);
@@ -477,10 +477,10 @@ void generateThreeEntitySentenceFromEntityNode(GIAentityNode * entityNode0, stri
 	{
 		*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[2];
 	}
-	
+
 	#ifdef GIA_NLG_DEBUG
 	cout << "*generatedText = " << *generatedText << endl;
-	#endif	
+	#endif
 
 #endif
 	/*
@@ -536,7 +536,7 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode * entityNode1, 
 	if(!(entityConnection->parsedForLanguageGeneration))	//&& !(entityConnection->disabled)
 	{
 	*/
-	
+
 	GIAentityNode * entityNode2 = entityConnection->entity;
 
 	#ifdef GIA_NLG_DEBUG

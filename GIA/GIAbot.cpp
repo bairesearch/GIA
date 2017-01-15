@@ -23,7 +23,7 @@
  * File Name: GIAbot.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -60,12 +60,12 @@ void botSwitchFirstAndSecondPerson(Sentence * currentSentenceInList, bool GIAent
 					currentRelationInList->relationDependent = featureSecondPersonNameArray[i];
 					firstPersonEntity->entityName = featureSecondPersonNameArray[i];
 					passedFirstPersonDependent = true;
-				}				
+				}
 			}
 			for(int i=0; i<FEATURE_SECOND_PERSON_NUMBER_OF_TYPES; i++)
 			{
 				if(!passedFirstPersonGovernor)
-				{		
+				{
 					if(currentRelationInList->relationGovernor == featureSecondPersonNameArray[i])
 					{
 						GIAentityNode * secondPersonEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
@@ -80,9 +80,9 @@ void botSwitchFirstAndSecondPerson(Sentence * currentSentenceInList, bool GIAent
 						GIAentityNode * secondPersonEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 						currentRelationInList->relationDependent = featureFirstPersonNameArray[i];
 						secondPersonEntity->entityName = featureFirstPersonNameArray[i];
-					}	
-				}			
-			}		
+					}
+				}
+			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif

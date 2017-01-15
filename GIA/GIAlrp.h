@@ -23,7 +23,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -169,7 +169,7 @@ public:
 	~GIALRPtagTextCorrespondenceInfo(void);
 
 	string wordWithLRP;		//LRP generated word name
-	string lemmaWithLRP;		//LRP generated lemma name	
+	string lemmaWithLRP;		//LRP generated lemma name
 	string wordWithLRPforNLPonly;	//temporary/dummy word name such that NLP can properly parse the text
 
 	int entityIndex;	//used to map the NLP dummy replacement lemma to the official LRP generated lemma (for entity name reversion after NLP)
@@ -213,6 +213,6 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 bool determineIfWordIsIrregularVerbContinuousCaseWrapper(string word, string * baseNameFound);
 bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * firstTagInIrregularVerbList, string * baseNameFound);
 #endif
-#endif	
-	
+#endif
+
 #endif

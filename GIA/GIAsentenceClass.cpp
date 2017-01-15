@@ -23,7 +23,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -139,7 +139,7 @@ Relation::Relation(void)
 	//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	disabledDuringLink = false;
 	//#endif
-	
+
 	#ifdef GIA_USE_RELEX
 	subjObjRelationAlreadyAdded = false;
 	#endif
@@ -211,7 +211,7 @@ Feature::Feature(void)
 	mustSetIsSubstanceConceptBasedOnApposRelation = false;
 	isPronounReference = false;
 	#endif
-	
+
 	entityDisabled = false;
 
 	next = NULL;
@@ -239,7 +239,7 @@ Sentence::Sentence(void)
 	#endif
 
 	sentenceIndex = GIA_SENTENCE_INDEX_UNDEFINED;
-	#ifdef GIA_USE_STANFORD_CORENLP	
+	#ifdef GIA_USE_STANFORD_CORENLP
 	firstCoreferenceInList = new StanfordCoreNLPcoreference();
 	#endif
 
@@ -267,14 +267,14 @@ Sentence::~Sentence(void)
 	}
 
 	#ifdef GIA_FREE_MEMORY1
-	#ifdef GIA_USE_STANFORD_CORENLP	
-	if(firstCoreferenceInList != NULL)	//added 21 Sept 2012 
+	#ifdef GIA_USE_STANFORD_CORENLP
+	if(firstCoreferenceInList != NULL)	//added 21 Sept 2012
 	{
 		delete firstCoreferenceInList;
 	}
 	#endif
 	#endif
-	
+
 	if(next != NULL)
 	{
 		delete next;
@@ -317,7 +317,7 @@ void copySentences(Sentence * sentenceToCopy, Sentence * newSentence)
 	#endif
 
 	#ifdef GIA_USE_STANFORD_CORENLP
-	copyStanfordCoreferences(sentenceToCopy->firstCoreferenceInList, newSentence->firstCoreferenceInList);	//changed 21 Sept 2012 
+	copyStanfordCoreferences(sentenceToCopy->firstCoreferenceInList, newSentence->firstCoreferenceInList);	//changed 21 Sept 2012
 	//newSentence->firstCoreferenceInList = sentenceToCopy->firstCoreferenceInList;
 	#endif
 
@@ -350,7 +350,7 @@ void copyRelations(Relation * firstRelationInListToCopy, Relation * firstRelatio
 		//cout << "copy relation:" << endl;
 		//cout << currentRelation->relationType << "(" << currentRelation->relationGovernor << ", " << currentRelation->relationDependent << ")" << endl;
 		#endif
-		
+
 		Relation * newRelation = new Relation();
 		//newRelation->previous = currentRelation;
 		currentRelation->next = newRelation;
@@ -389,7 +389,7 @@ void copyFeatures(Feature * firstFeatureInListToCopy, Feature * firstFeatureInLi
 		//cout << "copy feature:" << endl;
 		//cout << currentFeature->lemma << endl;
 		#endif
-		
+
 		Feature * newFeature = new Feature();
 		newFeature->previous = currentFeature;
 		currentFeature->next = newFeature;
@@ -414,7 +414,7 @@ void copyStanfordCoreferences(StanfordCoreNLPcoreference * firstCoreferenceInLis
 		//cout << "copy Stanford coreference:" << endl;
 		//cout << currentCoreferenceInList->head << endl;
 		#endif
-		
+
 		StanfordCoreNLPcoreference * newCoreference = new StanfordCoreNLPcoreference();
 		currentCoreferenceInList->next = newCoreference;
 
@@ -439,7 +439,7 @@ void copyStanfordMention(StanfordCoreNLPmention * firstMentionInListToCopy, Stan
 		//cout << "copy Stanford Mention:" << endl;
 		//cout << currentMentionInList->head << endl;
 		#endif
-		
+
 		StanfordCoreNLPmention * newMention = new StanfordCoreNLPmention();
 		currentMentionInList->next = newMention;
 

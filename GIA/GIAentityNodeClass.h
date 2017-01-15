@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -243,7 +243,7 @@ public:
 	GIAentityNode(void);
 	~GIAentityNode(void);
 
-	
+
 	/*GIA Internal Entity Referencing*/
 	long idActiveList;
 	long idActiveEntityTypeList;
@@ -329,7 +329,7 @@ public:
 	bool hasMeasure;
 	int measureType;
 
-	
+
 	/*GIA Draw Variables*/
 	bool initialisedForPrinting;
 	int printX;
@@ -360,8 +360,8 @@ public:
 	string TimexTemp;
 	#endif
 	int NERTemp;
-	
-	
+
+
 	/*GIA Translator Temporary Variables*/
 	bool isSubjectTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
 	bool isObjectTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
@@ -378,16 +378,16 @@ public:
 	#ifdef GIA_SUPPORT_ALIASES
 	bool isName;
 	bool isNameQuery;
-	#endif	
-	
-	
+	#endif
+
+
 	/*Query Variables*/
 	bool isQuery;
 	bool isWhichOrEquivalentWhatQuery;
 	bool isAnswerToQuery;
 	bool testedForQueryComparison;
 	bool testedForQueryComparisonTemp; //added 17 May 2012 - support better trace routine
-	bool queryAnswerContext;	
+	bool queryAnswerContext;
 	bool queryEntityTraced;	//temporary for determining max confidence
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	GIAentityNode* entityCorrespondingBestMatch;	 //best match entity node corresponding to this assumed query entity node	//does not take into account multiple diversions/answers [assumes single matches only]
@@ -397,7 +397,7 @@ public:
 	/*GIA Miscellaneous Internal Variables*/
 	bool disabled;	//temporary for concept entities: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool permanentConcept;	//concept entity is to be drawn/saved to XML (if false, this entity has been deemed redundant in semantic network generation)
-	bool firstSentenceToAppearInNetwork;	
+	bool firstSentenceToAppearInNetwork;
 		//CXL:
 	bool CXLdummyNode;
 		//referencing:
@@ -409,13 +409,13 @@ public:
 	#endif
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	bool wasReference;
-	#endif	
+	#endif
 	#endif
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	bool alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	bool mustSetIsSubstanceConceptBasedOnApposRelation;
 	bool isPronounReference;
-	#endif	
+	#endif
 		//databasing:
 	#ifdef GIA_USE_DATABASE
 	bool added;	//implies database Update is Required
@@ -430,7 +430,7 @@ public:
 	bool sourceAddedInLanguageGeneration;
 	bool sourceReferencedInLanguageGeneration;
 	#endif
-	
+
 	#ifdef USE_NLPI
 	bool parsedForNLPIcodeBlocks;
 	//bool parsedForNLPIclassHeirarchy;
@@ -448,9 +448,9 @@ public:
 	EntityCharacteristic(string entityCharacteristicNameNew, string entityCharacteristicValueNew);
 	EntityCharacteristic(string entityCharacteristicNameNew, string entityCharacteristicValueNew, bool isNegativeNew);
 	EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew);
-	EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew, bool isNegativeNew);	
+	EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew, bool isNegativeNew);
 	~EntityCharacteristic(void);
-	
+
 	string name;
 	string value;
 	int arrayIndex;
@@ -482,12 +482,12 @@ string * convertDelimitedStringToArray(string str, char delimiter);
 void deleteEntitiesInEntityNodeList(vector<GIAentityNode*> * entityNodesActiveListComplete);
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
-bool testEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristic*> * redistributeSpecialCasePropertiesTestVector, bool andOrOr);				
+bool testEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristic*> * redistributeSpecialCasePropertiesTestVector, bool andOrOr);
 	bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic);
 		void testEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch);
 		void testEntityCharacteristicIterationint(int entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch);
 		void testEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch);
-void setEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristic*> * redistributeSpecialCasePropertiesAssignmentVector);		
+void setEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristic*> * redistributeSpecialCasePropertiesAssignmentVector);
 	bool setEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic);
 		void setEntityCharacteristicIterationbool(bool * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch);
 		void setEntityCharacteristicIterationint(int * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch);

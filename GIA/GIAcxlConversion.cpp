@@ -23,7 +23,7 @@
  * File Name: GIAcxlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  *
@@ -45,11 +45,11 @@ bool writeCmapToolsCXLFileOptimised(string xmlFileName, vector<GIAentityNode*> *
 
 	bool result;
 	result = writeCmapToolsCXLfile(xmlFileName, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions);
-	
+
 	#ifdef GIA_FREE_MEMORY1
 	delete entityNodesActiveListConcepts;
 	#endif
-	
+
 	return result;
 }
 
@@ -175,7 +175,7 @@ bool writeCmapToolsCXLfile(string xmlFileName, vector<GIAentityNode*> *entityNod
 	#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
 	cout << "DEBUG generateXMLTagListBasedUponSubnet done " << endl;
 	#endif
-	
+
  	if(!writeXMLfile(xmlFileName, firstTagInXMLFile))
  	{
 		result = false;
@@ -184,11 +184,11 @@ bool writeCmapToolsCXLfile(string xmlFileName, vector<GIAentityNode*> *entityNod
 	#ifdef GIA_FREE_MEMORY1
 	delete firstTagInXMLFile;
 	#endif
-	
+
 	#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
 	cout << "DEBUG writeXMLfile done " << endl;
 	#endif
-	
+
 	return result;
 }
 
@@ -288,7 +288,7 @@ XMLparserTag * addToCXLentityNodeTagList(XMLparserTag * currentTagL1, vector<GIA
 				#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
 				cout << "DEBUG: currentEntity->entityName = " << currentEntity->entityName << endl;
 				#endif
-				
+
 				#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
 				currentEntity->idActiveListReorderdIDforXMLsave = *currentCmapNodeIDinCmapNodeList;
 				long currentEntityID = currentEntity->idActiveListReorderdIDforXMLsave;
@@ -342,7 +342,7 @@ XMLparserTag * generateCXLentityNodeTag(XMLparserTag * currentTagL1, string enti
 			currentTagL1->name = NET_CXL_TAG_linkingPhraseAppearance;
 		}
 	}
-	
+
 	XMLparserTag * firstTagL2 = new XMLparserTag();
 	currentTagL1->firstLowerLevelTag = firstTagL2;
 	XMLparserTag * currentTagL2 = currentTagL1->firstLowerLevelTag;
@@ -687,7 +687,7 @@ XMLparserTag * generateCXLconnectionNodeTagAndLinkingPhraseTags(XMLparserTag * c
 	cout << "entity1ID = " << entity1ID << endl;
 	cout << "entity2ID = " << entity2ID << endl;
 	#endif
-	
+
 	int entity1X =  entity1->printX;
 	int entity2X =  entity2->printX;
 	int entity1Y =  entity1->printY;
@@ -699,7 +699,7 @@ XMLparserTag * generateCXLconnectionNodeTagAndLinkingPhraseTags(XMLparserTag * c
 
 	//verify connection is not already found;
 	bool alreadyMadeConnection = false;
-	
+
 	/*OLD:
 	XMLparserTag * currentTagInList = firstTagInConnectionsList;
 	while(currentTagInList->nextTag != NULL)

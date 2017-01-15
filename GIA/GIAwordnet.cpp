@@ -23,7 +23,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -45,7 +45,7 @@ int getSynonymnDetectionStatus()
 void initialiseWordNet(int newSynonymnDetectionStatus)
 {
 	synonymnDetectionStatus = newSynonymnDetectionStatus;
-	
+
 	wninit();
 
 	#ifdef GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
@@ -193,9 +193,9 @@ bool checkIfWordIsContainedWithinAnotherWordsSynsets(string * word, string * oth
 			{
 				free_synset(senseOutputWithHighestTags);	//Free a synset	//CHECK THIS; senseOutputWithHighestTags may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)
 			}
-			#endif		
+			#endif
 		}
-		
+
 		#ifdef GIA_FREE_MEMORY3
 		free_syns(firstSenseInList);	//Free a synset linked list allocated by findtheinfo_ds()
 		#endif
@@ -210,7 +210,7 @@ SynsetPtr findMostPopularSynsets(string * word, bool * wordIsFound, int wordNetP
 	int maximumNumberOfTagsAcrossSimilarityTypes = 0;
 	SynsetPtr senseOutputWithHighestTagsAcrossSimilarityTypes = NULL;
 	bool senseOutputWithHighestTagsAcrossSimilarityTypesMustFree = false;
-	
+
 	for(int similarityTypeIndex = 0; similarityTypeIndex<WORDNET_DATA_ENTRY_POINTERS_INDICATING_SIMILAR_SYNSETS_NUMBER_OF_TYPES; similarityTypeIndex++)
 	{
 		int similarityType = wordnetDataEntryPointersIndicatingSimilarSynsetsArray[similarityTypeIndex];
@@ -221,7 +221,7 @@ SynsetPtr findMostPopularSynsets(string * word, bool * wordIsFound, int wordNetP
 			int maximumNumberOfTags = 0;
 			bool entityNamesAreSynonymousIrrelevantNotUsed = false;
 			string otherWordIrrelevantNotUsed = "";
-			bool senseOutputWithHighestTagsPassedNewSynsetMustFree = false;			
+			bool senseOutputWithHighestTagsPassedNewSynsetMustFree = false;
 			SynsetPtr senseOutputWithHighestTags = checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(firstSenseInList, wordNetPOS, &maximumNumberOfTags, &entityNamesAreSynonymousIrrelevantNotUsed, word, &otherWordIrrelevantNotUsed, false, &senseOutputWithHighestTagsPassedNewSynsetMustFree);
 
 			if(maximumNumberOfTags > maximumNumberOfTagsAcrossSimilarityTypes)
@@ -230,19 +230,19 @@ SynsetPtr findMostPopularSynsets(string * word, bool * wordIsFound, int wordNetP
 				if(senseOutputWithHighestTagsAcrossSimilarityTypes != NULL)
 				{//senseOutputWithHighestTagsAcrossSimilarityTypes may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)
 					if(senseOutputWithHighestTagsAcrossSimilarityTypesMustFree)
-					{						
-						free_synset(senseOutputWithHighestTagsAcrossSimilarityTypes);	//Free a synset							
+					{
+						free_synset(senseOutputWithHighestTagsAcrossSimilarityTypes);	//Free a synset
 					}
 				}
 				if(senseOutputWithHighestTagsPassedNewSynsetMustFree)
 				{
 					senseOutputWithHighestTagsAcrossSimilarityTypesMustFree = true;
-				}	
+				}
 				else
 				{
 					senseOutputWithHighestTagsAcrossSimilarityTypesMustFree = false;
-				}			
-				#endif			
+				}
+				#endif
 				maximumNumberOfTagsAcrossSimilarityTypes = maximumNumberOfTags;
 				senseOutputWithHighestTagsAcrossSimilarityTypes = senseOutputWithHighestTags;
 			}
@@ -253,7 +253,7 @@ SynsetPtr findMostPopularSynsets(string * word, bool * wordIsFound, int wordNetP
 				{
 					free_synset(senseOutputWithHighestTags);	//Free a synset	//CHECK THIS; senseOutputWithHighestTags may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)
 				}
-				#endif				
+				#endif
 			}
 		}
 	}
@@ -278,7 +278,7 @@ SynsetPtr findSynsets(string * word, bool * wordIsFound, int wordNetPOS, int sim
 	//char * sensePrintedOutput = findtheinfo(wordCharStar, wordNetPOS, similarityType, 0);		//similarityType/OVERVIEW
 	//cout << "findtheinfo sensePrintedOutput = " << sensePrintedOutput << endl;
 	#endif
-	
+
 	if(firstSenseInList == NULL)
 	{
 		*wordIsFound = false;
@@ -320,7 +320,7 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 					if(similarityTypeIndex == 0)
 					{//only execute the loop once when (pointerIndex == CURRENTSYNSETPOINTERINDEX)
 						passed = true;
-						currentRelatedSense = currentSenseInList;						
+						currentRelatedSense = currentSenseInList;
 					}
 				}
 				else
@@ -329,7 +329,7 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 					//cout << "similarityTypeIndex = " << similarityTypeIndex << endl;
 					#endif
 					if(currentSenseInList->ptrtyp[pointerIndex] == wordnetDataEntryPointersIndicatingRelatedSynsetsArray[similarityTypeIndex])
-					{	
+					{
 						#ifdef GIA_WORDNET_DEBUG
 						//cout << "passed" << endl;
 						//cout << "currentSenseInList->ptrtyp[pointerIndex] = " << currentSenseInList->ptrtyp[pointerIndex] << endl;
@@ -398,7 +398,7 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 
 
 						#ifdef GIA_FREE_MEMORY3
-						free_index(idxOfFirstWordInWords);	//Free an index structure	
+						free_index(idxOfFirstWordInWords);	//Free an index structure
 						#endif
 
 
@@ -407,10 +407,10 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 							*maximumNumberOfTags = tagCount;
 							#ifdef GIA_FREE_MEMORY3
 							if(senseOutputWithHighestTags != NULL)
-							{//senseOutputWithHighestTags may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)	
+							{//senseOutputWithHighestTags may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)
 								if(*senseOutputWithHighestTagsPassedNewSynsetMustFree)
-								{					
-									free_synset(senseOutputWithHighestTags);	//Free a synset							
+								{
+									free_synset(senseOutputWithHighestTags);	//Free a synset
 								}
 							}
 							if(passedNewSynsetMustFree)
@@ -461,15 +461,15 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 
 				#ifdef GIA_FREE_MEMORY3
 				if(passedNewSynsetMustFree)
-				{						
+				{
 					if(currentRelatedSense != senseOutputWithHighestTags)
 					{
-						free_synset(currentRelatedSense);	//Free a synset					
-					}		
+						free_synset(currentRelatedSense);	//Free a synset
+					}
 				}
 				#endif
 			}
-									
+
 		}
 		if(currentSenseInList->nextss == NULL)
 		{
@@ -560,7 +560,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 		#ifdef GIA_WORDNET_DEBUG
 		//cout << "senseEntryTitleStringExpected = " << senseEntryTitleStringExpected << endl;
 		#endif
-		
+
 		string lineStringTemp = lineString;
 		if(senseEntryTitleStringExpected != lineStringTemp)
 		{

@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -70,7 +70,7 @@ using namespace std;
 	#define GIA_DATABASE_ENTITY_GRAMMATICAL_NUMBER_MAX_LENGTH (9)	//1 billion - NB if this is increased, then grammaticalNumber must be made a long instead of an int
 	#define GIA_ACTIVE_LIST_ID_MAX_LENGTH 19		//~billion billion ids allowed in active list (allows reading/writing database to XML - which is highly unrealistic)
 	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_NUMBER_MAX_LENGTH (9)
-	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_MAX_LENGTH (9)	
+	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_MAX_LENGTH (9)
 	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_NUMBER_STRING_MAX_LENGTH (10)		//important: GIA database can only support quantity number strings <= 10 digits
 	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_STRING_MAX_LENGTH (10)	//important: GIA database can only support quantity modifer strings <= 10 digits
 	#define GIA_DATABASE_ENTITY_NODE_MEASURE_TYPE_MAX_LENGTH (2)
@@ -86,13 +86,13 @@ using namespace std;
 	#define GIA_DATABASE_ENTITY_GRAMMATICAL_NUMBER_MAX_LENGTH_STRING "9"
 	#define GIA_ACTIVE_LIST_ID_MAX_LENGTH_STRING "19"
 	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_NUMBER_MAX_LENGTH_STRING "9"
-	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_MAX_LENGTH_STRING "9"	
+	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_MAX_LENGTH_STRING "9"
 	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_NUMBER_STRING_MAX_LENGTH_STRING "9"
 	#define GIA_DATABASE_ENTITY_NODE_QUANTITY_MODIFIER_STRING_MAX_LENGTH_STRING "9"
 	#define GIA_DATABASE_ENTITY_NODE_MEASURE_TYPE_MAX_LENGTH_STRING "2"
 
 	#define GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME ((string)"GIAKBdatabase/")
-	#define GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME "/home/systemusername/source/"	 //this could be "/mnt/serverNameX/" once configuring appropriate NFS Linux File Sharing in /etc/fstab	
+	#define GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME "/home/systemusername/source/"	 //this could be "/mnt/serverNameX/" once configuring appropriate NFS Linux File Sharing in /etc/fstab
 	#define GIA_DATABASE_CONCEPT_NAME_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS (3) 	//eg e/x/a/example
 	#define GIA_DATABASE_INSTANCE_ID_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS (3) 	//eg 1/2/3/instance123000000
 	#define GIA_DATABASE_INSTANCE_ID_MAX_ORDER (GIA_DATABASE_INSTANCE_ID_MAX_LENGTH-1)		//for 9, maximum number of instances becomes 999999999
@@ -216,7 +216,7 @@ void initialiseDatabase(bool readFromDatabase, string newDatabaseFolderName, boo
 	#ifdef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
 	void DBreadDatabase(vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> * entityNodesActiveListConcepts);
 	#endif
-	
+
 void DBreadVectorConnections(GIAentityNode * entityNode, int connectionType);
 	void DBreadVectorConnectionsReferences(string * entityName, long idInstance, int connectionType, vector<GIAentityConnection*> *entityVectorConnections);
 		void DBreadVectorConnectionsReference(string * entityName, long idInstance, int connectionType, string *entityVectorConnectionsName, long *entityVectorConnectionsID, long referenceIndex);

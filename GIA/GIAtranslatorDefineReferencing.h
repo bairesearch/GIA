@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -65,7 +65,7 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList);
 
 int identifyReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, bool NLPdependencyRelationsType);
-	void resetReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList);	
+	void resetReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList);
 	void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int * referenceSetID, bool haveSentenceEntityIndexOfDeterminers);
 		bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode, bool sameReferenceSet, int referenceSetID, int minimumEntityIndexOfReferenceSet, bool isProperty);
 			void identifyReferenceSet(GIAentityNode * entityNode, int referenceSetID, int minimumEntityIndexOfReferenceSet);

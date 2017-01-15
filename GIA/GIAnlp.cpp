@@ -23,7 +23,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -63,7 +63,7 @@ using namespace std;
 void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfileName, int NLPParser, string NLPexeFolderArray[], bool parseRelationsOrFeatures)
 {
 	/*
-	NB execute NLP on current folder not saved working folder (this is required for when a preprocessor eg LRP/CE has been executed on the input text): 
+	NB execute NLP on current folder not saved working folder (this is required for when a preprocessor eg LRP/CE has been executed on the input text):
 	so must assume current folder has been set to the folder where the [pre-processed] plain text file exists (if not the actual working folder)
 	*/
 	char currentFolderCharStar[EXE_FOLDER_PATH_MAX_LENGTH];
@@ -72,7 +72,7 @@ void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfi
 	#else
 	::GetCurrentDirectory(EXE_FOLDER_PATH_MAX_LENGTH, currentFolderCharStar);
 	#endif
-			
+
 	/*
 	int inputTextNLPParsedXMLFileNameLength = inputTextNLPXMLfileName.length();
 	int inputTextNLPParsedXMLFileNameIndexOfExtension = inputTextNLPXMLfileName.rfind(".");		//find last occurance of "."
@@ -163,12 +163,12 @@ void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfi
 
 	}
 	#endif
-	
+
 	#ifdef LINUX
 	chdir(currentFolderCharStar);
 	#else
 	::SetCurrentDirectory(currentFolderCharStar);
-	#endif	
+	#endif
 }
 
 
@@ -186,13 +186,13 @@ bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputText
 	cout << "NLPrelexCompatibilityMode = " << NLPrelexCompatibilityMode << endl;
 	#endif
 
-	//Parse Features	
+	//Parse Features
 	#ifdef GIA_USE_RELEX
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
 		#ifdef GIA_NLP_DEBUG
 		cout << "parseRelexFile" << endl;
-		#endif	
+		#endif
 		createNewSentences = false;
 		if(!parseRelexFile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, false, true, NLPrelexCompatibilityMode, true))
 		{
@@ -205,7 +205,7 @@ bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputText
 	{
 		#ifdef GIA_NLP_DEBUG
 		cout << "parseStanfordCoreNLPfile" << endl;
-		#endif	
+		#endif
 		createNewSentences = false;
 		if(!parseStanfordCoreNLPfile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, false, true, true))
 		{
@@ -219,7 +219,7 @@ bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputText
 	{
 		#ifdef GIA_NLP_DEBUG
 		cout << "parseStanfordParserFile" << endl;
-		#endif	
+		#endif
 		if(isQuery)
 		{
 			cout << "error: parseNLPparserFile() does not support queries at present with (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER). Set feature parser to RelEx or Stanford Core NLP for queries" << endl;
@@ -227,7 +227,7 @@ bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputText
 		}
 		else
 		{
-			cout << "warning: parseNLPparserFile() does not parse features when (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER). Feature extraction is not supported with GIA_NLP_PARSER_STANFORD_PARSER. Set feature parser to RelEx or Stanford Core NLP to extract features" << endl;		
+			cout << "warning: parseNLPparserFile() does not parse features when (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER). Feature extraction is not supported with GIA_NLP_PARSER_STANFORD_PARSER. Set feature parser to RelEx or Stanford Core NLP to extract features" << endl;
 		}
 	}
 	#endif
@@ -235,16 +235,16 @@ bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputText
 	#ifdef GIA_NLP_DEBUG
 	cout << "finished parsing features. Parse dependency relations:" << endl;
 	#endif
-	
+
 	//Parse Relations
 	if(result)
-	{	
+	{
 		#ifdef GIA_USE_RELEX
 		if(NLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
 		{
 			#ifdef GIA_NLP_DEBUG
 			cout << "parseRelexFile" << endl;
-			#endif			
+			#endif
 			if(!parseRelexFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, true, false, NLPrelexCompatibilityMode, createNewSentences))
 			{
 				result = false;
@@ -256,7 +256,7 @@ bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputText
 		{
 			#ifdef GIA_NLP_DEBUG
 			cout << "parseStanfordCoreNLPfile" << endl;
-			#endif		
+			#endif
 			if(!parseStanfordCoreNLPfile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, true, false, createNewSentences))
 			{
 				result = false;
@@ -268,7 +268,7 @@ bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputText
 		{
 			#ifdef GIA_NLP_DEBUG
 			cout << "parseStanfordParserFile" << endl;
-			#endif		
+			#endif
 			if(!parseStanfordParserFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, createNewSentences))
 			{
 				result = false;
@@ -279,7 +279,7 @@ bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputText
 		cout << "finished parsing dependency relations." << endl;
 		#endif
 	}
-	
+
 	return result;
 }
 
@@ -298,7 +298,7 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragr
 	{
 		result = false;
 	}
-	
+
 	if(result)
 	{
 		#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
@@ -421,11 +421,11 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragr
 		}
 		#endif
 	}
-	
+
 	#ifndef GIA_FREE_MEMORY1
 	delete firstTagInXMLFile;
 	#endif
-		
+
 	return result;
 }
 #endif
@@ -439,7 +439,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 	#ifdef GIA_NLP_DEBUG
 	//cout << "inputTextNLPrelationXMLfileName = " << inputTextNLPrelationXMLfileName << endl;
 	#endif
-	
+
 	Paragraph * currentParagraph = firstParagraphInList;
 	Paragraph * newParagraph = new Paragraph();
 	newParagraph->previous = currentParagraph;
@@ -453,7 +453,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 	{
 		result = false;
 	}
-	
+
 	if(result)
 	{
 
@@ -472,7 +472,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 				#ifdef GIA_NLP_DEBUG
 				//cout << "currentSentence->sentenceIndex = " << currentSentence->sentenceIndex << endl;
 				#endif
-				
+
 				XMLparserTag * firstTagInSentence = parseTagDownALevel(currentTagInSentences, StanfordCoreNLP_XML_TAG_sentence, &result);
 
 				XMLparserTag * currentTagInSentence = firstTagInSentence;
@@ -489,7 +489,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 				bool isQuestion = false;
 
 				#ifdef GIA_NLP_DEBUG
-				//cout << "parseFeatures: " << endl;			
+				//cout << "parseFeatures: " << endl;
 				#endif
 				while(currentTagInTokens->nextTag != NULL)
 				{
@@ -497,9 +497,9 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 					int lastFeatureEntityIndex = -1;
 					string lastFeatureWord = "";
 					#endif
-					
+
 					if(parseFeatures)
-					{				
+					{
 						string entityIndexString = currentTagInTokens->firstAttribute->value;
 						currentFeatureInList->entityIndex = atoi(entityIndexString.c_str());
 						#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
@@ -510,16 +510,16 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 					else
 					{
 						string entityIndexString = currentTagInTokens->firstAttribute->value;
-						lastFeatureEntityIndex = atoi(entityIndexString.c_str());					
+						lastFeatureEntityIndex = atoi(entityIndexString.c_str());
 					}
-					#endif						
-					
+					#endif
+
 					XMLparserTag * firstTagInToken = parseTagDownALevel(currentTagInTokens, StanfordCoreNLP_XML_TAG_token, &result);
 					XMLparserTag * currentTagInToken = firstTagInToken;
 					while(currentTagInToken->nextTag != NULL)
 					{
 						if(parseFeatures)
-						{					
+						{
 							if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_word)
 							{
 								string TagValue = currentTagInToken->value;
@@ -533,8 +533,8 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 								#endif
 								#endif
 								#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
-								lastFeatureWord = TagValue;						
-								#endif									
+								lastFeatureWord = TagValue;
+								#endif
 							}
 							else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_lemma)
 							{
@@ -599,8 +599,8 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 							{
 								string TagValue = currentTagInToken->value;
 								lastFeatureWord = TagValue;
-							}							
-							#endif						
+							}
+							#endif
 						}
 						currentTagInToken = currentTagInToken->nextTag;
 					}
@@ -609,7 +609,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 					{//process lemma only if parsing features
 						#ifdef GIA_USE_LRP
 						if(getUseLRP())
-						{						
+						{
 							bool foundOfficialLRPreplacementString = false;
 							Relation * currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
 							revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentence, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
@@ -625,19 +625,19 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 								currentFeatureInList->lemma = currentFeatureInList->word;
 							}
 						}
-						#endif							
+						#endif
 						#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_LEMMA_CASE_ASSIGNMENT_BUG_MAKE_ALL_LEMMAS_LOWER_CASE
 						for(int i=0; i<currentFeatureInList->lemma.length(); i++)
 						{
-							currentFeatureInList->lemma[i] = tolower(currentFeatureInList->lemma[i]);				
+							currentFeatureInList->lemma[i] = tolower(currentFeatureInList->lemma[i]);
 						}
-						#endif										
+						#endif
 					}
 					#ifdef GIA_NLP_DEBUG
 					//cout << "currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 					//cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
 					#endif
-					
+
 					#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 					if(lastFeatureEntityIndex == GIA_NLP_START_ENTITY_INDEX)
 					{
@@ -646,7 +646,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 							invalidSentenceFoundIsolatedFullStop = true;
 						}
 					}
-					#endif						
+					#endif
 
 					if(parseFeatures)		//OR if(createNewSentences)
 					{//all sentences created must have feature list, as feature NLP file is always parsed first
@@ -659,10 +659,10 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 					{
 						currentFeatureInList = currentFeatureInList->next;
 					}
-					
+
 					currentTagInTokens = currentTagInTokens->nextTag;
 				}
-				
+
 				if(parseFeatures)
 				{//calculate question only if parsing features
 					#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
@@ -694,7 +694,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 				if(parseRelations)
 				{
 					#ifdef GIA_NLP_DEBUG
-					//cout << "parseRelations: " << endl;			
+					//cout << "parseRelations: " << endl;
 					#endif
 					for(int dependenciesSetIndex=0; dependenciesSetIndex< StanfordCoreNLP_numberOfDependencySetsPerSentence; dependenciesSetIndex++)
 					{
@@ -720,11 +720,11 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 									currentRelationInList->relationDependentIndex = atoi(relationDependentIndexString.c_str());
 
 									currentRelationInList->relationType = currentTagInDependencies->firstAttribute->value;
-								
+
 									//don't use these, use lemmas instead (as per Stanford Core NLP/Relex dependency relation definitions). These are required to be set temporarily for LRP;
 									currentRelationInList->relationGovernor = governerTagInDep->value;
 									currentRelationInList->relationDependent = dependentTagInDep->value;
-																	
+
 									convertStanfordRelationToRelex(currentRelationInList, currentSentence);
 
 									#ifdef GIA_NLP_DEBUG
@@ -732,7 +732,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 									//cout << "currentRelationInList->relationGovernorIndex = " << currentRelationInList->relationGovernorIndex << endl;
 									//cout << "currentRelationInList->relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
 									#endif
-									
+
 									currentFeatureInList = firstFeatureInList;
 									for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationDependentIndex; f++)
 									{
@@ -750,7 +750,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 									//cout << "currentRelationInList->relationGovernor = " << currentRelationInList->relationGovernor << endl;
 									//cout << "currentRelationInList->relationDependent = " << currentRelationInList->relationDependent << endl;
 									#endif
-									
+
 									#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
 									#ifdef GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
 									if(currentRelationInList->relationType != RELATION_TYPE_ROOT)
@@ -761,11 +761,11 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 										currentRelationInList->next = newRelation;
 										currentRelationInList = currentRelationInList->next;
 									#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
-									#ifdef GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION										
+									#ifdef GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
 									}
-									#endif		
 									#endif
-									
+									#endif
+
 									currentTagInDependencies = currentTagInDependencies->nextTag;
 								}
 							}
@@ -784,7 +784,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 				}
 				else
 				{
-				#endif		
+				#endif
 					if(createNewSentences)
 					{
 						Sentence * newSentence = new Sentence();
@@ -938,7 +938,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 	#ifdef GIA_FREE_MEMORY1
 	delete firstTagInXMLFile;
 	#endif
-	
+
 	return result;
 }
 
@@ -1080,7 +1080,7 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 			charCount++;
 		}
 	}
-	
+
 	#ifdef GIA_NLP_DEBUG
 	currentSentence = firstParagraphInList->firstSentenceInList;
 	while(currentSentence->next != NULL)
@@ -1102,7 +1102,7 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 		currentSentence = currentSentence->next;
 	}
 	#endif
-		
+
 	return result;
 }
 #endif

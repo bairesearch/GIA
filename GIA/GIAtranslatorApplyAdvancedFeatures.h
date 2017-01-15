@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -61,7 +61,7 @@ void applyAdvancedFeatures(Sentence * currentSentenceInList, bool GIAentityNodeA
 		#endif
 			#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 			void addTimeToSubstance(GIAentityNode * timeConditionEntity);
-			#endif		
+			#endif
 	void extractQuantities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, int NLPfeatureParser);	//Stanford Compatible
 		#ifdef GIA_USE_RELEX
 		void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts);
@@ -69,7 +69,7 @@ void applyAdvancedFeatures(Sentence * currentSentenceInList, bool GIAentityNodeA
 		#ifdef GIA_USE_STANFORD_CORENLP
 		void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts);		//Stanford Specific	[requires NERTemp info to be set]
 		#endif
-		
+
 	#ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 	void extractMeasures(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts);			//Stanford Incompatible [measures not supported]
 	void defineToBeAndToDoPropertiesAndConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts);	//Stanford Compatible
@@ -82,8 +82,8 @@ void applyAdvancedFeatures(Sentence * currentSentenceInList, bool GIAentityNodeA
 	#endif
 	void defineTenseOnlyTimeConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
 	#endif
-	
-	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS	
+
+	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	void defineActionConcepts1(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
 	#endif

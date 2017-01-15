@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -41,7 +41,7 @@
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[])
-{				
+{
 	#ifdef GIA_USE_STANFORD_CORENLP
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
@@ -55,7 +55,7 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1c3; redistribute Stanford Relations Create Query Vars Adjust for Action Preposition Action" << endl;
-	#endif		
+	#endif
 	//redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction() needs to be called with LRP also - separated out from redistributeStanfordRelationsMultiwordPreposition() 24 July 2013 to achieve this
 	redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);	//added 28 October 2012
 
@@ -96,7 +96,7 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 	cout << "pass 1c5c; redistribute Relations - intepret name of as definition (eg interpret 'The red dog's name is Max.' / 'The name of the red dog is Max.'	nsubj(Max-7, name-5) / poss/prep_of(name-5, dog-3) -> appos(dog-3, Max-7)" << endl;
 	#endif
 	redistributeStanfordRelationsInterpretNameOfAsDefinition(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
-	#endif		
+	#endif
 
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -113,7 +113,7 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 	cout << "eg4 bikes are machines        nsubj(machines-3, bikes-1) / cop(machines-3, are-2) -> appos(bikes-1, machines-3) 	      [NB plural and non-determinate of governer of subject relation; take as an indicator of definition]" << endl;
 	cout << "eg5 the wheels are green      nsubj(green-6, wheels-4) / cop(green-6, are-5) -> _predadj(wheels-4, green-6)		      [NB plural and determinate of governer of subject relation; take as indicator of substance]" << endl;
 	cout << "eg6 That is Jim.	      nsubj(Jim-3, That-1) / cop(Jim-3, is-2) -> appos(That-1, Jim-3)" << endl;
-	cout << "eg7 The time is 06:45	      nsubj(06:45-4, time-2) / cop(06:45-4, is-3) / det(time-2, The-1) -> appos(time-2, 06:45-4)" << endl;	
+	cout << "eg7 The time is 06:45	      nsubj(06:45-4, time-2) / cop(06:45-4, is-3) / det(time-2, The-1) -> appos(time-2, 06:45-4)" << endl;
 	#endif
 	redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
 	#endif
@@ -145,7 +145,7 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1c11; redistribute Stanford Relations - Generate Unparsed Quantity Modifers (eg The punter won almost $1000. 	advmod(won-3, almost-4) / pobj(almost-4, $-5)) / num($-5, 1000-6)" << endl;
 	#endif
-	redistributeStanfordRelationsGenerateUnparsedQuantityModifers(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);	
+	redistributeStanfordRelationsGenerateUnparsedQuantityModifers(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -205,13 +205,13 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 	cout << "1c19 pass; redistributeStanfordRelationsAuxHave (eg Red dogs have flies.	aux(flies-4, have-3) + nsubj(flies-4, dogs-2) -> _predadj(dogs-2, flies-4" << endl;
 	#endif
 	redistributeStanfordRelationsAuxHave(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
-	#endif	
+	#endif
 
 	#ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 	//added 12 July 2013
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1c20; redistribute Stanford Relations - disable Aux And Cop Relations" << endl;
-	#endif		
+	#endif
 	redistributeStanfordRelationsDisableAuxAndCop(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 
@@ -221,7 +221,7 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 	cout << "1c21 pass; collapseRedundantRelationAndMakeNegativeStanford (eg The chicken has not eaten a pie.: neg(eaten-5, not-4)" << endl;
 	#endif
 	collapseRedundantRelationAndMakeNegativeStanford(currentSentenceInList, GIAentityNodeArray);
-	#endif		
+	#endif
 }
 
 #ifdef GIA_USE_STANFORD_CORENLP
@@ -235,14 +235,14 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
           </dep>
 	*/
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
 	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeConjugationNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES; param.relationArrayTestIsNegative[REL1][REL_ENT3] = true;
 
 	GIAgenericDepRelInterpretationParameters paramA1 = param;
 	EntityCharacteristic entityCharacteristicsTestA("NERTemp", FEATURE_NER_UNDEFINED_STRING, true);
 	paramA1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTestA);
-	paramA1.useSpecialCaseCharacteristicsRelationIndexTest[REL1][REL_ENT1] = true; paramA1.specialCaseCharacteristicsRelationIndexTestRelationID[REL1][REL_ENT1] = REL1; paramA1.specialCaseCharacteristicsRelationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT2; paramA1.specialCaseCharacteristicsRelationIndexTest[REL1][REL_ENT1].name = "NERTemp";		
+	paramA1.useSpecialCaseCharacteristicsRelationIndexTest[REL1][REL_ENT1] = true; paramA1.specialCaseCharacteristicsRelationIndexTestRelationID[REL1][REL_ENT1] = REL1; paramA1.specialCaseCharacteristicsRelationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT2; paramA1.specialCaseCharacteristicsRelationIndexTest[REL1][REL_ENT1].name = "NERTemp";
 	EntityCharacteristic entityCharacteristicsTest1i1("NERTemp", FEATURE_NER_PERSON_STRING);
 	EntityCharacteristic entityCharacteristicsTest1i2("NERTemp", FEATURE_NER_LOCATION_STRING);
 	EntityCharacteristic entityCharacteristicsTest1i3("NERTemp", FEATURE_NER_ORGANIZATION_STRING);
@@ -256,24 +256,24 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 	paramA1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest1ii1);
 	paramA1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1ii1);
 	#endif
-	paramA1.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT1] = true; 
+	paramA1.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT1] = true;
 		paramA1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][0] = REL1; paramA1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][0] = REL_ENT2;
 		paramA1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][1] = REL1; paramA1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][1] = REL_ENT1;
-	paramA1.disableRelation[REL1] = true;	
+	paramA1.disableRelation[REL1] = true;
 	paramA1.disableEntity[REL1][REL_ENT2] = true;
 	if(genericDependecyRelationInterpretation(&paramA1, REL1))
 	{
 		//cout << "A1" << endl;
 	}
-	
+
 	#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
 	GIAgenericDepRelInterpretationParameters paramB = param;
 
-	
+
 	GIAgenericDepRelInterpretationParameters paramB1 = param;
 	EntityCharacteristic entityCharacteristicsTestB("NERTemp", FEATURE_NER_PERSON_STRING);
-	paramB1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTestB);	
-	paramB1.useRelationTest[REL1][REL_ENT3] = true; paramB1.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PRENOMIAL_MODIFIER;		
+	paramB1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTestB);
+	paramB1.useRelationTest[REL1][REL_ENT3] = true; paramB1.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PRENOMIAL_MODIFIER;
 	paramB1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i1);
 	paramB1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i2);
 	paramB1.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1i3);
@@ -282,37 +282,37 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 	paramB1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&entityCharacteristicsTest1ii1);
 	paramB1.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1ii1);
 	#endif
-	paramB1.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT1] = true; 
+	paramB1.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT1] = true;
 		paramB1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][0] = REL1; paramB1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][0] = REL_ENT2;
 		paramB1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][1] = REL1; paramB1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][1] = REL_ENT1;
-	paramB1.disableRelation[REL1] = true;	
+	paramB1.disableRelation[REL1] = true;
 	paramB1.disableEntity[REL1][REL_ENT2] = true;
 	if(genericDependecyRelationInterpretation(&paramB1, REL1))
 	{
 		//cout << "B1" << endl;
-	}	
+	}
 	#endif
-	
+
 	GIAgenericDepRelInterpretationParameters paramA2 = param;
 	paramA2.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTestA);
-	paramA2.useSpecialCaseCharacteristicsRelationIndexTest[REL1][REL_ENT1] = true; paramA2.specialCaseCharacteristicsRelationIndexTestRelationID[REL1][REL_ENT1] = REL1; paramA2.specialCaseCharacteristicsRelationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT2; paramA2.specialCaseCharacteristicsRelationIndexTest[REL1][REL_ENT1].name = "NERTemp";	
+	paramA2.useSpecialCaseCharacteristicsRelationIndexTest[REL1][REL_ENT1] = true; paramA2.specialCaseCharacteristicsRelationIndexTestRelationID[REL1][REL_ENT1] = REL1; paramA2.specialCaseCharacteristicsRelationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT2; paramA2.specialCaseCharacteristicsRelationIndexTest[REL1][REL_ENT1].name = "NERTemp";
 	paramA2.disableEntity[REL1][REL_ENT2] = true;
 	if(genericDependecyRelationInterpretation(&paramA2, REL1))
 	{
 		//cout << "A2" << endl;
-	}	
-	
+	}
+
 	#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
 	GIAgenericDepRelInterpretationParameters paramB2 = param;
-	paramB2.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTestB);	
-	paramB2.useRelationTest[REL1][REL_ENT3] = true; paramB2.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PRENOMIAL_MODIFIER;	
+	paramB2.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTestB);
+	paramB2.useRelationTest[REL1][REL_ENT3] = true; paramB2.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PRENOMIAL_MODIFIER;
 	paramB2.disableEntity[REL1][REL_ENT2] = true;
 	if(genericDependecyRelationInterpretation(&paramB2, REL1))
 	{
 		//cout << "B2" << endl;
-	}	
-	#endif	
-#else	
+	}
+	#endif
+#else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -327,10 +327,10 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 				{
 					relationTypeConjuction = true;
 				}
-			}		
+			}
 			if(!relationTypeConjuction)
 			{//added 25 July 2013
-			
+
 				GIAentityNode * governerEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 				GIAentityNode * dependentEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 
@@ -343,7 +343,7 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 					}
 				}
 
-				bool governerIsPersonAndRelationTypeIsPrenominalModifier = false;			
+				bool governerIsPersonAndRelationTypeIsPrenominalModifier = false;
 				#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
 				//the assignment of NER values implementation appears to have changed in Stanford Core NLP
 				if((governerEntity->NERTemp == FEATURE_NER_PERSON) && (currentRelationInList->relationType == RELATION_TYPE_PRENOMIAL_MODIFIER))
@@ -408,7 +408,7 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 						}
 					}
 					else
-					{	
+					{
 						#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 						//cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
 						//cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
@@ -428,14 +428,14 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 #endif
 
 void disableRedundantNodesStanfordParser(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 	/*
-	ONLY USED FOR OLD VERSION OF STANFORD PARSER/CORENLP? note the following example no longer generates a complm dependency relation... 
+	ONLY USED FOR OLD VERSION OF STANFORD PARSER/CORENLP? note the following example no longer generates a complm dependency relation...
 	eliminate redundant complementizer 'that' nodes eg 'The authors believe that their method can identify the time at which a subject becomes aware of her own movement.' / _complm(identify[8], that[4])
 	*/
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
@@ -477,18 +477,18 @@ void disableRedundantNodesStanfordParser(Sentence * currentSentenceInList, bool 
 void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	
+
 		//general parameters
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.useRelationIndexTest[REL1][REL_ENT3] = true; param.relationIndexTestRelationID[REL1][REL_ENT3] = REL2; param.relationIndexTestEntityID[REL1][REL_ENT3] = REL_ENT3; param.relationIndexTestIsNegative[REL1][REL_ENT3] = true;
 	param.useRelationIndexTest[REL1][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT1] = REL2; param.relationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT1;
 	param.useRelationArrayTest[REL2][REL_ENT2] = true; param.relationArrayTest[REL2][REL_ENT2] = featureQueryActionPrepositionActionEquivalentQueryVariableNameArray; param.relationArrayTestSize[REL2][REL_ENT2] = FEATURE_QUERY_ACTION_PREPOSITION_ACTION_EQUIVALENT_QUERY_VARIABLE_NUMBER_OF_TYPES;
 
 		//opt1
 	GIAgenericDepRelInterpretationParameters paramOpt1 = param;
-	
+
 		//opt1a
-	GIAgenericDepRelInterpretationParameters paramOpt1a = paramOpt1;	
+	GIAgenericDepRelInterpretationParameters paramOpt1a = paramOpt1;
 	paramOpt1a.expectToFindPrepositionTest[REL1] = true;	//added 24 July 2013
 	/*
 	What is yarn used in the making of?
@@ -498,29 +498,29 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	root(ROOT-0, used-4)
 	det(making-7, the-6)
 	prep_in(used-4, making-7)
-	prep(making-7, of-8)						
+	prep(making-7, of-8)
 	/
 	_obj(making[7], what[1])
 	_obj(use[4], yarn[3])
 	prep_in(use[4], making[7])
-	_prep(making[7], of[8])	
-	
+	_prep(making[7], of[8])
+
 	prep_in(use[4], making[7]) + _obj(used[4], what[1]) +  _prep(making[7], of[8])	-> prep_of(making[7], what[1])
 		*/
-	paramOpt1a.numberOfRelations = 3;	
+	paramOpt1a.numberOfRelations = 3;
 	paramOpt1a.useRelationTest[REL3][REL_ENT3] = true; paramOpt1a.relationTest[REL3][REL_ENT3] = RELATION_TYPE_PREPOSITION_MODIFIER;
 	paramOpt1a.useRelationIndexTest[REL3][REL_ENT3] = true; paramOpt1a.relationIndexTestRelationID[REL3][REL_ENT3] = REL1; paramOpt1a.relationIndexTestEntityID[REL3][REL_ENT3] = REL_ENT3; paramOpt1a.relationIndexTestIsNegative[REL3][REL_ENT3] = true;
-	paramOpt1a.useRelationIndexTest[REL3][REL_ENT1] = true; paramOpt1a.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; paramOpt1a.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT2;	
+	paramOpt1a.useRelationIndexTest[REL3][REL_ENT1] = true; paramOpt1a.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; paramOpt1a.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT2;
 	paramOpt1a.disableRelation[REL2] = true;
-	paramOpt1a.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT3] = true; paramOpt1a.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT3] = REL3; paramOpt1a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT3] = REL_ENT2; paramOpt1a.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL3][REL_ENT3] = true;	
-	paramOpt1a.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT2] = true; paramOpt1a.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT2] = REL2; paramOpt1a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT2] = REL_ENT2;	
+	paramOpt1a.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT3] = true; paramOpt1a.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT3] = REL3; paramOpt1a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT3] = REL_ENT2; paramOpt1a.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL3][REL_ENT3] = true;
+	paramOpt1a.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT2] = true; paramOpt1a.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT2] = REL2; paramOpt1a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT2] = REL_ENT2;
 	if(genericDependecyRelationInterpretation(&paramOpt1a, REL1))
-	{	
+	{
 		//cout << "opt1a" << endl;
 	}
-				
+
 		//opt1b
-	/*	
+	/*
 	What is the cart designed to integrate with?
 	dep(designed-5, What-1)
 	auxpass(designed-5, is-2)
@@ -530,82 +530,82 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	root(ROOT-0, designed-5)
 	aux(integrate-7, to-6)
 	xcomp(designed-5, integrate-7)
-	prep(integrate-7, with-8)	
+	prep(integrate-7, with-8)
 	xcomp(designed-5, integrate-7) + dep(designed, what) + prep(integrate-7, with-8)	-> prep_with(integrate[7], what[1])
-	*/		
+	*/
 	GIAgenericDepRelInterpretationParameters paramOpt1b = paramOpt1a;
 	paramOpt1b.expectToFindPrepositionTest[REL1] = false;
 	paramOpt1b.useRelationTest[REL1][REL_ENT3] = true; paramOpt1b.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
 	if(genericDependecyRelationInterpretation(&paramOpt1b, REL1))
 	{
 		//cout << "opt1b" << endl;
-	}		
-							
+	}
+
 		//opt1c
 	/*
 	x(y, _$qVar[1]) + prep_q(y, a) -> x(a, _$qVar[1])
-	eg1; 
+	eg1;
 		Apples is used for making juice.
 		What is apples used for making?
 		dobj(used-4, What-1)
 		auxpass(used-4, is-2)
 		nsubjpass(used-4, apples-3)
 		root(ROOT-0, used-4)
-		prepc_for(used-4, making-6)	
+		prepc_for(used-4, making-6)
 		/
 		_obj(use[4], _$qVar[1])
 		_obj(use[4], apple[3])
-		prepc_for(use[4], make[6])				
+		prepc_for(use[4], make[6])
 		NO [this solution is not universal]: dobj(used-4, What-1) + prepc_for(used-4, making-6) -> dobj(making-6, What-1)
 		_obj(use[4], _$qVar[1]) + prepc_for(use[4], make[6]) -> _obj(make[6], _$qVar[1])
-	eg 2; 
+	eg 2;
 		Apples are used for eating in the forest.
 		Where are apples used for eating?
 		advmod(used-4, Where-1)
 		auxpass(used-4, are-2)
 		nsubjpass(used-4, apples-3)
 		root(ROOT-0, used-4)
-		prepc_for(used-4, eating-6)			
+		prepc_for(used-4, eating-6)
 		/
 		_%atLocation(use[4], _$qVar[1])
 		_obj(use[4], apple[3])
-		prepc_for(use[4], eat[6])			
+		prepc_for(use[4], eat[6])
 		_%atLocation(use[4], _$qVar[1]) + prepc_for(use[4], eat[6]) -> _%atLocation(eat[6], _$qVar[1])
-	*/		
+	*/
 	GIAgenericDepRelInterpretationParameters paramOpt1c = paramOpt1;
 	paramOpt1c.expectToFindPrepositionTest[REL1] = true;
 	paramOpt1c.numberOfRelations = 2;
-	paramOpt1c.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt1c.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt1c.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
+	paramOpt1c.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt1c.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt1c.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
 	if(genericDependecyRelationInterpretation(&paramOpt1c, REL1))
 	{
 		//cout << "opt1c" << endl;
 	}
-				
+
 	#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP
 		//opt2
-	GIAgenericDepRelInterpretationParameters paramOpt2 = param;	
+	GIAgenericDepRelInterpretationParameters paramOpt2 = param;
 	paramOpt2.numberOfRelations = 2;
 	paramOpt2.useRelationTest[REL1][REL_ENT3] = true; paramOpt2.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
-		
+
 		//opt2a
 	/*
 	What is the Co-cart designed to do?
 	interpret; _to-do(design[5], do[7]) + _dep(design[5], what[1]) -> _to-do(design[5], do[7]) + _dep(design[5], do[7]) [see 2c] -> _to-do(design[5], what[1]) [2a]
-	*/		
-	GIAgenericDepRelInterpretationParameters paramOpt2a = paramOpt2;							
+	*/
+	GIAgenericDepRelInterpretationParameters paramOpt2a = paramOpt2;
 	paramOpt2a.useRelationTest[REL1][REL_ENT2] = true; paramOpt2a.relationTest[REL1][REL_ENT2] = RELATION_DEPENDENT_DO;
 	paramOpt2a.disableEntity[REL1][REL_ENT2] = true; paramOpt2a.disableEntityUseOriginalValues[REL1][REL_ENT2] = true;
 	paramOpt2a.disableRelation[REL2] = true;
-	paramOpt2a.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
-	paramOpt2a.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT2;	
+	paramOpt2a.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
+	paramOpt2a.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramOpt2a.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT2;
 	if(genericDependecyRelationInterpretation(&paramOpt2a, REL1))
 	{
 		//cout << "opt2a" << endl;
-	}	
-		
+	}
+
 		//opt2b
 	/*
-	eg 
+	eg
 	What is yarn used to make?
 	dep(used-4, What-1)
 	auxpass(used-4, is-2)
@@ -615,54 +615,54 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	aux(make-6, to-5)
 	xcomp(used-4, make-6)
 	interpret; _to-do(used-4, make-6) + dep(used-4, What-1) -> _to-do(used-4, make-6) + dep(make-6, What-1) [see 2c] -> _to-do(used-4, make-6) + obj(make-6, What-1) [2b]
-	*/		
-	GIAgenericDepRelInterpretationParameters paramOpt2b = paramOpt2;		
-	paramOpt2b.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt2b.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt2b.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
+	*/
+	GIAgenericDepRelInterpretationParameters paramOpt2b = paramOpt2;
+	paramOpt2b.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt2b.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt2b.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
 	paramOpt2b.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramOpt2b.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
 	if(genericDependecyRelationInterpretation(&paramOpt2b, REL1))
 	{
 		//cout << "opt2b" << endl;
 	}
-	
+
 		//opt2c
 	//interpret; ...
 	GIAgenericDepRelInterpretationParameters paramOpt2c = paramOpt2;
-	paramOpt2c.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt2c.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt2c.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
+	paramOpt2c.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramOpt2c.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramOpt2c.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
 	if(genericDependecyRelationInterpretation(&paramOpt2c, REL1))
 	{
 		//cout << "opt2c" << endl;
 	}
-					
-	#endif		
-		
+
+	#endif
+
 #else
 	//cout << "\n" << endl;
-	
+
 	//added 28 October 2012
  	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	bool foundFirstPreposition = false;
 	while(currentRelationInList->next != NULL)
 	{
 		//cout << "Relation: " << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
-	
+
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
 			bool prepositionFound = false;
 			string relexPreposition = convertPrepositionToRelex(&(currentRelationInList->relationType), &prepositionFound);
-			
+
 			#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP
 			if(prepositionFound || (currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO))
 			#else
 			if(prepositionFound)
 			#endif
-			{						
+			{
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
-				{	
+				{
 					//cout << "Relation2: " << currentRelationInList2->relationType << "(" << currentRelationInList2->relationGovernor << ", " << currentRelationInList2->relationDependent << ")" << endl;
-							
+
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					if(!(currentRelationInList2->disabled))
 					{
@@ -678,7 +678,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 									{
 										queryEquivalentQueryVariableFound = true;
 									}
-								}							
+								}
 								if(queryEquivalentQueryVariableFound)
 								{
 									if(!foundFirstPreposition)
@@ -692,7 +692,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 											{
 											//#endif
 												if(currentRelationInList3->relationType == RELATION_TYPE_PREPOSITION_MODIFIER)
-												{	
+												{
 													if(currentRelationInList3->relationType != currentRelationInList->relationType)
 													{//ensure unique preposition found
 														if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationDependentIndex)
@@ -707,12 +707,12 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 															root(ROOT-0, used-4)
 															det(making-7, the-6)
 															prep_in(used-4, making-7)
-															prep(making-7, of-8)							
+															prep(making-7, of-8)
 															/
 															_obj(making[7], _$qVar[1])
 															_obj(use[4], yarn[3])
 															prep_in(use[4], making[7])
-															_prep(making[7], of[8])	
+															_prep(making[7], of[8])
 															prep_in(use[4], making[7]) + _obj(used[4], _$qVar[1]) + _prep(making[7], of[8])	-> prep_of(making[7], _$qVar[1])
 															*/
 
@@ -723,7 +723,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 
 															currentRelationInList3->relationType = newPrepositionName;
 															currentRelationInList3->relationDependent = currentRelationInList2->relationDependent;
-															currentRelationInList3->relationDependentIndex = currentRelationInList2->relationDependentIndex;																										
+															currentRelationInList3->relationDependentIndex = currentRelationInList2->relationDependentIndex;
 
 															foundSecondPreposition = true;
 														}
@@ -742,34 +742,34 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 
 											/*
 											x(y, _$qVar[1]) + prep_q(y, a) -> x(a, _$qVar[1])
-											eg1; 
+											eg1;
 												Apples is used for making juice.
 												What is apples used for making?
 												dobj(used-4, What-1)
 												auxpass(used-4, is-2)
 												nsubjpass(used-4, apples-3)
 												root(ROOT-0, used-4)
-												prepc_for(used-4, making-6)	
+												prepc_for(used-4, making-6)
 												/
 												_obj(use[4], _$qVar[1])
 												_obj(use[4], apple[3])
-												prepc_for(use[4], make[6])				
+												prepc_for(use[4], make[6])
 												NO [this solution is not universal]: dobj(used-4, What-1) + prepc_for(used-4, making-6) -> dobj(making-6, What-1)
 												_obj(use[4], _$qVar[1]) + prepc_for(use[4], make[6]) -> _obj(make[6], _$qVar[1])
-											eg 2; 
+											eg 2;
 												Apples are used for eating in the forest.
 												Where are apples used for eating?
 												advmod(used-4, Where-1)
 												auxpass(used-4, are-2)
 												nsubjpass(used-4, apples-3)
 												root(ROOT-0, used-4)
-												prepc_for(used-4, eating-6)			
+												prepc_for(used-4, eating-6)
 												/
 												_%atLocation(use[4], _$qVar[1])
 												_obj(use[4], apple[3])
-												prepc_for(use[4], eat[6])			
+												prepc_for(use[4], eat[6])
 												_%atLocation(use[4], _$qVar[1]) + prepc_for(use[4], eat[6]) -> _%atLocation(eat[6], _$qVar[1])
-											*/	
+											*/
 
 											currentRelationInList2->relationGovernor = currentRelationInList->relationDependent;
 											currentRelationInList2->relationGovernorIndex = currentRelationInList->relationDependentIndex;
@@ -777,24 +777,24 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 											if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO)
 											{//opt2a+b
 												if(currentRelationInList->relationDependent == RELATION_DEPENDENT_DO)
-												{//opt2a	
+												{//opt2a
 													//cout << "opt2a" << endl;
 													/*
 													What is the Co-cart designed to do?
 													interpret; _to-do(design[5], do[7]) + _dep(design[5], what[1]) -> {IRRELEVANT: _to-do(design[5], do[7]) + _dep(design[5], do[7]) [2a] } -> _to-do(design[5], what[1]) [2b]
 													*/
-													
+
 													currentRelationInList2->disabled = true;
 													disableEntity(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
 
 													currentRelationInList->relationDependentIndex = currentRelationInList2->relationDependentIndex;
-													currentRelationInList->relationDependent = currentRelationInList2->relationDependent;												
+													currentRelationInList->relationDependent = currentRelationInList2->relationDependent;
 												}
 												else
 												{//opt2b
 													//cout << "opt2b" << endl;
 													/*
-													eg 
+													eg
 													What is yarn used to make?
 													dep(used-4, What-1)
 													auxpass(used-4, is-2)
@@ -805,7 +805,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 													xcomp(used-4, make-6) [_to-do]
 													interpret; _to-do(used-4, make-6) + dep(used-4, What-1) -> _to-do(used-4, make-6) + dep(make-6, What-1) [2a] -> _to-do(used-4, make-6) + obj(make-6, What-1) [2c]
 													*/
-													currentRelationInList2->relationType = RELATION_TYPE_OBJECT;												
+													currentRelationInList2->relationType = RELATION_TYPE_OBJECT;
 												}
 											}
 											#endif
@@ -833,8 +833,8 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 	Relation * currentRelationInList;
-	
-#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_ACTION_PREPOSITION_ACTION	
+
+#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_ACTION_PREPOSITION_ACTION
 	//for queries only (1j6h)
 	#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
@@ -868,7 +868,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 			prep_with(integrate-7, What-1)
 		*/
 
-		GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+		GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 
 		paramA.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
 		paramA.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_DEPENDENT;
@@ -881,9 +881,9 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		paramOptA1.useRelationTest[REL1][REL_ENT2] = true; paramOptA1.relationTest[REL1][REL_ENT2] = RELATION_DEPENDENT_DO;	//this is check required? (perhaps the same case needs to be accounted for when (currentRelationInList->relationDependent != RELATION_DEPENDENT_DO)
 		paramOptA1.disableRelation[REL2] = true;
 		paramOptA1.disableEntity[REL1][REL_ENT2] = true; paramOptA1.disableEntityUseOriginalValues[REL1][REL_ENT2] = true;
-		paramOptA1.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramOptA1.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramOptA1.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT2;	
+		paramOptA1.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramOptA1.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramOptA1.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT2;
 		genericDependecyRelationInterpretation(&paramOptA1, REL1);
-	
+
 		//opt2
 		/*
 		interpret;
@@ -900,7 +900,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		paramOptA2.useRelationIndexTest[REL3][REL_ENT1] = true; paramOptA2.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; paramOptA2.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT2;
 		paramOptA2.disableRelation[REL2] = true;
 		paramOptA2.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT3] = true; paramOptA2.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT3] = REL3; paramOptA2.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT3] = REL_ENT2; paramOptA2.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL3][REL_ENT3] = true;
-		paramOptA2.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT2] = true; paramOptA2.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT2] = REL2; paramOptA2.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT2] = REL_ENT2;	
+		paramOptA2.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT2] = true; paramOptA2.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT2] = REL2; paramOptA2.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT2] = REL_ENT2;
 		genericDependecyRelationInterpretation(&paramOptA2, REL1);
 
 	#else
@@ -998,7 +998,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 			#endif
 			currentRelationInList = currentRelationInList->next;
 		}
-	#endif		
+	#endif
 	#endif
 
 #endif
@@ -1012,10 +1012,10 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 				[then rely upon redistributeStanfordRelationsMultiwordPreposition() for  nsubj(are-4, claims-3) / prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)]
 	*/
 	//for queries only (1j6g)
-	
+
 #ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_WITH_BE
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION			
-	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramB.numberOfRelations = 2;
 	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DEPENDENT;
 	paramB.useRelationTest[REL2][REL_ENT3] = true; paramB.relationTest[REL2][REL_ENT3] = RELATION_TYPE_PREPOSITION_MODIFIER;
@@ -1023,12 +1023,12 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	paramB.useRelationTest[REL1][REL_ENT1] = true; paramB.relationTest[REL1][REL_ENT1] = RELATION_ENTITY_BE;
 	paramB.useRelationTest[REL2][REL_ENT1] = true; paramB.relationTest[REL2][REL_ENT1] = RELATION_ENTITY_BE;
 	paramB.disableRelation[REL1] = true;
-	paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL2; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT2; paramB.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL2][REL_ENT3] = true;	
-	paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;	
+	paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL2; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT2; paramB.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL2][REL_ENT3] = true;
+	paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;
 	paramB.disableEntity[REL1][REL_ENT1] = true;
-	genericDependecyRelationInterpretation(&paramB, REL1);		
-#else	
-	
+	genericDependecyRelationInterpretation(&paramB, REL1);
+#else
+
 	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -1077,7 +1077,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		//#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 #endif
 
 
@@ -1110,7 +1110,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 #ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		//general parameters
-	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramC.numberOfRelations = 2;
 	paramC.useRelationTest[REL1][REL_ENT3] = true; paramC.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	paramC.expectToFindPrepositionTest[REL2] = true;
@@ -1118,14 +1118,14 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION_OLD
 	paramC.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramC.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION;
 	paramC.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramC.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION;
-	paramC.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL2][REL_ENT1] = true; 
+	paramC.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL2][REL_ENT1] = true;
 		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL2][REL_ENT1][0] = REL2; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL2][REL_ENT1][0] = REL_ENT1;
 		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL2][REL_ENT1][1] = REL2; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL2][REL_ENT1][1] = REL_ENT3;
-	#else							
+	#else
 	paramC.useRelationTest[REL1][REL_ENT1] = true; paramC.relationTest[REL1][REL_ENT1] = RELATION_ENTITY_BE;
 	paramC.useRelationTest[REL2][REL_ENT1] = true; paramC.relationTest[REL2][REL_ENT1] = RELATION_ENTITY_BE;
 	paramC.disableRelation[REL1] = true;
-	paramC.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramC.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramC.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
+	paramC.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramC.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramC.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
 	paramC.disableEntity[REL1][REL_ENT1] = true;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	/*eg;
@@ -1134,7 +1134,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	nsubj(are-4, claims-2)
 	prep_on(are-4, frame-7)
 	rcmod(claims-2, are-4)
-	*/	
+	*/
 	paramC.useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck[REL2] = true;
 	paramC.useRelationTest[REL3][REL_ENT3] = true; paramC.relationTest[REL3][REL_ENT3] = RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER;
 	paramC.useRelationIndexTest[REL3][REL_ENT2] = true; paramC.relationIndexTestRelationID[REL3][REL_ENT2] = REL1; paramC.relationIndexTestEntityID[REL3][REL_ENT2] = REL_ENT1;
@@ -1142,7 +1142,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	paramC.useRelationTest[REL3][REL_ENT2] = true; paramC.relationTest[REL3][REL_ENT2] = RELATION_ENTITY_BE;
 	#endif
 	genericDependecyRelationInterpretation(&paramC, REL1);
-	#endif											
+	#endif
 #else
 
 	currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -1179,7 +1179,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 									#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 									//cout << "newPrepositionName = " << newPrepositionName << endl;
 									#endif
-									
+
 									Relation * subjectOfPrepositionRelation = currentRelationInList;
 									Relation * objectOfPrepositionRelation = currentRelationInList2;
 									subjectOfPrepositionRelation->relationType = RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION;
@@ -1239,7 +1239,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 #endif
 
 
@@ -1490,12 +1490,12 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 
 		//general parameters
-	GIAgenericDepRelInterpretationParameters paramOptMult(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramOptMult(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramOptMult.expectToFindPrepositionTest[REL1] = true;
 	//NB this assumes "cop/aux" etc relations cannot be disabled in fillGrammaticalArraysStanford [must disable these later, at the end of redistribution]
 	paramOptMult.useRelationArrayTest[REL3][REL_ENT3] = true; paramOptMult.relationArrayTest[REL3][REL_ENT3] = redistributionStanfordRelationsMultiwordPrepositionSubjObjRelations; paramOptMult.relationArrayTestSize[REL3][REL_ENT3] = GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_SUBJOBJ_RELATIONS;
 	//note the following test should not be required as disabled relations eg cop are not being parsed: "if(!(currentRelationInList->prepositionCombinationAlreadyCreatedTemp))"
-	
+
 	//optMultA
 	/*
 	[CaseA]
@@ -1517,7 +1517,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	prevents multiword prepositional collapse of "name of" in; "Max is the name of the red dog" [/ "3 is the number of the red dogs."], based on 'det(name-4, the-3)'
 	nsubj(name-4, Max-1)
 	cop(name-4, is-2)	//rel2
-	det(name-4, the-3)	
+	det(name-4, the-3)
 	root(ROOT-0, name-4)
 	det(dog-8, the-6)	//rel4
 	amod(dog-8, red-7)
@@ -1525,9 +1525,9 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	*/
 	//paramOptMultA.relationTestSpecialCaseNotDefinite[REL3][REL_ENT1] = true;
 	EntityCharacteristic relationTestSpecialCaseNotDefinite("grammaticalDefiniteTemp", "false");
-	paramOptMultA.specialCaseCharacteristicsTestAndVector[REL3][REL_ENT1].push_back(&relationTestSpecialCaseNotDefinite);	
+	paramOptMultA.specialCaseCharacteristicsTestAndVector[REL3][REL_ENT1].push_back(&relationTestSpecialCaseNotDefinite);
 	#endif
-	paramOptMultA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramOptMultA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL3; paramOptMultA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;	
+	paramOptMultA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramOptMultA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL3; paramOptMultA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;
 	paramOptMultA.disableRelation[REL2] = true;
 	paramOptMultA.disableRelation[REL3] = true;
 	paramOptMultA.disableEntity[REL2][REL_ENT1] = true;
@@ -1537,17 +1537,17 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	//nsubj(near-7, carriage-4)
 	//cop(near-7, is-6)
 	//rcmod(carriage-4, near-7)
-	//prep_to(near-7, horse-10)	
+	//prep_to(near-7, horse-10)
 	paramOptMultA.useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck[REL1] = true;
 	paramOptMultA.useRelationTest[REL4][REL_ENT3] = true; paramOptMultA.relationTest[REL4][REL_ENT3] = RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER;
 	paramOptMultA.useRelationIndexTest[REL4][REL_ENT2] = true; paramOptMultA.relationIndexTestRelationID[REL4][REL_ENT2] = REL3; paramOptMultA.relationIndexTestEntityID[REL4][REL_ENT2] = REL_ENT1;
 	paramOptMultA.useRelationIndexTest[REL4][REL_ENT1] = true; paramOptMultA.relationIndexTestRelationID[REL4][REL_ENT1] = REL3; paramOptMultA.relationIndexTestEntityID[REL4][REL_ENT1] = REL_ENT2;
-	#endif	
-	paramOptMultA.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT3] = true; 
+	#endif
+	paramOptMultA.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT3] = true;
 		paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][0] = REL2; paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][0] = REL_ENT1;
-		paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][1] = REL1; paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][1] = REL_ENT3;		      
+		paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][1] = REL1; paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][1] = REL_ENT3;
 	genericDependecyRelationInterpretation(&paramOptMultA, REL1);
-		
+
 	//optMultB
 	/*
 	[CaseB]
@@ -1563,7 +1563,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	paramOptMultB.useRelationIndexTest[REL3][REL_ENT1] = true; paramOptMultB.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; paramOptMultB.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT1;
 	paramOptMultB.disableRelation[REL2] = true;
 	paramOptMultB.disableEntity[REL2][REL_ENT2] = true;
-	paramOptMultB.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT3] = true; 
+	paramOptMultB.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT3] = true;
 		paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][0] = REL2; paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][0] = REL_ENT2;
 		paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][1] = REL1; paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][1] = REL_ENT3;
 	genericDependecyRelationInterpretation(&paramOptMultB, REL1);
@@ -1583,13 +1583,13 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	paramOptMultD.useRelationIndexTest[REL3][REL_ENT1] = true; paramOptMultD.relationIndexTestRelationID[REL3][REL_ENT1] = REL2; paramOptMultD.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT1;
 	//paramOptMultD.disableRelation[REL2] = true;	//removed 15 July 2013 to allow double use of partmod eg "The Co-cart is a high quality, ultra compact, lightweight cart, also known as a trolley or buggie.: partmod(quality-6, known-15) + prep_as(known-15, trolley-18) + prep_as(known-15, buggie-20) -> prep_know_as(quality[6], trolley[18]) + prep_know_as(quality[6], buggie[20])
 	paramOptMultD.disableEntity[REL2][REL_ENT2] = true;
-	paramOptMultD.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramOptMultD.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL3; paramOptMultD.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT1;	
-	paramOptMultD.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT3] = true; 
+	paramOptMultD.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramOptMultD.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL3; paramOptMultD.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT1;
+	paramOptMultD.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT3] = true;
 		paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][0] = REL2; paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][0] = REL_ENT2;
 		paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][1] = REL1; paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][1] = REL_ENT3;
 	if(genericDependecyRelationInterpretation(&paramOptMultD, REL1))
 	{
-		paramOptMultD.relationFinalResult[REL2]->disabled =  true;	//see above 
+		paramOptMultD.relationFinalResult[REL2]->disabled =  true;	//see above
 	}
 
 #else
@@ -1622,10 +1622,10 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 							{
 								multiwordPrepositionSupportedPrepositionTypeAFound = true;
 							}
-						}						
+						}
 						if(multiwordPrepositionSupportedPrepositionTypeAFound)
 						{//[assert "to"/"of" prepositions 5 July 2013]
-							
+
 							for(int i=0; i<GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA; i++)
 							{
 								if(currentRelationInList2->relationType == redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeA[i])
@@ -1770,7 +1770,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 															//need to reset same reference set values on the preposition
 
 															currentRelationInList->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;
-															
+
 															#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 															//currentRelationInList3->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;
 															//cout << "\t\t\t1currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
@@ -1793,11 +1793,11 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 															currentRelationInList->relationGovernor = GIAentityNodeArray[currentRelationInList3->relationDependentIndex]->entityName;
 
 															#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-															//cout << "redistributeStanfordRelationsMultiwordPreposition(): newPrepositionName = " << newPrepositionName << endl;															
+															//cout << "redistributeStanfordRelationsMultiwordPreposition(): newPrepositionName = " << newPrepositionName << endl;
 															//cout << "\t\t\t2currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 															//cout << "\t\t\t2auxillaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxillaryIndicatesDifferentReferenceSet << endl;
 															#endif
-															
+
 															currentRelationInList2->disabled = true;
 															currentRelationInList3->disabled = true;	//added 3 June 2012
 
@@ -1927,7 +1927,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		currentRelationInList = currentRelationInList->next;
 	}
 #endif
-	
+
 }
 
 
@@ -1938,11 +1938,11 @@ void redistributeStanfordRelationsInterpretOfAsPossessive(Sentence * currentSent
 	//eg The ball of the red dog is green.   prep_of(ball-2, dog-6) ->  poss(ball-5, dog-3)
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
 	param.expectToFindPrepositionTest[REL1] = true;	//redundant
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PREPOSITION_OF;
-	param.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_POSSESSIVE;	
+	param.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_POSSESSIVE;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -1986,15 +1986,15 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 		'What is the name of the red dog near the farm?' [return entity names]
 			nsubj(is-2, name-4) + attr(is-2, What-1) {+ det(name-4, the-3)} + poss/prep_of(name-4, dog-8) -> appos(dog[8], _$qVar[1])	{_name(dog[8], _$qVar)??}
 		'What is the dog's name?'
-			nsubj(is-2, name-6) + attr(is-2, What-1) + poss(name-6, dog-4)	
-				
+			nsubj(is-2, name-6) + attr(is-2, What-1) + poss(name-6, dog-4)
+
 		'What is the number of the red dogs near the farm?' [return entity number/quantity]
 			nsubj(is-2, number-4) + attr(is-2, What-1) {/ det(number-4, the-3)} + poss/prep_of(number-4, dogs-8) -> _quantity(dog[8], _$qVar[1])
-		
+
 	*/
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 3;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_ATTRIBUTIVE;
@@ -2004,22 +2004,22 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 	param.useRelationTest[REL1][REL_ENT1] = true; param.relationTest[REL1][REL_ENT1] = RELATION_ENTITY_BE;
 	param.useRelationArrayTest[REL3][REL_ENT3] = true; param.relationArrayTest[REL3][REL_ENT3] = relationTypeOfOrPossessivePrepositionsNameArray; param.relationArrayTestSize[REL3][REL_ENT3] = RELATION_TYPE_OF_OR_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES;
 	param.useRelationIndexTest[REL3][REL_ENT1] = true; param.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT2;
-	param.useRelationTest[REL2][REL_ENT2] = true; param.relationTest[REL2][REL_ENT2] = REFERENCE_TYPE_QUESTION_QUERY_WHAT; 
+	param.useRelationTest[REL2][REL_ENT2] = true; param.relationTest[REL2][REL_ENT2] = REFERENCE_TYPE_QUESTION_QUERY_WHAT;
 
 	/*interpret
 	What is the name of the red dog near the farm? [return entity names]
 		nsubj(is-2, name-4) + attr(is-2, What-1) {+ det(name-4, the-3)} + poss/prep_of(name-4, dog-8) -> appos(dog-1, _$qVar[1])	{_name(That-1, _$qVar)??}
 	'What is the dog's name?'
-		nsubj(is-2, name-6) + attr(is-2, What-1) + poss(name-6, dog-4)		
+		nsubj(is-2, name-6) + attr(is-2, What-1) + poss(name-6, dog-4)
 	*/
 	GIAgenericDepRelInterpretationParameters paramNameQuery = param;
-	paramNameQuery.useRelationTest[REL1][REL_ENT2] = true; paramNameQuery.relationTest[REL1][REL_ENT2] = GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME; 
+	paramNameQuery.useRelationTest[REL1][REL_ENT2] = true; paramNameQuery.relationTest[REL1][REL_ENT2] = GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME;
 	paramNameQuery.disableRelation[REL1] = true;
 	paramNameQuery.disableRelation[REL3] = true;
 	paramNameQuery.disableEntity[REL1][REL_ENT1] = true;
 	paramNameQuery.disableEntity[REL3][REL_ENT1] = true;
 	paramNameQuery.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramNameQuery.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-	paramNameQuery.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramNameQuery.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL3; paramNameQuery.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
+	paramNameQuery.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramNameQuery.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL3; paramNameQuery.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
 	paramNameQuery.useRedistributeRelationEntityReassignment[REL2][REL_ENT2] = true; paramNameQuery.redistributeRelationEntityReassignment[REL2][REL_ENT2] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What" to _$qVar
 	//paramNameQuery.useRedistributeSpecialCaseIsNameQueryAssignment[REL2][REL_ENT2] = true;
 	EntityCharacteristic useRedistributeSpecialCaseIsNameQueryAssignment("isNameQuery", "true");
@@ -2031,16 +2031,16 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 	nsubj(is-2, number-4) + attr(is-2, What-1) {+ det(number-4, the-3)} + poss/prep_of(number-4, dogs-8) -> _quantity(dog[8], _$qVar[1])
 	*/
 	GIAgenericDepRelInterpretationParameters paramNumberQuery = param;
-	paramNumberQuery.useRelationTest[REL1][REL_ENT2] = true; paramNumberQuery.relationTest[REL1][REL_ENT2] = GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NUMBER; 
+	paramNumberQuery.useRelationTest[REL1][REL_ENT2] = true; paramNumberQuery.relationTest[REL1][REL_ENT2] = GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NUMBER;
 	paramNumberQuery.disableRelation[REL1] = true;
 	paramNumberQuery.disableRelation[REL3] = true;
 	paramNumberQuery.disableEntity[REL1][REL_ENT1] = true;
 	paramNumberQuery.disableEntity[REL3][REL_ENT1] = true;
 	paramNumberQuery.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramNumberQuery.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_QUANTITY;
-	paramNumberQuery.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramNumberQuery.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL3; paramNumberQuery.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
+	paramNumberQuery.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramNumberQuery.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL3; paramNumberQuery.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
 	paramNumberQuery.useRedistributeRelationEntityReassignment[REL2][REL_ENT2] = true; paramNumberQuery.redistributeRelationEntityReassignment[REL2][REL_ENT2] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What" to _$qVar
 	genericDependecyRelationInterpretation(&paramNumberQuery, REL1);
-		
+
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -2193,7 +2193,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 #endif
 
@@ -2207,33 +2207,33 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 	*/
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		//general parameters
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.useRelationArrayTest[REL2][REL_ENT3] = true; param.relationArrayTest[REL2][REL_ENT3] = relationTypeOfOrPossessivePrepositionsNameArray; param.relationArrayTestSize[REL2][REL_ENT3] = RELATION_TYPE_OF_OR_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES;
-	
+
 	GIAgenericDepRelInterpretationParameters paramType1 = param;
 	paramType1.useRelationTest[REL1][REL_ENT2] = true; paramType1.relationTest[REL1][REL_ENT2] = GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME;
 	paramType1.disableRelation[REL1] = true;
 	paramType1.disableEntity[REL1][REL_ENT2] = true;
 	paramType1.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramType1.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-	paramType1.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramType1.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; paramType1.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
-	paramType1.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramType1.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramType1.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT1;	
+	paramType1.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramType1.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; paramType1.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
+	paramType1.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramType1.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramType1.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT1;
 	//paramType1.useRedistributeSpecialCaseIsNameAssignment[REL2][REL_ENT2] = true;
 	EntityCharacteristic useRedistributeSpecialCaseIsNameAssignment("isName", "true");
-	paramType1.specialCaseCharacteristicsAssignmentVector[REL2][REL_ENT2].push_back(&useRedistributeSpecialCaseIsNameAssignment);	
+	paramType1.specialCaseCharacteristicsAssignmentVector[REL2][REL_ENT2].push_back(&useRedistributeSpecialCaseIsNameAssignment);
 	genericDependecyRelationInterpretation(&paramType1, REL1);
-			
+
 	GIAgenericDepRelInterpretationParameters paramType2 = param;
 	paramType2.useRelationTest[REL1][REL_ENT1] = true; paramType2.relationTest[REL1][REL_ENT1] = GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME;
 	paramType2.disableRelation[REL1] = true;
 	paramType2.disableEntity[REL1][REL_ENT1] = true;
 	paramType2.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramType2.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-	paramType2.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramType2.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; paramType2.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
-	paramType2.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramType2.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramType2.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;	
+	paramType2.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramType2.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; paramType2.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
+	paramType2.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramType2.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramType2.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;
 	//paramType2.useRedistributeSpecialCaseIsNameAssignment[REL2][REL_ENT2] = true;
-	paramType2.specialCaseCharacteristicsAssignmentVector[REL2][REL_ENT2].push_back(&useRedistributeSpecialCaseIsNameAssignment);	
-	genericDependecyRelationInterpretation(&paramType2, REL1);	
+	paramType2.specialCaseCharacteristicsAssignmentVector[REL2][REL_ENT2].push_back(&useRedistributeSpecialCaseIsNameAssignment);
+	genericDependecyRelationInterpretation(&paramType2, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -2279,7 +2279,7 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 										currentRelationInList2->relationGovernor = currentRelationInList2->relationDependent;
 										currentRelationInList2->relationDependentIndex = currentRelationInList->relationGovernorIndex;
 										currentRelationInList2->relationDependent = currentRelationInList->relationGovernor;
-										
+
 										GIAentityNode * definitionEntity = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
 										definitionEntity->isName = true;
 									}
@@ -2299,9 +2299,9 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 										currentRelationInList2->relationGovernor = currentRelationInList2->relationDependent;
 										currentRelationInList2->relationDependentIndex = currentRelationInList->relationDependentIndex;
 										currentRelationInList2->relationDependent = currentRelationInList->relationDependent;
-										
+
 										GIAentityNode * definitionEntity = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
-										definitionEntity->isName = true;							
+										definitionEntity->isName = true;
 									}
 								}
 							}
@@ -2317,7 +2317,7 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 #endif
 
@@ -2330,9 +2330,9 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 		//OLD: nsubj(is-3, rabbit-2) + advmod(is-3, away-6) - > nsubj(away-6, rabbit-2) )
 	case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; nsubj(is-4, rabbit-2) + advmod(is-4, away-7) + rcmod(rabbit-2, is-4) -> _predadj(rabbit-2, away-7)
 	*/
-	
+
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_ADJECTIVE_ADVMOD;
@@ -2351,12 +2351,12 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 		nsubj(is-4, rabbit-2)
 		advmod(is-4, away-7)
 		rcmod(rabbit-2, is-4)
-		*/	
+		*/
 		param.useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck[REL2] = true;
 		param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER;
 		param.useRelationIndexTest[REL3][REL_ENT1] = true; param.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT2;
 		param.useRelationTest[REL3][REL_ENT2] = true; param.relationTest[REL3][REL_ENT2] = RELATION_ENTITY_BE;
-		#endif		
+		#endif
 		genericDependecyRelationInterpretation(&param, REL1);
 		#else
 		//Case currently enabled
@@ -2371,7 +2371,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 		param.disableRelation[REL2] = true;
 		genericDependecyRelationInterpretation(&param, REL1);
 	#endif
-												
+
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -2468,7 +2468,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 
 void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
@@ -2488,9 +2488,9 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 	or
 	eg7 The time is 06:45.        nsubj(06:45-4, time-2) + cop(06:45-4, is-3) + det(time-2, The-1) -> appos(time-2, 06:45-4)
 	*/
-	
+
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_COPULA;
 	param.useRelationTest[REL2][REL_ENT2] = true; param.relationTest[REL2][REL_ENT2] = RELATION_ENTITY_BE;
@@ -2498,12 +2498,12 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	param.useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck[REL2] = true;
 	param.useRelationTest[REL3][REL_ENT1] = true; param.relationTest[REL3][REL_ENT1] = "impossibleEntityName";	//an impossible check which is therefore guaranteed to set auxillaryIndicatesDifferentReferenceSet to true
-	#endif	
+	#endif
 	#ifndef GIA_OPTIMISE_PERFORMANCE_FOR_RELEX_PATENT_QUERIES_REPLICATION_RATHER_THAN_RELEX_PATENT_SYNTACTIC_PROTOTYPE_OUTPUT_REPLICATION
 		#ifndef GIA_COLLAPSE_COP_RELATION_DEPENDENT_BE_TO_APPOS_NOT_PREDADJ_OLD
 		//currently in use
 		if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
-		{	
+		{
 			param.numberOfRelations = 2;
 
 			GIAgenericDepRelInterpretationParameters paramA = param;
@@ -2521,14 +2521,14 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			paramA.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp1E);
 			paramA.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp1F);
 			paramA.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramA.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_ADJECTIVE_PREDADJ;
-			paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;	
+			paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;
 			paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1;
 			paramA.disableRelation[REL2] = true;
 			if(genericDependecyRelationInterpretation(&paramA, REL1))
 			{
 				//cout << "passA" << endl;
 			}
-			
+
 			GIAgenericDepRelInterpretationParameters paramB = param;
 			//paramB.useRelationArrayTest[REL1][REL_ENT1] = true; paramB.relationArrayTest[REL1][REL_ENT1] = featurePOSindicatesNounTypeArray; paramB.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_OF_TYPES; paramB.relationArrayTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
 			EntityCharacteristic relationArrayTestSpecialCasePOStemp2A("stanfordPOStemp", FEATURE_POS_TAG_CD);
@@ -2542,7 +2542,7 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			paramB.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp2D);
 			paramB.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp2E);
 			paramB.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramB.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-			paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;	
+			paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;
 			paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1;
 			paramB.disableRelation[REL2] = true;
 			if(genericDependecyRelationInterpretation(&paramB, REL1))
@@ -2588,18 +2588,18 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 		paramA.useRelationTest[REL3][REL_ENT3] = true; paramA.relationTest[REL3][REL_ENT3] = RELATION_TYPE_DETERMINER;
 		paramA.useRelationIndexTest[REL3][REL_ENT1] = true; paramA.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; paramA.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT2;
 		paramA.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramA.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_ADJECTIVE_PREDADJ;
-		paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;	
+		paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;
 		paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1;
 		paramA.disableRelation[REL2] = true;
 		genericDependecyRelationInterpretation(&paramA, REL1);
-		
+
 		//eg she is the one	nsubj(one-4, She-1) + cop(one-4, is-2) + det(one-4, the-3)
 		GIAgenericDepRelInterpretationParameters paramB = param;
 		paramB.numberOfRelations = 3;
 		paramB.useRelationTest[REL3][REL_ENT3] = true; paramB.relationTest[REL3][REL_ENT3] = RELATION_TYPE_DETERMINER;
 		paramB.useRelationIndexTest[REL3][REL_ENT1] = true; paramB.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; paramA.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT1;
 		paramB.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramB.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-		paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;	
+		paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;
 		paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1;
 		paramB.disableRelation[REL2] = true;
 		genericDependecyRelationInterpretation(&paramB, REL1);
@@ -2607,7 +2607,7 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 		GIAgenericDepRelInterpretationParameters paramC = param;
 		paramB.numberOfRelations = 2;
 		paramB.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramB.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-		paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;	
+		paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;
 		paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1;
 		paramB.disableRelation[REL2] = true;
 		genericDependecyRelationInterpretation(&paramC, REL1);
@@ -2616,12 +2616,12 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 		//not used
 		param.numberOfRelations = 2;
 		param.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-		param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;	
+		param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;
 		param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1;
 		param.disableRelation[REL2] = true;
 		genericDependecyRelationInterpretation(&param, REL1);
 	#endif
-#else										
+#else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -2661,14 +2661,14 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 										if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 										{
 											GIAentityNode * subjectGovernorEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-											
+
 											#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_WORKAROUND_STANFORD_BUG_SINGLE_DIGIT_TIMES_MARKED_AS_ADJECTIVE
 											if(subjectGovernorEntity->NERTemp == FEATURE_NER_TIME)
 											{
 												subjectGovernorEntity->stanfordPOStemp = FEATURE_POS_TAG_CD;
 											}
 											#endif
-											
+
 											bool subjectGovernorAdjectiveOrAdvebFound = false;
 											for(int i=0; i<FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_OF_TYPES; i++)
 											{
@@ -2685,7 +2685,7 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 													subjectGovernorNounFound = true;
 												}
 											}
-											
+
 											if(subjectGovernorAdjectiveOrAdvebFound)
 											{
 												currentRelationInList->relationType = RELATION_TYPE_ADJECTIVE_PREDADJ;
@@ -2828,10 +2828,10 @@ void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence *
 {
 	//eg	The accident happened as the night was falling. 	advcl(happen, fall) + mark(fall, as) -> prep_as (happen, fall)
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 2;
-	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER; 
-	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_COMPLEMENT_OF_ADVERBAL_CLAUSE_MODIFIER; 
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER;
+	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_COMPLEMENT_OF_ADVERBAL_CLAUSE_MODIFIER;
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT2;
 	param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT3] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT3] = REL_ENT2;
 	genericDependecyRelationInterpretation(&param, REL1);
@@ -2890,7 +2890,7 @@ void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence *
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 
 
@@ -2898,10 +2898,10 @@ void redistributeStanfordRelationsClausalSubject(Sentence * currentSentenceInLis
 {
 	//eg	What she said makes sense. 	csubj (make, say) + dobj ( said-3 , What-1 )
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 2;
-	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_OBJECT; 
-	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_CLAUSAL_SUBJECT; 
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_OBJECT;
+	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_CLAUSAL_SUBJECT;
 	param.useRelationIndexTest[REL2][REL_ENT2] = true; param.relationIndexTestRelationID[REL2][REL_ENT2] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT2] = REL_ENT1;
 	param.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;
@@ -2946,17 +2946,17 @@ void redistributeStanfordRelationsClausalSubject(Sentence * currentSentenceInLis
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 
 void redistributeStanfordRelationsConjunctionAndCoordinate(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 	//eg	I eat a pie or tom rows the boat. 	cc(pie-4, or-5)  + conj(pie-4, tom-6)
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 2;
-	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CONJUNCT; 
-	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_COORDINATION; 
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CONJUNCT;
+	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_COORDINATION;
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
 	param.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;
@@ -3036,19 +3036,19 @@ void redistributeStanfordRelationsConjunctionAndCoordinate(Sentence * currentSen
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 
 void redistributeStanfordRelationsGenerateUnparsedQuantityModifers(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 	//eg	 The punter won almost $1000. 	advmod(won-3, almost-4) + pobj(almost-4, $-5) + num($-5, 1000-6)	[Relex: _obj(win[3], $[5]) + _quantity_mod($[5], almost[4])] -> _obj(win[3], $[5]) +  _quantity_mod($[5], almost[4])
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-		
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 3;
-	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_ADJECTIVE_ADVMOD; 
+	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_ADJECTIVE_ADVMOD;
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION;
-	param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_QUANTITY; 
+	param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_QUANTITY;
 	param.useRelationIndexTest[REL3][REL_ENT1] = true; param.relationIndexTestRelationID[REL3][REL_ENT1] = REL2; param.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT2;
 	param.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_OBJECT;
 	param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT2;
@@ -3056,7 +3056,7 @@ void redistributeStanfordRelationsGenerateUnparsedQuantityModifers(Sentence * cu
 	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
 	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2; param.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL2][REL_ENT2] = true;	//required to swap variables via redistributeRelationEntityIndexReassignmentUseOriginalValues;
 	genericDependecyRelationInterpretation(&param, REL1);
-		
+
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -3125,31 +3125,31 @@ void redistributeStanfordRelationsGenerateUnparsedQuantityModifers(Sentence * cu
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 
 
 void redistributeStanfordRelationsGenerateMeasures(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION	
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//note GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_GENERATE_MEASURES is not supported by GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//eg1	The undergraduate student is 18 years old. 	years old - npadvmod(old, years) -> _measure_time(old[7], years[6])		   {IRRELEVANT years: <NER>NUMBER</NER>} + old: <NER>DURATION</NER>
 	//eg2	The rabbit is 20 meters away.		meters away - npadvmod(away-6, meters-5) -> _measure_distance(away[6], meter[5])
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_NOUNPHRASEASADVERBIALMODIFIER;
 	param.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_MEASURE_UNKNOWN;
 	genericDependecyRelationInterpretation(&param, REL1);
 
 	//eg3 Robert ate 4 times a day.	dep(times-4, day-6) -> measure_dependency(times-4, day-6)			{Relex: _measure_per(times[4], day[6])}
-	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DEPENDENT;
 	EntityCharacteristic useRedistributeSpecialCaseNERTempCheck("NERTemp", FEATURE_NER_DURATION_STRING); param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&useRedistributeSpecialCaseNERTempCheck);
 	param.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_MEASURE_DEPENDENCY_UNKNOWN;
 	genericDependecyRelationInterpretation(&param, REL1);
-	
-	/*	
+
+	/*
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -3219,7 +3219,7 @@ void redistributeStanfordRelationsGenerateMeasures(Sentence * currentSentenceInL
 
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 
 void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
@@ -3228,37 +3228,37 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 
 	#ifdef GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE_AND_TEMPORAL_MODIFIER
 	//The disaster happened over night.   prt(happened-3, over-4) + tmod(happened-3, night-5) -> over(happened-3, night-5)
-	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramA.numberOfRelations = 2;
 	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PHRASAL_VERB_PARTICLE;
 	paramA.useRelationTest[REL2][REL_ENT3] = true; paramA.relationTest[REL2][REL_ENT3] = RELATION_TYPE_TEMPORAL_MODIFIER;
 	paramA.useRelationIndexTest[REL2][REL_ENT1] = true; paramA.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; paramA.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
 	paramA.disableRelation[REL1] = true;
-	paramA.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT2;	
+	paramA.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT2;
 	genericDependecyRelationInterpretation(&paramA, REL1);
 	#endif
 
 	#ifdef GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE_AND_OBJECT_OF_PREPOSITION
 	//What does the red laser work on?	prt(work-6, on-7) + pobj(on-7, What-1) -> on(work-6, What-1)	//case added 7 August 2012b
-	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramB.numberOfRelations = 2;
 	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PHRASAL_VERB_PARTICLE;
 	paramB.useRelationTest[REL2][REL_ENT3] = true; paramB.relationTest[REL2][REL_ENT3] = RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION;
 	paramB.useRelationIndexTest[REL2][REL_ENT1] = true; paramB.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; paramB.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT2;
 	paramB.disableRelation[REL1] = true;
-	paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT2;	
-	paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT1;	
+	paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT2;
+	paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT1;
 	genericDependecyRelationInterpretation(&paramB, REL1);
 	#endif
 
 	#ifdef GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE
 	//eg They shut down the station. 	prt(shut, down)
-	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramC.numberOfRelations = 1;
 	paramC.useRelationTest[REL1][REL_ENT3] = true; paramC.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PHRASAL_VERB_PARTICLE;
 	paramC.disableEntity[REL1][REL_ENT2] = true;
 	paramC.disableRelation[REL1] = true;	//added 11 July 2013 - check this
-	paramC.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT1] = true; 
+	paramC.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT1] = true;
 		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][0] = REL1; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][0] = REL_ENT1;
 		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][1] = REL1; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][1] = REL_ENT2;
 	genericDependecyRelationInterpretation(&paramC, REL1);
@@ -3367,7 +3367,7 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 
 
@@ -3414,14 +3414,14 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 	//interpret; 'Who rode the bike?' / 'What broke the glass?' -> nsubj(rode-2, Who-1) -> nsubj(rode-2, _$qVar-1)  /  nsubj(broke-2, What-1) -> nsubj(broke-2, _$qVar-1) [added 7 August 2012]
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//interpret; 'Who rode the bike?' / 'What broke the glass?' -> nsubj(rode-2, Who-1) -> nsubj(rode-2, _$qVar) / nsubj(broke-2, What-1) -> nsubj(broke-2, _$qVar) [added 7 August 2012]
-	GIAgenericDepRelInterpretationParameters paramNsubj(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramNsubj(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramNsubj.numberOfRelations = 1;
-	paramNsubj.useRelationTest[REL1][REL_ENT3] = true; paramNsubj.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;	
+	paramNsubj.useRelationTest[REL1][REL_ENT3] = true; paramNsubj.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	paramNsubj.useRedistributeRelationEntityReassignment[REL1][REL_ENT2] = true; paramNsubj.redistributeRelationEntityReassignment[REL1][REL_ENT2] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What"/"Who" to _$qVar
 	GIAgenericDepRelInterpretationParameters paramNsubjWho = paramNsubj;
 	paramNsubjWho.useRelationTest[REL1][REL_ENT2] = true; paramNsubjWho.relationTest[REL1][REL_ENT2] = REFERENCE_TYPE_QUESTION_QUERY_WHO;
 	#ifdef GIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS
-	//paramNsubjWho.useRedistributeSpecialCaseIsNameQueryAssignment[REL1][REL_ENT2] = true; 
+	//paramNsubjWho.useRedistributeSpecialCaseIsNameQueryAssignment[REL1][REL_ENT2] = true;
 	EntityCharacteristic useRedistributeSpecialCaseIsNameQueryAssignment("isNameQuery", "true");
 	paramNsubjWho.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT2].push_back(&useRedistributeSpecialCaseIsNameQueryAssignment);
 	#endif
@@ -3432,10 +3432,10 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 	genericDependecyRelationInterpretation(&paramNsubjWhat, REL1);
 
 	//interpret; 'who is that' / 'what is the time.'  attr(is-2, What-1) + nsubj(is-2, time-4) -> appos(time-4, _$qVar-1)   /   attr(is-2, Who-1) + nsubj(is-2, that-3) -> appos(That-3, _$qVar-1)	[NB _$qVar can be switched in both cases with respect to GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY]
-	GIAgenericDepRelInterpretationParameters paramNsubjAndAttr(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramNsubjAndAttr(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramNsubjAndAttr.numberOfRelations = 2;
-	paramNsubjAndAttr.useRelationTest[REL1][REL_ENT3] = true; paramNsubjAndAttr.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;	
-	paramNsubjAndAttr.useRelationTest[REL2][REL_ENT3] = true; paramNsubjAndAttr.relationTest[REL2][REL_ENT3] = RELATION_TYPE_ATTRIBUTIVE;	
+	paramNsubjAndAttr.useRelationTest[REL1][REL_ENT3] = true; paramNsubjAndAttr.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
+	paramNsubjAndAttr.useRelationTest[REL2][REL_ENT3] = true; paramNsubjAndAttr.relationTest[REL2][REL_ENT3] = RELATION_TYPE_ATTRIBUTIVE;
 	paramNsubjAndAttr.useRelationIndexTest[REL2][REL_ENT1] = true; paramNsubjAndAttr.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; paramNsubjAndAttr.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
 	paramNsubjAndAttr.useRelationTest[REL1][REL_ENT1] = true; paramNsubjAndAttr.relationTest[REL1][REL_ENT1] = RELATION_ENTITY_BE;
 	paramNsubjAndAttr.useRelationTest[REL2][REL_ENT1] = true; paramNsubjAndAttr.relationTest[REL2][REL_ENT1] = RELATION_ENTITY_BE;
@@ -3457,14 +3457,14 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 	#ifdef GIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS
 	#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
 	//paramNsubjAndAttrWho.useRedistributeSpecialCaseIsNameQueryAssignment[REL2][REL_ENT2] = true;
-	paramNsubjAndAttrWho.specialCaseCharacteristicsAssignmentVector[REL2][REL_ENT2].push_back(&useRedistributeSpecialCaseIsNameQueryAssignment);	
+	paramNsubjAndAttrWho.specialCaseCharacteristicsAssignmentVector[REL2][REL_ENT2].push_back(&useRedistributeSpecialCaseIsNameQueryAssignment);
 	#else
 	//paramNsubjAndAttrWho.useRedistributeSpecialCaseIsNameQueryAssignment[REL2][REL_ENT1] = true;
-	paramNsubjAndAttrWho.specialCaseCharacteristicsAssignmentVector[REL2][REL_ENT1].push_back(&useRedistributeSpecialCaseIsNameQueryAssignment);		
+	paramNsubjAndAttrWho.specialCaseCharacteristicsAssignmentVector[REL2][REL_ENT1].push_back(&useRedistributeSpecialCaseIsNameQueryAssignment);
 	#endif
 	#endif
 	genericDependecyRelationInterpretation(&paramNsubjAndAttrWho, REL1);
-	
+
 	GIAgenericDepRelInterpretationParameters paramNsubjAndAttrWhat = paramNsubjAndAttr;
 	paramNsubjAndAttrWhat.useRelationTest[REL2][REL_ENT2] = true; paramNsubjAndAttrWhat.relationTest[REL2][REL_ENT2] = REFERENCE_TYPE_QUESTION_QUERY_WHAT;
 	genericDependecyRelationInterpretation(&paramNsubjAndAttrWhat, REL1);
@@ -3536,7 +3536,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 											#endif
 
 										#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
-											
+
 											currentRelationInList->disabled =  true;
 											GIAentityNode * oldRedundantBeEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 											disableEntity(oldRedundantBeEntity);
@@ -3595,9 +3595,9 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 #endif
 
 	//added 3 July 2013
-	//interpret; 'What time is it?'  attr(is-3, time-2) + nsubj(is-3, it-4) + det(time-2, What-1) -> appos(time-4, _$qVar-1)	
+	//interpret; 'What time is it?'  attr(is-3, time-2) + nsubj(is-3, it-4) + det(time-2, What-1) -> appos(time-4, _$qVar-1)
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters paramNsubjAndAttrAndDet(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramNsubjAndAttrAndDet(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramNsubjAndAttrAndDet.numberOfRelations = 3;
 	paramNsubjAndAttrAndDet.useRelationTest[REL1][REL_ENT3] = true; paramNsubjAndAttrAndDet.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	paramNsubjAndAttrAndDet.useRelationTest[REL2][REL_ENT3] = true; paramNsubjAndAttrAndDet.relationTest[REL2][REL_ENT3] = RELATION_TYPE_ATTRIBUTIVE;
@@ -3609,14 +3609,14 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 	paramNsubjAndAttrAndDet.disableEntity[REL1][REL_ENT1] = true;	//oldRedundantBeEntity
 	paramNsubjAndAttrAndDet.disableEntity[REL1][REL_ENT2] = true;	//oldRedundantItEntity
 	paramNsubjAndAttrAndDet.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramNsubjAndAttrAndDet.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-	paramNsubjAndAttrAndDet.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramNsubjAndAttrAndDet.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; paramNsubjAndAttrAndDet.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
-	paramNsubjAndAttrAndDet.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramNsubjAndAttrAndDet.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL3; paramNsubjAndAttrAndDet.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;	
+	paramNsubjAndAttrAndDet.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramNsubjAndAttrAndDet.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; paramNsubjAndAttrAndDet.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
+	paramNsubjAndAttrAndDet.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramNsubjAndAttrAndDet.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL3; paramNsubjAndAttrAndDet.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;
 	paramNsubjAndAttrAndDet.useRedistributeRelationEntityReassignment[REL2][REL_ENT2] = true; paramNsubjAndAttrAndDet.redistributeRelationEntityReassignment[REL2][REL_ENT2] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//CHECK THIS overwrite
 	if(genericDependecyRelationInterpretation(&paramNsubjAndAttrAndDet, REL1))
 	{
-		featureArrayTemp[paramNsubjAndAttrAndDet.relationEntityIndexFinalResult[REL2][REL_ENT1]]->grammaticalIsDefinite = true;	//required such that "time" is treated the same way as when generated by "what is the time?" 
-	}	
-#else	
+		featureArrayTemp[paramNsubjAndAttrAndDet.relationEntityIndexFinalResult[REL2][REL_ENT1]]->grammaticalIsDefinite = true;	//required such that "time" is treated the same way as when generated by "what is the time?"
+	}
+#else
 	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -3639,7 +3639,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 						{
 							//now find the associated relation..
  							Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
-							
+
 							while(currentRelationInList3->next != NULL)
 							{
 								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -3668,29 +3668,29 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 												disableEntity(oldRedundantBeEntity);
 												GIAentityNode * oldRedundantItEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 												disableEntity(oldRedundantItEntity);
-												
+
 												currentRelationInList2->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
 												currentRelationInList2->relationGovernorIndex = currentRelationInList2->relationDependentIndex;
 												currentRelationInList2->relationGovernor = currentRelationInList2->relationDependent;
 
-												currentRelationInList2->relationDependentIndex =  currentRelationInList3->relationDependentIndex;											
-												currentRelationInList2->relationDependent =  currentRelationInList3->relationDependent;												
+												currentRelationInList2->relationDependentIndex =  currentRelationInList3->relationDependentIndex;
+												currentRelationInList2->relationDependent =  currentRelationInList3->relationDependent;
 
 												GIAentityNodeArray[currentRelationInList2->relationDependentIndex]->entityName = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What" to _$qVar
 												currentRelationInList2->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
-												
-												featureArrayTemp[currentRelationInList2->relationGovernorIndex]->grammaticalIsDefinite = true;	//required such that "time" is treated the same way as when generated by "what is the time?" 
-											}	
+
+												featureArrayTemp[currentRelationInList2->relationGovernorIndex]->grammaticalIsDefinite = true;	//required such that "time" is treated the same way as when generated by "what is the time?"
+											}
 										}
 									}
-								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD	
+								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 								}
 								#endif
 								currentRelationInList3 = currentRelationInList3->next;
-							}						
-						
+							}
+
 						}
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD	
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					}
 					#endif
 					currentRelationInList2 = currentRelationInList2->next;
@@ -3701,7 +3701,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif		
+#endif
 }
 
 
@@ -3712,7 +3712,7 @@ void redistributeStanfordRelationsCreateQueryVarsHowMuchHowMany(Sentence * curre
 	//eg1 How much milk should he buy?
 	//eg2 How many apples should he buy?
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 2;
 	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = featureQueryHowMuchFirstRelationNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = FEATURE_QUERY_HOW_MUCH_FIRST_RELATION_NUMBER_OF_TYPES;
 	param.useRelationArrayTest[REL1][REL_ENT1] = true; param.relationArrayTest[REL1][REL_ENT1] = featureQueryWordMuchManyNameArray; param.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_QUERY_WORD_MUCH_MANY_NUMBER_OF_TYPES;
@@ -3771,7 +3771,7 @@ void redistributeStanfordRelationsCreateQueryVarsHowMuchHowMany(Sentence * curre
 				#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG
 				//cout << "(queryHowMuchFirstRelationFound && queryHowMuchFirstRelationGovernorFound && queryHowMuchFirstRelationDependentFound) = " << queryHowMuchFirstRelationDependentFound << endl;
 				#endif
-				
+
 				//now find the associated relation..
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 
@@ -3819,7 +3819,7 @@ void redistributeStanfordRelationsCreateQueryVarsHowMuchHowMany(Sentence * curre
 
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 
 void redistributeStanfordRelationsCreateQueryVarsWhich(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
@@ -3832,7 +3832,7 @@ void redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy(Sentence * curr
 	//interpret  'How did the disaster happen?' / 'When should they leave?' / 'Where is the ball?' / 'Why does the star fall?' --> advmod(happen-5, How-1) / advmod(leave-4, When-1) / advmod(is-2, Where-1) [+ nsubj(is-2, ball-4)] / advmod(fall-5, Why-1) -> how(happen[5], _$qVar[1]) / _%atTime(leave[4], _$qVar[1]) / _%atLocation(ball[4], _$qVar[1]) / _%because(fall[5], _$qVar[1])
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//interpret  'How did the disaster happen?' / 'When should they leave?' / 'Where is the ball?' / 'Why does the star fall?'	advmod(happen-5, How-1) / [advmod(leave-4, When-1)?] / advmod(is-2, Where-1) / advmod(fall-5, Why-1) -> how(happen[5], _$qVar[1]) / _%atTime(leave[4], _$qVar[1]) / [_%atLocation(ball[4], _$qVar[1])?] / _%because(fall[5], _$qVar[1])
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
 	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = featureQueryHowWhenWhereWhyRelationNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = FEATURE_QUERY_HOW_WHEN_WHERE_WHY_RELATION_NUMBER_OF_TYPES;
 	param.useRedistributeRelationEntityReassignment[REL1][REL_ENT2] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT2] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "how"/"when"/"why" to _$qVar
@@ -3855,7 +3855,7 @@ void redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy(Sentence * curr
 	GIAgenericDepRelInterpretationParameters paramWhy = param;
 	paramWhy.useRelationTest[REL1][REL_ENT2] = true; paramWhy.relationTest[REL1][REL_ENT2] = REFERENCE_TYPE_QUESTION_QUERY_WHY;
 	paramWhy.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramWhy.redistributeRelationEntityReassignment[REL1][REL_ENT3] = REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY;
-	genericDependecyRelationInterpretation(&paramWhy, REL1);	
+	genericDependecyRelationInterpretation(&paramWhy, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -3959,7 +3959,7 @@ void redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy(Sentence * curr
 
 						//interpret  'How did the disaster happen?' / 'When should they leave?' / 'Where is the ball?' / 'Why does the star fall?' advmod(happen-5, How-1) / [advmod(leave-4, When-1)?] / advmod(is-2, Where-1) / advmod(fall-5, Why-1) -> how(happen[5], _$qVar[1]) / _%atTime(leave[4], _$qVar[1]) / [_%atLocation(ball[4], _$qVar[1])?] / _%because(fall[5], _$qVar[1])
 						//????  interpret 'Who is that?' / 'What is the time?' ?????
-						
+
 						currentRelationInList->relationType = featureQueryWordHowWhenWhereWhyCrossReferenceQueryVariableNameArray[queryWordHowWhenWhereWhyFoundIndex];		// prep_how / _%atTime / _%because
 
 						GIAentityNodeArray[currentRelationInList->relationDependentIndex]->entityName = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "how"/"when"/"why" to _$qVar
@@ -3986,7 +3986,7 @@ void redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy(Sentence * curr
 		//#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 
 
@@ -4008,14 +4008,14 @@ void redistributeStanfordRelationsCreateQueryVarsWhat(Sentence * currentSentence
 	What is wood used in the delivering of?
 	*/
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DETERMINER; param.relationTestIsNegative[REL1][REL_ENT3] = true;	//OR if(GIAentityNodeArray[currentRelationInList->relationDependentIndex]->stanfordPOStemp != FEATURE_POS_TAG_WDT)	//to distinguish standard what queries from equivalent which queries eg "what time is it?"
 	param.useRelationArrayTest[REL1][REL_ENT2] = true; param.relationArrayTest[REL1][REL_ENT2] = featureQueryWordWhatNameArray; param.relationArrayTestSize[REL1][REL_ENT2] = FEATURE_QUERY_WORD_WHAT_NUMBER_OF_TYPES;
 	param.useRedistributeRelationEntityReassignment[REL1][REL_ENT2] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT2] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What" to _$qVar
-	genericDependecyRelationInterpretation(&param, REL1);	
+	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	
+
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -4065,7 +4065,7 @@ void redistributeStanfordRelationsPartmod(Sentence * currentSentenceInList, bool
 		during(pick, spring)
 		_predadj(truffle, tasty)
 		_obj(pick, truffle)
-		
+
 		An elevator governor rectifying a chicken.
 		det(governor-3, An-1)
 		nn(governor-3, elevator-2)
@@ -4075,28 +4075,28 @@ void redistributeStanfordRelationsPartmod(Sentence * currentSentenceInList, bool
 		dobj(rectifying-4, chicken-6)
 		->
 		_subj(governor-3, rectifying-4)
-		
+
 	*/
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_PARTMOD_DEAL_WITH_PROGRESSIVE_ANOMALY
 	//An elevator governor rectifying a chicken. partmod(governor-3, rectifying-4) + dobj(rectifying-4, chicken-6) -> _subj(governor-3, rectifying-4) + dobj(rectifying-4, chicken-6)
-	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramA.numberOfRelations = 2;
 	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PARTICIPIAL_MODIFIER;
 	paramA.useRelationTest[REL2][REL_ENT3] = true; paramA.relationTest[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
 	paramA.useRelationIndexTest[REL2][REL_ENT1] = true; paramA.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; paramA.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT2;
 	paramA.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramA.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
-	paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;	
-	paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1; paramA.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL1][REL_ENT2] = true;	
+	paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;
+	paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1; paramA.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL1][REL_ENT2] = true;
 	genericDependecyRelationInterpretation(&paramA, REL1);
 	#endif
 	//Truffles picked during the spring are tasty.   partmod(truffle, pick) -> obj(pick, truffle)
-	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramB.numberOfRelations = 1;
 	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PARTICIPIAL_MODIFIER;
 	paramB.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramB.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_OBJECT;
-	paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;	
-	paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1; paramB.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL1][REL_ENT2] = true;	
+	paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;
+	paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1; paramB.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL1][REL_ENT2] = true;
 	genericDependecyRelationInterpretation(&paramB, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -4136,7 +4136,7 @@ void redistributeStanfordRelationsPartmod(Sentence * currentSentenceInList, bool
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 
 
@@ -4148,7 +4148,7 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 	//eg What is wood used in the delivering of?   interpret prep_of(xing, y) as obj(xing, y) )
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PREPOSITION_OF;
 	EntityCharacteristic relationTestSpecialCaseContinousVerbA("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_VERB_STRING);
@@ -4157,9 +4157,9 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCaseContinousVerbB);
 	param.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_OBJECT;
 	genericDependecyRelationInterpretation(&param, REL1);
-	
+
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION
-	cout << "GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION not migrated for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION" << endl;	
+	cout << "GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION not migrated for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION" << endl;
 	#endif
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -4169,38 +4169,38 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 		if(!(currentRelationInList->disabled))	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
 		{
 		//#endif
-		
+
 			int actionOrSubstanceIndex = currentRelationInList->relationGovernorIndex;
 			int actionOrSubstanceConditionIndex = currentRelationInList->relationDependentIndex;
 			string relationType = currentRelationInList->relationType;
 			GIAentityNode * actionOrSubstanceEntity = GIAentityNodeArray[actionOrSubstanceIndex];
-			GIAentityNode * actionOrSubstanceConditionEntity = GIAentityNodeArray[actionOrSubstanceConditionIndex];		
+			GIAentityNode * actionOrSubstanceConditionEntity = GIAentityNodeArray[actionOrSubstanceConditionIndex];
 
 			bool prepositionFound = false;
 			if(convertPrepositionToRelex(&relationType, &prepositionFound) == RELATION_TYPE_PREPOSITION_OF)
 			{
 				//cout << "actionOrSubstanceEntity->stanfordPOStemp = " << actionOrSubstanceEntity->stanfordPOStemp << endl;
-				//cout << "actionOrSubstanceEntity->grammaticalWordTypeTemp = " << actionOrSubstanceEntity->grammaticalWordTypeTemp << endl;	
-				#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION							
+				//cout << "actionOrSubstanceEntity->grammaticalWordTypeTemp = " << actionOrSubstanceEntity->grammaticalWordTypeTemp << endl;
+				#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION
 				/*
 				if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 				{//to work effectively/best, this function requires a) GIA_NLP_PARSER_STANFORD_CORENLP as NLPfeatureParser
 					#ifndef STANFORD_PARSER_USE_POS_TAGS
 					//to work effectively/best, this function requires b) Stanford CoreNLP as pos tagger (ie it is incompatible with STANFORD_PARSER_USE_POS_TAGS, as stanford Parser tags a lot more -ing words as NN [rather than VBG] as compared to Stanford CoreNLP)
-				*/	
+				*/
 				if(correctContinuousVerbPOStagAndLemma(actionOrSubstanceEntity, featureArrayTemp[actionOrSubstanceIndex]))
 				{
 					currentRelationInList->relationGovernor = actionOrSubstanceEntity->entityName;
 				}
-				/*	
+				/*
 					#endif
-				}	
+				}
 				*/
 				#endif
 				//if(actionOrSubstanceEntity->stanfordPOStemp == FEATURE_POS_TAG_VBG)
 				if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true))
 				{
-					currentRelationInList->relationType = RELATION_TYPE_OBJECT;				
+					currentRelationInList->relationType = RELATION_TYPE_OBJECT;
 				}
 			}
 
@@ -4210,16 +4210,16 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 #endif
 
 #ifdef GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES
 void redistributeStanfordRelationsExpletives(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	//eg 'There is a place that we go.' _expl(be[2], there[1]) + _subj(be[2], place[4]) + _subj(go[7], we[6]) [IRRELEVANT] + _obj(be[2], go[7]) -> _subj(go[7], we[6]) + _obj(go[7], place[4]) 
+	//eg 'There is a place that we go.' _expl(be[2], there[1]) + _subj(be[2], place[4]) + _subj(go[7], we[6]) [IRRELEVANT] + _obj(be[2], go[7]) -> _subj(go[7], we[6]) + _obj(go[7], place[4])
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 3;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_EXPLETIVE;
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_SUBJECT;
@@ -4234,7 +4234,7 @@ void redistributeStanfordRelationsExpletives(Sentence * currentSentenceInList, b
 	param.disableEntity[REL1][REL_ENT1] = true;
 	param.disableEntity[REL1][REL_ENT2] = true;
 	genericDependecyRelationInterpretation(&param, REL1);
-#else	
+#else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -4252,7 +4252,7 @@ void redistributeStanfordRelationsExpletives(Sentence * currentSentenceInList, b
 					{
 					#endif
 						if(currentRelationInList2->relationType == RELATION_TYPE_SUBJECT)
-						{					
+						{
  							Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
 							while(currentRelationInList3->next != NULL)
 							{
@@ -4269,24 +4269,24 @@ void redistributeStanfordRelationsExpletives(Sentence * currentSentenceInList, b
 												if(currentRelationInList->relationGovernorIndex == currentRelationInList3->relationGovernorIndex)
 												{
 													currentRelationInList2->relationType = RELATION_TYPE_OBJECT;
-													currentRelationInList2->relationGovernorIndex = currentRelationInList3->relationDependentIndex; 
-													currentRelationInList2->relationGovernor = currentRelationInList3->relationDependent; 
-													currentRelationInList->disabled = true; 
-													currentRelationInList3->disabled = true; 
+													currentRelationInList2->relationGovernorIndex = currentRelationInList3->relationDependentIndex;
+													currentRelationInList2->relationGovernor = currentRelationInList3->relationDependent;
+													currentRelationInList->disabled = true;
+													currentRelationInList3->disabled = true;
 													disableEntity(GIAentityNodeArray[currentRelationInList->relationGovernorIndex]);
 													disableEntity(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
-																									
+
 													/*WRONG;
-													currentRelationInList3->relationGovernorIndex = currentRelationInList2->relationDependentIndex; 
-													currentRelationInList3->relationGovernor = currentRelationInList2->relationDependent; 
-													currentRelationInList->disabled = true; 
-													currentRelationInList2->disabled = true; 
+													currentRelationInList3->relationGovernorIndex = currentRelationInList2->relationDependentIndex;
+													currentRelationInList3->relationGovernor = currentRelationInList2->relationDependent;
+													currentRelationInList->disabled = true;
+													currentRelationInList2->disabled = true;
 													disableEntity(GIAentityNodeArray[currentRelationInList->relationGovernorIndex]);
 													disableEntity(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
 													*/
-												}	
+												}
 											}
-										}				
+										}
 									}
 								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 								}
@@ -4305,7 +4305,7 @@ void redistributeStanfordRelationsExpletives(Sentence * currentSentenceInList, b
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 #endif
 
@@ -4313,7 +4313,7 @@ void redistributeStanfordRelationsExpletives(Sentence * currentSentenceInList, b
 void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 	/*
-	redistribute the following stanford relations, eg	
+	redistribute the following stanford relations, eg
 		Given the nature of the bank, write the letter.
 			translate prep+dep into prep
 			prep(write-8, Given-1)
@@ -4329,14 +4329,14 @@ void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSenten
 				dobj(write-8, letter-10)
 	*/
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DEPENDENT;
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_PREPOSITION_MODIFIER;
 	param.useRelationIndexTest[REL1][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT1] = REL2; param.relationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT2;
 	param.disableRelation[REL1] = true;
-	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT1;	
-	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;	
+	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT1;
+	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -4384,7 +4384,7 @@ void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSenten
 		//#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
@@ -4399,21 +4399,21 @@ void redistributeStanfordRelationsAuxHave(Sentence * currentSentenceInList, bool
 	Joe is happy.	_predadj(Joe[1], happy[3])
 	*/
 //#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_MODAL_AUX;
 	param.useRelationTest[REL1][REL_ENT2] = true; param.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_HAVE;
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.useRelationIndexTest[REL1][REL_ENT1] = true; param.relationIndexTestRelationID[REL1][REL_ENT1] = REL2; param.relationIndexTestEntityID[REL1][REL_ENT1] = REL_ENT1;
 	param.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_ADJECTIVE_PREDADJ;
-	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2; 	
+	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
 	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT1; param.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL2][REL_ENT2] = true;
 	param.disableRelation[REL1] = true;
 	param.disableEntity[REL1][REL_ENT2] = true;
 	genericDependecyRelationInterpretation(&param, REL1);
 //#else
 	//not coded as this function was developed after GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
-//#endif	
+//#endif
 }
 #endif
 
@@ -4422,29 +4422,29 @@ void redistributeStanfordRelationsAuxHave(Sentence * currentSentenceInList, bool
 void redistributeStanfordRelationsDisableAuxAndCop(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramA.numberOfRelations = 1;
 	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_MODAL_AUX;
 	paramA.disableRelation[REL1] = true;
 	genericDependecyRelationInterpretation(&paramA, REL1);
 
-	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramB.numberOfRelations = 1;
 	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PASSIVE_AUX;
 	paramB.disableRelation[REL1] = true;
 	genericDependecyRelationInterpretation(&paramB, REL1);
 
-	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramC.numberOfRelations = 1;
 	paramC.useRelationTest[REL1][REL_ENT3] = true; paramC.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COPULA;
 	paramC.disableRelation[REL1] = true;
 	genericDependecyRelationInterpretation(&paramC, REL1);
 
-	GIAgenericDepRelInterpretationParameters paramD(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters paramD(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramD.numberOfRelations = 1;
 	paramD.useRelationTest[REL1][REL_ENT3] = true; paramD.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DETERMINER;
 	paramD.disableRelation[REL1] = true;
-	genericDependecyRelationInterpretation(&paramD, REL1);				
+	genericDependecyRelationInterpretation(&paramD, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -4475,7 +4475,7 @@ void redistributeStanfordRelationsDisableAuxAndCop(Sentence * currentSentenceInL
 
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 #endif
 
@@ -4485,17 +4485,17 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 	eg The chicken has not eaten a pie.: neg(eaten-5, not-4)
 	*/
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, false);	
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_NEGATIVE;
 	param.disableRelation[REL1] = true;
 	param.disableEntity[REL1][REL_ENT2] = true; 	//disable "not" entity
-	//param.useRedistributeSpecialCaseDisableInstanceAndConcept[REL1][REL_ENT2]= true;	//no longer required because collapseRedundantRelationAndMakeNegativeRelex() is executed during redistribution	
+	//param.useRedistributeSpecialCaseDisableInstanceAndConcept[REL1][REL_ENT2]= true;	//no longer required because collapseRedundantRelationAndMakeNegativeRelex() is executed during redistribution
 	//param.useRedistributeSpecialCaseNegativeAssignment[REL1][REL_ENT1] = true;
 	EntityCharacteristic useRedistributeSpecialCaseNegativeAssignment("negative", "true");
 	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&useRedistributeSpecialCaseNegativeAssignment);
 	genericDependecyRelationInterpretation(&param, REL1);
-#else	
+#else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -4517,7 +4517,7 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-#endif	
+#endif
 }
 
 #endif

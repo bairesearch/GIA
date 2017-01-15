@@ -23,7 +23,7 @@
  * File Name: GIAmain.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -124,9 +124,9 @@ bool executeGIA(
 	bool useOutputTextAnswerPlainTXTFile,
 	string outputTextAnswerPlainTXTFileName,
 
-#ifdef GIA_SUPPORT_INPUT_FILE_LISTS	
+#ifdef GIA_SUPPORT_INPUT_FILE_LISTS
 	bool inputFileList,
-#endif	
+#endif
 	bool printOutput,
 	bool printOutputQuery,
 	bool displayInOpenGLAndOutputScreenshot,
@@ -166,10 +166,10 @@ bool executeGIA(
 	vector<GIAentityNode*> * entityNodesActiveListActions,
 	vector<GIAentityNode*> * entityNodesActiveListConditions,
 	unordered_map<long, GIAtimeConditionNode*> * timeConditionNodesActiveList,
-	
+
 	int * maxNumberSentences
 	);
-	
+
 #ifdef USE_CE
 bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, string outputCFFfileName, string NLPexeFolderArray[], vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, int * maxNumberSentences, CECodeextension * firstCodeextensionInHeirachy, vector<CECodeextension*> * codeextensionsList, bool useCodeextensionsHeirachy);
 #else
@@ -184,7 +184,7 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 bool fileExists(string * fileName);
 
 #ifdef GIA_SUPPORT_INPUT_FILE_LISTS
-int getFilesFromFileList(string inputListFileName, string * inputFileNameArray);	
+int getFilesFromFileList(string inputListFileName, string * inputFileNameArray);
 #endif
 
 #ifdef USE_CS_WORKAROUND

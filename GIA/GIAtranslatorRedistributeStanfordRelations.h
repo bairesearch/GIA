@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -92,7 +92,7 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 	void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);	//Stanford Specific? (may require Relex equivalent redistribution function)
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	void redistributeStanfordRelationsAuxHave(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
-	#endif	
+	#endif
 	#ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 	void redistributeStanfordRelationsDisableAuxAndCop(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
 	#endif

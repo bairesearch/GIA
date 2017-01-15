@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -104,8 +104,8 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, 
 					#define RULES_XML_ATTRIBUTE_value ((string)"value")
 					#define RULES_XML_ATTRIBUTE_arrayIndex ((string)"arrayIndex")
 					#define RULES_XML_ATTRIBUTE_negative ((string)"negative")
-				#define RULES_XML_TAG_assert ((string)"assert")			
-	#define GIA_TRANSLATOR_XML_INTERPRETATION_ARRAY_DELIMITER '|'								
+				#define RULES_XML_TAG_assert ((string)"assert")
+	#define GIA_TRANSLATOR_XML_INTERPRETATION_ARRAY_DELIMITER '|'
 bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA);
 	bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depRelOrEntity, bool executeOrReassign, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA, string functionName);
 		bool genericDepRelInterpretationApplyOptions(GIAgenericDepRelInterpretationParameters * paramDepRel, XMLparserTag * xmlTag, int REL, int REL_ENT, int FUNC_ENT, int swapIndex);
@@ -121,6 +121,6 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 				bool genericEntityInterpretationApplySpecialCase(EntityCharacteristic * entityCharacteristics, GIAgenericEntityInterpretationParameters * paramEntity, string type);
 
 
-#endif	
+#endif
 
 #endif

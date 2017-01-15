@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -106,7 +106,7 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		#endif
 		currentParagraphInList = currentParagraphInList->next;
 	}
-	
+
 	#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
 	dreamModeLinkSpecificConceptsAndActions();
 	#endif
@@ -158,7 +158,7 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirac
 
 		#ifdef GIA_WITH_CE_DEBUG
 		cout << "CE DEBUG: print codeextension heirachy dependency relations for:" << endl;
-		cout << "currentCodeextensionInHeirachy->codeextensionTextRaw = " << currentCodeextensionInHeirachy->codeextensionTextRaw << endl;		
+		cout << "currentCodeextensionInHeirachy->codeextensionTextRaw = " << currentCodeextensionInHeirachy->codeextensionTextRaw << endl;
 		#endif
 		Sentence * currentSentenceInArtificialList = firstSentenceInArtificialList;
 		do
@@ -170,8 +170,8 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirac
 				cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
 				#endif
 				currentRelationInList = currentRelationInList->next;
-			}	
-				
+			}
+
 			currentSentenceInArtificialList = currentSentenceInArtificialList->next;
 			#ifdef GIA_WITH_CE_DEBUG
 			cout << "\tcurrentSentenceInArtificialList = currentSentenceInArtificialList->next;" << endl;
@@ -181,7 +181,7 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirac
 		#ifdef GIA_WITH_CE_DEBUG
 		cout << "\n\n" << endl;
 		#endif
-		
+
 		#ifdef GIA_WITH_CE_OLD
 		vector<GIAentityNode*> *sentenceConceptEntityNodesList = &(currentCodeextensionInHeirachy->relevantConceptEntityNodeList);
 		setAllCodeextensionEntitiesInHeirachyToUndeclaredInThisContext(firstCodeextensionInHeirachy);
@@ -234,13 +234,13 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#ifdef GIA_USE_DATABASE
 	int useDatabaseOriginal = getUseDatabase();
 	#endif
-	
+
 	#ifdef GIA_FREE_MEMORY2
 	vector<GIAentityNode*> * entityNodesActiveListCompleteOriginal = getTranslatorEntityNodesCompleteList();
 	unordered_map<string, GIAentityNode*> * entityNodesActiveListCompleteFastIndexDBactiveOriginal;
 	if(getUseDatabase() != GIA_USE_DATABASE_FALSE)
 	{
-		entityNodesActiveListCompleteFastIndexDBactiveOriginal = getDBentityNodesActiveListCompleteFastIndexDBactive();	
+		entityNodesActiveListCompleteFastIndexDBactiveOriginal = getDBentityNodesActiveListCompleteFastIndexDBactive();
 	}
 	vector<GIAentityNode*> * entityNodesActiveListSubstancesOriginal = getTranslatorSubstanceEntityNodesList();
 	vector<GIAentityNode*> * entityNodesActiveListActionsOriginal = getTranslatorActionEntityNodesList();
@@ -263,22 +263,22 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	setTranslatorActionEntityNodesList(entityNodesActiveListActionsTemp);
 	setTranslatorConditionEntityNodesList(entityNodesActiveListConditionsTemp);
 	long currentEntityNodeIDInCompleteListOriginal = *(getCurrentEntityNodeIDinCompleteList());
-	long currentEntityNodeIDInConceptEntityNodesListOriginal = *(getCurrentEntityNodeIDinConceptEntityNodesList());	
+	long currentEntityNodeIDInConceptEntityNodesListOriginal = *(getCurrentEntityNodeIDinConceptEntityNodesList());
 	long currentEntityNodeIDInSubstanceEntityNodesListOriginal = *(getCurrentEntityNodeIDinSubstanceEntityNodesList());
 	long currentEntityNodeIDInActionEntityNodesListOriginal = *(getCurrentEntityNodeIDinActionEntityNodesList());
 	long currentEntityNodeIDInConditionEntityNodesListOriginal = *(getCurrentEntityNodeIDinConditionEntityNodesList());
 	long currentEntityNodeIDInCompleteListTemp = 0;
-	long currentEntityNodeIDInConceptEntityNodesListTemp = 0;	
+	long currentEntityNodeIDInConceptEntityNodesListTemp = 0;
 	long currentEntityNodeIDInSubstanceEntityNodesListTemp = 0;
 	long currentEntityNodeIDInActionEntityNodesListTemp = 0;
 	long currentEntityNodeIDInConditionEntityNodesListTemp = 0;
 	*(getCurrentEntityNodeIDinCompleteList()) = currentEntityNodeIDInCompleteListTemp;
-	*(getCurrentEntityNodeIDinConceptEntityNodesList()) = currentEntityNodeIDInConceptEntityNodesListTemp;	
+	*(getCurrentEntityNodeIDinConceptEntityNodesList()) = currentEntityNodeIDInConceptEntityNodesListTemp;
 	*(getCurrentEntityNodeIDinSubstanceEntityNodesList()) = currentEntityNodeIDInSubstanceEntityNodesListTemp;
 	*(getCurrentEntityNodeIDinActionEntityNodesList()) = currentEntityNodeIDInActionEntityNodesListTemp;
 	*(getCurrentEntityNodeIDinConditionEntityNodesList()) = currentEntityNodeIDInConditionEntityNodesListTemp;
 	#endif
-				
+
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (1convertSentenceRelationsIntoGIAnetworkNodes)\n" << endl;
 	#endif
@@ -353,35 +353,35 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	setTranslatorEntityNodesCompleteList(entityNodesActiveListCompleteOriginal);
 	if(getUseDatabase() != GIA_USE_DATABASE_FALSE)
 	{
-		setDBentityNodesActiveListCompleteFastIndexDBactive(entityNodesActiveListCompleteFastIndexDBactiveOriginal);	
+		setDBentityNodesActiveListCompleteFastIndexDBactive(entityNodesActiveListCompleteFastIndexDBactiveOriginal);
 	}
 	setTranslatorSubstanceEntityNodesList(entityNodesActiveListSubstancesOriginal);
 	setTranslatorActionEntityNodesList(entityNodesActiveListActionsOriginal);
 	setTranslatorConditionEntityNodesList(entityNodesActiveListConditionsOriginal);
 	*(getCurrentEntityNodeIDinCompleteList()) = currentEntityNodeIDInCompleteListOriginal;
 	*(getCurrentEntityNodeIDinSubstanceEntityNodesList()) = currentEntityNodeIDInSubstanceEntityNodesListOriginal;
-	*(getCurrentEntityNodeIDinConceptEntityNodesList()) = currentEntityNodeIDInConceptEntityNodesListOriginal;	
+	*(getCurrentEntityNodeIDinConceptEntityNodesList()) = currentEntityNodeIDInConceptEntityNodesListOriginal;
 	*(getCurrentEntityNodeIDinActionEntityNodesList()) = currentEntityNodeIDInActionEntityNodesListOriginal;
 	*(getCurrentEntityNodeIDinConditionEntityNodesList()) = currentEntityNodeIDInConditionEntityNodesListOriginal;
 	#endif
-		
+
 	vector<GIAentityNode*> sentenceConceptEntityNodesListTempNotUsed;
 	convertSentenceRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, true, firstGIACoreferenceInList);
 
 	#ifdef GIA_FREE_MEMORY1
 	//Clear temporary variables;
-	delete firstGIACoreferenceInList;	
+	delete firstGIACoreferenceInList;
 	delete currentSentenceInListTemp;
 	#ifdef GIA_FREE_MEMORY2
 	deleteEntitiesInEntityNodeList(entityNodesActiveListCompleteTemp);	//what about entities that have been referenced via advanced referencing (and were not added via direct database access) - won't these be deleted also?
 	delete entityNodesActiveListCompleteTemp;	//entityNodesActiveListCompleteTemp->clear();
 	if(getUseDatabase() != GIA_USE_DATABASE_FALSE)
-	{	
-		delete entityNodesActiveListCompleteFastIndexDBactiveTemp;	//entityNodesActiveListCompleteFastIndexTemp->clear();	
+	{
+		delete entityNodesActiveListCompleteFastIndexDBactiveTemp;	//entityNodesActiveListCompleteFastIndexTemp->clear();
 	}
 	delete entityNodesActiveListSubstancesTemp;	//entityNodesActiveListSubstancesTemp->clear();
 	delete entityNodesActiveListActionsTemp;	//entityNodesActiveListActionsTemp->clear();
-	delete entityNodesActiveListConditionsTemp;  	//entityNodesActiveListConditionsTemp->clear();  
+	delete entityNodesActiveListConditionsTemp;  	//entityNodesActiveListConditionsTemp->clear();
 	#endif
 	delete sentenceConceptEntityNodesList;		//sentenceConceptEntityNodesList->clear();
 	delete sentenceTimeConditionNodesList;		//sentenceTimeConditionNodesList->clear();
@@ -457,7 +457,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	cout << "pass 0; locate/add all entities [execution#1]" << endl;
 	#endif
 	locateAndAddAllFeatureTempEntities(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPdependencyRelationsType, NLPfeatureParser);
-	
+
 	Feature * featureArrayTemp[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 	generateTempFeatureArray(currentSentenceInList->firstFeatureInList, featureArrayTemp);	//regeneration required for Relex in case query variables detected
 
@@ -470,7 +470,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		}
 	}
 	#endif
-		
+
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1a; fillGrammaticalArrays" << endl;
 	#endif
@@ -505,14 +505,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	*/
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout <<"pass 1c1; redistribute Stanford Relations - correct POS tags And Lemmas Of All Continuous Verbs" << endl;
-	#endif		
-	redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllContinuousVerbs(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, featureArrayTemp);
-	/*	
-		#endif
-	}	
-	*/	
 	#endif
-	#endif		
+	redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllContinuousVerbs(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, featureArrayTemp);
+	/*
+		#endif
+	}
+	*/
+	#endif
+	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -523,14 +523,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		}
 	}
 	#endif
-	
+
 
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
 		#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 		applyGIATranslatorGenericXMLfunctions("GIAtranslatorRedistributeStanfordRelations", currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NULL, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
-		#else	
+		#else
 		redistributeStanfordRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPfeatureParser, featureArrayTemp);
 		#endif
 	}
@@ -540,12 +540,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	{
 		#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 		applyGIATranslatorGenericXMLfunctions("GIAtranslatorRedistributeRelexRelations", currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NULL, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
-		#else	
+		#else
 		redistributeRelexRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPfeatureParser, featureArrayTemp);
 		#endif
-	}	
+	}
 	#endif
-	
+
 	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
 	botSwitchFirstAndSecondPerson(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPdependencyRelationsType);
 	#endif
@@ -556,7 +556,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#endif
 	locateAndAddAllConceptEntities(GIAentityNodeArrayFilled, GIAconceptNodeArray, entityNodesActiveListConcepts, sentenceConceptEntityNodesList, NLPdependencyRelationsType, NLPfeatureParser, GIAfeatureTempEntityNodeArray);
 
-	
+
 	#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG
 	cout << "dependency relations: " << endl;
 	currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -608,7 +608,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		}
 	}
 	#endif
-	
+
 
 	if(NLPassumePreCollapsedStanfordRelations)
 	{//untested
@@ -625,13 +625,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	//{
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1e; fill Explicit Reference Same Set Tags" << endl;
-		#endif	
+		#endif
 		//identify explicit same set linkages
 		//eg "the guy that robbed the bank" in "the guy that robbed the bank is tall"
 		fillExplicitReferenceSameSetTags(currentSentenceInList);
 	//}
 	#endif
-#endif	
+#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 2; identify entity types [define entities as objects, subjects, and being possessive of substances];" << endl;
@@ -702,7 +702,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		}
 	}
 	#endif
-	
+
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 4; disable concept entities based on feature temp entity node array" << endl;
 	#endif
@@ -717,7 +717,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 			cout << "1: " << featureArrayTemp[w]->lemma << ", w = " << w << endl;
 		}
 	}
-	
+
 	cout << "dependency relations: " << endl;
 	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -752,20 +752,20 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
  	//this is required as GIAtranslatorDefineSubstances.cpp now relies on entity grammar values rather than featureArrayTemp
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 5 [execution#2]; apply Grammatical Info To All Entities" << endl;
-	#endif	
+	#endif
 	applyGrammaticalInfoToAllEntities(GIAentityNodeArrayFilled, GIAentityNodeArray, currentSentenceInList->firstFeatureInList);
 	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass B:" << endl;
 	#endif
-	
+
 	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 	applyGIATranslatorGenericXMLfunctions("GIAtranslatorDefineSubstances", currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NULL, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
 	#else
 	defineSubstances(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp, NLPdependencyRelationsType);
 	#endif
-		
+
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "\nAfter substance declarations: " << endl;
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -782,7 +782,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		}
 	}
 	#endif
-	
+
 	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//Stanford version is executed after all substances have been generated (including actions)... [Upgrade translator - do not associate feature/grammatical info with concept entities; just leave them in the feature array until the concept instances have been generated]
 	#ifdef GIA_USE_RELEX
@@ -821,7 +821,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#else
 	linkEntities(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType, linkPreestablishedReferencesGIA);
 	#endif
-	
+
 
 	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//Stanford version has been shifted to after all substances have been generated (including actions)... [Upgrade translator - do not associate feature/grammatical info with concept entities; just leave them in the feature array until the concept instances have been generated]
@@ -840,8 +840,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	applyGIATranslatorGenericXMLfunctions("GIAtranslatorApplyAdvancedFeatures", currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
 	#endif
 	applyAdvancedFeatures(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType, NLPfeatureParser);
-	
-		
+
+
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	//record entityIndexTemp + sentenceIndexTemp for all substances in sentence (allows for referencing)...
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -867,9 +867,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 					conceptNode->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;	//added 29 Sept 2013
 					conceptNode->isPronounReference = false;	//added 29 Sept 2013
 					#endif
-				
+
 					if(conceptNode->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
-					{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network 
+					{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network
 						//cout << "assigning: " <<  currentSentenceInList->sentenceIndex << endl;
 						conceptNode->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
 					}
@@ -879,12 +879,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 						cout << "error: invalid sentence id" << endl;
 					}
 					*/
-				#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE	
+				#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 				}
 				#endif
 			}
 			#endif
-			
+
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 			//cout << GIAentityNodeArray[w]->entityName << ", w = " << w << endl;
 			#endif
@@ -965,16 +965,16 @@ void disableEntitiesBasedOnFeatureTempEntityNodeArray(bool GIAentityNodeArrayFil
 void dreamModeLinkSpecificConceptsAndActions()
 {
 	vector<GIAentityNode*> * entityNodesActiveListComplete = getTranslatorEntityNodesCompleteList();
-	
+
 	identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(entityNodesActiveListComplete);
 }
 #endif
 
-#ifdef GIA_TRANSLATOR_XML_INTERPRETATION				
+#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA)
 {
 	//int tempindex = 1;
-	
+
 	bool result = true;
 	XMLparserTag * firstTagInRulesTag = parseTagDownALevel(GIAfirstTagInXMLfile, RULES_XML_TAG_rules, &result);
 	if(result)
@@ -988,14 +988,14 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 			{
 				foundTranslatorTag = true;
 				firstTagInTranslatorTag = parseTagDownALevel(currentTag, RULES_XML_TAG_translator, &result);
-			} 
+			}
 			currentTag = currentTag->nextTag;
 		}
 		if(foundTranslatorTag)
 		{
 			XMLparserTag * currentFileTag = firstTagInTranslatorTag;
 			while(currentFileTag->nextTag != NULL)
-			{	
+			{
 				if(currentFileTag->firstAttribute->name == RULES_XML_ATTRIBUTE_name)
 				{
 					if(currentFileTag->firstAttribute->value == translatorFileName)
@@ -1009,7 +1009,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 							cout << "GIAtranslatorLinkEntities" << endl;
 						}
 						*/
-						
+
 						XMLparserTag * firstTagInFileTag = parseTagDownALevel(currentFileTag, RULES_XML_TAG_file, &result);
 						if(result)
 						{
@@ -1021,11 +1021,11 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 								{
 									functionName = currentFunctionTag->firstAttribute->value;
 								}
-								
-								#ifdef GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG						
+
+								#ifdef GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
 								cout << "applyGIATranslatorGenericXMLfunctions functionName: " << functionName << endl;
 								#endif
-																
+
 								if(currentFunctionTag->firstLowerLevelTag != NULL)
 								{
 									XMLparserTag * firstTagInFunction = currentFunctionTag->firstLowerLevelTag;
@@ -1056,13 +1056,13 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 												}
 											}
 
-																						
-											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation 
+
+											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation
 											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))
 											{
 												result = false;
 											}
-											
+
 											/*
 											if(functionName == "redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs")
 											{
@@ -1082,25 +1082,25 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 													currentRelationInList = currentRelationInList->next;
 												}
 											}
-											*/											
+											*/
 										}
 										currentParamTag = currentParamTag->nextTag;
 									}
 								}
-								
+
 								/*
-								if(functionName == "defineSubstanceConcepts")			
+								if(functionName == "defineSubstanceConcepts")
 								{
 									exit(0);
 								}
 								*/
-													
+
 								currentFunctionTag = currentFunctionTag->nextTag;
-							}	
+							}
 						}
 					}
 				}
-				currentFileTag = currentFileTag->nextTag; 
+				currentFileTag = currentFileTag->nextTag;
 			}
 		}
 	}
@@ -1109,16 +1109,16 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depRelOrEntity, bool executeOrReassign, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA, string functionName)
 {
 	if(currentParamTag->firstLowerLevelTag != NULL)
-	{	
+	{
 		#ifdef GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
 		cout << "\tapplyGIATranslatorGenericXMLparam: " << currentParamTag->name << endl;
 		#endif
-		
+
 		GIAgenericDepRelInterpretationParameters paramDepRel(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, executeOrReassign);
 		paramDepRel.functionName = functionName;
-		paramDepRel.entityNodesActiveListConcepts = entityNodesActiveListConcepts;		
+		paramDepRel.entityNodesActiveListConcepts = entityNodesActiveListConcepts;
 		paramDepRel.NLPdependencyRelationsType = NLPdependencyRelationsType;
-		paramDepRel.executeOrReassign = executeOrReassign;			
+		paramDepRel.executeOrReassign = executeOrReassign;
 		GIAgenericEntityInterpretationParameters paramEntity(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, executeOrReassign);
 		paramEntity.functionName = functionName;
 		paramEntity.executeOrReassign = executeOrReassign;
@@ -1127,7 +1127,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 		bool asssertsetDefiniteAfterFinish = false;
 		int asssertPostProcessingREL_ENT = -1;
 		int asssertPostProcessingREL = -1;
-					
+
 		XMLparserTag * firstConfigurationTag = currentParamTag->firstLowerLevelTag;
 		XMLparserTag * currentConfigurationTag = firstConfigurationTag;
 		while(currentConfigurationTag->nextTag != NULL)
@@ -1136,7 +1136,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 			cout << "currentConfigurationTag->name: " << currentConfigurationTag->name << endl;
 			cout << "currentConfigurationTag->firstAttribute->name: " << currentConfigurationTag->firstAttribute->name << endl;
 			#endif
-			
+
 			string RELstring = "";
 			string REL_ENTstring = "";
 			string FUNC_ENTstring = "";
@@ -1147,34 +1147,34 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 			int swapIndex = -1;
 			if(getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_REL, &RELstring))
 			{
-				REL = atoi(RELstring.c_str()); 
+				REL = atoi(RELstring.c_str());
 				//cout << "REL = " << REL << endl;
 			}
 			if(getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_REL_ENT, &REL_ENTstring))
 			{
-				REL_ENT = atoi(REL_ENTstring.c_str()); 
-				//cout << "REL_ENT = " << REL_ENT << endl;				
+				REL_ENT = atoi(REL_ENTstring.c_str());
+				//cout << "REL_ENT = " << REL_ENT << endl;
 			}
 			if(getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_FUNC_ENT, &FUNC_ENTstring))
 			{
-				FUNC_ENT = atoi(FUNC_ENTstring.c_str()); 
+				FUNC_ENT = atoi(FUNC_ENTstring.c_str());
 				//cout << "FUNC_ENT = " << FUNC_ENT << endl;
 			}
 			if(getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_swapIndex, &swapIndexstring))
 			{
-				swapIndex = atoi(swapIndexstring.c_str()); 
+				swapIndex = atoi(swapIndexstring.c_str());
 			}
-						
+
 			if(currentConfigurationTag->name == RULES_XML_TAG_option)
 			{
 				if(depRelOrEntity)
-				{				
+				{
 					genericDepRelInterpretationApplyOptions(&paramDepRel, currentConfigurationTag, REL, REL_ENT, FUNC_ENT, swapIndex);
 				}
 				else
 				{
 					genericEntityInterpretationApplyOptions(&paramEntity, currentConfigurationTag);
-				}			
+				}
 			}
 			else if(currentConfigurationTag->name == RULES_XML_TAG_specialCase)
 			{
@@ -1183,14 +1183,14 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 				if(genericInterpretationGenerateSpecialCase(currentConfigurationTag, entityCharacteristics, &entityCharacteristicsType))
 				{
 					if(depRelOrEntity)
-					{				
+					{
 						genericDepRelInterpretationApplySpecialCase(entityCharacteristics, &paramDepRel, REL, REL_ENT, entityCharacteristicsType);
 					}
 					else
 					{
 						genericEntityInterpretationApplySpecialCase(entityCharacteristics, &paramEntity, entityCharacteristicsType);
 					}
-				}						
+				}
 			}
 			else if(currentConfigurationTag->name == RULES_XML_TAG_assert)
 			{//store especially defined conditions for pre/post processing of DepRel/Entity interpretation:
@@ -1207,7 +1207,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 					else if(assertAttribute->value == "whichOrWhatQueryFound")
 					{
 						bool whichOrWhatQueryFound = false;
-						//if(GIAentityNodeArrayFilled[GIA_NLP_START_ENTITY_INDEX]	//"what" is not added to a relation and therefore GIAentityNodeArrayFilled will not be filled		
+						//if(GIAentityNodeArrayFilled[GIA_NLP_START_ENTITY_INDEX]	//"what" is not added to a relation and therefore GIAentityNodeArrayFilled will not be filled
 						if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX] != NULL)
 						{
 							for(int i=0; i<FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES; i++)
@@ -1224,13 +1224,13 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 						if(!(whichOrWhatQueryFound))
 						{
 							passedAssert = false;
-						}						
+						}
 					}
 					else if(assertAttribute->value == "firstWordOfSentenceIsWho")
 					{
 						bool firstWordOfSentenceIsWho = false;
 						#ifdef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
-						//if(GIAentityNodeArrayFilled[GIA_NLP_START_ENTITY_INDEX])	//approximately the reason: "who" is not added to a relation and therefore GIAentityNodeArrayFilled will not be filled	
+						//if(GIAentityNodeArrayFilled[GIA_NLP_START_ENTITY_INDEX])	//approximately the reason: "who" is not added to a relation and therefore GIAentityNodeArrayFilled will not be filled
 						if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX] != NULL)
 						{
 							if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
@@ -1245,14 +1245,14 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 							if(featureArrayTemp[REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
 							{
 								firstWordOfSentenceIsWho = true;
-							}	
+							}
 						}
 						#endif
 						if(!firstWordOfSentenceIsWho)
 						{
 							passedAssert = false;
 						}
-					}					
+					}
 					else if(assertAttribute->value == "isQuestion")
 					{
 						if(!(currentSentenceInList->isQuestion))
@@ -1268,8 +1268,8 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 					}
 					else if(assertAttribute->value == "setDefiniteAfterFinish")
 					{
-						asssertsetDefiniteAfterFinish = true;	
-						asssertPostProcessingREL = REL;										
+						asssertsetDefiniteAfterFinish = true;
+						asssertPostProcessingREL = REL;
 						asssertPostProcessingREL_ENT = REL_ENT;
 					}
 					else if(assertAttribute->value == "linkPreestablishedReferencesGIA")
@@ -1284,26 +1284,26 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 						if(!(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD))
 						{
 							passedAssert = false;
-						}					
-					}																								
-				}		
-			}		
+						}
+					}
+				}
+			}
 			else
 			{
 				cout << "applyGIATranslatorGenericXMLparam(): error - illegal param tag:" << currentConfigurationTag->name  << endl;
 				//exit(0);
 			}
-							
+
 			currentConfigurationTag = currentConfigurationTag->nextTag;
 		}
-		
+
 		if(passedAssert)
 		{
 			if(depRelOrEntity)
 			{
-				//cout << "genericDependecyRelationInterpretation()" << endl;							
+				//cout << "genericDependecyRelationInterpretation()" << endl;
 				if(genericDependecyRelationInterpretation(&paramDepRel, REL1))
-				{	
+				{
 					if(asssertsetDefiniteAfterFinish)
 					{
 						featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalIsDefinite = true;
@@ -1321,7 +1321,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 				if(genericEntityInterpretation(&paramEntity))
 				{
 					/*
-					if(functionName == "defineSubstanceConcepts")			
+					if(functionName == "defineSubstanceConcepts")
 					{
 						cout << "\t\tdefineSubstanceConcepts passed" << endl;
 					}
@@ -1330,7 +1330,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 				/*
 				else
 				{
-					if(functionName == "defineSubstanceConcepts")			
+					if(functionName == "defineSubstanceConcepts")
 					{
 						cout << "\t\tdefineSubstanceConcepts failed" << endl;
 					}
@@ -1353,17 +1353,17 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 bool genericInterpretationGenerateSpecialCase(XMLparserTag * xmlTag, EntityCharacteristic * entityCharacteristics, string * type)
 {
 	bool result = false;
-	
+
 	bool typeFound = false;
 	bool variableFound = false;
 	bool valueFound = false;
-	
+
 	*type = "";
 	string variable = "";
 	string value = "";
 	string arrayIndex = "";
 	string negative = "";
-	
+
 	if(getAttribute(xmlTag, RULES_XML_ATTRIBUTE_type, type))
 	{
 		typeFound = true;
@@ -1385,7 +1385,7 @@ bool genericInterpretationGenerateSpecialCase(XMLparserTag * xmlTag, EntityChara
 	if(getAttribute(xmlTag, RULES_XML_ATTRIBUTE_negative, &negative))
 	{
 		if(negative == "true")
-		{	
+		{
 			entityCharacteristics->isNegative = true;
 		}
 	}
@@ -1417,7 +1417,7 @@ bool genericDepRelInterpretationApplySpecialCase(EntityCharacteristic * entityCh
 	else if(type == "specialCaseCharacteristicsTestOr3Vector")
 	{
 		paramDepRel->specialCaseCharacteristicsTestOr3Vector[REL][REL_ENT].push_back(entityCharacteristics);
-	}				
+	}
 	else if(type == "specialCaseCharacteristicsAssignmentVector")
 	{
 		paramDepRel->specialCaseCharacteristicsAssignmentVector[REL][REL_ENT].push_back(entityCharacteristics);
@@ -1425,10 +1425,10 @@ bool genericDepRelInterpretationApplySpecialCase(EntityCharacteristic * entityCh
 	else
 	{
 		cout << "genericDepRelInterpretationApplySpecialCase() error: illegal type" << endl;
-	}					
-}					
-			
-					
+	}
+}
+
+
 //string * convertDelimitedStringToArray(string str, char delimiter)
 
 bool genericDepRelInterpretationApplyOptions(GIAgenericDepRelInterpretationParameters * paramDepRel, XMLparserTag * xmlTag, int REL, int REL_ENT, int FUNC_ENT, int swapIndex)
@@ -1443,7 +1443,7 @@ bool genericDepRelInterpretationApplyOptions(GIAgenericDepRelInterpretationParam
 		}
 		currentAttribute = currentAttribute->nextAttribute;
 	}
-	return result;	
+	return result;
 }
 
 bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParameters * paramDepRel, XMLParserAttribute * xmlAttribute, int REL, int REL_ENT, int FUNC_ENT, int swapIndex)
@@ -1514,7 +1514,7 @@ bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParame
 	genericEntityInterpretationApplyOptionint(&(paramDepRel->defaultSameSetRelationID), xmlAttribute, "defaultSameSetRelationID", &foundMatch);
 	genericEntityInterpretationApplyOptionbool(&(paramDepRel->defaultSameSetReferenceValue), xmlAttribute, "defaultSameSetReferenceValue", &foundMatch);
 	#endif
-	
+
 	genericEntityInterpretationApplyOptionint(&(paramDepRel->functionEntityRelationID[FUNC_ENT]), xmlAttribute, "functionEntityRelationID", &foundMatch);
 	genericEntityInterpretationApplyOptionint(&(paramDepRel->functionEntityRelationEntityID[FUNC_ENT]), xmlAttribute, "functionEntityRelationEntityID", &foundMatch);
 	genericEntityInterpretationApplyOptionint(&(paramDepRel->functionToExecuteUponFind), xmlAttribute, "functionToExecuteUponFind", &foundMatch);
@@ -1527,7 +1527,7 @@ bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParame
 	genericEntityInterpretationApplyOptionbool(&(paramDepRel->disableEntityUseOriginalValues[REL][REL_ENT]), xmlAttribute, "disableEntityUseOriginalValues", &foundMatch);
 	genericEntityInterpretationApplyOptionbool(&(paramDepRel->disableRelation[REL]), xmlAttribute, "disableRelation", &foundMatch);
 	genericEntityInterpretationApplyOptionbool(&(paramDepRel->disableRelationDuringLink[REL]), xmlAttribute, "disableRelationDuringLink", &foundMatch);
-	
+
 	return foundMatch;
 }
 
@@ -1541,7 +1541,7 @@ bool genericEntityInterpretationApplySpecialCase(EntityCharacteristic * entityCh
 	else if(type == "specialCaseCharacteristicsTestOrVector")
 	{
 		paramEntity->specialCaseCharacteristicsTestOrVector.push_back(entityCharacteristics);
-	}				
+	}
 	else if(type == "specialCaseCharacteristicsAssignmentVector")
 	{
 		paramEntity->specialCaseCharacteristicsAssignmentVector.push_back(entityCharacteristics);
@@ -1549,7 +1549,7 @@ bool genericEntityInterpretationApplySpecialCase(EntityCharacteristic * entityCh
 	else
 	{
 		cout << "genericEntityInterpretationApplySpecialCase() error: illegal type: " << type << endl;
-	}	
+	}
 }
 
 bool genericEntityInterpretationApplyOptions(GIAgenericEntityInterpretationParameters * paramEntity, XMLparserTag * xmlTag)
@@ -1564,7 +1564,7 @@ bool genericEntityInterpretationApplyOptions(GIAgenericEntityInterpretationParam
 		}
 		currentAttribute = currentAttribute->nextAttribute;
 	}
-	return result;	
+	return result;
 }
 bool genericEntityInterpretationApplyOption(GIAgenericEntityInterpretationParameters * paramEntity, XMLParserAttribute * xmlAttribute)
 {
@@ -1583,7 +1583,7 @@ bool genericEntityInterpretationApplyOption(GIAgenericEntityInterpretationParame
 	genericEntityInterpretationApplyOptionint(&(paramEntity->functionToExecuteUponFind), xmlAttribute, "functionToExecuteUponFind", &foundMatch);
 
 	genericEntityInterpretationApplyOptionbool(&(paramEntity->disableEntity), xmlAttribute, "disableEntity", &foundMatch);
-	
+
 	return foundMatch;
 }
 
@@ -1601,16 +1601,16 @@ bool genericEntityInterpretationApplyOptionbool(bool * paramVal, XMLParserAttrib
 		else if(xmlAttribute->value == "false")
 		{
 			paramOptionSetValue = false;
-		}	
+		}
 		else
 		{
 			cout << "genericEntityInterpretationApplyOptionbool() error: illegal paramOptionSetValue for " << iterationVariable << ": " << xmlAttribute->value << endl;
 		}
 		//bool paramOptionSetValue = atoi(xmlAttribute->value.c_str());		//if GIA Translator XML file booleans are defined as '1'/'0' instead of 'true'/'false'
 		*paramVal = paramOptionSetValue;
-		
-		//cout << "genericEntityInterpretationApplyOptionbool(): " << xmlAttribute->name << " = " << paramOptionSetValue << endl;	
-		*foundMatch = true; 	
+
+		//cout << "genericEntityInterpretationApplyOptionbool(): " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
+		*foundMatch = true;
 		result = true;
 	}
 	return result;
@@ -1622,9 +1622,9 @@ bool genericEntityInterpretationApplyOptionint(int * paramVal, XMLParserAttribut
 	{
 		int paramOptionSetValue = atoi(xmlAttribute->value.c_str());
 		*paramVal = paramOptionSetValue;
-		
-		//cout << "genericEntityInterpretationApplyOptionint(): " << xmlAttribute->name << " = " << paramOptionSetValue << endl;	
-		*foundMatch = true; 	
+
+		//cout << "genericEntityInterpretationApplyOptionint(): " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
+		*foundMatch = true;
 		result = true;
 	}
 	return result;
@@ -1636,10 +1636,10 @@ bool genericEntityInterpretationApplyOptionstring(string * paramVal, XMLParserAt
 	{
 		string paramOptionSetValue = xmlAttribute->value;
 		*paramVal = paramOptionSetValue;
-		
-		//cout << "testEntityCharacteristicIterationstring(): " << xmlAttribute->name << " = " << paramOptionSetValue << endl;	
-		*foundMatch = true; 	
-		result = true;	
+
+		//cout << "testEntityCharacteristicIterationstring(): " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
+		*foundMatch = true;
+		result = true;
 	}
 	return result;
 }
@@ -1649,12 +1649,12 @@ bool genericEntityInterpretationApplyOptionstringarray(string ** paramVal, XMLPa
 	if(xmlAttribute->name == iterationVariable)
 	{
 		string paramOptionSetValue = xmlAttribute->value;
-		
+
 		*paramVal = convertDelimitedStringToArray(paramOptionSetValue, GIA_TRANSLATOR_XML_INTERPRETATION_ARRAY_DELIMITER);
-		
-		//cout << "testEntityCharacteristicIterationstringarray(): " << xmlAttribute->name << " = " << paramOptionSetValue << endl;	
-		*foundMatch = true; 
-		result = true;		
+
+		//cout << "testEntityCharacteristicIterationstringarray(): " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
+		*foundMatch = true;
+		result = true;
 	}
 	return result;
 }

@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u10b 10-October-2013
+ * Project Version: 1u11a 13-October-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -48,14 +48,14 @@ int maxXAtAParticularY[MAX_GIA_TREE_DEPTH];
 void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile, int maxNumberSentences)
 {//most of this is copied from CSexecFlow.cpp
 	bool result = true;
-	
+
 	char * outputFileNameLDRcharstar = const_cast<char*>(outputFileNameLDR.c_str());
 	char * displayFileNamePPMcharstar = const_cast<char*>(outputFileNamePPM.c_str());
 	char * outputFileNameSVGcharstar = const_cast<char*>(outputFileNameSVG.c_str());
 
 	XMLparserTag * firstTagInSVGFile = new XMLparserTag();
 	XMLparserTag * currentTagInSVGFile = firstTagInSVGFile;
-	
+
 	bool printType[3];
 	printType[DRAW_CREATE_LDR_REFERENCES] = false;
 	printType[DRAW_CREATE_SVG_REFERENCES] = false;
@@ -80,7 +80,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 
 
 	if(useOutputSVGfile)
-	{	
+	{
 		if(!writeSVGfile(outputFileNameSVGcharstar, firstTagInSVGFile))
 		{
 			result = false;
@@ -113,12 +113,12 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 		char * topLevelSceneFileNameCollapsed = "sceneCollapsedForRaytracing.ldr";
 		write2DreferenceListCollapsedTo1DtoFile(topLevelSceneFileNameCollapsed, firstReferenceInPrintList);
 		*/
-		
+
 		#ifdef GIA_FREE_MEMORY1
 		delete initialReferenceInSceneFile;
 		delete topLevelReferenceInSceneFile;
 		#endif
-		
+
 
 		unsigned char * rgbMap = new unsigned char[width*height*RGB_NUM];
 
@@ -142,7 +142,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 		delete initialReferenceInCollapsedSceneFile;
 		delete topLevelReferenceInCollapsedSceneFile;
 		#endif
-		
+
 		if(useOutputPPMfile)
 		{
 			generatePixmapFromRGBmap(displayFileNamePPMcharstar, width, height, rgbMap);
@@ -155,7 +155,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 	{
 		//must use an external program to view the .ldr file (Eg LDView)
 	}
-	
+
 	#ifdef GIA_FREE_MEMORY1
 	delete firstReferenceInPrintList;
 	#endif
@@ -187,7 +187,7 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesA
 
 	#ifndef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	maxNumberSentences = 1;
-	#endif	
+	#endif
 	bool printFromXMLcoordinatesAlreadyDefined = false;
 	if((*(entityNodesActiveListComplete->begin()))->printCoordsAlreadyDefined)
 	{
@@ -208,10 +208,10 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesA
 			//initiateMaxXAtParticularY();
 			xInitial = maxXAtAParticularY[yInitial];
 			//xInitial = sentenceIndex*100;	//compact
-			
+
 			bool thisIsDefinitionAndPreviousNodeWasInstance = false;
-			
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, printType, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);		
+
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, printType, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
 		}
 	}
 }
@@ -219,7 +219,7 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesA
 Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityConnection * entityConnection, Reference * currentReferenceInPrintList, bool printType[], string connectionName, int entityConnectionColour, XMLparserTag ** currentTag)
 {
 	GIAentityNode * entityNodeToConnect = entityConnection->entity;
-	
+
 	//cout << "initialiseEntityConnectionForPrinting: entityNodeToConnect->entityName = " << entityNodeToConnect->entityName << endl;
 
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
@@ -232,7 +232,7 @@ Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityConnectio
 		#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
 		entityConnection->initialisedForPrinting = true;
 		#endif
-		
+
 		//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
 		vec pos2;
 		pos2.x = entityNodeToConnect->printX;
@@ -240,24 +240,24 @@ Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityConnectio
 		pos2.z = DRAW_CONNECTION_Z;
 		currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, pos1, &pos2, entityConnectionColour, currentTag, connectionName, printType);
 	}
-	
+
 	return currentReferenceInPrintList;
 }
 
 
 Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, int x, bool printType[], Reference * currentReferenceInPrintList, XMLparserTag ** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance)
-{	
+{
 	//cout << "1 entityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp  << endl;
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	if((entityNode->sentenceIndexTemp == sentenceIndex) || (entityNode->wasReference) || thisIsDefinitionAndPreviousNodeWasInstance || entityNode->printCoordsAlreadyDefined)	//condition (entityNode->wasReference) added 12 October 2012 1q3b
 	{
 	#endif
-		//cout << "2 " << endl;		
+		//cout << "2 " << endl;
 		//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
 		if(!(entityNode->initialisedForPrinting) && !(entityNode->disabled))
 		{
 			//cout << "initialiseEntityNodeForPrinting: entityNode->entityName = " << entityNode->entityName << endl;
-			
+
 			/*
 			cout << "\nentityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp << endl;
 			cout << "entityNode->entityName = " << entityNode->entityName << endl;
@@ -269,9 +269,9 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 			if(entityNode->wasReference)
 			{
 				cout << "entityNode = " << entityNode->entityName << " (wasReference)" << endl;
-			}	
-			*/		
-						
+			}
+			*/
+
 			#ifdef GIA_DRAW_DEBUG
 			if(entityNode->isSubstance)
 			{
@@ -308,14 +308,14 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 			//cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
 			//cout << "\tentityNode->isSubstance = " << entityNode->isSubstance << endl;
 			//cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
-			//cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;		
+			//cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;
 			#endif
 
 
 			entityNode->initialisedForPrinting = true;
 
 			maxXAtAParticularY[y] = maxXAtAParticularY[y] + DRAW_X_SPACE_BETWEEN_ENTITIES;	//only used, for indepdendent network visualisation (eg, when rendering next sentence)
-			
+
 			if(entityNode->printCoordsAlreadyDefined)
 			{
 				x = entityNode->printX;
@@ -324,7 +324,7 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 			else
 			{
 				entityNode->printX = x;
-				entityNode->printY = y;			
+				entityNode->printY = y;
 			}
 
 			int q, r;
@@ -402,7 +402,7 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, *connectionIter, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);
 						}
 					}
-					
+
 					q = q + entityVectorConnectionDrawPosYspacingArray[i];
 				}
 			}
@@ -474,7 +474,7 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 				else if(entityNode->isActionConcept)
 				{
 					entityColour = GIA_DRAW_ACTION_CONCEPT_NODE_COLOUR;
-				}				
+				}
 				else if(entityNode->isSubstance)
 				{
 					if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
@@ -504,11 +504,11 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 						entityColour = GIA_DRAW_SUBSTANCE_QUANTITY_NODE_COLOUR;
 					}
 
-				}				
+				}
 				else if(entityNode->isAction)
 				{
 					entityColour = GIA_DRAW_ACTION_NODE_COLOUR;
-				} 				
+				}
 				/*
 				else if(entityNode->hasAssociatedTime)
 				{
@@ -569,9 +569,9 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 				}
 				//#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
 				//nameOfBox = convertIntToString(entityNode->referenceSetID);
-				//nameOfBox = convertIntToString(entityNode->idInstance);	
+				//nameOfBox = convertIntToString(entityNode->idInstance);
 				//#endif
-				//cout << "entityColour = " << entityColour << endl;	
+				//cout << "entityColour = " << entityColour << endl;
 				currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, currentTag, boxThickness, printType);
 
 			}
@@ -615,7 +615,7 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 		}
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	}
-	#endif		
+	#endif
 
 	return currentReferenceInPrintList;	//does this need to be newCurrentReferenceInPrintList?
 
@@ -629,10 +629,10 @@ Reference * initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode * timeCo
 
 	int timeConditionNodePrintX = x;
 	int timeConditionNodePrintY = y;
-		
+
 	timeConditionNode->printX = timeConditionNodePrintX;
 	timeConditionNode->printY = timeConditionNodePrintY;
-	
+
 	vec pos1;
 	vec pos2;
 	vec pos3;
@@ -712,7 +712,7 @@ Reference * createReferenceConnection(Reference * currentReferenceInPrintList, v
 		#ifdef GIA_DRAW_DEBUG
 		//cout << "drawing connection" << endl;
 		#endif
-		
+
 		newCurrentReferenceInPrintList->type = REFERENCE_TYPE_LINE;
 		newCurrentReferenceInPrintList->colour = colour;
 
