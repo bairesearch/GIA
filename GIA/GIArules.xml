@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  *
  *******************************************************************************/
 -->
@@ -655,7 +655,7 @@
 			</function>
 
 			<!-- XML only function (not hard coded) -->
-			<!-- #ifdefGIA_USE_NON_STANDARD_CONDITION_CONDITION_CONNECTIONS_CONNECT_CONJUNCTIONS_TO_THEIR_RELEVANT_PREPOSITIONS -->
+			<!-- #ifdefGIA_NON_STANDARD_CONDITION_CONDITION_CONNECTIONS_CONNECT_CONJUNCTIONS_TO_THEIR_RELEVANT_PREPOSITIONS -->
 			<function name="redistributeStanfordRelationsConjunctionAndSubjectAndPreposition">
 				
 				<example><!--
@@ -717,7 +717,7 @@
 			<function name="redistributeStanfordRelationsActionPrepositionAction">	<!-- extracted from redistributeStanfordRelationsMultiwordPreposition -->
 			<!-- #ifndefGIA_REDISTRIBUTE_STANFORD_RELATIONS_ACTION_PREPOSITION_ACTION -->
 				<!-- #ifdefGIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP -->
-				<!-- #ifdefGIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION -->
+				<!-- #ifdefGIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION -->
 					<!-- for queries only (1j6h) -->
 					<!--
 					<example>
@@ -1494,7 +1494,7 @@
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 				</paramDepRel>
 				
-				<!-- #ifdefGIA_SUPPORT_NUMBER_OF -->
+				<!-- #ifdefGIA_NUMBER_OF -->
 				<example><!--interpret
 				The number of blue birds near the mountain.
 				prep_near(number-2, mountain-8) + prep_of(number-2, birds-5)  -> prep_near(birds-5, mountain-8) + birds-5 with isNumberOf=true
@@ -2016,7 +2016,7 @@
 			</function>
 
 			<function name="redistributeStanfordRelationsPhrasalVerbParticle">
-				<!-- #ifdefGIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE_AND_TEMPORAL_MODIFIER -->
+				<!-- #ifdefGIA_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE_AND_TEMPORAL_MODIFIER -->
 				<example><!--
 				The disaster happened over night. prt(happened-3, over-4) + tmod(happened-3, night-5) -> over(happened-3, night-5)
 				--></example>
@@ -2030,7 +2030,7 @@
 				</paramDepRel>
 				<!-- #endif -->
 
-				<!-- #ifdefGIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE_AND_OBJECT_OF_PREPOSITION -->
+				<!-- #ifdefGIA_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE_AND_OBJECT_OF_PREPOSITION -->
 				<example><!--
 				What does the red laser work on? prt(work-6, on-7) + pobj(on-7, What-1) -> on(work-6, What-1) {!-- case added 7 August 2012b --}
 				--></example>
@@ -2045,7 +2045,7 @@
 				</paramDepRel>
 				<!-- #endif -->
 
-				<!-- #ifdefGIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE -->
+				<!-- #ifdefGIA_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE -->
 				<example><!--
 				eg They shut down the station. prt(shut, down)
 				--></example>
@@ -2072,7 +2072,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_subj" />
 				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_$qVar" /> <!-- convert "What"/"Who" to _$qVar -->
 				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="who" />
-				<!-- #ifdefGIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS -->
+				<!-- #ifdefGIA_WHO_QUERY_ALIAS_ANSWERS -->
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNameQuery" value="true" REL="1" REL_ENT="2" />
 				<!-- #endif -->
 				</paramDepRel>
@@ -2114,7 +2114,7 @@
 				-->
 				<!-- #endif -->
 				<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="who" />
-				<!-- #ifdefGIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS -->
+				<!-- #ifdefGIA_WHO_QUERY_ALIAS_ANSWERS -->
 				<!-- #ifdefGIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY -->
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNameQuery" value="true" REL="2" REL_ENT="2" />
 				<!-- #else -->
@@ -2150,7 +2150,7 @@
 					-->
 					<!-- #endif -->
 					<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="who" />
-					<!-- #ifdefGIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS -->
+					<!-- #ifdefGIA_WHO_QUERY_ALIAS_ANSWERS -->
 					<!-- #ifdefGIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY -->
 					<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNameQuery" value="true" REL="2" REL_ENT="2" />
 					<!-- #else -->
@@ -2455,7 +2455,7 @@
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="4" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 				<option useRedistributeRelationEntityReassignment="true" REL="4" REL_ENT="3" redistributeRelationEntityReassignment="_rcmod" />
 				<!--<option disableRelation="true" REL="4" />-->
-				<!-- #ifdefGIA_SUPPORT_EXPLETIVES -->
+				<!-- #ifdefGIA_EXPLETIVES -->
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isExpletive" value="true" REL="2" REL_ENT="2" />
 				<!-- #endif -->
 				</paramDepRel>
@@ -2473,7 +2473,7 @@
 				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_subj" />
 				<option useRelationTest="true" REL="4" REL_ENT="3" relationTest="_rcmod" />
 				<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
-				<!-- #ifdefGIA_SUPPORT_EXPLETIVES_WORKAROUND_STANFORD_ANOMALY_HAS_ASSIGNMENTS -->
+				<!-- #ifdefGIA_EXPLETIVES_WORKAROUND_STANFORD_ANOMALY_HAS_ASSIGNMENTS -->
 				<option useRelationTest="true" REL="3" REL_ENT="1" relationTest="have" relationTestIsNegative="true" />
 				<!-- #endif -->
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
@@ -2481,13 +2481,13 @@
 				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="4" relationIndexTestEntityID="1" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_obj" />
-				<!-- #ifdefGIA_SUPPORT_EXPLETIVES -->
+				<!-- #ifdefGIA_EXPLETIVES -->
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isExpletive" value="true" REL="2" REL_ENT="2" />
 				<!-- #endif -->
 				</paramDepRel>
 				
 				<!-- XML only function (not hard coded) -->
-				<!-- #ifdefGIA_SUPPORT_EXPLETIVES -->
+				<!-- #ifdefGIA_EXPLETIVES -->
 				<example><!--
 				eg 'There is a red ball.' expl(is-2, There-1) + nsubj(is-2, ball-4)  -> ball-4 [mark as expletive]
 				--></example>
@@ -3115,7 +3115,7 @@
 				</paramDepRel>
 			</function>
 
-			<!-- #ifdefGIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION -->
+			<!-- #ifdefGIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION -->
 			<!-- #ifndefGIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS -->
 			<function name="redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationAllWithADefinitionFunctionAsPropertyLinks">
 				<!-- #ifndefGIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO -->
@@ -3145,7 +3145,7 @@
 			<!-- #endif -->
 			<!-- #endif -->
 
-			<!-- #ifdefGIA_SUPPORT_ALIASES_RELEX_COMPATIBILITY -->
+			<!-- #ifdefGIA_ALIASES_RELEX_COMPATIBILITY -->
 			<function name="redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos">
 				<example><!--
 				She is the one. _subj(be[2], she[1]) + _obj(be[2], one[4]) -> appos(She-1, one-4)
@@ -3243,7 +3243,7 @@
 				</paramDepRel>
 			</function>
 
-			<!-- #ifdefGIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS -->
+			<!-- #ifdefGIA_WHO_QUERY_ALIAS_ANSWERS -->
 			<function name="redistributeRelexRelationsDetectNameQueries">
 				<paramEntity mode="redistribute">
 				<assert variable="firstWordOfSentenceIsWho" />
@@ -3610,14 +3610,14 @@
 			</function>
 			<!-- #endif -->		
 
-			<!-- #ifdefGIA_SUPPORT_SPECIFIC_CONCEPTS -->
+			<!-- #ifdefGIA_SPECIFIC_CONCEPTS -->
 			<function name="defineConcepts">
 				<paramEntity mode="redistribute">
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="1" />
 				<!-- #ifdefGIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_CONCEPT_TO_REFERENCES -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wasReference" value="false" />
 				<!-- #endif -->
-				<!-- #ifndefGIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS -->
+				<!-- #ifndefGIA_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalPronounTemp" value="false" />
 				<!-- #endif -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="2" negative="true" />
@@ -3636,7 +3636,7 @@
 				<!-- #ifdefGIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_CONCEPT_TO_REFERENCES -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wasReference" value="false" />
 				<!-- #endif -->
-				<!-- #ifndefGIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS -->
+				<!-- #ifndefGIA_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalPronounTemp" value="false" />
 				<!-- #endif -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	<!-- added 2i22a -->
@@ -3644,7 +3644,7 @@
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="4" />
 				</paramEntity>
 
-				<!-- #ifdefGIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS -->
+				<!-- #ifdefGIA_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS -->
 				<!--
 				<paramEntity mode="redistribute">
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="1" />
@@ -3658,7 +3658,7 @@
 				-->
 				<!-- #endif -->
 
-				<!-- #ifdefGIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS -->
+				<!-- #ifdefGIA_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS -->
 				<!--
 				<paramEntity mode="redistribute">
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="1" />
@@ -3857,7 +3857,7 @@
 				</paramDepRel>
 			</function>
 
-			{!-- #ifdefGIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXES --}
+			{!-- #ifdefGIA_SPECIFIC_ACTION_NETWORK_INDEXES --}
 			<function name="defineSubstancesActionNetworkIndexes">
 				<example>{!--
 				eg 'swim' in 'To swim to the beach requires strength.'
@@ -4363,7 +4363,7 @@
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_subj" relationArrayTestSize="1" />
 				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_obj|_that" relationArrayTestSize="2" />
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
-				<!-- #ifndefGIA_USE_CORPUS_DATABASE --><!--
+				<!-- #ifndefGIA_CORPUS_DATABASE --><!--
 				<option disableRelationDuringLink="true" REL="1" />	{!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 --}
 				<option disableRelationDuringLink="true" REL="2" />	{!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 --}
 				--><!-- #endif -->
@@ -4388,11 +4388,11 @@
 				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
 				<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				<!-- #endif -->
-				<!-- #ifndefGIA_USE_CORPUS_DATABASE -->
+				<!-- #ifndefGIA_CORPUS_DATABASE -->
 				<!-- <option disableEntity="true" REL="1" REL_ENT="1" /> {!-- disable "have" entity --} -->
 				<!-- #endif -->
 				</paramDepRel>
-				<!-- #ifdefGIA_USE_CORPUS_DATABASE -->
+				<!-- #ifdefGIA_CORPUS_DATABASE -->
 				<paramDepRel mode="execute">
 				<option numberOfRelations="2" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_subj" relationArrayTestSize="1" />

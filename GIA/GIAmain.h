@@ -26,7 +26,7 @@
  * File Name: GIAmain.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -117,7 +117,7 @@ bool executeGIA(
 	bool useOutputTextAnswerPlainTXTFile,
 	string outputTextAnswerPlainTXTFileName,
 
-#ifdef GIA_SUPPORT_INPUT_FILE_LISTS
+#ifdef GIA_INPUT_FILE_LISTS
 	bool inputFileList,
 #endif
 	bool printOutput,
@@ -129,7 +129,7 @@ bool executeGIA(
 
 	bool useInputQuery,
 
-#ifdef GIA_USE_DATABASE
+#ifdef GIA_DATABASE
 	bool readFromDatabase,
 	bool writeToDatabase,
 	bool useDatabase,
@@ -140,7 +140,7 @@ bool executeGIA(
 	string semanticParserDatabaseFolderName,
 #endif
 
-#ifdef GIA_USE_LRP
+#ifdef GIA_LRP
 	bool useLRP,
 	bool useOutputLRPTextPlainTXTFile,
 	string outputLRPTextPlainTXTFileName,
@@ -165,7 +165,7 @@ bool executeGIA(
 	int* maxNumberSentences
 	);
 
-#ifdef GIA_SUPPORT_INPUT_FILE_LISTS
+#ifdef GIA_INPUT_FILE_LISTS
 int getFilesFromFileList(string inputListFileName, string* inputFileNameArray);
 #endif
 

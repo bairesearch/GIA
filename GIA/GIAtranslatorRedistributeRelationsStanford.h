@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelationsStanford.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -43,10 +43,10 @@
 #include "GIAconditionNodeClass.h"
 #include "GIAtranslatorOperations.h"
 
-#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
+#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 void redistributeStanfordRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser, GIAfeature* featureArrayTemp[]);
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	void disableRedundantNodesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
 	#endif
 	void disableRedundantNodesStanfordParser(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
@@ -84,7 +84,7 @@ void redistributeStanfordRelations(GIAsentence* currentSentenceInList, bool GIAe
 	#endif
 	void redistributeStanfordRelationsDependencyPreposition(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);	//Stanford Specific? (may require Relex equivalent redistribution function)
 	#ifdef STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS
-	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	void redistributeStanfordRelationsAuxHave(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 	#endif
 	#endif

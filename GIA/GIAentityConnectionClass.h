@@ -26,7 +26,7 @@
  * File Name: GIAentityConnectionClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -48,8 +48,8 @@
 #include <cmath>
 #include <string>
 #include <vector>
-#include <unordered_map>		//required for GIA_USE_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR
-#include <utility> 			// make_pair	//required for GIA_USE_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR
+#include <unordered_map>		//required for GIA_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR
+#include <utility> 			// make_pair	//required for GIA_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR
 using namespace std;
 
 #ifndef HEADER_GIA_ENTITY_NODE_CLASS
@@ -101,7 +101,7 @@ public:
 	#endif
 	#endif
 
-	#ifdef GIA_USE_DATABASE
+	#ifdef GIA_DATABASE
 	bool referenceLoaded;
 	string entityName;	//records the vector connection target entity name (to enable loading from db) [of target]
 	long idInstance;	//records the vector connection target instance id (to enable loading from db) [of target]
@@ -130,7 +130,7 @@ public:
 	bool NLCparsedForlogicalConditionOperations;
 	bool NLCcontextGenerated;	//added NLC 1g14b/15-July-2014
 	#endif
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_ADVANCED_REFERENCING
 	#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 	bool isReference;	//added NLC 1i2a/20-August-2014
 	#endif
@@ -143,7 +143,7 @@ public:
 	#endif
 
 	/*
-	#ifdef GIA_USE_NLG
+	#ifdef GIA_NLG
 	bool parsedForLanguageGeneration;
 	#endif
 	*/

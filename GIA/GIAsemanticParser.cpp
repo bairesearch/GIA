@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -51,7 +51,7 @@ bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDepende
 		result = false;
 	}
 
-	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
+	#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
 		if(!lookupSemanticParserFiles(firstParagraphInList, NLPfeatureParser))	//finds all corresponding GIA2 semantic dependency files and parses them
@@ -84,7 +84,7 @@ bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDepende
 			#endif
 			result = false;
 		}
-	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
+	#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 	}
 	#endif
 

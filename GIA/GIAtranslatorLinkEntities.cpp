@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -57,7 +57,7 @@ void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFil
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B2c; link entity definitions (appositive of nouns only); eg The fish, a carp, swam deeply. _appo(fish[2], carp[5])" << endl;
 	#endif
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_ADVANCED_REFERENCING
 	linkEntityDefinitionsAppositiveOfNouns(currentSentenceInList, GIAentityNodeArray, linkPreestablishedReferencesGIA);
 	#else
 	linkEntityDefinitionsAppositiveOfNouns(currentSentenceInList, GIAentityNodeArray, BOOL_IRRELEVANT);
@@ -75,7 +75,7 @@ void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFil
 	#endif
 
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B2eOLD; linkHavingPropertyConditionsAndBeingDefinitionConditions" << endl;
 	cout << "eg1; Space is saved through/by having a chicken. prepc/prep_through/by(saved-3, having-5) + dobj(having-5, chicken-7)" << endl;
@@ -87,7 +87,7 @@ void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFil
 	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	//26 July 2013 - shifted linkIndirectObjects before linkSubjectObjectRelationships for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK (as obj is disableRelationDuringLink by linkSubjectObjectRelationships) - note defineToBeAndToDoConditions is also reliant on at least a subj being active [but not a subj and obj combination like linkIndirectObjects]: check this does not require shifting either
+	//26 July 2013 - shifted linkIndirectObjects before linkSubjectObjectRelationships for GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK (as obj is disableRelationDuringLink by linkSubjectObjectRelationships) - note defineToBeAndToDoConditions is also reliant on at least a subj being active [but not a subj and obj combination like linkIndirectObjects]: check this does not require shifting either
 	cout << "section B2e; linkIndirectObjects, eg The officer gave the youth a ride. _iobj(give, youth) +  _obj(give[3], ride[7])" << endl;
 	#endif
 	linkIndirectObjects(currentSentenceInList, GIAentityNodeArray);
@@ -107,10 +107,10 @@ void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFil
 	linkSubjectOrObjectRelationships(currentSentenceInList, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
-		#ifdef GIA_USE_STANFORD_CORENLP	//why GIA_USE_STANFORD_CORENLP and not GIA_USE_STANFORD_DEPENDENCY_RELATIONS?
+		#ifdef GIA_STANFORD_CORENLP	//why GIA_STANFORD_CORENLP and not GIA_STANFORD_DEPENDENCY_RELATIONS?
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "section B2hOLD; link Having Substance Conditions And Being Definition Conditions" << endl;
 		#endif
@@ -156,7 +156,7 @@ void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFil
 
 void linkPropertiesPossessiveRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	/*
 	Joe's bike is blue.	_poss(bike[3], Joe[1])
 	*/
@@ -309,7 +309,7 @@ void linkPropertiesDescriptiveRelationships(GIAsentence* currentSentenceInList, 
 	/*
 	Joe is happy.	_predadj(Joe[1], happy[3])	[NB Stanford nsubj(happy-3, Joe-1) + cop(happy-3, is-2) gets redistributed to _predadj(Joe[1], happy[3])]
 	*/
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
 		GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
 		param.numberOfRelations = 1;
@@ -352,7 +352,7 @@ void linkPropertiesDescriptiveRelationships(GIAsentence* currentSentenceInList, 
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
-		#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		#elif defined GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -367,7 +367,7 @@ void linkPropertiesDescriptiveRelationships(GIAsentence* currentSentenceInList, 
 			//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_AMOD) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_PREDADJ) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))
 			if(passed)
 			{
-				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+				#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 				bool passed2 = true;
 				bool passed3 = true;
 
@@ -414,13 +414,13 @@ void linkPropertiesDescriptiveRelationships(GIAsentence* currentSentenceInList, 
 					bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 					#endif
 					GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(thingEntity, substanceEntity, sameReferenceSet);
-				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+				#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 				}
 				#endif
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
-		#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		#elif defined GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -434,7 +434,7 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 	/*
 	The fish, a carp, swam deeply.	_appo(fish[2], carp[5])
 	*/
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	#ifdef GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA
 	if(linkPreestablishedReferencesGIA)
 	{
@@ -442,7 +442,7 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 		GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, true);
 		paramA.numberOfRelations = 1;
 		paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-		GIAentityCharacteristic entityCharacteristicsTest1("entityType", GIA_ENTITY_TYPE_TYPE_SUBSTANCE_STRING);	//#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS must assert !isConcept
+		GIAentityCharacteristic entityCharacteristicsTest1("entityType", GIA_ENTITY_TYPE_TYPE_SUBSTANCE_STRING);	//#ifdef GIA_SPECIFIC_CONCEPTS must assert !isConcept
 		GIAentityCharacteristic entityCharacteristicsTest2("isNameQuery", "true");
 		paramA.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1);
 		paramA.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest2);
@@ -512,7 +512,7 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))		//?this condition may be required to prevent redundant RELATION_TYPE_APPOSITIVE_OF_NOUN relations eg in 'Where is the ball?'
 		{
-		#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+		#elif defined GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -540,11 +540,11 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 				bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 				#endif
 
-				#ifdef GIA_SUPPORT_ALIASES
+				#ifdef GIA_ALIASES
 				bool treatDefinitionAsEquality = false;
 				bool treatDefinitionAsEqualityReversePrimary = false;
 				#ifdef GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_ADVANCED_REFERENCING
 				if(linkPreestablishedReferencesGIA)
 				{
 				#endif
@@ -561,8 +561,8 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 						//cout << "thingEntity->entityType = " << thingEntity->entityType << endl;
 						//cout << "definitionEntity->entityType = " << definitionEntity->entityType << endl;
 						#endif
-						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-						if(!(thingEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT) && (!(definitionEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))) 	//only required with GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS: || (definitionEntity->isName)))
+						#ifdef GIA_SPECIFIC_CONCEPTS
+						if(!(thingEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT) && (!(definitionEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))) 	//only required with GIA_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS: || (definitionEntity->isName)))
 						{
 						#endif
 							#ifdef GIA_TRANSLATOR_DEBUG
@@ -595,12 +595,12 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 									//if no proper noun (or query) detected, each node is equal, eg the brown dog == the happy wolf]
 								}
 							}
-						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+						#ifdef GIA_SPECIFIC_CONCEPTS
 						}
 						#endif
 					}
 				#ifdef GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_ADVANCED_REFERENCING
 				}
 				#endif
 				#endif
@@ -647,13 +647,13 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 					#endif
 
 					addDefinitionToEntity(thingEntity, definitionEntity, sameReferenceSet);
-				#ifdef GIA_SUPPORT_ALIASES
+				#ifdef GIA_ALIASES
 				}
 				#endif
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
-		#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+		#elif defined GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -677,7 +677,7 @@ void linkDependentActionsType1(GIAsentence* currentSentenceInList, GIAentityNode
 		dobj(requires-6, strength-7)
 	*/
 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CLAUSAL_SUBJECT;
@@ -765,7 +765,7 @@ void linkDependentActionsType1(GIAsentence* currentSentenceInList, GIAentityNode
 #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 void linkHavingPropertyConditionsAndBeingDefinitionConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
 {
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	/*
 	Stanford;
 	Space is saved through/by having a chicken.	prepc_through/by(saved-3, having-5) + dobj(having-5, chicken-7) + nsubjpass(saved-3, Space-1) [IRRELEVANT]	+ auxpass(saved-3, is-2) [IRRELEVANT]
@@ -783,7 +783,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(GIAsentence* curre
 	param.disableRelationDuringLink[REL1] = true;	//required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions()
 	param.disableRelationDuringLink[REL2] = true;	//required to prevent re-interpretation of prepositions in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013
 	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = linkHavingPropertyConditionsAndBeingDefinitionConditionsPrepositionsNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_HAVING_AND_BEING_CONDITIONS_PREPOSITIONS_NUMBER_OF_TYPES;
-	param.expectToFindPrepositionTest[REL1] = true;	//redundant test (maintained for consistency only with old non-GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK code)
+	param.expectToFindPrepositionTest[REL1] = true;	//redundant test (maintained for consistency only with old non-GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK code)
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT2;	//coincidentially this condition holds for all 3 cases
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;	//coincidentially this condition holds for all 3 cases
 	param.functionEntityRelationID[FUNC_ENT2] = REL2; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
@@ -980,7 +980,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(GIAsentence* curre
 
 void linkIndirectObjects(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	/*
 	eg The officer gave the youth a ride. _iobj(give, youth) +  _obj(give[3], ride[7])
 	*/
@@ -1063,7 +1063,7 @@ void linkIndirectObjects(GIAsentence* currentSentenceInList, GIAentityNode* GIAe
 
 void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
 {
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 
 	/*special case A: partnerTypeObjectSpecialConditionMeasureDistanceOrStanfordFound
 	eg The rabbit is 20 meters away.	_subj(away[6], rabbit[2]) + _measure_distance(away[6], meter[5])	[away is a substance of rabbit, not a condition of rabbit]
@@ -1085,16 +1085,16 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 	paramA.disableRelationDuringLink[REL1] = true;	//required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013
 	genericDependecyRelationInterpretation(&paramA, REL1);
 	#else
-	cout << "GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO not migrated for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK" << endl;
+	cout << "GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO not migrated for GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK" << endl;
 	#endif
 
 	/*
 	//compilation checks:
 	#ifdef GIA_TRANSLATOR_RETAIN_SUSPECTED_REDUNDANT_RELEX_CODE
-	cout << "GIA_TRANSLATOR_RETAIN_SUSPECTED_REDUNDANT_RELEX_CODE not migrated for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK" << endl;
+	cout << "GIA_TRANSLATOR_RETAIN_SUSPECTED_REDUNDANT_RELEX_CODE not migrated for GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK" << endl;
 	#endif
 	#ifdef GIA_TRANSLATOR_RETAIN_SUSPECTED_REDUNDANT_RELEX_CODE
-	cout << "!GIA_SUPPORT_ALIASES_RELEX_COMPATIBILITY (and !GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY) not migrated for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK" << endl;
+	cout << "!GIA_ALIASES_RELEX_COMPATIBILITY (and !GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY) not migrated for GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK" << endl;
 	#endif
 	*/
 
@@ -1189,7 +1189,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
-		#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		#elif defined GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -1243,7 +1243,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					if(!(currentRelationInList2->disabled))
 					{
-					#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+					#elif defined GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 					if(!(currentRelationInList2->disabled))
 					{
 					#endif
@@ -1293,7 +1293,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 						}
 						#endif
 
-					#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+					#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 						/*
 						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE2
 						if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
@@ -1373,7 +1373,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 									//cout << "objectEntityTemp->entityName = " << objectEntityTemp->entityName << endl;
 									#endif
 
-									#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+									#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 
 									bool subjectIsConnectedToAnAdvMod = false;
 
@@ -1607,7 +1607,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 												//NB definitions are only assigned to entities, not substances (instances of entities)
 
 
-											#ifndef GIA_SUPPORT_ALIASES_RELEX_COMPATIBILITY
+											#ifndef GIA_ALIASES_RELEX_COMPATIBILITY
 											#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
 											if(currentSentenceInList->isQuestion == true)
 											#else
@@ -1638,7 +1638,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 											#endif
 												bool sameReferenceSet = false;
 												addDefinitionToEntity(subjectEntityTemp, objectEntityTemp, sameReferenceSet);
-											#ifndef GIA_SUPPORT_ALIASES_RELEX_COMPATIBILITY
+											#ifndef GIA_ALIASES_RELEX_COMPATIBILITY
 											}
 											#endif
 
@@ -1695,7 +1695,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 												#endif
 											#endif
 										}
-									#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+									#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 									#ifdef GIA_TRANSLATOR_RETAIN_SUSPECTED_REDUNDANT_RELEX_CODE
 										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_WITH_BE_AS_DEFINITION_LINK
 										else if(partnerTypeObjectSpecialConditionToDoSubstanceFound)
@@ -1778,11 +1778,11 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 											#endif
 											GIAentityNodeArray[actionIndex] = addOrConnectActionToEntity(subjectEntityTemp, objectEntityTemp, actionEntity, sameReferenceSet);
 										}
-									#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+									#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 									}
 									#endif
 
-									#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+									#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 									bool passAlreadyAddedConditions = true;
 									bool relexAdditionalRequirement = false;
 									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
@@ -1813,7 +1813,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 									}
 									#endif
 								}
-								#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+								#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 								else
 								{//do not find matching object-subject relationship
 
@@ -1931,7 +1931,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					}
-					#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+					#elif defined GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 					}
 					#endif
 					currentRelationInList2 = currentRelationInList2->next;
@@ -1940,7 +1940,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
-		#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		#elif defined GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -1954,7 +1954,7 @@ void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAent
 	Tom runs quickly. 	_subj(run[2], Tom[1])
 	The bike was ridden.	_obj(ride[4], bike[2])
 	*/
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
 	param.numberOfRelations = 1;
 	param.useRelationArrayTest[REL1][REL_ENT1] = true; param.relationArrayTest[REL1][REL_ENT1] = relationGovernorCompositionNameArray; param.relationArrayTestSize[REL1][REL_ENT1] = RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES; param.relationArrayTestIsNegative[REL1][REL_ENT1] = true;
@@ -1993,7 +1993,7 @@ void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAent
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
-		#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		#elif defined GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -2071,7 +2071,7 @@ void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAent
 						int actionIndex = subjectObjectFunctionEntityIndex;	//relationGovernorIndex
 						GIAentityNode* actionEntity = GIAentityNodeArray[actionIndex];
 
-						#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+						#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 						bool subjectOrObjectIsConnectedToAnAdvMod = false;
 
 						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
@@ -2198,7 +2198,7 @@ void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAent
 								GIAentityNode* objectEntityTemp = subjectObjectEntity;
 								GIAentityNodeArray[actionIndex] = addOrConnectActionToObject(objectEntityTemp, actionEntity, sameReferenceSetObject);
 							}
-						#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+						#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 						}
 						#endif
 					}
@@ -2206,7 +2206,7 @@ void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAent
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
-		#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		#elif defined GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -2217,7 +2217,7 @@ void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAent
 //is this still used by Stanford? [appears to be Relex only]
 void linkObjectSubjectOfPreposition(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
 {
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	/*
 	The garage is next to the house.	_pobj(next_to, house)  + _psubj(next_to, garage)
 	*/
@@ -2333,7 +2333,7 @@ void linkObjectSubjectOfPreposition(GIAsentence* currentSentenceInList, bool GIA
 
 void linkConjunctionConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	/*
 	Tom and/or Max eat the cake.	conj_and(Tom[1], Max[3]) / conj_or(Tom[2], Max[4])
 	*/
@@ -2435,10 +2435,10 @@ void linkConjunctionConditions(GIAsentence* currentSentenceInList, bool GIAentit
 
 void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
 {
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 
 	#ifdef GIA_IGNORE_MEANINGLESS_RELATIONS
-	//NB with GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK, meaningless relations are now disabled completely rather than just ignored
+	//NB with GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK, meaningless relations are now disabled completely rather than just ignored
 	//to prevent meaningless relex relations; eg "on(be[2], on[6])"
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramA.numberOfRelations = 1;
@@ -2665,7 +2665,7 @@ void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 #endif
 }
 
-#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 void createConditionBasedUponPreposition(GIAentityNode* actionOrSubstanceConditionSubjectEntity, GIAentityNode* actionOrSubstanceConditionObjectEntity, GIArelation* currentRelationInList, bool negative, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType, bool sameReferenceSet)
 {
 	string relationType = currentRelationInList->relationType;
@@ -2726,7 +2726,7 @@ void createConditionBasedUponPreposition(GIAentityNode* actionOrSubstanceConditi
 	}
 	else if(prepositionName == REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN)
 	{//NB time query entities obviously do not have associated times (time grammar flags generated by relex)
-		passedPrepositionTime = true;		//are time nodes required to be attached to when query nodes (REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN)? Note this functionality has been removed with GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+		passedPrepositionTime = true;		//are time nodes required to be attached to when query nodes (REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN)? Note this functionality has been removed with GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 		passedPreposition = true;
 	}
 	#endif
@@ -2882,7 +2882,7 @@ void addTimeToSubstance(GIAentityNode* timeConditionEntity)
 }
 
 /*
-#ifdef GIA_USE_TIME_NODE_INDEXING
+#ifdef GIA_TIME_NODE_INDEXING
 void addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, GIAentityNode* timeConditionEntity, GIAentityNode* conditionNetworkIndexEntity, vector<GIAtimeConditionNode*>* timeConditionNodesActiveList, vector<long>* timeConditionNumbersActiveList)
 #else
 void addTimeConditionToEntity(GIAentityNode* substanceNode, GIAentityNode* timeConditionEntity, GIAentityNode* conditionNetworkIndexEntity)
@@ -2896,7 +2896,7 @@ GIAentityNode* addTimeConditionToEntity(GIAentityNode* substanceNode, GIAentityN
 	timeConditionEntity->conditionType = CONDITION_NODE_TYPE_TIME;
 
 	/*
-	#ifdef GIA_USE_TIME_NODE_INDEXING
+	#ifdef GIA_TIME_NODE_INDEXING
 	int timeConditionEntityIndex = INT_DEFAULT_VALUE;
 	bool argumentEntityAlreadyExistant = false;
 	long timeConditionTotalTimeInSeconds = calculateTotalTimeInSeconds(timeConditionEntity->entityName);
@@ -2971,7 +2971,7 @@ void linkDependentActionsType2(GIAsentence* currentSentenceInList, bool GIAentit
 	 use dep tag to connect dependent actions (interpret as condition - invent one)
 	 dep(create-6, copy-2)
 	*/
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
 	param.numberOfRelations = 1;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DEPENDENT;	//check this implementation is not conficting with any stanford dependency relation reductions as defined in RELATION_TYPE_DEPENDENT

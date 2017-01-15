@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -50,7 +50,7 @@
 
 
 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_undefined -1
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition 1
@@ -64,7 +64,7 @@
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity 9
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity 10
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntity 11
-#ifdef GIA_SUPPORT_ALIASES
+#ifdef GIA_ALIASES
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias 12
 #endif
 //#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
@@ -239,14 +239,14 @@ public:
 
 	bool useRedistributeSpecialCaseNonExistantRelationCheck[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];	//non existant relations tests - added GIA 2f12a/13-July-2014
 
-	#ifdef GIA_SUPPORT_PREDETERMINERS
+	#ifdef GIA_PREDETERMINERS
 
 	#endif
 };
 
 #endif
 
-#ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
+#ifdef GIA_GENERIC_ENTITY_INTERPRETATION
 class GIAgenericEntityInterpretationParameters
 {
 public:
@@ -290,7 +290,7 @@ public:
 #endif
 
 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 
 void initialiseBoolArray1D(bool* boolArray, int size, int value);
 void initialiseBoolArray2D(bool* boolArray, int size1, int size2, int value);
@@ -302,7 +302,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 
 #endif
 
-#ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
+#ifdef GIA_GENERIC_ENTITY_INTERPRETATION
 bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters* param);
 #endif
 

@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
@@ -41,7 +41,7 @@
 #include "GIAentityConnectionClass.h"
 #include "GIAconditionNodeClass.h"
 
-#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
+#ifdef GIA_1N1ATEMP1TO8_CHANGES
 	#define GIA_QUERY_DO_NOT_RECORD_IF_COMPLETELY_MISMATCHED_TRACE_PATHS		//added 13 July 2012
 #endif
 #define GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS					//default: enabled	//added 21 May 2012
@@ -54,13 +54,13 @@
 
 //#define GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS	//default: disabled
 #ifdef GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS
-	#define GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE (true)		//added with GIA_USE_1N1ATEMP1TO8_CHANGES
+	#define GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE (true)		//added with GIA_1N1ATEMP1TO8_CHANGES
 	//#define GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_OLD_TEXTUAL_OUTPUT
 #else
-	#ifndef GIA_SUPPORT_ALIASES
+	#ifndef GIA_ALIASES
 		#define GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES	//removed 15 August 2012
 	#endif
-	#define GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE (false)		//added with GIA_USE_1N1ATEMP1TO8_CHANGES
+	#define GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE (false)		//added with GIA_1N1ATEMP1TO8_CHANGES
 #endif
 #ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
 	#define GIA_QUERY_RELAX_CONFIDENCE_REQUIREMENTS_FOR_YES
@@ -166,7 +166,7 @@ public:
 	bool doNotParseQuerySubnetsWithConcepts;
 	#endif
 
-	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+	#ifdef GIA_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 	bool testReferenceSetContext;
 	GIAentityNode* referenceSetDefiniteEntity;
 	//GIAsentence* firstSentenceInList;
@@ -182,7 +182,7 @@ public:
 	#ifdef GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING_ONLY
 	bool traceConceptsOnly;
 	#endif
-	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
+	#ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 	bool logicalConditionDisableTraceConcepts;
 	#endif
 };
@@ -200,7 +200,7 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 		bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode* queryEntityNode, GIAentityNode* entityNode, int* numberOfMatchedNodes, bool knownBestMatch, int* numberOfMatchedNodesRequiredSynonymnDetection, bool traceModeIsQuery, GIAqueryTraceParameters* queryTraceParameters, GIAreferenceTraceParameters* referenceTraceParameters);
 #endif
 
-#ifdef GIA_USE_SYNONYMN_DETECTION
+#ifdef GIA_SYNONYMN_DETECTION
 bool compareEntitySynonyms(GIAentityNode* queryEntityNode, GIAentityNode* entityNode);
 #endif
 bool compareEntityAliases(GIAentityNode* queryEntityNode, GIAentityNode* entityNode);

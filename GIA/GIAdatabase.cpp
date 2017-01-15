@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -40,12 +40,12 @@
 
 
 
-#ifdef GIA_USE_DATABASE
+#ifdef GIA_DATABASE
 
 static int useDatabase;
 static string databaseFolderName;
 
-#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 unordered_map<string, bool>* DBnetworkIndexEntityNodesLoadedList;		//load all references (ids/entity names) whenever a networkIndex node is used
 #else
 unordered_map<string, GIAnetworkIndexEntityLoaded*>* DBnetworkIndexEntityNodesLoadedList;		//do not load references (ids/entity names) whenever a networkIndex node is used - only load the total number of instances associated with that networkIndex node
@@ -58,13 +58,13 @@ unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndexDBa
 
 GIAentityNode* findOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, string* entityNodeName, bool* found, long* index, bool addIfNonexistant, long* currentEntityNodeIDinCompleteList, long* currentEntityNodeIDinNetworkIndexEntityNodesList, bool saveNetwork)
 {
-	#ifdef GIA_USE_DATABASE
+	#ifdef GIA_DATABASE
 	GIAentityNode* entityNodeFound = NULL;
-	if((useDatabase == GIA_USE_DATABASE_TRUE_READ_INACTIVE) || (useDatabase == GIA_USE_DATABASE_TRUE_READ_ACTIVE))
+	if((useDatabase == GIA_DATABASE_TRUE_READ_INACTIVE) || (useDatabase == GIA_DATABASE_TRUE_READ_ACTIVE))
 	{
 		entityNodeFound = DBfindOrAddNetworkIndexEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, entityNodeName, found, index, addIfNonexistant, currentEntityNodeIDinCompleteList, currentEntityNodeIDinNetworkIndexEntityNodesList, saveNetwork);
 	}
-	else if(useDatabase == GIA_USE_DATABASE_FALSE)
+	else if(useDatabase == GIA_DATABASE_FALSE)
 	{
 		entityNodeFound = LocalFindOrAddNetworkIndexEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, entityNodeName, found, index, addIfNonexistant, currentEntityNodeIDinCompleteList, currentEntityNodeIDinNetworkIndexEntityNodesList, saveNetwork);
 	}
@@ -74,12 +74,12 @@ GIAentityNode* findOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* ent
 	return entityNodeFound;
 }
 
-#ifdef GIA_USE_DATABASE
+#ifdef GIA_DATABASE
 GIAentityNode* DBfindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, string* entityNodeName, bool* found, long* index, bool addIfNonexistant, long* currentEntityNodeIDinCompleteList, long* currentEntityNodeIDinNetworkIndexEntityNodesList, bool saveNetwork)
 {
 	GIAentityNode* entityNodeFound = NULL;
 
-	#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+	#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 	unordered_map<string, bool>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->find(*entityNodeName);
 	#else
 	unordered_map<string, GIAnetworkIndexEntityLoaded*>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->find(*entityNodeName);
@@ -88,7 +88,7 @@ GIAentityNode* DBfindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* e
 	if(networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end())
 	{//networkIndex entity found
 
-		#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+		#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 		bool networkIndexEntityNodeLoaded = networkIndexEntityNodesLoadedListIterator->second;
 		#else
 		GIAnetworkIndexEntityLoaded* networkIndexEntityLoaded = networkIndexEntityNodesLoadedListIterator->second;
@@ -116,7 +116,7 @@ GIAentityNode* DBfindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* e
 			entityNodesActiveListNetworkIndexes->insert(pair<string, GIAentityNode*>(*entityNodeName, networkIndexEntityNode));
 			addEntityNodesActiveListCompleteFastIndexDBcache(networkIndexEntityNode);	//added 2 Nov 2012	//CHECK THIS
 
-			#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+			#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 			networkIndexEntityNodesLoadedListIterator->second = true;
 			#else
 			networkIndexEntityLoaded->loaded = true;	//added 18 June 2012
@@ -151,7 +151,7 @@ GIAentityNode* DBfindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* e
 			newEntityNode->idInstance = GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE;
 			newEntityNode->entityType = GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX;	//added 10 May 2012
 			newEntityNode->idActiveList = *currentEntityNodeIDinCompleteList;
-			#ifdef GIA_USE_DATABASE
+			#ifdef GIA_DATABASE
 			newEntityNode->added = true;
 			#endif
 
@@ -165,7 +165,7 @@ GIAentityNode* DBfindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* e
 			entityNodesActiveListNetworkIndexes->insert(pair<string, GIAentityNode*>(*entityNodeName, newEntityNode));
 			(*currentEntityNodeIDinNetworkIndexEntityNodesList) = (*currentEntityNodeIDinNetworkIndexEntityNodesList) + 1;		//?not used for database...
 
-			#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+			#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 			bool networkIndexEntityNodeLoaded = true;
 			DBnetworkIndexEntityNodesLoadedList->insert(pair<string, bool>(*entityNodeName, networkIndexEntityNodeLoaded));
 			#else
@@ -220,7 +220,7 @@ GIAentityNode* LocalFindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>
 			newEntityNode->idInstance = GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE;
 			newEntityNode->entityType = GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX;	//added 10 May 2012
 			newEntityNode->idActiveList = *currentEntityNodeIDinCompleteList;
-			#ifdef GIA_USE_DATABASE
+			#ifdef GIA_DATABASE
 			newEntityNode->added = true;
 			#endif
 
@@ -235,8 +235,8 @@ GIAentityNode* LocalFindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>
 			entityNodesActiveListNetworkIndexes->insert(pair<string, GIAentityNode*>(*entityNodeName, newEntityNode));
 			(*currentEntityNodeIDinNetworkIndexEntityNodesList) = (*currentEntityNodeIDinNetworkIndexEntityNodesList) + 1;
 
-			#ifdef GIA_USE_DATABASE
-			#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+			#ifdef GIA_DATABASE
+			#ifndef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 			GIAnetworkIndexEntityLoaded* networkIndexEntityLoaded = new GIAnetworkIndexEntityLoaded();
 			networkIndexEntityLoaded->loaded = true;
 			networkIndexEntityLoaded->numberOfInstances = 0;
@@ -295,7 +295,7 @@ long maximumLong(long a, long b)
 
 
 
-#ifdef GIA_USE_DATABASE
+#ifdef GIA_DATABASE
 
 bool DBdirectoryExists(string* folderName)
 {
@@ -572,7 +572,7 @@ void DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unord
 	initialiseDBentityNodesActiveListCompleteFastIndexDBcache();
 
 	//based on code from DBwriteNetworkIndexEntityNodesLoadedList()
-	#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+	#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 	for(unordered_map<string, bool>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->begin(); networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end(); networkIndexEntityNodesLoadedListIterator++)
 	{
 		string networkIndexEntityName = networkIndexEntityNodesLoadedListIterator->first;
@@ -615,7 +615,7 @@ void DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unord
 		entityNodesActiveListNetworkIndexes->insert(pair<string, GIAentityNode*>(networkIndexEntityName, networkIndexEntityNode));
 		entityNodesActiveListComplete->push_back(networkIndexEntityNode);
 
-		#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+		#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 		networkIndexEntityNodesLoadedListIterator->second = true;
 		#else
 		networkIndexEntityLoaded->loaded = true;
@@ -644,7 +644,7 @@ void DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unord
 		{
 			GIAentityNode* entityNode = (*connectionIter)->entity;
 
-			#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+			#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 			if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[0]))	//test if entity has already had its connections loaded (and therefore has already been added to entityNodesActiveListComplete)
 			{
 			#endif
@@ -657,7 +657,7 @@ void DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unord
 					//read all instances
 					DBreadVectorConnections(entityNode, i);
 				}
-			#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+			#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 			}
 			#endif
 		}
@@ -692,19 +692,19 @@ void initialiseDatabase(bool readFromDatabase, string newDatabaseFolderName, boo
 
 		if(readFromDatabase)
 		{
-			setUseDatabase(GIA_USE_DATABASE_TRUE_READ_ACTIVE);
+			setUseDatabase(GIA_DATABASE_TRUE_READ_ACTIVE);
 		}
 		else
 		{
-			setUseDatabase(GIA_USE_DATABASE_TRUE_READ_INACTIVE);
+			setUseDatabase(GIA_DATABASE_TRUE_READ_INACTIVE);
 		}
 		/*
-		setUseDatabase(GIA_USE_DATABASE_TRUE_READ_INACTIVE);	//OLD: at initialisation (/by default), do not activate read (use active list instead)
+		setUseDatabase(GIA_DATABASE_TRUE_READ_INACTIVE);	//OLD: at initialisation (/by default), do not activate read (use active list instead)
 		*/
 	}
 	else
 	{
-		setUseDatabase(GIA_USE_DATABASE_FALSE);
+		setUseDatabase(GIA_DATABASE_FALSE);
 	}
 }
 
@@ -716,7 +716,7 @@ void DBreadNetworkIndexEntityNodesLoadedList()	//unordered_map<string, bool>* DB
 
 	string networkIndexEntityNodesListFileName = DBgenerateFileName(NULL, NULL, NULL, GIA_DATABASE_GENERATE_FILENAME_FILE_NETWORK_INDEX_ENTITY_NODES_LIST);
 
-#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 	ifstream parseFileObject(networkIndexEntityNodesListFileName.c_str());
 	if(!parseFileObject.rdbuf()->is_open())
 	{
@@ -998,7 +998,7 @@ void DBreadNetworkIndexEntityNode(string* entityName, GIAentityNode* networkInde
 	int idInstance = GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE;
 	DBreadEntityNode(entityName, idInstance, networkIndexEntityNode);
 
-	#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+	#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 	//added 18 June 2012 - now networkIndex entity nodes have their reference names/ids loaded upon first access in DB (this is required such that new idInstances can be assigned correctly)
 		//will this scale for ~1000000 instances per networkIndex node? [1 connection = 64bits/8bytes{id} + 64bytes{name} per networkIndex node = ~72bytes = 72MB per networkIndex node]. Perhaps not... - may need to devise an alternate system, where by total number of instances (and therefore max instance id) per networkIndex are recorded and loaded upon openDatabase
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
@@ -1097,14 +1097,14 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 			#endif
 
 			entity->entityName = entityNameCharStarTemp;
-			#ifdef GIA_USE_WORD_ORIG
+			#ifdef GIA_WORD_ORIG
 			entity->wordOrig = DBreplaceBlankString(string(wordOrigCharStarTemp));
 			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 			//cout << "entityNameCharStarTemp = " << entityNameCharStarTemp << endl;
 			//cout << "wordOrigCharStarTemp = " << wordOrigCharStarTemp << endl;
 			#endif
 			#endif
-			#ifdef GIA_SUPPORT_ALIASES
+			#ifdef GIA_ALIASES
 			string aliasesString = DBreplaceBlankString(string(aliasesCharStarTemp));
 			convertAliasesStringToAliases(entity, aliasesString);
 			#endif
@@ -1397,7 +1397,7 @@ void DBwriteEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 		string wordOrig = "";
 		wordOrig = DBaddBlankString(entity->wordOrig);
 		string aliasesString = "";
-		#ifdef GIA_SUPPORT_ALIASES
+		#ifdef GIA_ALIASES
 		convertAliasesToAliasesString(entity, &aliasesString);
 		#endif
 		aliasesString = DBaddBlankString(aliasesString);
@@ -1623,10 +1623,10 @@ void DBwriteNetworkIndexEntityNodesLoadedList()	//unordered_map<string, bool>* D
 	//cout << "networkIndexEntityNodesListFileName = " << networkIndexEntityNodesListFileName << endl;
 	#endif
 
-#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 
 	#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
-	cout << "error: GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS cannot be used with GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES" << endl;
+	cout << "error: GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS cannot be used with GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES" << endl;
 	exit(0);
 	#endif
 
@@ -1700,7 +1700,7 @@ void DBprintNetworkIndexEntityNodesLoadedList(string executionStage)
 {
 	cout << "DBprintNetworkIndexEntityNodesLoadedList{}:" << executionStage << endl;
 
-#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 	for(unordered_map<string, bool>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->begin(); networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end(); networkIndexEntityNodesLoadedListIterator++)
 	{
 		string networkIndexEntityName = networkIndexEntityNodesLoadedListIterator->first;
@@ -1762,7 +1762,7 @@ long DBreadNumberOfReferencesInList(string* entityNodeName, long idInstance, int
 
 void initialiseDBnetworkIndexEntityNodesLoadedList()
 {
-	#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+	#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 	DBnetworkIndexEntityNodesLoadedList = new unordered_map<string, bool>;
 	#else
 	DBnetworkIndexEntityNodesLoadedList = new unordered_map<string, GIAnetworkIndexEntityLoaded*>;

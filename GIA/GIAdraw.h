@@ -26,7 +26,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -55,7 +55,7 @@
 	//#define GIA_DRAW_USE_SUPPORT_PRINT_OF_DOCUMENT_TO_GRAY_SCALE		//switched on for patent diagrams
 #endif
 
-#define GIA_USE_SVG_ELLIPTICAL_BOXES (true)
+#define GIA_SVG_ELLIPTICAL_BOXES (true)
 
 #define MAX_GIA_TREE_DEPTH (100000)
 #define DRAW_X_INITIAL_OFFSET (150)

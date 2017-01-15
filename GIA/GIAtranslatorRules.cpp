@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -409,7 +409,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 		int asssertPostProcessingREL = INT_DEFAULT_VALUE;
 		string assertPostProcessingValue = "";
 		bool assertassignPluralAfterFinish = false;
-		#ifdef GIA_SUPPORT_PREDETERMINERS
+		#ifdef GIA_PREDETERMINERS
 		bool assertassignPredeterminerAfterFinish = false;
 		#endif
 
@@ -591,7 +591,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 						asssertPostProcessingREL = REL;
 						asssertPostProcessingREL_ENT = REL_ENT;
 					}
-					#ifdef GIA_SUPPORT_PREDETERMINERS
+					#ifdef GIA_PREDETERMINERS
 					else if(assertAttribute->value == "assignPredeterminerAfterFinish")
 					{
 						assertassignPredeterminerAfterFinish = true;
@@ -647,7 +647,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 					{
 						featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;
 					}
-					#ifdef GIA_SUPPORT_PREDETERMINERS
+					#ifdef GIA_PREDETERMINERS
 					if(assertassignPredeterminerAfterFinish)
 					{
 						int arrayIndexOfResultFound = GRAMMATICAL_PREDETERMINER_UNDEFINED;

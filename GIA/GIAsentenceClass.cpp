@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -35,7 +35,7 @@
 #include "GIAsentenceClass.h"
 
 
-#ifdef GIA_USE_STANFORD_CORENLP
+#ifdef GIA_STANFORD_CORENLP
 
 
 GIAstanfordCoreNLPmention::GIAstanfordCoreNLPmention(void)
@@ -78,8 +78,8 @@ GIAstanfordCoreNLPcoreference::~GIAstanfordCoreNLPcoreference(void)
 }
 #endif
 
-//#ifdef GIA_USE_ADVANCED_REFERENCING
-//these classes are only used by GIA_USE_ADVANCED_REFERENCING:
+//#ifdef GIA_ADVANCED_REFERENCING
+//these classes are only used by GIA_ADVANCED_REFERENCING:
 GIAMention::GIAMention(void)
 {
 	representative = false;
@@ -149,15 +149,15 @@ GIArelation::GIArelation(void)
 	#endif
 
 	disabled = false;
-	//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	//#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	disabledDuringLink = false;
 	//#endif
 
-	#ifdef GIA_USE_RELEX
+	#ifdef GIA_RELEX
 	subjObjRelationAlreadyAdded = false;
 	#endif
 
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	prepositionCombinationAlreadyCreatedTemp = false;
 	#endif
 
@@ -204,20 +204,20 @@ GIAfeature::GIAfeature(void)
 	entityIndex = 0;
 	word = "";
 	lemma = "";
-	#ifdef GIA_USE_LRP
+	#ifdef GIA_LRP
 	wordWithLRPforNLPonly = "";
 	#endif
-	#ifdef GIA_USE_LRP
+	#ifdef GIA_LRP
 	featureRevertedToOfficialLRPTemp = "";
 	#endif
 
-	#ifdef GIA_USE_RELEX
+	#ifdef GIA_RELEX
 	type = "";
 	grammar = "";
 	#endif
 
 	NER = FEATURE_NER_UNDEFINED;
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	CharacterOffsetBegin = INT_DEFAULT_VALUE;
 	CharacterOffsetEnd = INT_DEFAULT_VALUE;
 	stanfordPOS = "";
@@ -242,12 +242,12 @@ GIAfeature::GIAfeature(void)
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	grammaticalIndexOfDeterminer = GIA_ENTITY_INDEX_UNDEFINED;
 	#endif
-	#ifdef GIA_SUPPORT_PREDETERMINERS
+	#ifdef GIA_PREDETERMINERS
 	grammaticalPredeterminer = GRAMMATICAL_PREDETERMINER_UNDEFINED;
 	#endif
 	previousWordInSentenceIsTo = false;
 
-	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;		//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	mustSetIsConceptBasedOnApposRelation = false;
 	isPronounReference = false;
@@ -279,7 +279,7 @@ GIAfeature::~GIAfeature(void)
 
 GIAsentence::GIAsentence(void)
 {
-	#ifdef GIA_USE_RELEX
+	#ifdef GIA_RELEX
 	sentenceText = "";
 	constituentsText = "";
 	featuresText = "";
@@ -288,7 +288,7 @@ GIAsentence::GIAsentence(void)
 	#endif
 
 	sentenceIndex = GIA_SENTENCE_INDEX_UNDEFINED;
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	firstCoreferenceInList = new GIAstanfordCoreNLPcoreference();
 	#endif
 
@@ -320,7 +320,7 @@ GIAsentence::~GIAsentence(void)
 	}
 
 	#ifdef GIA_FREE_MEMORY1
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	if(firstCoreferenceInList != NULL)	//added 21 Sept 2012
 	{
 		delete firstCoreferenceInList;
@@ -361,7 +361,7 @@ void copySentences(GIAsentence* sentenceToCopy, GIAsentence* newSentence)
 {
 	newSentence->sentenceIndex = sentenceToCopy->sentenceIndex;
 
-	#ifdef GIA_USE_RELEX
+	#ifdef GIA_RELEX
 	newSentence->sentenceText = sentenceToCopy->sentenceText;
 	newSentence->constituentsText = sentenceToCopy->constituentsText;
 	newSentence->featuresText = sentenceToCopy->featuresText;
@@ -369,7 +369,7 @@ void copySentences(GIAsentence* sentenceToCopy, GIAsentence* newSentence)
 	newSentence->linksText = sentenceToCopy->linksText;
 	#endif
 
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	copyStanfordCoreferences(sentenceToCopy->firstCoreferenceInList, newSentence->firstCoreferenceInList);	//changed 21 Sept 2012
 	//newSentence->firstCoreferenceInList = sentenceToCopy->firstCoreferenceInList;
 	#endif
@@ -434,13 +434,13 @@ void copyFeatures(GIAfeature* firstFeatureInListToCopy, GIAfeature* firstFeature
 		currentFeature->word = currentFeatureToCopy->word;
 		currentFeature->lemma = currentFeatureToCopy->lemma;
 
-		#ifdef GIA_USE_RELEX
+		#ifdef GIA_RELEX
 		currentFeature->type = currentFeatureToCopy->type;
 		currentFeature->grammar = currentFeatureToCopy->grammar;
 		#endif
 
 		currentFeature->NER = currentFeatureToCopy->NER;
-		#ifdef GIA_USE_STANFORD_CORENLP
+		#ifdef GIA_STANFORD_CORENLP
 		currentFeature->CharacterOffsetBegin = currentFeatureToCopy->CharacterOffsetBegin;
 		currentFeature->CharacterOffsetEnd = currentFeatureToCopy->CharacterOffsetEnd;
 		currentFeature->stanfordPOS = currentFeatureToCopy->stanfordPOS;
@@ -463,7 +463,7 @@ void copyFeatures(GIAfeature* firstFeatureInListToCopy, GIAfeature* firstFeature
 }
 
 
-#ifdef GIA_USE_STANFORD_CORENLP
+#ifdef GIA_STANFORD_CORENLP
 void copyStanfordCoreferences(GIAstanfordCoreNLPcoreference* firstCoreferenceInListToCopy, GIAstanfordCoreNLPcoreference* firstCoreferenceInList)
 {
 	GIAstanfordCoreNLPcoreference* currentCoreferenceInListToCopy = firstCoreferenceInListToCopy;

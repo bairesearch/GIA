@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -49,8 +49,8 @@
 #include <cmath>
 #include <string>
 #include <vector>
-#include <unordered_map>		//required for GIA_USE_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR
-#include <utility> // make_pair	//required for GIA_USE_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR
+#include <unordered_map>		//required for GIA_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR
+#include <utility> // make_pair	//required for GIA_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR
 using namespace std;
 
 #define GIA_ENTITY_ID_INSTANCE_NETWORK_INDEX_ENTITY (0)
@@ -88,7 +88,7 @@ using namespace std;
 
 #define GRAMMATICAL_WORD_TYPE_UNDEFINED (0)
 
-#ifdef GIA_SUPPORT_PREDETERMINERS
+#ifdef GIA_PREDETERMINERS
 	//added 2i34a
 	//must be synced with GIAtranslatorDefs.h entityPredeterminerSmallArray;
 	#define GRAMMATICAL_PREDETERMINER_UNDEFINED (INT_DEFAULT_VALUE)	//-1
@@ -103,7 +103,7 @@ using namespace std;
 #define GIA_NLP_START_ENTITY_INDEX (1)
 #define GIA_NLP_START_SENTENCE_INDEX (1)
 
-#ifdef GIA_SUPPORT_ALIASES
+#ifdef GIA_ALIASES
 	#define GIA_ALIASES_CONVERT_TO_STRING_DELIMITER ';'	//has to be different than attribute delimiter used in GIA filesystem database GIA_DATABASE_ATTRIBUTE_DELIMITER
 #endif
 
@@ -296,8 +296,8 @@ static int entityVectorConnectionEqualitiesArray[GIA_ENTITY_NUMBER_OF_VECTOR_CON
 
 class GIAentityConnection;
 
-#ifdef GIA_USE_DATABASE
-#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+#ifdef GIA_DATABASE
+#ifndef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 class GIAnetworkIndexEntityLoaded
 {
 public:
@@ -334,11 +334,11 @@ public:
 
 	/*GIA Entity Name*/
 	string entityName;
-	#ifdef GIA_USE_WORD_ORIG
+	#ifdef GIA_WORD_ORIG
 	string wordOrig;		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
 	#endif
 	double confidence;		//not currently used
-	#ifdef GIA_SUPPORT_ALIASES
+	#ifdef GIA_ALIASES
 	vector<string> aliasList;
 	#endif
 
@@ -353,7 +353,7 @@ public:
 
 	/*GIA Connections*/
 	vector<GIAentityConnection*> entityVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];		//allows for generic coding
-	#ifdef GIA_USE_DATABASE
+	#ifdef GIA_DATABASE
 	//designed for a high scale database (eg 200,000 references per instance, 200,000 instances per networkIndex)
 	bool entityVectorConnectionsReferenceListLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];			//signifies whether all the vector connections in the reference list has been loaded from file and entityConnections entityNames+idInstance have therefore been populated. This is the first step required to enable loading of connections into RAM (see entityVectorConnectionsLoadedArray)
 	//bool entityVectorConnectionsLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//not used - vector connections are loaded into RAM on an individual basis. //signifies whether all the vector connection nodes have been loaded (eg from the db)
@@ -428,13 +428,13 @@ public:
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	int grammaticalIndexOfDeterminerTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	#endif
-	#ifdef GIA_SUPPORT_PREDETERMINERS
+	#ifdef GIA_PREDETERMINERS
 	int grammaticalPredeterminerTemp;
 	#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS
 	unordered_map<int, int> grammaticalPredeterminerTempSentenceArray;	//only for instances (not for networkIndexes)	- required for GIA advanced referencing as different references to an entity may well have different predeterminers (eg each)
 	#endif
 	#endif
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	string stanfordPOStemp;
 	string NormalizedNERtemp;
 	string TimexTemp;
@@ -450,16 +450,16 @@ public:
 	int entityIndexTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Stanford CoreNLP referencing only?)
 	int sentenceIndexTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Stanford CoreNLP referencing only?)
 	bool isToBeComplimentOfActionTemp;	//required for Relex (linkConditions()/defineSubstancesOfPossessivePrepositions())
-	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	bool disableParsingAsPrepositionRelationTemp;
 	#endif
 	bool entityAlreadyDeclaredInThisContext;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
 	bool hasAssociatedInstanceTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	#ifdef GIA_SUPPORT_ALIASES
+	#ifdef GIA_ALIASES
 	bool isName;
 	bool isNameQuery;
 	#endif
-	#ifdef GIA_SUPPORT_NUMBER_OF
+	#ifdef GIA_NUMBER_OF
 	bool isNumberOf;	//added NLC1j18a/24-September-2014
 	#endif
 	
@@ -487,7 +487,7 @@ public:
 	int referenceSetID;
 	int minimumEntityIndexOfReferenceSet;
 	#endif
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_ADVANCED_REFERENCING
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	bool wasReferenceTemp;
 	#endif
@@ -495,7 +495,7 @@ public:
 	bool wasReference;
 	#endif
 	#endif
-	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	bool alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	bool mustSetIsConceptBasedOnApposRelation;
 	bool isPronounReference;
@@ -514,20 +514,20 @@ public:
 	#endif
 	#endif
 		//expletives:
-	#ifdef GIA_SUPPORT_EXPLETIVES
+	#ifdef GIA_EXPLETIVES
 	bool isExpletive;	//added 2n7b
 	#endif
 	
 		//databasing:
-	#ifdef GIA_USE_DATABASE
+	#ifdef GIA_DATABASE
 	bool added;	//implies database Update is Required
 	bool modified;	//implies database Update is Required
-	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+	#ifndef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 	GIAnetworkIndexEntityLoaded* networkIndexEntityLoaded;
 	#endif
 	#endif
 		//nlg:
-	#ifdef GIA_USE_NLG
+	#ifdef GIA_NLG
 	bool parsedForLanguageGeneration;
 	bool sourceAddedInLanguageGeneration;
 	bool sourceReferencedInLanguageGeneration;
@@ -548,7 +548,7 @@ public:
 	string NLCoriginalNumericalVariableName;	//added NLC 1h1d/24-July-2014
 	bool NLCcontextGeneratedTemp;		//added NLC 1l2d/31-October-2014
 	bool NLCcategoryListCreatedTemp;	//added NLC 1l10d/06-November-2014
-	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
+	#ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 	bool NLCmathTextParsablePhraseEntity;
 	#endif
 	bool NLCisAlias;
@@ -590,7 +590,7 @@ public:
 };
 
 
-#ifdef GIA_USE_DATABASE
+#ifdef GIA_DATABASE
 void DBsetEntityConnectionsReferenceListsLoaded(GIAentityNode* entityNode, bool loaded);
 #endif
 
@@ -604,7 +604,7 @@ int calculateQuantityMultiplierInt(string quantityMultiplierString);
 string printQuantityNumberString(GIAentityNode* entityNode);
 
 
-#ifdef GIA_SUPPORT_ALIASES
+#ifdef GIA_ALIASES
 void convertAliasesStringToAliases(GIAentityNode* entityNode, string aliasesString);
 void convertAliasesToAliasesString(GIAentityNode* entityNode, string* aliasesString);
 vector<string> explode(const string& str, const char& ch);
@@ -613,7 +613,7 @@ string* convertDelimitedStringToArray(string str, char delimiter);
 
 void deleteEntitiesInEntityNodeList(vector<GIAentityNode*>* entityNodesActiveListComplete);
 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 bool testEntityCharacteristics(GIAentityNode* entity, vector<GIAentityCharacteristic*>* redistributeSpecialCasePropertiesTestVector, bool andOrOr);
 	bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic);
 		void testEntityCharacteristicIterationbool(bool entityVal, GIAentityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch);

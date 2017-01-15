@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -35,7 +35,7 @@
 
 #include "GIAtranslatorOperations.h"
 #include "GIAdatabase.h"
-#ifdef GIA_SUPPORT_NLC_INTEGRATION
+#ifdef GIA_NLC_INTEGRATION
 #include "NLCpreprocessorSentenceClass.h"
 #endif
 #ifdef GIA_LRP_NORMALISE_PREPOSITIONS
@@ -45,7 +45,7 @@
 #include "GIAsemanticParserOperations.h"
 #endif
 
-#ifdef GIA_SUPPORT_NLC_INTEGRATION
+#ifdef GIA_NLC_INTEGRATION
 NLCsentence* firstNLCsentenceInListLocal;
 #endif
 
@@ -95,7 +95,7 @@ void initialiseGIATranslatorForTexualContextOperations()
 
 }
 
-#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 //this is no longer required with redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition, etc..
 bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(GIArelation* currentRelationInList, GIAentityNode* GIAentityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType)
 {
@@ -385,7 +385,7 @@ GIAentityNode* addInstance(GIAentityNode* entity, int instanceType)
 {
 	//configure substance node
 	GIAentityNode* newInstance = new GIAentityNode();
-	#ifdef GIA_USE_DATABASE
+	#ifdef GIA_DATABASE
 	newInstance->added = true;
 	#endif
 
@@ -413,7 +413,7 @@ GIAentityNode* addInstance(GIAentityNode* entity, int instanceType)
 	addInstanceEntityNodeToActiveLists(newInstance);
 
 	newInstance->entityName = entity->entityName;
-	#ifdef GIA_USE_WORD_ORIG
+	#ifdef GIA_WORD_ORIG
 	newInstance->wordOrig = entity->wordOrig;
 	#endif
 	newInstance->idInstance = determineNextIdInstance(entity);
@@ -421,7 +421,7 @@ GIAentityNode* addInstance(GIAentityNode* entity, int instanceType)
 	entity->hasAssociatedInstance = true;
 	entity->hasAssociatedInstanceTemp = true;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	/*//original code from addSubstance: what was this used for?
-	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+	#ifdef GIA_SPECIFIC_CONCEPTS
 	if(entity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
 	{
 		newInstance->entityType = GIA_ENTITY_TYPE_TYPE_CONCEPT;
@@ -475,7 +475,7 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 		newSubstance->grammaticalTenseModifierArrayTemp[i] = entity->grammaticalTenseModifierArrayTemp[i];	//including GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE eg "substance has progressive (eg lying/sitting/being happy)"
 	}
 	newSubstance->grammaticalTenseTemp = entity->grammaticalTenseTemp;
-	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES	// or GIA_USE_GENERIC_ENTITY_INTERPRETATION
+	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES	// or GIA_GENERIC_ENTITY_INTERPRETATION
 	newSubstance->grammaticalDefiniteTemp = entity->grammaticalDefiniteTemp;	//must forward grammatical info for GIAtranslatorDefineSubstances.cpp post substance declaration modifications (ie defineConcepts)
 	newSubstance->grammaticalIndefinitePluralTemp = entity->grammaticalIndefinitePluralTemp;	//must forward grammatical info for GIAtranslatorDefineSubstances.cpp post substance declaration modifications (ie defineConcepts)
 	newSubstance->grammaticalProperNounTemp = entity->grammaticalProperNounTemp;	//must forward grammatical info for GIAtranslatorDefineSubstances.cpp post substance declaration modifications (ie defineConcepts)
@@ -486,18 +486,18 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	newSubstance->grammaticalIndexOfDeterminerTemp = entity->grammaticalIndexOfDeterminerTemp;
 	#endif
-	#ifdef GIA_SUPPORT_PREDETERMINERS
+	#ifdef GIA_PREDETERMINERS
 	newSubstance->grammaticalPredeterminerTemp = entity->grammaticalPredeterminerTemp;
 	#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS
 	newSubstance->grammaticalPredeterminerTempSentenceArray.insert(make_pair(entity->sentenceIndexTemp, entity->grammaticalPredeterminerTemp));
 	#endif
 	#endif
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	newSubstance->NormalizedNERtemp = entity->NormalizedNERtemp;	//always required (not just for time info / time condition related)
 	#endif
 	newSubstance->NERTemp = entity->NERTemp;
 
-	#ifdef GIA_SUPPORT_ALIASES
+	#ifdef GIA_ALIASES
 	if(entity->isName)
 	{
 		entity->isName = false;	//added 2n5a
@@ -505,7 +505,7 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 	}
 	#endif
 
-	#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
+	#ifdef GIA_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
 	if(entity->isQuery)
 	{
 		entity->isQuery = false;
@@ -513,7 +513,7 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 
 		//this propogation was only defined for substance instances [generalised 1t1m 24 July 2013]:
 		#ifdef GIA_1S8D_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_APPLY_FIX_TO_IS_NAME_QUERY_PROPOGATION
-		#ifdef GIA_SUPPORT_ALIASES
+		#ifdef GIA_ALIASES
 		if(entity->isNameQuery)
 		{
 			entity->isNameQuery = false;
@@ -522,7 +522,7 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 		#endif
 		#endif
 
-		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
+		#ifdef GIA_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
 		if(entity->isWhichOrEquivalentWhatQuery)
 		{
 			entity->isWhichOrEquivalentWhatQuery = false;
@@ -555,7 +555,7 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 	#endif
 	#endif
 
-	#ifdef GIA_SUPPORT_NUMBER_OF
+	#ifdef GIA_NUMBER_OF
 	if(entity->isNumberOf)
 	{
 		entity->isNumberOf = false;	//added 2n5a
@@ -578,7 +578,7 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 	#endif
 	#endif
 	
-	#ifdef GIA_SUPPORT_EXPLETIVES
+	#ifdef GIA_EXPLETIVES
 	if(entity->isExpletive)
 	{
 		entity->isExpletive = false;
@@ -590,7 +590,7 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 
 
 /*
-#ifdef GIA_USE_TIME_NODE_INDEXING
+#ifdef GIA_TIME_NODE_INDEXING
 void addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, int tense, vector<GIAtimeConditionNode*>* timeConditionNodesActiveList, vector<long>* timeConditionNumbersActiveList)
 #else
 void addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, int tense)
@@ -601,7 +601,7 @@ void addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, int tens
 	substanceNode->conditionType = CONDITION_NODE_TYPE_TIME;
 
 	/*
-	#ifdef GIA_USE_TIME_NODE_INDEXING
+	#ifdef GIA_TIME_NODE_INDEXING
 	int timeConditionEntityIndex = INT_DEFAULT_VALUE;
 	bool argumentEntityAlreadyExistant = false;
 	long timeConditionTotalTimeInSeconds = 0; //cannot assign absolute time to an event which occurs in the past.... //calculateTotalTimeInSeconds{};
@@ -874,7 +874,7 @@ GIAentityNode* addOrConnectConditionToEntity(GIAentityNode* conditionSubjectEnti
 		}
 		#endif
 
-		#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		//required to compensate for defineSubstancesActions{} being exectuted before linkDependentActionsType1{}
 		newOrExistingCondition->entityType = GIA_ENTITY_TYPE_TYPE_CONDITION;
 		#endif
@@ -926,7 +926,7 @@ GIAentityNode* addOrConnectConditionToSubject(GIAentityNode* conditionSubjectEnt
 
 		newOrExistingCondition = addInstanceToInstanceDefinition(conditionEntity, GIA_ENTITY_TYPE_TYPE_CONDITION);
 
-		#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		//required to compensate for defineSubstancesActions{} being exectuted before linkDependentActionsType1{}
 		newOrExistingCondition->entityType = GIA_ENTITY_TYPE_TYPE_CONDITION;
 		#endif
@@ -972,7 +972,7 @@ GIAentityNode* addOrConnectConditionToObject(GIAentityNode* conditionObjectEntit
 
 		newOrExistingCondition = addInstanceToInstanceDefinition(conditionEntity, GIA_ENTITY_TYPE_TYPE_CONDITION);
 
-		#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		//required to compensate for defineSubstancesActions{} being exectuted before linkDependentActionsType1{}
 		newOrExistingCondition->entityType = GIA_ENTITY_TYPE_TYPE_CONDITION;
 		#endif
@@ -1561,12 +1561,12 @@ GIAentityConnection* writeVectorConnection(GIAentityNode* entityNode, GIAentityN
 				#ifndef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 				if(entityVectorConnectionIsBasicArray[connectionType])
 				{
-					#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+					#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 					if(connectionType != GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
 					{
 					#endif
 						vectorConnection->clear();	//clear the vector (basic connections only support 1 node)
-					#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+					#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 					}
 					#endif
 				}
@@ -1593,10 +1593,10 @@ GIAentityConnection* writeVectorConnection(GIAentityNode* entityNode, GIAentityN
 				*/
 				#endif
 
-				#ifdef GIA_USE_DATABASE
-				if((getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE) || (getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_INACTIVE))	//NB even if not accessing the database for new information (read), still prepare nodes for database write
+				#ifdef GIA_DATABASE
+				if((getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE) || (getUseDatabase() == GIA_DATABASE_TRUE_READ_INACTIVE))	//NB even if not accessing the database for new information (read), still prepare nodes for database write
 				{
-					//#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS		//why is this preprocessor check not required???
+					//#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS		//why is this preprocessor check not required???
 					//required for database syncronisation with RAM
 					if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
 					{
@@ -1722,9 +1722,9 @@ long determineNextIdInstance(GIAentityNode* entity)
 	}
 	#endif
 
-//#if defined(GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS) || !defined(GIA_USE_DATABASE)
-//check #elif !defined GIA_USE_DATABASE is OK instead of #elif !defined(GIA_USE_DATABASE)
-#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+//#if defined(GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS) || !defined(GIA_DATABASE)
+//check #elif !defined GIA_DATABASE is OK instead of #elif !defined(GIA_DATABASE)
+#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 	#ifdef GIA_ID_INSTANCE_ALLOW_INSTANCE_DELETIONS
 	if(!(networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].empty()))
 	{
@@ -1745,7 +1745,7 @@ long determineNextIdInstance(GIAentityNode* entity)
 	long numberOfInstances =  networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].size();
 	nextIdInstance = numberOfInstances;
 	#endif
-#elif !defined GIA_USE_DATABASE
+#elif !defined GIA_DATABASE
 	#ifdef GIA_ID_INSTANCE_ALLOW_INSTANCE_DELETIONS
 	if(!(networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].empty()))
 	{
@@ -1783,7 +1783,7 @@ long determineNextIdInstance(GIAentityNode* entity)
 }
 
 
-#ifdef GIA_USE_DATABASE
+#ifdef GIA_DATABASE
 /*//replaced with optimised function findEntityNodesActiveListCompleteFastIndexDBactive{}
 bool entityInActiveListComplete(string* entityName, long idInstance)
 {
@@ -1835,7 +1835,7 @@ void addInstanceEntityNodeToActiveLists(GIAentityNode* entity)
 		entityNodesActiveListComplete->push_back(entity);
 		currentEntityNodeIDinCompleteList++;
 
-		if(getUseDatabase() != GIA_USE_DATABASE_FALSE)
+		if(getUseDatabase() != GIA_DATABASE_FALSE)
 		{
 			addEntityNodesActiveListCompleteFastIndexDBactive(entity);	//added 2 Nov 2012
 		}
@@ -1850,7 +1850,7 @@ void addInstanceEntityNodeToActiveLists(GIAentityNode* entity)
 
 
 
-#ifdef GIA_SUPPORT_ALIASES
+#ifdef GIA_ALIASES
 void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNodeToMerge)
 {
 	if(entityNode->idActiveList == entityNodeToMerge->idActiveList)
@@ -1913,7 +1913,7 @@ void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNo
 
 						if(entityNodeToMerge == entityConnectedToEntityConnectedToEntityToMerge)	//OR (entityNodeToMerge == entityConnectedToEntityConnectedToEntityToMerge)?
 						{
-							#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+							#ifndef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 							//the commenting out of the below case is required for advanced referencing (eg networkIndex Tom has associated instance Dog) [NB this means that instances can appear to have more than one entityNodeDefiningThisInstance]
 							if((entityConnectedToEntityToMerge->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX) && (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE))
 							{//restored 29 November 2012, and condition (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE) added
@@ -1924,7 +1924,7 @@ void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNo
 								//delete* connectionIter2;	//delete connection
 								connectionIter2 = entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].erase(connectionIter2);		//(*connectionIter2)->entity = NULL;	//need a better delete routine
 								connectionIter2Erased = true;
-								#ifdef GIA_USE_DATABASE
+								#ifdef GIA_DATABASE
 								//(*connectionIter2)->modified = true;
 								entityConnectedToEntityToMerge->entityVectorConnectionsRemovedArray[iInverted] = true;	//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
 								#endif
@@ -1938,12 +1938,12 @@ void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNo
 								#endif
 
 								(*connectionIter2)->entity = entityNode;
-								#ifdef GIA_USE_DATABASE
+								#ifdef GIA_DATABASE
 								(*connectionIter2)->entityName = entityNode->entityName;	//added 29 November 2012
 								(*connectionIter2)->idInstance = entityNode->idInstance;	//added 29 November 2012
 								(*connectionIter2)->modified = true;
 								#endif
-							#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+							#ifndef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 							}
 							#endif
 						}
@@ -1956,7 +1956,7 @@ void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNo
 
 					//connect entityNode to entityConnectedToEntityToMerge (x)
 
-					#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+					#ifndef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 					//the commenting out of the below case is required for advanced referencing (eg networkIndex Tom has associated instance Dog) [NB this means that instances can appear to have more than one entityNodeDefiningThisInstance]
 					if(!((entityConnectedToEntityToMerge->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX) && (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)))
 					{
@@ -1970,7 +1970,7 @@ void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNo
 						bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 						#endif
 						writeVectorConnection(entityNode, entityConnectedToEntityToMerge, i, sameReferenceSet);
-					#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+					#ifndef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 					}
 					#endif
 				}
@@ -1989,7 +1989,7 @@ void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNo
 				//delete* connectionIter;	//delete connection
 				connectionIter = entityNodeToMerge->entityVectorConnectionsArray[i].erase(connectionIter);		//(*connectionIter)->entity = NULL;	//need a better delete routine
 				connectionIterErased = true;
-				#ifdef GIA_USE_DATABASE
+				#ifdef GIA_DATABASE
 				//(*connectionIter)->modified = true;
 				entityNodeToMerge->entityVectorConnectionsRemovedArray[i] = true;	//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
 				#endif
@@ -2020,7 +2020,7 @@ void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNo
 					#endif
 					connectionIter = entityNode->entityVectorConnectionsArray[i].erase(connectionIter);		//(*connectionIter)->entity = NULL;	//need a better delete routine
 					connectionIterErased = true;
-					#ifdef GIA_USE_DATABASE
+					#ifdef GIA_DATABASE
 					//(*connectionIter)->modified = true;
 					entityNode->entityVectorConnectionsRemovedArray[i] = true;	//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
 					#endif
@@ -2059,11 +2059,11 @@ void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNo
 			#endif
 			entityNode->isQuery = entityNodeToMerge->isQuery;
 			entityNode->isWhichOrEquivalentWhatQuery = entityNodeToMerge->isWhichOrEquivalentWhatQuery;
-			#ifdef GIA_SUPPORT_ALIASES
+			#ifdef GIA_ALIASES
 			entityNode->isNameQuery = entityNodeToMerge->isNameQuery;
 			#endif
 		}
-		#ifdef GIA_SUPPORT_ALIASES
+		#ifdef GIA_ALIASES
 		entityNode->isName = entityNodeToMerge->isName;
 		#endif
 
@@ -2092,7 +2092,7 @@ GIAentityNode* getPrimaryNetworkIndexNodeDefiningInstance(GIAentityNode* instanc
 	{
 		primaryNetworkIndexNodeDefiningInstance = (instanceEntity->entityNodeDefiningThisInstance->back())->entity;
 
-		#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+		#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 		for(vector<GIAentityConnection*>::iterator connectionIter = instanceEntity->entityNodeDefiningThisInstance->begin(); connectionIter != instanceEntity->entityNodeDefiningThisInstance->end(); connectionIter++)
 		{
 			GIAentityNode* networkIndexEntityNode = (*connectionIter)->entity;
@@ -2111,7 +2111,7 @@ GIAentityNode* getPrimaryNetworkIndexNodeDefiningInstance(GIAentityNode* instanc
 }
 
 
-#ifdef GIA_SUPPORT_NLC_INTEGRATION
+#ifdef GIA_NLC_INTEGRATION
 NLCsentence* getFirstNLCsentenceInList()
 {
 	return firstNLCsentenceInListLocal;
@@ -2202,7 +2202,7 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 
 	return foundIndefiniteEntity;
 }
-#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
+#ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 bool checkIfSentenceIsMathTextParsablePhrase(GIAsentence* currentSentenceInList)
 {
 	bool sentenceIsMathTextParsablePhrase = false;

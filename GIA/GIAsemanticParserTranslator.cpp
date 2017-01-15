@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParserTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -39,7 +39,7 @@
 #include "GIAnlp.h"
 #include "GIAsemanticParserDatabase.h"
 #endif
-#ifdef GIA_USE_BOT
+#ifdef GIA_BOT
 #include "GIAbot.h"
 #endif
 #ifdef GIA_LRP_NORMALISE_PREPOSITIONS
@@ -125,13 +125,13 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1a; fillGrammaticalArrays" << endl;
 	#endif
-	#ifdef GIA_USE_RELEX
+	#ifdef GIA_RELEX
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX) 				//OLD: (NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
 		fillGrammaticalArraysRelex(currentSentenceInList);
 	}
 	#endif
-	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
+	#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS
 	if((NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER) || (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP))	//OLD: (NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
 		//fillGrammaticalArraysStanford(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser, featureArrayTemp);	//not possible as Stanford syntactical dependency relations are assumed not available
@@ -157,11 +157,11 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
 
 #ifndef GIA_ADVANCED_REFERENCING_DISABLE_LINKING
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_ADVANCED_REFERENCING
 	if(linkPreestablishedReferencesGIA)
 	{
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-		cout << "\n\t\t\t GIA_USE_ADVANCED_REFERENCING_DEBUG (5linkAdvancedReferencesGIA)\n" << endl;
+		cout << "\n\t\t\t GIA_ADVANCED_REFERENCING_DEBUG (5linkAdvancedReferencesGIA)\n" << endl;
 		#endif
 		#ifdef GIA_SEMANTIC_PARSER_TRANSLATOR_DEBUG
 		cout << "pass 3ii; link advanced references GIA (eg the red car is fast. Mike drove the red car.)" << endl;
@@ -184,7 +184,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 			linkPronounReferencesRelex(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, featureArrayTemp);	//NB third parameter used to be GIAfeatureTempEntityNodeArray
 		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
 		}
-		#ifdef GIA_USE_STANFORD_CORENLP
+		#ifdef GIA_STANFORD_CORENLP
 		else if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 		{
 			#ifdef GIA_SEMANTIC_PARSER_TRANSLATOR_DEBUG
@@ -195,7 +195,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 		#endif
 		#endif
 		#endif
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_ADVANCED_REFERENCING
 	}
 	#endif
 #endif
@@ -248,7 +248,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 			//record sentenceIndex for networkIndex entity nodes also (NB cannot use GIAnetworkIndexNodeArray here as it won't necessarily include networkIndex entity nodes for prepositions [for dynamic linking])
 			if(!(GIAentityNodeArray[w]->entityNodeDefiningThisInstance->empty()))
 			{
-				#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+				#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 				GIAentityNode* instanceEntity = GIAentityNodeArray[w];
 				for(vector<GIAentityConnection*>::iterator connectionIter = instanceEntity->entityNodeDefiningThisInstance->begin(); connectionIter != instanceEntity->entityNodeDefiningThisInstance->end(); connectionIter++)
 				{
@@ -269,7 +269,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 						#endif
 					}
 
-				#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+				#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 				}
 				#endif
 			}
@@ -337,10 +337,10 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 		{
 			entityNodesActiveListSentence->push_back(GIAentityNodeArray[w]);
 
-			#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
+			#ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 			if(checkIfSentenceIsMathTextParsablePhrase(currentSentenceInList))
 			{
-				#ifndef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
+				#ifndef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
 				if(GIAentityNodeArray[w]->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
 				{
 				#endif
@@ -348,7 +348,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 					{
 						GIAentityNodeArray[w]->NLCmathTextParsablePhraseEntity = true;
 					}
-				#ifndef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
+				#ifndef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
 				}
 				#endif
 			}
@@ -466,7 +466,7 @@ void locateAndAddAllNetworkIndexEntitiesBasedOnSemanticRelations(GIAsentence* cu
 				}
 				#endif
 
-				#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+				#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 				//this is required because negative assignment is now performed during redistribution
 				if(currentRelationInList->negative)	//TODO: detect negative from GIA semanticRelation argument (yet to implement)
 				{
@@ -478,7 +478,7 @@ void locateAndAddAllNetworkIndexEntitiesBasedOnSemanticRelations(GIAsentence* cu
 				#ifdef GIA_DEBUG
 				//cout << "filling: " << relationIndex[i] << " " << name[i] << endl;
 				#endif
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_ADVANCED_REFERENCING
 				//this is required for fillGrammaticalArraysStanford findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet()	[nb these values are applied to networkIndex entities only]
 				GIAnetworkIndexNodeArray[relationIndex[i]]->entityIndexTemp = relationIndex[i];
 				GIAnetworkIndexNodeArray[relationIndex[i]]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
@@ -614,7 +614,7 @@ void defineSubstancesBasedOnSemanticRelations(GIAsentence* currentSentenceInList
 	cout << "error: USE_GIA2 currently requires GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES (as it simplifies coding)";
 	#endif
 
-	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXES
+	#ifdef GIA_SPECIFIC_ACTION_NETWORK_INDEXES
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "define substances action networkIndexes, eg 'swim' in 'To swim to the beach requires strength.'" << endl;
 	#endif

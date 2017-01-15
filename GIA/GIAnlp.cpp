@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -37,7 +37,7 @@
 #include "XMLrulesClass.h"
 #include "GIAnlpParser.h"
 #include "GIAtranslatorDefs.h" //required for featureNERtypeArray only
-#ifdef GIA_USE_LRP
+#ifdef GIA_LRP
 #include "GIAlrp.h"
 #endif
 #include "SHAREDvars.h"	//file io
@@ -68,7 +68,7 @@ void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfi
 	bool result = true;
 	string NLPParserExecutableName = "";
 	string NLPexeFolder = "";
-	#ifdef GIA_USE_RELEX
+	#ifdef GIA_RELEX
 	if(NLPParser == GIA_NLP_PARSER_RELEX)
 	{
 		if(NLPrelexCompatibilityMode)
@@ -82,7 +82,7 @@ void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfi
 		NLPexeFolder = NLPexeFolderArray[GIA_NLP_PARSER_RELEX];
 	}
 	#endif
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	if(NLPParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
 		#ifdef STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS
@@ -100,7 +100,7 @@ void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfi
 		NLPexeFolder = NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_CORENLP];
 	}
 	#endif
-	#ifdef GIA_USE_STANFORD_PARSER
+	#ifdef GIA_STANFORD_PARSER
 	if(NLPParser == GIA_NLP_PARSER_STANFORD_PARSER)
 	{
 		NLPParserExecutableName = GIA_STANFORD_PARSER_EXECUTABLE_NAME;
@@ -121,7 +121,7 @@ void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfi
 
 	setCurrentDirectory(tempFolder);
 
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	if(NLPParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
 		#ifdef LINUX
@@ -188,7 +188,7 @@ bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQu
 {
 	bool result = true;
 
-	#ifdef GIA_USE_RELEX
+	#ifdef GIA_RELEX
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
 		#ifdef GIA_NLP_DEBUG
@@ -206,7 +206,7 @@ bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQu
 		*createNewSentences = false;
 	}
 	#endif
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
 		#ifdef GIA_NLP_DEBUG
@@ -220,7 +220,7 @@ bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQu
 	}
 	#endif
 	#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
-	#ifdef GIA_USE_STANFORD_PARSER
+	#ifdef GIA_STANFORD_PARSER
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER)
 	{
 		//stanford parser does not create lemmas and so can't be used for full GIA feature extraction
@@ -247,7 +247,7 @@ bool parseNLPparserRelationsFile(string inputTextNLPrelationXMLfileName, bool is
 {
 	bool result = true;
 
-	#ifdef GIA_USE_RELEX
+	#ifdef GIA_RELEX
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
 	{
 		#ifdef GIA_NLP_DEBUG
@@ -259,7 +259,7 @@ bool parseNLPparserRelationsFile(string inputTextNLPrelationXMLfileName, bool is
 		}
 	}
 	#endif
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
 		#ifdef GIA_NLP_DEBUG
@@ -271,7 +271,7 @@ bool parseNLPparserRelationsFile(string inputTextNLPrelationXMLfileName, bool is
 		}
 	}
 	#endif
-	#ifdef GIA_USE_STANFORD_PARSER
+	#ifdef GIA_STANFORD_PARSER
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_STANFORD_PARSER)
 	{
 		#ifdef GIA_NLP_DEBUG
@@ -290,7 +290,7 @@ bool parseNLPparserRelationsFile(string inputTextNLPrelationXMLfileName, bool is
 	return result;
 }
 
-#ifdef GIA_USE_RELEX
+#ifdef GIA_RELEX
 bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, bool parseRelations, bool parseFeatures, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
@@ -307,7 +307,7 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIApar
 
 	if(result)
 	{
-		#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
+		#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 		XMLparserTag* currentTag2 = firstTagInXMLFile;
 		currentTag2 = parseTagDownALevel(currentTag2, Relex_CFF_XML_TAG_nlparse, &result);
 		if(result)
@@ -447,7 +447,7 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIApar
 						}
 
 					}
-		#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
+		#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 					GIAparagraph* newParagraph = new GIAparagraph();
 					newParagraph->previous = currentParagraph;
 					currentParagraph->next = newParagraph;
@@ -470,7 +470,7 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIApar
 #endif
 
 
-#ifdef GIA_USE_STANFORD_CORENLP
+#ifdef GIA_STANFORD_CORENLP
 bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, bool parseRelations, bool parseFeatures, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
@@ -506,7 +506,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 			XMLparserTag* currentTagInSentences = firstTagInSentences;
 			while(currentTagInSentences->nextTag != NULL)
 			{
-				#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+				#ifdef GIA_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 				bool invalidSentenceFoundIsolatedFullStop = false;
 				#endif
 
@@ -536,7 +536,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 
 					while(currentTagInTokens->nextTag != NULL)
 					{
-						#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+						#ifdef GIA_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 						int lastFeatureEntityIndex = INT_DEFAULT_VALUE;
 						string lastFeatureWord = "";
 						#endif
@@ -545,11 +545,11 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 						{
 							string entityIndexString = currentTagInTokens->firstAttribute->value;
 							currentFeatureInList->entityIndex = convertStringToInt(entityIndexString);
-							#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+							#ifdef GIA_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 							lastFeatureEntityIndex = currentFeatureInList->entityIndex;
 							#endif
 						}
-						#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+						#ifdef GIA_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 						else
 						{
 							string entityIndexString = currentTagInTokens->firstAttribute->value;
@@ -575,7 +575,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 									}
 									#endif
 									#endif
-									#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+									#ifdef GIA_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 									lastFeatureWord = TagValue;
 									#endif
 								}
@@ -637,7 +637,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 									string TagValue = currentTagInToken->value;
 									currentFeatureInList->stanfordPOS = TagValue;
 								}
-								#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+								#ifdef GIA_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 								else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_word)
 								{
 									string TagValue = currentTagInToken->value;
@@ -650,7 +650,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 
 						if(parseFeatures)
 						{//process lemma only if parsing features
-							#ifdef GIA_USE_LRP
+							#ifdef GIA_LRP
 							if(getUseLRP())
 							{
 								bool foundOfficialLRPreplacementString = false;
@@ -681,7 +681,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 						//cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
 						#endif
 
-						#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+						#ifdef GIA_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 						if(lastFeatureEntityIndex == GIA_NLP_START_ENTITY_INDEX)
 						{
 							if(lastFeatureWord == string(STRING_FULLSTOP))
@@ -785,7 +785,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 										//cout << "currentRelationInList->relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
 										#endif
 
-										#ifdef GIA_USE_LRP
+										#ifdef GIA_LRP
 										if(!(currentRelationInList->relationGovernorRevertedToOfficialLRPTemp))
 										{
 										#endif
@@ -795,7 +795,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 												currentFeatureInList = currentFeatureInList->next;
 											}
 											currentRelationInList->relationGovernor = currentFeatureInList->lemma;
-										#ifdef GIA_USE_LRP
+										#ifdef GIA_LRP
 										}
 										if(!(currentRelationInList->relationDependentRevertedToOfficialLRPTemp))
 										{
@@ -806,7 +806,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 												currentFeatureInList = currentFeatureInList->next;
 											}
 											currentRelationInList->relationDependent = currentFeatureInList->lemma;
-										#ifdef GIA_USE_LRP
+										#ifdef GIA_LRP
 										}
 										#endif
 
@@ -852,7 +852,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 					}
 				}
 
-				#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+				#ifdef GIA_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 				if(invalidSentenceFoundIsolatedFullStop)
 				{
 					#ifdef GIA_NLP_DEBUG
@@ -871,7 +871,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 					}
 					currentSentence = currentSentence->next;
 
-				#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
+				#ifdef GIA_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 				}
 				#endif
 
@@ -1026,7 +1026,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 
 #endif
 
-#ifdef GIA_USE_STANFORD_PARSER
+#ifdef GIA_STANFORD_PARSER
 
 //http://rosettacode.org/wiki/Count_occurrences_of_a_substring#C.2B.2B
 // returns count of non-overlapping occurrences of 'sub' in 'str'
@@ -1310,7 +1310,7 @@ void outputInternalRelationsInRelexFormat(string* nameOfRelexCompactFormatCFFfil
 	GIAparagraph* currentParagraph = firstParagraphInList;
 	GIAsentence* firstSentenceInList = firstParagraphInList->firstSentenceInList;
 
-	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
+	#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 	while(currentParagraph->next != NULL)
 	{
 		firstSentenceInList = currentParagraph->firstSentenceInList;
@@ -1376,7 +1376,7 @@ void outputInternalRelationsInRelexFormat(string* nameOfRelexCompactFormatCFFfil
 
 
 
-	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
+	#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 		newTag1 = new XMLparserTag();
 		currentTagL1->nextTag = newTag1;
 		currentTagL1 = currentTagL1->nextTag;

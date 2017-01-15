@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -42,7 +42,7 @@
 #include "GIAentityConnectionClass.h"
 #include "GIAconditionNodeClass.h"
 #include "GIAtranslatorDefs.h"
-#ifdef GIA_SUPPORT_NLC_INTEGRATION
+#ifdef GIA_NLC_INTEGRATION
 #include "NLCpreprocessorSentenceClass.h"
 #endif
 
@@ -62,8 +62,8 @@ adjective = happy
 
 void initialiseGIATranslatorForTexualContextOperations();
 
-//double check that isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe and isAdjectiveNotConnectedToObjectOrSubject and are no longer required with GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+//double check that isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe and isAdjectiveNotConnectedToObjectOrSubject and are no longer required with GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(GIArelation* currentRelationInList, GIAentityNode* GIAentityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType);
 bool isAdjectiveNotConnectedToObjectOrSubject(GIAsentence* currentSentenceInList, GIArelation* currentRelationInList, int NLPdependencyRelationsType);								//Stanford Compatible
 #endif
@@ -174,7 +174,7 @@ GIAentityConnection* writeVectorConnection(GIAentityNode* entityNode, GIAentityN
 
 long determineNextIdInstance(GIAentityNode* entity);
 
-#ifdef GIA_USE_DATABASE
+#ifdef GIA_DATABASE
 /*//replaced with optimised function findEntityNodesActiveListCompleteFastIndexDBactive()
 bool entityInActiveListComplete(string* entityName, long idInstance);
 bool entityInActiveListComplete(GIAentityNode* entity);
@@ -182,17 +182,17 @@ bool entityInActiveListComplete(GIAentityNode* entity);
 void addInstanceEntityNodeToActiveLists(GIAentityNode* entity);
 #endif
 
-#ifdef GIA_SUPPORT_ALIASES
+#ifdef GIA_ALIASES
 void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNodeToMerge);
 #endif
 
 GIAentityNode* getPrimaryNetworkIndexNodeDefiningInstance(GIAentityNode* instanceEntity);
 
-#ifdef GIA_SUPPORT_NLC_INTEGRATION
+#ifdef GIA_NLC_INTEGRATION
 NLCsentence* getFirstNLCsentenceInList();
 void setFirstNLCsentenceInList(NLCsentence* firstNLCsentenceInListNew);
 bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNode* indefiniteEntity, GIAentityNode* definiteEntity, int* indentationDifferenceFound);
-#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
+#ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 bool checkIfSentenceIsMathTextParsablePhrase(GIAsentence* currentSentenceInList);
 #endif
 #endif

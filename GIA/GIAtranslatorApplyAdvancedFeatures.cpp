@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -74,7 +74,7 @@ void applyAdvancedFeatures(GIAsentence* currentSentenceInList, bool GIAentityNod
 
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
-		#ifdef GIA_USE_STANFORD_CORENLP
+		#ifdef GIA_STANFORD_CORENLP
 		#ifndef GIA_TRANSLATOR_INTERPRET_CLAUSAL_COMPLEMENT_AS_ACTION_OBJECT_INSTEAD_OF_ACTION_PROPERTY
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "section B4g; defineClausalComplementProperties; eg He says that you like to swim. ccomp(say, like)" << endl;
@@ -89,8 +89,8 @@ void applyAdvancedFeatures(GIAsentence* currentSentenceInList, bool GIAentityNod
 	#endif
 	defineTenseOnlyTimeConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 
-	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXES
-	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	#ifdef GIA_SPECIFIC_ACTION_NETWORK_INDEXES
+	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B4h; defineActionConcepts1" << endl;
 	#endif
@@ -109,7 +109,7 @@ void applyAdvancedFeatures(GIAsentence* currentSentenceInList, bool GIAentityNod
 	#endif
 	extractQuantities(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, NLPfeatureParser);
 
-	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXES
+	#ifdef GIA_SPECIFIC_ACTION_NETWORK_INDEXES
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B4k; defineActionConcepts2" << endl;
 	#endif
@@ -126,7 +126,7 @@ void applyAdvancedFeatures(GIAsentence* currentSentenceInList, bool GIAentityNod
 
 void extractDates(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser)
 {
-	#ifdef GIA_USE_RELEX
+	#ifdef GIA_RELEX
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
 		/*
@@ -135,7 +135,7 @@ void extractDates(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFil
 		extractDatesRelex(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	}
 	#endif
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
 		extractDatesStanfordCoreNLP(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
@@ -143,7 +143,7 @@ void extractDates(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFil
 	#endif
 }
 
-#ifdef GIA_USE_STANFORD_CORENLP
+#ifdef GIA_STANFORD_CORENLP
 void extractDatesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -153,7 +153,7 @@ void extractDatesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool GIAent
 			GIAentityNode* currentEntity = GIAentityNodeArray[i];
 			if(!(currentEntity->disabled))
 			{
-				#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+				#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 				if(currentEntity->hasAssociatedTime)
 				{
 					addTimeToSubstance(currentEntity);	//note will overwrite any previous time condition nodes (eg tenseOnlyTimeCondition) - but these should not exist in the case of hasAssociatedTime
@@ -219,7 +219,7 @@ void extractDatesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool GIAent
 }
 #endif
 
-#ifdef GIA_USE_RELEX
+#ifdef GIA_RELEX
 void extractDatesRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -227,7 +227,7 @@ void extractDatesRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArr
 		if(GIAentityNodeArrayFilled[i])
 		{
 			GIAentityNode* currentEntity = GIAentityNodeArray[i];
-			#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+			#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 			if(currentEntity->hasAssociatedTime)
 			{
 				addTimeToSubstance(currentEntity);	//note will overwrite any previous time condition nodes (eg tenseOnlyTimeCondition) - but these should not exist in the case of hasAssociatedTime
@@ -345,7 +345,7 @@ void extractDatesRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArr
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
-	#ifdef GIA_USE_TIME_NODE_INDEXING
+	#ifdef GIA_TIME_NODE_INDEXING
 	#ifdef GIA_TRANSLATOR_DEBUG
 	//cout <<"add time condition nodes to index [for fast lookup by time]" << endl;
 	#endif
@@ -384,7 +384,7 @@ void extractDatesRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArr
 }
 #endif
 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 void addTimeToSubstance(GIAentityNode* timeConditionEntity)
 {
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -404,13 +404,13 @@ void extractQuantities(GIAsentence* currentSentenceInList, bool GIAentityNodeArr
 	/*
 	eg He lost three dollars. /   He lost almost three dollars. / He lost three hundred dollars.	_quantity(dollar, three) / _quantity_mod(three, almost) / _quantity_mult(hundred, three)
 	*/
-	#ifdef GIA_USE_RELEX
+	#ifdef GIA_RELEX
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
 		extractQuantitiesRelex(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes);
 	}
 	#endif
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	//NB GIA could support quantity extraction with Stanford Parser only (ie without Stanford CoreNLP as the NLPfeatureParser) but this has not been implemented
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
@@ -419,7 +419,7 @@ void extractQuantities(GIAsentence* currentSentenceInList, bool GIAentityNodeArr
 	#endif
 }
 
-#ifdef GIA_USE_STANFORD_CORENLP
+#ifdef GIA_STANFORD_CORENLP
 void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -606,7 +606,7 @@ void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool G
 }
 #endif
 
-#ifdef GIA_USE_RELEX
+#ifdef GIA_RELEX
 void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -763,7 +763,7 @@ void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNo
 						measureSubstance->measureType = MEASURE_TYPE_PER;
 
 						GIAentityNode* newQuantityTimesEntity = new GIAentityNode();
-						#ifdef GIA_USE_DATABASE
+						#ifdef GIA_DATABASE
 						newQuantityTimesEntity->added = true;
 						#endif
 
@@ -838,7 +838,7 @@ void extractMeasures(GIAsentence* currentSentenceInList, bool GIAentityNodeArray
 	/*
 	eg The boy is 4 feet away. / Take these 4 times a day. / The boy is 4 feet tall. / The birthday boy is 12 years old.	_measure_distance(away, foot) / _measure_per(times, day) / _measure_size(tall, feet) / _measure_time(old, years)
 	*/
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
 	param.entityNodesActiveListNetworkIndexes = entityNodesActiveListNetworkIndexes;
 	param.numberOfRelations = 1;
@@ -851,12 +851,12 @@ void extractMeasures(GIAsentence* currentSentenceInList, bool GIAentityNodeArray
 
 	GIAgenericDepRelInterpretationParameters paramA = param;
 	paramA.useRelationArrayTest[REL1][REL_ENT3] = true; paramA.relationArrayTest[REL1][REL_ENT3] = relationTypeMeasureDependencyNameArray; paramA.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_MEASURE_DEPENDENCY_NUMBER_OF_TYPES;
-	paramA.mustGenerateConditionName = true; paramA.conditionEntityDefaultName = RELATION_TYPE_MEASURE_DEPENDENCY_UNKNOWN;	//NB GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK does not support the full array of Relex measure/dependency types
+	paramA.mustGenerateConditionName = true; paramA.conditionEntityDefaultName = RELATION_TYPE_MEASURE_DEPENDENCY_UNKNOWN;	//NB GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK does not support the full array of Relex measure/dependency types
 	genericDependecyRelationInterpretation(&paramA, REL1);
 
 	GIAgenericDepRelInterpretationParameters paramB = param;
 	paramB.useRelationArrayTest[REL1][REL_ENT3] = true; paramB.relationArrayTest[REL1][REL_ENT3] = relationTypeMeasureNotDependencyNameArray; paramB.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_MEASURE_NOT_DEPENDENCY_NUMBER_OF_TYPES;
-	paramB.mustGenerateConditionName = true; paramB.conditionEntityDefaultName = RELATION_TYPE_MEASURE_UNKNOWN;	//NB GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK does not support the full array of Relex measure/dependency types
+	paramB.mustGenerateConditionName = true; paramB.conditionEntityDefaultName = RELATION_TYPE_MEASURE_UNKNOWN;	//NB GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK does not support the full array of Relex measure/dependency types
 	genericDependecyRelationInterpretation(&paramB, REL1);
 #else
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -952,7 +952,7 @@ void extractMeasures(GIAsentence* currentSentenceInList, bool GIAentityNodeArray
 
 void defineToBeAndToDoConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
 	param.numberOfRelations = 1;
 	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeComplementsNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_COMPLEMENTS_NUMBER_OF_TYPES;	//redundant test
@@ -1099,7 +1099,7 @@ void extractQualities(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 	/*
 	eg The broken pencil fell apart. / Giants are red. [Joe is happy.] / Tom runs quickly.	_amod(pencil, broken) / _predadj(giants, red) / _advmod(run, quick)
 	*/
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
 	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeQualityNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_QUALITY_NUMBER_OF_TYPES;
@@ -1125,7 +1125,7 @@ void extractQualities(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 			}
 			if(passed)
 			{
-				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+				#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 				bool passed2 = true;
 				#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
 				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
@@ -1145,7 +1145,7 @@ void extractQualities(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 					GIAentityNode* substanceEntity = GIAentityNodeArray[relationDependentIndex];
 
 					substanceEntity->entityType = GIA_ENTITY_TYPE_TYPE_QUALITY;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
-				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+				#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 				}
 				#endif
 			}
@@ -1160,7 +1160,7 @@ void extractQualities(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 
 void linkPropertiesParataxis(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
 	param.numberOfRelations = 1;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PARATAXIS;
@@ -1205,14 +1205,14 @@ void linkPropertiesParataxis(GIAsentence* currentSentenceInList, bool GIAentityN
 }
 
 //currently disabled;
-#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
+#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS
 #ifndef GIA_TRANSLATOR_INTERPRET_CLAUSAL_COMPLEMENT_AS_ACTION_OBJECT_INSTEAD_OF_ACTION_PROPERTY
 void defineClausalComplementProperties(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	/*
 	eg He says that you like to swim. ccomp(say, like)
 	*/
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
 	param.numberOfRelations = 1;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CLAUSAL_COMPLEMENT;
@@ -1265,7 +1265,7 @@ void defineClausalComplementProperties(GIAsentence* currentSentenceInList, bool 
 
 void defineTenseOnlyTimeConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
 	GIAentityCharacteristic entityCharacteristicsTest1("conditionType", CONDITION_NODE_TYPE_TIME_STRING, true);
 	GIAentityCharacteristic entityCharacteristicsTest2("grammaticalTenseTemp", GRAMMATICAL_TENSE_PAST_STRING);
@@ -1300,12 +1300,12 @@ void defineTenseOnlyTimeConditions(GIAsentence* currentSentenceInList, bool GIAe
 #endif
 }
 
-#ifdef GIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXES
+#ifdef GIA_SPECIFIC_ACTION_NETWORK_INDEXES
 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 void defineActionConcepts1(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
-//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+//#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
 	param.parseDisabledRelation[REL1] = true;
@@ -1317,7 +1317,7 @@ void defineActionConcepts1(GIAsentence* currentSentenceInList, bool GIAentityNod
 	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&useRedistributeSpecialCaseAssignment2);
 	genericDependecyRelationInterpretation(&param, REL1);
 //#else
-	//not coded as this function was developed after GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+	//not coded as this function was developed after GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 //#endif
 }
 #endif

@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -369,7 +369,7 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 					//cout << "\ti = " << i << ", initialiseEntityNodeForPrinting; " << (*connectionIter)->entity->entityName << endl;
 					#endif
 					bool thisIsDefinitionAndPreviousNodeWasInstance = false;
-					#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+					#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
 					{
 						thisIsDefinitionAndPreviousNodeWasInstance = true;
@@ -915,7 +915,7 @@ LDreference* createBox(LDreference* currentReferenceInPrintList, vec* vect, doub
 		positionSVG.x = vect->x + GIA_DRAW_BASICENTITY_NODE_WIDTH/2;
 		positionSVG.y = vect->y;
 		positionSVG.z = GIA_OUTPUT_Z_POSITION_NODES;
-		writeSVGbox(currentTag, &positionSVG, width, height, colour, GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG*thickness, GIA_USE_SVG_ELLIPTICAL_BOXES);
+		writeSVGbox(currentTag, &positionSVG, width, height, colour, GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG*thickness, GIA_SVG_ELLIPTICAL_BOXES);
 		positionSVG.x = vect->x - GIA_DRAW_BASICENTITY_NODE_WIDTH/3;
 		positionSVG.y = vect->y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 		positionSVG.z = GIA_OUTPUT_Z_POSITION_TEXT;

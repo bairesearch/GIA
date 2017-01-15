@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  *
  *******************************************************************************/
 
@@ -41,8 +41,8 @@ string quantityModifierNameArray[QUANTITY_MODIFIER_NUMBER_OF_TYPES] = {"almost"}
 
 //int grammaticalTenseNameLengthsArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES] = {9, 7, 4, 6};
 
-#ifdef GIA_USE_DATABASE
-#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+#ifdef GIA_DATABASE
+#ifndef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 GIAnetworkIndexEntityLoaded::GIAnetworkIndexEntityLoaded(void)
 {
 	loaded = false;
@@ -68,7 +68,7 @@ GIAentityNode::GIAentityNode(void)
 
 	/*GIA Entity Name*/
 	entityName = "";
-	#ifdef GIA_USE_WORD_ORIG
+	#ifdef GIA_WORD_ORIG
 	wordOrig = "";
 	#endif
 	confidence = 1.0;
@@ -121,10 +121,10 @@ GIAentityNode::GIAentityNode(void)
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	grammaticalIndexOfDeterminerTemp = GIA_ENTITY_INDEX_UNDEFINED;
 	#endif
-	#ifdef GIA_SUPPORT_PREDETERMINERS
+	#ifdef GIA_PREDETERMINERS
 	grammaticalPredeterminerTemp = GRAMMATICAL_PREDETERMINER_UNDEFINED;
 	#endif
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	/*
 	CharacterOffsetBeginTemp = INT_DEFAULT_VALUE;
 	CharacterOffsetEndTemp = INT_DEFAULT_VALUE;
@@ -144,16 +144,16 @@ GIAentityNode::GIAentityNode(void)
 	entityIndexTemp = GIA_ENTITY_INDEX_UNDEFINED;	//was 0 before 11 October 2012
 	sentenceIndexTemp = GIA_SENTENCE_INDEX_UNDEFINED;	//was 0 before 11 October 2012
 	isToBeComplimentOfActionTemp = false;
-	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	disableParsingAsPrepositionRelationTemp = false;
 	#endif
 	entityAlreadyDeclaredInThisContext = false;
 	hasAssociatedInstanceTemp = false;
-	#ifdef GIA_SUPPORT_ALIASES
+	#ifdef GIA_ALIASES
 	isName = false;
 	isNameQuery = false;
 	#endif
-	#ifdef GIA_SUPPORT_NUMBER_OF
+	#ifdef GIA_NUMBER_OF
 	isNumberOf = false;
 	#endif
 	
@@ -173,14 +173,14 @@ GIAentityNode::GIAentityNode(void)
 	conditionSubjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT]);
 	conditionObjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT]);
 	entityNodeDefiningThisInstance = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE]);
-	#ifdef GIA_USE_DATABASE
+	#ifdef GIA_DATABASE
 	DBsetEntityConnectionsReferenceListsLoaded(this, true);	//for now, assume that a new entity will be configured with its connections loaded into RAM
 	#endif
 	/*
 	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_DEFINITIONS] = entityNodeDefinitionList;
 	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_SUBSTANCES] = propertyNodeList;
 	*/
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_ADVANCED_REFERENCING
 	/* initialisation shouldnt be necessary...
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 	{
@@ -216,7 +216,7 @@ GIAentityNode::GIAentityNode(void)
 	referenceSetID = GIA_REFERENCE_SET_ID_UNDEFINED;
 	minimumEntityIndexOfReferenceSet = GIA_REFERENCE_SET_ID_UNDEFINED;
 	#endif
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_ADVANCED_REFERENCING
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	wasReferenceTemp = false;
 	#endif
@@ -224,7 +224,7 @@ GIAentityNode::GIAentityNode(void)
 	wasReference = false;
 	#endif
 	#endif
-	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;		//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	mustSetIsConceptBasedOnApposRelation = false;
 	isPronounReference = false;
@@ -243,19 +243,19 @@ GIAentityNode::GIAentityNode(void)
 	#endif
 	#endif
 		//expletives:
-	#ifdef GIA_SUPPORT_EXPLETIVES
+	#ifdef GIA_EXPLETIVES
 	isExpletive = false;
 	#endif
 		//databasing:
-	#ifdef GIA_USE_DATABASE
+	#ifdef GIA_DATABASE
 	added = false;		//implies database Update is Required		//CHECKTHIS removed 'bool' 21 July 2012
 	modified = false;	//implies database Update is Required		//CHECKTHIS removed 'bool' 21 July 2012
-	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+	#ifndef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 	networkIndexEntityLoaded = NULL;
 	#endif
 	#endif
 		//nlg:
-	#ifdef GIA_USE_NLG
+	#ifdef GIA_NLG
 	parsedForLanguageGeneration = false;
 	sourceAddedInLanguageGeneration = false;		//added 3 Aug 2013 - why wasn't this being initialised?
 	sourceReferencedInLanguageGeneration = false;
@@ -276,7 +276,7 @@ GIAentityNode::GIAentityNode(void)
 	NLCoriginalNumericalVariableName = "";
 	NLCcontextGeneratedTemp = false;
 	NLCcategoryListCreatedTemp = false;
-	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
+	#ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 	NLCmathTextParsablePhraseEntity = false;
 	#endif
 	NLCisAlias = false;
@@ -321,8 +321,8 @@ GIAentityNode::~GIAentityNode(void)
 		entityVectorConnectionsArray[i].clear();
 	}
 
-	#ifdef GIA_USE_DATABASE
-	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+	#ifdef GIA_DATABASE
+	#ifndef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 	delete networkIndexEntityLoaded;
 	#endif
 	#endif
@@ -342,7 +342,7 @@ void deleteEntitiesInEntityNodeList(vector<GIAentityNode*>* entityNodesActiveLis
 
 
 
-#ifdef GIA_USE_DATABASE
+#ifdef GIA_DATABASE
 void DBsetEntityConnectionsReferenceListsLoaded(GIAentityNode* entityNode, bool loaded)
 {
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
@@ -491,7 +491,7 @@ string printQuantityNumberString(GIAentityNode* entityNode)
 	return quantityNumberStringTemp;
 }
 
-#ifdef GIA_SUPPORT_ALIASES
+#ifdef GIA_ALIASES
 
 void convertAliasesStringToAliases(GIAentityNode* entityNode, string aliasesString)
 {
@@ -588,7 +588,7 @@ string* convertDelimitedStringToArray(string str, char delimiter)
 
 
 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 GIAentityCharacteristic::GIAentityCharacteristic()
 {
 	name = "";
@@ -725,7 +725,7 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	testEntityCharacteristicIterationint(entity->grammaticalIndexOfDeterminerTemp, entityCharacteristic, "grammaticalIndexOfDeterminerTemp", &foundMatch);
 	#endif
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	testEntityCharacteristicIterationstring(entity->stanfordPOStemp, entityCharacteristic, "stanfordPOStemp", &foundMatch);
 	testEntityCharacteristicIterationstring(entity->NormalizedNERtemp, entityCharacteristic, "NormalizedNERtemp", &foundMatch);
 	testEntityCharacteristicIterationstring(entity->TimexTemp, entityCharacteristic, "TimexTemp", &foundMatch);
@@ -740,16 +740,16 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 	testEntityCharacteristicIterationint(entity->entityIndexTemp, entityCharacteristic, "entityIndexTemp", &foundMatch);
 	testEntityCharacteristicIterationint(entity->sentenceIndexTemp, entityCharacteristic, "sentenceIndexTemp", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->isToBeComplimentOfActionTemp, entityCharacteristic, "isToBeComplimentOfActionTemp", &foundMatch);
-	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	testEntityCharacteristicIterationbool(entity->disableParsingAsPrepositionRelationTemp, entityCharacteristic, "disableParsingAsPrepositionRelationTemp", &foundMatch);
 	#endif
 	testEntityCharacteristicIterationbool(entity->entityAlreadyDeclaredInThisContext, entityCharacteristic, "entityAlreadyDeclaredInThisContext", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->hasAssociatedInstanceTemp, entityCharacteristic, "hasAssociatedInstanceTemp", &foundMatch);
-	#ifdef GIA_SUPPORT_ALIASES
+	#ifdef GIA_ALIASES
 	testEntityCharacteristicIterationbool(entity->isName, entityCharacteristic, "isName", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->isNameQuery, entityCharacteristic, "isNameQuery", &foundMatch);
 	#endif
-	#ifdef GIA_SUPPORT_NUMBER_OF
+	#ifdef GIA_NUMBER_OF
 	testEntityCharacteristicIterationbool(entity->isNumberOf, entityCharacteristic, "isNumberOf", &foundMatch);
 	#endif
 
@@ -774,7 +774,7 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 	testEntityCharacteristicIterationbool(entity->addSubClass, entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
 	#endif
-	#ifdef GIA_SUPPORT_EXPLETIVES
+	#ifdef GIA_EXPLETIVES
 	testEntityCharacteristicIterationbool(entity->isExpletive, entityCharacteristic, "isExpletive", &foundMatch);	
 	#endif	
 	
@@ -907,7 +907,7 @@ bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	setEntityCharacteristicIterationint(&(entity->grammaticalIndexOfDeterminerTemp), entityCharacteristic, "grammaticalIndexOfDeterminerTemp", &foundMatch);
 	#endif
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	setEntityCharacteristicIterationstring(&(entity->stanfordPOStemp), entityCharacteristic, "stanfordPOStemp", &foundMatch);
 	setEntityCharacteristicIterationstring(&(entity->NormalizedNERtemp), entityCharacteristic, "NormalizedNERtemp", &foundMatch);
 	setEntityCharacteristicIterationstring(&(entity->TimexTemp), entityCharacteristic, "TimexTemp", &foundMatch);
@@ -923,16 +923,16 @@ bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	setEntityCharacteristicIterationint(&(entity->entityIndexTemp), entityCharacteristic, "entityIndexTemp", &foundMatch);
 	setEntityCharacteristicIterationint(&(entity->sentenceIndexTemp), entityCharacteristic, "sentenceIndexTemp", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->isToBeComplimentOfActionTemp), entityCharacteristic, "isToBeComplimentOfActionTemp", &foundMatch);
-	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	setEntityCharacteristicIterationbool(&(entity->disableParsingAsPrepositionRelationTemp), entityCharacteristic, "disableParsingAsPrepositionRelationTemp", &foundMatch);
 	#endif
 	setEntityCharacteristicIterationbool(&(entity->entityAlreadyDeclaredInThisContext), entityCharacteristic, "entityAlreadyDeclaredInThisContext", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->hasAssociatedInstanceTemp), entityCharacteristic, "hasAssociatedInstanceTemp", &foundMatch);
-	#ifdef GIA_SUPPORT_ALIASES
+	#ifdef GIA_ALIASES
 	setEntityCharacteristicIterationbool(&(entity->isName), entityCharacteristic, "isName", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->isNameQuery), entityCharacteristic, "isNameQuery", &foundMatch);
 	#endif
-	#ifdef GIA_SUPPORT_NUMBER_OF
+	#ifdef GIA_NUMBER_OF
 	setEntityCharacteristicIterationbool(&(entity->isNumberOf), entityCharacteristic, "isNumberOf", &foundMatch);
 	#endif
 	
@@ -952,7 +952,7 @@ bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	setEntityCharacteristicIterationbool(&(entity->addSubClass), entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
 	#endif
-	#ifdef GIA_SUPPORT_EXPLETIVES
+	#ifdef GIA_EXPLETIVES
 	setEntityCharacteristicIterationbool(&(entity->isExpletive), entityCharacteristic, "isExpletive", &foundMatch);
 	#endif	
 
@@ -1054,7 +1054,7 @@ bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	getEntityCharacteristicIterationint(entity->grammaticalIndexOfDeterminerTemp, entityCharacteristic, "grammaticalIndexOfDeterminerTemp", &foundMatch);
 	#endif
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	getEntityCharacteristicIterationstring(entity->stanfordPOStemp, entityCharacteristic, "stanfordPOStemp", &foundMatch);
 	getEntityCharacteristicIterationstring(entity->NormalizedNERtemp, entityCharacteristic, "NormalizedNERtemp", &foundMatch);
 	getEntityCharacteristicIterationstring(entity->TimexTemp, entityCharacteristic, "TimexTemp", &foundMatch);
@@ -1069,16 +1069,16 @@ bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	getEntityCharacteristicIterationint(entity->entityIndexTemp, entityCharacteristic, "entityIndexTemp", &foundMatch);
 	getEntityCharacteristicIterationint(entity->sentenceIndexTemp, entityCharacteristic, "sentenceIndexTemp", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->isToBeComplimentOfActionTemp, entityCharacteristic, "isToBeComplimentOfActionTemp", &foundMatch);
-	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	getEntityCharacteristicIterationbool(entity->disableParsingAsPrepositionRelationTemp, entityCharacteristic, "disableParsingAsPrepositionRelationTemp", &foundMatch);
 	#endif
 	getEntityCharacteristicIterationbool(entity->entityAlreadyDeclaredInThisContext, entityCharacteristic, "entityAlreadyDeclaredInThisContext", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->hasAssociatedInstanceTemp, entityCharacteristic, "hasAssociatedInstanceTemp", &foundMatch);
-	#ifdef GIA_SUPPORT_ALIASES
+	#ifdef GIA_ALIASES
 	getEntityCharacteristicIterationbool(entity->isName, entityCharacteristic, "isName", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->isNameQuery, entityCharacteristic, "isNameQuery", &foundMatch);
 	#endif
-	#ifdef GIA_SUPPORT_NUMBER_OF
+	#ifdef GIA_NUMBER_OF
 	getEntityCharacteristicIterationbool(entity->isNumberOf, entityCharacteristic, "isNumberOf", &foundMatch);
 	#endif
 	
@@ -1098,7 +1098,7 @@ bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	getEntityCharacteristicIterationbool(entity->addSubClass, entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
 	#endif
-	#ifdef GIA_SUPPORT_EXPLETIVES
+	#ifdef GIA_EXPLETIVES
 	getEntityCharacteristicIterationbool(entity->isExpletive, entityCharacteristic, "isExpletive", &foundMatch);
 	#endif
 	
@@ -1184,10 +1184,10 @@ void deleteAllEntitiesInNetworkIndexEntityNodeList(unordered_map<string, GIAenti
 				}
 				instanceEntityNode->entityVectorConnectionsArray[i].clear();
 			}
-			#ifdef GIA_SUPPORT_ALIASES
+			#ifdef GIA_ALIASES
 			delete aliasList;
 			#endif
-			#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+			#ifndef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 			delete networkIndexEntityLoaded;
 			#endif
 
@@ -1199,10 +1199,10 @@ void deleteAllEntitiesInNetworkIndexEntityNodeList(unordered_map<string, GIAenti
 		string entityNodeNameTemp = networkIndexEntityNodeTemp->entityName;
 		sentenceNetworkIndexEntityNodesListTempNotUsedMap.insert(pair<string, GIAentityNode*>(entityNodeNameTemp, networkIndexEntityNodeTemp));
 
-		#ifdef GIA_SUPPORT_ALIASES
+		#ifdef GIA_ALIASES
 		delete aliasList;
 		#endif
-		#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+		#ifndef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 		delete networkIndexEntityLoaded;
 		#endif
 

@@ -26,7 +26,7 @@
  * File Name: GIAnlg.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -53,7 +53,7 @@ public:
 };
 
 
-#ifndef GIA_USE_NLG2
+#ifndef GIA_NLG2
 	#define GIA_NLG_INDEX_IRRELEVANT (0)
 #endif
 
@@ -98,7 +98,7 @@ public:
 #define NLG_INPUTVIEW_FEATURE_TAG_GOVERNOR_FULLSTOP "."
 #define NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_FULLSTOP "punctuation"
 
-#ifdef GIA_USE_NLG
+#ifdef GIA_NLG
 
 #define NLG_NUMBER_OF_VOWELS (5)
 static char vowelArray[NLG_NUMBER_OF_VOWELS] = {'a','e','i','o','u'};
@@ -125,7 +125,7 @@ static string grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_
 GIANLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, GIANLGSentence* currentNLGsentence, bool isQueryAnswerContext, int isQueryAnswerContextRound);
 	void generateThreeEntitySentenceFromEntityNode(GIAentityNode* entityNode0, string* generatedText, int connectionType1, int connectionType2, int startEntityIndex, bool supportAdditionalLinks);
 	void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, GIAentityConnection* entityConnection, string* generatedText, int connectionType, int startEntityIndex, bool additionalLink);
-		#ifdef GIA_USE_NLG2
+		#ifdef GIA_NLG2
 		void NLG2generateNLGinputViewFeatureTagsGenericPerSentence(string* generatedNLGinputViewTags);
 		void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode, int entityIndex, string* generatedNLGinputViewTags);
 			string NLG2generateNLGinputViewLine(string type, string governor, string dependent);

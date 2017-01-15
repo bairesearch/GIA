@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -43,7 +43,7 @@
 
 
 
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 
 GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParameters(GIAsentence* newcurrentSentenceInList, bool newGIAentityNodeArrayFilled[], GIAentityNode* newGIAentityNodeArray[], bool newexecuteOrReassign)
 {
@@ -922,7 +922,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 								}
-								#ifdef GIA_SUPPORT_ALIASES
+								#ifdef GIA_ALIASES
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias)
 								{
 									#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
@@ -978,7 +978,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								else
 								{	
 									bool exitProgram = true;
-									#ifndef GIA_USE_CORPUS_DATABASE
+									#ifndef GIA_CORPUS_DATABASE
 									if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addAuxiliaryToEntity)
 									{
 										exitProgram = false;	//allow GIArules.xml to attempt to execute disabled function
@@ -1288,7 +1288,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 
 #endif
 
-#ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
+#ifdef GIA_GENERIC_ENTITY_INTERPRETATION
 
 GIAgenericEntityInterpretationParameters::GIAgenericEntityInterpretationParameters(GIAsentence* newcurrentSentenceInList, bool newGIAentityNodeArrayFilled[], GIAentityNode* newGIAentityNodeArray[], bool newexecuteOrReassign)
 {

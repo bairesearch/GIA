@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -59,7 +59,7 @@ void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool
 		name[0] = currentRelationInList->relationGovernor;
 		name[1] =  currentRelationInList->relationDependent; 	//argumentName
 
-		#ifdef GIA_USE_RELEX
+		#ifdef GIA_RELEX
 		if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 		{
 			#ifdef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1
@@ -285,7 +285,7 @@ void locateAndAddAllNetworkIndexEntities(GIAsentence* currentSentenceInList, boo
 				}
 			}
 			#endif
-			#ifdef GIA_SUPPORT_ALIASES
+			#ifdef GIA_ALIASES
 			if(GIAfeatureTempEntityNodeArray[w]->isNameQuery)
 			{
 				entity->isNameQuery = true;
@@ -295,7 +295,7 @@ void locateAndAddAllNetworkIndexEntities(GIAsentence* currentSentenceInList, boo
 				entity->isName = true;
 			}
 			#endif
-			#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+			#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 			//this is required because negative assignment is now performed during redistribution
 			if(GIAfeatureTempEntityNodeArray[w]->negative)
 			{
@@ -320,7 +320,7 @@ void locateAndAddAllNetworkIndexEntities(GIAsentence* currentSentenceInList, boo
 			}
 			#endif
 			#endif
-			#ifdef GIA_SUPPORT_EXPLETIVES
+			#ifdef GIA_EXPLETIVES
 			if(GIAfeatureTempEntityNodeArray[w]->isExpletive)
 			{
 				entity->isExpletive = true;
@@ -334,7 +334,7 @@ void locateAndAddAllNetworkIndexEntities(GIAsentence* currentSentenceInList, boo
 
 
 
-#ifdef GIA_USE_RELEX
+#ifdef GIA_RELEX
 void fillGrammaticalArraysRelex(GIAsentence* currentSentenceInList)
 {
 	GIAfeature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
@@ -523,7 +523,7 @@ void fillGrammaticalArraysRelex(GIAsentence* currentSentenceInList)
 #endif
 
 
-#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
+#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS
 //NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford()
 void fillGrammaticalArraysStanford(GIAsentence* currentSentenceInList,  bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], int NLPfeatureParser, GIAfeature* featureArrayTemp[])
 {
@@ -999,7 +999,7 @@ void findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(GIAsentence* 
 				}
 			}
 
-			#ifndef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILIARY_AND_SET_DIFFERENT_REFERENCE_SET
+			#ifndef GIA_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILIARY_AND_SET_DIFFERENT_REFERENCE_SET
 			if(passed)
 			{
 			#endif
@@ -1014,7 +1014,7 @@ void findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(GIAsentence* 
 						#endif
 					}
 				}
-			#ifndef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILIARY_AND_SET_DIFFERENT_REFERENCE_SET
+			#ifndef GIA_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILIARY_AND_SET_DIFFERENT_REFERENCE_SET
 			}
 			#endif
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1039,14 +1039,14 @@ void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentit
 		if(GIAentityNodeArrayFilled[w])
 		{
 			GIAentityNode* entity = GIAentityNodeArray[w];
-			#ifdef GIA_USE_ADVANCED_REFERENCING
+			#ifdef GIA_ADVANCED_REFERENCING
 			if(!(entity->wasReference))	//added GIA 2a5a - required for NLC; do not overwrite isDefinite=false (from "a dog") with isDefinite=true (from "the dog") when the variable is being re-referenced in context
 			{
 			#endif
 				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "applyGrammaticalInfoToAllEntities{}: entity->entityName = " << entity->entityName << endl;
 				#endif
-				#ifdef GIA_USE_WORD_ORIG
+				#ifdef GIA_WORD_ORIG
 				entity->wordOrig = currentFeatureInList->word;
 				#endif
 
@@ -1062,16 +1062,16 @@ void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentit
 				entity->grammaticalIndexOfDeterminerTemp = currentFeatureInList->grammaticalIndexOfDeterminer;
 				//cout << "entity->grammaticalIndexOfDeterminerTemp = " << entity->grammaticalIndexOfDeterminerTemp << endl;
 				#endif
-				#ifdef GIA_SUPPORT_PREDETERMINERS
+				#ifdef GIA_PREDETERMINERS
 				entity->grammaticalPredeterminerTemp = currentFeatureInList->grammaticalPredeterminer;
 				#endif
 
 				entity->NERTemp = currentFeatureInList->NER;
-				#ifdef GIA_USE_STANFORD_CORENLP
+				#ifdef GIA_STANFORD_CORENLP
 				entity->NormalizedNERtemp = currentFeatureInList->NormalizedNER;
 				entity->TimexTemp = currentFeatureInList->Timex;
 				#endif
-			#ifdef GIA_USE_ADVANCED_REFERENCING
+			#ifdef GIA_ADVANCED_REFERENCING
 			}
 			#endif
 		}
@@ -1088,7 +1088,7 @@ void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode* entity, GIAfeature* c
 		entity->grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = currentFeatureInList->grammaticalTenseModifierArray[grammaticalTenseModifierIndex];
 	}
 	entity->grammaticalTenseTemp = currentFeatureInList->grammaticalTense;
-	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+	#ifdef GIA_SPECIFIC_CONCEPTS
 	if(!(entity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))
 	{
 	#endif
@@ -1096,14 +1096,14 @@ void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode* entity, GIAfeature* c
 		#ifdef GIA_DEBUG
 		//cout << "entity->grammaticalNumber = " << entity->grammaticalNumber << endl;
 		#endif
-	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+	#ifdef GIA_SPECIFIC_CONCEPTS
 	}
 	#endif
 
 	entity->grammaticalPronounTemp = currentFeatureInList->grammaticalIsPronoun;
 	entity->grammaticalWordTypeTemp = currentFeatureInList->grammaticalWordType;
 
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	entity->stanfordPOStemp = currentFeatureInList->stanfordPOS;
 	#endif
 }

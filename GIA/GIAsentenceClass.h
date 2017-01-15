@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -79,7 +79,7 @@ static string featureRelexPOStypeArray[FEATURE_RELEX_POS_NUMBER_OF_TYPES] = {FEA
 
 
 
-#ifdef GIA_USE_STANFORD_CORENLP
+#ifdef GIA_STANFORD_CORENLP
 class GIAstanfordCoreNLPmention
 {
 public:
@@ -110,8 +110,8 @@ public:
 
 #endif
 
-//#ifdef GIA_USE_ADVANCED_REFERENCING
-//these classes are only used by GIA_USE_ADVANCED_REFERENCING:
+//#ifdef GIA_ADVANCED_REFERENCING
+//these classes are only used by GIA_ADVANCED_REFERENCING:
 class GIAMention
 {
 public:
@@ -160,7 +160,7 @@ public:
 	int relationGovernorIndex;
 	string relationDependent;
 	int relationDependentIndex;
-	#ifdef GIA_USE_LRP
+	#ifdef GIA_LRP
 	bool relationGovernorRevertedToOfficialLRPTemp;
 	bool relationDependentRevertedToOfficialLRPTemp;
 	#endif
@@ -171,15 +171,15 @@ public:
 	#endif
 
 	bool disabled;
-	//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	//#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	bool disabledDuringLink;
 	//#endif
 
-	#ifdef GIA_USE_RELEX
+	#ifdef GIA_RELEX
 	bool subjObjRelationAlreadyAdded;	//Relex Only
 	#endif
 
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	bool prepositionCombinationAlreadyCreatedTemp;
 	#endif
 
@@ -227,20 +227,20 @@ public:
 	int entityIndex;
 	string word;
 	string lemma;
-	#ifdef GIA_USE_LRP
+	#ifdef GIA_LRP
 	string wordWithLRPforNLPonly;
 	#endif
-	#ifdef GIA_USE_LRP
+	#ifdef GIA_LRP
 	bool featureRevertedToOfficialLRPTemp;	//not currently used
 	#endif
 
-	#ifdef GIA_USE_RELEX
+	#ifdef GIA_RELEX
 	string type;
 	string grammar;
 	#endif
 
 	int NER;
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	int CharacterOffsetBegin;
 	int CharacterOffsetEnd;
 	string stanfordPOS;
@@ -263,11 +263,11 @@ public:
 	int grammaticalIndexOfDeterminer;
 	#endif
 	bool previousWordInSentenceIsTo;
-	#ifdef GIA_SUPPORT_PREDETERMINERS
+	#ifdef GIA_PREDETERMINERS
 	int grammaticalPredeterminer;
 	#endif
 
-	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	bool alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	bool mustSetIsConceptBasedOnApposRelation;
 	bool isPronounReference;
@@ -298,7 +298,7 @@ public:
 
 	int sentenceIndex;
 
-	#ifdef GIA_USE_RELEX
+	#ifdef GIA_RELEX
 	string sentenceText;		//not required - delete in future
 	string constituentsText;	//not required - delete in future
 	string featuresText;		//not required - delete in future
@@ -306,7 +306,7 @@ public:
 	string linksText;		//not required - delete in future
 	#endif
 
-	#ifdef GIA_USE_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	GIAstanfordCoreNLPcoreference* firstCoreferenceInList;
 	#endif
 
@@ -341,7 +341,7 @@ public:
 void copySentences(GIAsentence* sentenceToCopy, GIAsentence* newSentence);
 void copyRelations(GIArelation* firstRelationInListToCopy, GIArelation* firstRelationInList);
 void copyFeatures(GIAfeature* firstFeatureInListToCopy, GIAfeature* firstFeatureInList);
-#ifdef GIA_USE_STANFORD_CORENLP
+#ifdef GIA_STANFORD_CORENLP
 void copyStanfordCoreferences(GIAstanfordCoreNLPcoreference* firstCoreferenceInListToCopy, GIAstanfordCoreNLPcoreference* firstCoreferenceInList);
 void copyStanfordMention(GIAstanfordCoreNLPmention* firstMentionInListToCopy, GIAstanfordCoreNLPmention* firstMentionInList);
 #endif

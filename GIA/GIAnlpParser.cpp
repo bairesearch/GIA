@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -35,7 +35,7 @@
 
 #include "GIAnlpParser.h"
 #include "GIAtranslatorDefs.h"	//required for convertStanfordRelationToRelex
-#ifdef GIA_USE_LRP
+#ifdef GIA_LRP
 #include "GIAlrp.h"
 #endif
 
@@ -170,7 +170,7 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 				currentRelation->relationDependent = relationDependent;
 				*/
 
-				#ifdef GIA_USE_LRP
+				#ifdef GIA_LRP
 				if(!(currentRelation->relationDependentRevertedToOfficialLRPTemp))
 				#endif
 				{
@@ -253,7 +253,7 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 				}
 				*/
 
-				#ifdef GIA_USE_LRP
+				#ifdef GIA_LRP
 				if(!(currentRelation->relationGovernorRevertedToOfficialLRPTemp))
 				#endif
 				{
@@ -677,7 +677,7 @@ void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsente
 	}
 	#endif
 
-	#ifdef GIA_USE_LRP
+	#ifdef GIA_LRP
 	convertStanfordRelationToRelexLRPreversion(currentRelationInList, currentSentenceInList, stanfordPrepositionFound, tempRelexPrepositionString, &relationTypeRelexStandard);
 	#endif
 
@@ -688,7 +688,7 @@ void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsente
 	#endif
 }
 
-#ifdef GIA_USE_LRP
+#ifdef GIA_LRP
 void convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList, bool stanfordPrepositionFound, string tempRelexPrepositionString, string* relationTypeRelexStandard)
 {
 	//if(stanfordPrepositionFound)
@@ -772,12 +772,12 @@ void convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInLi
 #ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 void convertGIAsemanticRelation(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList)
 {
-	#ifdef GIA_USE_LRP
+	#ifdef GIA_LRP
 	convertGIAsemanticRelationLRPreversion(currentRelationInList, currentSentenceInList);
 	#endif
 }
 
-#ifdef GIA_USE_LRP
+#ifdef GIA_LRP
 void convertGIAsemanticRelationLRPreversion(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList)
 {
 	if(getUseLRP())
@@ -922,7 +922,7 @@ void GIATHparseRelexFeaturesText(string* featuresText, GIAsentence* currentSente
 				}
 			#endif
 
-				#ifdef GIA_USE_LRP
+				#ifdef GIA_LRP
 				if(getUseLRP())
 				{
 					bool foundOfficialLRPreplacementString = false;

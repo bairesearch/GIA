@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o9b 26-October-2016
+ * Project Version: 2p1a 08-December-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -276,10 +276,10 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 
 	bool idFound = false;
 	bool entityNameFound = false;
-	#ifdef GIA_USE_WORD_ORIG
+	#ifdef GIA_WORD_ORIG
 	bool wordOrigFound = false;
 	#endif
-	#ifdef GIA_SUPPORT_ALIASES
+	#ifdef GIA_ALIASES
 	bool aliasesFound = false;
 	#endif
 	bool confidenceFound = false;
@@ -315,7 +315,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 	bool grammaticalDefiniteTempFound = false;
 	bool grammaticalIndefinitePluralTempFound = false;
 	bool grammaticalProperNounTempFound = false;
-	#ifdef GIA_SUPPORT_PREDETERMINERS
+	#ifdef GIA_PREDETERMINERS
 	bool grammaticalPredeterminerTempFound = false;
 	#endif
 
@@ -327,7 +327,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 	#endif
 
 	bool disabledFound = false;
-	#ifdef GIA_SUPPORT_EXPLETIVES
+	#ifdef GIA_EXPLETIVES
 	bool isExpletiveFound = false;
 	#endif
 	
@@ -368,7 +368,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 				entityNode->entityName = attributeValue;
 				entityNameFound = true;
 			}
-			#ifdef GIA_USE_WORD_ORIG
+			#ifdef GIA_WORD_ORIG
 			else if(currentAttribute->name == NET_XML_ATTRIBUTE_wordOrig)
 			{
 				string attributeValue = currentAttribute->value.c_str();
@@ -376,7 +376,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 				wordOrigFound = true;
 			}
 			#endif
-			#ifdef GIA_SUPPORT_ALIASES
+			#ifdef GIA_ALIASES
 			else if(currentAttribute->name == NET_XML_ATTRIBUTE_aliases)
 			{
 				string attributeValue = currentAttribute->value.c_str();
@@ -561,7 +561,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 				entityNode->grammaticalProperNounTemp = attributeValue;
 				grammaticalProperNounTempFound = true;
 			}
-			#ifdef GIA_SUPPORT_PREDETERMINERS
+			#ifdef GIA_PREDETERMINERS
 			else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalPredeterminerTemp)
 			{
 				int attributeValue = convertStringToInt(currentAttribute->value);
@@ -576,7 +576,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 				entityNode->entityIndexTemp = attributeValue;
 				entityIndexFound = true;
 			}
-			#ifdef GIA_USE_ADVANCED_REFERENCING
+			#ifdef GIA_ADVANCED_REFERENCING
 			else if(currentAttribute->name == NET_XML_ATTRIBUTE_wasReference)
 			{
 				int attributeValue = convertStringToInt(currentAttribute->value);
@@ -605,7 +605,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 				entityNode->disabled = attributeValue;
 				disabledFound = true;
 			}
-			#ifdef GIA_SUPPORT_EXPLETIVES
+			#ifdef GIA_EXPLETIVES
 			else if(currentAttribute->name == NET_XML_ATTRIBUTE_isExpletive)
 			{
 				bool attributeValue = convertStringToInt(currentAttribute->value);
@@ -738,7 +738,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 			#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 			bool sentenceIndexTempFound = false;
 			#endif
-			#ifdef GIA_USE_ADVANCED_REFERENCING
+			#ifdef GIA_ADVANCED_REFERENCING
 			#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 			bool isReferenceFound = false;
 			#endif
@@ -779,7 +779,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 					#endif
 				}
 				#endif
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_ADVANCED_REFERENCING
 				#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 				else if(currentAttribute->name == NET_XML_ATTRIBUTE_isReference)
 				{
@@ -842,7 +842,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 			{
 				GIAentityNode* targetEntity = findActiveEntityNodeByID(idActiveList, entityNodesActiveListComplete);
 				newConnection->entity = targetEntity;
-				#ifdef GIA_USE_DATABASE
+				#ifdef GIA_DATABASE
 				newConnection->referenceLoaded = true;
 				newConnection->entityName = targetEntity->entityName;
 				newConnection->idInstance = targetEntity->idInstance;
@@ -1140,13 +1140,13 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentAttribute->value = currentEntity->entityName;
 	currentAttribute = createNewAttribute(currentAttribute);
 
-	#ifdef GIA_USE_WORD_ORIG
+	#ifdef GIA_WORD_ORIG
 	currentAttribute->name = NET_XML_ATTRIBUTE_wordOrig;
 	currentAttribute->value = currentEntity->wordOrig;
 	currentAttribute = createNewAttribute(currentAttribute);
 	#endif
 
-	#ifdef GIA_SUPPORT_ALIASES
+	#ifdef GIA_ALIASES
 	currentAttribute->name = NET_XML_ATTRIBUTE_aliases;
 	convertAliasesToAliasesString(currentEntity, &(currentAttribute->value));
 	currentAttribute = createNewAttribute(currentAttribute);
@@ -1288,7 +1288,7 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentAttribute->value = convertIntToString(int(currentEntity->grammaticalProperNounTemp));
 	currentAttribute = createNewAttribute(currentAttribute);
 
-	#ifdef GIA_SUPPORT_PREDETERMINERS
+	#ifdef GIA_PREDETERMINERS
 	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalPredeterminerTemp;
 	currentAttribute->value = convertIntToString(int(currentEntity->grammaticalPredeterminerTemp));
 	currentAttribute = createNewAttribute(currentAttribute);
@@ -1299,7 +1299,7 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentAttribute->value = convertIntToString((currentEntity->entityIndexTemp));
 	currentAttribute = createNewAttribute(currentAttribute);
 
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_ADVANCED_REFERENCING
 	currentAttribute->name = NET_XML_ATTRIBUTE_wasReference;
 	currentAttribute->value = convertIntToString((currentEntity->wasReference));
 	currentAttribute = createNewAttribute(currentAttribute);
@@ -1320,7 +1320,7 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentAttribute->value = convertIntToString(int(currentEntity->disabled));
 	currentAttribute = createNewAttribute(currentAttribute);
 
-	#ifdef GIA_SUPPORT_EXPLETIVES
+	#ifdef GIA_EXPLETIVES
 	currentAttribute->name = NET_XML_ATTRIBUTE_isExpletive;
 	currentAttribute->value = convertIntToString(int(currentEntity->isExpletive));
 	currentAttribute = createNewAttribute(currentAttribute);
@@ -1392,7 +1392,7 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 						currentAttribute = createNewAttribute(currentAttribute);
 						#endif
 
-						#ifdef GIA_USE_ADVANCED_REFERENCING
+						#ifdef GIA_ADVANCED_REFERENCING
 						#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 						currentAttribute->name = NET_XML_ATTRIBUTE_isReference;
 						currentAttribute->value = convertIntToString(int(connection->isReference));
