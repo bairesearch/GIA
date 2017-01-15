@@ -1093,8 +1093,10 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 		bool newLineDetected = false;
 		while(parseFileObject.get(currentToken))
 		{
-			cout << currentToken;
-
+			#ifdef GIA_NLP_DEBUG
+			//cout << currentToken;
+			#endif
+			
 			if(currentToken == CHAR_NEWLINE)
 			{
 				if(newLineDetected)
