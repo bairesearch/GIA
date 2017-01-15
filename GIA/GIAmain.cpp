@@ -92,17 +92,22 @@ using namespace std;
 #include "LDopengl.h"
 
 static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any of the following\n"
-"\n\n\t-itxt [string]  : plain text .txt input filename to be parsed by Relex (def: inputText.txt)"
-"\n\n\t-irelex [string] : RelEx compact .xml input filename (def: relexCompactOutput.xml)"
-"\n\n\t-ixml [string]   : semantic network definition .xml input filename (def: semanticNet.xml)"
-"\n\n\t-qtxt [string]  : plain text .txt input query filename to be parsed by Relex (def: inputQuery.txt)"
-"\n\n\t-qrelex [string] : RelEx compact .xml input query filename (def: relexCompactOutputQuery.xml)"
-"\n\n\t-qxml [string]   : semantic network definition .xml input query filename (def: semanticNetQuery.xml)"
-"\n\n\t-oxml [string]   : semantic network definition .xml output filename (def: semanticNet.xml)"
-"\n\n\t-ocxl [string]   : semantic network display .cxl vector graphics output filename (def: semanticNet.cxl)"
+"\n\t-itxt [string]     : plain text .txt input filename to be parsed by Relex (def: inputText.txt)"
+"\n\t-iorelex [string]  : RelEx compact .xml intermediary input/output filename (def: inputRelex.xml)"
+"\n\t-ixml [string]     : semantic network definition .xml input filename (def: semanticNet.xml)"
+"\n\t-itxtq [string]    : query plain text .txt input filename to be parsed by Relex (def: inputQuery.txt)"
+"\n\t-iorelexq [string] : query RelEx compact .xml intermediary input/output filename (def: inputRelexQuery.xml)"
+"\n\t-ixmlq [string]    : query semantic network definition .xml input filename (def: semanticNetQuery.xml)"
+"\n\t-oxml [string]     : semantic network definition .xml output filename (def: semanticNet.xml)"
+"\n\t-ocxl [string]     : semantic network display .cxl vector graphics output filename (def: semanticNet.cxl)"
 "\n\t-osvg [string]     : semantic network display .svg 2D vector graphics output filename (def: semanticNet.svg)"
 "\n\t-oldr [string]     : semantic network display .ldr 3D vector graphics output filename (def: semanticNet.ldr)"
 "\n\t-oppm [string]     : semantic network display .ppm raster graphics output filename (def: semanticNet.ppm)"
+"\n\t-oxmlq [string]    : query semantic network definition .xml output filename (def: semanticNetQuery.xml)"
+"\n\t-ocxlq [string]    : query semantic network display .cxl vector graphics output filename (def: semanticNetQuery.cxl)"
+"\n\t-osvgq [string]    : query semantic network display .svg 2D vector graphics output filename (def: semanticNetQuery.svg)"
+"\n\t-oldrq [string]    : query semantic network display .ldr 3D vector graphics output filename (def: semanticNetQuery.ldr)"
+"\n\t-oppmq [string]    : query semantic network display .ppm raster graphics output filename (def: semanticNetQuery.ppm)"
 "\n\t-oall [string]     : semantic network display xml/.svg/.ldr/.ppm default generic output filename (def: semanticNet)"
 "\n\t-oanswer [string]  : plain text .txt file containing the answer to the query (def: answer.txt)"
 "\n\t-notshow           : do not display outputText in opengl"
@@ -135,11 +140,11 @@ int main(int argc,char **argv)
 	string inputTextPlainTXTFileName = "inputText.txt";
 		
 	bool useInputTextRelexXMLFile = false;
-	string inputTextRelexXMLFileName = "relexCompactOutput.xml";
+	string inputTextRelexXMLFileName = "inputRelex.xml";
 	
 	bool useInputTextXMLFile = false;
 	string inputTextXMLFileName = "semanticNet.xml";
-		
+
 	bool useOutputTextXMLFile = false;
 	string outputTextXMLFileName = "semanticNet.xml";
 
@@ -156,19 +161,19 @@ int main(int argc,char **argv)
 	string outputTextSVGFileName = "semanticNet.svg";
 		
 	bool useInputQueryPlainTXTFile = false;
-	string inputQueryPlainTXTFileName = "inputQuery.txt";
+	string inputQueryPlainTXTFileName = "inputTextQuery.txt";
 		
 	bool useInputQueryRelexXMLFile = false;
-	string inputQueryRelexXMLFileName = "relexCompactOutputQuery.xml";
+	string inputQueryRelexXMLFileName = "inputRelexQuery.xml";
 	
 	bool useInputQueryXMLFile = false;
 	string inputQueryXMLFileName = "semanticNetQuery.xml";	
 	
-	//bool useOutputQueryXMLFile = true;
-	//string outputQueryXMLFileName = "semanticNetQuery.xml";
+	bool useOutputQueryXMLFile = true;
+	string outputQueryXMLFileName = "semanticNetQuery.xml";
 
-	//bool useOutputQueryCXLFile = true;
-	//string outputQueryCXLFileName = "semanticNetQuery.cxl";
+	bool useOutputQueryCXLFile = true;
+	string outputQueryCXLFileName = "semanticNetQuery.cxl";
 		
 	bool useOutputQueryLDRFile = true;
 	string outputQueryLDRFileName = "semanticNetQuery.ldr";
@@ -186,6 +191,7 @@ int main(int argc,char **argv)
 	string outputTextAnswerPlainTXTFileName = "answer.txt";
 			
 	bool printOutput = false;
+	bool printOutputQuery = false;
 	bool displayInOpenGLAndOutputScreenshot = true;
 
 	int rasterImageWidth = 640;
@@ -219,23 +225,23 @@ int main(int argc,char **argv)
 			useInputTextXMLFile = true;
 		}
 
-		if(exists_argument(argc,argv,"-qtxt"))
+		if(exists_argument(argc,argv,"-itxtq"))
 		{
-			inputQueryPlainTXTFileName=get_char_argument(argc,argv,"-qtxt");
+			inputQueryPlainTXTFileName=get_char_argument(argc,argv,"-itxtq");
 			useInputQueryPlainTXTFile = true;
 			useInputQuery = true;
 		}
 
-		if(exists_argument(argc,argv,"-qrelex"))
+		if(exists_argument(argc,argv,"-iorelexq"))
 		{
-			inputQueryRelexXMLFileName=get_char_argument(argc,argv,"-qrelex");
+			inputQueryRelexXMLFileName=get_char_argument(argc,argv,"-iorelexq");
 			useInputQueryRelexXMLFile = true;
 			useInputQuery = true;
 		}
 
-		if(exists_argument(argc,argv,"-qxml"))
+		if(exists_argument(argc,argv,"-ixmlq"))
 		{
-			inputQueryXMLFileName=get_char_argument(argc,argv,"-qxml");
+			inputQueryXMLFileName=get_char_argument(argc,argv,"-ixmlq");
 			useInputQueryXMLFile = true;
 			useInputQuery = true;
 		}
@@ -273,6 +279,38 @@ int main(int argc,char **argv)
 			printOutput = true;
 		}
 
+		if(exists_argument(argc,argv,"-oxmlq"))
+		{
+			outputQueryXMLFileName=get_char_argument(argc,argv,"-oxmlq");
+			useOutputQueryXMLFile = true;
+		}
+
+		if(exists_argument(argc,argv,"-ocxlq"))
+		{
+			outputQueryCXLFileName=get_char_argument(argc,argv,"-ocxlq");
+			useOutputQueryCXLFile = true;
+		}
+
+		if(exists_argument(argc,argv,"-oldrq"))
+		{
+			outputQueryLDRFileName=get_char_argument(argc,argv,"-oldrq");
+			useOutputQueryLDRFile = true;
+			printOutputQuery = true;
+		}
+
+		if(exists_argument(argc,argv,"-oppmq"))
+		{
+			outputQueryPPMFileName=get_char_argument(argc,argv,"-oppmq");
+			useOutputQueryPPMFile = true;
+			printOutputQuery = true;
+		}
+
+		if(exists_argument(argc,argv,"-osvgq"))
+		{
+			outputQuerySVGFileName=get_char_argument(argc,argv,"-osvgq");
+			useOutputQuerySVGFile = true;
+			printOutputQuery = true;
+		}
 		if(exists_argument(argc,argv,"-oall"))
 		{
 			outputTextAllFileName=get_char_argument(argc,argv,"-oall");
@@ -438,9 +476,53 @@ int main(int argc,char **argv)
 		if(displayInOpenGLAndOutputScreenshot)
 		{
 			initiateOpenGL(rasterImageWidth, rasterImageHeight);
-		}		
+		}	
+		
+		if(useInputQuery)
+		{
+			if(!useOutputQueryXMLFile)
+			{	
+				if(useOutputTextAllFile)
+				{	
+					useOutputQueryXMLFile = true;		
+					outputQueryXMLFileName = outputTextAllFileName + "Query.xml";
+				}
+			}	
+			if(!useOutputQueryCXLFile)
+			{	
+				if(useOutputTextAllFile)
+				{	
+					useOutputQueryCXLFile = true;		
+					outputQueryCXLFileName = outputTextAllFileName + "Query.cxl";
+				}
+			}			
+			if(!useOutputQueryLDRFile)
+			{		
+				if(useOutputTextAllFile || displayInOpenGLAndOutputScreenshot)		//LDR outputQuery is always required when displaying semantic network in OpenGL and outputQuerying screenshot
+				{
+					useOutputQueryLDRFile = true;			
+					outputQueryLDRFileName = outputTextAllFileName + "Query.ldr";
+				}
+			}
+			if(!useOutputQuerySVGFile)
+			{
+				if(useOutputTextAllFile)
+				{				
+					useOutputQuerySVGFile = true;
+					outputQuerySVGFileName = outputTextAllFileName + "Query.svg";
+				}
+			}
+			if(!useOutputQueryPPMFile)
+			{
+				if(useOutputTextAllFile)
+				{
+					useOutputQueryPPMFile = true;		
+					outputQueryPPMFileName = outputTextAllFileName + "Query.ppm";
+				}
+			}				
+		}	
 	}
-
+	
 					
 	if(useInputTextPlainTXTFile)
 	{
@@ -536,13 +618,26 @@ int main(int argc,char **argv)
 			}					
 		}
 
-	#ifdef GIA_DEBUG_PRINT_QUERY_SEMANTIC_NETWORK		
-		if(printOutput)
+		if(printOutputQuery)
 		{	
 			printGIAnetworkNodes(entityNodesCompleteListQuery, rasterImageWidth, rasterImageHeight, outputQueryLDRFileName, outputQuerySVGFileName, outputQueryPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputQueryLDRFile, useOutputQueryPPMFile, useOutputQuerySVGFile);
 		}	
-	#endif
-			
+
+		if(useOutputQueryXMLFile)
+		{			
+			if(!writeSemanticNetXMLFileOptimised(outputQueryXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery))
+			{
+				result = false;
+			}
+		}
+		if(useOutputQueryCXLFile)
+		{
+			if(!writeCMapToolsCXLFileOptimised(outputQueryCXLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery))
+			{
+				result = false;
+			}	
+		}
+						
 	}
 		
 	if(useInputQueryXMLFile)

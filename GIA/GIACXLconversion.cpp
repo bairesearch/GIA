@@ -413,7 +413,108 @@ bool generateCXLConnectionNodeTagList(XMLParserTag * firstTagInMap, vector<GIAEn
 	
 	return result;
 }	
+
+#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES	
+bool checkIfPassedRedundantConceptNodeRemoval(GIAEntityNode * currentEntity)
+{
+	bool result = false;
+
+	#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES_OLD
+	if(currentEntity->AssociatedInstanceNodeList.begin() == currentEntity->AssociatedInstanceNodeList.end())
+	{//if GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES; then do not add a concept entity if it has an associated instance (property node) 
+	//if((currentEntity->isAction) || (currentEntity->isProperty) || (currentEntity->isCondition))
+	//{//do not add raw concept nodes
+		result = true;
+	}
+	#else
+			
+	if((currentEntity->AssociatedInstanceNodeList.begin() == currentEntity->AssociatedInstanceNodeList.end()))
+	{
+		//entity does not have an associated instance [entity is either a raw/isolated concept node, or it is a property]
+		result = true;
+	}
+	else
+	{
+		//entity has an associated instance [entity is a concept node]
+
+		if(currentEntity->actionSubjectEntity != NULL)
+		{
+			result = true;				
+		}
+		if(currentEntity->actionObjectEntity != NULL)
+		{
+			result = true;
+		}
+
+		if(currentEntity->conditionSubjectEntity != NULL)
+		{
+			result = true;				
+		}
+		if(currentEntity->conditionObjectEntity != NULL)
+		{
+			result = true;
+		}	
 		
+		if(currentEntity->entityNodeDefiningThisInstance != NULL)
+		{//this shouldnt be defined, since this entity is a concept node, not a property node 
+			result = true;		
+		}
+
+		//cout << "w2" << endl;
+
+		
+		if(currentEntity->ActionNodeList.begin() != currentEntity->ActionNodeList.end())
+		{
+			result = true;
+		}
+		if(currentEntity->IncomingActionNodeList.begin() != currentEntity->IncomingActionNodeList.end())
+		{
+			result = true;
+		}
+		
+		if(currentEntity->ConditionNodeList.begin() != currentEntity->ConditionNodeList.end())
+		{
+			result = true;
+		}
+
+		if(currentEntity->IncomingConditionNodeList.begin() != currentEntity->IncomingConditionNodeList.end())
+		{
+			result = true;
+		}
+					
+
+		if(currentEntity->PropertyNodeList.begin() != currentEntity->PropertyNodeList.end())
+		{
+			result = true;
+		}
+
+		if(currentEntity->PropertyNodeReverseList.begin() != currentEntity->PropertyNodeReverseList.end())
+		{
+			result = true;
+		}
+
+		if(currentEntity->EntityNodeDefinitionList.begin() != currentEntity->EntityNodeDefinitionList.end())
+		{
+			result = true;
+		}
+
+		if(currentEntity->EntityNodeDefinitionReverseList.begin() != currentEntity->EntityNodeDefinitionReverseList.end())
+		{
+			result = true;
+		}
+
+		if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
+		{
+			result = true;
+		}				
+	}
+	
+	#endif
+	
+	return result;
+}
+#endif
+	
 XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector<GIAEntityNode*> *entityNodesList, long * currentCmapNodeIDInCmapNodeList, XMLParserTag * firstTagL1, XMLParserTag ** currentTagInLinkingPhraseList, XMLParserTag ** currentTagInLinkingPhraseAppearanceList, XMLParserTag * firstTagInConnectionsList)
 {
 	//cout << "h3ii" << endl;
@@ -426,10 +527,8 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 
 		
 		#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
-		if(currentEntity->AssociatedInstanceNodeList.begin() == currentEntity->AssociatedInstanceNodeList.end())
-		{//if GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES; then do not add a concept entity if it has an associated instance (property node) 
-		//if((currentEntity->isAction) || (currentEntity->isProperty) || (currentEntity->isCondition))
-		//{//do not add raw concept nodes
+		if(checkIfPassedRedundantConceptNodeRemoval(currentEntity))
+		{
 		#endif
 			//cout << "cxl1" << endl;
 			//cout << "w1" << endl;
@@ -547,7 +646,7 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 
 			//cout << "w1d" << endl;
 
-			#ifndef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
+			#ifndef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES_OLD
 			if(currentEntity->entityNodeDefiningThisInstance != NULL)
 			{
 				string connectionTypeName = "instance";

@@ -34,6 +34,11 @@ using namespace std;
 #endif
 #ifdef GIA_CMAP_CONVERSION_SANITISED
 	#define GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
+	/*
+	#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
+		//#define GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES_OLD
+	#endif
+	*/
 	#define GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_TIME_CONDITION_NODES
 #endif
 #define GIA_CXL_EXPAND_RATIO (3)
@@ -83,5 +88,9 @@ bool writeCMapToolsCXLFileOptimised(string xmlFileName, vector<GIAEntityNode*> *
 		void resetIDsForNodeList2(vector<GIAEntityNode*> *entityNodesList, long * currentEntityNodeIDInConceptEntityNodesList);
 		//void resetIDsForNodeMap(unordered_map<string, GIAEntityNode*> *entityNodesMap, long * currentEntityNodeIDInConceptEntityNodesList);	
 		#endif
+
+#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES	
+bool checkIfPassedRedundantConceptNodeRemoval(GIAEntityNode * currentEntity);
+#endif
 		
 #endif
