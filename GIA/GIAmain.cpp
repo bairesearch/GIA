@@ -900,7 +900,7 @@ bool executeGIA(
 {
 #ifdef USE_CS_WORKAROUND
 }
-int main2(int argc,char **argv)
+bool executeGIA2()
 {
 #endif
 	/*

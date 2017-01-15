@@ -183,7 +183,7 @@ int getFilesFromFileList(string inputListFileName, string * inputFileNameArray);
 #endif
 
 #ifdef USE_CS_WORKAROUND
-int main2(int argc,char **argv);
+bool executeGIA2();
 #endif
 
 #endif
