@@ -86,9 +86,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		{
 			cout << "entityNode = " << entityNode->entityName << " (has associated property)" << endl;	
 		}
-		else if(entityNode->hasAssociatedAction)
+		else if(entityNode->hasAssociatedPropertyIsAction)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated action)" << endl;
+			cout << "entityNode = " << entityNode->entityName << " (has associated property is action)" << endl;
 		} 
 		else if(entityNode->hasAssociatedTime)
 		{
@@ -104,7 +104,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
 		cout << "\tentityNode->isProperty = " << entityNode->isProperty << endl;
 		cout << "\tentityNode->hasAssociatedProperty = " << entityNode->hasAssociatedProperty << endl;
-		cout << "\tentityNode->hasAssociatedAction = " << entityNode->hasAssociatedAction << endl;
+		cout << "\tentityNode->hasAssociatedPropertyIsAction = " << entityNode->hasAssociatedPropertyIsAction << endl;
 		*/
 		
 		entityNode->initialisedForPrinting = true;
@@ -363,15 +363,6 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			//cout << "as1" << endl;
 			q = q+DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE;
 		}	
-		q = DRAW_Y_SPACE_BETWEEN_ACTION_DEFINITION_NODES;
-		r = DRAW_X_SPACE_BETWEEN_ACTION_DEFINITION_NODES;			
-		for(actionIter = entityNode->AssociatedActionNodeList.begin(); actionIter != entityNode->AssociatedActionNodeList.end(); actionIter++) 
-		{
-			//cout << "as2" << endl;
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*actionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			//cout << "as3" << endl;
-			q = q+DRAW_Y_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE;
-		}
 		
 		//cout << "a7" << endl;
 		
@@ -382,7 +373,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			int boxThickness = GIA_DRAW_THICKNESS_NORMAL;
 			
 			int entityColour;
-			if(entityNode->hasAssociatedAction)
+			if(entityNode->hasAssociatedPropertyIsAction)
 			{
 				if(entityNode->hasMeasure)
 				{
@@ -470,9 +461,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property)" << endl;	
 		}
-		else if(entityNode->hasAssociatedAction)
+		else if(entityNode->hasAssociatedPropertyIsAction)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated action)" << endl;
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property is action)" << endl;
 		} 
 		else if(entityNode->hasAssociatedTime)
 		{

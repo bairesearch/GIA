@@ -64,7 +64,7 @@ vector<GIAEntityNode*> * getTranslatorEntityNodesCompleteList()
 	
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity)
 {
-	if(((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY != 1) && (propertyEntity->hasAssociatedPropertyTemp)) || ((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY != 1) && (propertyEntity->entityAlreadyDeclaredInThisContext)))
+	if((propertyEntity->hasAssociatedPropertyTemp) || (propertyEntity->entityAlreadyDeclaredInThisContext))
 	{
 		if(!(propertyEntity->hasAssociatedPropertyTemp))
 		{
@@ -73,7 +73,7 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 			
 		GIAEntityNode * existingProperty  = propertyEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
 
-		if(((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY != 1) && (thingEntity->hasAssociatedPropertyTemp)) || ((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY != 1) && (thingEntity->entityAlreadyDeclaredInThisContext)))
+		if((thingEntity->hasAssociatedPropertyTemp) || (thingEntity->entityAlreadyDeclaredInThisContext))
 		{
 			if(!(thingEntity->hasAssociatedPropertyTemp))
 			{
@@ -93,7 +93,7 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 	}
 	else
 	{
-		if(((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY != 1) && (thingEntity->hasAssociatedPropertyTemp)) || ((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY != 1) && (thingEntity->entityAlreadyDeclaredInThisContext)))
+		if((thingEntity->hasAssociatedPropertyTemp) || (thingEntity->entityAlreadyDeclaredInThisContext))
 		{
 			if(!(thingEntity->hasAssociatedPropertyTemp))
 			{
@@ -140,7 +140,7 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 {
-	if(((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY != 1) && (propertyEntity->hasAssociatedPropertyTemp)) || ((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY != 1) && (propertyEntity->entityAlreadyDeclaredInThisContext)))
+	if((propertyEntity->hasAssociatedPropertyTemp) || (propertyEntity->entityAlreadyDeclaredInThisContext))
 	{
 		if(!(propertyEntity->hasAssociatedPropertyTemp))
 		{
@@ -185,15 +185,15 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 
 void addActionToActionDefinition(GIAEntityNode * actionEntity)
 {
-	if(((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY != 1) && (actionEntity->hasAssociatedActionTemp)) || ((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY != 1) && (actionEntity->entityAlreadyDeclaredInThisContext)))
+	if((actionEntity->hasAssociatedPropertyTemp) || (actionEntity->entityAlreadyDeclaredInThisContext))
 	{
-		if(!(actionEntity->hasAssociatedActionTemp))
+		if(!(actionEntity->hasAssociatedPropertyTemp))
 		{
-			actionEntity->hasAssociatedActionTemp = true;
+			actionEntity->hasAssociatedPropertyTemp = true;
 		}
 			
 		//cout << "break; actionEntity->entityName = " << actionEntity->entityName << endl;
-		actionEntity = actionEntity->AssociatedActionNodeList.back();	//added 4 May 11a
+		actionEntity = actionEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
 	}
 	else
 	{	
@@ -206,8 +206,9 @@ void addActionToActionDefinition(GIAEntityNode * actionEntity)
 		newAction->isAction = true;
 		newAction->entityNodeContainingThisProperty = NULL;
 		newAction->entityNodeDefiningThisPropertyOrAction = actionEntity;
-		actionEntity->hasAssociatedAction = true;
-		actionEntity->hasAssociatedActionTemp = true;
+		actionEntity->hasAssociatedProperty = true;
+		actionEntity->hasAssociatedPropertyIsAction = true;
+		actionEntity->hasAssociatedPropertyTemp = true;
 
 		//if(actionEntity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
 		//{
@@ -220,7 +221,7 @@ void addActionToActionDefinition(GIAEntityNode * actionEntity)
 		}
 
 		//configure property definition node
-		actionEntity->AssociatedActionNodeList.push_back(newAction);	
+		actionEntity->AssociatedPropertyNodeList.push_back(newAction);	
 		
 		actionEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
 	}	
@@ -275,42 +276,30 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 	
 	//configure action node	
 	GIAEntityNode * newOrExistingAction;
-	if(actionEntity->hasAssociatedActionTemp)
+	if(actionEntity->hasAssociatedPropertyTemp)
 	{
-		newOrExistingAction = actionEntity->AssociatedActionNodeList.back();	
-	}
-	else if(actionEntity->hasAssociatedPropertyTemp)
-	{
-		newAction = true;
+		newOrExistingAction = actionEntity->AssociatedPropertyNodeList.back();	
 		
-		//convert property to action
-		newOrExistingAction = actionEntity->AssociatedPropertyNodeList.back();
-		
-		newOrExistingAction->isProperty = false;
-		actionEntity->hasAssociatedPropertyTemp = false;
-		actionEntity->AssociatedPropertyNodeList.pop_back();
-		if(actionEntity->AssociatedPropertyNodeList.size() < 1)
-		{
-			actionEntity->hasAssociatedProperty = false;
+		if(actionEntity->hasAssociatedPropertyIsAction == false)
+		{//upgrade associated property to action
+			actionEntity->hasAssociatedPropertyIsAction = true;
+			newOrExistingAction->isProperty = false;
+			newOrExistingAction->isAction = true;
 		}
 	}
 	else
-	{
-		newAction = true;
-		
+	{		
 		newOrExistingAction = new GIAEntityNode();
 		newOrExistingAction->id = currentEntityNodeIDInCompleteList++;
 		newOrExistingAction->entityName = actionEntity->entityName;		
 		newOrExistingAction->entityNodeDefiningThisPropertyOrAction = actionEntity;
-	}
-	
-	if(newAction)
-	{
+		
 		entityNodesCompleteList.push_back(newOrExistingAction);
 
-		actionEntity->AssociatedActionNodeList.push_back(newOrExistingAction);
-		actionEntity->hasAssociatedAction = true;
-		actionEntity->hasAssociatedActionTemp = true;
+		actionEntity->AssociatedPropertyNodeList.push_back(newOrExistingAction);
+		actionEntity->hasAssociatedProperty = true;
+		actionEntity->hasAssociatedPropertyIsAction = true;
+		actionEntity->hasAssociatedPropertyTemp = true;
 		newOrExistingAction->isAction = true;
 
 		//cout << "actionEntity->grammaticalTenseTemp = " << actionEntity->grammaticalTenseTemp << endl;
@@ -321,8 +310,10 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 			//cout << "hello" << endl;
 			//exit(0);
 			addTenseOnlyTimeConditionToProperty(newOrExistingAction, actionEntity->grammaticalTenseTemp);
-		}
-	}	
+		}		
+	}
+	
+	
 
 	return newOrExistingAction;
 }
@@ -406,14 +397,6 @@ void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntity
 	if(conditionEntityNode->hasAssociatedPropertyTemp)
 	{
 		conditionEntityNode = conditionEntityNode->AssociatedPropertyNodeList.back();
-	}
-	if(entityNode->hasAssociatedActionTemp)
-	{
-		entityNode = entityNode->AssociatedActionNodeList.back();
-	}
-	if(conditionEntityNode->hasAssociatedActionTemp)
-	{
-		conditionEntityNode = conditionEntityNode->AssociatedActionNodeList.back();
 	}										
 	addPropertyConditionToProperty(entityNode, conditionEntityNode, conditionName);
 }
@@ -629,7 +612,6 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				
 				 
 				GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedPropertyTemp = false;
-				GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedActionTemp = false;
 				
 			}
 			if(!GIAEntityNodeArrayFilled[relationArgumentIndex])
@@ -649,7 +631,6 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				GIAEntityNodeArray[relationArgumentIndex]->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[relationArgumentIndex];
 								
 				GIAEntityNodeArray[relationArgumentIndex]->hasAssociatedPropertyTemp = false;	
-				GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedActionTemp = false;		
 			}
 			
 			currentRelationInList = currentRelationInList->next;
@@ -1664,20 +1645,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			if(actionOrPropertyEntity->hasAssociatedPropertyTemp)
 			{
 				actionOrPropertyEntity = actionOrPropertyEntity->AssociatedPropertyNodeList.back();	
-			}
-			if(actionOrPropertyEntity->hasAssociatedActionTemp)
-			{
-				actionOrPropertyEntity = actionOrPropertyEntity->AssociatedActionNodeList.back();	
 			}				
 
 			//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
 			if(actionOrPropertyConditionEntity->hasAssociatedPropertyTemp)
 			{
 				actionOrPropertyConditionEntity = actionOrPropertyConditionEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
-			}
-			if(actionOrPropertyConditionEntity->hasAssociatedActionTemp)
-			{
-				actionOrPropertyConditionEntity = actionOrPropertyConditionEntity->AssociatedActionNodeList.back();	//added 4 May 11a
 			}
 																	
 			if(passedPropositionLocationOrTime)
@@ -1903,10 +1876,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						}
 					}																		
 					if(relationTypeQuantityArgumentImplyMeasurePer)
-					{//eg "every hour" or "every day"
+					{//eg "every hour" or "every day" - convert to measure_per system
 						
 						GIAEntityNode * entityToConnectMeasurePerEntity;
-						
 						bool foundQuantityOwner = false;
 						Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 						while(currentRelationInList2->next != NULL)
@@ -1919,29 +1891,35 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 												
 							currentRelationInList2 = currentRelationInList2->next;
 						}	
-					
-						//disconnect quantity node from existing connections (not including definitions).
-						disconnectNodeFromAllButDefinitions(quantityProperty);
 						
-						GIAEntityNode * newQuantityTimesEntity = new GIAEntityNode();
-						newQuantityTimesEntity->entityName = "times";
-						newQuantityTimesEntity->hasQuantity = true;
-						newQuantityTimesEntity->quantityNumber = 1;
-						addPropertyToPropertyDefinition(newQuantityTimesEntity);
-						if(newQuantityTimesEntity->hasAssociatedPropertyTemp)
-						{//assumed true since its property was just explicitly created
-							newQuantityTimesEntity = newQuantityTimesEntity->AssociatedPropertyNodeList.back();
-						}						
-						
-						//reconnect refreshed quanity (times) node;
-						addOrConnectPropertyToEntity(entityToConnectMeasurePerEntity, newQuantityTimesEntity);
-						
-						//now add measure_per condition node
-						quantityProperty->hasQuantity = false;
-						quantityProperty->hasMeasure = true;
-						quantityProperty->measureType = MEASURE_TYPE_PER;						
-						addOrConnectPropertyConditionToEntity(newQuantityTimesEntity, quantityProperty, "measurePer");
+						if(foundQuantityOwner)
+						{
+							//disconnect quantity node from existing connections (not including definitions) - NOT YET CODED.
+							disconnectNodeFromAllButDefinitions(quantityProperty);
+							
+							GIAEntityNode * measureProperty = quantityProperty;	//convert quantity property to measure property
+							measureProperty->hasQuantity = false;
+							measureProperty->hasMeasure = true;
+							measureProperty->measureType = MEASURE_TYPE_PER;						
 
+							GIAEntityNode * newQuantityTimesEntity = new GIAEntityNode();
+							newQuantityTimesEntity->entityName = "times";
+																				
+							//reconnect refreshed quanity (times) node;
+							addOrConnectPropertyToEntity(entityToConnectMeasurePerEntity, newQuantityTimesEntity);
+
+							if(newQuantityTimesEntity->hasAssociatedPropertyTemp)
+							{//assumed true since its property was just explicitly created
+								newQuantityTimesEntity = newQuantityTimesEntity->AssociatedPropertyNodeList.back();
+							}
+							newQuantityTimesEntity->hasQuantity = true;
+							newQuantityTimesEntity->quantityNumber = 1;
+							
+							//now add measure_per condition node
+							addOrConnectPropertyConditionToEntity(newQuantityTimesEntity, measureProperty, RELATION_TYPE_MEASURE_PER);
+							
+						}
+						
 					}
 											
 				}								

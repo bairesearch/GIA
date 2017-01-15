@@ -34,7 +34,7 @@ GIAEntityNode::GIAEntityNode(void)
 	isProperty = false;
 	isAction = false;
 	hasAssociatedProperty = false;
-	hasAssociatedAction = false;
+	hasAssociatedPropertyIsAction = false;
 	hasAssociatedTime = false;
 	
 	//type = undefinedEntityType;
@@ -81,7 +81,6 @@ GIAEntityNode::GIAEntityNode(void)
 	entityAlreadyDeclaredInThisContext = false;
 	
 	hasAssociatedPropertyTemp = false;
-	hasAssociatedActionTemp = false;
 	
 }
 GIAEntityNode::~GIAEntityNode(void)
@@ -107,7 +106,22 @@ GIAEntityNodeContainer::~GIAEntityNodeContainer(void)
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode)
 {
-	cout << "error: disconnectNodeFromAllButDefinitions() not programmed yet" << endl;
+	cout << "warning: disconnectNodeFromAllButDefinitions() not yet coded" << endl; 
+	/* need to delete its instance from the reverse lists of each node of each list of this entity...
+	ActionNodeList->clear();
+	IncomingActionNodeList->clear();
+
+	IncomingActionNodeList->clear();
+	IncomingActionNodeList->clear();
+	IncomingActionNodeList->clear();
+	IncomingActionNodeList->clear();
+	IncomingActionNodeList->clear();
+	IncomingActionNodeList->clear();
+	IncomingActionNodeList->clear();
+	IncomingActionNodeList->clear();
+	IncomingActionNodeList->clear();
+	IncomingActionNodeList->clear();
+	*/
 }
 
 

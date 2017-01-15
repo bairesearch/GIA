@@ -92,7 +92,7 @@ public:
 	bool isProperty;		//is this entity a property?
 	bool isAction;			//is this entity an action?
 	bool hasAssociatedProperty;	//this boolean appears to only represent whether this entity defines a child property node [and not whether it contains one]
-	bool hasAssociatedAction;
+	bool hasAssociatedPropertyIsAction;
 	bool hasAssociatedTime;
 		
 	/*
@@ -148,8 +148,6 @@ public:
 	vector<GIAEntityNode*> EntityNodeDefinitionReverseList;			//if not property only: 	//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
 	vector<GIAEntityNode*>::iterator EntityNodeDefinitionReverseListIterator;	//if not property only: 
 	//associated actions and properties [ie does this entity also define an action/verb or a property/adjective? [ie, it is not just a thing/noun]]
-	vector<GIAEntityNode*> AssociatedActionNodeList;				//if not property only: if type == definesAnActionVerb
-	vector<GIAEntityNode*>::iterator AssociatedActionNodeListIterator;	//if not property only: if type == definesAnActionVerb
 	vector<GIAEntityNode*> AssociatedPropertyNodeList;			//if not property only: if type == definesAPropertyAdjective (ie, if this entity is not a property/instance but defines one or more properties/instances)
 	vector<GIAEntityNode*>::iterator AssociatedPropertyNodeListIterator;	//if not property only: if type == definesAPropertyAdjective (ie, if this entity is not a property/instance but defines one or more properties/instances)
 	
@@ -198,7 +196,6 @@ public:
 	bool entityAlreadyDeclaredInThisContext;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
 
 	bool hasAssociatedPropertyTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	bool hasAssociatedActionTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 
 	
 };
