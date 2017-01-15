@@ -10,3 +10,4 @@
  
 int main(int argc,char **argv);
 
+//#define GIA_XML_DEBUG_TEST_WRITE_READ_WRITE

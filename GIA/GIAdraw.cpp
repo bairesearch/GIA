@@ -814,14 +814,13 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 
 
 
-void printGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int width, int height, string outputFileName, bool display)
+void printGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile)
 {//most of this is copied from CSexecFlow.cpp
 
 	if(display)
 	{
 		initiateOpenGL(width, height);
 	}
-
 	
 	if(!parseGIARulesXMLFile())
 	{
@@ -833,12 +832,6 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int width,
 	///GIA specific rules.xml file is not used at the moment	[once right variables have been decided upon they will be fed to xml]
 	//fillInGIARulesExternVariables();
 	
-
-	
-	string outputFileNameLDR = outputFileName + ".ldr";
-	string outputFileNameSVG = outputFileName + ".svg";
-	string outputFileNamePPM = outputFileName + ".ppm";
-
 	char * outputFileNameLDRcharstar = const_cast<char*>(outputFileNameLDR.c_str());
 	char * displayFileNamePPMcharstar = const_cast<char*>(outputFileNamePPM.c_str());
 	char * outputFileNameSVGcharstar = const_cast<char*>(outputFileNameSVG.c_str());
@@ -868,8 +861,11 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int width,
 	//cout << "h3" <<endl;
 	
 
-	writeReferencesToFile(outputFileNameLDRcharstar, firstReferenceInPrintList);
-
+	if(useOutputLDRFile || display)
+	{
+		writeReferencesToFile(outputFileNameLDRcharstar, firstReferenceInPrintList);
+	}
+	
 	if(display)
 	{
 	

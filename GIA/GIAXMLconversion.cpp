@@ -586,10 +586,12 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 	
 	}
 
+	/*
 	if(printXFound && printYFound && printXIndexFound && printYIndexFound && printTextXFound && printTextYFound)
 	{
 		entityNode->initialisedForPrinting = true; 
 	}
+	*/
 
 	return result;
 }
@@ -922,10 +924,12 @@ bool parseActionNodeTag(XMLParserTag * firstTagInActionNode, GIAActionNode * act
 		result = false;				
 	}
 
+	/*
 	if(printXFound && printYFound && printXIndexFound && printYIndexFound && printTextXFound && printTextYFound)
 	{
 		actionNode->initialisedForPrinting = true; 
 	}
+	*/
 
 	return result;	
 }
@@ -1188,12 +1192,13 @@ bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionN
 		cout << "parseConditionNodeTag error: !conditionIsActionFound" << endl;
 	}
 
+	/*
 	if(printXFound && printYFound && printXIndexFound && printYIndexFound && printTextXFound && printTextYFound)
 	{
 		conditionNode->initialisedForPrinting = true; 
 	}
-
-
+	*/
+	
 	return result;		
 		
 }

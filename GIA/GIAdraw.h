@@ -112,7 +112,7 @@ using namespace std;
 #define GIA_OUTPUT_Z_POSITION_TEXT (0.2)
 
 
-void printGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int width, int height, string outputFileName, bool display);
+void printGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile);
 
 void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int initialiseOrPrint, Reference * firstReferenceInPrintList, ofstream * writeFileObject);
 
