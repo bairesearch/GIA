@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n7a 30-July-2012
+ * Project Version: 1n7b 31-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -225,8 +225,11 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 
 }
 
-
+#ifdef GIA_USE_ADVANCED_REFERENCING
 void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations, bool linkPreestablishedReferencesGIA,  GIACoreference * firstGIACoreferenceInList)
+#else
+void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations)
+#endif
 {
 	Relation * currentRelationInList;
 	/*
@@ -529,6 +532,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		GIAEntityNodeArray[w] = GIAConceptNodeArray[w];		//set default values of GIAEntityNodeArray
 	}
 
+	#ifdef GIA_USE_ADVANCED_REFERENCING
 	if(linkPreestablishedReferencesGIA)
 	{
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -541,6 +545,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	}
 	else
 	{
+	#endif
 		#ifdef GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING
 		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
 		if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
@@ -563,7 +568,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		#endif
 		#endif
 		#endif
+	#ifdef GIA_USE_ADVANCED_REFERENCING	
 	}
+	#endif
 
 	//transfer disabled properties across execution#1 [this is required since GIATranslatorRedistributeStanfordRelations operations are now done on temporary entity nodes GIAFeatureTempEntityNodeArray instead of concept entity nodes {whose values would have been automatically transferred their instances upon creation}...]
 	disableConceptEntitiesBasedOnFeatureTempEntityNodeArray(GIAEntityNodeArrayFilled, GIAConceptNodeArray, GIAFeatureTempEntityNodeArray);

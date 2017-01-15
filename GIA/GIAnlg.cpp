@@ -23,7 +23,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n7a 30-July-2012
+ * Project Version: 1n7b 31-July-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -33,6 +33,8 @@
 
 #include "GIAnlg.h"
 #include "GIATranslatorDefineGrammar.h"
+
+#ifdef GIA_USE_NLG
 
 NLGSentence::NLGSentence(void)
 {
@@ -593,7 +595,7 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 		else
 		{//isConcept
 			cout << "error: generateTwoEntitySentenceFromEntityConnection && (entityNode1->isConcept) && (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)" << endl;
-			exit(0);
+			//exit(0);
 		}
 	}
 	else if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS)
@@ -1095,4 +1097,6 @@ string getWordOrig(GIAEntityNode * entityNode)
 
 	return wordOrig;
 }
+
+#endif
 
