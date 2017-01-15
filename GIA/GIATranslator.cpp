@@ -1694,10 +1694,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						addLocationConditionToAction(actionNode, timeOrLocationConditionEntity);
 					}
 				}
-				else
-				#endif
-				if(actionOrPropertyEntityHasAssociatedPropertyTemp)
+				else if(ctionOrPropertyEntity->hasAssociatedPropertyTemp)
 				{
+				#endif
 					GIAEntityNode * propertyNode = actionOrPropertyEntity;
 					
 					if(timeOrLocationConditionEntity->hasAssociatedTime)
@@ -1723,13 +1722,15 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						}
 
 						addLocationConditionToProperty(propertyNode, timeOrLocationConditionEntity);
-					}				
+					}	
+				#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS				
 				}
 				else
 				{
 					cout << "error: actionOrPropertyEntity does not have associated Property or Action" << endl;
-					cout << "actionOrPropertyEntity = " << actionOrPropertyEntity << endl;				
+					cout << "actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;				
 				}
+				#endif
 				
 
 			}		
@@ -1782,10 +1783,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity << endl;
 					}
 				}
-				else 
-				#endif
-				if(actionOrPropertyEntityHasAssociatedPropertyTemp)
+				else if(actionOrPropertyEntity->hasAssociatedPropertyTemp)
 				{
+				#endif
 					GIAEntityNode * propertyNode = actionOrPropertyEntity;
 					
 					if(actionOrPropertyConditionEntity->hasAssociatedActionTemp)
@@ -1819,14 +1819,15 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					{
 						cout << "error: actionOrPropertyConditionEntity does not have associated Property or Action" << endl;
 						cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity << endl;
-					}				
+					}
+				#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS					
 				}
 				else
 				{
-					 
 					cout << "error: actionOrPropertyEntity does not have associated Property or Action" << endl;
 					cout << "actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;				
-				}					
+				}
+				#endif					
 			}			
 						
 			currentRelationInList = currentRelationInList->next;
