@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i31b 06-February-2015
+ * Project Version: 2i32a 11-February-2015
  *
  *******************************************************************************/
 
@@ -267,6 +267,7 @@ GIAentityNode::GIAentityNode(void)
 	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
 	NLCmathTextParsablePhraseEntity = false;
 	#endif
+	NLCisAlias = false;
 	#endif
 	
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
