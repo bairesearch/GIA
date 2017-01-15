@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1h 31-August-2016
+ * Project Version: 2m2a 06-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -123,6 +123,9 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	initialiseBoolArray2D(&useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false);
 	initialiseIntArray3D(&redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[0][0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, 2, INT_DEFAULT_VALUE);
 	initialiseIntArray3D(&redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[0][0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, 2, INT_DEFAULT_VALUE);
+	#ifdef GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES
+	initialiseIntArray2D(&redistributeSpecialCaseRelationEntityReassignmentConcatonateType[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, INT_DEFAULT_VALUE);
+	#endif
 	initialiseBoolArray2D(&useRedistributeSpecialCaseDisableInstanceAndConcept[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false);
 	initialiseBoolArray2D(&useSpecialCaseCharacteristicsRelationEntityIndexReassignment[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false); 	//not used often
 	initialiseIntArray2D(&specialCaseCharacteristicsRelationEntityIndexReassignmentRelationID[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, INT_DEFAULT_VALUE);					//not used often
@@ -1059,7 +1062,13 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										{
 											string concatonatedEntityNamePart1 = param->relationEntity[param->redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[relationID][relationEntityID][0]][param->redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[relationID][relationEntityID][0]];
 											string concatonatedEntityNamePart2 = param->relationEntity[param->redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[relationID][relationEntityID][1]][param->redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[relationID][relationEntityID][1]];
-											string concatonatedEntityName = concatonatedEntityNamePart1 + STANFORD_PARSER_PREPOSITION_DELIMITER + concatonatedEntityNamePart2;
+											#ifdef GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES
+											string concatonatedTypeDelimiter = concatenationTypesArray[param->redistributeSpecialCaseRelationEntityReassignmentConcatonateType[relationID][relationEntityID]];
+											string concatonatedEntityName = concatonatedEntityNamePart1 + concatonatedTypeDelimiter + concatonatedEntityNamePart2;
+											cout << "concatonatedTypeDelimiter = " << concatonatedTypeDelimiter << endl;
+											#else
+											string concatonatedEntityName = concatonatedEntityNamePart1 + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER + concatonatedEntityNamePart2;
+											#endif
 											#ifdef GIA_DEBUG
 											//cout << "concatonatedEntityName = " << concatonatedEntityName << endl;
 											//cout << "concatonatedEntityNamePart1 = " << concatonatedEntityNamePart1 << endl;
@@ -1373,7 +1382,7 @@ bool determineFeatureIndexOfPreposition(GIAsentence* currentSentenceInList, GIAr
 	while(currentFeatureInList->next != NULL)
 	{
 		string singleWordPreposition = prepositionName;
-		int indexOfPrepositionDelimiter = prepositionName.rfind(STANFORD_PARSER_PREPOSITION_DELIMITER);	//find last occurance
+		int indexOfPrepositionDelimiter = prepositionName.rfind(GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER);	//find last occurance
 		if(indexOfPrepositionDelimiter != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 		{
 			int lengthOfSingleWordPreposition = prepositionName.length() - indexOfPrepositionDelimiter - 1;

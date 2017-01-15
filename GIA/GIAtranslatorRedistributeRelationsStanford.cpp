@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelationsStanford.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1h 31-August-2016
+ * Project Version: 2m2a 06-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -274,6 +274,7 @@ void disableRedundantNodesStanfordCoreNLP(GIAsentence* currentSentenceInList, bo
 	paramA1.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT1] = true;
 		paramA1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][0] = REL1; paramA1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][0] = REL_ENT2;
 		paramA1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][1] = REL1; paramA1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][1] = REL_ENT1;
+		paramA1.redistributeSpecialCaseRelationEntityReassignmentConcatonateType[REL1][REL_ENT1] = 1;
 	paramA1.disableRelation[REL1] = true;
 	paramA1.disableEntity[REL1][REL_ENT2] = true;
 	if(genericDependecyRelationInterpretation(&paramA1, REL1))
@@ -295,6 +296,7 @@ void disableRedundantNodesStanfordCoreNLP(GIAsentence* currentSentenceInList, bo
 	paramB1.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT1] = true;
 		paramB1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][0] = REL1; paramB1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][0] = REL_ENT2;
 		paramB1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][1] = REL1; paramB1.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][1] = REL_ENT1;
+		paramB1.redistributeSpecialCaseRelationEntityReassignmentConcatonateType[REL1][REL_ENT1] = 1;
 	paramB1.disableRelation[REL1] = true;
 	paramB1.disableEntity[REL1][REL_ENT2] = true;
 	if(genericDependecyRelationInterpretation(&paramB1, REL1))
@@ -1157,6 +1159,7 @@ void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSente
 	paramC.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL2][REL_ENT1] = true;
 		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL2][REL_ENT1][0] = REL2; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL2][REL_ENT1][0] = REL_ENT1;
 		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL2][REL_ENT1][1] = REL2; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL2][REL_ENT1][1] = REL_ENT3;
+		paramC.redistributeSpecialCaseRelationEntityReassignmentConcatonateType[REL2][REL_ENT1] = 0;
 	#else
 	paramC.useRelationTest[REL1][REL_ENT1] = true; paramC.relationTest[REL1][REL_ENT1] = RELATION_ENTITY_BE;
 	paramC.useRelationTest[REL2][REL_ENT1] = true; paramC.relationTest[REL2][REL_ENT1] = RELATION_ENTITY_BE;
@@ -1210,7 +1213,7 @@ void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSente
 								if(!(currentRelationInList2->prepositionCombinationAlreadyCreatedTemp))
 								{
 									string newPrepositionName = "";
-									newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + GIAentityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
+									newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + GIAentityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER + relexPreposition;
 
 									#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 									//cout << "newPrepositionName = " << newPrepositionName << endl;
@@ -1582,6 +1585,7 @@ void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSente
 	paramOptMultA.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT3] = true;
 		paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][0] = REL2; paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][0] = REL_ENT1;
 		paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][1] = REL1; paramOptMultA.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][1] = REL_ENT3;
+		paramOptMultA.redistributeSpecialCaseRelationEntityReassignmentConcatonateType[REL1][REL_ENT3] = 0;
 	genericDependecyRelationInterpretation(&paramOptMultA, REL1);
 
 	//optMultB
@@ -1602,6 +1606,7 @@ void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSente
 	paramOptMultB.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT3] = true;
 		paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][0] = REL2; paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][0] = REL_ENT2;
 		paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][1] = REL1; paramOptMultB.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][1] = REL_ENT3;
+		paramOptMultB.redistributeSpecialCaseRelationEntityReassignmentConcatonateType[REL1][REL_ENT3] = 0;
 	genericDependecyRelationInterpretation(&paramOptMultB, REL1);
 
 	//optMultD
@@ -1623,6 +1628,7 @@ void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSente
 	paramOptMultD.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT3] = true;
 		paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][0] = REL2; paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][0] = REL_ENT2;
 		paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT3][1] = REL1; paramOptMultD.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT3][1] = REL_ENT3;
+		paramOptMultD.redistributeSpecialCaseRelationEntityReassignmentConcatonateType[REL1][REL_ENT3] = 0;
 	if(genericDependecyRelationInterpretation(&paramOptMultD, REL1))
 	{
 		paramOptMultD.relationFinalResult[REL2]->disabled =  true;	//see above
@@ -1820,7 +1826,7 @@ void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSente
 															GIAentityNode* entityContainingFirstWordOfMultiwordPreposition = GIAentityNodeArray[currentRelationInList2->relationGovernorIndex];
 
 															string newPrepositionName = "";
-															newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
+															newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER + relexPreposition;
 
 															currentRelationInList->relationType = newPrepositionName;
 															/*
@@ -1868,7 +1874,7 @@ void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSente
 														GIAentityNode* entityContainingFirstWordOfMultiwordPreposition = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
 
 														string newPrepositionName = "";
-														newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
+														newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER + relexPreposition;
 
 														currentRelationInList->relationType = newPrepositionName;
 														/*
@@ -1903,7 +1909,7 @@ void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSente
 														GIAentityNode* entityContainingFirstWordOfMultiwordPreposition = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
 
 														string newPrepositionName = "";
-														newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
+														newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER + relexPreposition;
 
 														currentRelationInList->relationType = newPrepositionName;
 														/*
@@ -1940,7 +1946,7 @@ void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSente
 														GIAentityNode* entityContainingFirstWordOfMultiwordPreposition = GIAentityNodeArray[currentRelationInList3->relationDependentIndex];
 
 														string newPrepositionName = "";
-														newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
+														newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER + relexPreposition;
 
 														currentRelationInList->relationType = newPrepositionName;
 														/*
@@ -3377,6 +3383,7 @@ void redistributeStanfordRelationsPhrasalVerbParticle(GIAsentence* currentSenten
 	paramC.useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[REL1][REL_ENT1] = true;
 		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][0] = REL1; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][0] = REL_ENT1;
 		paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[REL1][REL_ENT1][1] = REL1; paramC.redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[REL1][REL_ENT1][1] = REL_ENT2;
+		paramC.redistributeSpecialCaseRelationEntityReassignmentConcatonateType[REL1][REL_ENT1] = 0;
 	genericDependecyRelationInterpretation(&paramC, REL1);
 	#endif
 #else
@@ -3473,7 +3480,7 @@ void redistributeStanfordRelationsPhrasalVerbParticle(GIAsentence* currentSenten
 
 						GIAentityNode* governerEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 						GIAentityNode* dependentEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
-						governerEntity->entityName = governerEntity->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + dependentEntity->entityName;
+						governerEntity->entityName = governerEntity->entityName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER + dependentEntity->entityName;
 
 						disableEntity(dependentEntity);
 

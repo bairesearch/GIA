@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1h 31-August-2016
+ * Project Version: 2m2a 06-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -704,17 +704,20 @@
 //#define GIA_DISABLE_2j_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2k_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2l_CODE_FOR_DEBUG
-#ifndef GIA_DISABLE_2l_CODE_FOR_DEBUG
-	#define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_PLURAL_GOVERNOR	//added 2l9b
-	//#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_QUALITIES	//added 2l9a, disabled 2l9c
+//#define GIA_DISABLE_2m_CODE_FOR_DEBUG
+#ifndef GIA_DISABLE_2m_CODE_FOR_DEBUG
+	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES	//2m2a
+	#define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_PLURAL_GOVERNOR	//2m1b
+	//#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_QUALITIES	//added 2m1a, disabled 2m1c
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_QUALITIES
-		#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_NEW	//2l9a/b
+		#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_NEW	//2m1a/b
 	#endif
-	#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS	//2l9c - create subclasses based on prenominal modifiers (eg toyshop:shop)
+	#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS	//2m1c - create subclasses based on prenominal modifiers (eg toyshop:shop)
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
-		#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_NEW	//2l9a/b
-		#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_SUBCLASS_DELIMITER "_"	//this must be set the same as STANFORD_PARSER_PREPOSITION_DELIMITER
-	#endif	
+		#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_NEW	//2m1a/b
+	#endif
+#endif
+#ifndef GIA_DISABLE_2l_CODE_FOR_DEBUG	
 	#define GIA_REFERENCING_WILD_CARDS	//2l3a	//interpret something/anything entities as GIA wild card - affects both GIA advanced referencing and queries
 	#ifdef GIA_REFERENCING_WILD_CARDS
 		#define GIA_REFERENCING_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES (2)
@@ -840,7 +843,7 @@
 	#define GIA_TRANSLATOR_DO_NOT_CREATE_SUBSTANCE_CONCEPT_PROPERTIES_FOR_NON_SUBSTANCE_CONCEPT_PARENTS	//2i10a
 	#ifdef GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
 		#ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_NEW
-			#define GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS	//disabled 2l9a	//2i9a	//requires GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS (this is required such that only the instance list of a concept need be parsed when tracing both its definitions and properties/conditions)
+			#define GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS	//disabled 2m1a	//2i9a	//requires GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS (this is required such that only the instance list of a concept need be parsed when tracing both its definitions and properties/conditions)
 		#endif
 		#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS
 			#define GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_SWITCH_DEFINITION_LINKS_IF_NON_MATCHING_SUBSTANCE_CONCEPTS	//2i10b - designed to enable compatibility with NLC
@@ -849,7 +852,7 @@
 		#endif
 	#endif
 	#ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_NEW
-		#define GIA_TRANSLATOR_ADAPT_ENTITY_LINKING_FOR_SUBSTANCE_CONCEPTS	//disabled 2l9a	//2i7a
+		#define GIA_TRANSLATOR_ADAPT_ENTITY_LINKING_FOR_SUBSTANCE_CONCEPTS	//disabled 2m1a	//2i7a
 	#endif
 	#define GIA_REFERENCING_QUERY_SUPPORT_SAME_REFERENCE_SET_TESTS		//2i6a
 	#define GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER	//2i5a
@@ -919,17 +922,10 @@
 
 #ifdef USE_NLC
 	#define GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS	//added 2i36a
-	#ifdef GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS
-		#define GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS_FILLER "_"	//this must be synced with NLC_PREPROCESSOR_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER
-	#endif
 #else
 	//#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS	//GIA 2b4a	//disabled 2i36a
 	#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
-		#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER "_"	//this filler does not appear compatible with Relex (Stanford only); try another filler character (NB "-" doesn't work with Relex either)
 		#define GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS	//added 2i36a
-		#ifdef GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS
-			#define GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS_FILLER (GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER)
-		#endif
 	#endif
 #endif
 #ifdef GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS

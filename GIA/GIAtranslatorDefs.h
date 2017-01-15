@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1h 31-August-2016
+ * Project Version: 2m2a 06-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -552,7 +552,6 @@ static string featureQueryWhatIsTheNameNumberOfNameArray[FEATURE_QUERY_WHAT_IS_T
 #define RELATION_TYPE_PREPOSITION_OF "of"		//eg [she grew tired] of it	 "She grew tired of the pie."  / "The house of Kriton is blue."	//detect if function and argument are both nouns/substance entities; if so then create a substance connection. if a function is a verb/action, then create a condition connection.
 #define STANFORD_PARSER_PREPOSITION_PREPEND "prep_"
 #define STANFORD_PARSER_PREPOSITIONC_PREPEND "prepc_"
-#define STANFORD_PARSER_PREPOSITION_DELIMITER "_"
 #define RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES 19
 static string relationTypePrepositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {"in", "on", "after", "ago", "before", "between", "by", "during", "for", "to", "till", "until", "past", "since", "up_to", "within", "over", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
 //?? NB all of these cases/types need to be replaced with more complex grammar requirements (eg "on" can also mean "rides his bike on the road" [location], not just "rides his bike on tuesday" [time])

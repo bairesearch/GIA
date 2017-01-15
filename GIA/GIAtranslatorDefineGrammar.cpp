@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1h 31-August-2016
+ * Project Version: 2m2a 06-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -879,7 +879,7 @@ void extractGrammaticalInformationFromPOStag(string* POStag, GIAfeature* feature
 				singularDetected = true;
 			}
 			#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER_OR_QUOTATIONS
-			if((feature->word).find(GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS_FILLER) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+			if((feature->word).find(GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_QUOTES_DELIMITER) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 			{
 				singularDetected = true;
 			}

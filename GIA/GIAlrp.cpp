@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1h 31-August-2016
+ * Project Version: 2m2a 06-September-2016
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -1076,7 +1076,7 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag* firstTagInPlain
 				#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
 				if(readingQuotation)
 				{
-					currentWord = currentWord + GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER;
+					currentWord = currentWord + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_QUOTES_DELIMITER;
 				}
 				else
 				{
@@ -1372,14 +1372,14 @@ bool searchAndReplacePhrasalVerbs(GIALRPtag* firstTagInPlainText, GIALRPtag* fir
 
 								foundAtLeastOneMatch = true;
 								currentTagInCollapsedPhrasalVerb->collapsedPhrasalVerbExactDefinedSection = true;
-								currentTagInCollapsedPhrasalVerb->tagName = currentTagInCollapsedPhrasalVerb->tagName + currentTagInPlainTextSentenceTemp->tagName + "_";		//this is part of the defined/main section of the phrasal verb
+								currentTagInCollapsedPhrasalVerb->tagName = currentTagInCollapsedPhrasalVerb->tagName + currentTagInPlainTextSentenceTemp->tagName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER;		//this is part of the defined/main section of the phrasal verb
 								if(currentTagInPhrasalVerb->base)
 								{
-									currentTagInCollapsedPhrasalVerb->tagNameLemma = currentTagInCollapsedPhrasalVerb->tagNameLemma + generatedTagNameLemma + "_";
+									currentTagInCollapsedPhrasalVerb->tagNameLemma = currentTagInCollapsedPhrasalVerb->tagNameLemma + generatedTagNameLemma + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER;
 								}
 								else
 								{
-									currentTagInCollapsedPhrasalVerb->tagNameLemma = currentTagInCollapsedPhrasalVerb->tagNameLemma + currentTagInPlainTextSentenceTemp->tagName + "_";
+									currentTagInCollapsedPhrasalVerb->tagNameLemma = currentTagInCollapsedPhrasalVerb->tagNameLemma + currentTagInPlainTextSentenceTemp->tagName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER;
 								}
 								#ifdef GIA_LRP_DEBUG
 								cout << "currentTagInCollapsedPhrasalVerb->tagName  = " << currentTagInCollapsedPhrasalVerb->tagName << endl;
@@ -1560,7 +1560,7 @@ bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, GIALR
 						cout << "currentTagInPlainTextSentenceTemp->tagName  = " << currentTagInPlainTextSentenceTemp->tagName << endl;
 						#endif
 						currentTagInCollapsedMultiwordPreposition->collapsedMultiwordPreposition = true;
-						currentTagInCollapsedMultiwordPreposition->tagName = currentTagInCollapsedMultiwordPreposition->tagName + currentTagInPlainTextSentenceTemp->tagName + "_";
+						currentTagInCollapsedMultiwordPreposition->tagName = currentTagInCollapsedMultiwordPreposition->tagName + currentTagInPlainTextSentenceTemp->tagName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER;
 						foundAtLeastOneMatch = true;
 					}
 					currentTagInMultiwordPreposition = currentTagInMultiwordPreposition->nextTag;

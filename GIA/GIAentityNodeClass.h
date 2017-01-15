@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1h 31-August-2016
+ * Project Version: 2m2a 06-September-2016
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -53,6 +53,21 @@
 #include <utility> // make_pair	//required for GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
 using namespace std;
 
+
+//#ifdef GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES
+	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION (0)
+	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_TITLE (1)
+	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_QUOTES (2)
+	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS (3)
+	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER "_"	//this is now equivalent to STANFORD_PARSER_PREPOSITION_DELIMITER
+	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_TITLE_DELIMITER "_"
+	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_QUOTES_DELIMITER "_"	//this filler does not appear compatible with Relex (Stanford only); try another filler character (NB "-" doesn't work with Relex either)
+	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER "_"
+	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_NUMBER_OF_TYPES (4)
+	static string concatenationTypesArray[GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_NUMBER_OF_TYPES] = {GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER, GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_TITLE_DELIMITER, GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_QUOTES_DELIMITER, GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER};
+//#endif
+
+#define GRAMMATICAL_WORD_TYPE_UNDEFINED (0)
 
 #ifdef GIA_SUPPORT_PREDETERMINERS
 	//added 2i34a
