@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1b 31-August-2016
+ * Project Version: 2m1c 31-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -292,7 +292,7 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(GIAsentence* curren
 	}
 	#endif
 	
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_NEW
 	GIAgenericDepRelInterpretationParameters paramE(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramE.numberOfRelations = 1;
 	paramE.useRelationTest[REL1][REL_ENT3] = true; paramE.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PRENOMINAL_MODIFIER_OF_NOUN;
@@ -590,7 +590,7 @@ void defineSubstanceConcepts(GIAsentence* currentSentenceInList, bool GIAentityN
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA6);
 	GIAentityCharacteristic entityCharacteristicsTestA7("grammaticalProperNounTemp", "false");
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA7);
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_NEW
 	GIAentityCharacteristic entityCharacteristicsTestA8("mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation", "false");
 	paramB.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA8);
 	#endif

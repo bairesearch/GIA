@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1b 31-August-2016
+ * Project Version: 2m1c 31-August-2016
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -472,8 +472,11 @@ public:
 	bool alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	bool mustSetIsSubstanceConceptBasedOnApposRelation;
 	bool isPronounReference;
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_NEW
 	bool mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation;
+	#endif
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+	bool isSubClass;
 	#endif
 	#endif
 		//databasing:

@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1b 31-August-2016
+ * Project Version: 2m1c 31-August-2016
  *
  *******************************************************************************/
 -->
@@ -3403,7 +3403,7 @@
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="mustSetIsSubstanceConceptBasedOnApposRelation" value="true" REL="1" REL_ENT="2" />
 				</paramDepRel>
 				
-				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY -->
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_NEW -->
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_nn" />
@@ -3439,7 +3439,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" />
-				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY -->
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_NEW -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation" value="false" />			
 				<!-- #endif -->				
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	<!-- added 2i22a -->
@@ -3758,8 +3758,45 @@
 				<!-- #endif -->
 				
 				
-				<!-- #ifndefGIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS -->
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS -->
+				<!-- XML only function (not hard coded): added 2l9c -->
+				<example>
+				<!--
+				For proper nouns: Interpret as alias (propernouns only)
+				eg The planet Earth is old.	_nn(Earth, planet)
+				-->
+				</example>
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_nn" relationArrayTestSize="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="true" REL="1" REL_ENT="1" />
+				<option functionToExecuteUponFind="14" />
+				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
+				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
+				<!--  #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				<option defaultSameSetReferenceValue="true" />
+				<!--  #endif -->
+				<option disableRelationDuringLink="true" REL="1" />
+				</paramDepRel>
+				<!-- XML only function (not hard coded): added 2l9c -->
+				<example>
+				<!-- Hamish smoked at the toy shop. _nn(shop[6], toy[5]) -->
+				</example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_nn" relationArrayTestSize="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" REL="1" REL_ENT="1" />	<!-- CHECKTHIS -->
+				<option useRedistributeSpecialCaseRelationEntityReassignmentConcatonate="true" REL="1" REL_ENT="1" />
+					<option redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID="1" REL="1" REL_ENT="1" swapIndex="1" redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID="2" />
+					<option redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID="1" REL="1" REL_ENT="1" swapIndex="2" redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID="1" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubClass" value="true" REL="1" REL_ENT="1" />
+				<option disableEntity="true" REL="1" REL_ENT="2" />
+				<option disableRelationDuringLink="true" REL="1" />
+				</paramDepRel>
 				
+				<!-- #else-->
+				
+				<!-- #ifndefGIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS -->
 				<!-- XML only function (not hard coded): added 2i7a, disabled 2i8h -->
 				<!-- #ifdefGIA_TRANSLATOR_ADAPT_ENTITY_LINKING_FOR_SUBSTANCE_CONCEPTS -->
 				<!--
@@ -3781,28 +3818,30 @@
 				-->
 				<!-- #endif -->
 				
+				<!--
 				<example>
-				<!-- Hamish smoked at the toy shop. _nn(shop[6], toy[5]) -->
+				{!-- Hamish smoked at the toy shop. _nn(shop[6], toy[5]) --}
 				</example>
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_nn" relationArrayTestSize="1" />
 				<option functionToExecuteUponFind="4" />
-				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR -->
+				{!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR --}
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #else -->
-				<!--
+				{!-- #else --}
+				{!--
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />		
+				--}
+				{!-- #endif --}
+				{!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION --}
+				<option defaultSameSetReferenceValue="true" />
+				{!-- #endif --}
+				</paramDepRel>
 				-->
 				<!-- #endif -->
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
-				<option defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
-				</paramDepRel>
 				
-				<!-- #endif -->
 			</function>
 
 			<function name="linkPropertiesDescriptiveRelationships">
@@ -4458,7 +4497,68 @@
 				<!-- #endif -->
 				</paramDepRel>
 				<!-- #endif -->
-								
+				
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS -->
+				<!-- XML only function (not hard coded): added 2l9c -->
+				<example><!--
+				For proper nouns: Interpret "of" preposition as alias (propernouns only)
+				NB this case "The house of Kriton is blue."
+				of(house[2], Kriton[4])
+				...
+				"the game of Monopoly"/"the planet of Earth"/"the town of Kriton"
+				but ignore cases where the subject of the preposition is an action
+				--></example>
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="true" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
+				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
+				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
+				<option functionToExecuteUponFind="14" />
+				<!-- #else -->
+				<!-- <option functionToExecuteUponFind="12" /> -->
+				<!-- #endif -->
+				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
+				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
+				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
+				<option disableEntity="true" REL="1" REL_ENT="3" />
+				<!-- #endif -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
+				<!-- #endif -->
+				
+				</paramDepRel>	
+				<!-- XML only function (not hard coded): added 2l9c -->
+				<example><!--
+				For proper nouns: Interpret "of" preposition as subclass (non propernouns only)
+				NB this case "The house of mousse is old."
+				of(house[2], mousse[4])
+				but ignore cases where the subject of the preposition is an action
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
+				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
+				<option useRedistributeSpecialCaseRelationEntityReassignmentConcatonate="true" REL="1" REL_ENT="1" />
+					<option redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID="1" REL="1" REL_ENT="1" swapIndex="1" redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID="2" />
+					<option redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID="1" REL="1" REL_ENT="1" swapIndex="2" redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID="1" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubClass" value="true" REL="1" REL_ENT="1" />
+				<option disableEntity="true" REL="1" REL_ENT="2" />
+				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
+				<option disableEntity="true" REL="1" REL_ENT="3" />
+				<!-- #endif -->
+				</paramDepRel>	
+			
+				<!-- #else -->
 				<!-- XML only function (not hard coded): added 2i7d -->
 				<!-- #ifdefGIA_TRANSLATOR_ADAPT_ENTITY_LINKING_FOR_SUBSTANCE_CONCEPTS -->
 				<!--
@@ -4488,52 +4588,52 @@
 				</paramDepRel>
 				-->
 				<!-- #endif -->
-				
-				<example><!--
+				<!--			
+				<example>{!--
 				For proper nouns: Interpret "of" preposition as property quality
 				NB this case "The house of Kriton is blue." should create 2 substance connections (not just 1)
 				of(house[2], Kriton[4])
-				_predadj(house[2], blue[6])
 				...
 				"the game of chess"/"the planet of Earth"/"the town of Kriton" [property quality {including names/aliases}; or formally definitions]
-				--></example>
-				<example><!--but ignore cases where the subject of the preposition is an action;
+				--}</example>
+				<example>{!--but ignore cases where the subject of the preposition is an action;
 				NB not in this case "She grew tired of Kriton."
 				nmod:of(grew-2, Kriton-5)
 				xcomp(grew-2, tired-3)
 				nsubj(grew-2, She-1)
-				--></example>
+				--}</example>
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="2" /> <!-- added 2i7e -->
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="1" /> <!-- added 2l9a -->
-				<!-- <option relationTestSpecialCaseIsNotAction="true" REL="1" REL_ENT="1" />
-				<!-- <option relationTestSpecialCaseIsNotToBeComplimentOfAction="true" REL="1" REL_ENT="1" />-->
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
-				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="2" /> {!-- added 2i7e --}
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="1" /> {!-- added 2l9a --}
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> {!-- Stanford Condition --}
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> {!-- Relex Condition --}
+				<option disableRelationDuringLink="true" REL="1" /> {!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions --}
 				<option functionToExecuteUponFind="4" />
-				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_SINGULAR_QUALITY -->	<!-- added 2l9a -->
+				{!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_QUALITIES --}	{!-- added 2l9a --}
+				{!--
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceQuality" value="true" REL="1" REL_ENT="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #else -->
-				<!--
+				--}
+				{!-- #else --}
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="1" />	{!-- added 2i26a: required for NLC --}
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				-->
-				<!-- #endif -->
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
+				{!-- #endif --}
+				{!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR --}
 				<option disableEntity="true" REL="1" REL_ENT="3" />
-				<!-- #endif -->
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				{!-- #endif --}
+				{!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION --}
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
+				{!-- #endif --}
 				</paramDepRel>				
+				-->
 				
 				<!-- #endif -->
+				<!-- #endif -->
+				
 				
 				<example><!--standard preposition;
 				Joe is sad at the park. at(sad[3], park[6])
@@ -4730,10 +4830,10 @@
 				--></example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
-				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_QUALITY -->
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_amod|_predadj|_advmod|_nn" relationArrayTestSize="4" />
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_QUALITIES -->
+				<!-- <option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_amod|_predadj|_advmod|_nn" relationArrayTestSize="4" /> -->
 				<!-- #else -->
-				<!-- <option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_amod|_predadj|_advmod" relationArrayTestSize="3" /> -->
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_amod|_predadj|_advmod" relationArrayTestSize="3" />
 				<!-- #endif -->
 				<!-- <option useRedistributeSpecialCaseQualityAssignment="true" REL="1" REL_ENT="2" /> -->
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceQuality" value="true" REL="1" REL_ENT="2" />
