@@ -29,6 +29,8 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	
 	GIAEntityNode * networkEntityNodeWhenSearchedResultsInBestConfidence = NULL;
 	GIAEntityNode * queryEntityNodeWhenSearchedResultsInBestConfidence = NULL;
+	
+	bool foundAtLeastOneMatch = false;
 		
 	vector<GIAEntityNode*>::iterator entityIterQuery;
 	for(entityIterQuery = conceptEntityNodesListQuery->begin(); entityIterQuery != conceptEntityNodesListQuery->end(); entityIterQuery++) 
@@ -99,6 +101,8 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 						networkEntityNodeWhenSearchedResultsInBestConfidence = conceptEntityMatchingCurrentQueryEntity;
 						queryEntityNodeWhenSearchedResultsInBestConfidence = currentQueryEntityNode;
 					
+						foundAtLeastOneMatch = true;
+						
 						#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
 						#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_OLD_TEXTUAL_OUTPUT
 						if(*foundAnswer)
@@ -120,10 +124,12 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 			{
 				bestConfidence = currentConfidence;
 				//cout << "bestConfidence = " << bestConfidence << endl;
-				if(!detectComparisonVariable)
+				if(!detectComparisonVariable || (detectComparisonVariable && (*foundAnswer == false)))
 				{
 					networkEntityNodeWhenSearchedResultsInBestConfidence = conceptEntityMatchingCurrentQueryEntity;
 					queryEntityNodeWhenSearchedResultsInBestConfidence = currentQueryEntityNode;
+					
+					foundAtLeastOneMatch = true;
 				}
 			}				
 
@@ -135,44 +141,49 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	cout << "finished query round 1" << endl;
 	#endif
 	
-	#ifndef GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND
-	if(!detectComparisonVariable || !(*foundAnswer))
-	{//now set draw parameters for optimium solution...
-	#endif
-		//cout << "asf2" << endl;
-		//cout << "queryEntityNodeWhenSearchedResultsInBestConfidence->entityName = " << queryEntityNodeWhenSearchedResultsInBestConfidence->entityName << endl; 
-		bool foundAnswerTemp = false;
-		GIAEntityNode* queryAnswerNodeTemp = NULL;
-		GIAEntityNode* queryPeviousAnswerNodeTemp = NULL;
-		string queryAnswerContextTemp = "";
-		int numberOfMatchedNodes = 0;
-		
-		queryAnswerNodeTemp = testEntityNodeForQuery(queryEntityNodeWhenSearchedResultsInBestConfidence, networkEntityNodeWhenSearchedResultsInBestConfidence, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodes, true, queryAnswerPreviousNode, &queryAnswerContextTemp, false);
-	
-		//cout << "numberOfMatchedNodes = " << numberOfMatchedNodes << endl;
-		
-		#ifdef GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND
-		if(!detectComparisonVariable || !(*foundAnswer))
+	if(foundAtLeastOneMatch)
+	{
+		#ifndef GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND
+		if(!detectComparisonVariable || (detectComparisonVariable && !(*foundAnswer)))
 		{//now set draw parameters for optimium solution...
 		#endif
-					
-			if(!detectComparisonVariable && foundAnswerTemp)
-			{
-				//cout << "asf1" << endl;
-				*foundAnswer = true;
-				queryAnswerNode = queryAnswerNodeTemp;
-				*queryAnswerPreviousNode = queryPeviousAnswerNodeTemp;
-				*queryAnswerContext = queryAnswerContextTemp;
+			//cout << "asf2" << endl;
+			//cout << "queryEntityNodeWhenSearchedResultsInBestConfidence->entityName = " << queryEntityNodeWhenSearchedResultsInBestConfidence->entityName << endl; 
+			bool foundAnswerTemp = false;
+			GIAEntityNode* queryAnswerNodeTemp = NULL;
+			GIAEntityNode* queryPeviousAnswerNodeTemp = NULL;
+			string queryAnswerContextTemp = "";
+			int numberOfMatchedNodes = 0;
+
+			//cout << "asf3" << endl;
+
+			queryAnswerNodeTemp = testEntityNodeForQuery(queryEntityNodeWhenSearchedResultsInBestConfidence, networkEntityNodeWhenSearchedResultsInBestConfidence, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodes, true, queryAnswerPreviousNode, &queryAnswerContextTemp, false);
+
+			//cout << "numberOfMatchedNodes = " << numberOfMatchedNodes << endl;
+
+			#ifdef GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND
+			if(!detectComparisonVariable || (detectComparisonVariable && !(*foundAnswer)))
+			{//now set draw parameters for optimium solution...
+			#endif
+
+				if(!detectComparisonVariable && foundAnswerTemp)
+				{
+					//cout << "asf1" << endl;
+					*foundAnswer = true;
+					queryAnswerNode = queryAnswerNodeTemp;
+					*queryAnswerPreviousNode = queryPeviousAnswerNodeTemp;
+					*queryAnswerContext = queryAnswerContextTemp;
+				}
+				*confidence = (double)numberOfMatchedNodes;
+
+			#ifdef GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND
 			}
-			*confidence = (double)numberOfMatchedNodes;
-			
-		#ifdef GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND
+			#endif		
+
+		#ifndef GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND	
 		}
-		#endif		
-	
-	#ifndef GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND	
+		#endif
 	}
-	#endif
 
 
 		
