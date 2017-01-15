@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammarAndReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i12a 15-Apr-2012
+ * Project Version: 1i13a 15-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1219,12 +1219,15 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 									currentRelationInList2->prepositionCombinationAlreadyCreatedTemp = true;
 								}
 								#else
+									if((currentRelationInList->relationGovernor == RELATION_ENTITY_BE) && (currentRelationInList2->relationGovernor == RELATION_ENTITY_BE))
+									{
 
-									currentRelationInList->disabled = true;
-									currentRelationInList2->relationGovernorIndex = currentRelationInList->relationDependentIndex;
-									currentRelationInList2->relationGovernor = currentRelationInList->relationDependent;
+										currentRelationInList->disabled = true;
+										currentRelationInList2->relationGovernorIndex = currentRelationInList->relationDependentIndex;
+										currentRelationInList2->relationGovernor = currentRelationInList->relationDependent;
 
-									disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]);
+										disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]);
+									}
 								#endif
 							}
 						}
@@ -1583,13 +1586,11 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 		currentRelationInList = currentRelationInList->next;
 	}
 	
-#ifdef GIA_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE_TO_PREDADJ_NOT_SUBJ
-	////eg Kane is late 	nsubj(late-3, Kane-1) / cop(late-3, is-2) -> _predadj(kane-1, late-3) 
 	
-	//TODO; need to distinguish between;
-	//eg Kane is late 	nsubj(late-3, Kane-1) / cop(late-3, is-2) -> _predadj(kane-1, late-3) 
-	//and;
-	//eg She is the one 	nsubj(one-4, She-1)	/cop(one-4, is-2) -> appos(fish-2, carp-5)
+	//either do eg1 or eg2 ;
+	//eg1 Kane is late 	nsubj(late-3, Kane-1) / cop(late-3, is-2) -> _predadj(kane-1, late-3) 
+	//or
+	//eg2 She is the one 	nsubj(one-4, She-1) / cop(one-4, is-2) / det(one-4, the-3) -> appos(She-1, one-4)
 
 	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1620,18 +1621,56 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 								if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)	//redundant test
 								{//found a matching object-subject relationship
 
+									#ifndef GIA_OPTIMISE_PERFORMANCE_FOR_RELEX_PATENT_QUERIES_REPLICATION_RATHER_THAN_RELEX_PATENT_SYNTACTIC_PROTOTYPE_OUTPUT_REPLICATION
+									bool detectedDeterminate = false;
+ 									Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+									while(currentRelationInList3->next != NULL)
+									{	
+										#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+										if(!(currentRelationInList3->disabled))
+										{			
+										#endif
+											if(currentRelationInList3->relationType == RELATION_TYPE_DETERMINER) 	
+											{	
+												if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationGovernorIndex)	//redundant test
+												{//found a matching object-subject relationship	
+													detectedDeterminate = true;
+												}
+											}																			
+										#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+										}			
+										#endif	
+										currentRelationInList3 = currentRelationInList3->next;
+									}										
 
-									currentRelationInList->relationType = RELATION_TYPE_ADJECTIVE_PREDADJ;
-									currentRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
-									currentRelationInList->relationGovernor = GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
-									currentRelationInList->relationDependentIndex = currentRelationInList2->relationGovernorIndex;
-									currentRelationInList->relationDependent = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName;							
+									if(detectedDeterminate)
+									{
+									#endif
+										currentRelationInList->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+										currentRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
+										currentRelationInList->relationGovernor = GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
+										currentRelationInList->relationDependentIndex = currentRelationInList2->relationGovernorIndex;
+										currentRelationInList->relationDependent = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName;							
 
-									currentRelationInList2->disabled =  true;						
-									/*//Not necessary; already disabled in fillGrammaticalArraysStanford;
-									GIAEntityNode * oldRedundantBeEntity = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];							
-									disableEntityBasedUponFirstSentenceToAppearInNetwork(oldRedundantBeEntity);
-									*/								
+										currentRelationInList2->disabled =  true;
+									#ifndef GIA_OPTIMISE_PERFORMANCE_FOR_RELEX_PATENT_QUERIES_REPLICATION_RATHER_THAN_RELEX_PATENT_SYNTACTIC_PROTOTYPE_OUTPUT_REPLICATION	
+									}
+									else
+									{																
+										currentRelationInList->relationType = RELATION_TYPE_ADJECTIVE_PREDADJ;
+										currentRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
+										currentRelationInList->relationGovernor = GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
+										currentRelationInList->relationDependentIndex = currentRelationInList2->relationGovernorIndex;
+										currentRelationInList->relationDependent = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName;							
+
+										currentRelationInList2->disabled =  true;		
+										/*//Not necessary; already disabled in fillGrammaticalArraysStanford;
+										GIAEntityNode * oldRedundantBeEntity = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];							
+										disableEntityBasedUponFirstSentenceToAppearInNetwork(oldRedundantBeEntity);
+										*/						
+
+									}
+									#endif
 								}
 							}
 						}
@@ -1649,7 +1688,6 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 		currentRelationInList = currentRelationInList->next;
 	}
 
-#endif	
 }
 
 
@@ -2006,9 +2044,56 @@ void redistributeStanfordRelationsGenerateMeasures(Sentence * currentSentenceInL
 	}
 }
 
+void redistributeStanfordRelationsPrtAndTmod(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+{
+	//The disaster happened over night.   prt(happened-3, over-4) / tmod(happened-3, night-5) -> over(happened-3, night-5)
 
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{	
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{			
+		#endif	
+			//cout << "here1" << endl;
+			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+			
+			if(currentRelationInList->relationType == RELATION_TYPE_PHRASAL_VERB_PARTICLE)
+			{	
+				//now find the associated object..
+ 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				
+				while(currentRelationInList2->next != NULL)
+				{					
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					if(!(currentRelationInList2->disabled))
+					{			
+					#endif	
+						if(currentRelationInList2->relationType == RELATION_TYPE_TEMPORAL_MODIFIER)
+						{		
+							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
+							{//found a matching preposition of object-subject relationship
 
-	
+								currentRelationInList->disabled = true;
+								GIAEntityNode * oldPreposition = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+								string newPrepositionName = "";
+								newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + currentRelationInList->relationDependent;	//oldPreposition->entityName
+								currentRelationInList2->relationType = newPrepositionName;
+							}
+						}
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					}			
+					#endif
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}		
+		#endif
+			//cout << "here2" << endl;
+		currentRelationInList = currentRelationInList->next;
+	}	
+}
 	
 #endif	
 

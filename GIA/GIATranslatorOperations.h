@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i12a 15-Apr-2012
+ * Project Version: 1i13a 15-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -28,6 +28,11 @@ using namespace std;
 #include "GIASentenceClass.h"
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
+
+
+//#define GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE		//this has been disabled because it has been deemed inappropriate for 'The disaster happened over night.?'  [prt(happened-3, over-4)]
+
+//#define GIA_ENFORCE_USE_OF_RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES
 
 
 //#define GIA_DO_NOT_PARSE_DISABLED_RELATIONS	//test only
@@ -259,6 +264,9 @@ using namespace std;
 #define RELATION_TYPE_ROOT "_root"  	
 #define GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
 
+#define STANFORD_RELATION_TYPE_TEMPORAL_MODIFIER "tmod"
+#define RELATION_TYPE_TEMPORAL_MODIFIER "_tmod"
+
 //stanford relations not used by GIA;
 /*
 used
@@ -271,7 +279,6 @@ used
 #define STANFORD_RELATION_TYPE_REFERENT "ref"
 //#define STANFORD_RELATION_TYPE_MODIFIER "mod"		//high level relation - not used
 #define STANFORD_RELATION_TYPE_PURPOSE_CLAUSE_MODIFIER "purpcl"
-#define STANFORD_RELATION_TYPE_TEMPORAL_MODIFIER "tmod"
 #define STANFORD_RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER "rcmod"
 #define STANFORD_RELATION_TYPE_ABBREVIATION_MODIFIER "abbrev"
 #define STANFORD_RELATION_TYPE_POSSESSIVE "possessive"
@@ -365,7 +372,7 @@ used
 
 
 //conditions: prepositions [predicates????]
-#define RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES (18)
+#define RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES (19)
 #define RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES (35)
 #define RELATION_TYPE_PREPOSITION_REASON_OR_CIRCUMSTANCE_NUMBER_OF_TYPES (6)
 #define RELATION_TYPE_PREPOSITION_FIRST_CHARACTER '_'
@@ -483,7 +490,7 @@ static string redistributionStanfordRelationsMultiwordPrepositionSubjObjRelation
 
 static string featureQueryWordAcceptedByAlternateMethodNameArray[FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES] = {"which"};
 
-static string relationTypePropositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {"in", "on", "after", "ago", "before", "between", "by", "during", "for", "to", "till", "until", "past", "since", "up_to", "within", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
+static string relationTypePropositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {"in", "on", "after", "ago", "before", "between", "by", "during", "for", "to", "till", "until", "past", "since", "up_to", "within", "over", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
 	//http://www.englisch-hilfen.de/en/grammar/preposition_time.htm + is [time is] etc
 static string relationTypePropositionLocationNameArray[RELATION_TYPE_PREPOSITION_LOCATION_NUMBER_OF_TYPES] = {"in", "on", "at", "by", "near", "nearby", "above", "below", "over", "under", "around", "through", "inside", "inside_of", "outside", "between", "beside", "beyond", "in_front_of", "in_front", "in_back_of", "behind", "next_to", "on_top_of", "within", "beneath", "underneath", "among", "along", "against", "before", "after", "behind", "to", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE};		
 	//http://www.eslgold.com/grammar/prepositions_location.html + before, after, behind, to, etc
