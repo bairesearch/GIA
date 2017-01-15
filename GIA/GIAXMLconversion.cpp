@@ -17,37 +17,43 @@ bool testReadSemanticNetXMLFile1()
 {
 	bool result = true;
 
-	GIAEntityNode * firstEntityNodeInNetwork = new GIAEntityNode();	//the firstEntityNodeInNetwork object must be initialised here (in GIAXMLconversion.cpp scope). if it is initialised in another .cpp it will be come corrupted,
+	vector<GIAEntityNode*> *entityNodesCompleteList;	//the entityNodesCompleteList object must be initialised here (in GIAXMLconversion.cpp scope). if it is initialised in another .cpp it will be come corrupted,
+	vector<GIAActionNode*> *actionNodesCompleteList;
+	vector<GIAConditionNode*> *conditionNodesCompleteList;
 
-	if(!readSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, firstEntityNodeInNetwork))
+	if(!readSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, entityNodesCompleteList, actionNodesCompleteList, conditionNodesCompleteList))
 	{
 		result = false;
 	}
 
-	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, firstEntityNodeInNetwork))
+	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, entityNodesCompleteList, actionNodesCompleteList, conditionNodesCompleteList))
 	{
 		result = false;
 	}
+	
 	return result;
 }
 
-bool testReadSemanticNetXMLFile2(GIAEntityNode * firstEntityNodeInNetwork)
+bool testReadSemanticNetXMLFile2(vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAActionNode*> *actionNodesCompleteList, vector<GIAConditionNode*> *conditionNodesCompleteList)
 {
 	bool result = true;
 
-	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, firstEntityNodeInNetwork))
+	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, entityNodesCompleteList, actionNodesCompleteList, conditionNodesCompleteList))
 	{
 		result = false;
 	}
 
-	GIAEntityNode * tempfirstEntityNodeInNetwork = new GIAEntityNode();
-	if(!readSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, tempfirstEntityNodeInNetwork))
+	vector<GIAEntityNode*> *tempentityNodesCompleteList;
+	vector<GIAActionNode*> *tempactionNodesCompleteList;
+	vector<GIAConditionNode*> *tempconditionNodesCompleteList;
+	
+	if(!readSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, tempentityNodesCompleteList, tempactionNodesCompleteList, tempconditionNodesCompleteList))
 	{
 		result = false;
 	}
 
 	//cout << "here3" << endl;
-	if(!writeNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, tempfirstEntityNodeInNetwork))
+	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, tempentityNodesCompleteList, tempactionNodesCompleteList, tempconditionNodesCompleteList))
 	{
 		result = false;
 	}
@@ -55,7 +61,7 @@ bool testReadSemanticNetXMLFile2(GIAEntityNode * firstEntityNodeInNetwork)
 }
 #endif
 
-bool readSemanticNetXMLFile(string xmlFileName, GIAEntityNode * firstEntityNodeInNetwork, GIAActionNode * firstActionNodeInNetwork, GIAConditionNode * firstConditionNodeInNetwork)
+bool readSemanticNetXMLFile(string xmlFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAActionNode*> *actionNodesCompleteList, vector<GIAConditionNode*> *conditionNodesCompleteList)
 {
 	bool result = true;
 
@@ -69,22 +75,24 @@ bool readSemanticNetXMLFile(string xmlFileName, GIAEntityNode * firstEntityNodeI
 	}
 		//cout << "b" << endl;
 
-	if(!parseSemanticNetTag(firstTagInXMLFile, firstEntityNodeInNetwork, firstActionNodeInNetwork, firstConditionNodeInNetwork))
+	if(!parseSemanticNetTag(firstTagInXMLFile, entityNodesCompleteList, actionNodesCompleteList, conditionNodesCompleteList, false))
 	{
 		result = false;
 	}
 
+	if(!parseSemanticNetTag(firstTagInXMLFile, entityNodesCompleteList, actionNodesCompleteList, conditionNodesCompleteList, true))
+	{
+		result = false;
+	}
+	
 		//cout << "c" << endl;
 
-	if(!linkEntities(firstEntityNodeInNetwork))
-	{
-		result = false;
-	}
+	
 	return result;
 }
 
 //Top Level
-bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, GIAEntityNode * firstEntityNodeInNetwork, GIAActionNode * firstActionNodeInNetwork, GIAConditionNode * firstConditionNodeInNetwork, bool linkConnections)
+bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAActionNode*> *actionNodesCompleteList, vector<GIAConditionNode*> *conditionNodesCompleteList, bool linkConnections)
 {
 	bool result = true;
 
@@ -104,7 +112,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, GIAEntityNode * first
 		XMLParserTag * currentTagUpdatedL2 = currentTagUpdatedL1->firstLowerLevelTag;
 		if(currentTagUpdatedL2->name == NET_XML_TAG_entityNodeContainer)
 		{
-			GIAEntityNode * currentEntity = firstEntityNodeInNetwork;
+			long currentEntityNodeIDInCompleteList = 0;	
 			XMLParserTag * currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
 			while(currentTagUpdatedL3->nextTag != NULL)
 			{
@@ -113,14 +121,24 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, GIAEntityNode * first
 					cout << "Entity Node ID: " << currentTagUpdatedL3->value << endl;
 					if(linkConnections)
 					{
-						if(!parseEntityNodeTag(currentTagUpdatedL3, currentEntity))
+						GIAEntityNode * currentEntity = entityNodesCompleteList->at(currentEntityNodeIDInCompleteList);
+						currentEntityNodeIDInCompleteList++;
+						if(!parseEntityNodeTag(currentTagUpdatedL3, currentEntity, entityNodesCompleteList, actionNodesCompleteList, conditionNodesCompleteList))
 						{
 							result = false;
 						}
 					}
-					GIAEntityNode * newEntity = new GIAEntityNode();
-					currentEntity->next = newEntity;
-					currentEntity = currentEntity->next; 
+					else
+					{
+						GIAEntityNode * newEntity = new GIAEntityNode();
+						entityNodesCompleteList->push_back(newEntity);
+						currentEntityNodeIDInCompleteList++;
+						/*
+						GIAEntityNode * newEntity = new GIAEntityNode();
+						currentEntity->next = newEntity;
+						currentEntity = currentEntity->next; 
+						*/
+					}
 				}
 				else
 				{
@@ -137,7 +155,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, GIAEntityNode * first
 		currentTagUpdatedL2=currentTagUpdatedL2->nextTag;
 		if(currentTagUpdatedL2->name == NET_XML_TAG_actionNodeContainer)
 		{
-			GIAActionNode * currentAction = firstActionNodeInNetwork;
+			long currentActionNodeIDInCompleteList = 0;	
 			XMLParserTag * currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
 			while(currentTagUpdatedL3->nextTag != NULL)
 			{
@@ -146,14 +164,24 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, GIAEntityNode * first
 					cout << "Action Node ID: " << currentTagUpdatedL3->value << endl;
 					if(linkConnections)
 					{
-						if(!parseActionNodeTag(currentTagUpdatedL3, currentAction))
+						GIAActionNode * currentAction = actionNodesCompleteList->at(currentActionNodeIDInCompleteList);
+						currentActionNodeIDInCompleteList++;					
+						if(!parseActionNodeTag(currentTagUpdatedL3, currentAction, entityNodesCompleteList, actionNodesCompleteList, conditionNodesCompleteList))
 						{
 							result = false;
 						}
 					}
-					GIAActionNode * newAction = new GIAActionNode();
-					currentAction->next = newAction;
-					currentAction = currentAction->next; 					
+					else
+					{
+						GIAActionNode * newAction = new GIAActionNode();
+						actionNodesCompleteList->push_back(newAction);
+						currentActionNodeIDInCompleteList++;					
+						/*
+						GIAActionNode * newAction = new GIAActionNode();
+						currentAction->next = newAction;
+						currentAction = currentAction->next; 					
+						*/
+					}
 				}
 				else
 				{
@@ -170,7 +198,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, GIAEntityNode * first
 		
 		if(currentTagUpdatedL2->name == NET_XML_TAG_conditionNodeContainer)
 		{
-			GIAConditionNode * currentCondition = firstConditionNodeInNetwork;
+			long currentConditionNodeIDInCompleteList = 0;	
 			XMLParserTag * currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
 			while(currentTagUpdatedL3->nextTag != NULL)
 			{
@@ -179,14 +207,24 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, GIAEntityNode * first
 					cout << "Condition Node ID: " << currentTagUpdatedL3->value << endl;
 					if(linkConnections)
 					{
-						if(!parseConditionNodeTag(currentTagUpdatedL3, currentCondition))
+						GIAConditionNode * currentCondition = conditionNodesCompleteList->at(currentConditionNodeIDInCompleteList);
+						currentConditionNodeIDInCompleteList++;					
+						if(!parseConditionNodeTag(currentTagUpdatedL3, currentCondition, entityNodesCompleteList, actionNodesCompleteList, conditionNodesCompleteList))
 						{
 							result = false;
 						}
 					}
-					GIAConditionNode * newCondition = new GIAConditionNode();
-					currentCondition->next = newCondition;
-					currentCondition = currentCondition->next; 					
+					else
+					{
+						GIAConditionNode * newCondition = new GIAConditionNode();
+						conditionNodesCompleteList->push_back(newCondition);
+						currentConditionNodeIDInCompleteList++;					
+						/*
+						GIAConditionNode * newCondition = new GIAConditionNode();
+						currentCondition->next = newCondition;
+						currentCondition = currentCondition->next; 
+						*/
+					}					
 				}
 				else
 				{
@@ -207,7 +245,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, GIAEntityNode * first
 
 
 
-bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * entityNode, GIAEntityNode * firstEntityNodeInNetwork, GIAActionNode * firstActionNodeInNetwork, GIAConditionNode * firstConditionNodeInNetwork)
+bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAActionNode*> *actionNodesCompleteList, vector<GIAConditionNode*> *conditionNodesCompleteList)
 {
 	bool result = true;
 
@@ -351,25 +389,25 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isProperty)
 		{
-			int attributeValue = atof(currentAttribute->value.c_str());
+			int attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->isProperty = attributeValue;
 			isPropertyFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedProperty)
 		{
-			bool attributeValue = atof(currentAttribute->value.c_str());
+			bool attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->hasAssociatedProperty = attributeValue;
 			hasAssociatedPropertyFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedAction)
 		{
-			bool attributeValue = atof(currentAttribute->value.c_str());
+			bool attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->hasAssociatedAction = attributeValue;
 			hasAssociatedActionFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedTime)
 		{
-			bool attributeValue = atof(currentAttribute->value.c_str());
+			bool attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->hasAssociatedTime = attributeValue;
 			hasAssociatedTimeFound = true;
 		}
@@ -377,13 +415,13 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityNodeContainingThisProperty)
 		{
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			entityNode->entityNodeContainingThisProperty = findEntityNodeByID(attributeValue, firstEntityNodeInNetwork);
+			entityNode->entityNodeContainingThisProperty = findEntityNodeByID(attributeValue, entityNodesCompleteList);
 			entityNodeContainingThisPropertyFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityNodeDefiningThisProperty)
 		{
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			entityNode->entityNodeDefiningThisProperty = findEntityNodeByID(attributeValue, firstEntityNodeInNetwork);
+			entityNode->entityNodeDefiningThisProperty = findEntityNodeByID(attributeValue, entityNodesCompleteList);
 			entityNodeDefiningThisPropertyFound = true;
 		}		
 		
@@ -396,7 +434,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		if(currentTagUpdatedL3->name == NET_XML_TAG_ActionNodeList)
 		{
 			cout << "ActionNodeList: " << endl;
-			if(!parseActionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstActionNodeInNetwork))
+			if(!parseActionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, actionNodesCompleteList))
 			{
 				result = false;
 			}
@@ -405,7 +443,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		if(currentTagUpdatedL3->name == NET_XML_TAG_IncomingActionNodeList)
 		{
 			cout << "IncomingActionNodeList: " << endl;
-			if(!parseIncomingActionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstActionNodeInNetwork))
+			if(!parseIncomingActionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, actionNodesCompleteList))
 			{
 				result = false;
 			}	
@@ -415,7 +453,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		if(currentTagUpdatedL3->name == NET_XML_TAG_PropertyNodeList)
 		{
 			cout << "PropertyNodeList: " << endl;
-			if(!parsePropertyNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstEntityNodeInNetwork))
+			if(!parsePropertyNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList))
 			{
 				result = false;
 			}				
@@ -425,7 +463,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		if(currentTagUpdatedL3->name == NET_XML_TAG_EntityNodeDefinitionList)
 		{
 			cout << "EntityNodeDefinitionList: " << endl;
-			if(!parseEntityNodeDefinitionListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstEntityNodeInNetwork))
+			if(!parseEntityNodeDefinitionListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList))
 			{
 				result = false;
 			}				
@@ -434,7 +472,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		if(currentTagUpdatedL3->name == NET_XML_TAG_EntityNodeDefinitionReverseList)
 		{
 			cout << "EntityNodeDefinitionReverseList: " << endl;
-			if(!parseEntityNodeDefinitionReverseListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstEntityNodeInNetwork))
+			if(!parseEntityNodeDefinitionReverseListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList))
 			{
 				result = false;
 			}				
@@ -443,7 +481,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		if(currentTagUpdatedL3->name == NET_XML_TAG_AssociatedActionNodeList)
 		{
 			cout << "AssociatedActionNodeList: " << endl;
-			if(!parseAssociatedActionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstActionNodeInNetwork))
+			if(!parseAssociatedActionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, actionNodesCompleteList))
 			{
 				result = false;
 			}				
@@ -452,7 +490,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		if(currentTagUpdatedL3->name == NET_XML_TAG_AssociatedPropertyNodeList)
 		{
 			cout << "AssociatedPropertyNodeList: " << endl;
-			if(!parseAssociatedPropertyNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstEntityNodeInNetwork))
+			if(!parseAssociatedPropertyNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList))
 			{
 				result = false;
 			}
@@ -462,7 +500,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		if(currentTagUpdatedL3->name == NET_XML_TAG_ConditionNodeList)
 		{
 			cout << "ConditionNodeList: " << endl;
-			if(!parseConditionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstConditionNodeInNetwork))
+			if(!parseConditionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, conditionNodesCompleteList))
 			{
 				result = false;
 			}	
@@ -471,7 +509,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		if(currentTagUpdatedL3->name == NET_XML_TAG_ConditionNodeReverseList)
 		{
 			cout << "ConditionNodeReverseList: " << endl;
-			if(!parseConditionNodeReverseListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, firstConditionNodeInNetwork))
+			if(!parseConditionNodeReverseListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, conditionNodesCompleteList))
 			{
 				result = false;
 			}
@@ -507,7 +545,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 
 
 
-bool parseActionNodeListTag(XMLParserTag * firstTagInActionNodeList, GIAActionNode * entityNode, GIAActionNode * firstActionNodeInNetwork)
+bool parseActionNodeListTag(XMLParserTag * firstTagInActionNodeList, GIAEntityNode * entityNode, vector<GIAActionNode*> *actionNodesCompleteList)
 {
 	XMLParserTag * currentTagUpdatedL1 = firstTagInActionNodeList;
 	while(currentTagUpdatedL1->nextTag != NULL)
@@ -517,7 +555,7 @@ bool parseActionNodeListTag(XMLParserTag * firstTagInActionNodeList, GIAActionNo
 			cout << "actionNodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			entityNode->ActionNodeList.push_back(findActionNodeByID(attributeValue, firstActionNodeInNetwork));
+			entityNode->ActionNodeList.push_back(findActionNodeByID(attributeValue, actionNodesCompleteList));
 		}
 		else
 		{
@@ -527,7 +565,7 @@ bool parseActionNodeListTag(XMLParserTag * firstTagInActionNodeList, GIAActionNo
 	}	
 }
 
-bool parseIncomingActionNodeListTag(XMLParserTag * firstTagInIncomingActionNodeList, GIAEntityNode * entityNode, GIAActionNode * firstActionNodeInNetwork)
+bool parseIncomingActionNodeListTag(XMLParserTag * firstTagInIncomingActionNodeList, GIAEntityNode * entityNode, vector<GIAActionNode*> *actionNodesCompleteList)
 {
 	XMLParserTag * currentTagUpdatedL1 = firstTagInIncomingActionNodeList;
 	while(currentTagUpdatedL1->nextTag != NULL)
@@ -537,7 +575,7 @@ bool parseIncomingActionNodeListTag(XMLParserTag * firstTagInIncomingActionNodeL
 			cout << "actionNodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			entityNode->IncomingActionNodeList.push_back(findActionNodeByID(attributeValue, firstActionNodeInNetwork));
+			entityNode->IncomingActionNodeList.push_back(findActionNodeByID(attributeValue, actionNodesCompleteList));
 		}
 		else
 		{
@@ -547,7 +585,7 @@ bool parseIncomingActionNodeListTag(XMLParserTag * firstTagInIncomingActionNodeL
 	}
 }
 
-bool parsePropertyNodeListTag(XMLParserTag * firstTagInPropertyNodeList, GIAEntityNode * entityNode, GIAEntityNode * firstEntityNodeInNetwork)
+bool parsePropertyNodeListTag(XMLParserTag * firstTagInPropertyNodeList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
 {
 	XMLParserTag * currentTagUpdatedL1 = firstTagInPropertyNodeList;
 	while(currentTagUpdatedL1->nextTag != NULL)
@@ -557,7 +595,7 @@ bool parsePropertyNodeListTag(XMLParserTag * firstTagInPropertyNodeList, GIAEnti
 			cout << "entityNodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			entityNode->PropertyNodeList.push_back(findEntityNodeByID(attributeValue, firstEntityNodeInNetwork));
+			entityNode->PropertyNodeList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
 		}
 		else
 		{
@@ -567,7 +605,7 @@ bool parsePropertyNodeListTag(XMLParserTag * firstTagInPropertyNodeList, GIAEnti
 	}
 }
 
-bool parseEntityNodeDefinitionListTag(XMLParserTag * firstTagInEntityNodeDefinitionList, GIAEntityNode * entityNode, GIAEntityNode * firstEntityNodeInNetwork)
+bool parseEntityNodeDefinitionListTag(XMLParserTag * firstTagInEntityNodeDefinitionList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
 {
 	XMLParserTag * currentTagUpdatedL1 = firstTagInEntityNodeDefinitionList;
 	while(currentTagUpdatedL1->nextTag != NULL)
@@ -577,7 +615,7 @@ bool parseEntityNodeDefinitionListTag(XMLParserTag * firstTagInEntityNodeDefinit
 			cout << "entityNodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			entityNode->EntityNodeDefinitionList.push_back(findEntityNodeByID(attributeValue, firstEntityNodeInNetwork));
+			entityNode->EntityNodeDefinitionList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
 		}
 		else
 		{
@@ -587,7 +625,7 @@ bool parseEntityNodeDefinitionListTag(XMLParserTag * firstTagInEntityNodeDefinit
 	}
 }
 
-bool parseEntityNodeDefinitionReverseListTag(XMLParserTag * firstTagInEntityNodeDefinitionReverseList, GIAEntityNode * entityNode, GIAEntityNode * firstEntityNodeInNetwork)
+bool parseEntityNodeDefinitionReverseListTag(XMLParserTag * firstTagInEntityNodeDefinitionReverseList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
 {
 	XMLParserTag * currentTagUpdatedL1 = firstTagInEntityNodeDefinitionReverseList;
 	while(currentTagUpdatedL1->nextTag != NULL)
@@ -597,7 +635,7 @@ bool parseEntityNodeDefinitionReverseListTag(XMLParserTag * firstTagInEntityNode
 			cout << "entityNodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			entityNode->EntityNodeDefinitionReverseList.push_back(findEntityNodeByID(attributeValue, firstEntityNodeInNetwork));
+			entityNode->EntityNodeDefinitionReverseList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
 		}
 		else
 		{
@@ -607,7 +645,7 @@ bool parseEntityNodeDefinitionReverseListTag(XMLParserTag * firstTagInEntityNode
 	}
 }
 
-bool parseAssociatedActionNodeListTag(XMLParserTag * firstTagInAssociatedActionNodeList, GIAEntityNode * entityNode, GIAActionNode * firstActionNodeInNetwork)
+bool parseAssociatedActionNodeListTag(XMLParserTag * firstTagInAssociatedActionNodeList, GIAEntityNode * entityNode, vector<GIAActionNode*> *actionNodesCompleteList)
 {
 	XMLParserTag * currentTagUpdatedL1 = firstTagInAssociatedActionNodeList;
 	while(currentTagUpdatedL1->nextTag != NULL)
@@ -617,7 +655,7 @@ bool parseAssociatedActionNodeListTag(XMLParserTag * firstTagInAssociatedActionN
 			cout << "actionNodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			entityNode->AssociatedActionNodeList.push_back(findActionNodeByID(attributeValue, firstActionNodeInNetwork));
+			entityNode->AssociatedActionNodeList.push_back(findActionNodeByID(attributeValue, actionNodesCompleteList));
 		}
 		else
 		{
@@ -627,7 +665,7 @@ bool parseAssociatedActionNodeListTag(XMLParserTag * firstTagInAssociatedActionN
 	}
 }
 
-bool parseAssociatedPropertyNodeListTag(XMLParserTag * firstTagInAssociatedPropertyNodeList, GIAEntityNode * entityNode, GIAEntityNode * firstEntityNodeInNetwork)
+bool parseAssociatedPropertyNodeListTag(XMLParserTag * firstTagInAssociatedPropertyNodeList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
 {
 	XMLParserTag * currentTagUpdatedL1 = firstTagInAssociatedPropertyNodeList;
 	while(currentTagUpdatedL1->nextTag != NULL)
@@ -637,7 +675,7 @@ bool parseAssociatedPropertyNodeListTag(XMLParserTag * firstTagInAssociatedPrope
 			cout << "entityNodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			entityNode->AssociatedPropertyNodeList.push_back(findEntityNodeByID(attributeValue, firstEntityNodeInNetwork));
+			entityNode->AssociatedPropertyNodeList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
 		}
 		else
 		{
@@ -647,7 +685,7 @@ bool parseAssociatedPropertyNodeListTag(XMLParserTag * firstTagInAssociatedPrope
 	}
 }
 
-bool parseConditionNodeListTag(XMLParserTag * firstTagInConditionNodeList, GIAEntityNode * entityNode, GIAConditionNode * firstConditionNodeInNetwork)
+bool parseConditionNodeListTag(XMLParserTag * firstTagInConditionNodeList, GIAEntityNode * entityNode, vector<GIAConditionNode*> *conditionNodesCompleteList)
 {
 	XMLParserTag * currentTagUpdatedL1 = firstTagInConditionNodeList;
 	while(currentTagUpdatedL1->nextTag != NULL)
@@ -657,7 +695,7 @@ bool parseConditionNodeListTag(XMLParserTag * firstTagInConditionNodeList, GIAEn
 			cout << "conditionNodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			entityNode->ConditionNodeList.push_back(findConditionNodeByID(attributeValue, firstConditionNodeInNetwork));
+			entityNode->ConditionNodeList.push_back(findConditionNodeByID(attributeValue, conditionNodesCompleteList));
 		}
 		else
 		{
@@ -667,7 +705,7 @@ bool parseConditionNodeListTag(XMLParserTag * firstTagInConditionNodeList, GIAEn
 	}
 }
 
-bool parseConditionNodeReverseListTag(XMLParserTag * firstTagInConditionNodeReverseList, GIAEntityNode * entityNode, GIAActionNode * firstConditionNodeInNetwork)
+bool parseConditionNodeReverseListTag(XMLParserTag * firstTagInConditionNodeReverseList, GIAEntityNode * entityNode, vector<GIAConditionNode*> *conditionNodesCompleteList)
 {
 	XMLParserTag * currentTagUpdatedL1 = firstTagInConditionNodeReverseList;
 	while(currentTagUpdatedL1->nextTag != NULL)
@@ -677,7 +715,7 @@ bool parseConditionNodeReverseListTag(XMLParserTag * firstTagInConditionNodeReve
 			cout << "conditionNodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			entityNode->ConditionNodeReverseList.push_back(findConditionNodeByID(attributeValue, firstConditionNodeInNetwork));
+			entityNode->ConditionNodeReverseList.push_back(findConditionNodeByID(attributeValue, conditionNodesCompleteList));
 		}
 		else
 		{
@@ -688,13 +726,13 @@ bool parseConditionNodeReverseListTag(XMLParserTag * firstTagInConditionNodeReve
 }
 
 
-bool parseActionNodeTag(XMLParserTag * firstTagInActionNode, GIAActionNode * actionNode)
+bool parseActionNodeTag(XMLParserTag * firstTagInActionNode, GIAActionNode * actionNode, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAActionNode*> *actionNodesCompleteList, vector<GIAConditionNode*> *conditionNodesCompleteList)
 {
 	bool result = true;
 
 	//cout << "g1 error detected here" << endl;
 
-	XMLParserAttribute * currentAttribute = currentTag->firstAttribute;
+	XMLParserAttribute * currentAttribute = firstTagInActionNode->firstAttribute;
 
 	bool printXFound = false;
 	bool printYFound = false;
@@ -721,19 +759,19 @@ bool parseActionNodeTag(XMLParserTag * firstTagInActionNode, GIAActionNode * act
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityNodeDefiningThisAction)
 		{
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			actionNode->entityNodeDefiningThisAction = findEntityNodeByID(attributeValue, firstEntityNodeInNetwork);
+			actionNode->entityNodeDefiningThisAction = findEntityNodeByID(attributeValue, entityNodesCompleteList);
 			entityNodeDefiningThisActionFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_actionSubjectEntity)
 		{
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			actionNode->actionSubjectEntity = findEntityNodeByID(attributeValue, firstEntityNodeInNetwork);
+			actionNode->actionSubjectEntity = findEntityNodeByID(attributeValue, entityNodesCompleteList);
 			actionSubjectEntityFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_actionObjectEntity)
 		{
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			actionNode->actionObjectEntity = findEntityNodeByID(attributeValue, firstEntityNodeInNetwork);
+			actionNode->actionObjectEntity = findEntityNodeByID(attributeValue, entityNodesCompleteList);
 			actionObjectEntityFound = true;
 		}
 
@@ -778,13 +816,13 @@ bool parseActionNodeTag(XMLParserTag * firstTagInActionNode, GIAActionNode * act
 		currentAttribute = currentAttribute->nextAttribute;
 	}
 
-	XMLParserTag * currentTagUpdatedL3 = firstTagInEntityNode->firstLowerLevelTag;
+	XMLParserTag * currentTagUpdatedL3 = firstTagInActionNode->firstLowerLevelTag;
 	while(currentTagUpdatedL3->nextTag != NULL)
 	{
 		if(currentTagUpdatedL3->name == NET_XML_TAG_ConditionNodeList)
 		{
 			cout << "ConditionNodeList: " << endl;
-			if(!parseConditionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, currentActionNode, firstConditionNodeInNetwork))
+			if(!parseConditionNodeListInActionTag(currentTagUpdatedL3->firstLowerLevelTag, actionNode, conditionNodesCompleteList))
 			{
 				result = false;
 			}	
@@ -793,7 +831,7 @@ bool parseActionNodeTag(XMLParserTag * firstTagInActionNode, GIAActionNode * act
 		if(currentTagUpdatedL3->name == NET_XML_TAG_ConditionNodeReverseList)
 		{
 			cout << "ConditionNodeReverseList: " << endl;
-			if(!parseConditionNodeReverseListTag(currentTagUpdatedL3->firstLowerLevelTag, currentActionNode, firstConditionNodeInNetwork))
+			if(!parseConditionNodeReverseListInActionTag(currentTagUpdatedL3->firstLowerLevelTag, actionNode, conditionNodesCompleteList))
 			{
 				result = false;
 			}
@@ -804,9 +842,9 @@ bool parseActionNodeTag(XMLParserTag * firstTagInActionNode, GIAActionNode * act
 	}
 			
 				
-	if(!entityNodeDefiningThisAction)
+	if(!entityNodeDefiningThisActionFound)
 	{	
-		cout << "parseActionNodeTag error: !entityNodeDefiningThisAction" << endl;
+		cout << "parseActionNodeTag error: !entityNodeDefiningThisActionFound" << endl;
 		result = false;				
 	}
 	if(!actionSubjectEntityFound || !actionObjectEntityFound)
@@ -819,7 +857,7 @@ bool parseActionNodeTag(XMLParserTag * firstTagInActionNode, GIAActionNode * act
 	return result;	
 }
 
-bool parseConditionNodeListInActionTag(XMLParserTag * firstTagInConditionNodeList, GIAActionNode * actionNode, GIAConditionNode * firstConditionNodeInNetwork)
+bool parseConditionNodeListInActionTag(XMLParserTag * firstTagInConditionNodeList, GIAActionNode * actionNode, vector<GIAConditionNode*> *conditionNodesCompleteList)
 {
 	XMLParserTag * currentTagUpdatedL1 = firstTagInConditionNodeList;
 	while(currentTagUpdatedL1->nextTag != NULL)
@@ -829,7 +867,7 @@ bool parseConditionNodeListInActionTag(XMLParserTag * firstTagInConditionNodeLis
 			cout << "conditionNodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			actionNode->ConditionNodeList.push_back(findConditionNodeByID(attributeValue, firstConditionNodeInNetwork));
+			actionNode->ConditionNodeList.push_back(findConditionNodeByID(attributeValue, conditionNodesCompleteList));
 		}
 		else
 		{
@@ -839,7 +877,7 @@ bool parseConditionNodeListInActionTag(XMLParserTag * firstTagInConditionNodeLis
 	}
 }
 
-bool parseConditionNodeReverseListInActionTag(XMLParserTag * firstTagInConditionNodeReverseList, GIAActionNode * actionNode, GIAActionNode * firstConditionNodeInNetwork)
+bool parseConditionNodeReverseListInActionTag(XMLParserTag * firstTagInConditionNodeReverseList, GIAActionNode * actionNode, vector<GIAConditionNode*> *conditionNodesCompleteList)
 {
 	XMLParserTag * currentTagUpdatedL1 = firstTagInConditionNodeReverseList;
 	while(currentTagUpdatedL1->nextTag != NULL)
@@ -849,7 +887,7 @@ bool parseConditionNodeReverseListInActionTag(XMLParserTag * firstTagInCondition
 			cout << "conditionNodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			actionNode->ConditionNodeReverseList.push_back(findConditionNodeByID(attributeValue, firstConditionNodeInNetwork));
+			actionNode->ConditionNodeReverseList.push_back(findConditionNodeByID(attributeValue, conditionNodesCompleteList));
 		}
 		else
 		{
@@ -860,13 +898,13 @@ bool parseConditionNodeReverseListInActionTag(XMLParserTag * firstTagInCondition
 }
 
 
-bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionNode * conditionNode)
+bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionNode * conditionNode, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAActionNode*> *actionNodesCompleteList, vector<GIAConditionNode*> *conditionNodesCompleteList)
 {
 	bool result = true;
 
 	//cout << "g1 error detected here" << endl;
 
-	XMLParserAttribute * currentAttribute = currentTag->firstAttribute;
+	XMLParserAttribute * currentAttribute = firstTagInConditionNode->firstAttribute;
 
 	bool conditionNameFound = false;
 	bool conditionIsActionFound = false;
@@ -902,13 +940,13 @@ bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionN
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionAction)
 		{
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			conditionNode->conditionAction = findActionNodeByID(attributeValue, firstActionNodeInNetwork);
+			conditionNode->conditionAction = findActionNodeByID(attributeValue, actionNodesCompleteList);
 			conditionActionFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionEntity)
 		{
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			conditionNode->conditionEntity = findEntityNodeByID(attributeValue, firstEntityNodeInNetwork);
+			conditionNode->conditionEntity = findEntityNodeByID(attributeValue, entityNodesCompleteList);
 			conditionEntityFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_parentIsAction)
@@ -920,13 +958,13 @@ bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionN
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_parentAction)
 		{
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			conditionNode->parentAction = findActionNodeByID(attributeValue, firstActionNodeInNetwork);
+			conditionNode->parentAction = findActionNodeByID(attributeValue, actionNodesCompleteList);
 			parentActionFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_parentProperty)
 		{
 			long attributeValue = atoi(currentAttribute->value.c_str());
-			conditionNode->parentProperty = findEntityNodeByID(attributeValue, firstEntityNodeInNetwork);
+			conditionNode->parentProperty = findEntityNodeByID(attributeValue, entityNodesCompleteList);
 			parentPropertyFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionType)
@@ -976,7 +1014,7 @@ bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionN
 		currentAttribute = currentAttribute->nextAttribute;
 	}
 		
-	if(conditionTypeFound && (conditionType == CONDITION_NODE_TYPE_TIME))
+	if(conditionTypeFound && (conditionNode->conditionType == CONDITION_NODE_TYPE_TIME))
 	{	
 		XMLParserTag * currentTagUpdatedL3 = firstTagInConditionNode->firstLowerLevelTag;
 		while(currentTagUpdatedL3->nextTag != NULL)
@@ -984,7 +1022,7 @@ bool parseConditionNodeTag(XMLParserTag * firstTagInConditionNode, GIAConditionN
 			if(currentTagUpdatedL3->name == NET_XML_TAG_timeConditionNode)
 			{
 				cout << "timeConditionNode: " << endl;
-				if(!parseTimeConditionNodeListTag(currentTagUpdatedL3, conditionNode->timeConditionNode))
+				if(!parseTimeConditionNodeTag(currentTagUpdatedL3, conditionNode->timeConditionNode))
 				{
 					result = false;
 				}	
@@ -1068,7 +1106,7 @@ bool parseTimeConditionNodeTag(XMLParserTag * firstTagInTimeConditionNode, GIATi
 
 	//cout << "g1 error detected here" << endl;
 
-	XMLParserAttribute * currentAttribute = currentTag->firstAttribute;
+	XMLParserAttribute * currentAttribute = firstTagInTimeConditionNode->firstAttribute;
 
 	bool tenseFound = false;
 	bool secondFound = false;
@@ -1144,7 +1182,7 @@ bool parseTimeConditionNodeTag(XMLParserTag * firstTagInTimeConditionNode, GIATi
 
 
 
-bool writeSemanticNetXMLFile(string xmlFileName, GIAEntityNode * firstEntityNodeInNetwork, GIAActionNode * firstActionNodeInNetwork, GIAConditionNode * firstConditionNodeInNetwork)
+bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAActionNode*> *actionNodesCompleteList, vector<GIAConditionNode*> *conditionNodesCompleteList)
 {
 	bool result = true;
 
@@ -1161,25 +1199,25 @@ bool writeSemanticNetXMLFile(string xmlFileName, GIAEntityNode * firstEntityNode
 	XMLParserTag * newTag1 = new XMLParserTag();	//had to add a null tag
 	currentTagL1->nextTag = newTag1;
 
-	if(!generateXMLEntityNodeTagList(currentTagL1, firstEntityNodeInNetwork))
+	if(!generateXMLEntityNodeTagList(currentTagL1, entityNodesCompleteList, actionNodesCompleteList, conditionNodesCompleteList))
 	{
 		result = false;
 	}
 	
-	currentTagL1 = currentTagL1->nextTag
+	currentTagL1 = currentTagL1->nextTag;
 	XMLParserTag * newTag2 = new XMLParserTag();	//had to add a null tag
 	currentTagL1->nextTag = newTag2;
 	
-	if(!generateXMLActionNodeTagList(currentTagL1, firstActionNodeInNetwork))
+	if(!generateXMLActionNodeTagList(currentTagL1, entityNodesCompleteList, actionNodesCompleteList, conditionNodesCompleteList))
 	{
 		result = false;
 	}
 
-	currentTagL1 = currentTagL1->nextTag
+	currentTagL1 = currentTagL1->nextTag;
 	XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
 	currentTagL1->nextTag = newTag3;
 	
-	if(!generateXMLConditionNodeTagList(currentTagL1, firstConditionNodeInNetwork))
+	if(!generateXMLConditionNodeTagList(currentTagL1, entityNodesCompleteList, actionNodesCompleteList, conditionNodesCompleteList))
 	{
 		result = false;
 	}
@@ -1200,7 +1238,7 @@ bool writeSemanticNetXMLFile(string xmlFileName, GIAEntityNode * firstEntityNode
 }
 
 
-bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, GIAEntityNode * firstEntityNodeInNetwork)
+bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAActionNode*> *actionNodesCompleteList, vector<GIAConditionNode*> *conditionNodesCompleteList)
 {
 	//cout << "h3" << endl;
 
@@ -1217,12 +1255,20 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, GIAEntit
 	XMLParserTag * newTag1 = new XMLParserTag();	//had to add a null tag
 	currentTagL1->nextTag = newTag1;
 	
-	GIAEntityNode * currentEntity = firstEntityNodeInNetwork;
-
-	while(currentEntity->next != NULL)
+	
+	long currentEntityNodeIDInCompleteList = 0;	
+	bool notYetReachedEndOfList = true;
+	GIAEntityNode * currentEntity = entityNodesCompleteList->at(currentEntityNodeIDInCompleteList);
+	currentEntityNodeIDInCompleteList++;
+	if(currentEntity == NULL)
+	{
+		notYetReachedEndOfList = false;
+	}
+	 
+	while(notYetReachedEndOfList)
 	{
 		//cout << "h5" << endl;
-
+		
 		char tempString[MAX_ATTRIBUTE_VALUE_SIZE];
 		//generate neuron connection tag
 		currentTagL1->name = NET_XML_TAG_entityNode;
@@ -1233,7 +1279,7 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, GIAEntit
 		XMLParserAttribute * currentAttribute = currentTagL1->firstAttribute;
 
 		currentAttribute->name = NET_XML_ATTRIBUTE_id;
-		sprintf(tempString, "%d", (currentEntity->id));
+		sprintf(tempString, "%ld", (currentEntity->id));
 		currentAttribute->value = tempString;
 
 		XMLParserAttribute * newAttribute1 = new XMLParserAttribute();
@@ -1242,207 +1288,440 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, GIAEntit
 
 		//cout << "h5a" << endl;
 
-	#ifndef DO_NOT_STORE_NET_XML_NEURON_ID_PARAMETERS
-
-		currentAttribute->name = NET_XML_ATTRIBUTE_layerID;
-		sprintf(tempString, "%d", (currentNeuron->neuron->layerID));
+		currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalNumber;
+		sprintf(tempString, "%d", (currentEntity->grammaticalNumber));
 		currentAttribute->value = tempString;
 
 		XMLParserAttribute * newAttribute2 = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute2;
 		currentAttribute = currentAttribute->nextAttribute;
-
-		currentAttribute->name = NET_XML_ATTRIBUTE_orderID;
-		sprintf(tempString, "%d", (currentNeuron->neuron->orderID));
+		
+		currentAttribute->name = NET_XML_ATTRIBUTE_hasQuantity;
+		sprintf(tempString, "%d", int(currentEntity->hasQuantity));
 		currentAttribute->value = tempString;
 
 		XMLParserAttribute * newAttribute3 = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute3;
 		currentAttribute = currentAttribute->nextAttribute;
 
-		currentAttribute->name = NET_XML_ATTRIBUTE_subnetID;
-		sprintf(tempString, "%d", (currentNeuron->neuron->subnetID));
+		currentAttribute->name = NET_XML_ATTRIBUTE_quantityNumber;
+		sprintf(tempString, "%d", (currentEntity->quantityNumber));
 		currentAttribute->value = tempString;
 
 		XMLParserAttribute * newAttribute4 = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute4;
 		currentAttribute = currentAttribute->nextAttribute;
-	#endif
-		//cout << "h5b" << endl;
 
-	#ifndef DO_NOT_STORE_NET_XML_NEURON_KEYPROPERTIES_PARAMETERS
-
-		currentAttribute->name = NET_XML_ATTRIBUTE_bias;
-		sprintf(tempString, "%0.6f", (currentNeuron->neuron->bias));
+		currentAttribute->name = NET_XML_ATTRIBUTE_quantityModifier;
+		sprintf(tempString, "%d", (currentEntity->quantityModifier));
 		currentAttribute->value = tempString;
 
 		XMLParserAttribute * newAttribute5 = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute5;
 		currentAttribute = currentAttribute->nextAttribute;
 
-		currentAttribute->name = NET_XML_ATTRIBUTE_output;
-		sprintf(tempString, "%0.6f", (currentNeuron->neuron->output));
-		currentAttribute->value = tempString;
+		currentAttribute->name = NET_XML_ATTRIBUTE_quantityModifierString;
+		currentAttribute->value = currentEntity->quantityModifierString;
 
 		XMLParserAttribute * newAttribute6 = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute6;
-		currentAttribute = currentAttribute->nextAttribute;parseEntityContainerNodeTag
+		currentAttribute = currentAttribute->nextAttribute;
 
-		currentAttribute->name = NET_XML_ATTRIBUTE_classTarget;
-		sprintf(tempString, "%0.6f", (currentNeuron->neuron->classTarget));
+		currentAttribute->name = NET_XML_ATTRIBUTE_hasMeasure;
+		sprintf(tempString, "%d", int(currentEntity->hasMeasure));
 		currentAttribute->value = tempString;
 
 		XMLParserAttribute * newAttribute7 = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute7;
 		currentAttribute = currentAttribute->nextAttribute;
 
-		currentAttribute->name = NET_XML_ATTRIBUTE_error;
-		sprintf(tempString, "%0.6f", (currentNeuron->neuron->error));
+		currentAttribute->name = NET_XML_ATTRIBUTE_measureType;
+		sprintf(tempString, "%d", (currentEntity->measureType));
 		currentAttribute->value = tempString;
 
 		XMLParserAttribute * newAttribute8 = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute8;
 		currentAttribute = currentAttribute->nextAttribute;
-	#endif
-
-			//cout << "h5cB1" << endl;
-
-		#ifndef DO_NOT_STORE_NET_XML_NEURON_SPATIAL_COORD_PARAMETERS
-
-			if(currentNeuron->neuron->spatialCoordinatesSet)
-			{
-
-				currentAttribute->name = NET_XML_ATTRIBUTE_xPosRel;
-				sprintf(tempString, "%d", (currentNeuron->neuron->xPosRel));
-				currentAttribute->value = tempString;
-
-				XMLParserAttribute * newAttribute9 = new XMLParserAttribute();
-				currentAttribute->nextAttribute = newAttribute9;
-				currentAttribute = currentAttribute->nextAttribute;
-
-				currentAttribute->name = NET_XML_ATTRIBUTE_yPosRel;
-				sprintf(tempString, "%d", (currentNeuron->neuron->yPosRel));
-				currentAttribute->value = tempString;
-
-				XMLParserAttribute * newAttribute10 = new XMLParserAttribute();
-				currentAttribute->nextAttribute = newAttribute10;
-				currentAttribute = currentAttribute->nextAttribute;
-
-				currentAttribute->name = NET_XML_ATTRIBUTE_zPosRel;
-				sprintf(tempString, "%d", (currentNeuron->neuron->zPosRel));
-				currentAttribute->value = tempString;
-
-				XMLParserAttribute * newAttribute11 = new XMLParserAttribute();
-				currentAttribute->nextAttribute = newAttribute11;
-				//currentAttribute = currentAttribute->nextAttribute;
-			}
-		#endif
-			//cout << "h5d" << endl;
 
 
-			XMLParserTag * newTag = new XMLParserTag();
-			currentTagL2->nextTag = newTag;
-			currentTagL2 = currentTagL2->nextTag;
 
-			//cout << "h5e" << endl;
+		currentAttribute->name = NET_XML_ATTRIBUTE_printX;
+		sprintf(tempString, "%d", (currentEntity->printX));
+		currentAttribute->value = tempString;
 
-			//generate NET_XML_TAG_forwardNeuronConnectionsList tag
-			if(currentNeuron -> firstFrontNeuronConnectionContainer -> nextNeuronConnectionContainer != NULL)
-			{
-				//cout << "h6" << endl;
-				currentTagL2->name = NET_XML_TAG_forwardNeuronConnectionsList;
-				XMLParserTag * firstTagL3 = new XMLParserTag();
-				currentTagL2->firstLowerLevelTag = firstTagL3;
-				XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
-				NeuronConnectionContainer * currentNeuronConnectionContainer = currentNeuron->firstFrontNeuronConnectionContainer;
-				while(currentNeuronConnectionContainer -> nextNeuronConnectionContainer != NULL)
-				{
-					//cout << "h7" << endl;
+		XMLParserAttribute * newAttribute9 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute9;
+		currentAttribute = currentAttribute->nextAttribute;
 
-					//generate NET_XML_TAG_forwardNeuronConnection tag and attributes
-					currentTagL3->name = NET_XML_TAG_forwardNeuronConnection;
+		currentAttribute->name = NET_XML_ATTRIBUTE_printY;
+		sprintf(tempString, "%d", (currentEntity->printY));
+		currentAttribute->value = tempString;
 
-					XMLParserAttribute * currentAttribute = currentTagL3->firstAttribute;
+		XMLParserAttribute * newAttribute10 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute10;
+		currentAttribute = currentAttribute->nextAttribute;
 
-					currentAttribute->name = "neuronID";
-					sprintf(tempString, "%d", (currentNeuronConnectionContainer->neuron->id));
-					currentAttribute->value = tempString;
+		currentAttribute->name = NET_XML_ATTRIBUTE_printXIndex;
+		sprintf(tempString, "%d", (currentEntity->printXIndex));
+		currentAttribute->value = tempString;
 
-					XMLParserAttribute * newAttribute1 = new XMLParserAttribute();
-					currentAttribute->nextAttribute = newAttribute1;
-					currentAttribute = currentAttribute->nextAttribute;
+		XMLParserAttribute * newAttribute11 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute11;
+		currentAttribute = currentAttribute->nextAttribute;
 
-				#ifndef DO_NOT_STORE_NET_XML_NEURON_KEYPROPERTIES_PARAMETERS
-					currentAttribute->name = "weight";
-					sprintf(tempString, "%0.6f", (currentNeuronConnectionContainer->neuronConnection->weight));
-					currentAttribute->value = tempString;
+		currentAttribute->name = NET_XML_ATTRIBUTE_printYIndex;
+		sprintf(tempString, "%d", (currentEntity->printYIndex));
+		currentAttribute->value = tempString;
 
-					XMLParserAttribute * newAttribute2 = new XMLParserAttribute();
-					currentAttribute->nextAttribute = newAttribute2;
-					//currentAttribute = currentAttribute->nextAttribute;
-				#endif
+		XMLParserAttribute * newAttribute12 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute12;
+		currentAttribute = currentAttribute->nextAttribute;
 
-					XMLParserTag * newTag = new XMLParserTag();
-					currentTagL3->nextTag = newTag;
-					currentTagL3 = currentTagL3->nextTag;
+		currentAttribute->name = NET_XML_ATTRIBUTE_printTextX;
+		sprintf(tempString, "%d", (currentEntity->printTextX));
+		currentAttribute->value = tempString;
 
-					currentNeuronConnectionContainer = currentNeuronConnectionContainer -> nextNeuronConnectionContainer;
+		XMLParserAttribute * newAttribute13 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute13;
+		currentAttribute = currentAttribute->nextAttribute;
 
-					//cout << "h7b" << endl;
+		currentAttribute->name = NET_XML_ATTRIBUTE_printTextY;
+		sprintf(tempString, "%d", (currentEntity->printTextY));
+		currentAttribute->value = tempString;
 
-				}
-				XMLParserTag * newTag = new XMLParserTag();
-				currentTagL2->nextTag = newTag;
-
-				//cout << "h6b" << endl;
+		XMLParserAttribute * newAttribute14 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute14;
+		currentAttribute = currentAttribute->nextAttribute;
 
 
-			}
 
-		#ifdef ANN
-			currentTagL2 = currentTagL2->nextTag;
 
-			//generate subtag tag
-			if(currentNeuron -> isSubnet)
-			{
-				currentTagL2->name = NET_XML_TAG_subnet;
+		currentAttribute->name = NET_XML_ATTRIBUTE_entityName;
+		currentAttribute->value = currentEntity->entityName;
 
-				XMLParserTag * newTag1 = new XMLParserTag();
-				currentTagL2->firstLowerLevelTag = newTag1;
-				if(!generateXMLTagListBasedUponSubnet(currentTagL2->firstLowerLevelTag, currentNeuron->firstNeuronContainerInBackLayerOfSubnet))
-				{
-					result = false;
-				}
+		XMLParserAttribute * newAttribute15 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute15;
+		currentAttribute = currentAttribute->nextAttribute;
 
-				XMLParserTag * newTag = new XMLParserTag();
-				currentTagL2->nextTag = newTag;
-				//currentTagL2 = currentTagL2->nextTag;
-			}
-		#endif
+		currentAttribute->name = NET_XML_ATTRIBUTE_confidence;
+		sprintf(tempString, "%0.6f", (currentEntity->confidence));
+		currentAttribute->value = tempString;
 
-			XMLParserTag * newTag2 = new XMLParserTag();
-			currentTagL1->nextTag = newTag2;
-			currentTagL1 = currentTagL1->nextTag;
+		XMLParserAttribute * newAttribute16 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute16;
+		currentAttribute = currentAttribute->nextAttribute;
 
-			currentNeuron = currentNeuron->nextNeuronContainer;
-		}
+		currentAttribute->name = NET_XML_ATTRIBUTE_isProperty;
+		sprintf(tempString, "%d", int(currentEntity->isProperty));
+		currentAttribute->value = tempString;
 
-		//cout << "h8" << endl;
+		XMLParserAttribute * newAttribute17 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute17;
+		currentAttribute = currentAttribute->nextAttribute;
+		
+		currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedProperty;
+		sprintf(tempString, "%d", int(currentEntity->hasAssociatedProperty));
+		currentAttribute->value = tempString;
+		
+		XMLParserAttribute * newAttribute18 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute18;
+		currentAttribute = currentAttribute->nextAttribute;
 
-		if(firstNeuronInLayer->hasFrontLayer)
-		{
-			currentNeuron=firstNeuronInLayer->firstNeuronInFrontLayer;
-		}
-		else
-		{
-			stillMoreLayers = false;
-		}
+		currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedAction;
+		sprintf(tempString, "%d", int(currentEntity->hasAssociatedAction));
+		currentAttribute->value = tempString;
+		
+		XMLParserAttribute * newAttribute19 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute19;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedTime;
+		sprintf(tempString, "%d", int(currentEntity->hasAssociatedTime));
+		currentAttribute->value = tempString;
+
+
+
+		XMLParserAttribute * newAttribute20 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute20;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_entityNodeContainingThisProperty;
+		sprintf(tempString, "%ld", (currentEntity->entityNodeContainingThisProperty->id));
+		currentAttribute->value = tempString;
+		
+		XMLParserAttribute * newAttribute21 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute21;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_entityNodeDefiningThisProperty;
+		sprintf(tempString, "%ld", (currentEntity->entityNodeDefiningThisProperty->id));
+		currentAttribute->value = tempString;
+
+	
+
+		currentTagL2->name = NET_XML_TAG_ActionNodeList;
+		XMLParserTag * firstTagL3 = new XMLParserTag();
+		currentTagL2->firstLowerLevelTag = firstTagL3;
+		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->ActionNodeListIterator = currentEntity->ActionNodeList->begin(); currentEntity->ActionNodeListIterator < currentEntity->ActionNodeList->end(); currentEntity->ActionNodeListIterator++)
+		{	
+			currentTagL3->name = NET_XML_TAG_actionNodeReference;
+			
+			currentAttribute = currentTagL3->firstAttribute;
+
+			currentAttribute->name = NET_XML_ATTRIBUTE_id;
+			sprintf(tempString, "%ld", currentEntity->ActionNodeListIterator->id;
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;
+
+			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
+			currentTagL3->nextTag = newTag3;			
+			currentTagL3 = currentTagL3->nextTag;
+			
+		} 
+		XMLParserTag * newTag2 = new XMLParserTag();	//had to add a null tag
+		currentTagL2->nextTag = newTag2;
+		currentTagL2 = currentTagL2->nextTag;		
+
+
+		currentTagL2->name = NET_XML_TAG_IncomingActionNodeList;
+		firstTagL3 = new XMLParserTag();
+		currentTagL2->firstLowerLevelTag = firstTagL3;
+		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->IncomingActionNodeListIterator = currentEntity->IncomingActionNodeList->begin(); currentEntity->IncomingActionNodeListIterator < currentEntity->IncomingActionNodeList->end(); currentEntity->IncomingActionNodeListIterator++)
+		{	
+			currentTagL3->name = NET_XML_TAG_actionNodeReference;
+			
+			currentAttribute = currentTagL3->firstAttribute;
+
+			currentAttribute->name = NET_XML_ATTRIBUTE_id;
+			sprintf(tempString, "%ld", currentEntity->IncomingActionNodeListIterator->id;
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;
+
+			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
+			currentTagL3->nextTag = newTag3;			
+			currentTagL3 = currentTagL3->nextTag;
+			
+		} 
+		newTag2 = new XMLParserTag();	//had to add a null tag
+		currentTagL2->nextTag = newTag2;
+		currentTagL2 = currentTagL2->nextTag;	
+		
+		
+		currentTagL2->name = NET_XML_TAG_PropertyNodeList;
+		firstTagL3 = new XMLParserTag();
+		currentTagL2->firstLowerLevelTag = firstTagL3;
+		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->PropertyNodeListIterator = currentEntity->PropertyNodeList->begin(); currentEntity->PropertyNodeListIterator < currentEntity->PropertyNodeList->end(); currentEntity->PropertyNodeListIterator++)
+		{	
+			currentTagL3->name = NET_XML_TAG_entityNodeReference;
+			
+			currentAttribute = currentTagL3->firstAttribute;
+
+			currentAttribute->name = NET_XML_ATTRIBUTE_id;
+			sprintf(tempString, "%ld", currentEntity->PropertyNodeListIterator->id;
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;
+
+			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
+			currentTagL3->nextTag = newTag3;			
+			currentTagL3 = currentTagL3->nextTag;
+			
+		} 
+		newTag2 = new XMLParserTag();	//had to add a null tag
+		currentTagL2->nextTag = newTag2;
+		currentTagL2 = currentTagL2->nextTag;		
+		
+		
+		currentTagL2->name = NET_XML_TAG_EntityNodeDefinitionList;
+		firstTagL3 = new XMLParserTag();
+		currentTagL2->firstLowerLevelTag = firstTagL3;
+		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->EntityNodeDefinitionListIterator = currentEntity->EntityNodeDefinitionList->begin(); currentEntity->EntityNodeDefinitionListIterator < currentEntity->EntityNodeDefinitionList->end(); currentEntity->EntityNodeDefinitionListIterator++)
+		{	
+			currentTagL3->name = NET_XML_TAG_entityNodeReference;
+			
+			currentAttribute = currentTagL3->firstAttribute;
+
+			currentAttribute->name = NET_XML_ATTRIBUTE_id;
+			sprintf(tempString, "%ld", currentEntity->EntityNodeDefinitionListIterator->id;
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;
+
+			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
+			currentTagL3->nextTag = newTag3;			
+			currentTagL3 = currentTagL3->nextTag;
+			
+		} 
+		newTag2 = new XMLParserTag();	//had to add a null tag
+		currentTagL2->nextTag = newTag2;
+		currentTagL2 = currentTagL2->nextTag;
+		
+
+		currentTagL2->name = NET_XML_TAG_EntityNodeDefinitionReverseList;
+		firstTagL3 = new XMLParserTag();
+		currentTagL2->firstLowerLevelTag = firstTagL3;
+		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->EntityNodeDefinitionReverseListIterator = currentEntity->EntityNodeDefinitionReverseList->begin(); currentEntity->EntityNodeDefinitionReverseListIterator < currentEntity->EntityNodeDefinitionReverseList->end(); currentEntity->EntityNodeDefinitionReverseListIterator++)
+		{	
+			currentTagL3->name = NET_XML_TAG_entityNodeReference;
+			
+			currentAttribute = currentTagL3->firstAttribute;
+
+			currentAttribute->name = NET_XML_ATTRIBUTE_id;
+			sprintf(tempString, "%ld", currentEntity->EntityNodeDefinitionReverseListIterator->id;
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;
+
+			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
+			currentTagL3->nextTag = newTag3;			
+			currentTagL3 = currentTagL3->nextTag;
+			
+		} 
+		newTag2 = new XMLParserTag();	//had to add a null tag
+		currentTagL2->nextTag = newTag2;
+		currentTagL2 = currentTagL2->nextTag;
+		
+
+		currentTagL2->name = NET_XML_TAG_AssociatedActionNodeList;
+		firstTagL3 = new XMLParserTag();
+		currentTagL2->firstLowerLevelTag = firstTagL3;
+		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->AssociatedActionNodeListIterator = currentEntity->AssociatedActionNodeList->begin(); currentEntity->AssociatedActionNodeListIterator < currentEntity->AssociatedActionNodeList->end(); currentEntity->AssociatedActionNodeListIterator++)
+		{	
+			currentTagL3->name = NET_XML_TAG_actionNodeReference;
+			
+			currentAttribute = currentTagL3->firstAttribute;
+
+			currentAttribute->name = NET_XML_ATTRIBUTE_id;
+			sprintf(tempString, "%ld", currentEntity->AssociatedActionNodeListIterator->id;
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;
+
+			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
+			currentTagL3->nextTag = newTag3;			
+			currentTagL3 = currentTagL3->nextTag;
+			
+		} 
+		newTag2 = new XMLParserTag();	//had to add a null tag
+		currentTagL2->nextTag = newTag2;
+		currentTagL2 = currentTagL2->nextTag;
+								
+
+		currentTagL2->name = NET_XML_TAG_AssociatedPropertyNodeList;
+		firstTagL3 = new XMLParserTag();
+		currentTagL2->firstLowerLevelTag = firstTagL3;
+		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->AssociatedPropertyNodeListIterator = currentEntity->AssociatedPropertyNodeList->begin(); currentEntity->AssociatedPropertyNodeListIterator < currentEntity->AssociatedPropertyNodeList->end(); currentEntity->AssociatedPropertyNodeListIterator++)
+		{	
+			currentTagL3->name = NET_XML_TAG_entityNodeReference;
+			
+			currentAttribute = currentTagL3->firstAttribute;
+
+			currentAttribute->name = NET_XML_ATTRIBUTE_id;
+			sprintf(tempString, "%ld", currentEntity->AssociatedPropertyNodeListIterator->id;
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;
+
+			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
+			currentTagL3->nextTag = newTag3;			
+			currentTagL3 = currentTagL3->nextTag;
+			
+		} 
+		newTag2 = new XMLParserTag();	//had to add a null tag
+		currentTagL2->nextTag = newTag2;
+		currentTagL2 = currentTagL2->nextTag;
+		
+
+		currentTagL2->name = NET_XML_TAG_ConditionNodeList;
+		firstTagL3 = new XMLParserTag();
+		currentTagL2->firstLowerLevelTag = firstTagL3;
+		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->ConditionNodeListIterator = currentEntity->ConditionNodeList->begin(); currentEntity->ConditionNodeListIterator < currentEntity->ConditionNodeList->end(); currentEntity->ConditionNodeListIterator++)
+		{	
+			currentTagL3->name = NET_XML_TAG_entityNodeReference;
+			
+			currentAttribute = currentTagL3->firstAttribute;
+
+			currentAttribute->name = NET_XML_ATTRIBUTE_id;
+			sprintf(tempString, "%ld", currentEntity->ConditionNodeListIterator->id;
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;
+
+			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
+			currentTagL3->nextTag = newTag3;			
+			currentTagL3 = currentTagL3->nextTag;
+			
+		} 
+		newTag2 = new XMLParserTag();	//had to add a null tag
+		currentTagL2->nextTag = newTag2;
+		currentTagL2 = currentTagL2->nextTag;
+		
+
+		currentTagL2->name = NET_XML_TAG_ConditionNodeReverseList;
+		firstTagL3 = new XMLParserTag();
+		currentTagL2->firstLowerLevelTag = firstTagL3;
+		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->ConditionNodeReverseListIterator = currentEntity->ConditionNodeReverseList->begin(); currentEntity->ConditionNodeReverseListIterator < currentEntity->ConditionNodeReverseList->end(); currentEntity->ConditionNodeReverseListIterator++)
+		{	
+			currentTagL3->name = NET_XML_TAG_entityNodeReference;
+			
+			currentAttribute = currentTagL3->firstAttribute;
+
+			currentAttribute->name = NET_XML_ATTRIBUTE_id;
+			sprintf(tempString, "%ld", currentEntity->ConditionNodeReverseListIterator->id;
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;
+
+			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
+			currentTagL3->nextTag = newTag3;			
+			currentTagL3 = currentTagL3->nextTag;
+			
+		} 
+		newTag2 = new XMLParserTag();	//had to add a null tag
+		currentTagL2->nextTag = newTag2;
+		currentTagL2 = currentTagL2->nextTag;				
+		//cout << "h5e" << endl;
+
 
 		XMLParserTag * newTag = new XMLParserTag();
-		currentTagL0->nextTag = newTag;
-		currentTagL0 = currentTagL0->nextTag;
+		currentTagL1->nextTag = newTag;
+		currentTagL1 = currentTagL1->nextTag;
 		
-		currentEntity = currentEntity->next;
+		GIAEntityNode * currentEntity = entityNodesCompleteList->at(currentEntityNodeIDInCompleteList);
+		currentEntityNodeIDInCompleteList++;
+		if(currentEntity == NULL)
+		{
+			notYetReachedEndOfList = false;
+		}
 	}
 
 	return result;
@@ -1450,13 +1729,520 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, GIAEntit
 
 
 
-GIAEntityNode * findEntityNodeByID(long EntityNodeID, GIAEntityNode * firstEntityNodeInNetwork)
+
+
+bool generateXMLActionNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAActionNode*> *actionNodesCompleteList, vector<GIAConditionNode*> *conditionNodesCompleteList)
+{
+	//cout << "h3" << endl;
+
+	bool result = true;
+
+	XMLParserTag * currentTagL0 = firstTagInSemanticNet;
+	currentTagL0->name = NET_XML_TAG_actionNodeContainer;
+	XMLParserTag * newTag0 = new XMLParserTag();	//had to add a null tag
+	currentTagL0->nextTag = newTag0;
+
+	XMLParserTag * firstTagL1 = new XMLParserTag();
+	currentTagL0->firstLowerLevelTag = firstTagL1;
+	XMLParserTag * currentTagL1 = currentTagL0->firstLowerLevelTag;
+	XMLParserTag * newTag1 = new XMLParserTag();	//had to add a null tag
+	currentTagL1->nextTag = newTag1;
+	
+	
+	long currentActionNodeIDInCompleteList = 0;	
+	bool notYetReachedEndOfList = true;
+	GIAActionNode * currentAction = actionNodesCompleteList->at(currentActionNodeIDInCompleteList);
+	currentActionNodeIDInCompleteList++;
+	if(currentAction == NULL)
+	{
+		notYetReachedEndOfList = false;
+	}
+	 
+	while(notYetReachedEndOfList)
+	{
+		//cout << "h5" << endl;
+		
+		char tempString[MAX_ATTRIBUTE_VALUE_SIZE];
+		//generate neuron connection tag
+		currentTagL1->name = NET_XML_TAG_entityNode;
+		XMLParserTag * firstTagL2 = new XMLParserTag();
+		currentTagL1->firstLowerLevelTag = firstTagL2;
+		XMLParserTag * currentTagL2 = currentTagL1->firstLowerLevelTag;
+
+		XMLParserAttribute * currentAttribute = currentTagL1->firstAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_id;
+		sprintf(tempString, "%ld", (currentAction->id));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute1 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute1;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_actionName;
+		currentAttribute->value = currentAction->actionName;
+
+		XMLParserAttribute * newAttribute15 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute15;
+		currentAttribute = currentAttribute->nextAttribute;
+		
+
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_printX;
+		sprintf(tempString, "%d", (currentAction->printX));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute9 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute9;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_printY;
+		sprintf(tempString, "%d", (currentAction->printY));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute10 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute10;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_printXIndex;
+		sprintf(tempString, "%d", (currentAction->printXIndex));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute11 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute11;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_printYIndex;
+		sprintf(tempString, "%d", (currentAction->printYIndex));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute12 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute12;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_printTextX;
+		sprintf(tempString, "%d", (currentAction->printTextX));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute13 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute13;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_printTextY;
+		sprintf(tempString, "%d", (currentAction->printTextY));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute14 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute14;
+		currentAttribute = currentAttribute->nextAttribute;
+
+
+
+
+		XMLParserAttribute * newAttribute20 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute20;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_entityNodeDefiningThisAction;
+		sprintf(tempString, "%ld", (currentAction->entityNodeDefiningThisAction->id));
+		currentAttribute->value = tempString;
+		
+		XMLParserAttribute * newAttribute21 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute21;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_actionSubjectEntity;
+		sprintf(tempString, "%ld", (currentAction->actionSubjectEntity->id));
+		currentAttribute->value = tempString;
+		
+		XMLParserAttribute * newAttribute22 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute22;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_actionObjectEntity;
+		sprintf(tempString, "%ld", (currentAction->actionObjectEntity->id));
+		currentAttribute->value = tempString;		
+
+	
+		
+
+		currentTagL2->name = NET_XML_TAG_ConditionNodeList;
+		firstTagL3 = new XMLParserTag();
+		currentTagL2->firstLowerLevelTag = firstTagL3;
+		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentAction->ConditionNodeListIterator = currentAction->ConditionNodeList->begin(); currentAction->ConditionNodeListIterator < currentAction->ConditionNodeList->end(); currentAction->ConditionNodeListIterator++)
+		{	
+			currentTagL3->name = NET_XML_TAG_entityNodeReference;
+			
+			currentAttribute = currentTagL3->firstAttribute;
+
+			currentAttribute->name = NET_XML_ATTRIBUTE_id;
+			sprintf(tempString, "%ld", currentAction->ConditionNodeListIterator->id;
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;
+
+			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
+			currentTagL3->nextTag = newTag3;			
+			currentTagL3 = currentTagL3->nextTag;
+			
+		} 
+		XMLParserTag * newTag2 = new XMLParserTag();	//had to add a null tag
+		currentTagL2->nextTag = newTag2;
+		currentTagL2 = currentTagL2->nextTag;
+		
+
+		currentTagL2->name = NET_XML_TAG_ConditionNodeReverseList;
+		firstTagL3 = new XMLParserTag();
+		currentTagL2->firstLowerLevelTag = firstTagL3;
+		currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentAction->ConditionNodeReverseListIterator = currentAction->ConditionNodeReverseList->begin(); currentAction->ConditionNodeReverseListIterator < currentAction->ConditionNodeReverseList->end(); currentAction->ConditionNodeReverseListIterator++)
+		{	
+			currentTagL3->name = NET_XML_TAG_entityNodeReference;
+			
+			currentAttribute = currentTagL3->firstAttribute;
+
+			currentAttribute->name = NET_XML_ATTRIBUTE_id;
+			sprintf(tempString, "%ld", currentAction->ConditionNodeReverseListIterator->id;
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;
+
+			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
+			currentTagL3->nextTag = newTag3;			
+			currentTagL3 = currentTagL3->nextTag;
+			
+		} 
+		newTag2 = new XMLParserTag();	//had to add a null tag
+		currentTagL2->nextTag = newTag2;
+		currentTagL2 = currentTagL2->nextTag;				
+		//cout << "h5e" << endl;
+
+
+		XMLParserTag * newTag = new XMLParserTag();
+		currentTagL1->nextTag = newTag;
+		currentTagL1 = currentTagL1->nextTag;
+		
+		GIAActionNode * currentAction = actionNodesCompleteList->at(currentActionNodeIDInCompleteList);
+		currentActionNodeIDInCompleteList++;
+		if(currentAction == NULL)
+		{
+			notYetReachedEndOfList = false;
+		}
+	}
+
+	return result;
+}
+
+
+
+bool generateXMLConditionNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAActionNode*> *actionNodesCompleteList, vector<GIAConditionNode*> *conditionNodesCompleteList)
+{
+	//cout << "h3" << endl;
+
+	bool result = true;
+
+	XMLParserTag * currentTagL0 = firstTagInSemanticNet;
+	currentTagL0->name = NET_XML_TAG_conditionNodeContainer;
+	XMLParserTag * newTag0 = new XMLParserTag();	//had to add a null tag
+	currentTagL0->nextTag = newTag0;
+
+	XMLParserTag * firstTagL1 = new XMLParserTag();
+	currentTagL0->firstLowerLevelTag = firstTagL1;
+	XMLParserTag * currentTagL1 = currentTagL0->firstLowerLevelTag;
+	XMLParserTag * newTag1 = new XMLParserTag();	//had to add a null tag
+	currentTagL1->nextTag = newTag1;
+	
+	
+	long currentConditionNodeIDInCompleteList = 0;	
+	bool notYetReachedEndOfList = true;
+	GIAConditionNode * currentCondition = conditionNodesCompleteList->at(currentConditionNodeIDInCompleteList);
+	currentConditionNodeIDInCompleteList++;
+	if(currentCondition == NULL)
+	{
+		notYetReachedEndOfList = false;
+	}
+	 
+	while(notYetReachedEndOfList)
+	{
+		//cout << "h5" << endl;
+		
+		char tempString[MAX_ATTRIBUTE_VALUE_SIZE];
+		//generate neuron connection tag
+		currentTagL1->name = NET_XML_TAG_entityNode;
+		XMLParserTag * firstTagL2 = new XMLParserTag();
+		currentTagL1->firstLowerLevelTag = firstTagL2;
+		XMLParserTag * currentTagL2 = currentTagL1->firstLowerLevelTag;
+
+		XMLParserAttribute * currentAttribute = currentTagL1->firstAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_id;
+		sprintf(tempString, "%ld", (currentCondition->id));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute1 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute1;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		//cout << "h5a" << endl;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_conditionName;
+		currentAttribute->value = currentCondition->conditionName;
+
+		XMLParserAttribute * newAttribute2 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute2;
+		currentAttribute = currentAttribute->nextAttribute;
+		
+		currentAttribute->name = NET_XML_ATTRIBUTE_conditionIsAction;
+		sprintf(tempString, "%d", int(currentCondition->conditionIsAction));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute3 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute3;
+		currentAttribute = currentAttribute->nextAttribute;
+	
+		if(currentCondition->conditionIsAction)
+		{
+			currentAttribute->name = NET_XML_ATTRIBUTE_conditionAction;
+			sprintf(tempString, "%ld", currentCondition->conditionAction->id);
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute4 = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute4;
+			currentAttribute = currentAttribute->nextAttribute;
+		}
+		else
+		{
+			currentAttribute->name = NET_XML_ATTRIBUTE_conditionEntity;
+			sprintf(tempString, "%ld", currentCondition->conditionEntity->id);
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute5 = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute5;
+			currentAttribute = currentAttribute->nextAttribute;
+		}
+		
+		currentAttribute->name = NET_XML_ATTRIBUTE_parentIsAction;
+		sprintf(tempString, "%d", int(currentCondition->parentIsAction));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute6 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute6;
+		currentAttribute = currentAttribute->nextAttribute;
+
+
+		if(currentCondition->parentIsAction)
+		{
+			currentAttribute->name = NET_XML_ATTRIBUTE_parentAction;
+			sprintf(tempString, "%ld", currentCondition->parentAction->id);
+			currentAttribute->value = tempString;
+			
+			XMLParserAttribute * newAttribute7 = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute7;
+			currentAttribute = currentAttribute->nextAttribute;			
+		}
+		else
+		{
+			currentAttribute->name = NET_XML_ATTRIBUTE_parentProperty;
+			sprintf(tempString, "%ld", currentCondition->parentProperty->id);
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute8 = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute8;
+			currentAttribute = currentAttribute->nextAttribute;
+		}
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_conditionType;
+		sprintf(tempString, "%d", currentCondition->conditionType);
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute22 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute22;
+		currentAttribute = currentAttribute->nextAttribute;
+		
+		
+		currentAttribute->name = NET_XML_ATTRIBUTE_printX;
+		sprintf(tempString, "%d", (currentCondition->printX));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute9 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute9;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_printY;
+		sprintf(tempString, "%d", (currentCondition->printY));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute10 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute10;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_printXIndex;
+		sprintf(tempString, "%d", (currentCondition->printXIndex));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute11 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute11;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_printYIndex;
+		sprintf(tempString, "%d", (currentCondition->printYIndex));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute12 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute12;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_printTextX;
+		sprintf(tempString, "%d", (currentCondition->printTextX));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute13 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute13;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		currentAttribute->name = NET_XML_ATTRIBUTE_printTextY;
+		sprintf(tempString, "%d", (currentCondition->printTextY));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute14 = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute14;
+		currentAttribute = currentAttribute->nextAttribute;
+
+		if(currentCondition->conditionType == CONDITION_NODE_TYPE_TIME)
+		{
+			currentTagL2->name = NET_XML_TAG_timeConditionNode;
+			
+			/*
+			XMLParserTag * firstTagL3 = new XMLParserTag();
+			currentTagL2->firstLowerLevelTag = firstTagL3;
+			XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
+			*/
+			
+			if(!generateXMLConditionTimeNodeTagList(currentTagL2, currentCondition->timeConditionNode))
+			{
+				result = false;
+			}
+			
+			XMLParserTag * newTag2 = new XMLParserTag();	//had to add a null tag
+			currentTagL2->nextTag = newTag2;
+			currentTagL2 = currentTagL2->nextTag;		
+		}
+
+		XMLParserTag * newTag = new XMLParserTag();
+		currentTagL1->nextTag = newTag;
+		currentTagL1 = currentTagL1->nextTag;
+		
+		GIAConditionNode * currentCondition = conditionNodesCompleteList->at(currentConditionNodeIDInCompleteList);
+		currentConditionNodeIDInCompleteList++;
+		if(currentCondition == NULL)
+		{
+			notYetReachedEndOfList = false;
+		}
+	}
+
+	return result;
+}
+
+
+bool generateXMLConditionTimeNodeTagList(XMLParserTag * firstTagInConditionTimeNode, GIATimeConditionNode * conditionTimeNode)
+{
+	//cout << "h3" << endl;
+
+	bool result = true;
+	
+	char tempString[MAX_ATTRIBUTE_VALUE_SIZE];
+	
+	XMLParserAttribute * currentAttribute = firstTagInConditionTimeNode->firstAttribute;
+
+	currentAttribute->name = NET_XML_ATTRIBUTE_tense;
+	sprintf(tempString, "%d", (conditionTimeNode->tense));
+	currentAttribute->value = tempString;
+
+	XMLParserAttribute * newAttribute1 = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute1;
+	currentAttribute = currentAttribute->nextAttribute;
+
+	currentAttribute->name = NET_XML_ATTRIBUTE_second;
+	sprintf(tempString, "%0.6f", (conditionTimeNode->tense));
+	currentAttribute->value = tempString;
+
+	XMLParserAttribute * newAttribute2 = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute2;
+	currentAttribute = currentAttribute->nextAttribute;
+
+	currentAttribute->name = NET_XML_ATTRIBUTE_hour;
+	sprintf(tempString, "%d", conditionTimeNode->hour);
+	currentAttribute->value = tempString;
+
+	XMLParserAttribute * newAttribute3 = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute3;
+	currentAttribute = currentAttribute->nextAttribute;
+
+	currentAttribute->name = NET_XML_ATTRIBUTE_dayOfWeek;
+	sprintf(tempString, "%d", conditionTimeNode->dayOfWeek);
+	currentAttribute->value = tempString;
+
+	XMLParserAttribute * newAttribute4 = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute4;
+	currentAttribute = currentAttribute->nextAttribute;
+
+	currentAttribute->name = NET_XML_ATTRIBUTE_month;
+	sprintf(tempString, "%d", conditionTimeNode->month);
+	currentAttribute->value = tempString;
+
+	XMLParserAttribute * newAttribute5 = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute5;
+	currentAttribute = currentAttribute->nextAttribute;
+
+	currentAttribute->name = NET_XML_ATTRIBUTE_dayOfMonth;
+	sprintf(tempString, "%d", conditionTimeNode->dayOfMonth);
+	currentAttribute->value = tempString;
+
+	XMLParserAttribute * newAttribute6 = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute6;
+	currentAttribute = currentAttribute->nextAttribute;
+
+	currentAttribute->name = NET_XML_ATTRIBUTE_year;
+	sprintf(tempString, "%ld", conditionTimeNode->year);
+	currentAttribute->value = tempString;
+
+	XMLParserAttribute * newAttribute7 = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute7;
+	currentAttribute = currentAttribute->nextAttribute;			
+
+	currentAttribute->name = NET_XML_ATTRIBUTE_period;
+	sprintf(tempString, "%0.6f", conditionTimeNode->period);
+	currentAttribute->value = tempString;
+
+	XMLParserAttribute * newAttribute8 = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute8;
+	currentAttribute = currentAttribute->nextAttribute;
+
+	currentAttribute->name = NET_XML_ATTRIBUTE_totalTimeInSeconds;
+	sprintf(tempString, "%ld", conditionTimeNode->totalTimeInSeconds);
+	currentAttribute->value = tempString;
+
+	XMLParserAttribute * newAttribute9 = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute9;
+	currentAttribute = currentAttribute->nextAttribute;
+		
+	return result;
+}
+
+
+
+GIAEntityNode * findEntityNodeByID(long EntityNodeID, vector<GIAEntityNode*> *entityNodesCompleteList)
 {
 	GIAEntityNode * foundEntityNode = NULL;
 	foundEntityNode = entityNodesCompleteList->at(EntityNodeID);
 	
 	/*
-	GIAEntityNode * currentEntityNode = firstEntityNodeInNetwork;
+	GIAEntityNode * currentEntityNode = entityNodesCompleteList;
 	while(currentEntityNode->next != NULL)
 	{
 		if(currentEntityNode->id == EntityNodeID)
@@ -1470,13 +2256,13 @@ GIAEntityNode * findEntityNodeByID(long EntityNodeID, GIAEntityNode * firstEntit
 	return foundEntityNode;
 }
 
-GIAActionNode * findActionNodeByID(long ActionNodeID, GIAActionNode * firstActionNodeInNetwork)
+GIAActionNode * findActionNodeByID(long ActionNodeID, vector<GIAActionNode*> *actionNodesCompleteList)
 {
 	GIAActionNode * foundActionNode = NULL;
 	foundActionNode = actionNodesCompleteList->at(ActionNodeID);
 	
 	/*
-	GIAActionNode * currentActionNode = firstActionNodeInNetwork;
+	GIAActionNode * currentActionNode = actionNodesCompleteList;
 	while(currentActionNode->next != NULL)
 	{
 		if(currentActionNode->id == ActionNodeID)
@@ -1490,12 +2276,12 @@ GIAActionNode * findActionNodeByID(long ActionNodeID, GIAActionNode * firstActio
 	return foundActionNode;
 }
 
-GIAConditionNode * findConditionNodeByID(long conditionNodeID, GIAConditionNode * firstConditionNodeInNetwork)
+GIAConditionNode * findConditionNodeByID(long conditionNodeID, vector<GIAConditionNode*> *conditionNodesCompleteList)
 {
 	GIAConditionNode * foundConditionNode = NULL;
 	foundConditionNode = conditionNodesCompleteList->at(conditionNodeID);
 	/*
-	GIAConditionNode * currentConditionNode = firstConditionNodeInNetwork;
+	GIAConditionNode * currentConditionNode = conditionNodesCompleteList;
 	while(currentConditionNode->next != NULL)
 	{
 		if(currentConditionNode->id == ConditionNodeID)

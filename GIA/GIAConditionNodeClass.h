@@ -54,6 +54,14 @@ class GIAActionConditionNode;
 #define TIME_MONTH_DECEMBER "December"
 #define TIME_MONTH_NUMBER_OF_TYPES (12)
 
+#define MONDAY (0)
+#define TUESDAY (1)
+#define WEDNESDAY (2)
+#define THURSDAY (3)
+#define FRIDAY (4)
+#define SATURDAY (5)
+#define SUNDAY (6)
+#define TIME_DAY_OF_WEEK_UNDEFINED (7)
 
 #define GRAMMATICAL_TENSE_UNDEFINED (0)
 
@@ -145,10 +153,13 @@ public:
 	*/	
 	double second;
 	int hour;
+	int dayOfWeek;
+	/*
 	enum
 	{
 		monday, tuesday, wednesday, thursday, friday, saturday, sunday, dayundefined
 	}dayOfWeek;
+	*/
 	/*
 	enum
 	{

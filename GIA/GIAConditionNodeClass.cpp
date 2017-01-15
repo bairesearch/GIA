@@ -70,7 +70,7 @@ GIATimeConditionNode::GIATimeConditionNode(void)
 	//tense = tenseundefined;
 	second = -1.0;
 	hour = -1;
-	dayOfWeek = dayundefined;
+	dayOfWeek = TIME_DAY_OF_WEEK_UNDEFINED;
 	dayOfMonth = TIME_DAY_OF_MONTH_UNDEFINED;
 	month = TIME_MONTH_UNDEFINED;
 	//month = monthundefined;

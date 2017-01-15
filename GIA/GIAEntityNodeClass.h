@@ -116,7 +116,7 @@ public:
 	string entityName;
 	double confidence;
 	
-	int isProperty;		//is this entity a property?
+	bool isProperty;		//is this entity a property?
 	bool hasAssociatedProperty;	//this boolean appears to only represent whether this entity defines a child property node [and not whether it contains one]
 	bool hasAssociatedAction;
 	bool hasAssociatedTime;
