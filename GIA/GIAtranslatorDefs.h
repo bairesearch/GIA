@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3a 10-July-2015
+ * Project Version: 2k3b 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1227,11 +1227,11 @@ static string grammaticalDeterminerIndefiniteArray[GRAMMATICAL_DETERMINER_LIMITE
 static string GIAconnectionistNetworkPOStypeNameArray[GIA_SEMANTIC_PARSER_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"undefined", "coordinatingConjunction", "number", "determiner", "unknown", "predeterminer", "posessiveEnding", "modalAuxiliary", "preposition", "adjective", "noun", "adverb", "pronounPersonal", "pronounPossessive", "particle", "interjection", "verb", "wh", "punctuationDivision", "punctuationQuote", "isAuxillaryBeing", "isAuxillaryHaving", "isAuxillaryDoing", "determinerLimitedIndefinite", "specialReducedConjunction"};
 static int featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[FEATURE_RELEX_POS_NUMBER_OF_TYPES] = {GIA_SEMANTIC_PARSER_POS_TYPE_UNDEFINED, GIA_SEMANTIC_PARSER_POS_TYPE_ADJECTIVE, GIA_SEMANTIC_PARSER_POS_TYPE_ADVERB, GIA_SEMANTIC_PARSER_POS_TYPE_PUNCTUATION_DIVISION, GIA_SEMANTIC_PARSER_POS_TYPE_DETERMINER, GIA_SEMANTIC_PARSER_POS_TYPE_NOUN, GIA_SEMANTIC_PARSER_POS_TYPE_PARTICLE, GIA_SEMANTIC_PARSER_POS_TYPE_PREPOSITION, GIA_SEMANTIC_PARSER_POS_TYPE_PUNCTUATION_QUOTE, GIA_SEMANTIC_PARSER_POS_TYPE_VERB, GIA_SEMANTIC_PARSER_POS_TYPE_UNKNOWN};
 
-#ifdef GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS
+#ifdef GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS
 	#define FEATURE_SPECIAL_REDUCED_CONJUNCTIONS_NUMBER_OF_TYPES (2)
 	static string featureSpecialReducedConjunctionArray[FEATURE_SPECIAL_REDUCED_CONJUNCTIONS_NUMBER_OF_TYPES] = {"and", "or"};
-	#define GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS_ILLEGAL_CENTRAL_WORD_NUMBER_OF_TYPES  (3)
-	static string optimiseConnectionistNetworkBasedOnConjunctionsIllegalCentralWordArray[GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS_ILLEGAL_CENTRAL_WORD_NUMBER_OF_TYPES] = {",", "and", "or"};
+	#define GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS_ILLEGAL_CENTRAL_WORD_NUMBER_OF_TYPES  (3)
+	static string semanticParserOptimiseBasedOnConjunctionsIllegalSecondWordInTupleArray[GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS_ILLEGAL_CENTRAL_WORD_NUMBER_OF_TYPES] = {",", "and", "or"};
 
 #endif
 		

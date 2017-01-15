@@ -26,7 +26,7 @@
  * File Name: GIAsemanticParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3a 10-July-2015
+ * Project Version: 2k3b 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -149,7 +149,16 @@ bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 		currentSentenceInList->corpusLookupSuccessful = true;
 		
-		#ifdef GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS	//NO: GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
+		/*
+		GIAfeature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
+		while(currentFeatureInList->next != NULL)
+		{
+			cout << "1 currentFeatureInList->word = " << currentFeatureInList->word << endl;
+			currentFeatureInList = currentFeatureInList->next;
+		}
+		*/
+		
+		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS	//prioritise text corpus defined semantic relations matching full sentence (or GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS)
 		if(!loadSemanticParserCorpusDatabaseFile(currentSentenceInList, currentSentenceInList->firstFeatureInList))
 		{
 		#endif
@@ -160,20 +169,22 @@ bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 			//#endif
 			GIAfeature* dummyBlankFeature = new GIAfeature();
 			//now simulate GIA2 semantic relations for each subset of original sentence POS permutation
-			GIAfeature* centralFeatureInSentence = currentSentenceInList->firstFeatureInList;
-			if(centralFeatureInSentence->next != NULL)
+			GIAfeature* secondWordInTupleFeature = currentSentenceInList->firstFeatureInList;
+			if(secondWordInTupleFeature->next != NULL)
 			{
-				while(centralFeatureInSentence->next->next != NULL)	//set centralFeatureInSentence to last in sentence
+				while(secondWordInTupleFeature->next->next != NULL)	//set secondWordInTupleFeature to last in sentence
 				{
-					centralFeatureInSentence = centralFeatureInSentence->next;
+					secondWordInTupleFeature = secondWordInTupleFeature->next;
 				}
 			}
 			int subsetStillNotFoundMaxFeatureIndex = currentSentenceInList->maxNumberOfWordsInSentence;
 			bool notFoundASubsetForAtLeastTwoWords = false;
 			bool stillNotFoundASubset = true;
-			for(int centralWord=currentSentenceInList->maxNumberOfWordsInSentence; centralWord>=2; centralWord--)	//centralWord in subset [NB centralWord>=2 as a subset of 1 is not a subset]
+	
+			int minIndexOfSecondWordInTuple = GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE;
+			for(int secondWordInTupleIndex=currentSentenceInList->maxNumberOfWordsInSentence; secondWordInTupleIndex>=minIndexOfSecondWordInTuple; secondWordInTupleIndex--)	//secondWordInTupleIndex in subset [NB secondWordInTupleIndex>=2 as a subset of 1 is not a subset]
 			{
-				//NB "centralWord" aka indexOfSecondWordInTuple
+				//NB "secondWordInTupleIndex" aka centralWordIndex
 				if(stillNotFoundASubset)
 				{
 					#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
@@ -181,55 +192,62 @@ bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 					{
 					#endif
 						//#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-						cout << "centralWord = " << centralWord << ", " << centralFeatureInSentence->lemma << endl;
+						cout << "\tsecondWordInTupleIndex = " << secondWordInTupleIndex << ", " << secondWordInTupleFeature->lemma << endl;
+						cout << "secondWordInTupleFeature->word = " << secondWordInTupleFeature->word << endl;
 						//#endif
-						GIAfeature* recordOfFeatureAfterCentralFeatureInSentence = centralFeatureInSentence->next;
-						centralFeatureInSentence->next = dummyBlankFeature;	//temporarily disconnect node at end of sentence subset
-						bool foundACorpusSubsetForCentralWord = false;
+						GIAfeature* recordOfFeatureAfterSecondWordInTupleFeature = secondWordInTupleFeature->next;
+						secondWordInTupleFeature->next = dummyBlankFeature;	//temporarily disconnect node at end of sentence subset
+						bool foundACorpusSubsetForSecondWordInTuple = false;
 						
 						if(currentSentenceInList->firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)
 						{
 							cout << "lookupCorpusFiles{} implementation error*: (sentence->firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)" << endl;
 							exit(0);
 						}
-						#ifdef GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS
-						if(!textInTextArray(centralFeatureInSentence->word, optimiseConnectionistNetworkBasedOnConjunctionsIllegalCentralWordArray, GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS_ILLEGAL_CENTRAL_WORD_NUMBER_OF_TYPES))
+						#ifdef GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS
+						if(!textInTextArray(secondWordInTupleFeature->word, semanticParserOptimiseBasedOnConjunctionsIllegalSecondWordInTupleArray, GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS_ILLEGAL_CENTRAL_WORD_NUMBER_OF_TYPES))
 						{
-							GIAfeature* firstFeatureInSentenceSubset = generateOptimisedFeatureSubsetBasedOnContextualConjunctions(currentSentenceInList->firstFeatureInList, centralWord);
+							bool optimisedBasedOnContextualConjunctions = false;
+							GIAfeature* firstFeatureInSentenceSubsetInitial = generateOptimisedFeatureSubsetBasedOnContextualConjunctions(currentSentenceInList->firstFeatureInList, secondWordInTupleIndex, &optimisedBasedOnContextualConjunctions);
 						#else
-							GIAfeature* firstFeatureInSentenceSubset = currentSentenceInList->firstFeatureInList;
+							GIAfeature* firstFeatureInSentenceSubsetInitial = currentSentenceInList->firstFeatureInList;
 						#endif
-							int maxIndexOfFirstWordInTuple = (centralFeatureInSentence->entityIndex - (GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1));
+							int maxIndexOfFirstWordInTuple = (secondWordInTupleFeature->entityIndex - (GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1));
+							cout << "\t\tmaxIndexOfFirstWordInTuple = " << maxIndexOfFirstWordInTuple << endl;
 							#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
-							for(int firstWordInTupleIndex = 0; firstWordInTupleIndex <= maxIndexOfFirstWordInTuple; firstWordInTupleIndex++)
+							for(int firstWordInTupleIndex = GIA_NLP_START_ENTITY_INDEX; firstWordInTupleIndex <= maxIndexOfFirstWordInTuple; firstWordInTupleIndex++)
 							{
 								int GIA2semanticDependencyRelationProbabilityTotalArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {0};
 							#endif
-								
-								while(firstFeatureInSentenceSubset->entityIndex <= maxIndexOfFirstWordInTuple)		//changed 2k1a for GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS compatibility: verify that feature entityIndices are not mutated by GIA referencing*	//OLD:	for(int firstWord=1; firstWord<=centralWord-(GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1); firstWord++)	
+								GIAfeature* firstFeatureInSentenceSubset = firstFeatureInSentenceSubsetInitial;
+								while(firstFeatureInSentenceSubset->entityIndex <= maxIndexOfFirstWordInTuple)		//changed 2k1a for GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS compatibility: verify that feature entityIndices are not mutated by GIA referencing*	//OLD:	for(int firstWordInSentenceSubsetIndex=1; firstWordInSentenceSubsetIndex<=secondWordInTupleIndex-(GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1); firstWordInSentenceSubsetIndex++)	
 								{
-									int firstWord=firstFeatureInSentenceSubset->entityIndex;	//firstWord in subset
-
-									if(!foundACorpusSubsetForCentralWord)
+									int firstWordInSentenceSubsetIndex=firstFeatureInSentenceSubset->entityIndex;
+									#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
+									if(firstWordInTupleIndex >= firstWordInSentenceSubsetIndex)
 									{
-										//#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-										cout << "firstWord = " << firstWord << ", " << firstFeatureInSentenceSubset->lemma << endl;
-										//#endif
-										int subsetSize = centralWord-firstWord+1;	//subsetSize aka maxSpread
-
-										//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
-
+									#endif
 										#ifdef GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
-										if(loadSemanticParserCorpusDatabaseFile(currentSentenceInList, firstFeatureInSentenceSubset))
+										if(!foundACorpusSubsetForSecondWordInTuple)
 										{
-											foundACorpusSubsetForCentralWord = true;
-											if(firstWord == 1)
+											//#ifdef GIA2_SEMANTIC_PARSER_DEBUG
+											cout << "firstWordInSentenceSubsetIndex = " << firstWordInSentenceSubsetIndex << ", " << firstFeatureInSentenceSubset->lemma << endl;
+											//#endif
+											int subsetSize = secondWordInTupleIndex-firstWordInSentenceSubsetIndex+1;	//subsetSize aka maxSpread
+
+											//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
+											
+											if(loadSemanticParserCorpusDatabaseFile(currentSentenceInList, firstFeatureInSentenceSubset))
 											{
-												stillNotFoundASubset = false;
+												foundACorpusSubsetForSecondWordInTuple = true;
+												if(firstWordInSentenceSubsetIndex == 1)
+												{
+													stillNotFoundASubset = false;	//have found a full matching sentence corpus file (with features matching from the firstFeatureInSentence right up to the secondFeatureInTheTuple); therefore no more corpus files need be parsed
+												}
 											}
 										}
 										#endif
-										
+
 										#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
 										int GIA2semanticDependencyRelationProbabilityArray[GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES];
 										int GIA2semanticDependencyRelationAssignedArray[GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES];
@@ -242,10 +260,13 @@ bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 											}
 										}
 										#endif
+
+									#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
 									}
+									#endif
 									firstFeatureInSentenceSubset = firstFeatureInSentenceSubset->next;
 								}
-								if(!foundACorpusSubsetForCentralWord)
+								if(!foundACorpusSubsetForSecondWordInTuple)
 								{
 									cout << "************************ warning: notFoundASubsetForAtLeastTwoWords* *****************" << endl;
 									notFoundASubsetForAtLeastTwoWords = true;
@@ -267,24 +288,24 @@ bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 									cout << "maxProbabilityOfSemanticRelationTypesInTuple = " << maxProbabilityOfSemanticRelationTypesInTuple << endl;
 									cout << "semanticRelationTypeBidirectionalInTupleWithMaxProbability = " << semanticRelationTypeBidirectionalInTupleWithMaxProbability << endl;
 									#endif
-									addTupleSemanticRelationToSentence(currentSentenceInList, semanticRelationTypeBidirectionalInTupleWithMaxProbability, firstWordInTupleIndex, centralWord);
-									foundACorpusSubsetForCentralWord = true;	//CHECKTHIS
+									addTupleSemanticRelationToSentence(currentSentenceInList, semanticRelationTypeBidirectionalInTupleWithMaxProbability, firstWordInTupleIndex, secondWordInTupleIndex);
+									foundACorpusSubsetForSecondWordInTuple = true;	//CHECKTHIS
 								}
 							}
 							#endif
-						#ifdef GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS
-							if(firstFeatureInSentenceSubset != currentSentenceInList->firstFeatureInList)
+						#ifdef GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS
+							if(optimisedBasedOnContextualConjunctions)
 							{
-								delete firstFeatureInSentenceSubset;	//delete artificially generated optimised sentence subset
+								delete firstFeatureInSentenceSubsetInitial;	//delete artificially generated optimised sentence subset
 							}
 						}
 						#endif
-						centralFeatureInSentence->next = recordOfFeatureAfterCentralFeatureInSentence;	//restore temporarily disconnected node at end of sentence subset
+						secondWordInTupleFeature->next = recordOfFeatureAfterSecondWordInTupleFeature;	//restore temporarily disconnected node at end of sentence subset
 					#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
 					}
 					#endif
 				}
-				centralFeatureInSentence = centralFeatureInSentence->previous;
+				secondWordInTupleFeature = secondWordInTupleFeature->previous;
 			}
 			if(notFoundASubsetForAtLeastTwoWords)
 			{
@@ -300,6 +321,15 @@ bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
 		}
 		#endif
+		
+		/*
+		currentFeatureInList = currentSentenceInList->firstFeatureInList;
+		while(currentFeatureInList->next != NULL)
+		{
+			cout << "2 currentFeatureInList->word = " << currentFeatureInList->word << endl;
+			currentFeatureInList = currentFeatureInList->next;
+		}
+		*/
 
 		//cout << "here3" << endl;
 		currentSentenceInList = currentSentenceInList->next;

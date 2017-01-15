@@ -26,7 +26,7 @@
  * File Name: GIAsemanticParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3a 10-July-2015
+ * Project Version: 2k3b 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -607,15 +607,15 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeature
 }
 
 #ifdef GIA2_SEMANTIC_PARSER
-#ifdef GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS
+#ifdef GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS
 //based on NLC generateLogicalConditionImplicitConjunctionsAndIdentifyCommand
 //eg extracts "The pie has a car [GIA_SEMANTIC_PARSER_POS_TYPE_SPECIAL_REDUCED_CONJUNCTION] chicken" from "The pie has a car, bike, and chicken." (where centralWord corresponds to chicken; ie 10)
-GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeature* firstFeatureInSentenceSubset, int centralWord)
+GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeature* firstFeatureInSentenceSubset, int centralWord, bool* optimisedBasedOnContextualConjunctions)
 {
 	bool result = true;
 			
 	#ifdef GIA_SEMANTIC_PARSER_TRANSLATOR_DEBUG
-	cout << "generateOptimisedFeatureSubsetBasedOnContextualConjunctions: firstFeatureInSentence->word = " << firstFeatureInSentence->word << endl;
+	cout << "generateOptimisedFeatureSubsetBasedOnContextualConjunctions: firstFeatureInSentenceSubset->word = " << firstFeatureInSentenceSubset->word << endl;
 	#endif
 	
 	bool commaDetected = false;
@@ -627,7 +627,8 @@ GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeatu
 	
 	GIAfeature* currentFeatureInSentenceSubset = firstFeatureInSentenceSubset;
 	int featureIndex = GIA_NLP_START_ENTITY_INDEX;	//1
-	while(currentFeatureInSentenceSubset = currentFeatureInSentenceSubset->next)
+	
+	while(currentFeatureInSentenceSubset->next != NULL)
 	{
 		if(foundCentralWord)
 		{
@@ -641,6 +642,7 @@ GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeatu
 				cout << "generateOptimisedFeatureSubsetBasedOnContextualConjunctions{} error: (currentFeatureInSentenceSubset->entityIndex != featureIndex)" << endl;
 				cout << "currentFeatureInSentenceSubset->entityIndex = " << currentFeatureInSentenceSubset->entityIndex << endl;
 				cout << "featureIndex = " << featureIndex << endl;
+				cout << "currentFeatureInSentenceSubset->lemma = " << currentFeatureInSentenceSubset->lemma << endl;
 				exit(0);	
 			}
 
@@ -715,11 +717,13 @@ GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeatu
 			currentFeatureInSentenceSubset = currentFeatureInSentenceSubset->next;
 			featureIndex++;
 		}
+		*optimisedBasedOnContextualConjunctions = true;
 	}
 	else
 	{
 		//no superphrase (conjunction/commas) found, do not optimise sentence subset
 		firstFeatureInOptimisedSentenceSubset = firstFeatureInSentenceSubset;
+		*optimisedBasedOnContextualConjunctions = false;
 	}
 	
 	return firstFeatureInOptimisedSentenceSubset;

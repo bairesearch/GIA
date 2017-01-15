@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3a 10-July-2015
+ * Project Version: 2k3b 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -664,7 +664,7 @@
 
 #ifndef GIA_DISABLE_2k_CODE_FOR_DEBUG
 	//#ifdef GIA2_SEMANTIC_PARSER	//hasn't been defined yet
-		#define GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS	//2k1a [UNTESTED]		//NB training a connectionist network with this optimisation requires the NLP to directly connect the primary entity (object) in each subphrase to the subject, with the conjunction relations being auxiliary to these connections (not supported by Stanford Parser/CoreNLP at present; to implement a workaround see NLC removeRedundantConditionConjunctions/addConjunctionsConnectedToConditionConjunctionObject for related code)
+		#define GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS	//2k1a [UNTESTED]		//NB training a connectionist network with this optimisation requires the NLP to directly connect the primary entity (object) in each subphrase to the subject, with the conjunction relations being auxiliary to these connections (not supported by Stanford Parser/CoreNLP at present; to implement a workaround see NLC removeRedundantConditionConjunctions/addConjunctionsConnectedToConditionConjunctionObject for related code)
 		#define GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE	//2k3a
 		#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
 			//#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS	//for offline reimplementions of GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE only
@@ -890,7 +890,7 @@
 	#ifdef GIA2_SEMANTIC_PARSER
 		#define GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE	//NB maxNumberOfWordsInSentence is only currently used by GIA2
 		#define GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_USE_FLAT_FILE	//temporarily enabled for debugging
-		#define GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE (3)	//ie 3 words in subset is the minimimum	//CHECKTHIS
+		#define GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE (2)	//ie 2 words in subset is the minimimum	//CHECKTHIS
 	#else
 		#define GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_USE_FLAT_FILE
 	#endif
