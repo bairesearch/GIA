@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2f 23-July-2013
+ * Project Version: 1t2g 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -638,21 +638,7 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]) 
 {
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
-		cout << "before" << endl;
-		Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
-		while(currentRelationInList->next != NULL)
-		{
-			if(!(currentRelationInList->disabled))
-			{
-				string relationType = currentRelationInList->relationType;
-				GIAentityNode * relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-				GIAentityNode * relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
-
-				cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
-			}
-			currentRelationInList = currentRelationInList->next;
-		}
-			
+		
 	/*eg1;  Space is saved by having a chicken.	_subj(have[5], by[4]) + _obj(have[5], chicken[7]) + _advmod(save[3], by[4]) -> dobj(have[5], chicken[7]) + prep_by(save[3], have[5])	{required for interpretation by linkHavingPropertyConditionsAndBeingDefinitionConditions}
 	_subj(have[5], by[4])
 	_obj(have[5], chicken[7])
@@ -682,21 +668,7 @@ void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHas
 	param.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT2] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT2] = REL_ENT1;	
 	param.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT3] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT3] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT3] = REL_ENT2;	
 	genericDependecyRelationInterpretation(&param, REL1);
-	
-		cout << "after" << endl;
-		currentRelationInList = currentSentenceInList->firstRelationInList;
-		while(currentRelationInList->next != NULL)
-		{
-			if(!(currentRelationInList->disabled))
-			{
-				string relationType = currentRelationInList->relationType;
-				GIAentityNode * relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-				GIAentityNode * relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
-
-				cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
-			}
-			currentRelationInList = currentRelationInList->next;
-		}	
+		
 	#else
 	cout << "!GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION not migrated for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION" << endl;
 	#endif
@@ -765,7 +737,6 @@ void redistributeRelexRelationsDisregardRedundantDefinitionRelations(Sentence * 
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_RELATION_AS_ACTION_CONDITION
 void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]) 
 {
-
 	/*eg 1 Space is saved by running fast.	_subj(run[5], by[4]) + _advmod(save[3], by[4]) -> by(save[3], run[5])
 	_subj(run[5], by[4])
 	_advmod(save[3], by[4])
@@ -803,7 +774,6 @@ void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(Senten
 	paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;	
 	paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL2; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT2; paramB.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL2][REL_ENT3] = true;	
 	genericDependecyRelationInterpretation(&paramB, REL1);
-	
 }
 #endif
 

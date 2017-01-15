@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2f 23-July-2013
+ * Project Version: 1t2g 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -55,7 +55,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramA.defaultSameSetRelationID = REL1; paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;
 	#endif		
-	genericDependecyRelationInterpretation(&paramA, 1);
+	genericDependecyRelationInterpretation(&paramA, REL1);
 
 	/*
 	Hamish smoked at the toy shop.	_nn(shop[6], toy[5])
@@ -70,7 +70,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramB.defaultSameSetRelationID = REL1; paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;
 	#endif		
-	genericDependecyRelationInterpretation(&paramB, 1);
+	genericDependecyRelationInterpretation(&paramB, REL1);
 	#endif
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -181,7 +181,7 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	param.defaultSameSetRelationID = REL1; param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;
 	#endif		
-	genericDependecyRelationInterpretation(&param, 1);
+	genericDependecyRelationInterpretation(&param, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -480,7 +480,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	paramA.defaultSameSetRelationID = REL2; paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_CONDITIONS;
 	#endif		
 	paramA.disableEntity[REL1][REL_ENT2] = true;
-	genericDependecyRelationInterpretation(&paramA, 1);
+	genericDependecyRelationInterpretation(&paramA, REL1);
 		
 	/*
 	Space is saved through/by being a chicken.		prep_through/by(saved-3, be-5) + dobj(be-5, chicken-7) 	[Relex Only - note Relex currently fails to parse 'through having' but can parse 'by having']
@@ -494,7 +494,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	paramB.defaultSameSetRelationID = REL2; paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS;
 	#endif	
 	paramB.disableEntity[REL1][REL_ENT2] = true;	
-	genericDependecyRelationInterpretation(&paramB, 1);
+	genericDependecyRelationInterpretation(&paramB, REL1);
 
 	/*
 	Space is saved through/by being a chicken.		prepc_through/by(saved-3, chicken-7) + cop(chicken-7, being-5) 	[Stanford Only]
@@ -508,7 +508,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	paramC.defaultSameSetRelationID = REL2; paramC.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS;
 	#endif	
 	paramC.disableEntity[REL2][REL_ENT2] = true;	
-	genericDependecyRelationInterpretation(&paramC, 1);
+	genericDependecyRelationInterpretation(&paramC, REL1);
 #else
 
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -668,7 +668,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 	paramA.defaultSameSetReferenceValue = false;	//CHECK THIS???
 	#endif		
 	paramA.disableRelation[REL1];	//required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013
-	genericDependecyRelationInterpretation(&paramA, 1);			
+	genericDependecyRelationInterpretation(&paramA, REL1);			
 	#else
 	cout << "GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO not migrated for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK" << endl;	
 	#endif
@@ -706,7 +706,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 	paramB.defaultSameSetReferenceValue = false;
 	#endif	
 	paramB.disableEntity[REL1][REL_ENT1];	//disable "be" entity	
-	genericDependecyRelationInterpretation(&paramB, 1);	
+	genericDependecyRelationInterpretation(&paramB, REL1);	
 	#endif
 				
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
@@ -725,7 +725,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 	paramC.defaultSameSetReferenceValue = false;
 	#endif	
 	paramC.disableEntity[REL1][REL_ENT1];	//disable "have" entity
-	genericDependecyRelationInterpretation(&paramC, 1);	
+	genericDependecyRelationInterpretation(&paramC, REL1);	
 	#endif	
 	
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
@@ -740,7 +740,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	//defaultSameSetReferenceValues are handled by genericDependecyRelationInterpretation();
 	#endif	
-	genericDependecyRelationInterpretation(&paramD, 1);	
+	genericDependecyRelationInterpretation(&paramD, REL1);	
 	#endif
 			
 	
@@ -766,6 +766,9 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
+		#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		if(!(currentRelationInList->disabled))					
+		{		
 		#endif
 			int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
 			int relationDependentIndex = currentRelationInList->relationDependentIndex;
@@ -816,6 +819,9 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 				{
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					if(!(currentRelationInList2->disabled))
+					{
+					#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+					if(!(currentRelationInList2->disabled))					
 					{
 					#endif
 						int relationGovernorIndex2 = currentRelationInList2->relationGovernorIndex;
@@ -1501,6 +1507,8 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					}
+					#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+					}						
 					#endif
 					currentRelationInList2 = currentRelationInList2->next;
 				}
@@ -1508,6 +1516,8 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
+		#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		}		
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
@@ -1531,7 +1541,7 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAentit
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToSubject;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	param.functionEntityRelationID[FUNC_ENT2] = REL1; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
-	genericDependecyRelationInterpretation(&param, 1);
+	genericDependecyRelationInterpretation(&param, REL1);
 
 	/*
 	Tom runs quickly. 	_subj(run[2], Tom[1])
@@ -1539,7 +1549,7 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAentit
 	GIAgenericDepRelInterpretationParameters paramA = param;
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToSubject;
 	paramA.useRelationArrayTest[REL1][REL_ENT3] = true; paramA.relationArrayTest[REL1][REL_ENT3] = relationTypeSubjectNameArray; paramA.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES;
-	genericDependecyRelationInterpretation(&paramA, 1);
+	genericDependecyRelationInterpretation(&paramA, REL1);
 
 	/*
 	The bike was ridden.	_obj(ride[4], bike[2])
@@ -1547,7 +1557,7 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAentit
 	GIAgenericDepRelInterpretationParameters paramB = param;
 	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToObject;
 	paramB.useRelationArrayTest[REL1][REL_ENT3] = true; paramB.relationArrayTest[REL1][REL_ENT3] = relationTypeObjectNameArray; paramB.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_OBJECT_NUMBER_OF_TYPES;
-	genericDependecyRelationInterpretation(&paramB, 1);
+	genericDependecyRelationInterpretation(&paramB, REL1);
 
 #else
  	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -1561,6 +1571,9 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAentit
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
+		#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		if(!(currentRelationInList->disabled))
+		{						
 		#endif
 			int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
 			int relationDependentIndex = currentRelationInList->relationDependentIndex;
@@ -1771,6 +1784,8 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAentit
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
+		#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		}		
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
@@ -1795,7 +1810,7 @@ void linkIndirectObjects(Sentence * currentSentenceInList, GIAentityNode * GIAen
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE;
 	#endif		
-	genericDependecyRelationInterpretation(&param, 1);
+	genericDependecyRelationInterpretation(&param, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1877,7 +1892,7 @@ void linkObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIAen
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;
 	#endif		
-	genericDependecyRelationInterpretation(&param, 1);	
+	genericDependecyRelationInterpretation(&param, REL1);	
 #else	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1979,7 +1994,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 	paramA.numberOfRelations = 1;
 	paramA.useRelationIndexTest[REL1][REL_ENT3] = true; paramA.relationIndexTestRelationID[REL1][REL_ENT3] = REL1; paramA.relationIndexTestEntityID[REL1][REL_ENT3] = REL_ENT2;
 	paramA.disableRelation[REL1] = true;
-	genericDependecyRelationInterpretation(&paramA, 1);	
+	genericDependecyRelationInterpretation(&paramA, REL1);	
 	#endif
 	
 	#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
@@ -2013,7 +2028,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramB.defaultSameSetRelationID = REL1; paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;
 	#endif		
-	genericDependecyRelationInterpretation(&paramB, 1);	
+	genericDependecyRelationInterpretation(&paramB, REL1);	
 	#endif
 	#endif
 
@@ -2039,14 +2054,14 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramC.defaultSameSetRelationID = REL1; paramC.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;
 	#endif
-	genericDependecyRelationInterpretation(&paramC, 1);
+	genericDependecyRelationInterpretation(&paramC, REL1);
 	
 	//interpret $qVar relationTypes as conditions:
 	//this code should only be required for 'how' qvar, because the other qvars should be detected within one of the above loops
 	GIAgenericDepRelInterpretationParameters paramC2 = paramC;
 	paramC2.expectToFindPrepositionTest[REL1] = false;
 	paramC2.useRelationArrayTest[REL1][REL_ENT3] = true; paramC2.relationArrayTest[REL1][REL_ENT3] = relationTypeQueryVariableNameArray; paramC2.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES; paramC.relationArrayTestIsNegative[REL1][REL_ENT3] = false;
-	genericDependecyRelationInterpretation(&paramC2, 1);	
+	genericDependecyRelationInterpretation(&paramC2, REL1);	
 	
 #else	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -2510,7 +2525,7 @@ void linkDependentActionsType1(Sentence * currentSentenceInList, GIAentityNode *
 	param.defaultSameSetRelationID = REL1; param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS;
 	#endif		
 	param.disableRelation[REL2];	//required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013
-	genericDependecyRelationInterpretation(&param, 1);	
+	genericDependecyRelationInterpretation(&param, REL1);	
 #else	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -2601,7 +2616,7 @@ void linkDependentActionsType2(Sentence * currentSentenceInList, bool GIAentityN
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	param.defaultSameSetRelationID = REL1; param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS;
 	#endif		
-	genericDependecyRelationInterpretation(&param, 1);	
+	genericDependecyRelationInterpretation(&param, REL1);	
 #else	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)

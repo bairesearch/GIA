@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2f 23-July-2013
+ * Project Version: 1t2g 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -69,7 +69,7 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 	param.disableRelation[REL1] = true;
 	param.disableEntity[REL1][REL_ENT2] = true; param.useRedistributeSpecialCaseDisableInstanceAndConcept[REL1][REL_ENT2]= true;	
 	param.useRedistributeSpecialCaseNegativeAssignment[REL1][REL_ENT1] = true;
-	genericDependecyRelationInterpretation(&param, 1);
+	genericDependecyRelationInterpretation(&param, REL1);
 #else	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -110,7 +110,7 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;	
 	param.useRedistributeSpecialCaseNegativeAssignment[REL2][REL_ENT1] = true;
 	param.disableRelation[REL1] = true;
-	genericDependecyRelationInterpretation(&param, 1);
+	genericDependecyRelationInterpretation(&param, REL1);
 #else
 	/*
 	eg Space is saved by not having a bulky cart. _subj(not[5], by[4]), _subj(have[6], not[5])
@@ -516,7 +516,7 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 	paramA.useRelationArrayTest[REL1][REL_ENT3] = true; paramA.relationArrayTest[REL1][REL_ENT3] = relationTypeAdjectiveWhichImplyEntityInstanceNameArray; paramA.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES;
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	paramA.functionEntityRelationID[FUNC_ENT1] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
-	genericDependecyRelationInterpretation(&paramA, 1);
+	genericDependecyRelationInterpretation(&paramA, REL1);
 	
 	#ifdef GIA_TRANSLATOR_DEFINE_NOUNS_WITH_PRENOMINAL_MODIFIERS_AS_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, NULL, GIAentityNodeArray, true);	
@@ -528,7 +528,7 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 	#else
 	paramB.functionEntityRelationID[FUNC_ENT1] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	#endif
-	genericDependecyRelationInterpretation(&paramB, 1);
+	genericDependecyRelationInterpretation(&paramB, REL1);
 	#endif	
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -639,7 +639,7 @@ void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIA
 	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeQuantityOrMeasureNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES;
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
-	genericDependecyRelationInterpretation(&param, 1);
+	genericDependecyRelationInterpretation(&param, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -684,7 +684,7 @@ void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAenti
 	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeQuantityOrMeasureSwitchedNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_QUANTITY_OR_MEASURE_SWITCHED_NUMBER_OF_TYPES;
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
-	genericDependecyRelationInterpretation(&param, 1);
+	genericDependecyRelationInterpretation(&param, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -731,13 +731,13 @@ void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAentityNode 
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_EXPLETIVE;
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
-	genericDependecyRelationInterpretation(&param, 1);	
+	genericDependecyRelationInterpretation(&param, REL1);	
 	#else
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, false);	
 	param.numberOfRelations = 1;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_EXPLETIVE;
 	param.disableEntity[REL1][REL_ENT2] = true;
-	genericDependecyRelationInterpretation(&param, 1);
+	genericDependecyRelationInterpretation(&param, REL1);
 	#endif
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -804,7 +804,7 @@ void defineSubstancesToBe(Sentence * currentSentenceInList, GIAentityNode * GIAe
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_BE;
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
-	genericDependecyRelationInterpretation(&param, 1);	
+	genericDependecyRelationInterpretation(&param, REL1);	
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -843,7 +843,7 @@ void defineActionsToDo(Sentence * currentSentenceInList, GIAentityNode * GIAenti
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addActionToActionDefinitionDefineSubstances;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
-	genericDependecyRelationInterpretation(&param, 1);	
+	genericDependecyRelationInterpretation(&param, REL1);	
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -937,7 +937,7 @@ void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentity
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	param.functionEntityRelationID[FUNC_ENT1] = REL2; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
-	genericDependecyRelationInterpretation(&param, 1);	
+	genericDependecyRelationInterpretation(&param, REL1);	
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1091,7 +1091,7 @@ void defineSubstanceConcepts(bool GIAentityNodeArrayFilled[], GIAentityNode * GI
 #endif
 
 
-void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType)
+void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -1119,7 +1119,7 @@ void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, 
 	param.relationTestSpecialCaseIsNotToBeComplimentOfAction[REL1][REL_ENT1] = true;	//Relex Condition	
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
-	genericDependecyRelationInterpretation(&param, 1);		
+	genericDependecyRelationInterpretation(&param, REL1);		
 #else		
 	currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -1187,6 +1187,33 @@ void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, 
 	}
 #endif	
 }	
+
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+//this function was developed after GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION and was designed for it
+void defineSubstancesActions(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+{
+	/*
+	eg 'run' in 'Tom runs' _subj(run[2], Tom[1])
+	exceptions required for linkHavingPropertyConditionsAndBeingDefinitionConditions():
+		'having a chicken'/being a chicken': dobj(having-5, chicken-7) / dobj(be-5, chicken-7)]
+	no exceptions required for linkSubjectObjectRelationships(); this will cause no problems:	
+		 eg The rabbit is 20 meters away.	_subj(away[6], rabbit[2]) + _measure_distance(away[6], meter[5])	[away is a substance of rabbit, not a condition of rabbit]
+	*/		
+
+//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);	
+	param.numberOfRelations = 1;
+	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeSubjectObjectNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT_OBJECT_NUMBER_OF_TYPES;
+	param.useRelationArrayTest[REL1][REL_ENT1] = true; param.relationArrayTest[REL1][REL_ENT1] = linkHavingPropertyConditionsAndBeingDefinitionConditionsSpecialEntityNameArray; param.relationArrayTestSize[REL1][REL_ENT1] = RELATION_TYPE_HAVING_AND_BEING_SPECIAL_ENTITY_NUMBER_OF_TYPES; param.relationArrayTestIsNegative[REL1][REL_ENT1] = true;	//exceptions required for linkHavingPropertyConditionsAndBeingDefinitionConditions()
 	
+	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
+	genericDependecyRelationInterpretation(&param, REL1);		
+//#else
+	//not coded as this function was developed after GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+//#endif	
+}	
+#endif
+
 
 

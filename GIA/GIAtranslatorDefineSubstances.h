@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2f 23-July-2013
+ * Project Version: 1t2g 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -81,5 +81,10 @@ void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentity
 #ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 void defineSubstanceConcepts(bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[]);
 #endif
-void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType);
+void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[]);
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+//this function was developed after GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION and was designed for it
+void defineSubstancesActions(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[]);
+#endif
+
 #endif

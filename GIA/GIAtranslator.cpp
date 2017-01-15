@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2f 23-July-2013
+ * Project Version: 1t2g 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1084,7 +1084,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0o pass; define substances (possessive prepositions, eg 'all' in 'all of the mice');" << endl;
 	#endif
-	defineSubstancesOfPossessivePrepositions(currentSentenceInList, GIAentityNodeArray, NLPdependencyRelationsType);
+	defineSubstancesOfPossessivePrepositions(currentSentenceInList, GIAentityNodeArray);
 
 	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -1092,6 +1092,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#endif
 	defineSubstanceConcepts(GIAentityNodeArrayFilled, GIAentityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
 	#endif 
+
+	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "0q pass; define substances (actions), eg 'run' in 'Tom runs' [exceptions 'having a chicken'/being a chicken': dobj(having-5, chicken-7) / dobj(be-5, chicken-7)]);" << endl;
+	#endif
+	defineSubstancesActions(currentSentenceInList, GIAentityNodeArray);
+	#endif
 
 	//Stanford version needs to be shifted after all substances have been generated (including actions)... [Upgrade translator - do not associate feature/grammatical info with concept entities; just leave them in the feature array until the concept instances have been generated]
 	#ifdef GIA_USE_RELEX

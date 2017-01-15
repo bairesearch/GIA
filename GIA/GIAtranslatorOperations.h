@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2f 23-July-2013
+ * Project Version: 1t2g 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -452,6 +452,9 @@ static string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES
 static string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT};
 #endif
 
+//substances (actions)
+#define RELATION_TYPE_SUBJECT_OBJECT_NUMBER_OF_TYPES (2)
+static string relationTypeSubjectObjectNameArray[RELATION_TYPE_SUBJECT_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_OBJECT};
 
 
 //substances (descriptive relationships)
@@ -656,6 +659,8 @@ static string relationTypeConjugationNameArray[RELATION_TYPE_CONJUGATION_NUMBER_
 #define PREPOSITION_THROUGH "through"
 #define RELATION_TYPE_HAVING_AND_BEING_CONDITIONS_PREPOSITIONS_NUMBER_OF_TYPES (2)
 static string linkHavingPropertyConditionsAndBeingDefinitionConditionsPrepositionsNameArray[RELATION_TYPE_HAVING_AND_BEING_CONDITIONS_PREPOSITIONS_NUMBER_OF_TYPES] = {PREPOSITION_BY, PREPOSITION_THROUGH};
+#define RELATION_TYPE_HAVING_AND_BEING_SPECIAL_ENTITY_NUMBER_OF_TYPES (2)
+static string linkHavingPropertyConditionsAndBeingDefinitionConditionsSpecialEntityNameArray[RELATION_TYPE_HAVING_AND_BEING_SPECIAL_ENTITY_NUMBER_OF_TYPES] = {RELATION_ENTITY_HAVE, RELATION_ENTITY_BE};
 #define RELATION_TYPE_COMPLIMENT_TO_BE "_to-be"		//eg grows tired / The rose smelled sweet / _to-be(smell, sweet) - CHECK THIS
 #define RELATION_TYPE_COMPLIMENT_TO_DO "_to-do"		//eg Linas likes to row / _to-do(like, row) - CHECK THIS
 #define STANFORD_RELATION_TYPE_COMPLIMENT_TO_BE "acomp"	//NB added '_' for conversion purposes
