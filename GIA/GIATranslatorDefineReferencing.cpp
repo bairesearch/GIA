@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n7b 31-July-2012
+ * Project Version: 1n7c 31-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1209,7 +1209,9 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		createGIACoreferenceInListBasedUponIdentifiedReferenceSet(sentenceConceptEntityNodesList, sentenceConceptEntityNodesList, &referenceTraceParameters, &maxNumberOfMatchedNodes, &queryEntityWithMaxNumberNodesMatched, &networkEntityWithMaxNumberNodesMatched, &foundAtLeastOneMatchIntraSentence);	//always perform intrasentence reference detection last (as this takes priority)
 		if(foundAtLeastOneMatchIntraSentence)
 		{
+			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 			cout << "\nfoundAtLeastOneMatchIntraSentence" << endl;
+			#endif
 			foundAtLeastOneMatch = true;
 			referenceTraceParameters.intrasentenceReference = true;		//already the case
 		}
@@ -1496,7 +1498,7 @@ GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIA
 
 
 
-void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, GIACoreference * firstCoreferenceInList, Feature * featureArrayTemp[])
+void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, GIACoreference * firstCoreferenceInList, Feature * featureArrayTemp[], GIAEntityNode * GIAFeatureTempEntityNodeArray[], GIAEntityNode * GIAConceptNodeArray[])
 {
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "linkAdvancedReferencesGIA()" << endl;
@@ -1634,6 +1636,9 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 							else
 							{
 								GIAEntityNodeArrayFilled[referenceEntityIndex] = true;	//preposition reference
+								GIAFeatureTempEntityNodeArray[referenceEntityIndex] = referenceSource;		//added for GIAS 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
+								featureArrayTemp[referenceEntityIndex] = new Feature();				//added for GIAS 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
+								GIAConceptNodeArray[referenceEntityIndex] = referenceSource;			//added for GIAS 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
 							}
 							#endif
 
