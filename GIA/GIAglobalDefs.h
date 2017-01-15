@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i19e 31-January-2015
+ * Project Version: 2i20a 01-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -632,6 +632,7 @@
 	#define GIA_XML_RECORD_ADDITIONAL_VARIABLES
 #endif
 #ifndef GIA_DISABLE_2i_CODE_FOR_DEBUG
+	#define GIA_PREVENT_SUBSTANCE_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_SUBSTANCE_CONCEPTS	//2i20a
 	#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 		#ifdef USE_NLC
 			#define GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY	//2i19c	//NB this requires !GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS	//designed for GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS

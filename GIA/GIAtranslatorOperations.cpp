@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i19e 31-January-2015
+ * Project Version: 2i20a 01-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -221,6 +221,17 @@ GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode
 		//configure entity node containing this substance
 		writeVectorConnection(thingEntity, propertyEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
 		writeVectorConnection(propertyEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
+		
+		#ifdef GIA_PREVENT_SUBSTANCE_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_SUBSTANCE_CONCEPTS
+		if(propertyEntity->isSubstanceConcept)
+		{
+			if(!(thingEntity->isSubstanceConcept))
+			{
+				cout << "addOrConnectPropertyToEntity() warning: property was declared substance concept while parent was not declared substance concept" << endl;
+				propertyEntity->isSubstanceConcept = false;
+			}
+		}
+		#endif
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
@@ -242,7 +253,7 @@ GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentit
 	#endif
 	#endif
 	
-	GIAentityNode* newOrExistingSubstance = propertyEntity;
+	GIAentityNode* propertyEntitySubstance = propertyEntity;
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(propertyEntity->disabled))
@@ -252,48 +263,34 @@ GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentit
 	#endif
 		if(!(propertyEntity->isConcept))
 		{
-			GIAentityNode* existingSubstance = propertyEntity;
-
-			/*
-			if(substanceEntity->hasQualityTemp)
-			{
-				existingSubstance->isSubstanceQuality = true;
-			}
-			*/
-
-			thingEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-
-			//configure entity node containing this substance
-			writeVectorConnection(thingEntity, existingSubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
-			writeVectorConnection(existingSubstance, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
-
-			newOrExistingSubstance = existingSubstance;
-
+			propertyEntitySubstance = propertyEntity;
 		}
 		else
 		{
-			GIAentityNode* newSubstance = addSubstance(propertyEntity);
-
-			/*
-			if(substanceEntity->hasQualityTemp)
-			{
-				newSubstance->isSubstanceQuality = true;
-			}
-			*/
-
-			writeVectorConnection(newSubstance, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
-			writeVectorConnection(thingEntity, newSubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
-
-			thingEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-
-			newOrExistingSubstance = newSubstance;
+			propertyEntitySubstance = addSubstance(propertyEntity);
 		}
+		
+		writeVectorConnection(thingEntity, propertyEntitySubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+		writeVectorConnection(propertyEntitySubstance, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
+		thingEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+			
+		#ifdef GIA_PREVENT_SUBSTANCE_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_SUBSTANCE_CONCEPTS
+		if(propertyEntitySubstance->isSubstanceConcept)
+		{
+			if(!(thingEntity->isSubstanceConcept))
+			{
+				cout << "addOrConnectPropertyToEntity() warning: property was declared substance concept while parent was not declared substance concept" << endl;
+				propertyEntitySubstance->isSubstanceConcept = false;
+			}
+		}
+		#endif
+		
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
 	#endif
 
-	return newOrExistingSubstance;
+	return propertyEntitySubstance;
 }
 
 GIAentityNode* addSubstanceToSubstanceDefinition(GIAentityNode* substanceEntity)
@@ -975,6 +972,17 @@ GIAentityNode* addOrConnectConditionToEntity(GIAentityNode* conditionSubjectEnti
 
 		newOrExistingCondition = addConditionToConditionDefinition(conditionEntity);
 
+		#ifdef GIA_PREVENT_SUBSTANCE_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_SUBSTANCE_CONCEPTS
+		if(conditionObjectEntity->isSubstanceConcept)
+		{
+			if(!(conditionSubjectEntity->isSubstanceConcept))
+			{
+				cout << "addOrConnectConditionToEntity() warning: condition object was declared substance concept while condition subject was not declared substance concept" << endl;
+				conditionObjectEntity->isSubstanceConcept = false;
+			}
+		}
+		#endif
+		
 		#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		//required to compensate for defineSubstancesActions() being exectuted before linkDependentActionsType1()
 		newOrExistingCondition->isSubstance = false;	//required because defineSubstancesActions() defines substances [not actions]
