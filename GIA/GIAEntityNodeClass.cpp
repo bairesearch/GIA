@@ -28,7 +28,9 @@ string quantityModifierNameArray[QUANTITY_MODIFIER_NUMBER_OF_TYPES] = {"almost"}
 //~nouns
 GIAEntityNode::GIAEntityNode(void)
 {
-	id = 0;				
+	id = 0;	
+	idSecondary = 0;	//temporary ID reserved for specific entity types; concept, action, property etc
+				
 	entityName = "";
 	confidence = 1.0;
 	

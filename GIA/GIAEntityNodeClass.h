@@ -97,6 +97,7 @@ public:
 	~GIAEntityNode(void);
 	
 	long id;
+	long idSecondary;
 	string entityName;
 	double confidence;
 		

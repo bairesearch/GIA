@@ -38,8 +38,9 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 			cout << "adding entity node; " << *entityNodeName << endl;
 
 			entityNodeFound = new GIAEntityNode();
-			entityNodeFound->id = *currentEntityNodeIDInConceptEntityNodesList;
-
+			entityNodeFound->id = *currentEntityNodeIDInCompleteList;
+			entityNodeFound->idSecondary = *currentEntityNodeIDInConceptEntityNodesList;
+			
 			entityNodesCompleteList->push_back(entityNodeFound);
 			(*currentEntityNodeIDInCompleteList) = (*currentEntityNodeIDInCompleteList) + 1;
 			conceptEntityNodesList->push_back(entityNodeFound);
@@ -202,8 +203,9 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 				//cout << "previousFindIndex = " << previousFindIndex << endl;
 				
 				entityNodeFound = new GIAEntityNode();
-				entityNodeFound->id = *currentEntityNodeIDInConceptEntityNodesList;
-				
+				entityNodeFound->id = *currentEntityNodeIDInCompleteList;
+				entityNodeFound->idSecondary = *currentEntityNodeIDInConceptEntityNodesList;
+			
 				entityNodesCompleteList->push_back(entityNodeFound);
 				(*currentEntityNodeIDInCompleteList) = (*currentEntityNodeIDInCompleteList) + 1;
 				entityNodeFound->entityName = *entityNodeName;

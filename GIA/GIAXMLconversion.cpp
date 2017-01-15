@@ -344,6 +344,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 	bool entityNameFound = false;
 	bool confidenceFound = false;
 	bool isPropertyFound = false;
+	bool isActionFound = false;
 	
 	bool actionSubjectEntityFound = false;
 	bool actionObjectEntityFound = false;
@@ -416,6 +417,12 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			entityNode->isProperty = attributeValue;
 			isPropertyFound = true;
 		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isAction)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->isAction = attributeValue;
+			isActionFound = true;
+		}		
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedProperty)
 		{
 			bool attributeValue = atoi(currentAttribute->value.c_str());
@@ -1120,6 +1127,14 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		currentAttribute->nextAttribute = newAttribute17;
 		currentAttribute = currentAttribute->nextAttribute;
 		
+		currentAttribute->name = NET_XML_ATTRIBUTE_isAction;
+		sprintf(tempString, "%d", int(currentEntity->isAction));
+		currentAttribute->value = tempString;
+
+		XMLParserAttribute * newAttribute17b = new XMLParserAttribute();
+		currentAttribute->nextAttribute = newAttribute17b;
+		currentAttribute = currentAttribute->nextAttribute;		
+		
 		currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedProperty;
 		sprintf(tempString, "%d", int(currentEntity->hasAssociatedProperty));
 		currentAttribute->value = tempString;
@@ -1127,7 +1142,7 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		XMLParserAttribute * newAttribute18 = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute18;
 		currentAttribute = currentAttribute->nextAttribute;
-
+		
 		currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedPropertyIsAction;
 		sprintf(tempString, "%d", int(currentEntity->hasAssociatedPropertyIsAction));
 		currentAttribute->value = tempString;

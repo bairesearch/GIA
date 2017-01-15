@@ -150,6 +150,7 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 		//configure property node
 		GIAEntityNode * newProperty = new GIAEntityNode();
 		newProperty->id = currentEntityNodeIDInCompleteList;
+		newProperty->idSecondary = currentEntityNodeIDInPropertyEntityNodesList;
 		
 		entityNodesCompleteList->push_back(newProperty);
 		currentEntityNodeIDInCompleteList++;
@@ -205,6 +206,7 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 		//configure property node
 		GIAEntityNode * newProperty = new GIAEntityNode();
 		newProperty->id = currentEntityNodeIDInCompleteList;
+		newProperty->idSecondary = currentEntityNodeIDInPropertyEntityNodesList;
 		
 		entityNodesCompleteList->push_back(newProperty);
 		currentEntityNodeIDInCompleteList++;
@@ -254,6 +256,7 @@ void addActionToActionDefinition(GIAEntityNode * actionEntity)
 		//configure property node
 		GIAEntityNode * newAction = new GIAEntityNode();
 		newAction->id = currentEntityNodeIDInCompleteList;
+		newAction->idSecondary = currentEntityNodeIDInActionEntityNodesList;
 		
 		entityNodesCompleteList->push_back(newAction);
 		currentEntityNodeIDInCompleteList++;
@@ -359,15 +362,25 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 		
 		if(actionEntity->hasAssociatedPropertyIsAction == false)
 		{//upgrade associated property to action
+			//CHECK THIS; must remove from property list, and add to action list 
 			actionEntity->hasAssociatedPropertyIsAction = true;
 			newOrExistingAction->isProperty = false;
 			newOrExistingAction->isAction = true;
+			
+			vector<GIAEntityNode*>::iterator propertyEntityNodesListIterator = propertyEntityNodesList->begin();
+			advance(propertyEntityNodesListIterator,newOrExistingAction->idSecondary);
+			propertyEntityNodesList->erase(propertyEntityNodesListIterator);
+			currentEntityNodeIDInPropertyEntityNodesList--;
+			
+			actionEntityNodesList->push_back(newOrExistingAction);
+			currentEntityNodeIDInActionEntityNodesList++;
 		}
 	}
 	else
 	{		
 		newOrExistingAction = new GIAEntityNode();
 		newOrExistingAction->id = currentEntityNodeIDInCompleteList;
+		newOrExistingAction->idSecondary = currentEntityNodeIDInActionEntityNodesList;
 		
 		entityNodesCompleteList->push_back(newOrExistingAction);
 		currentEntityNodeIDInCompleteList++;
@@ -2226,6 +2239,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 							measureProperty->measureType = MEASURE_TYPE_PER;						
 
 							GIAEntityNode * newQuantityTimesEntity = new GIAEntityNode();
+							newQuantityTimesEntity->id = currentEntityNodeIDInCompleteList;
+							newQuantityTimesEntity->idSecondary = currentEntityNodeIDInPropertyEntityNodesList;
+
+							entityNodesCompleteList->push_back(newQuantityTimesEntity);
+							currentEntityNodeIDInCompleteList++;
+							propertyEntityNodesList->push_back(newQuantityTimesEntity);
+							currentEntityNodeIDInPropertyEntityNodesList++;
+									
 							newQuantityTimesEntity->entityName = "times";
 																				
 							//reconnect refreshed quanity (times) node;
