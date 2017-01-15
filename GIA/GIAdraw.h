@@ -41,11 +41,11 @@ using namespace std;
 #define GIA_DRAW_PROPERTY_NODE_COLOUR (DAT_FILE_COLOUR_CYAN)				//this was cyan(?) in the original spec	
 
 #define GIA_DRAW_CONDITION_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_ORANGE)	//colour not defined in original GIA spec	
-#define GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_RED)			//Not used	//this was red in the original GIA spec
+//#define GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_RED)		//Not used	//this was red in the original GIA spec
 #define GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_BROWN)		//colour not defined in original GIA spec
 #define GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_BROWN)			//this was dark green to original GIA spec
 #define GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_MAGENTA)	//colour not defined in original GIA spec	
-#define GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_CYAN)			//Not used	//this was cyan(?) in the original spec			
+//#define GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_CYAN)		//Not used	//this was cyan(?) in the original spec			
 #define GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR (DAT_FILE_COLOUR_RED)		//this was red in the original spec			
 
 #define GIA_DRAW_CONDITION_NODE_HEIGHT (5)

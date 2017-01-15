@@ -107,12 +107,16 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		vector<GIAActionNode*>::iterator actionIter;
 		for(actionIter = entityNode->firstIncomingActionNodeInList.begin(); actionIter != entityNode->firstIncomingActionNodeInList.end(); actionIter++) 
 		{
+			//cout << "A" << endl;
 			currentReferenceInPrintList = initialiseActionNodeForPrinting((*actionIter), y+q, x-r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			//cout << "AA" << endl;
 			q = q + DRAW_Y_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE;
 		}	
 		for(actionIter = entityNode->firstActionNodeInList.begin(); actionIter != entityNode->firstActionNodeInList.end(); actionIter++) 
-		{	
+		{
+			//cout << "AAA" << endl;	
 			currentReferenceInPrintList = initialiseActionNodeForPrinting((*actionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+			//cout << "AAAA" << endl;
 			q = q + DRAW_Y_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE;
 		}	
 
@@ -279,7 +283,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			int entityColour;
 			if(entityNode->hasAssociatedAction)
 			{
-				entityColour = GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR;	//clearly identify the definition of the action
+				entityColour = GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
 			}			
 			else if(entityNode->isProperty)
 			{
@@ -424,7 +428,7 @@ Reference * initialiseActionNodeForPrinting(GIAActionNode * actionNode, int y, i
 				pos2.x = actionNode->entityNodeDefiningThisAction->printX;
 				pos2.y = actionNode->entityNodeDefiningThisAction->printY;	
 				pos2.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_ACTION_CONNECTION_COLOUR, writeFileObject);
+				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR, writeFileObject);
 			}		
 		}
 		if(actionNode->actionSubjectEntity != NULL)
@@ -456,7 +460,7 @@ Reference * initialiseActionNodeForPrinting(GIAActionNode * actionNode, int y, i
 				pos4.x = actionNode->actionObjectEntity->printX;
 				pos4.y = actionNode->actionObjectEntity->printY;	
 				pos4.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR, writeFileObject);
+				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_ACTION_CONNECTION_COLOUR, writeFileObject);
 			}		
 		}
 		
