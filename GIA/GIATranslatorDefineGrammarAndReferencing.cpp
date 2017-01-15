@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammarAndReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i14c 17-Apr-2012
+ * Project Version: 1i15a 17-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -877,39 +877,66 @@ void linkReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEnt
 		{
 			if(!foundReferenceSource)
 			{
-				if(currentMentionInList->representative = true)
+				if(currentMentionInList->representative)
 				{
 					int referenceSourceSentenceIndex = currentMentionInList->sentence;			
 					int referenceSourceEntityNodeIndex = currentMentionInList->head;
-
-					if(referenceSourceSentenceIndex < currentSentenceInList->sentenceIndex)
+					
+					//cout << "referenceSourceSentenceIndex = " << referenceSourceSentenceIndex << endl;
+					//cout << "\treferenceSourceEntityNodeIndex = " << referenceSourceEntityNodeIndex << endl;
+					
+					if(referenceSourceSentenceIndex <= currentSentenceInList->sentenceIndex)
 					{
+						//cout << "ASD" << endl;
 						Sentence * currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInList;
-						while(currentSentenceInWhichReferenceSourceIsBeingSearchedFor->previous != NULL)
+						bool stillExistsPreviousSentence = true;
+						while(stillExistsPreviousSentence)
 						{
+							//cout << "currentSentenceInWhichReferenceSourceIsBeingSearchedFor->sentenceIndex = " <<  currentSentenceInWhichReferenceSourceIsBeingSearchedFor->sentenceIndex << endl;
 							if(currentSentenceInWhichReferenceSourceIsBeingSearchedFor->sentenceIndex == referenceSourceSentenceIndex)
 							{
-								Relation * currentRelationInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->firstRelationInList;
-								while(currentRelationInWhichReferenceSourceIsBeingSearchedFor->next != NULL)
+								Feature * currentFeatureInList = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->firstFeatureInList;
+								while(currentFeatureInList->next != NULL)
 								{
-									long entityIndex = -1;
-									bool entityAlreadyExistant = false;
-									string entityName = currentRelationInWhichReferenceSourceIsBeingSearchedFor->relationDependent;	//CHECK THIS; assumes [at least one instance of] the reference source will always occur as a relation argument/dependent (ie, will not find the reference source if it only occurs as a relation function/governer)					
-									vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
-									long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-									long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();								
-									GIAEntityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &entityName, &entityAlreadyExistant, &entityIndex, false, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
+									//cout << "currentFeatureInList->entityIndex = " <<  currentFeatureInList->entityIndex << endl;
+									
+									if(currentFeatureInList->entityIndex == referenceSourceEntityNodeIndex)
+									{	
+										long entityIndex = -1;
+										bool entityAlreadyExistant = false;
+										string entityName = currentFeatureInList->lemma;	//CHECK THIS; assumes [at least one instance of] the reference source will always occur as a relation argument/dependent (ie, will not find the reference source if it only occurs as a relation function/governer)					
+										vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+										long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+										long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();								
+										GIAEntityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &entityName, &entityAlreadyExistant, &entityIndex, false, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
 
-									if(entityAlreadyExistant)
-									{
-										referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
-										foundReferenceSource = true;
+										//cout << "entityName = " << entityName << endl;
+										//cout << "referenceSourceSentenceIndex = " << referenceSourceSentenceIndex << endl;
+										//cout << "referenceSourceEntityNodeIndex = " << referenceSourceEntityNodeIndex << endl;
+
+										if(entityAlreadyExistant)
+										{
+											referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
+
+											//cout << "referenceSource->entityName = " << referenceSource->entityName << endl;										
+											foundReferenceSource = true;
+										}
+
+										//now search for this entity
+
 									}
-																	
-									currentRelationInWhichReferenceSourceIsBeingSearchedFor = currentRelationInWhichReferenceSourceIsBeingSearchedFor->next;
+									currentFeatureInList = currentFeatureInList->next;
 								}
 							}
-							currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->previous;
+							
+							if(currentSentenceInWhichReferenceSourceIsBeingSearchedFor->previous != NULL)
+							{
+								currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->previous;
+							}
+							else
+							{
+								stillExistsPreviousSentence = false;
+							}
 						}
 					}
 				}
@@ -917,23 +944,43 @@ void linkReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEnt
 			
 			if(foundReferenceSource)
 			{
-				if(currentMentionInList->representative == false)
-				{//continue only for references, eg pronoun (not for their source, eg name)			
+				if(!(currentMentionInList->representative))
+				{//continue only for references, eg pronoun (not for their source, eg name)	
+					
 					if(currentMentionInList->sentence == currentSentenceInList->sentenceIndex)
 					{
 						int currentSentenceEntityNodeIndex = currentMentionInList->head;
 						if(GIAEntityNodeArrayFilled[currentSentenceEntityNodeIndex])
 						{
-							#ifdef GIA_TRANSLATOR_DEBUG
-							cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
+							GIAEntityNode * reference = GIAEntityNodeArray[currentSentenceEntityNodeIndex];
+							
+							bool passedCoreferenceTypeRequirements = false;
+							#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
+							//use POS information to ensure that the reference is a pronoun - NB alternatively, could use referenceTypePersonNameArray and referenceTypePossessiveNameArray (as there is only a limited set of pronouns in english)
+							for(int i=0; i<FEATURE_POS_INDICATES_PRONOUN_NUMBER_TYPES; i++)
+							{
+								if(reference->POSTemp == featurePOSindicatesPronounTypeArray[i])
+								{
+									passedCoreferenceTypeRequirements = true;
+								}
+							}
+							#else
+							passedCoreferenceTypeRequirements = true;
 							#endif
-							//referenceSource->isReferenceEntityInThisSentence = true;
-							disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentSentenceEntityNodeIndex]);
+							
+							if(passedCoreferenceTypeRequirements)
+							{
+								#ifdef GIA_TRANSLATOR_DEBUG
+								cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
+								#endif
+								//referenceSource->isReferenceEntityInThisSentence = true;
+								disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentSentenceEntityNodeIndex]);
 
-							GIAEntityNodeArray[currentSentenceEntityNodeIndex] = referenceSource;
-							GIAEntityNodeIsAReference[currentSentenceEntityNodeIndex] = true;
-					
-							applyEntityAlreadyExistsFunction(referenceSource);									
+								GIAEntityNodeArray[currentSentenceEntityNodeIndex] = referenceSource;
+								GIAEntityNodeIsAReference[currentSentenceEntityNodeIndex] = true;
+
+								applyEntityAlreadyExistsFunction(referenceSource);
+							}									
 						}
 					}
 				}
@@ -1639,7 +1686,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 											GIAEntityNode * subjectGovernorEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
 											
 											bool subjectGovernorAdjectiveOrAdvebFound = false;
-											for(int i=0; i<FEATURE_POS_INDICATES_ADJECTIVE_OR_ADVERB; i++)
+											for(int i=0; i<FEATURE_POS_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_TYPES; i++)
 											{
 												//cout << "subjectGovernorEntity->POSTemp = " << subjectGovernorEntity->POSTemp << endl;
 												if(subjectGovernorEntity->POSTemp == featurePOSindicatesAdjectiveOrAdverbTypeArray[i])

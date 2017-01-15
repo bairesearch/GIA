@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i14c 17-Apr-2012
+ * Project Version: 1i15a 17-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -29,6 +29,9 @@ using namespace std;
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
+#ifndef GIA_STANFORD_CORE_NLP_DO_NOT_USE_CODEPENDENCIES
+	#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
+#endif
 
 //#define GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE		//this has been disabled because it has been deemed inappropriate for 'The disaster happened over night.?'  [prt(happened-3, over-4)]
 
@@ -484,8 +487,13 @@ static string featureNERindicatesNormalisedNERavailableTypeArray[FEATURE_NER_IND
 #define FEATURE_POS_ADVERB "RB"
 #define FEATURE_POS_ADVERB_COMPARATIVE "RBR"
 #define FEATURE_POS_ADVERB_SUPERLATIVE "RBS"
-#define FEATURE_POS_INDICATES_ADJECTIVE_OR_ADVERB (6)
-static string featurePOSindicatesAdjectiveOrAdverbTypeArray[FEATURE_POS_INDICATES_ADJECTIVE_OR_ADVERB] = {FEATURE_POS_ADJECTIVE, FEATURE_POS_ADJECTIVE_COMPARATIVE, FEATURE_POS_ADJECTIVE_SUPERLATIVE, FEATURE_POS_ADVERB, FEATURE_POS_ADVERB_COMPARATIVE, FEATURE_POS_ADVERB_SUPERLATIVE};
+#define FEATURE_POS_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_TYPES (6)
+static string featurePOSindicatesAdjectiveOrAdverbTypeArray[FEATURE_POS_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_TYPES] = {FEATURE_POS_ADJECTIVE, FEATURE_POS_ADJECTIVE_COMPARATIVE, FEATURE_POS_ADJECTIVE_SUPERLATIVE, FEATURE_POS_ADVERB, FEATURE_POS_ADVERB_COMPARATIVE, FEATURE_POS_ADVERB_SUPERLATIVE};
+
+#define FEATURE_POS_PERSONAL_PRONOUN "PRP"
+#define FEATURE_POS_POSSESSIVE_PRONOUN "PP$" 
+#define FEATURE_POS_INDICATES_PRONOUN_NUMBER_TYPES (2)
+static string featurePOSindicatesPronounTypeArray[FEATURE_POS_INDICATES_PRONOUN_NUMBER_TYPES] = {FEATURE_POS_PERSONAL_PRONOUN, FEATURE_POS_POSSESSIVE_PRONOUN};
 
 
 #define STANFORD_PARSER_PREPOSITION_PREPEND "prep_"
@@ -571,6 +579,8 @@ static string referenceTypePossessiveNameArray[REFERENCE_TYPE_POSSESSIVE_NUMBER_
 //static int referenceTypePossessiveNameLengthsArray[REFERENCE_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {9, 3, 3, 4, 3};
 static string referenceTypePersonNameArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {"undefined", "he", "she", "they", "it"};
 //static int referenceTypePersonNameLengthsArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {9, 2, 3, 4, 2};
+
+
 
 static int referenceTypePersonCrossReferenceNumberArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {GRAMMATICAL_NUMBER_UNDEFINED, GRAMMATICAL_NUMBER_SINGULAR, GRAMMATICAL_NUMBER_SINGULAR, GRAMMATICAL_NUMBER_PLURAL, GRAMMATICAL_NUMBER_SINGULAR};
 static int referenceTypePersonCrossReferenceGenderArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {GRAMMATICAL_GENDER_UNDEFINED, GRAMMATICAL_GENDER_MASCULINE, GRAMMATICAL_GENDER_FEMININE, GRAMMATICAL_GENDER_UNDEFINED, GRAMMATICAL_GENDER_UNDEFINED};

@@ -3,7 +3,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i14c 17-Apr-2012
+ * Project Version: 1i15a 17-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -577,25 +577,25 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 			currentFeatureInList = currentFeatureInList->next;	
 		}
 		
-		StanfordCoreNLPCoreference * currentCoreferenceInList = currentSentence->firstCoreferenceInList;
-		while(currentCoreferenceInList->next != NULL)
-		{	
-			StanfordCoreNLPMention * currentMentionInList = currentCoreferenceInList->firstMentionInList;
-			while(currentMentionInList->next != NULL)
-			{	
-				cout << "currentMentionInList->representative = " << currentMentionInList->representative << endl;
-				cout << "currentMentionInList->sentence = " << currentMentionInList->sentence << endl;
-				cout << "currentMentionInList->start = " << currentMentionInList->start << endl;
-				cout << "currentMentionInList->end = " << currentMentionInList->end << endl;
-				cout << "currentMentionInList->head = " << currentMentionInList->head << endl;
-
-				currentMentionInList = currentMentionInList->next;	
-			}
-			currentCoreferenceInList = currentCoreferenceInList->next;	
-		}
-				
 		currentSentence = currentSentence->next;	
 	}
+	currentCoreferenceInList = firstParagraphInList->firstSentenceInList->firstCoreferenceInList;
+	while(currentCoreferenceInList->next != NULL)
+	{	
+		StanfordCoreNLPMention * currentMentionInList = currentCoreferenceInList->firstMentionInList;
+		while(currentMentionInList->next != NULL)
+		{	
+			cout << "currentMentionInList->representative = " << int(currentMentionInList->representative) << endl;
+			cout << "currentMentionInList->sentence = " << currentMentionInList->sentence << endl;
+			cout << "currentMentionInList->start = " << currentMentionInList->start << endl;
+			cout << "currentMentionInList->end = " << currentMentionInList->end << endl;
+			cout << "currentMentionInList->head = " << currentMentionInList->head << endl;
+
+			currentMentionInList = currentMentionInList->next;	
+		}
+		currentCoreferenceInList = currentCoreferenceInList->next;	
+	}
+			
 	//cout << "exiting prematurely; GIA_NLP_DEBUG complete" << endl; 
 	//exit(0);
 	#endif				
