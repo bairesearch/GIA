@@ -23,7 +23,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q10d 12-November-2012b
+ * Project Version: 1r1a 12-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -87,6 +87,51 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
+	
+	#ifdef GIA_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY
+	currentRelationInList = currentSentenceInList->firstRelationInList;
+ 	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			bool passed = false;
+			for(int i=0; i<RELATION_TYPE_POSSESSIVE_REVERSED_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypePossessiveReversedNameArray[i])
+				{
+					passed = true;
+				}
+			}		
+			if(passed)
+			{
+				//create a new substance for the entity and assign a substance definition entity if not already created
+				string thingName = currentRelationInList->relationGovernor;
+				string substanceName = currentRelationInList->relationDependent;
+				int thingIndex = currentRelationInList->relationGovernorIndex;
+				int substanceIndex = currentRelationInList->relationDependentIndex;
+				GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
+				GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
+
+				#ifdef GIA_TRANSLATOR_DEBUG
+				cout << "thingEntity = " << thingEntity->entityName << endl;
+				cout << "substanceEntity = " << substanceEntity->entityName << endl;
+				#endif
+
+				#ifdef GIA_USE_ADVANCED_REFERENCING
+				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES, currentRelationInList);
+				#else
+				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+				#endif
+				GIAEntityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(thingEntity, substanceEntity, sameReferenceSet);
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}
+	#endif
 }
 
 
@@ -164,6 +209,7 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 		currentRelationInList = currentRelationInList->next;
 	}
 }
+
 
 #ifdef GIA_USE_ADVANCED_REFERENCING
 void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], bool linkPreestablishedReferencesGIA)
@@ -626,7 +672,6 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityN
 						bool passed2 = false;
 						bool partnerTypeObjectSpecialConditionMeasureDistanceOrStanfordFound = false;
 						bool partnerTypeObjectSpecialConditionToDoSubstanceFound = false;
-						bool partnerTypeObjectSpecialConditionToDoSubstanceFoundAssumeUsed = true;
 						bool partnerTypeObjectSpecialConditionToBeSubstanceFound = false;
 
 						for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
@@ -661,12 +706,10 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityN
 						}
 						#endif
 
-						/*
-						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE2
+						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 						if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 						{
 						#endif
-						*/
 							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_WITH_BE_AS_DEFINITION_LINK
 							for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_TO_DO_SUBSTANCE_NUMBER_OF_TYPES; i++)
 							{
@@ -677,11 +720,9 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityN
 								}
 							}
 							#endif
-						/*
-						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE2
+						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 						}
 						#endif							
-						*/						
 
 					#ifdef GIA_TRANSLATOR_RETAIN_SUSPECTED_REDUNDANT_RELEX_CODE
 						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
@@ -1026,7 +1067,6 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityN
 										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_WITH_BE_AS_DEFINITION_LINK
 										else if(partnerTypeObjectSpecialConditionToDoSubstanceFound)
 										{
-											partnerTypeObjectSpecialConditionToDoSubstanceFoundAssumeUsed = false;
 											//relevant code is executed in function defineToBeAndToDoPropertiesAndConditions() instead
 										}
 										#endif
@@ -1107,34 +1147,44 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityN
 										}
 									}
 
-									bool passAlreadyAddedConditions = true;
-									bool relexAdditionalRequirement = false;
+									#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
+									if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
+									{
+									#endif
 									#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
-									#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
-									if(!subjectIsConnectedToAnAdvMod)
-									{
-										relexAdditionalRequirement = true;
-									}
-									#endif
-									#endif
-									#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_WITH_BE_AS_DEFINITION_LINK
-									if(relexAdditionalRequirement)
-									{
-										if(partnerTypeObjectSpecialConditionToDoSubstanceFound)
-										{	
-											if(!partnerTypeObjectSpecialConditionToDoSubstanceFoundAssumeUsed)
-											{
-												passAlreadyAddedConditions = false;
-											}
+										bool passAlreadyAddedConditions = false;
+										#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
+										if(subjectIsConnectedToAnAdvMod)
+										{
+											passAlreadyAddedConditions = true;
 										}
-									}
+										#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_WITH_BE_AS_DEFINITION_LINK
+										if(!partnerTypeObjectSpecialConditionToDoSubstanceFound)
+										{
+											passAlreadyAddedConditions = true;
+										}
+										#endif
+										if(passAlreadyAddedConditions)
+										{
+											foundPartner = true;
+											currentRelationInList->subjObjRelationAlreadyAdded = true;
+											currentRelationInList2->subjObjRelationAlreadyAdded = true;
+										}
+										#endif
+									#else
+										foundPartner = true;
+										currentRelationInList->subjObjRelationAlreadyAdded = true;
+										currentRelationInList2->subjObjRelationAlreadyAdded = true;
 									#endif
-									if(passAlreadyAddedConditions)
+									#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
+									}
+									else
 									{
 										foundPartner = true;
 										currentRelationInList->subjObjRelationAlreadyAdded = true;
 										currentRelationInList2->subjObjRelationAlreadyAdded = true;
 									}
+									#endif
 								}
 								else
 								{//do not find matching object-subject relationship
@@ -1632,13 +1682,6 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 			}
 			#endif
 
-			/*
-			#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-			if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
-			{
-			#endif
-			*/
-			
 			#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
 			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3A_PREPOSITIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_SUBSTANCE_LINK_DEPENDING_UPON_ACTION_OR_SUBSTANCE
 			bool stanfordPrepositionFound = false;
@@ -1692,11 +1735,6 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 			}
 			#endif
 			#endif
-			/*
-			#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-			}
-			#endif
-			*/
 
 			if(passed)
 			{

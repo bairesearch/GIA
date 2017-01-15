@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q10d 12-November-2012b
+ * Project Version: 1r1a 12-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -309,6 +309,15 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 				}
 			}
 			//if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
+			#ifndef GIA_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY
+			for(int i=0; i<RELATION_TYPE_POSSESSIVE_REVERSED_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypePossessiveReversedNameArray[i])
+				{
+					passed = true;
+				}
+			}
+			#endif			
 			if(passed)
 			{
 				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
@@ -328,11 +337,28 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 					passed = true;
 				}
 			}
+			#ifdef GIA_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY
+			for(int i=0; i<RELATION_TYPE_POSSESSIVE_REVERSED_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypePossessiveReversedNameArray[i])
+				{
+					passed = true;
+				}
+			}
+			#endif
 			//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_AMOD) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_PREDADJ) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))
 			if(passed)
 			{
-				bool passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList, NLPdependencyRelationsType);
-
+				bool passed2 = true;
+				#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
+				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
+				{
+				#endif				
+					bool passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList, NLPdependencyRelationsType);
+				#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
+				}
+				#endif
+				
 				if(passed2)
 				{
 					int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
@@ -1835,6 +1861,15 @@ void identifyEntityTypesLocal(Relation * currentRelationInList, int NLPdependenc
 		}
 	}
 	//if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
+	#ifndef GIA_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY
+	for(int i=0; i<RELATION_TYPE_POSSESSIVE_REVERSED_NUMBER_OF_TYPES; i++)
+	{
+		if(currentRelationInList->relationType == relationTypePossessiveReversedNameArray[i])
+		{
+			passed = true;
+		}
+	}
+	#endif		
 	if(passed)
 	{
 		dependent->hasSubstanceTemp = true;
@@ -1853,11 +1888,28 @@ void identifyEntityTypesLocal(Relation * currentRelationInList, int NLPdependenc
 			passed = true;
 		}
 	}
+	#ifdef GIA_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY
+	for(int i=0; i<RELATION_TYPE_POSSESSIVE_REVERSED_NUMBER_OF_TYPES; i++)
+	{
+		if(currentRelationInList->relationType == relationTypePossessiveReversedNameArray[i])
+		{
+			passed = true;
+		}
+	}
+	#endif		
 	//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_AMOD) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_PREDADJ) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))
 	if(passed)
 	{
-		bool passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList, NLPdependencyRelationsType);
-
+		bool passed2 = true;
+		#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
+		if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
+		{
+		#endif		
+			passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList, NLPdependencyRelationsType);
+		#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
+		}
+		#endif
+		
 		if(passed2)
 		{
 			governor->hasSubstanceTemp = true;
