@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p10d 24-September-2012
+ * Project Version: 1p11c 24-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -631,7 +631,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1p10d 24-September-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1p11c 24-September-2012" << endl;
 			exit(1);
 		}
 
@@ -977,7 +977,7 @@ int main(int argc,char **argv)
 			#ifdef GIA_WITH_CE_USE_CODEEXTENSION_HEIRACHY
 			useCodeextensionsHeirachy = true;
 			#else
-			useCodeextensionsHeirachy = false;		//have GIA parse claims list like any ordinary file (do not execute GIA for each claim dependency hierarchical combination)
+			useCodeextensionsHeirachy = false;		//have GIA parse codeextension list like any ordinary file (do not execute GIA for each codeextension dependency hierarchical combination)
 			#endif
 
 			//generate codeextensions heirachy

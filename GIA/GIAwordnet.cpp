@@ -23,7 +23,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p10d 24-September-2012
+ * Project Version: 1p11c 24-September-2012
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -309,32 +309,27 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 		#endif
 		for(int pointerIndex = CURRENTSYNSETPOINTERINDEX; pointerIndex<currentSenseInList->ptrcount; pointerIndex++)	//updated 2 June 2012 to properly account for CURRENTSYNSETPOINTERINDEX
 		{
-			SynsetPtr currentRelatedSense = NULL;
-			bool passed = false;
-			bool passedNewSynsetMustFree = false;
-			bool recordedSynset = false;
-			
-			if(pointerIndex == CURRENTSYNSETPOINTERINDEX)
+			for(int similarityTypeIndex = 0; similarityTypeIndex<WORDNET_DATA_ENTRY_POINTERS_INDICATING_RELATED_SYNSETS_NUMBER_OF_TYPES; similarityTypeIndex++)
 			{
-				passed = true;
-				currentRelatedSense = currentSenseInList;
-			}
-			else
-			{
-				for(int similarityTypeIndex = 0; similarityTypeIndex<WORDNET_DATA_ENTRY_POINTERS_INDICATING_RELATED_SYNSETS_NUMBER_OF_TYPES; similarityTypeIndex++)
+				SynsetPtr currentRelatedSense = NULL;
+				bool passed = false;
+				bool passedNewSynsetMustFree = false;
+
+				if(pointerIndex == CURRENTSYNSETPOINTERINDEX)
+				{
+					if(similarityTypeIndex == 0)
+					{//only execute the loop once when (pointerIndex == CURRENTSYNSETPOINTERINDEX)
+						passed = true;
+						currentRelatedSense = currentSenseInList;						
+					}
+				}
+				else
 				{
 					#ifdef GIA_WORDNET_DEBUG
 					//cout << "similarityTypeIndex = " << similarityTypeIndex << endl;
 					#endif
 					if(currentSenseInList->ptrtyp[pointerIndex] == wordnetDataEntryPointersIndicatingRelatedSynsetsArray[similarityTypeIndex])
 					{	
-						#ifdef GIA_FREE_MEMORY3
-						if(passedNewSynsetMustFree)
-						{//free currentRelatedSense [NB must modify code such that overwrite can not occur..]
-							free_synset(currentRelatedSense);	//Free a synset	
-						}
-						#endif
-											
 						#ifdef GIA_WORDNET_DEBUG
 						//cout << "passed" << endl;
 						//cout << "currentSenseInList->ptrtyp[pointerIndex] = " << currentSenseInList->ptrtyp[pointerIndex] << endl;
@@ -346,133 +341,134 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 						passedNewSynsetMustFree = true;
 					}
 				}
-			}
-			if(passed)
-			{
-				#ifdef GIA_WORDNET_DEBUG
-				cout << "senseIndex = " << senseIndex << endl;
-				cout << "currentRelatedSense->wcount = " << currentRelatedSense->wcount << endl;
-				#endif
-				if(compareEntityNames)
-				{
-					for(int w=0; w< currentRelatedSense->wcount; w++)
-					{
-						#ifdef GIA_WORDNET_DEBUG
-						cout << "word = " << currentRelatedSense->words[w] << endl;
-						#endif
 
-						string currentWord = currentRelatedSense->words[w];
-						if(currentWord == *otherWord)
+				if(passed)
+				{
+					#ifdef GIA_WORDNET_DEBUG
+					cout << "senseIndex = " << senseIndex << endl;
+					cout << "currentRelatedSense->wcount = " << currentRelatedSense->wcount << endl;
+					#endif
+					if(compareEntityNames)
+					{
+						for(int w=0; w< currentRelatedSense->wcount; w++)
 						{
-							*entityNamesAreSynonymous = true;
 							#ifdef GIA_WORDNET_DEBUG
-							cout << "match found - entityNamesAreSynonymous:" << endl;
-							cout << "currentRelatedSense->words[w] = " << currentRelatedSense->words[w] << endl;
-							cout << "otherWord = " << *otherWord << endl;
+							cout << "word = " << currentRelatedSense->words[w] << endl;
 							#endif
 
-							/*
-							if(compareEntityNames)
+							string currentWord = currentRelatedSense->words[w];
+							if(currentWord == *otherWord)
 							{
-								if(tagCount > *maximumNumberOfTags)
+								*entityNamesAreSynonymous = true;
+								#ifdef GIA_WORDNET_DEBUG
+								cout << "match found - entityNamesAreSynonymous:" << endl;
+								cout << "currentRelatedSense->words[w] = " << currentRelatedSense->words[w] << endl;
+								cout << "otherWord = " << *otherWord << endl;
+								#endif
+
+								/*
+								if(compareEntityNames)
 								{
-									*maximumNumberOfTags = tagCount;
-									senseOutputWithHighestTags = currentRelatedSense;
+									if(tagCount > *maximumNumberOfTags)
+									{
+										*maximumNumberOfTags = tagCount;
+										senseOutputWithHighestTags = currentRelatedSense;
+									}
+								}
+								*/
+							}
+						}
+					}
+					else
+					{
+
+						Index * idxOfFirstWordInWords = getindex(currentRelatedSense->words[0], wordNetPOS);	//returns pointer to Index struct representing first word in words[]
+						int senseNumber = *(currentRelatedSense->wnsns);
+						int tagCount = GetTagcnt(idxOfFirstWordInWords, senseNumber);
+
+						#ifdef GIA_WORDNET_DEBUG
+						cout << "whichword = " << currentRelatedSense->whichword << endl;		//which word in words[] corresponds to word/searchStr
+						cout << "indexInData = " << currentRelatedSense->hereiam << endl;	      //index [first column] from data.wordNetPOS (eg data.noun) for the sense/usage of word/searchStr
+						cout << "idxOfFirstWordInWords = " << idxOfFirstWordInWords << endl;
+						cout << "idxOfFirstWordInWords->off_cnt " << idxOfFirstWordInWords->off_cnt << endl;  //total number of senses of first word in words[] (see index.wordNetPOS (eg index.noun) - the total number of pointers listed)
+						cout << "senseNumber = " << senseNumber << endl;      //sense number of the first word in words[] (corresponding to the sense of word/searchStr) - second last column of sense.wordNetPOS (eg sense.noun)
+						cout << "tagCount = " << tagCount << endl;	      //popularity of sense (number of times the sense passed has been tagged according to the cntlist file) - last column of sense.wordNetPOS (eg sense.noun)
+						cout << " " << endl;
+						#endif
+
+
+						#ifdef GIA_FREE_MEMORY3
+						free_index(idxOfFirstWordInWords);	//Free an index structure	
+						#endif
+
+
+						if(tagCount > *maximumNumberOfTags)
+						{
+							*maximumNumberOfTags = tagCount;
+							#ifdef GIA_FREE_MEMORY3
+							if(senseOutputWithHighestTags != NULL)
+							{//senseOutputWithHighestTags may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)	
+								if(*senseOutputWithHighestTagsPassedNewSynsetMustFree)
+								{					
+									free_synset(senseOutputWithHighestTags);	//Free a synset							
 								}
 							}
-							*/
+							if(passedNewSynsetMustFree)
+							{
+								*senseOutputWithHighestTagsPassedNewSynsetMustFree = true;
+							}
+							else
+							{
+								*senseOutputWithHighestTagsPassedNewSynsetMustFree = false;
+							}
+							#endif
+							senseOutputWithHighestTags = currentRelatedSense;
 						}
 					}
-				}
-				else
-				{
-
-					Index * idxOfFirstWordInWords = getindex(currentRelatedSense->words[0], wordNetPOS);	//returns pointer to Index struct representing first word in words[]
-					int senseNumber = *(currentRelatedSense->wnsns);
-					int tagCount = GetTagcnt(idxOfFirstWordInWords, senseNumber);
 
 					#ifdef GIA_WORDNET_DEBUG
-					cout << "whichword = " << currentRelatedSense->whichword << endl;		//which word in words[] corresponds to word/searchStr
-					cout << "indexInData = " << currentRelatedSense->hereiam << endl;	      //index [first column] from data.wordNetPOS (eg data.noun) for the sense/usage of word/searchStr
-					cout << "idxOfFirstWordInWords = " << idxOfFirstWordInWords << endl;
-					cout << "idxOfFirstWordInWords->off_cnt " << idxOfFirstWordInWords->off_cnt << endl;  //total number of senses of first word in words[] (see index.wordNetPOS (eg index.noun) - the total number of pointers listed)
-					cout << "senseNumber = " << senseNumber << endl;      //sense number of the first word in words[] (corresponding to the sense of word/searchStr) - second last column of sense.wordNetPOS (eg sense.noun)
-					cout << "tagCount = " << tagCount << endl;	      //popularity of sense (number of times the sense passed has been tagged according to the cntlist file) - last column of sense.wordNetPOS (eg sense.noun)
-					cout << " " << endl;
-					#endif
-					
-					
-					#ifdef GIA_FREE_MEMORY3
-					free_index(idxOfFirstWordInWords);	//Free an index structure	
-					#endif
-					
-					
-					if(tagCount > *maximumNumberOfTags)
+					/*
+					for(int q=1; q<= idxOfFirstWordInWords->off_cnt; q++)
 					{
-						*maximumNumberOfTags = tagCount;
-						#ifdef GIA_FREE_MEMORY3
-						if(senseOutputWithHighestTags != NULL)
-						{//senseOutputWithHighestTags may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)	
-							if(*senseOutputWithHighestTagsPassedNewSynsetMustFree)
-							{					
-								free_synset(senseOutputWithHighestTags);	//Free a synset							
-							}
-						}
-						if(passedNewSynsetMustFree)
-						{
-							*senseOutputWithHighestTagsPassedNewSynsetMustFree = true;
-						}
-						else
-						{
-							*senseOutputWithHighestTagsPassedNewSynsetMustFree = false;
-						}
-						#endif
-						senseOutputWithHighestTags = currentRelatedSense;
+						cout << "tagcount = " << GetTagcnt(idxOfFirstWordInWords, q) << endl;
 					}
+
+					cout << "hereiam = " << currentRelatedSense->hereiam << endl;		//index [first column] from data.wordNetPOS (eg data.noun) for the sense/usage of word/searchStr
+					cout << "sstype = " << currentRelatedSense->sstype << endl;
+					cout << "fnum = " << currentRelatedSense->fnum << endl;
+					cout << "pos = " << currentRelatedSense->pos << endl;
+					cout << "wcount = " << currentRelatedSense->wcount << endl;
+					cout << "words = " << currentRelatedSense->words << endl;
+					cout << "lexid = " << currentRelatedSense->lexid << endl;
+					cout << "wnsns = " << *(currentRelatedSense->wnsns) << endl;			//sense number of the first word in words[] - corresponding to the sense of word/searchStr
+					cout << "whichword = " << currentRelatedSense->whichword << endl;		//which word in words[] corresponds to word/searchStr
+					cout << "ptrcount = " << currentRelatedSense->ptrcount << endl;
+					cout << "ptrtyp = " << currentRelatedSense->ptrtyp << endl;
+					cout << "ptroff = " << currentRelatedSense->ptroff << endl;
+					cout << "ppos = " << currentRelatedSense->ppos << endl;
+					cout << "pto = " << currentRelatedSense->pto << endl;
+					cout << "pfrm = " << currentRelatedSense->pfrm << endl;
+					cout << "fcount = " << currentRelatedSense->fcount << endl;
+					cout << "frmid = " << currentRelatedSense->frmid << endl;
+					cout << "frmto = " << currentRelatedSense->frmto << endl;
+					cout << "defn = " << currentRelatedSense->defn << endl;
+					cout << "key = " << currentRelatedSense->key << endl;
+					cout << "searchtype = " << currentRelatedSense->searchtype << endl;
+					cout << " " << endl;
+					*/
+					#endif
 				}
 
-				#ifdef GIA_WORDNET_DEBUG
-				/*
-				for(int q=1; q<= idxOfFirstWordInWords->off_cnt; q++)
-				{
-					cout << "tagcount = " << GetTagcnt(idxOfFirstWordInWords, q) << endl;
+				#ifdef GIA_FREE_MEMORY3
+				if(passedNewSynsetMustFree)
+				{						
+					if(currentRelatedSense != senseOutputWithHighestTags)
+					{
+						free_synset(currentRelatedSense);	//Free a synset					
+					}		
 				}
-
-				cout << "hereiam = " << currentRelatedSense->hereiam << endl;		//index [first column] from data.wordNetPOS (eg data.noun) for the sense/usage of word/searchStr
-				cout << "sstype = " << currentRelatedSense->sstype << endl;
-				cout << "fnum = " << currentRelatedSense->fnum << endl;
-				cout << "pos = " << currentRelatedSense->pos << endl;
-				cout << "wcount = " << currentRelatedSense->wcount << endl;
-				cout << "words = " << currentRelatedSense->words << endl;
-				cout << "lexid = " << currentRelatedSense->lexid << endl;
-				cout << "wnsns = " << *(currentRelatedSense->wnsns) << endl;			//sense number of the first word in words[] - corresponding to the sense of word/searchStr
-				cout << "whichword = " << currentRelatedSense->whichword << endl;		//which word in words[] corresponds to word/searchStr
-				cout << "ptrcount = " << currentRelatedSense->ptrcount << endl;
-				cout << "ptrtyp = " << currentRelatedSense->ptrtyp << endl;
-				cout << "ptroff = " << currentRelatedSense->ptroff << endl;
-				cout << "ppos = " << currentRelatedSense->ppos << endl;
-				cout << "pto = " << currentRelatedSense->pto << endl;
-				cout << "pfrm = " << currentRelatedSense->pfrm << endl;
-				cout << "fcount = " << currentRelatedSense->fcount << endl;
-				cout << "frmid = " << currentRelatedSense->frmid << endl;
-				cout << "frmto = " << currentRelatedSense->frmto << endl;
-				cout << "defn = " << currentRelatedSense->defn << endl;
-				cout << "key = " << currentRelatedSense->key << endl;
-				cout << "searchtype = " << currentRelatedSense->searchtype << endl;
-				cout << " " << endl;
-				*/
 				#endif
 			}
-			
-			#ifdef GIA_FREE_MEMORY3
-			if(passedNewSynsetMustFree)
-			{						
-				if(currentRelatedSense != senseOutputWithHighestTags)
-				{
-					free_synset(currentRelatedSense);	//Free a synset					
-				}		
-			}
-			#endif
 									
 		}
 		if(currentSenseInList->nextss == NULL)
@@ -484,9 +480,7 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 			currentSenseInList = currentSenseInList->nextss;
 		}
 
-
 		senseIndex++;
-
 	}
 
 	return senseOutputWithHighestTags;
