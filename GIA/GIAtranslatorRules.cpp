@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i34a 14-February-2015
+ * Project Version: 2i35a 19-March-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -269,8 +269,13 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation
 											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))
 											{
-												result = false;
 											}
+											/*
+											else
+											{
+												cout << "\t\t applyGIATranslatorGenericXMLparam passed: " << functionName << endl;	
+											}
+											*/
 											
 											/*
 											if(functionName == "defineSubstanceConcepts")
@@ -342,7 +347,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 
 bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRelOrEntity, bool executeOrReassign, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIAfeature* featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA, string functionName)
 {
-	bool result = true;
+	bool result = false;
 	if(currentParamTag->firstLowerLevelTag != NULL)
 	{
 		#ifdef GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
@@ -570,6 +575,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 				//cout << "genericDependecyRelationInterpretation()" << endl;
 				if(genericDependecyRelationInterpretation(&paramDepRel, REL1))
 				{
+					result = true;
 					//cout << "\t\t genericDependecyRelationInterpretation passed: " << functionName << endl;	
 					if(asssertsetDefiniteAfterFinish)
 					{
@@ -605,6 +611,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 			{
 				if(genericEntityInterpretation(&paramEntity))
 				{
+					result = true;
 					//cout << "\t\t genericEntityInterpretation passed: " << functionName << endl;				
 				}
 				else
