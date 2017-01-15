@@ -155,6 +155,7 @@
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="0" REL_ENT="2" relationArrayTest="_conj_and|_conj_or" relationArrayTestSize="2" relationArrayTestIsNegative="true" />
+				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="NERTemp" value="1" REL="0" REL_ENT="0" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="NERTemp" value="5" REL="0" REL_ENT="0" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="NERTemp" value="6" REL="0" REL_ENT="0" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="NERTemp" value="7" REL="0" REL_ENT="0" />
