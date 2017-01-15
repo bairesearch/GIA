@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2b 18-July-2013
+ * Project Version: 1t2c 19-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -487,12 +487,12 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 		{
 			GIAentityNode * currentGIAEntityNode = GIAfeatureTempEntityNodeArray[w];
 			#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-			//cout << "currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
+			cout << "currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
 			#endif
 			for(int i=0; i< REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES; i++)
 			{
 				#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-				//cout << "i = " << i << endl;
+				cout << "i = " << i << endl;
 				#endif
 				if(((currentGIAEntityNode->entityName == referenceTypePossessiveNameArray[i]) || (currentGIAEntityNode->entityName == referenceTypePersonNameArray[i])) && (currentGIAEntityNode->grammaticalPronounTemp == GRAMMATICAL_PRONOUN))
 				{//pronoun required for currentGIAEntityNode
@@ -507,7 +507,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 					while(!referenceSourceHasBeenFound && stillSentencesToSearch)
 					{
 						#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-						//cout << "s2 = " << s2 << endl;
+						cout << "s2 = " << s2 << endl;
 						#endif
 						Relation * currentRelationInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->firstRelationInList;
 						int maxWordLimit = 999999;
@@ -524,8 +524,8 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 
 							string entityName = currentRelationInWhichReferenceSourceIsBeingSearchedFor->relationDependent;
 							#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-							//cout << "w2 = " << w2 << endl;
-							//cout << "currentRelationInWhichReferenceSourceIsBeingSearchedFor = " << entityName << endl;							
+							cout << "w2 = " << w2 << endl;
+							cout << "currentRelationInWhichReferenceSourceIsBeingSearchedFor = " << entityName << endl;							
 							#endif
 
 							if(entityName != "")
@@ -537,7 +537,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 								if(entityAlreadyExistant)
 								{
 									#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-									//cout << "candidateReferenceSourceEntityName = " << entityName << endl;
+									cout << "candidateReferenceSourceEntityName = " << entityName << endl;
 									#endif
 									
 									bool entityPassesGrammaticalTestsForReference = true;
@@ -548,7 +548,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 										if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumber != referenceTypePersonCrossReferenceNumberArray[i])
 										{
 											#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-											//cout << "(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumber != referenceTypePersonCrossReferenceNumberArray[i])" << endl;
+											cout << "(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumber != referenceTypePersonCrossReferenceNumberArray[i])" << endl;
 											#endif
 											entityPassesGrammaticalTestsForReference = false;
 										}
@@ -559,7 +559,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 										if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp != referenceTypePersonCrossReferenceGenderArray[i])
 										{
 											#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-											//cout << "(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp != referenceTypePersonCrossReferenceGenderArray[i])" << endl;
+											cout << "(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp != referenceTypePersonCrossReferenceGenderArray[i])" << endl;
 											#endif;
 											entityPassesGrammaticalTestsForReference = false;
 										}
@@ -570,7 +570,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 										if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp != referenceTypePersonCrossReferenceDefiniteArray[i])
 										{
 											#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-											//cout << "(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp != referenceTypePersonCrossReferenceDefiniteArray[i])" << endl;
+											cout << "(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp != referenceTypePersonCrossReferenceDefiniteArray[i])" << endl;
 											#endif
 											entityPassesGrammaticalTestsForReference = false;
 										}
@@ -581,7 +581,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 										if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalRelexPersonOrStanfordProperNounTemp != referenceTypePersonCrossReferencePersonArray[i])
 										{
 											#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-											//cout << "(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalRelexPersonOrStanfordProperNounTemp != referenceTypePersonCrossReferencePersonArray[i])" << endl;
+											cout << "(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalRelexPersonOrStanfordProperNounTemp != referenceTypePersonCrossReferencePersonArray[i])" << endl;
 											#endif
 											entityPassesGrammaticalTestsForReference = false;
 										}
@@ -590,7 +590,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 										if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPronounTemp == GRAMMATICAL_PRONOUN)
 										{
 											#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-											//cout << "(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPronounTemp == GRAMMATICAL_PRONOUN)" << endl;
+											cout << "(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPronounTemp == GRAMMATICAL_PRONOUN)" << endl;
 											#endif
 											entityPassesGrammaticalTestsForReference = false;
 										}
@@ -605,20 +605,20 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 										#endif
 
 										#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-										//cout << "referenceTypePersonCrossReferenceNumberArray[i] = " << referenceTypePersonCrossReferenceNumberArray[i] << endl;
-										//cout << "referenceTypePersonCrossReferenceGenderArray[i] = " << referenceTypePersonCrossReferenceGenderArray[i] << endl;
-										//cout << "referenceTypePersonCrossReferenceDefiniteArray[i] = " << referenceTypePersonCrossReferenceDefiniteArray[i] << endl;
-										//cout << "referenceTypePersonCrossReferencePersonArray[i] = " << referenceTypePersonCrossReferencePersonArray[i] << endl;
-										//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumber = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumber << endl;
-										//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp << endl;
-										//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp << endl;
-										//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalRelexPersonOrStanfordProperNounTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalRelexPersonOrStanfordProperNounTemp << endl;
+										cout << "referenceTypePersonCrossReferenceNumberArray[i] = " << referenceTypePersonCrossReferenceNumberArray[i] << endl;
+										cout << "referenceTypePersonCrossReferenceGenderArray[i] = " << referenceTypePersonCrossReferenceGenderArray[i] << endl;
+										cout << "referenceTypePersonCrossReferenceDefiniteArray[i] = " << referenceTypePersonCrossReferenceDefiniteArray[i] << endl;
+										cout << "referenceTypePersonCrossReferencePersonArray[i] = " << referenceTypePersonCrossReferencePersonArray[i] << endl;
+										cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumber = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumber << endl;
+										cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp << endl;
+										cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp << endl;
+										cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalRelexPersonOrStanfordProperNounTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalRelexPersonOrStanfordProperNounTemp << endl;
 										#endif
 										
 										if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp)
 										{
 											#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp << endl;
+											cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp << endl;
 											#endif
 											referenceSourceHasBeenFound = true;
 											referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
@@ -626,7 +626,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 										else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp) && (s2 > 0))
 										{
 											#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp << endl;
+											cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp << endl;
 											#endif
 											referenceSourceHasBeenFound = true;
 											referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
@@ -634,7 +634,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 										else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasSubstanceTemp) && (s2 > 0))
 										{
 											#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasSubstanceTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasSubstanceTemp << endl;
+											cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasSubstanceTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasSubstanceTemp << endl;
 											#endif
 											referenceSourceHasBeenFound = true;
 											referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
@@ -644,7 +644,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 								else
 								{
 									#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-									//cout << "error: !entityAlreadyExistant" << endl;	//will be non-existant in the case of intermediary words like "the"
+									cout << "error: !entityAlreadyExistant" << endl;	//will be non-existant in the case of intermediary words like "the"
 									//exit(0);
 									#endif
 								}
@@ -686,12 +686,10 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 						{
 							GIAentityNode * substance = (*connectionIter)->entity;
 							#ifdef GIA_PRONOUN_REFERENCING_DEBUG
-							/*
 							cout << "substance->sentenceIndexTemp = " << substance->sentenceIndexTemp << endl;
 							cout << "substance->entityIndexTemp = " << substance->entityIndexTemp << endl;
-							cout << "referenceSourceSentenceIndex = " << referenceSourceSentenceIndex << endl;
-							cout << "referenceSourceEntityNodeIndex = " << referenceSourceEntityNodeIndex << endl;
-							*/
+							//cout << "referenceSourceSentenceIndex = " << referenceSourceSentenceIndex << endl;
+							//cout << "referenceSourceEntityNodeIndex = " << referenceSourceEntityNodeIndex << endl;
 							#endif
 							if(!conceptHasASubstance)
 							{//take first instance/substance in list

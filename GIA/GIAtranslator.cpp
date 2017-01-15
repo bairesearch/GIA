@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2b 18-July-2013
+ * Project Version: 1t2c 19-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -431,10 +431,20 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	cout << "pass 0; locate/add all entities [execution#1]" << endl;
 	#endif
 	locateAndAddAllFeatureTempEntities(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPdependencyRelationsType, NLPfeatureParser);
-
+	
 	Feature * featureArrayTemp[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 	generateTempFeatureArray(currentSentenceInList->firstFeatureInList, featureArrayTemp);	//regeneration required for Relex in case query variables detected
-	
+
+	#ifdef GIA_TRANSLATOR_DEBUG
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{
+		if(featureArrayTemp[w] != NULL)
+		{
+			cout << "-1: " << featureArrayTemp[w]->lemma << ", w = " << w << endl;
+		}
+	}
+	#endif
+		
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1a; fillGrammaticalArrays" << endl;
 	#endif
@@ -539,7 +549,17 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	*/	
 	#endif
 	#endif		
-	
+
+	#ifdef GIA_TRANSLATOR_DEBUG
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{
+		if(featureArrayTemp[w] != NULL)
+		{
+			cout << "0: " << featureArrayTemp[w]->lemma << ", w = " << w << endl;
+		}
+	}
+	#endif
+		
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
@@ -929,6 +949,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	disableConceptEntitiesBasedOnFeatureTempEntityNodeArray(GIAentityNodeArrayFilled, GIAconceptNodeArray, GIAfeatureTempEntityNodeArray);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
+	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	{
+		if(featureArrayTemp[w] != NULL)
+		{
+			cout << "1: " << featureArrayTemp[w]->lemma << ", w = " << w << endl;
+		}
+	}
+	
 	cout << "dependency relations: " << endl;
 	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -949,6 +977,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		//cout << w << endl;
 		if(GIAentityNodeArrayFilled[w])
 		{
+			cout << "filled" << endl;
 			if(!(GIAconceptNodeArray[w]->disabled))
 			{
 				Feature * currentFeature = featureArrayTemp[w];

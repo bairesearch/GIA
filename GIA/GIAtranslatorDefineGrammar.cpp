@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2b 18-July-2013
+ * Project Version: 1t2c 19-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -85,21 +85,39 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 		
 		bool argumentIsQuery = false;
 		#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
+		/*presumably this code relates to the special case; if there is another relation entity (eg _%atLocation[1]) with the same feature index as $qVar (eg _$qVar[1]) 
+		eg Where is the ball?
+		_pobj(_%atLocation[1], _$qVar[1])
+		_psubj(_%atLocation[1], ball[4])
+		*/							
 		if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
 		{
 			if(name[1] == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 			{//modify relation index [to prevent overlapping of comparison variable indicies with other indicies]
 
-				//update feature->entityIndex using featureArrayTemp - added 1 May 2012 after Relex Failure detected
+				#ifdef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
+				//create a new feature and add it onto the feature list
+				Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
+				while(currentFeatureInList->next != NULL)
+				{
+					currentFeatureInList = currentFeatureInList->next;
+				}
+				currentFeatureInList->entityIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX;
+				Feature * newFeature = new Feature();
+				currentFeatureInList->next = newFeature;
+				#else
+				//removed 19 July 2013 after failure to parse "Where is the ball?":
+				//update feature->entityIndex using featureArrayTemp - added 1 May 2012 after Relex Failure detected [somewhere between 1j6b -> 1j6f]
 				Feature * featureArrayTemp[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 				generateTempFeatureArray(currentSentenceInList->firstFeatureInList, featureArrayTemp);
 				Feature * featureOfQueryNode = featureArrayTemp[relationIndex[1]];
+				//cout << "featureOfQueryNode->lemma = " << featureOfQueryNode->lemma << endl; 
 				featureOfQueryNode->entityIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX;
-
+				#endif
+				
 				relationIndex[1] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX;
 				currentRelationInList->relationDependentIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX;
 				argumentIsQuery = true;
-
 			}
 		}
 		#endif
@@ -114,6 +132,8 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 				featureTempEntity->entityName = name[i];
 				GIAfeatureTempEntityNodeArray[relationIndex[i]] = featureTempEntity;
 
+				//cout << "filling: " << relationIndex[i] << " " << name[i] << endl;
+				
 				#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 				if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
 				{
@@ -136,11 +156,8 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 				GIAfeatureTempEntityNodeArray[relationIndex[i]]->entityIndexTemp = relationIndex[i];
 				GIAfeatureTempEntityNodeArray[relationIndex[i]]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
 				#endif
-
-
 			}
 		}
-
 
 		currentRelationInList = currentRelationInList->next;
 	}
