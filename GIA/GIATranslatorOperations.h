@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l4f 03-June-2012
+ * Project Version: 1l4g 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -555,6 +555,8 @@ used
 #define FEATURE_POS_TAG_ADVERB_COMPARATIVE "RBR"
 #define FEATURE_POS_TAG_ADVERB_SUPERLATIVE "RBS"
 #define FEATURE_POS_TAG_NUMBER_OF_TYPES_MINIMAL (16)
+#define FEATURE_POS_TAG_CD "CD"		//required for when "one" is misinterpreted as the number 'one', or for times eg "6:45"
+
 
 #define FEATURE_POS_TAG_VERB_PAST_NUMBER_OF_TYPES (2)
 #define FEATURE_POS_TAG_VERB_PRESENT_NUMBER_OF_TYPES (2)
@@ -645,6 +647,7 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 #define FEATURE_NER_NAME_CONCATENATION_TOKEN " " 	//or use "_" for Relex format
 
 #define FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_TYPES (6)
+#define FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_TYPES (5)
 
 #define FEATURE_POS_TAG_PERSONAL_PRONOUN "PRP"
 #define FEATURE_POS_TAG_POSSESSIVE_PRONOUN "PP$" 
@@ -837,6 +840,7 @@ static int featureNERindicatesNameConcatenationRequiredTypeArray[FEATURE_NER_IND
 static int featureNERindicatesNormalisedNERavailableTypeArray[FEATURE_NER_INDICATES_NORMALISED_NER_AVAILABLE_NUMBER_TYPES] = {FEATURE_NER_DATE, FEATURE_NER_TIME, FEATURE_NER_MONEY, FEATURE_NER_NUMBER};
 static string featurePOSindicatesAdjectiveOrAdverbTypeArray[FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_TYPES] = {FEATURE_POS_TAG_ADJECTIVE, FEATURE_POS_TAG_ADJECTIVE_COMPARATIVE, FEATURE_POS_TAG_ADJECTIVE_SUPERLATIVE, FEATURE_POS_TAG_ADVERB, FEATURE_POS_TAG_ADVERB_COMPARATIVE, FEATURE_POS_TAG_ADVERB_SUPERLATIVE};
 static string featurePOSindicatesPronounTypeArray[FEATURE_POS_TAG_INDICATES_PRONOUN_NUMBER_TYPES] = {FEATURE_POS_TAG_PERSONAL_PRONOUN, FEATURE_POS_TAG_POSSESSIVE_PRONOUN};
+static string featurePOSindicatesNounTypeArray[FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_TYPES] = {FEATURE_POS_TAG_CD, FEATURE_POS_TAG_NN, FEATURE_POS_TAG_NNS, FEATURE_POS_TAG_NNP, FEATURE_POS_TAG_NNPS};
 
 
 

@@ -3,7 +3,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l4f 03-June-2012
+ * Project Version: 1l4g 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -978,7 +978,19 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 													//cout << "subjectGovernorEntity->stanfordPOSTemp = " << subjectGovernorEntity->stanfordPOSTemp << endl;
 													subjectGovernorAdjectiveOrAdvebFound = true;
 												}
-											}											
+											}
+											bool subjectGovernorNounFound = false;
+											for(int i=0; i<FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_TYPES; i++)
+											{
+												//cout << "currentRelationInList->relationGovernorIndex = " << currentRelationInList->relationGovernorIndex << endl;
+												//cout << "subjectGovernorEntity->stanfordPOSTemp = " << subjectGovernorEntity->stanfordPOSTemp << endl;
+												//cout << "featurePOSindicatesNounTypeArray[i] = " << featurePOSindicatesNounTypeArray[i] << endl;
+												if(subjectGovernorEntity->stanfordPOSTemp == featurePOSindicatesNounTypeArray[i])
+												{
+													//cout << "subjectGovernorEntity->stanfordPOSTemp = " << subjectGovernorEntity->stanfordPOSTemp << endl;
+													subjectGovernorNounFound = true;
+												}
+											}																							
 															
 											if(subjectGovernorAdjectiveOrAdvebFound)
 											{
@@ -990,7 +1002,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 
 												currentRelationInList2->disabled =  true;												
 											}
-											else
+											else if(subjectGovernorNounFound)
 											{
 												currentRelationInList->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
 												currentRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
@@ -999,6 +1011,28 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 												currentRelationInList->relationDependent = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName;							
 
 												currentRelationInList2->disabled =  true;											
+											}
+											else
+											{
+												if(subjectGovernorEntity->stanfordPOSTemp == FEATURE_POS_TAG_VBN)
+												{
+													//must switch subject to object;
+													/*eg;
+													The boat that was rowed ate a pie.
+													The boat that is rowed ate a pie.
+													The boat that will be rowed ate a pie.
+													The boat that has been rowed ate a pie.
+													The boat that was being rowed ate a pie.
+													The boat that is being rowed ate a pie.		
+													nsubj(rowed-5, boat-2) -> dobj(rowed-5, boat-2)
+													nsubj(rowed-5, boat-2) -> dobj(rowed-5, boat-2)
+													nsubj(rowed-6, boat-2) -> dobj(rowed-5, boat-2)
+													nsubj(rowed-6, boat-2) -> dobj(rowed-5, boat-2)
+													nsubjpass(rowed-6, boat-2)	[already interpreted as obj in GIA]
+													nsubjpass(rowed-6, boat-2)	[already interpreted as obj in GIA]											
+													*/
+													currentRelationInList->relationType = RELATION_TYPE_OBJECT;
+												}
 											}
 										}
 										else
