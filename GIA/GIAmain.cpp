@@ -856,6 +856,7 @@ bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entity
 	setTranslatorEntityNodesCompleteList(entityNodesCompleteList);
 	setTranslatorPropertyEntityNodesList(propertyEntityNodesList);
 	setTranslatorActionEntityNodesList(actionEntityNodesList);
+	setTranslatorConditionEntityNodesList(conditionEntityNodesList);
 	convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, conceptEntityNamesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList);
 	
 	return result;

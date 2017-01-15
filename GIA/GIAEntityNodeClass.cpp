@@ -44,10 +44,12 @@ GIAEntityNode::GIAEntityNode(void)
 	
 	//type = undefinedEntityType;
 	//instance = undefinedInstance;
-
+	
 	actionSubjectEntity = NULL;
 	actionObjectEntity = NULL;
-	
+
+	conditionSubjectEntity = NULL;
+	conditionObjectEntity = NULL;	
 	conditionType = CONDITION_NODE_TYPE_UNDEFINED;
 	timeConditionNode = NULL;
 	
