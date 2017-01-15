@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q7a 02-November-2012
+ * Project Version: 1q7b 02-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -630,7 +630,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1q7a 02-November-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1q7b 02-November-2012" << endl;
 			exit(1);
 		}
 
@@ -658,23 +658,6 @@ int main(int argc,char **argv)
 	fillInLDSpriteExternVariables();
 	///GIA specific rules.xml file is not used at the moment	[once right variables have been decided upon they will be fed to xml]
 	//fillInGIARulesExternVariables();
-
-	#ifdef GIA_USE_DATABASE
-	initialiseDatabase(readFromDatabase, databaseFolderName, useDatabase);
-	#ifdef LINUX
-	chdir(workingFolderCharStar);
-	#else
-	::SetCurrentDirectory(workingFolderCharStar);
-	#endif		
-	#endif
-	
-	#ifdef USE_WORDNET
-	initialiseWordNet(synonymnDetectionStatus);
-	#endif	
-
-	#ifdef GIA_USE_LRP
-	initialiseLRP(lrpDataFolderName, useLRP);
-	#endif
 	
 	vector<GIAEntityNode*> * entityNodesActiveListComplete = new vector<GIAEntityNode*>;
 	unordered_map<string, GIAEntityNode*> * entityNodesActiveListConcepts = new unordered_map<string, GIAEntityNode*>;
@@ -690,6 +673,23 @@ int main(int argc,char **argv)
 	vector<GIAEntityNode*> * entityNodesActiveListConditionsQuery = new vector<GIAEntityNode*>;			//not required - declared for symmetry
 	unordered_map<long, GIATimeConditionNode*> * timeConditionNodesActiveListQuery = new unordered_map<long, GIATimeConditionNode*>;
 
+	#ifdef GIA_USE_DATABASE
+	initialiseDatabase(readFromDatabase, databaseFolderName, useDatabase, entityNodesActiveListComplete, entityNodesActiveListConcepts);
+	#ifdef LINUX
+	chdir(workingFolderCharStar);
+	#else
+	::SetCurrentDirectory(workingFolderCharStar);
+	#endif		
+	#endif
+	
+	#ifdef USE_WORDNET
+	initialiseWordNet(synonymnDetectionStatus);
+	#endif	
+
+	#ifdef GIA_USE_LRP
+	initialiseLRP(lrpDataFolderName, useLRP);
+	#endif
+	
 	if(printOutput)
 	{
 		if(!useOutputTextXMLFile)

@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q7a 02-November-2012
+ * Project Version: 1q7b 02-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -207,14 +207,28 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	
 	#ifdef GIA_FREE_MEMORY2
 	vector<GIAEntityNode*> * entityNodesActiveListCompleteOriginal = getTranslatorEntityNodesCompleteList();
+	unordered_map<string, GIAEntityNode*> * entityNodesActiveListCompleteFastIndexDBactiveOriginal;
+	if(getUseDatabase() != GIA_USE_DATABASE_FALSE)
+	{
+		getDBentityNodesActiveListCompleteFastIndexDBactive();	
+	}
 	vector<GIAEntityNode*> * entityNodesActiveListSubstancesOriginal = getTranslatorSubstanceEntityNodesList();
 	vector<GIAEntityNode*> * entityNodesActiveListActionsOriginal = getTranslatorActionEntityNodesList();
 	vector<GIAEntityNode*> * entityNodesActiveListConditionsOriginal = getTranslatorConditionEntityNodesList();
 	vector<GIAEntityNode*> * entityNodesActiveListCompleteTemp = new vector<GIAEntityNode*>;
+	unordered_map<string, GIAEntityNode*> * entityNodesActiveListCompleteFastIndexDBactiveTemp;
+	if(getUseDatabase() != GIA_USE_DATABASE_FALSE)
+	{
+		entityNodesActiveListCompleteFastIndexDBactiveTemp = new unordered_map<string, GIAEntityNode*>;
+	}
 	vector<GIAEntityNode*> * entityNodesActiveListSubstancesTemp = new vector<GIAEntityNode*>;
 	vector<GIAEntityNode*> * entityNodesActiveListActionsTemp = new vector<GIAEntityNode*>;
 	vector<GIAEntityNode*> * entityNodesActiveListConditionsTemp = new vector<GIAEntityNode*>;
 	setTranslatorEntityNodesCompleteList(entityNodesActiveListCompleteTemp);
+	if(getUseDatabase() != GIA_USE_DATABASE_FALSE)
+	{
+		setDBentityNodesActiveListCompleteFastIndexDBactive(entityNodesActiveListCompleteFastIndexDBactiveTemp);
+	}
 	setTranslatorSubstanceEntityNodesList(entityNodesActiveListSubstancesTemp);
 	setTranslatorActionEntityNodesList(entityNodesActiveListActionsTemp);
 	setTranslatorConditionEntityNodesList(entityNodesActiveListConditionsTemp);
@@ -307,6 +321,10 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 
 	#ifdef GIA_FREE_MEMORY2
 	setTranslatorEntityNodesCompleteList(entityNodesActiveListCompleteOriginal);
+	if(getUseDatabase() != GIA_USE_DATABASE_FALSE)
+	{
+		setDBentityNodesActiveListCompleteFastIndexDBactive(entityNodesActiveListCompleteFastIndexDBactiveOriginal);	
+	}
 	setTranslatorSubstanceEntityNodesList(entityNodesActiveListSubstancesOriginal);
 	setTranslatorActionEntityNodesList(entityNodesActiveListActionsOriginal);
 	setTranslatorConditionEntityNodesList(entityNodesActiveListConditionsOriginal);
@@ -325,8 +343,12 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	delete firstGIACoreferenceInList;	
 	delete currentSentenceInListTemp;
 	#ifdef GIA_FREE_MEMORY2
-	deleteEntitiesInEntityNodeList(entityNodesActiveListCompleteTemp);
+	deleteEntitiesInEntityNodeList(entityNodesActiveListCompleteTemp);	//what about entities that have been referenced via advanced referencing (and were not added via direct database access) - won't these be deleted also?
 	delete entityNodesActiveListCompleteTemp;	//entityNodesActiveListCompleteTemp->clear();
+	if(getUseDatabase() != GIA_USE_DATABASE_FALSE)
+	{	
+		delete entityNodesActiveListCompleteFastIndexDBactiveTemp;	//entityNodesActiveListCompleteFastIndexTemp->clear();	
+	}
 	delete entityNodesActiveListSubstancesTemp;	//entityNodesActiveListSubstancesTemp->clear();
 	delete entityNodesActiveListActionsTemp;	//entityNodesActiveListActionsTemp->clear();
 	delete entityNodesActiveListConditionsTemp;  	//entityNodesActiveListConditionsTemp->clear();  

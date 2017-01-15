@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q7a 02-November-2012
+ * Project Version: 1q7b 02-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -577,6 +577,7 @@
 
 #define GIA_USE_DATABASE	//requires further testing
 #ifdef GIA_USE_DATABASE
+	#define GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ	//enable this for debugging only - not required for GIA
 	//#define GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 	#define GIA_USE_DATABASE_FILESYSTEM
 	//#define GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
@@ -736,8 +737,8 @@
 //#define GIA_DRAW_USE_PATENT			//modifies colours of nodes such that they print uniquely in black and white
 //#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. concept-list -> concepts or substances
 #define GIA_DRAW_DISPLAY_ANSWER_CONTEXTS
-#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS
-	//#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS	//is this condition required?
+	#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 #endif
 
 #endif

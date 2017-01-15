@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q7a 02-November-2012
+ * Project Version: 1q7b 02-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1225,7 +1225,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 	int useDatabaseOriginal = getUseDatabase();
 	if(getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE)
 	{
-		initialiseDBentityNodesTempActiveListComplete();
+		initialiseDBentityNodesActiveListCompleteFastIndexDBcache();
 	}
 	#endif
 	#endif
@@ -1343,7 +1343,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 	#ifdef GIA_USE_DATABASE
 	if(getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE)
 	{
-		clearDBentityNodesTempActiveListComplete();
+		clearDBentityNodesActiveListCompleteFastIndexDBcache();
 	}
 	#endif
 	#endif
@@ -1727,8 +1727,13 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 							#ifdef GIA_USE_DATABASE
 							if(getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE)
 							{
-								addEntityNodeToActiveLists(referenceSource, entityNodesActiveListConcepts);
-								//referenceSource->modified = true;	//used to re-write the node to the database (in case it has been updated)
+								bool foundReferenceSourceInActiveList = false;
+								GIAEntityNode * tempNode = findEntityNodesActiveListCompleteFastIndexDBactive(&(referenceSource->entityName), referenceSource->idInstance, &foundReferenceSourceInActiveList); 
+								if(!foundReferenceSourceInActiveList)	//OR findEntityNodesActiveListCompleteFastIndexDBactive(referenceSource) OR if(!entityInActiveListComplete(referenceSource->entityName, referenceSource->idInstance))
+								{
+									addInstanceEntityNodeToActiveLists(referenceSource);
+									//referenceSource->modified = true;	//used to re-write the node to the database (in case it has been updated)									
+								}	
 							}
 							#endif
 

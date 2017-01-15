@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q7a 02-November-2012
+ * Project Version: 1q7b 02-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -45,6 +45,8 @@ static vector<GIAEntityNode*> * entityNodesActiveListComplete;		//For GIA XML ge
 static vector<GIAEntityNode*> * entityNodesActiveListSubstances;		//For GIA XML generation only
 static vector<GIAEntityNode*> * entityNodesActiveListActions;			//For GIA XML generation only
 static vector<GIAEntityNode*> * entityNodesActiveListConditions;		//For GIA XML generation only
+
+unordered_map<string, GIAEntityNode*> *entityNodesActiveListCompleteFastIndex;
 
 static bool saveNetwork; 						//For GIA XML generation only / GIA Advanced referencing only
 static long currentEntityNodeIDInSentenceCompleteList;			//For GIA Advanced referencing only
@@ -344,30 +346,16 @@ GIAEntityNode * addSubstance(GIAEntityNode * entity)
 	#ifdef GIA_USE_DATABASE
 	newSubstance->added = true;
 	#endif
-
-	if(saveNetwork)
-	{
-		newSubstance->idActiveList = currentEntityNodeIDInCompleteList;
-		newSubstance->idActiveEntityTypeList = currentEntityNodeIDInSubstanceEntityNodesList;
-
-		entityNodesActiveListComplete->push_back(newSubstance);
-		currentEntityNodeIDInCompleteList++;
-		entityNodesActiveListSubstances->push_back(newSubstance);
-		currentEntityNodeIDInSubstanceEntityNodesList++;
-	}
-	else
-	{
-		newSubstance->idActiveList = currentEntityNodeIDInSentenceCompleteList;
-		currentEntityNodeIDInSentenceCompleteList++;
-	}
+	
+	newSubstance->isSubstance = true;
+	addInstanceEntityNodeToActiveLists(newSubstance);
 
 	newSubstance->entityName = entity->entityName;
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
 	newSubstance->wordOrig = entity->wordOrig;
 	#endif
 	newSubstance->idInstance = determineNextIdInstance(entity);
-	newSubstance->isSubstance = true;
-
+	
 	entity->hasAssociatedInstance = true;
 	entity->hasAssociatedInstanceTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	newSubstance->wordNetPOS = entity->wordNetPOS;
@@ -553,21 +541,8 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 	newAction->added = true;
 	#endif
 
-	if(saveNetwork)
-	{
-		newAction->idActiveList = currentEntityNodeIDInCompleteList;
-		newAction->idActiveEntityTypeList = currentEntityNodeIDInActionEntityNodesList;
-
-		entityNodesActiveListComplete->push_back(newAction);
-		currentEntityNodeIDInCompleteList++;
-		entityNodesActiveListActions->push_back(newAction);
-		currentEntityNodeIDInActionEntityNodesList++;
-	}
-	else
-	{
-		newAction->idActiveList = currentEntityNodeIDInSentenceCompleteList;
-		currentEntityNodeIDInSentenceCompleteList++;
-	}
+	newAction->isAction = true;
+	addInstanceEntityNodeToActiveLists(newAction);
 
 	newAction->entityName = actionEntity->entityName;
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
@@ -582,7 +557,6 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 	actionEntity->hasAssociatedInstanceIsAction = true;
 	actionEntity->hasAssociatedInstanceTemp = true;
 	newAction->wordNetPOS = actionEntity->wordNetPOS;
-	newAction->isAction = true;
 	//WHY WOULD THIS EVER BE REQURIED?; newAction->entityNodeContainingThisSubstance = NULL;
 
 	forwardTimeInfoToNewSubstance(actionEntity, newAction);
@@ -998,21 +972,8 @@ GIAEntityNode * addCondition(GIAEntityNode * conditionEntity)
 	newCondition->added = true;
 	#endif
 
-	if(saveNetwork)
-	{
-		newCondition->idActiveList = currentEntityNodeIDInCompleteList;
-		newCondition->idActiveEntityTypeList = currentEntityNodeIDInConditionEntityNodesList;
-
-		entityNodesActiveListComplete->push_back(newCondition);
-		currentEntityNodeIDInCompleteList++;
-		entityNodesActiveListConditions->push_back(newCondition);
-		currentEntityNodeIDInConditionEntityNodesList++;
-	}
-	else
-	{
-		newCondition->idActiveList = currentEntityNodeIDInSentenceCompleteList;
-		currentEntityNodeIDInSentenceCompleteList++;
-	}
+	newCondition->isCondition = true;
+	addInstanceEntityNodeToActiveLists(newCondition);
 
 	newCondition->entityName = conditionEntity->entityName;
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
@@ -1026,7 +987,6 @@ GIAEntityNode * addCondition(GIAEntityNode * conditionEntity)
 	conditionEntity->hasAssociatedInstance = true;
 	conditionEntity->hasAssociatedInstanceIsCondition = true;
 	conditionEntity->hasAssociatedInstanceTemp = true;
-	newCondition->isCondition = true;
 	newCondition->negative = conditionEntity->negative;
 
 	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
@@ -1076,6 +1036,10 @@ void setTranslatorEntityNodesCompleteList(vector<GIAEntityNode*> * newEntityNode
 {
 	entityNodesActiveListComplete = newEntityNodesCompleteList;
 }
+void setTranslatorEntityNodesCompleteListFastIndex(unordered_map<string, GIAEntityNode*> * newEntityNodesCompleteListFastIndex)
+{
+	entityNodesActiveListCompleteFastIndex = newEntityNodesCompleteListFastIndex;
+}
 /*
 void setTranslatorConceptEntityNodesList(vector<GIAEntityNode*> * newConceptEntityNodesList)
 {
@@ -1100,6 +1064,10 @@ void setTranslatorConditionEntityNodesList(vector<GIAEntityNode*> * newCondition
 vector<GIAEntityNode*> * getTranslatorEntityNodesCompleteList()
 {
 	return entityNodesActiveListComplete;
+}
+unordered_map<string, GIAEntityNode*> * getTranslatorEntityNodesCompleteListFastIndex()
+{
+	return entityNodesActiveListCompleteFastIndex;
 }
 /*
 vector<GIAEntityNode*> * getTranslatorConceptEntityNodesList()
@@ -1677,7 +1645,39 @@ long determineNextIdInstance(GIAEntityNode * entity)
 
 
 #ifdef GIA_USE_DATABASE
-void addEntityNodeToActiveLists(GIAEntityNode * entity, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts)
+/*//replaced with optimised function findEntityNodesActiveListCompleteFastIndexDBactive()
+bool entityInActiveListComplete(string * entityName, long idInstance)
+{
+	bool entityAlreadyInActiveListComplete = false;
+	for(vector<GIAEntityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
+	{
+		GIAEntityNode * entityNode = *entityNodesActiveListComplete;
+		if((entityNode->entityName == entityName) && (entityNode->idInstance == idInstance))
+		{
+			entityAlreadyInActiveListComplete = true;
+		}
+	}
+	cout << "entityInActiveListComplete(string * entityName, long idInstance) = " << entityAlreadyInActiveListComplete << endl;
+	return entityAlreadyInActiveListComplete;
+}
+
+bool entityInActiveListComplete(GIAEntityNode * entity)
+{
+	bool entityAlreadyInActiveListComplete = false;
+	for(vector<GIAEntityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
+	{
+		GIAEntityNode * entityNode = *entityNodesActiveListComplete;
+		if(entityNode == entity)
+		{
+			entityAlreadyInActiveListComplete = true;
+		}
+	}
+	cout << "entityInActiveListComplete(GIAEntityNode * entity) = " << entityAlreadyInActiveListComplete << endl;
+	return entityAlreadyInActiveListComplete;
+}
+*/
+
+void addInstanceEntityNodeToActiveLists(GIAEntityNode * entity)
 {//NB add reference set entity to active list complete + appropriate list (substance/action/condition) [NB the reference set entity will already be added to concept active list entityNodesActiveListConcepts...] - this function enables references to be written to XML
 
 	/*already available locally...
@@ -1692,7 +1692,7 @@ void addEntityNodeToActiveLists(GIAEntityNode * entity, unordered_map<string, GI
 	{
 		if(entity->isConcept)
 		{
-			//do nothing - assume reference set entity already added to concept active list (in createGIACoreferenceInListBasedUponIdentifiedReferenceSets())
+			//addInstanceEntityNodeToActiveLists() does not support concept entities. NB when this function is executed via linkAdvancedReferencesGIA(), the referenceSource concept entity is already added to the concept active list (ie, see GIAEntityNode * referenceSourceConceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper)
 		}
 		else if(entity->isAction)
 		{
@@ -1712,13 +1712,18 @@ void addEntityNodeToActiveLists(GIAEntityNode * entity, unordered_map<string, GI
 			entityNodesActiveListSubstances->push_back(entity);
 			currentEntityNodeIDInSubstanceEntityNodesList++;
 		}
-
+		
 		entity->idActiveList = currentEntityNodeIDInCompleteList;
 		entityNodesActiveListComplete->push_back(entity);
 		currentEntityNodeIDInCompleteList++;
+		
+		if(getUseDatabase() != GIA_USE_DATABASE_FALSE)
+		{
+			addEntityNodesActiveListCompleteFastIndexDBactive(entity);	//added 2 Nov 2012
+		}
 	}
 	else
-	{//this case should never be used...
+	{//this case should never be used when this function is executed via linkAdvancedReferencesGIA() 
 		entity->idActiveList = currentEntityNodeIDInSentenceCompleteList;
 		currentEntityNodeIDInSentenceCompleteList++;
 	}

@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q7a 02-November-2012
+ * Project Version: 1q7b 02-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1062,7 +1062,11 @@ void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNod
 long determineNextIdInstance(GIAEntityNode * entity);
 
 #ifdef GIA_USE_DATABASE
-void addEntityNodeToActiveLists(GIAEntityNode * entity, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts);
+/*//replaced with optimised function findEntityNodesActiveListCompleteFastIndexDBactive()
+bool entityInActiveListComplete(string * entityName, long idInstance);
+bool entityInActiveListComplete(GIAEntityNode * entity);
+*/
+void addInstanceEntityNodeToActiveLists(GIAEntityNode * entity);
 #endif
 
 #ifdef GIA_SUPPORT_ALIASES
