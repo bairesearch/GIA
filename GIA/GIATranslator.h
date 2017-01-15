@@ -30,6 +30,7 @@ using namespace std;
 #define SUBJECT_INDEX (0)
 #define OBJECT_INDEX (1)
 
+#define GIA_ASSIGN_UNIQUE_ACTION_NODE_TO_EACH_ACTION_INSTANCE_OF_A_GIVEN_ACTION_NAME (1)
 					
 #include "GIASentenceClass.h"
 #include "GIAEntityNodeClass.h"

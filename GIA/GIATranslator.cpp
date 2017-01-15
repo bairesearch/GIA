@@ -102,7 +102,15 @@ void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEnti
 	}
 	else
 	{
-		newOrExistingAction = actionEntity->firstAssociatedActionNodeInList.back();
+		if(GIA_ASSIGN_UNIQUE_ACTION_NODE_TO_EACH_ACTION_INSTANCE_OF_A_GIVEN_ACTION_NAME == 1)
+		{
+			//cout << "GIA_ASSIGN_UNIQUE_ACTION_NODE_TO_EACH_ACTION_INSTANCE_OF_A_GIVEN_ACTION_NAME == 1" << endl;
+			newOrExistingAction = addAction(actionEntity);
+		}
+		else
+		{
+			newOrExistingAction = actionEntity->firstAssociatedActionNodeInList.back();
+		}
 	}
 
 	addActionToSubject(subjectEntity, actionEntity);
