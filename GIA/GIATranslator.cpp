@@ -1370,13 +1370,19 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 								else
 								{//assume that the subject-object relationships is an action
 									string actionName = currentRelationInList->relationFunction;
-									cout << "actionName = " << actionName << endl;
+									cout << "1 actionName = " << actionName << endl;
 									GIAEntityNode * actionEntity = GIAEntityNodeArray[relationFunctionIndex];
 									
 									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 									GIAEntityNode * subjectEntityTemp = subjectObjectEntityArray[SUBJECT_INDEX];
 									GIAEntityNode * objectEntityTemp = subjectObjectEntityArray[OBJECT_INDEX];
-																										
+									
+									cout << "subjectEntityTemp = " << subjectEntityTemp->entityName << endl;																	
+									cout << "objectEntityTemp = " << objectEntityTemp->entityName << endl;
+									
+									cout << "relationArgumentIndex = " << relationArgumentIndex << endl;
+									cout << "relationArgumentIndex2 = " << relationArgumentIndex2 << endl;
+									
 									addActionToEntity(subjectEntityTemp, objectEntityTemp, actionEntity);
 								}
 								foundPartner = true;	
@@ -1400,7 +1406,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						else
 						{//assume that the subject-object relationships is an action
 							string actionName = currentRelationInList->relationFunction;
-							cout << "actionName = " << actionName << endl;
+							cout << "2 actionName = " << actionName << endl;
 							GIAEntityNode * actionEntity = GIAEntityNodeArray[relationFunctionIndex];
 
 							//addAction(actionEntity);	//WHY WAS THIS HERE????
@@ -1609,7 +1615,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 	
 		
-		cout <<"4b pass; extract dates" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
+		//cout <<"4b pass; extract dates" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
 		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 		{
 			if(GIAEntityNodeArrayFilled[i])
@@ -1723,7 +1729,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;		
 		}
 		
-		cout << "4c pass; extract quantities" << endl;	
+		//cout << "4c pass; extract quantities" << endl;	
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{	
@@ -1785,7 +1791,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;		
 		}
 		
-		cout << "4d pass; extract measures" << endl;
+		//cout << "4d pass; extract measures" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{	
@@ -1828,7 +1834,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			}
 			currentRelationInList = currentRelationInList->next;		
 		}
-		cout << "4d2 pass; extract measures" << endl;
+		//cout << "4d2 pass; extract measures" << endl;
 				
 		/*
 		//restore critical variables; temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
