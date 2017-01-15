@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q1a 11-October-2012
+ * Project Version: 1q2a 11-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -185,9 +185,11 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesA
 	maxXAtAParticularY[yInitial] = xInitial;
 	//first pass; determine maxXAtAParticularY	[and use these to centre each row {at a given y} respectively]
 
-	for (entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
+	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	for(int sentenceIndex=0; sentenceIndex < MAXIMUM_NUMBER_OF_SENTENCES_IN_INPUT_TEXT; sentenceIndex++)
 	{
-		if(!((*entityIter)->initialisedForPrinting))
+	#endif
+		for(entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 		{
 			#ifdef GIA_DRAW_DEBUG
 			cout << "\ttracing..." << (*entityIter)->entityName << endl;
@@ -196,13 +198,11 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesA
 			//initiateMaxXAtAParticularY();
 			xInitial = maxXAtAParticularY[yInitial];
 
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, initialiseOrPrint, currentReferenceInPrintList, currentTag);
+			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, initialiseOrPrint, currentReferenceInPrintList, currentTag, sentenceIndex);		
 		}
-        	else
-		{//NB if already initalised for printing, disregard
-
-		}
+	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	}
+	#endif	
 }
 
 Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAEntityNode * entityNodeToConnect, Reference * currentReferenceInPrintList, bool initialiseOrPrint[], string connectionName, int entityDefinitionConnectionColour, XMLParserTag ** currentTag)
@@ -221,323 +221,329 @@ Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAEntityNode * en
 }
 
 
-Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLParserTag ** currentTag)
+Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLParserTag ** currentTag, int sentenceIndex)
 {
-
-	//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
-	if(!(entityNode->initialisedForPrinting) && !(entityNode->disabled))
+	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	if(entityNode->sentenceIndexTemp == sentenceIndex)
 	{
-		#ifdef GIA_DRAW_DEBUG
-		if(entityNode->isSubstance)
+	#endif		
+		//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
+		if(!(entityNode->initialisedForPrinting) && !(entityNode->disabled))
 		{
-			cout << "entityNode = " << entityNode->entityName << " (is substance)" << endl;
-		}
-		else if(entityNode->isAction)
-		{
-			cout << "entityNode = " << entityNode->entityName << " (is action)" << endl;
-		}
-		else if(entityNode->isCondition)
-		{
-			cout << "entityNode = " << entityNode->entityName << " (is condition)" << endl;
-		}
-		else if(entityNode->hasAssociatedInstance)
-		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
-		}
-		else if(entityNode->hasAssociatedInstanceIsAction)
-		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
-		}
-		else if(entityNode->hasAssociatedInstanceIsCondition)
-		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
-		}
-		else if(entityNode->hasAssociatedTime)
-		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated time)" << endl;
-		}
-		else
-		{
-			cout << "entityNode = " << entityNode->entityName << endl;
-		}
-		//cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
-		//cout << "\tentityNode->isSubstance = " << entityNode->isSubstance << endl;
-		//cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
-		//cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;		
-		#endif
-
-
-		entityNode->initialisedForPrinting = true;
-
-		maxXAtAParticularY[y] = maxXAtAParticularY[y] + DRAW_X_SPACE_BETWEEN_ENTITIES;	//only used, for indepdendent network visualisation (eg, when rendering next sentence)
-
-		entityNode->printX = x;
-		entityNode->printY = y;
-
-
-		int q, r;
-
-		vec pos1;
-
-		pos1.x = entityNode->printX;
-		pos1.y = entityNode->printY;
-		pos1.z = DRAW_CONNECTION_Z;
-
-
-		int entityDefinitionConnectionColour;
-		if(entityNode->isSubstance)
-		{
-			entityDefinitionConnectionColour = GIA_DRAW_SUBSTANCE_DEFINITION_CONNECTION_COLOUR;
-		}
-		else if(entityNode->isAction)
-		{
-			entityDefinitionConnectionColour = GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR;
-		}
-		else if(entityNode->isCondition)
-		{
-			entityDefinitionConnectionColour = GIA_DRAW_CONDITION_DEFINITION_CONNECTION_COLOUR;
-		}
-		else
-		{
-			entityDefinitionConnectionColour = GIA_DRAW_SUBSTANCE_DEFINITION_CONNECTION_COLOUR;
-		}
-
-		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-		{
-			int q = entityVectorConnectionDrawPosYinitialArray[i];
-			int r = entityVectorConnectionDrawPosXinitialArray[i];
-			for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
+			#ifdef GIA_DRAW_DEBUG
+			if(entityNode->isSubstance)
 			{
-				currentReferenceInPrintList = initialiseEntityNodeForPrinting((*connectionIter)->entity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, currentTag);
-
-				bool pass = true;
-				int entityConnectionColour = entityVectorConnectionDrawColourNameArray[i];
-				if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
-				{
-					if(initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] == true)
-					{
-						entityConnectionColour = entityDefinitionConnectionColour;
-					}
-					else
-					{
-						pass = false;
-					}
-				}
-
-				if(pass)
-				{
-					if(entityVectorConnectionDrawConnectionArray[i])
-					{
-						#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
-						if((*connectionIter)->sameReferenceSet)
-						{
-							entityConnectionColour = DAT_FILE_COLOUR_GREEN;
-						}
-						else
-						{
-							entityConnectionColour = DAT_FILE_COLOUR_RED;
-						}
-						#endif
-						currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, (*connectionIter)->entity, currentReferenceInPrintList, initialiseOrPrint, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);
-					}
-				}
-				q = q + entityVectorConnectionDrawPosYspacingArray[i];
-			}
-		}
-
-		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
-		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
-		if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
-		{
-			int timeConditionNodePrintX = x+r;
-			int timeConditionNodePrintY = y+q;
-			currentReferenceInPrintList = initialiseTimeConditionNodeForPrinting(entityNode->timeConditionNode, timeConditionNodePrintY, timeConditionNodePrintX, initialiseOrPrint, currentReferenceInPrintList, currentTag);
-
-			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-
-			//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-			vec pos2;
-			pos2.x = timeConditionNodePrintX;
-			pos2.y = timeConditionNodePrintY;
-			pos2.z = DRAW_CONNECTION_Z;
-			currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_TIME_CONNECTION_COLOUR, currentTag, "time", initialiseOrPrint);
-
-		}
-
-
-		if(initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] == true)
-		{
-			//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-
-			int boxThickness = GIA_DRAW_THICKNESS_NORMAL;
-
-			int entityColour;
-			if(entityNode->isQuery)
-			{
-				entityColour = GIA_DRAW_QUERY_QUESTION_NODE_COLOUR;
-			}
-			else if(entityNode->isAnswerToQuery)
-			{
-				entityColour = GIA_DRAW_QUERY_ANSWER_NODE_COLOUR;
-			}
-			#ifdef GIA_DRAW_DISPLAY_ANSWER_CONTEXTS
-			else if(entityNode->queryAnswerContext)
-			{
-				entityColour = GIA_DRAW_QUERY_ANSWER_CONTEXT_NODE_COLOUR;
-			}
-			#endif
-			else if(entityNode->hasAssociatedInstanceIsAction)
-			{
-				#ifdef GIA_DRAW_DEBUG
-				/*
-				if(entityNode->isAction)
-				{
-					cout << "(entityNode->hasAssociatedInstanceIsAction) && (entityNode->isAction)" << endl;
-				}
-				*/
-				#endif
-				if(entityNode->hasMeasure)
-				{
-					entityColour = GIA_DRAW_SUBSTANCE_MEASURE_NODE_COLOUR;
-				}
-				else
-				{
-					entityColour = GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
-				}
-			}
-			else if(entityNode->hasAssociatedInstanceIsCondition)
-			{
-				entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
-			}
-			else if(entityNode->isSubstance)
-			{
-				if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
-				{
-					boxThickness = GIA_DRAW_THICKNESS_THICK;
-				}
-
-				if(entityNode->isSubstanceQuality)
-				{
-					entityColour = GIA_DRAW_SUBSTANCE_QUALITY_NODE_COLOUR;
-				}
-				else
-				{
-					entityColour = GIA_DRAW_SUBSTANCE_NODE_COLOUR;
-				}
-
-				if(entityNode->hasMeasure)
-				{
-					entityColour = GIA_DRAW_SUBSTANCE_MEASURE_NODE_COLOUR;
-				}
-				else if(entityNode->hasQuantity)
-				{
-					entityColour = GIA_DRAW_SUBSTANCE_QUANTITY_NODE_COLOUR;
-				}
-
+				cout << "entityNode = " << entityNode->entityName << " (is substance)" << endl;
 			}
 			else if(entityNode->isAction)
 			{
-				entityColour = GIA_DRAW_ACTION_NODE_COLOUR;
+				cout << "entityNode = " << entityNode->entityName << " (is action)" << endl;
 			}
-			/*
-			else if(entityNode->hasAssociatedTime)
-			{
-				entityColour = GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR;	//clear identify a time node
-			}
-			*/
 			else if(entityNode->isCondition)
 			{
-				entityColour = GIA_DRAW_CONDITION_NODE_COLOUR;	//clear identify a time node
+				cout << "entityNode = " << entityNode->entityName << " (is condition)" << endl;
 			}
 			else if(entityNode->hasAssociatedInstance)
-			{//the original spec seemed to imply that entities that have associated substances (ie, that define substances) are special but they don't appear to be
-				if(!(entityNode->isSubstance))
-				{
-					//added 2 May 11a (highlight entities which define substance nodes)
-					entityColour = GIA_DRAW_SUBSTANCE_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_CONCEPT_NODE_COLOUR;
-				}
+			{
+				cout << "entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
+			}
+			else if(entityNode->hasAssociatedInstanceIsAction)
+			{
+				cout << "entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
+			}
+			else if(entityNode->hasAssociatedInstanceIsCondition)
+			{
+				cout << "entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
+			}
+			else if(entityNode->hasAssociatedTime)
+			{
+				cout << "entityNode = " << entityNode->entityName << " (has associated time)" << endl;
 			}
 			else
 			{
-				entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
+				cout << "entityNode = " << entityNode->entityName << endl;
 			}
-
-			#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
-			if(entityNode->referenceSetID == GIA_REFERENCE_SET_ID_UNDEFINED)
-			{
-				entityColour = DAT_FILE_COLOUR_RED;
-			}
-			else
-			{
-				entityColour = DAT_FILE_COLOUR_GREEN;
-			}
+			//cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
+			//cout << "\tentityNode->isSubstance = " << entityNode->isSubstance << endl;
+			//cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
+			//cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;		
 			#endif
 
-			//first, print this action node.
-			string nameOfBox = "";
-			if(entityNode->hasQuantity)
+
+			entityNode->initialisedForPrinting = true;
+
+			maxXAtAParticularY[y] = maxXAtAParticularY[y] + DRAW_X_SPACE_BETWEEN_ENTITIES;	//only used, for indepdendent network visualisation (eg, when rendering next sentence)
+
+			entityNode->printX = x;
+			entityNode->printY = y;
+
+
+			int q, r;
+
+			vec pos1;
+
+			pos1.x = entityNode->printX;
+			pos1.y = entityNode->printY;
+			pos1.z = DRAW_CONNECTION_Z;
+
+
+			int entityDefinitionConnectionColour;
+			if(entityNode->isSubstance)
 			{
-				string quantityNumberStringTemp;
+				entityDefinitionConnectionColour = GIA_DRAW_SUBSTANCE_DEFINITION_CONNECTION_COLOUR;
+			}
+			else if(entityNode->isAction)
+			{
+				entityDefinitionConnectionColour = GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR;
+			}
+			else if(entityNode->isCondition)
+			{
+				entityDefinitionConnectionColour = GIA_DRAW_CONDITION_DEFINITION_CONNECTION_COLOUR;
+			}
+			else
+			{
+				entityDefinitionConnectionColour = GIA_DRAW_SUBSTANCE_DEFINITION_CONNECTION_COLOUR;
+			}
+
+			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+			{
+				int q = entityVectorConnectionDrawPosYinitialArray[i];
+				int r = entityVectorConnectionDrawPosXinitialArray[i];
+				for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
+				{
+					currentReferenceInPrintList = initialiseEntityNodeForPrinting((*connectionIter)->entity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, currentTag, sentenceIndex);
+
+					bool pass = true;
+					int entityConnectionColour = entityVectorConnectionDrawColourNameArray[i];
+					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
+					{
+						if(initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] == true)
+						{
+							entityConnectionColour = entityDefinitionConnectionColour;
+						}
+						else
+						{
+							pass = false;
+						}
+					}
+
+					if(pass)
+					{
+						if(entityVectorConnectionDrawConnectionArray[i])
+						{
+							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
+							if((*connectionIter)->sameReferenceSet)
+							{
+								entityConnectionColour = DAT_FILE_COLOUR_GREEN;
+							}
+							else
+							{
+								entityConnectionColour = DAT_FILE_COLOUR_RED;
+							}
+							#endif
+							currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, (*connectionIter)->entity, currentReferenceInPrintList, initialiseOrPrint, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);
+						}
+					}
+					q = q + entityVectorConnectionDrawPosYspacingArray[i];
+				}
+			}
+
+			q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+			r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
+			if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
+			{
+				int timeConditionNodePrintX = x+r;
+				int timeConditionNodePrintY = y+q;
+				currentReferenceInPrintList = initialiseTimeConditionNodeForPrinting(entityNode->timeConditionNode, timeConditionNodePrintY, timeConditionNodePrintX, initialiseOrPrint, currentReferenceInPrintList, currentTag);
+
+				q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+
+				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
+				vec pos2;
+				pos2.x = timeConditionNodePrintX;
+				pos2.y = timeConditionNodePrintY;
+				pos2.z = DRAW_CONNECTION_Z;
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_TIME_CONNECTION_COLOUR, currentTag, "time", initialiseOrPrint);
+
+			}
+
+
+			if(initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] == true)
+			{
+				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
+
+				int boxThickness = GIA_DRAW_THICKNESS_NORMAL;
+
+				int entityColour;
 				if(entityNode->isQuery)
 				{
-					quantityNumberStringTemp = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+					entityColour = GIA_DRAW_QUERY_QUESTION_NODE_COLOUR;
+				}
+				else if(entityNode->isAnswerToQuery)
+				{
+					entityColour = GIA_DRAW_QUERY_ANSWER_NODE_COLOUR;
+				}
+				#ifdef GIA_DRAW_DISPLAY_ANSWER_CONTEXTS
+				else if(entityNode->queryAnswerContext)
+				{
+					entityColour = GIA_DRAW_QUERY_ANSWER_CONTEXT_NODE_COLOUR;
+				}
+				#endif
+				else if(entityNode->hasAssociatedInstanceIsAction)
+				{
+					#ifdef GIA_DRAW_DEBUG
+					/*
+					if(entityNode->isAction)
+					{
+						cout << "(entityNode->hasAssociatedInstanceIsAction) && (entityNode->isAction)" << endl;
+					}
+					*/
+					#endif
+					if(entityNode->hasMeasure)
+					{
+						entityColour = GIA_DRAW_SUBSTANCE_MEASURE_NODE_COLOUR;
+					}
+					else
+					{
+						entityColour = GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
+					}
+				}
+				else if(entityNode->hasAssociatedInstanceIsCondition)
+				{
+					entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
+				}
+				else if(entityNode->isSubstance)
+				{
+					if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
+					{
+						boxThickness = GIA_DRAW_THICKNESS_THICK;
+					}
+
+					if(entityNode->isSubstanceQuality)
+					{
+						entityColour = GIA_DRAW_SUBSTANCE_QUALITY_NODE_COLOUR;
+					}
+					else
+					{
+						entityColour = GIA_DRAW_SUBSTANCE_NODE_COLOUR;
+					}
+
+					if(entityNode->hasMeasure)
+					{
+						entityColour = GIA_DRAW_SUBSTANCE_MEASURE_NODE_COLOUR;
+					}
+					else if(entityNode->hasQuantity)
+					{
+						entityColour = GIA_DRAW_SUBSTANCE_QUANTITY_NODE_COLOUR;
+					}
+
+				}
+				else if(entityNode->isAction)
+				{
+					entityColour = GIA_DRAW_ACTION_NODE_COLOUR;
+				}
+				/*
+				else if(entityNode->hasAssociatedTime)
+				{
+					entityColour = GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR;	//clear identify a time node
+				}
+				*/
+				else if(entityNode->isCondition)
+				{
+					entityColour = GIA_DRAW_CONDITION_NODE_COLOUR;	//clear identify a time node
+				}
+				else if(entityNode->hasAssociatedInstance)
+				{//the original spec seemed to imply that entities that have associated substances (ie, that define substances) are special but they don't appear to be
+					if(!(entityNode->isSubstance))
+					{
+						//added 2 May 11a (highlight entities which define substance nodes)
+						entityColour = GIA_DRAW_SUBSTANCE_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_CONCEPT_NODE_COLOUR;
+					}
 				}
 				else
 				{
-					quantityNumberStringTemp = printQuantityNumberString(entityNode);
+					entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
 				}
-				nameOfBox = nameOfBox + quantityNumberStringTemp + " " + entityNode->entityName;
+
+				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
+				if(entityNode->referenceSetID == GIA_REFERENCE_SET_ID_UNDEFINED)
+				{
+					entityColour = DAT_FILE_COLOUR_RED;
+				}
+				else
+				{
+					entityColour = DAT_FILE_COLOUR_GREEN;
+				}
+				#endif
+
+				//first, print this action node.
+				string nameOfBox = "";
+				if(entityNode->hasQuantity)
+				{
+					string quantityNumberStringTemp;
+					if(entityNode->isQuery)
+					{
+						quantityNumberStringTemp = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+					}
+					else
+					{
+						quantityNumberStringTemp = printQuantityNumberString(entityNode);
+					}
+					nameOfBox = nameOfBox + quantityNumberStringTemp + " " + entityNode->entityName;
+
+				}
+				else if(entityNode->negative)
+				{
+					nameOfBox = nameOfBox + "!" + entityNode->entityName;
+				}
+				else
+				{
+					nameOfBox = entityNode->entityName;
+				}
+				currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, currentTag, boxThickness, initialiseOrPrint);
 
 			}
-			else if(entityNode->negative)
+
+
+			#ifdef GIA_DRAW_DEBUG
+			if(entityNode->isSubstance)
 			{
-				nameOfBox = nameOfBox + "!" + entityNode->entityName;
+				cout << "Exiting: entityNode = " << entityNode->entityName << " (is substance)" << endl;
+			}
+			else if(entityNode->isAction)
+			{
+				cout << "Exiting: entityNode = " << entityNode->entityName << " (is action)" << endl;
+			}
+			else if(entityNode->isCondition)
+			{
+				cout << "Exiting: entityNode = " << entityNode->entityName << " (is condition)" << endl;
+			}
+			else if(entityNode->hasAssociatedInstance)
+			{
+				cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
+			}
+			else if(entityNode->hasAssociatedInstanceIsAction)
+			{
+				cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
+			}
+			else if(entityNode->hasAssociatedInstanceIsCondition)
+			{
+				cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
+			}
+			else if(entityNode->hasAssociatedTime)
+			{
+				cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated time)" << endl;
 			}
 			else
 			{
-				nameOfBox = entityNode->entityName;
+				cout << "Exiting: entityNode = " << entityNode->entityName << endl;
 			}
-			currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, currentTag, boxThickness, initialiseOrPrint);
+			#endif
 
 		}
-
-
-		#ifdef GIA_DRAW_DEBUG
-		if(entityNode->isSubstance)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (is substance)" << endl;
-		}
-		else if(entityNode->isAction)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (is action)" << endl;
-		}
-		else if(entityNode->isCondition)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (is condition)" << endl;
-		}
-		else if(entityNode->hasAssociatedInstance)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
-		}
-		else if(entityNode->hasAssociatedInstanceIsAction)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
-		}
-		else if(entityNode->hasAssociatedInstanceIsCondition)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
-		}
-		else if(entityNode->hasAssociatedTime)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated time)" << endl;
-		}
-		else
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << endl;
-		}
-		#endif
-
+	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	}
+	#endif		
 
 	return currentReferenceInPrintList;	//does this need to be newCurrentReferenceInPrintList?
 

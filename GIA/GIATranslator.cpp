@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q1a 11-October-2012
+ * Project Version: 1q2a 11-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1026,7 +1026,19 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		if(GIAEntityNodeArrayFilled[w])
 		{
 			GIAEntityNodeArray[w]->entityIndexTemp = w;
-			GIAEntityNodeArray[w]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
+			GIAEntityNodeArray[w]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;	//LIMITATION: this will not assign sentence indicies for prepositions...
+			#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+			//record sentenceIndex for concept entity nodes also (NB cannot use GIAConceptNodeArray here as it won't include concept entity nodes for prepositions)
+			if(!(GIAEntityNodeArray[w]->entityNodeDefiningThisInstance->empty()))
+			{
+				GIAEntityNode * conceptNode = (GIAEntityNodeArray[w]->entityNodeDefiningThisInstance->back())->entity;
+				if(conceptNode->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
+				{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network 
+					conceptNode->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
+				}
+			}
+			#endif
+			
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 			//cout << GIAEntityNodeArray[w]->entityName << ", w = " << w << endl;
 			#endif

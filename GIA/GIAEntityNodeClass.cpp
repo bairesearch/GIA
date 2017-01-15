@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q1a 11-October-2012
+ * Project Version: 1q2a 11-October-2012
  *
  *******************************************************************************/
 
@@ -124,8 +124,8 @@ GIAEntityNode::GIAEntityNode(void)
 	isObjectTemp = false;
 	hasSubstanceTemp = false;
 	//hasQualityTemp = false;
-	entityIndexTemp = 0;
-	sentenceIndexTemp = 0;
+	entityIndexTemp = GIA_ENTITY_INDEX_UNDEFINED;	//was 0 before 11 October 2012
+	sentenceIndexTemp = GIA_SENTENCE_INDEX_UNDEFINED;	//was 0 before 11 October 2012
 
 	//to minimise query/referencing code
 	ActionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS]);

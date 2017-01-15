@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q1a 11-October-2012
+ * Project Version: 1q2a 11-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -515,6 +515,7 @@
 
 //variables currently being tested (1o1a+)
 
+
 #define STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS	//added 22 Sept to enable Stanford CoreNLP to be used to parse dependency relations with same accuracy as stanford parser (ie when stanford CoreNLP is set as both relation and feature parser)
 #define STANFORD_PARSER_USE_POS_TAGS	//added 23 July 2012 to support Stanford Parser POS tags (which are sometimes more accurate than stanford CoreNLP pos tags)
 
@@ -725,5 +726,8 @@
 //#define GIA_DRAW_USE_PATENT			//modifies colours of nodes such that they print uniquely in black and white
 //#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. concept-list -> concepts or substances
 #define GIA_DRAW_DISPLAY_ANSWER_CONTEXTS
+#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS
+	#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+#endif
 
 #endif

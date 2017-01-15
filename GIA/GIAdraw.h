@@ -23,7 +23,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q1a 11-October-2012
+ * Project Version: 1q2a 11-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -52,6 +52,10 @@ using namespace std;
 #include "GIAConditionNodeClass.h"
 
 
+#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	#define MAXIMUM_NUMBER_OF_SENTENCES_IN_INPUT_TEXT (1000000)
+#endif
+	
 #ifdef GIA_DRAW_USE_PATENT
 	//#define GIA_DRAW_USE_UNIQUE_COLOURS_FOR_ENTITY_DEFINITION_NODES	//switched off for patent diagrams
 	//#define GIA_DRAW_USE_UNIQUE_COLOURS_FOR_ENTITY_DEFINITION_CONNECTIONS	//switched on for patent diagrams
@@ -230,7 +234,7 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, XMLParserTag ** currentTag);
 
 void initiateMaxXAtAParticularY();
-Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLParserTag ** currentTag);
+Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLParserTag ** currentTag, int sentenceIndex);
 	Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAEntityNode * entityNodeToConnect, Reference * currentReferenceInPrintList, bool initialiseOrPrint[], string connectionName, int entityDefinitionConnectionColour, XMLParserTag ** currentTag);
 	Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeConditionNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, XMLParserTag ** currentTag);
 
