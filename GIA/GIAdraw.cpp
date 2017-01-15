@@ -317,8 +317,27 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				vec pos2;
 				pos2.x = entityNode->entityNodeDefiningThisInstance->printX;
 				pos2.y = entityNode->entityNodeDefiningThisInstance->printY;	
-				pos2.z = DRAW_CONNECTION_Z;							
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR, writeFileObject, "instance");
+				pos2.z = DRAW_CONNECTION_Z;
+				
+				int entityDefinitionConnectionColour;
+				if(entityNode->isProperty)
+				{
+					entityDefinitionConnectionColour = GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR;
+				}
+				else if(entityNode->isAction)
+				{
+					entityDefinitionConnectionColour = GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR;
+				}
+				else if(entityNode->isCondition)
+				{
+					entityDefinitionConnectionColour = GIA_DRAW_CONDITION_DEFINITION_CONNECTION_COLOUR;
+				}
+				else
+				{
+					entityDefinitionConnectionColour = GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR;
+				}		
+									
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, entityDefinitionConnectionColour, writeFileObject, "instance");
 			}
 				
 		}
