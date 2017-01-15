@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o3a 20-October-2016
+ * Project Version: 2o4a 20-October-2016
  *
  *******************************************************************************/
 -->
@@ -3923,23 +3923,25 @@
 				<option defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				</paramDepRel>
-				<!-- #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_HYBRID -->	
-				<!-- add an additional property connection -->			
+				<!-- #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_HYBRID -->
+				<!--	
+				{!-- add an additional property connection --}			
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
-				<!-- #ifdefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES -->
+				{!-- #ifdefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES --}
 				<option functionToExecuteUponFind="4" />
-				<!-- #else -->
-				<!-- <option functionToExecuteUponFind="3" /> -->
-				<!-- #endif -->
+				{!-- #else --}
+				{!-- <option functionToExecuteUponFind="3" /> --}
+				{!-- #endif --}
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				{!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION --}
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
+				{!-- #endif --}
 				</paramDepRel>
-				<!-- #endif -->	
+				{!-- #endif --}	
+				-->
 				<!-- #endif -->
 				
 				

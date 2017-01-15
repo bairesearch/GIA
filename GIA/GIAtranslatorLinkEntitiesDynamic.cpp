@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntitiesDynamic.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o3a 20-October-2016
+ * Project Version: 2o4a 20-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -604,12 +604,12 @@ void connectPropertyToEntityFull(GIAsentence* currentSentenceInList, bool GIAent
 	if(direction)
 	{
 	#endif
-		string actionName = RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES;	//actionEntity->entityName
+		actionName = RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES;	//actionEntity->entityName
 	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION
 	}
 	else
 	{
-		string actionName = RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_POSS;	//actionEntity->entityName
+		actionName = RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_POSS;	//actionEntity->entityName
 	}
 	#endif
 	actionNetworkIndexEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfAction, &actionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);

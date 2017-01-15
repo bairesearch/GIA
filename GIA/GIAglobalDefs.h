@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o3a 20-October-2016
+ * Project Version: 2o4a 20-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -814,7 +814,7 @@
 	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
 		//#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//note this preprocessor check is not enforced: use the new implementation regardless of whether GIA advanced referencing is set or not set
 			//#define GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION	//added 2k3a, removed 2k3c //record possessionAuxiliaryHaveArtificial info	//required by GIA advanced referencing
-			#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_HYBRID	//added 2k3c
+			//#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_HYBRID	//added 2k3c, disabled for USE_NLC:!GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 		//#endif
 	#endif
 #endif
