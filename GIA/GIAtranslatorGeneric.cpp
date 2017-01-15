@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l5a 11-December-2015
+ * Project Version: 2l5b 11-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -560,23 +560,19 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 							{//execute
 								#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 								bool sameReferenceSet;
-								bool rcmodIndicatesSameReferenceSet;
 								//not setting defaultSameSetRelationID (ie leaving it at INT_DEFAULT_VALUE) will enforce the sameReferenceSet value to be the defaultSameSetReferenceValue regardless of auxiliaryIndicatesDifferentReferenceSet and rcmodIndicatesSameReferenceSet
 								if(param->defaultSameSetRelationID == INT_DEFAULT_VALUE)
 								{
 									sameReferenceSet = param->defaultSameSetReferenceValue;
-									rcmodIndicatesSameReferenceSet = false;
 								}
 								else
 								{
 									//cout << "param->defaultSameSetReferenceValue = " << param->defaultSameSetReferenceValue << endl;
 									//cout << "sameReferenceSet = " << sameReferenceSet << endl;
 									sameReferenceSet = determineSameReferenceSetValue(param->defaultSameSetReferenceValue, param->relation[param->defaultSameSetRelationID]);
-									rcmodIndicatesSameReferenceSet = param->relation[param->defaultSameSetRelationID]->rcmodIndicatesSameReferenceSet;
 								}
 								#else
 								bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-								bool rcmodIndicatesSameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 								#endif
 
 								int functionEntityIndex1 = param->relationEntityIndex[param->functionEntityRelationID[FUNC_ENT1]][param->functionEntityRelationEntityID[FUNC_ENT1]];
@@ -697,25 +693,24 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									//cout << "entityName1 = " << param->GIAentityNodeArray[functionEntityIndex1]->entityName << endl;
 									//cout << "entityName2 = " << param->GIAentityNodeArray[functionEntityIndex2]->entityName << endl;
 									//cout << "sameReferenceSet = " << sameReferenceSet << endl;
-									param->GIAentityNodeArray[functionEntityIndex2] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									param->GIAentityNodeArray[functionEntityIndex2] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, functionEntityIndex1, functionEntityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 								}
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity)
 								{
 									//cout << "param->GIAentityNodeArray[functionEntityIndex1]->entityName = " << param->GIAentityNodeArray[functionEntityIndex1]->entityName << endl;
 									//cout << "param->GIAentityNodeArray[functionEntityIndex2]->entityName = " << param->GIAentityNodeArray[functionEntityIndex2]->entityName << endl;
-									param->GIAentityNodeArray[functionEntityIndex2] = addOrConnectPropertyToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									param->GIAentityNodeArray[functionEntityIndex2] = addOrConnectPropertyToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, functionEntityIndex1, functionEntityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 								}
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity)
 								{
 									//bool sameReferenceSetSubject = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 									//bool sameReferenceSetObject = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-									//NB rcmodIndicatesSameReferenceSet for actions is determined by fillExplicitReferenceSameSetTags()
 									#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 									if(param->mustGenerateConditionName)
 									{
@@ -752,24 +747,24 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									}
 									#endif
 
-									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectActionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectActionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, functionEntityIndex2, functionEntityIndex3, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, functionEntityIndex2, functionEntityIndex3, sameReferenceSet);
 									#endif
 								}
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToSubject)
 								{
-									param->GIAentityNodeArray[functionEntityIndex2] = addOrConnectActionToSubject(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									param->GIAentityNodeArray[functionEntityIndex2] = addOrConnectActionToSubject(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, functionEntityIndex1, functionEntityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 								}
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToObject)
 								{
-									param->GIAentityNodeArray[functionEntityIndex2] = addOrConnectActionToObject(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									param->GIAentityNodeArray[functionEntityIndex2] = addOrConnectActionToObject(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, functionEntityIndex1, functionEntityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 								}
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity)
@@ -779,7 +774,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									//cout << "param->GIAentityNodeArray[functionEntityIndex3] = " << param->GIAentityNodeArray[functionEntityIndex3]->entityName << endl;
 									//cout << "sameReferenceSet = " << sameReferenceSet << endl;
 																	
-									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], sameReferenceSet);
 									
 									#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED	//CHECKTHIS
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
@@ -790,16 +785,16 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										if(currentRelationInList->inverseRelationSingle)	//added 2j5g
 										{	
 											//cout << "a1 currentRelationInList->relationTypeIndexNonInversed = " << currentRelationInList->relationTypeIndexNonInversed << endl;
-											GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex2, currentRelationInList->relationTypeIndexNonInversed, sameReferenceSet, rcmodIndicatesSameReferenceSet);	//use original (non-inversed) values
-											GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, functionEntityIndex1, currentRelationInList->relationTypeIndexNonInversed, sameReferenceSet, rcmodIndicatesSameReferenceSet);	//use original (non-inversed) values
+											GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex2, currentRelationInList->relationTypeIndexNonInversed, sameReferenceSet);	//use original (non-inversed) values
+											GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, functionEntityIndex1, currentRelationInList->relationTypeIndexNonInversed, sameReferenceSet);	//use original (non-inversed) values
 											//cout << "a2" << endl;
 										}
 										else
 										{
 										#endif
 										#endif								
-											GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-											GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, functionEntityIndex2, functionEntityIndex3, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+											GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet);
+											GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, functionEntityIndex2, functionEntityIndex3, sameReferenceSet);
 										#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 										#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
 										}
@@ -833,28 +828,28 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								{
 									bool negative = param->GIAentityNodeArray[functionEntityIndex4special]->negative;
 									//cout << "negative = " << negative << endl;
-									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectBeingDefinitionConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], negative, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectBeingDefinitionConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], negative, sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, functionEntityIndex3, functionEntityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, functionEntityIndex3, functionEntityIndex2, sameReferenceSet);
 									#endif
 								}
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity)
 								{
 									bool negative = param->GIAentityNodeArray[functionEntityIndex4special]->negative;
 									//cout << "negative = " << negative << endl;
-									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectHavingPropertyConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], negative, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectHavingPropertyConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], negative, sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, functionEntityIndex3, functionEntityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, functionEntityIndex3, functionEntityIndex2, sameReferenceSet);
 									#endif
 								}
 								#endif
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntity)
 								{
-									addDefinitionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									addDefinitionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 								}
 								#ifdef GIA_SUPPORT_ALIASES
@@ -862,16 +857,16 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								{
 									#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 									cout << "GIArules.xml warning: functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias (12) and GIA has been compiled with GIA_DISABLE_ALIAS_ENTITY_MERGING: executing GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias (14) instead" << endl; 
-									addDefinitionToEntityMarkConnectionAsAlias(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									addDefinitionToEntityMarkConnectionAsAlias(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_MARK_CONNECTION_AS_ALIAS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_MARK_CONNECTION_AS_ALIAS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 									#else
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 									#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_ENTITY_NODES_ADD_ALIAS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_ENTITY_NODES_ADD_ALIAS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#else
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 									#endif
 									mergeEntityNodesAddAlias(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2]);
@@ -883,9 +878,9 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addAuxiliaryToEntity)
 								{
-									addDefinitionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									addDefinitionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_COMPOSITION_AUXILIARY, functionEntityIndex1, functionEntityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_COMPOSITION_AUXILIARY, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 								}
 								#endif
@@ -893,17 +888,17 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias)
 								{
 									#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-									addDefinitionToEntityMarkConnectionAsAlias(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									addDefinitionToEntityMarkConnectionAsAlias(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_MARK_CONNECTION_AS_ALIAS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_MARK_CONNECTION_AS_ALIAS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 									#else
 									cout << "GIArules.xml warning: functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias (14) and GIA has been compiled without GIA_DISABLE_ALIAS_ENTITY_MERGING: executing GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias (12) instead" << endl; 
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 									#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_ENTITY_NODES_ADD_ALIAS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_ENTITY_NODES_ADD_ALIAS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#else
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 									#endif
 									mergeEntityNodesAddAlias(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2]);

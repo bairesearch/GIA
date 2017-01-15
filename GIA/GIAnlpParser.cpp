@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l5a 11-December-2015
+ * Project Version: 2l5b 11-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -111,16 +111,6 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 				{
 					currentRelation->sameReferenceSet = false;
 				}
-				#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
-				if(sameReferenceSetString.find(createRcmodIndicatesSameReferenceSetRecord2(true)) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
-				{
-					currentRelation->rcmodIndicatesSameReferenceSet = true;
-				}
-				else
-				{
-					currentRelation->rcmodIndicatesSameReferenceSet = false;
-				}
-				#endif
 				//cout << "currentRelation->sameReferenceSet = " << currentRelation->sameReferenceSet << endl;
 				//cout << "currentRelation->rcmodIndicatesSameReferenceSet = " << currentRelation->rcmodIndicatesSameReferenceSet << endl;
 			}
@@ -514,13 +504,6 @@ string createSameReferenceSetRecord2(bool sameReferenceSet)
 	string sameReferenceSetRecord = "[sameReferenceSet=" + convertBoolToString(sameReferenceSet) + "]";
 	return sameReferenceSetRecord;
 }
-#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
-string createRcmodIndicatesSameReferenceSetRecord2(bool rcmodIndicatesSameReferenceSet)
-{
-	string rcmodIndicatesSameReferenceSetRecord = "[rcmodIndicatesSameReferenceSet=" + convertBoolToString(rcmodIndicatesSameReferenceSet) + "]";
-	return rcmodIndicatesSameReferenceSetRecord;
-}
-#endif
 #endif
 
 void GIATHparseStanfordParseWordsAndPOStagsText(string* POStagsText, GIAsentence* currentSentenceInList, int* maxNumberOfWordsInSentence, bool createFeaturesGIA2only)
@@ -709,7 +692,7 @@ void convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInLi
 				*relationTypeRelexStandard = officialLRPentityName;
 			}
 			#ifdef GIA_LRP_DEBUG
-			cout << "convertStanfordRelationToRelexLRPreversion() foundOfficialLRPreplacementString: tempRelexPrepositionString = " << tempRelexPrepositionString << ", *relationTypeRelexStandard= " << *relationTypeRelexStandard << endl;
+			cout << "convertStanfordRelationToRelexLRPreversion{} foundOfficialLRPreplacementString: tempRelexPrepositionString = " << tempRelexPrepositionString << ", *relationTypeRelexStandard= " << *relationTypeRelexStandard << endl;
 			#endif
 		}
 		delete tempFeature;
@@ -728,7 +711,7 @@ void convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInLi
 			currentRelationInList->relationGovernor = officialLRPentityName;
 			currentRelationInList->relationGovernorRevertedToOfficialLRPTemp = true;
 			#ifdef GIA_LRP_DEBUG
-			cout << "convertStanfordRelationToRelexLRPreversion() foundOfficialLRPreplacementString: relationGovernorForNLPonly = " << relationGovernorForNLPonly << ", currentRelationInList->relationGovernor= " << currentRelationInList->relationGovernor << endl;
+			cout << "convertStanfordRelationToRelexLRPreversion{} foundOfficialLRPreplacementString: relationGovernorForNLPonly = " << relationGovernorForNLPonly << ", currentRelationInList->relationGovernor= " << currentRelationInList->relationGovernor << endl;
 			#endif
 		}
 		delete tempFeature;		
@@ -744,7 +727,7 @@ void convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInLi
 			currentRelationInList->relationDependent = officialLRPentityName;
 			currentRelationInList->relationDependentRevertedToOfficialLRPTemp = true;
 			#ifdef GIA_LRP_DEBUG
-			cout << "convertStanfordRelationToRelexLRPreversion() foundOfficialLRPreplacementString: relationDependentForNLPonly = " << relationDependentForNLPonly << ", currentRelationInList->relationDependent= " << currentRelationInList->relationDependent << endl;
+			cout << "convertStanfordRelationToRelexLRPreversion{} foundOfficialLRPreplacementString: relationDependentForNLPonly = " << relationDependentForNLPonly << ", currentRelationInList->relationDependent= " << currentRelationInList->relationDependent << endl;
 			#endif
 		}
 		delete tempFeature;		
@@ -789,7 +772,7 @@ void convertGIAsemanticRelationLRPreversion(GIArelation* currentRelationInList, 
 				currentRelationInList->relationGovernor = officialLRPentityName;
 				currentRelationInList->relationGovernorRevertedToOfficialLRPTemp = true;
 				#ifdef GIA_LRP_DEBUG
-				cout << "convertGIAsemanticRelationLRPreversion() foundOfficialLRPreplacementString: relationGovernorForNLPonly = " << relationGovernorForNLPonly << ", currentRelationInList->relationGovernor= " << currentRelationInList->relationGovernor << endl;
+				cout << "convertGIAsemanticRelationLRPreversion{} foundOfficialLRPreplacementString: relationGovernorForNLPonly = " << relationGovernorForNLPonly << ", currentRelationInList->relationGovernor= " << currentRelationInList->relationGovernor << endl;
 				#endif
 			}
 		}
@@ -813,7 +796,7 @@ void convertGIAsemanticRelationLRPreversion(GIArelation* currentRelationInList, 
 				currentRelationInList->relationDependent = officialLRPentityName;
 				currentRelationInList->relationDependentRevertedToOfficialLRPTemp = true;
 				#ifdef GIA_LRP_DEBUG
-				cout << "convertGIAsemanticRelationLRPreversion() foundOfficialLRPreplacementString: relationDependentForNLPonly = " << relationDependentForNLPonly << ", currentRelationInList->relationDependent= " << currentRelationInList->relationDependent << endl;
+				cout << "convertGIAsemanticRelationLRPreversion{} foundOfficialLRPreplacementString: relationDependentForNLPonly = " << relationDependentForNLPonly << ", currentRelationInList->relationDependent= " << currentRelationInList->relationDependent << endl;
 				#endif
 			}
 		}

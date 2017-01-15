@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntitiesDynamic.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l5a 11-December-2015
+ * Project Version: 2l5b 11-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -149,14 +149,12 @@ void linkEntitiesDynamicPrenominalModifierOfNoun(GIAsentence* currentSentenceInL
 					#endif
 					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 					bool sameReferenceSet = true;
-					bool rcmodIndicatesSameReferenceSet = false;
 					#else
 					bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-					bool rcmodIndicatesSameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 					#endif
 					
-					connectPropertyToEntityFull(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, entity1, entity2, entity1Index, entity2Index, sameReferenceSet, rcmodIndicatesSameReferenceSet, true);
-					//OLD: GIAentityNodeArray[entity2Index] = addOrConnectPropertyToEntity(entity1, entity2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+					connectPropertyToEntityFull(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, entity1, entity2, entity1Index, entity2Index, sameReferenceSet, true);
+					//OLD: GIAentityNodeArray[entity2Index] = addOrConnectPropertyToEntity(entity1, entity2, sameReferenceSet);
 				}
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -175,10 +173,8 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(GIArelation* currentRe
 
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	bool sameReferenceSet = true;
-	bool rcmodIndicatesSameReferenceSet = false;
 	#else
 	bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-	bool rcmodIndicatesSameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 	#endif
 
 	//find the most recent reference (latest sentence);
@@ -207,20 +203,20 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(GIArelation* currentRe
 								if(((targetEntityFound->isSubstanceConcept) && (entity2->isSubstanceConcept)) || (!(targetEntityFound->isSubstanceConcept) && !(entity2->isSubstanceConcept)))
 								{
 								#endif
-									addDefinitionToEntity(entity1, entity2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									addDefinitionToEntity(entity1, entity2, sameReferenceSet);
 									#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, entity1Index, entity2Index, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, entity1Index, entity2Index, sameReferenceSet);
 									#endif
 									#endif
 								#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_SWITCH_DEFINITION_LINKS_IF_NON_MATCHING_SUBSTANCE_CONCEPTS
 								}
 								else
 								{
-									addDefinitionToEntity(entity2, entity1, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									addDefinitionToEntity(entity2, entity1, sameReferenceSet);
 									#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, entity2Index, entity1Index, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, entity2Index, entity1Index, sameReferenceSet);
 									#endif
 									#endif
 								}
@@ -253,12 +249,12 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(GIArelation* currentRe
 								}
 								#endif
 									
-								connectPropertyToEntityFull(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, entity1, entity2, entity1Index, entity2Index, sameReferenceSet, rcmodIndicatesSameReferenceSet, direction);
+								connectPropertyToEntityFull(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, entity1, entity2, entity1Index, entity2Index, sameReferenceSet, direction);
 
 							}
 							else if(previousConditionRelationshipFound)
 							{
-								int featureIndexOfPreposition = connectConditionToEntityFull(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, entity1, entity2, entity1Index, entity2Index, targetEntityFound->entityName, relationTypeIndex, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+								int featureIndexOfPreposition = connectConditionToEntityFull(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, entity1, entity2, entity1Index, entity2Index, targetEntityFound->entityName, relationTypeIndex, sameReferenceSet);
 								
 								#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
 								if(currentRelationInList->relationTwoWay)	//limitation only works when GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity is called based on a single GIArelation
@@ -301,10 +297,8 @@ void linkEntitiesDynamicFromConditions(GIAsentence* currentSentenceInList, bool 
 
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	bool sameReferenceSet = true;
-	bool rcmodIndicatesSameReferenceSet = false;
 	#else
 	bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-	bool rcmodIndicatesSameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 	#endif
 	
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -441,7 +435,7 @@ void linkEntitiesDynamicFromConditions(GIAsentence* currentSentenceInList, bool 
 								bool direction = false;	//always define from condition artificial property parent relationship as a poss relationship (this is done for NLC compatibility; such that NLC will parse the same reference set child entity)
 								int sourceLocationEntityIndex = getEntityIndex(GIAentityNodeArrayFilled, GIAentityNodeArray, sourceLocationEntity);
 								int sourceEntityIndex = getEntityIndex(GIAentityNodeArrayFilled, GIAentityNodeArray, sourceEntity);
-								connectPropertyToEntityFull(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, sourceLocationEntity, sourceEntity, sourceLocationEntityIndex, sourceEntityIndex, sameReferenceSet, rcmodIndicatesSameReferenceSet, direction);
+								connectPropertyToEntityFull(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, sourceLocationEntity, sourceEntity, sourceLocationEntityIndex, sourceEntityIndex, sameReferenceSet, direction);
 							}
 							else if(previousConditionRelationshipFound)
 							{
@@ -451,7 +445,7 @@ void linkEntitiesDynamicFromConditions(GIAsentence* currentSentenceInList, bool 
 								
 								int sourceLocationEntityIndex = getEntityIndex(GIAentityNodeArrayFilled, GIAentityNodeArray, sourceLocationEntity);
 								int sourceEntityIndex = getEntityIndex(GIAentityNodeArrayFilled, GIAentityNodeArray, sourceEntity);
-								connectConditionToEntityFull(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, sourceEntity, sourceLocationEntity, sourceEntityIndex, sourceLocationEntityIndex, targetEntityFound->entityName, INT_DEFAULT_VALUE, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+								connectConditionToEntityFull(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, sourceEntity, sourceLocationEntity, sourceEntityIndex, sourceLocationEntityIndex, targetEntityFound->entityName, INT_DEFAULT_VALUE, sameReferenceSet);
 							}
 						}
 					}
@@ -564,23 +558,23 @@ bool findPreviousRelationship(GIAentityNode* instanceEntity, GIAentityNode* comp
 	return previousRelationshipFound;
 }
 
-void connectPropertyToEntityFull(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIAentityNode* entity1, GIAentityNode* entity2, int entity1Index, int entity2Index, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet, bool direction)
+void connectPropertyToEntityFull(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIAentityNode* entity1, GIAentityNode* entity2, int entity1Index, int entity2Index, bool sameReferenceSet, bool direction)
 {
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 
-	GIAentityNodeArray[entity2Index] = addOrConnectPropertyToEntity(entity1, entity2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	GIAentityNodeArray[entity2Index] = addOrConnectPropertyToEntity(entity1, entity2, sameReferenceSet);
 	#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
 	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-	GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, entity1Index, entity2Index, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, entity1Index, entity2Index, sameReferenceSet);
 	#endif
 	#endif
 	
 	#elif defined GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_HYBRID
 
-	GIAentityNodeArray[entity2Index] = addOrConnectPropertyToEntity(entity1, entity2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	GIAentityNodeArray[entity2Index] = addOrConnectPropertyToEntity(entity1, entity2, sameReferenceSet);
 	#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
 	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-	GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, entity1Index, entity2Index, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, entity1Index, entity2Index, sameReferenceSet);
 	#endif
 	#endif
 	
@@ -611,19 +605,19 @@ void connectPropertyToEntityFull(GIAsentence* currentSentenceInList, bool GIAent
 	//cout << "actionConceptEntity = " << actionConceptEntity->entityName << endl;
 	
 	//cout << "featureIndexOfAction = " << featureIndexOfAction << endl;
-	GIAentityNodeArray[featureIndexOfAction] = addOrConnectActionToEntity(entity1, entity2, actionConceptEntity, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	GIAentityNodeArray[featureIndexOfAction] = addOrConnectActionToEntity(entity1, entity2, actionConceptEntity, sameReferenceSet);
 
 	#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
 	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-	GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, entity1Index, featureIndexOfAction, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-	GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, entity2Index, featureIndexOfAction, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, entity1Index, featureIndexOfAction, sameReferenceSet);
+	GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, entity2Index, featureIndexOfAction, sameReferenceSet);
 	#endif
 	#endif
 
 	#endif
 }
 
-int connectConditionToEntityFull(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIAentityNode* entity1, GIAentityNode* entity2, int entity1Index, int entity2Index, string conditionEntityName, int conditionIndex, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+int connectConditionToEntityFull(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIAentityNode* entity1, GIAentityNode* entity2, int entity1Index, int entity2Index, string conditionEntityName, int conditionIndex, bool sameReferenceSet)
 {
 	GIAentityNode* conditionConceptEntity;
 	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
@@ -649,11 +643,11 @@ int connectConditionToEntityFull(GIAsentence* currentSentenceInList, bool GIAent
 	//Alternative (need to fill GIAentityNodeArrayFilled);
 	//conditionConceptEntity = (conditionEntity->entityNodeDefiningThisInstance->back())->entity;
 
-	GIAentityNodeArray[featureIndexOfPreposition] = addOrConnectConditionToEntity(entity1, entity2, conditionConceptEntity, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	GIAentityNodeArray[featureIndexOfPreposition] = addOrConnectConditionToEntity(entity1, entity2, conditionConceptEntity, sameReferenceSet);
 	#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
 	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-	GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, entity1Index, featureIndexOfPreposition, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-	GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, entity2Index, featureIndexOfPreposition, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, entity1Index, featureIndexOfPreposition, sameReferenceSet);
+	GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, entity2Index, featureIndexOfPreposition, sameReferenceSet);
 	#endif
 	#endif
 	return featureIndexOfPreposition;

@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l5a 11-December-2015
+ * Project Version: 2l5b 11-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -49,9 +49,6 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string* POStagsText, GIAsentence
 	#endif
 	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 	string createSameReferenceSetRecord2(bool sameReferenceSet);
-	#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
-	string createRcmodIndicatesSameReferenceSetRecord2(bool rcmodIndicatesSameReferenceSet);
-	#endif
 	#endif
 void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* currentSentenceInList, int* maxNumberOfWordsInSentence, bool featuresNotPreviouslyFilled, bool parseGIA2file, bool NLPrelexCompatibilityMode);
 	void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList);

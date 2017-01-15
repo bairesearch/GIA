@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l5a 11-December-2015
+ * Project Version: 2l5b 11-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -736,7 +736,7 @@
 	#endif
 	//#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//has not yet been defined
 		#ifndef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
-			#define GIA_RECORD_RCMOD_SET_INFORMATION	//added 2j8a, disabled 2k3a (not supported by GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE)	//was only required to identify subject (primary entity holding math value) in nlp parsable phrase, but possessionAuxiliaryHave is now used for this purpose	//originally implemented 2i16a but rejected
+			//#define GIA_RECORD_RCMOD_SET_INFORMATION	//added 2j8a, disabled 2k3a (not supported by GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE), no longer supported 2l5b 	//was only required to identify subject (primary entity holding math value) in nlp parsable phrase, but possessionAuxiliaryHave is now used for this purpose	//originally implemented 2i16a but rejected
 		#endif
 	//#endif
 #endif

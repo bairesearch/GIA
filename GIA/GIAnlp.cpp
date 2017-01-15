@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l5a 11-December-2015
+ * Project Version: 2l5b 11-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -234,7 +234,7 @@ bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQu
 			
 		}
 		*/
-		cout << "error: parseNLPparserFeaturesFile() does not parse features when (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER). GIAfeature extraction is not supported with GIA_NLP_PARSER_STANFORD_PARSER because Stanford Parser does not identify lemmas. Set feature parser to RelEx or Stanford Core NLP to extract features" << endl;
+		cout << "error: parseNLPparserFeaturesFile{} does not parse features when (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER). GIAfeature extraction is not supported with GIA_NLP_PARSER_STANFORD_PARSER because Stanford Parser does not identify lemmas. Set feature parser to RelEx or Stanford Core NLP to extract features" << endl;
 		exit(0);
 	}
 	#endif

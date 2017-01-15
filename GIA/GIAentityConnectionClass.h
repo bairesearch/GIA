@@ -26,7 +26,7 @@
  * File Name: GIAentityConnectionClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l5a 11-December-2015
+ * Project Version: 2l5b 11-December-2015
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -71,9 +71,6 @@ public:
 
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	bool sameReferenceSet;
-	#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
-	bool rcmodIndicatesSameReferenceSet;	//added 2j8a, removed 1k3a
-	#endif
 	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
 	bool possessionAuxiliaryHave;	//added 1k3a	//NB this is currently only set by a !GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC post processor (eg NLC transformTheActionOfPossessionEgHavingIntoAproperty). For more a general implementation it should be set by GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC also
 	#endif

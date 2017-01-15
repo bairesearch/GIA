@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l5a 11-December-2015
+ * Project Version: 2l5b 11-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -470,8 +470,7 @@ void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool G
 				if(quantityEntity->NERTemp != FEATURE_NER_DATE)		//do not assume quantity entities when dealing with Stanford Dates (as they have already been parsed).
 				{
 					#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-					bool rcmodIndicatesSameReferenceSet = BOOL_UNKNOWN_LEGACY;	//CHECKTHIS???
-					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_QUANTITY, currentRelationInList->relationGovernorIndex, currentRelationInList->relationDependentIndex, false, rcmodIndicatesSameReferenceSet);
+					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_QUANTITY, currentRelationInList->relationGovernorIndex, currentRelationInList->relationDependentIndex, false);
 					#endif
 
 					GIAentityNode* quantitySubstance = quantityEntity;
@@ -535,17 +534,16 @@ void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool G
 									GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 									bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
-									bool rcmodIndicatesSameReferenceSet = BOOL_UNKNOWN_LEGACY;
 
 									#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-									GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet);
 									#else
-									addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet);
 									#endif
 
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, currentRelationInList->relationGovernorIndex, featureIndexOfCondition, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, currentRelationInList2->relationDependentIndex, featureIndexOfCondition, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, currentRelationInList->relationGovernorIndex, featureIndexOfCondition, sameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, currentRelationInList2->relationDependentIndex, featureIndexOfCondition, sameReferenceSet);
 									#endif
 								}
 
@@ -620,8 +618,7 @@ void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNo
 			if(currentRelationInList->relationType == RELATION_TYPE_QUANTITY)
 			{
 				#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-				bool rcmodIndicatesSameReferenceSet = BOOL_UNKNOWN_LEGACY;	//CHECKTHIS???
-				GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_QUANTITY, currentRelationInList->relationGovernorIndex, currentRelationInList->relationDependentIndex, false, rcmodIndicatesSameReferenceSet);
+				GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_QUANTITY, currentRelationInList->relationGovernorIndex, currentRelationInList->relationDependentIndex, false);
 				#endif
 
 				#ifdef GIA_TRANSLATOR_DEBUG
@@ -687,16 +684,15 @@ void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNo
 								GIAentityNode* conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
-								bool rcmodIndicatesSameReferenceSet = BOOL_UNKNOWN_LEGACY;	//CHECKTHIS???
 								#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-								GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+								GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet);
 								#else
-								addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+								addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet);
 								#endif
 
 								#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-								GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, currentRelationInList->relationGovernorIndex, featureIndexOfCondition, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-								GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, currentRelationInList2->relationDependentIndex, featureIndexOfCondition, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+								GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, currentRelationInList->relationGovernorIndex, featureIndexOfCondition, sameReferenceSet);
+								GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, currentRelationInList2->relationDependentIndex, featureIndexOfCondition, sameReferenceSet);
 								#endif
 							}
 
@@ -795,8 +791,7 @@ void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNo
 
 						//reconnect refreshed quantity (times) node;
 						bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
-						bool rcmodIndicatesSameReferenceSet = BOOL_UNKNOWN_LEGACY;	//CHECKTHIS???
-						addOrConnectPropertyToEntity(entityToConnectMeasurePerEntity, newQuantityTimesEntity, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+						addOrConnectPropertyToEntity(entityToConnectMeasurePerEntity, newQuantityTimesEntity, sameReferenceSet);
 
 						if(newQuantityTimesEntity->hasAssociatedInstanceTemp)
 						{//assumed true since its substance was just explicitly created
@@ -818,14 +813,14 @@ void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNo
 						sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 
 						#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-						GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(newQuantityTimesEntity, measureSubstance, conditionEntity, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+						GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(newQuantityTimesEntity, measureSubstance, conditionEntity, sameReferenceSet);
 						#else
-						addOrConnectConditionToEntity(newQuantityTimesEntity, measureSubstance, conditionEntity, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+						addOrConnectConditionToEntity(newQuantityTimesEntity, measureSubstance, conditionEntity, sameReferenceSet);
 						#endif
 
 						#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-						//GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, FEATURE_INDEX_OF_QUANTITY_TIMES_UNKNOWN, featureIndexOfCondition, sameReferenceSet, rcmodIndicatesSameReferenceSet);	//this (conditionSubject<->condition connection) is not currently been generated correctly by GIA1
-						GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, currentRelationInList->relationGovernorIndex, featureIndexOfCondition, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+						//GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, FEATURE_INDEX_OF_QUANTITY_TIMES_UNKNOWN, featureIndexOfCondition, sameReferenceSet);	//this (conditionSubject<->condition connection) is not currently been generated correctly by GIA1
+						GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, currentRelationInList->relationGovernorIndex, featureIndexOfCondition, sameReferenceSet);
 						#endif
 					}
 				}
@@ -931,20 +926,20 @@ void extractMeasures(GIAsentence* currentSentenceInList, bool GIAentityNodeArray
 				#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 				if(measureDependencyFound)
 				{
-					GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(quantityEntity, measureSubstanceEntity, conditionEntity, sameReferenceSet, BOOL_UNKNOWN_LEGACY);
+					GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(quantityEntity, measureSubstanceEntity, conditionEntity, sameReferenceSet);
 				}
 				else
 				{
-					GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(measureSubstanceEntity, quantityEntity, conditionEntity, sameReferenceSet, BOOL_UNKNOWN_LEGACY);
+					GIAentityNodeArray[featureIndexOfCondition] = addOrConnectConditionToEntity(measureSubstanceEntity, quantityEntity, conditionEntity, sameReferenceSet);
 				}
 				#else
 				if(measureDependencyFound)
 				{
-					addOrConnectConditionToEntity(quantityEntity, measureSubstanceEntity, conditionEntity, sameReferenceSet, BOOL_UNKNOWN_LEGACY);
+					addOrConnectConditionToEntity(quantityEntity, measureSubstanceEntity, conditionEntity, sameReferenceSet);
 				}
 				else
 				{
-					addOrConnectConditionToEntity(measureSubstanceEntity, quantityEntity, conditionEntity, sameReferenceSet, BOOL_UNKNOWN_LEGACY);
+					addOrConnectConditionToEntity(measureSubstanceEntity, quantityEntity, conditionEntity, sameReferenceSet);
 				}
 				#endif
 			}
@@ -1061,7 +1056,7 @@ void defineToBeAndToDoConditions(GIAsentence* currentSentenceInList, bool GIAent
 						GIAentityNode* substanceEntity = GIAentityNodeArray[substanceIndex];
 
 						bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES; 	//eg The chicken ate the pie that likes to draw.
-						GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(entityNode, substanceEntity, sameReferenceSet, BOOL_UNKNOWN_LEGACY);
+						GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(entityNode, substanceEntity, sameReferenceSet);
 					}
 					#else
 						int featureIndexNewCondition = 0;
@@ -1086,9 +1081,9 @@ void defineToBeAndToDoConditions(GIAsentence* currentSentenceInList, bool GIAent
 						bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//eg The chicken ate the pie that likes to draw.
 
 						#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-						GIAentityNodeArray[featureIndexNewCondition] = addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet, BOOL_UNKNOWN_LEGACY);
+						GIAentityNodeArray[featureIndexNewCondition] = addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet);
 						#else
-						addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet, BOOL_UNKNOWN_LEGACY);
+						addOrConnectConditionToEntity(entityNode, conditionObjectEntity, conditionEntity, sameReferenceSet);
 						#endif
 					#endif
 				}
@@ -1202,7 +1197,7 @@ void linkPropertiesParataxis(GIAsentence* currentSentenceInList, bool GIAentityN
 				//cout << "actionName = " << actionEntity->entityName << endl;
 				#endif
 				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PARATAXIS; 		//eg The guy, Akari said, left early in the morning.	[NB The guy, that Akari said was blue, left early in the morning. / He says that you like to swim.  does not generate parataxis, so these cases needn't be considered here...]
-				GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(actionEntity, substanceEntity, sameReferenceSet, BOOL_UNKNOWN_LEGACY);
+				GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(actionEntity, substanceEntity, sameReferenceSet);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
@@ -1258,7 +1253,7 @@ void defineClausalComplementProperties(GIAsentence* currentSentenceInList, bool 
 				#endif
 
 				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CCCOMP; 	//eg The guy, that Akari said was blue, left early in the morning. / He says that you like to swim.
-				GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(actionEntity, substanceEntity, sameReferenceSet, BOOL_UNKNOWN_LEGACY);
+				GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(actionEntity, substanceEntity, sameReferenceSet);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}

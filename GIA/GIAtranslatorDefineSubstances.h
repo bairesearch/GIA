@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineSubstances.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l5a 11-December-2015
+ * Project Version: 2l5b 11-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -48,7 +48,6 @@
 //0
 void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], GIAfeature* featureArrayTemp[], int NLPdependencyRelationsType);
 	void defineSubstancesExpletives(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[]);									//Stanford Compatible
-	void defineSubstancesAllNodes(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
 	#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], GIAfeature* featureArrayTemp[]);
 	#endif
@@ -80,6 +79,7 @@ void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArra
 #endif
 #endif
 //these had to be separated out from the above because they are used by GIAsemanticParserTranslator.cpp;
+void defineSubstancesAllNodes(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
 #ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
 void defineSubstancesActionConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[]);
 #endif

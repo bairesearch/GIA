@@ -26,7 +26,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l5a 11-December-2015
+ * Project Version: 2l5b 11-December-2015
  *
  *******************************************************************************/
 
@@ -40,9 +40,6 @@ GIAentityConnection::GIAentityConnection(void)
 
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	sameReferenceSet = false;	//CHECKTHIS default value
-	#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
-	rcmodIndicatesSameReferenceSet = false;
-	#endif
 	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
 	possessionAuxiliaryHave = false;
 	#endif

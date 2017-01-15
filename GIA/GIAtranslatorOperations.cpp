@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l5a 11-December-2015
+ * Project Version: 2l5b 11-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -186,20 +186,20 @@ bool isAdjectiveNotConnectedToObjectOrSubject(GIAsentence* currentSentenceInList
 #endif
 
 
-GIAentityNode* addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+GIAentityNode* addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet)
 {
 	if(thingEntity->isConcept)
 	{
-	      return connectPropertyToEntity(thingEntity, propertyEntity, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	      return connectPropertyToEntity(thingEntity, propertyEntity, sameReferenceSet);
 	}
 	else
 	{
-	      return addOrConnectPropertyToEntity(thingEntity, propertyEntity, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	      return addOrConnectPropertyToEntity(thingEntity, propertyEntity, sameReferenceSet);
 	}
 }
 
 //this has been created based upon addOrConnectPropertyToEntity
-GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet)
 {
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	#ifdef GIA_TRANSLATOR_DO_NOT_CREATE_SUBSTANCE_CONCEPT_PROPERTIES_FOR_NON_SUBSTANCE_CONCEPT_PARENTS
@@ -220,8 +220,8 @@ GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode
 		thingEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
 		//configure entity node containing this substance
-		writeVectorConnection(thingEntity, propertyEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-		writeVectorConnection(propertyEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+		writeVectorConnection(thingEntity, propertyEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+		writeVectorConnection(propertyEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
 		
 		#ifdef GIA_PREVENT_SUBSTANCE_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_SUBSTANCE_CONCEPTS
 		if(propertyEntity->isSubstanceConcept)
@@ -243,7 +243,7 @@ GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode
 }
 
 //changed some instances of addOrConnectPropertyToEntity to addPropertyToEntity
-GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet)
 {
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	#ifdef GIA_TRANSLATOR_DO_NOT_CREATE_SUBSTANCE_CONCEPT_PROPERTIES_FOR_NON_SUBSTANCE_CONCEPT_PARENTS
@@ -271,8 +271,8 @@ GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentit
 			propertyEntitySubstance = addSubstance(propertyEntity);
 		}
 		
-		writeVectorConnection(thingEntity, propertyEntitySubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-		writeVectorConnection(propertyEntitySubstance, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+		writeVectorConnection(thingEntity, propertyEntitySubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+		writeVectorConnection(propertyEntitySubstance, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
 		thingEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 			
 		#ifdef GIA_PREVENT_SUBSTANCE_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_SUBSTANCE_CONCEPTS
@@ -383,8 +383,8 @@ GIAentityNode* addSubstance(GIAentityNode* entity)
 	#endif
 	forwardInfoToNewSubstance(entity, newSubstance);
 
-	writeVectorConnection(newSubstance, entity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN, BASIC_DEFINING_INSTANCE_RCMOD_INDICATES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
-	writeVectorConnection(entity, newSubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN, BASIC_DEFINING_INSTANCE_RCMOD_INDICATES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+	writeVectorConnection(newSubstance, entity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+	writeVectorConnection(entity, newSubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
 
 	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 	entity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
@@ -536,7 +536,7 @@ void addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, int tens
 
 }
 
-void addDefinitionToEntity(GIAentityNode* thingEntity, GIAentityNode* definitionEntity, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+void addDefinitionToEntity(GIAentityNode* thingEntity, GIAentityNode* definitionEntity, bool sameReferenceSet)
 {
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(thingEntity->disabled))
@@ -546,8 +546,8 @@ void addDefinitionToEntity(GIAentityNode* thingEntity, GIAentityNode* definition
 	#endif
 
 		//configure entity node and entity definition node
-		writeVectorConnection(thingEntity, definitionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-		writeVectorConnection(definitionEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+		writeVectorConnection(thingEntity, definitionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);
+		writeVectorConnection(definitionEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet);
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
@@ -556,7 +556,7 @@ void addDefinitionToEntity(GIAentityNode* thingEntity, GIAentityNode* definition
 }
 
 #ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-void addDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* thingEntity, GIAentityNode* definitionEntity, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+void addDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* thingEntity, GIAentityNode* definitionEntity, bool sameReferenceSet)
 {
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(thingEntity->disabled))
@@ -565,9 +565,9 @@ void addDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* thingEntity, GIAe
 	{
 	#endif
 		//configure entity node and entity definition node
-		GIAentityConnection* connection = writeVectorConnection(thingEntity, definitionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+		GIAentityConnection* connection = writeVectorConnection(thingEntity, definitionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);
 		connection->isAlias = true;
-		GIAentityConnection* connectionReverse = writeVectorConnection(definitionEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+		GIAentityConnection* connectionReverse = writeVectorConnection(definitionEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet);
 		connectionReverse->isAlias = true;
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
@@ -582,7 +582,7 @@ void addDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* thingEntity, GIAe
 
 	//conditions required to be added [eg when, where, how, why]
 	//replace action if already existant
-GIAentityNode* addOrConnectActionToEntity(GIAentityNode* subjectEntity, GIAentityNode* objectEntity, GIAentityNode* actionEntity, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+GIAentityNode* addOrConnectActionToEntity(GIAentityNode* subjectEntity, GIAentityNode* objectEntity, GIAentityNode* actionEntity, bool sameReferenceSet)
 {
 	#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	#ifdef GIA_TRANSLATOR_DO_NOT_CREATE_SUBSTANCE_CONCEPT_PROPERTIES_FOR_NON_SUBSTANCE_CONCEPT_PARENTS
@@ -628,9 +628,9 @@ GIAentityNode* addOrConnectActionToEntity(GIAentityNode* subjectEntity, GIAentit
 
 		newOrExistingAction = addActionToActionDefinition(actionEntity);
 
-		connectActionInstanceToSubject(subjectEntity, newOrExistingAction, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+		connectActionInstanceToSubject(subjectEntity, newOrExistingAction, sameReferenceSet);
 
-		connectActionInstanceToObject(objectEntity, newOrExistingAction, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+		connectActionInstanceToObject(objectEntity, newOrExistingAction, sameReferenceSet);
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
@@ -639,7 +639,7 @@ GIAentityNode* addOrConnectActionToEntity(GIAentityNode* subjectEntity, GIAentit
 	return newOrExistingAction;
 }
 
-GIAentityNode* addOrConnectActionToSubject(GIAentityNode* subjectEntity, GIAentityNode* actionEntity, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+GIAentityNode* addOrConnectActionToSubject(GIAentityNode* subjectEntity, GIAentityNode* actionEntity, bool sameReferenceSet)
 {
 	GIAentityNode* newOrExistingAction = actionEntity;
 
@@ -666,7 +666,7 @@ GIAentityNode* addOrConnectActionToSubject(GIAentityNode* subjectEntity, GIAenti
 		#endif
 		*/
 		newOrExistingAction = addActionToActionDefinition(actionEntity);
-		connectActionInstanceToSubject(subjectEntity, newOrExistingAction, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+		connectActionInstanceToSubject(subjectEntity, newOrExistingAction, sameReferenceSet);
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
@@ -676,7 +676,7 @@ GIAentityNode* addOrConnectActionToSubject(GIAentityNode* subjectEntity, GIAenti
 	return newOrExistingAction;
 }
 
-GIAentityNode* addOrConnectActionToObject(GIAentityNode* objectEntity, GIAentityNode* actionEntity, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+GIAentityNode* addOrConnectActionToObject(GIAentityNode* objectEntity, GIAentityNode* actionEntity, bool sameReferenceSet)
 {
 	GIAentityNode* newOrExistingAction = actionEntity;
 
@@ -703,7 +703,7 @@ GIAentityNode* addOrConnectActionToObject(GIAentityNode* objectEntity, GIAentity
 		#endif
 		*/
 		newOrExistingAction = addActionToActionDefinition(actionEntity);
-		connectActionInstanceToObject(objectEntity, newOrExistingAction, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+		connectActionInstanceToObject(objectEntity, newOrExistingAction, sameReferenceSet);
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
@@ -714,20 +714,20 @@ GIAentityNode* addOrConnectActionToObject(GIAentityNode* objectEntity, GIAentity
 }
 
 
-void connectActionInstanceToSubject(GIAentityNode* subjectEntity, GIAentityNode* newOrExistingAction, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+void connectActionInstanceToSubject(GIAentityNode* subjectEntity, GIAentityNode* newOrExistingAction, bool sameReferenceSet)
 {
 	//configure action subject entity node
-	writeVectorConnection(subjectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-	writeVectorConnection(newOrExistingAction, subjectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	writeVectorConnection(subjectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS, sameReferenceSet);
+	writeVectorConnection(newOrExistingAction, subjectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, sameReferenceSet);
 
 	subjectEntity->isSubjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 }
 
-void connectActionInstanceToObject(GIAentityNode* objectEntity, GIAentityNode* newOrExistingAction, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+void connectActionInstanceToObject(GIAentityNode* objectEntity, GIAentityNode* newOrExistingAction, bool sameReferenceSet)
 {
 	//configure action object entity node
-	writeVectorConnection(objectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-	writeVectorConnection(newOrExistingAction, objectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	writeVectorConnection(objectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS, sameReferenceSet);
+	writeVectorConnection(newOrExistingAction, objectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, sameReferenceSet);
 
 	objectEntity->isObjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 }
@@ -840,8 +840,8 @@ GIAentityNode* addAction(GIAentityNode* actionEntity)
 	#endif
 	newAction->idInstance = determineNextIdInstance(actionEntity);
 
-	writeVectorConnection(newAction, actionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN, BASIC_DEFINING_INSTANCE_RCMOD_INDICATES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
-	writeVectorConnection(actionEntity, newAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN, BASIC_DEFINING_INSTANCE_RCMOD_INDICATES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+	writeVectorConnection(newAction, actionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+	writeVectorConnection(actionEntity, newAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
 
 	actionEntity->hasAssociatedInstance = true;
 	actionEntity->hasAssociatedInstanceIsAction = true;
@@ -944,7 +944,7 @@ void eraseSubstanceFromSubstanceList(GIAentityNode* existingEntity)
 }
 
 
-GIAentityNode* addOrConnectConditionToEntity(GIAentityNode* conditionSubjectEntity, GIAentityNode* conditionObjectEntity, GIAentityNode* conditionEntity, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+GIAentityNode* addOrConnectConditionToEntity(GIAentityNode* conditionSubjectEntity, GIAentityNode* conditionObjectEntity, GIAentityNode* conditionEntity, bool sameReferenceSet)
 {
 	GIAentityNode* newOrExistingCondition = conditionEntity;
 	
@@ -998,8 +998,8 @@ GIAentityNode* addOrConnectConditionToEntity(GIAentityNode* conditionSubjectEnti
 		//conditionSubjectEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
 		//configure entity node containing this substance
-		connectConditionInstanceToSubject(conditionSubjectEntity, newOrExistingCondition, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-		connectConditionInstanceToObject(conditionObjectEntity, newOrExistingCondition, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+		connectConditionInstanceToSubject(conditionSubjectEntity, newOrExistingCondition, sameReferenceSet);
+		connectConditionInstanceToObject(conditionObjectEntity, newOrExistingCondition, sameReferenceSet);
 		
 		#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
 		identifyConditionType(newOrExistingCondition);
@@ -1014,7 +1014,7 @@ GIAentityNode* addOrConnectConditionToEntity(GIAentityNode* conditionSubjectEnti
 	return newOrExistingCondition;
 }
 
-GIAentityNode* addOrConnectConditionToSubject(GIAentityNode* conditionSubjectEntity, GIAentityNode* conditionEntity, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+GIAentityNode* addOrConnectConditionToSubject(GIAentityNode* conditionSubjectEntity, GIAentityNode* conditionEntity, bool sameReferenceSet)
 {
 	GIAentityNode* newOrExistingCondition = conditionEntity;
 
@@ -1051,7 +1051,7 @@ GIAentityNode* addOrConnectConditionToSubject(GIAentityNode* conditionSubjectEnt
 		//conditionSubjectEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
 		//configure entity node containing this substance
-		connectConditionInstanceToSubject(conditionSubjectEntity, newOrExistingCondition, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+		connectConditionInstanceToSubject(conditionSubjectEntity, newOrExistingCondition, sameReferenceSet);
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
@@ -1061,7 +1061,7 @@ GIAentityNode* addOrConnectConditionToSubject(GIAentityNode* conditionSubjectEnt
 	return newOrExistingCondition;
 }
 
-GIAentityNode* addOrConnectConditionToObject(GIAentityNode* conditionObjectEntity, GIAentityNode* conditionEntity, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+GIAentityNode* addOrConnectConditionToObject(GIAentityNode* conditionObjectEntity, GIAentityNode* conditionEntity, bool sameReferenceSet)
 {
 	GIAentityNode* newOrExistingCondition = conditionEntity;
 
@@ -1098,7 +1098,7 @@ GIAentityNode* addOrConnectConditionToObject(GIAentityNode* conditionObjectEntit
 		//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
 		//configure entity node containing this substance
-		connectConditionInstanceToObject(conditionObjectEntity, newOrExistingCondition, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+		connectConditionInstanceToObject(conditionObjectEntity, newOrExistingCondition, sameReferenceSet);
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
@@ -1108,18 +1108,18 @@ GIAentityNode* addOrConnectConditionToObject(GIAentityNode* conditionObjectEntit
 	return newOrExistingCondition;
 }
 
-void connectConditionInstanceToSubject(GIAentityNode* subjectEntity, GIAentityNode* newOrExistingCondition, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+void connectConditionInstanceToSubject(GIAentityNode* subjectEntity, GIAentityNode* newOrExistingCondition, bool sameReferenceSet)
 {
 	//configure condition subject entity node
-	writeVectorConnection(subjectEntity, newOrExistingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-	writeVectorConnection(newOrExistingCondition, subjectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	writeVectorConnection(subjectEntity, newOrExistingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
+	writeVectorConnection(newOrExistingCondition, subjectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
 }
 
-void connectConditionInstanceToObject(GIAentityNode* objectEntity, GIAentityNode* newOrExistingCondition, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+void connectConditionInstanceToObject(GIAentityNode* objectEntity, GIAentityNode* newOrExistingCondition, bool sameReferenceSet)
 {
 	//configure condition object entity node
-	writeVectorConnection(objectEntity, newOrExistingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-	writeVectorConnection(newOrExistingCondition, objectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	writeVectorConnection(objectEntity, newOrExistingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS, sameReferenceSet);
+	writeVectorConnection(newOrExistingCondition, objectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, sameReferenceSet);
 }
 
 GIAentityNode* addConditionToConditionDefinition(GIAentityNode* conditionEntity)
@@ -1167,8 +1167,8 @@ GIAentityNode* addCondition(GIAentityNode* conditionEntity)
 	#endif
 	newCondition->idInstance = determineNextIdInstance(conditionEntity);
 
-	writeVectorConnection(newCondition, conditionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN, BASIC_DEFINING_INSTANCE_RCMOD_INDICATES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
-	writeVectorConnection(conditionEntity, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN, BASIC_DEFINING_INSTANCE_RCMOD_INDICATES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+	writeVectorConnection(newCondition, conditionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+	writeVectorConnection(conditionEntity, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
 
 	conditionEntity->hasAssociatedInstance = true;
 	conditionEntity->hasAssociatedInstanceIsCondition = true;
@@ -1184,7 +1184,7 @@ GIAentityNode* addCondition(GIAentityNode* conditionEntity)
 
 
 #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-GIAentityNode* addOrConnectBeingDefinitionConditionToEntity(GIAentityNode* conditionSubjectEntity, GIAentityNode* conditionDefinitionNode, GIAentityNode* conditionEntity, bool negative, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+GIAentityNode* addOrConnectBeingDefinitionConditionToEntity(GIAentityNode* conditionSubjectEntity, GIAentityNode* conditionDefinitionNode, GIAentityNode* conditionEntity, bool negative, bool sameReferenceSet)
 {
 	GIAentityNode* newOrExistingCondition = conditionEntity;
 
@@ -1201,8 +1201,8 @@ GIAentityNode* addOrConnectBeingDefinitionConditionToEntity(GIAentityNode* condi
 		//conditionSubjectEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
 		//configure entity node containing this substance
-		connectConditionInstanceToSubject(conditionSubjectEntity, newOrExistingCondition, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-		addDefinitionToEntity(newOrExistingCondition, conditionDefinitionNode, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+		connectConditionInstanceToSubject(conditionSubjectEntity, newOrExistingCondition, sameReferenceSet);
+		addDefinitionToEntity(newOrExistingCondition, conditionDefinitionNode, sameReferenceSet);
 
 		if(conditionEntity->isConcept)
 		{
@@ -1217,7 +1217,7 @@ GIAentityNode* addOrConnectBeingDefinitionConditionToEntity(GIAentityNode* condi
 	return newOrExistingCondition;
 }
 
-GIAentityNode* addOrConnectHavingPropertyConditionToEntity(GIAentityNode* conditionSubjectEntity, GIAentityNode* conditionSubstanceNode, GIAentityNode* conditionEntity, bool negative, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+GIAentityNode* addOrConnectHavingPropertyConditionToEntity(GIAentityNode* conditionSubjectEntity, GIAentityNode* conditionSubstanceNode, GIAentityNode* conditionEntity, bool negative, bool sameReferenceSet)
 {
 	GIAentityNode* newOrExistingCondition = conditionEntity;
 
@@ -1234,8 +1234,8 @@ GIAentityNode* addOrConnectHavingPropertyConditionToEntity(GIAentityNode* condit
 		//conditionSubjectEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
 		//configure entity node containing this substance
-		connectConditionInstanceToSubject(conditionSubjectEntity, newOrExistingCondition, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-		connectPropertyToEntity(newOrExistingCondition, conditionSubstanceNode, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+		connectConditionInstanceToSubject(conditionSubjectEntity, newOrExistingCondition, sameReferenceSet);
+		connectPropertyToEntity(newOrExistingCondition, conditionSubstanceNode, sameReferenceSet);
 
 		if(conditionEntity->isConcept)
 		{
@@ -1748,7 +1748,7 @@ GIAentityNode* findOrAddConceptEntityNodeByNameSimpleWrapper(string* entityNodeN
 
 /*these functions have been added for GIA Database compatibility*/
 //this function does write to database, but prepares data structures for write to database (at the end of the user sequence, writeDatabase{} is written...)
-GIAentityConnection* writeVectorConnection(GIAentityNode* entityNode, GIAentityNode* entityNodeToAdd, int connectionType, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+GIAentityConnection* writeVectorConnection(GIAentityNode* entityNode, GIAentityNode* entityNodeToAdd, int connectionType, bool sameReferenceSet)
 {
 	GIAentityConnection* newConnection = NULL;
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
@@ -1795,13 +1795,9 @@ GIAentityConnection* writeVectorConnection(GIAentityNode* entityNode, GIAentityN
 
 			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 			newConnection->sameReferenceSet = sameReferenceSet;
-			#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
-			newConnection->rcmodIndicatesSameReferenceSet = rcmodIndicatesSameReferenceSet;
-			#endif
 			/*
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 			cout << "writeVectorConnection: newConnection->sameReferenceSet = " << sameReferenceSet << endl;
-			cout << "writeVectorConnection: newConnection->rcmodIndicatesSameReferenceSet = " << rcmodIndicatesSameReferenceSet << endl;
 			#endif
 			*/
 			#endif
@@ -2181,16 +2177,10 @@ void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNo
 						#endif
 						#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 						bool sameReferenceSet = (*connectionIter)->sameReferenceSet;
-						#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
-						bool rcmodIndicatesSameReferenceSet = (*connectionIter)->rcmodIndicatesSameReferenceSet;	//CHECKTHIS
-						#else
-						bool rcmodIndicatesSameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-						#endif
 						#else
 						bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-						bool rcmodIndicatesSameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 						#endif
-						writeVectorConnection(entityNode, entityConnectedToEntityToMerge, i, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+						writeVectorConnection(entityNode, entityConnectedToEntityToMerge, i, sameReferenceSet);
 					#ifndef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 					}
 					#endif

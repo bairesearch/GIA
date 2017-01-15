@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l5a 11-December-2015
+ * Project Version: 2l5b 11-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -334,8 +334,8 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirac
 		setParentCodeextensionEntitiesAsAlreadyDeclaredInThisContext(currentCodeextensionInHeirachy);
 		convertSentenceSyntacticRelationsIntoGIAnetworkNodesCEOLD(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInArtificialList, currentSentenceInList, sentenceConceptEntityNodesList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);		//used to be firstSentenceInList, not firstSentenceInArtificialList
 		#else
-		//convertSentenceRelationsIntoGIAnetworkNodesWrapper(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInArtificialList, currentSentenceInList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);		//used to be firstSentenceInList, not firstSentenceInArtificialList
-		convertCEsentenceListRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInArtificialList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
+		//convertSentenceRelationsIntoGIAnetworkNodesWrapper(entityNodesActiveListConcepts, entityNodesActiveListSentences, timeConditionNodesActiveList, firstSentenceInArtificialList, currentSentenceInList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);		//used to be firstSentenceInList, not firstSentenceInArtificialList
+		convertCEsentenceListRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, entityNodesActiveListSentences, timeConditionNodesActiveList, firstSentenceInArtificialList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
 		#endif
 	#ifdef GIA_WITH_CE_USE_ALL_CODEEXTENSION_COMBINATIONS
 	}
@@ -347,7 +347,7 @@ void convertCEsentenceListRelationsIntoGIAnetworkNodes(unordered_map<string, GIA
 	GIAsentence* currentSentenceInList = firstSentenceInList;
 	do
 	{
-		convertSentenceRelationsIntoGIAnetworkNodesWrapper(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
+		convertSentenceRelationsIntoGIAnetworkNodesWrapper(entityNodesActiveListConcepts, entityNodesActiveListSentences, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, false);
 
 		currentSentenceInList = currentSentenceInList->next;
 	}

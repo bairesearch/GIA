@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l5a 11-December-2015
+ * Project Version: 2l5b 11-December-2015
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -200,9 +200,6 @@
 #endif
 #ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 #define NET_XML_ATTRIBUTE_sameReferenceSet ((string)"sameReferenceSet")	//this is only used for NLC
-#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
-#define NET_XML_ATTRIBUTE_rcmodIndicatesSameReferenceSet ((string)"rcmodIndicatesSameReferenceSet")	//this is only used for NLC
-#endif
 #endif
 #ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 #define NET_XML_ATTRIBUTE_isAlias ((string)"isAlias")	//this is only used for NLC

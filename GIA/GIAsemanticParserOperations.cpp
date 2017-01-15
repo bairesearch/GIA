@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l5a 11-December-2015
+ * Project Version: 2l5b 11-December-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -37,12 +37,12 @@
 
 #ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 
-void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNode** GIAentityNodeArray, GIAsentence* currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNode** GIAentityNodeArray, GIAsentence* currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet)
 {
 	//cout << "GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain: " << endl;
 	string GIA2semanticDependencyRelationText = "";
 	GIArelation* GIA2semanticDependencyRelation = getCurrentRelationInSemanticParserSentenceList();
-	generateGIA2semanticDependencyRelation(GIAentityNodeArray, connectionType, entityIndex1, entityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet, &GIA2semanticDependencyRelationText, GIA2semanticDependencyRelation);
+	generateGIA2semanticDependencyRelation(GIAentityNodeArray, connectionType, entityIndex1, entityIndex2, sameReferenceSet, &GIA2semanticDependencyRelationText, GIA2semanticDependencyRelation);
 	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD
 	saveTextLineToCorpusFileString(GIA2semanticDependencyRelation);
 	cout << GIA2semanticDependencyRelationText << endl;
@@ -53,10 +53,10 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 }
 
 /*
-void GIA2nonHeuristicImplementationRemoveExperiencesForConnectionistNetworkTrain(GIAentityNode** GIAentityNodeArray, GIAsentence* currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+void GIA2nonHeuristicImplementationRemoveExperiencesForConnectionistNetworkTrain(GIAentityNode** GIAentityNodeArray, GIAsentence* currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet)
 {
 	//cout << "GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain: " << endl;
-	string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelation(GIAentityNodeArray, connectionType, entityIndex1, entityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelation(GIAentityNodeArray, connectionType, entityIndex1, entityIndex2, sameReferenceSet);
 	removeTextLineFromCorpusFileString(GIA2semanticDependencyRelation);
 	cout << GIA2semanticDependencyRelation << endl;
 }
@@ -78,7 +78,6 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 				int entityIndex1 = currentRelationInList->relationGovernorIndex;
 				int entityIndex2 = currentRelationInList->relationDependentIndex;
 				bool sameReferenceSet =	false;	//irrelevant
-				bool rcmodIndicatesSameReferenceSet = false;	//irrelevant (CHECKTHIS)
 
 				/*
 				if(!(currentRelationInList->disabled))
@@ -88,28 +87,28 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 
 				if(currentRelationInList->relationType == RELATION_TYPE_MODAL_AUX)	//same as auxiliary
 				{
-					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet);
 				}
 
 				if(currentRelationInList->relationType == RELATION_TYPE_PASSIVE_AUX)
 				{
-					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet);
 				}
 
 				if(currentRelationInList->relationType == RELATION_TYPE_COPULA)
 				{
-					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet);
 				}
 
 				if(currentRelationInList->relationType == RELATION_TYPE_DETERMINER)
 				{
-					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DETERMINER, entityIndex1, entityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DETERMINER, entityIndex1, entityIndex2, sameReferenceSet);
 				}
 				
 				#ifdef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
 				if(currentRelationInList->relationType == RELATION_TYPE_PRENOMIAL_MODIFIER)	//must correspond to RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES/relationTypePrenominalModifierNameArray
 				{
-					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PRENOMINAL_MODIFIER, entityIndex1, entityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PRENOMINAL_MODIFIER, entityIndex1, entityIndex2, sameReferenceSet);
 				}
 				#endif
 				/*
@@ -128,7 +127,7 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 	#endif
 }
 
-void generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet, string* GIA2semanticDependencyRelationText, GIArelation* GIA2semanticDependencyRelation)
+void generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet, string* GIA2semanticDependencyRelationText, GIArelation* GIA2semanticDependencyRelation)
 {
 	#ifdef GIA2_SUPPORT_QUERIES
 	string entityWord1 = GIAentityNodeArray[entityIndex1]->entityName;
@@ -193,10 +192,9 @@ void generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, 
 		entityWord2 = GIAentityNodeArray[entityIndex2]->entityName;
 	}
 	#endif
-	//cout << "a2" << endl;
-
+	
 	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD
-	*GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationText(entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
+	*GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationText(entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet);
 	//cout << "GIA2semanticDependencyRelation = " << GIA2semanticDependencyRelation << endl;
 	#else
 	generateGIA2semanticDependencyRelationObject(GIA2semanticDependencyRelation, entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet);
@@ -204,16 +202,10 @@ void generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, 
 }
 
 #ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
-string generateGIA2semanticDependencyRelationText(string entityName1, string entityName2, string semanticRelation, int entityIndex1, int entityIndex2, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
+string generateGIA2semanticDependencyRelationText(string entityName1, string entityName2, string semanticRelation, int entityIndex1, int entityIndex2, bool sameReferenceSet)
 {
-	//cout << "a2" << endl;
-
 	string GIA2semanticDependencyRelation = "";
-	#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
-	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + semanticRelation + "(" + entityName1 + "-" + convertIntToString(entityIndex1) + ", " + entityName2 + "-" + convertIntToString(entityIndex2) + ") " + createSameReferenceSetRecord(sameReferenceSet) + createSameReferenceSetRecord(rcmodIndicatesSameReferenceSet);	
-	#else
 	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + semanticRelation + "(" + entityName1 + "-" + convertIntToString(entityIndex1) + ", " + entityName2 + "-" + convertIntToString(entityIndex2) + ") " + createSameReferenceSetRecord(sameReferenceSet);
-	#endif
 	//cout << "GIA2semanticDependencyRelation = " << GIA2semanticDependencyRelation << endl;
 	return GIA2semanticDependencyRelation;
 }
@@ -223,14 +215,6 @@ string createSameReferenceSetRecord(bool sameReferenceSet)
 	string sameReferenceSetRecord = "[sameReferenceSet=" + convertBoolToString(sameReferenceSet) + "]";
 	return sameReferenceSetRecord;
 }
-
-#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
-string createRcmodIndicatesSameReferenceSetRecord(bool rcmodIndicatesSameReferenceSet)
-{
-	string rcmodIndicatesSameReferenceSetRecord = "[rcmodIndicatesSameReferenceSet=" + convertBoolToString(rcmodIndicatesSameReferenceSet) + "]";
-	return rcmodIndicatesSameReferenceSetRecord;
-}
-#endif
 
 //preconditions: determineGIAconnectionistNetworkPOStypeNames() has been executed
 string generateCorpusFileHeaderText(GIAfeature* firstFeatureInSentence, bool addPOSinfo)
