@@ -1463,14 +1463,15 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		XMLParserTag * firstTagL3 = new XMLParserTag();
 		currentTagL2->firstLowerLevelTag = firstTagL3;
 		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->ActionNodeListIterator = currentEntity->ActionNodeList->begin(); currentEntity->ActionNodeListIterator < currentEntity->ActionNodeList->end(); currentEntity->ActionNodeListIterator++)
+				
+		for(currentEntity->ActionNodeListIterator = currentEntity->ActionNodeList.begin(); currentEntity->ActionNodeListIterator < currentEntity->ActionNodeList.end(); currentEntity->ActionNodeListIterator++)
 		{	
 			currentTagL3->name = NET_XML_TAG_actionNodeReference;
 			
 			currentAttribute = currentTagL3->firstAttribute;
 
 			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", currentEntity->ActionNodeListIterator->id;
+			sprintf(tempString, "%ld", (*(currentEntity->ActionNodeListIterator))->id);
 			currentAttribute->value = tempString;
 
 			XMLParserAttribute * newAttribute = new XMLParserAttribute();
@@ -1490,15 +1491,15 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		currentTagL2->name = NET_XML_TAG_IncomingActionNodeList;
 		firstTagL3 = new XMLParserTag();
 		currentTagL2->firstLowerLevelTag = firstTagL3;
-		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->IncomingActionNodeListIterator = currentEntity->IncomingActionNodeList->begin(); currentEntity->IncomingActionNodeListIterator < currentEntity->IncomingActionNodeList->end(); currentEntity->IncomingActionNodeListIterator++)
+		currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->IncomingActionNodeListIterator = currentEntity->IncomingActionNodeList.begin(); currentEntity->IncomingActionNodeListIterator < currentEntity->IncomingActionNodeList.end(); currentEntity->IncomingActionNodeListIterator++)
 		{	
 			currentTagL3->name = NET_XML_TAG_actionNodeReference;
 			
 			currentAttribute = currentTagL3->firstAttribute;
 
 			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", currentEntity->IncomingActionNodeListIterator->id;
+			sprintf(tempString, "%ld", (*(currentEntity->IncomingActionNodeListIterator))->id);
 			currentAttribute->value = tempString;
 
 			XMLParserAttribute * newAttribute = new XMLParserAttribute();
@@ -1518,15 +1519,15 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		currentTagL2->name = NET_XML_TAG_PropertyNodeList;
 		firstTagL3 = new XMLParserTag();
 		currentTagL2->firstLowerLevelTag = firstTagL3;
-		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->PropertyNodeListIterator = currentEntity->PropertyNodeList->begin(); currentEntity->PropertyNodeListIterator < currentEntity->PropertyNodeList->end(); currentEntity->PropertyNodeListIterator++)
+		currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->PropertyNodeListIterator = currentEntity->PropertyNodeList.begin(); currentEntity->PropertyNodeListIterator < currentEntity->PropertyNodeList.end(); currentEntity->PropertyNodeListIterator++)
 		{	
 			currentTagL3->name = NET_XML_TAG_entityNodeReference;
 			
 			currentAttribute = currentTagL3->firstAttribute;
 
 			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", currentEntity->PropertyNodeListIterator->id;
+			sprintf(tempString, "%ld", (*(currentEntity->PropertyNodeListIterator))->id);
 			currentAttribute->value = tempString;
 
 			XMLParserAttribute * newAttribute = new XMLParserAttribute();
@@ -1546,15 +1547,15 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		currentTagL2->name = NET_XML_TAG_EntityNodeDefinitionList;
 		firstTagL3 = new XMLParserTag();
 		currentTagL2->firstLowerLevelTag = firstTagL3;
-		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->EntityNodeDefinitionListIterator = currentEntity->EntityNodeDefinitionList->begin(); currentEntity->EntityNodeDefinitionListIterator < currentEntity->EntityNodeDefinitionList->end(); currentEntity->EntityNodeDefinitionListIterator++)
+		currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->EntityNodeDefinitionListIterator = currentEntity->EntityNodeDefinitionList.begin(); currentEntity->EntityNodeDefinitionListIterator < currentEntity->EntityNodeDefinitionList.end(); currentEntity->EntityNodeDefinitionListIterator++)
 		{	
 			currentTagL3->name = NET_XML_TAG_entityNodeReference;
 			
 			currentAttribute = currentTagL3->firstAttribute;
 
 			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", currentEntity->EntityNodeDefinitionListIterator->id;
+			sprintf(tempString, "%ld", (*(currentEntity->EntityNodeDefinitionListIterator))->id);
 			currentAttribute->value = tempString;
 
 			XMLParserAttribute * newAttribute = new XMLParserAttribute();
@@ -1574,15 +1575,15 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		currentTagL2->name = NET_XML_TAG_EntityNodeDefinitionReverseList;
 		firstTagL3 = new XMLParserTag();
 		currentTagL2->firstLowerLevelTag = firstTagL3;
-		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->EntityNodeDefinitionReverseListIterator = currentEntity->EntityNodeDefinitionReverseList->begin(); currentEntity->EntityNodeDefinitionReverseListIterator < currentEntity->EntityNodeDefinitionReverseList->end(); currentEntity->EntityNodeDefinitionReverseListIterator++)
+		currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->EntityNodeDefinitionReverseListIterator = currentEntity->EntityNodeDefinitionReverseList.begin(); currentEntity->EntityNodeDefinitionReverseListIterator < currentEntity->EntityNodeDefinitionReverseList.end(); currentEntity->EntityNodeDefinitionReverseListIterator++)
 		{	
 			currentTagL3->name = NET_XML_TAG_entityNodeReference;
 			
 			currentAttribute = currentTagL3->firstAttribute;
 
 			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", currentEntity->EntityNodeDefinitionReverseListIterator->id;
+			sprintf(tempString, "%ld", (*(currentEntity->EntityNodeDefinitionReverseListIterator))->id);
 			currentAttribute->value = tempString;
 
 			XMLParserAttribute * newAttribute = new XMLParserAttribute();
@@ -1602,15 +1603,15 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		currentTagL2->name = NET_XML_TAG_AssociatedActionNodeList;
 		firstTagL3 = new XMLParserTag();
 		currentTagL2->firstLowerLevelTag = firstTagL3;
-		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->AssociatedActionNodeListIterator = currentEntity->AssociatedActionNodeList->begin(); currentEntity->AssociatedActionNodeListIterator < currentEntity->AssociatedActionNodeList->end(); currentEntity->AssociatedActionNodeListIterator++)
+		currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->AssociatedActionNodeListIterator = currentEntity->AssociatedActionNodeList.begin(); currentEntity->AssociatedActionNodeListIterator < currentEntity->AssociatedActionNodeList.end(); currentEntity->AssociatedActionNodeListIterator++)
 		{	
 			currentTagL3->name = NET_XML_TAG_actionNodeReference;
 			
 			currentAttribute = currentTagL3->firstAttribute;
 
 			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", currentEntity->AssociatedActionNodeListIterator->id;
+			sprintf(tempString, "%ld", (*(currentEntity->AssociatedActionNodeListIterator))->id);
 			currentAttribute->value = tempString;
 
 			XMLParserAttribute * newAttribute = new XMLParserAttribute();
@@ -1630,15 +1631,15 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		currentTagL2->name = NET_XML_TAG_AssociatedPropertyNodeList;
 		firstTagL3 = new XMLParserTag();
 		currentTagL2->firstLowerLevelTag = firstTagL3;
-		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->AssociatedPropertyNodeListIterator = currentEntity->AssociatedPropertyNodeList->begin(); currentEntity->AssociatedPropertyNodeListIterator < currentEntity->AssociatedPropertyNodeList->end(); currentEntity->AssociatedPropertyNodeListIterator++)
+		currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->AssociatedPropertyNodeListIterator = currentEntity->AssociatedPropertyNodeList.begin(); currentEntity->AssociatedPropertyNodeListIterator < currentEntity->AssociatedPropertyNodeList.end(); currentEntity->AssociatedPropertyNodeListIterator++)
 		{	
 			currentTagL3->name = NET_XML_TAG_entityNodeReference;
 			
 			currentAttribute = currentTagL3->firstAttribute;
 
 			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", currentEntity->AssociatedPropertyNodeListIterator->id;
+			sprintf(tempString, "%ld", (*(currentEntity->AssociatedPropertyNodeListIterator))->id);
 			currentAttribute->value = tempString;
 
 			XMLParserAttribute * newAttribute = new XMLParserAttribute();
@@ -1658,15 +1659,15 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		currentTagL2->name = NET_XML_TAG_ConditionNodeList;
 		firstTagL3 = new XMLParserTag();
 		currentTagL2->firstLowerLevelTag = firstTagL3;
-		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->ConditionNodeListIterator = currentEntity->ConditionNodeList->begin(); currentEntity->ConditionNodeListIterator < currentEntity->ConditionNodeList->end(); currentEntity->ConditionNodeListIterator++)
+		currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->ConditionNodeListIterator = currentEntity->ConditionNodeList.begin(); currentEntity->ConditionNodeListIterator < currentEntity->ConditionNodeList.end(); currentEntity->ConditionNodeListIterator++)
 		{	
 			currentTagL3->name = NET_XML_TAG_entityNodeReference;
 			
 			currentAttribute = currentTagL3->firstAttribute;
 
 			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", currentEntity->ConditionNodeListIterator->id;
+			sprintf(tempString, "%ld", (*(currentEntity->ConditionNodeListIterator))->id);
 			currentAttribute->value = tempString;
 
 			XMLParserAttribute * newAttribute = new XMLParserAttribute();
@@ -1686,15 +1687,15 @@ bool generateXMLEntityNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		currentTagL2->name = NET_XML_TAG_ConditionNodeReverseList;
 		firstTagL3 = new XMLParserTag();
 		currentTagL2->firstLowerLevelTag = firstTagL3;
-		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentEntity->ConditionNodeReverseListIterator = currentEntity->ConditionNodeReverseList->begin(); currentEntity->ConditionNodeReverseListIterator < currentEntity->ConditionNodeReverseList->end(); currentEntity->ConditionNodeReverseListIterator++)
+		currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->ConditionNodeReverseListIterator = currentEntity->ConditionNodeReverseList.begin(); currentEntity->ConditionNodeReverseListIterator < currentEntity->ConditionNodeReverseList.end(); currentEntity->ConditionNodeReverseListIterator++)
 		{	
 			currentTagL3->name = NET_XML_TAG_entityNodeReference;
 			
 			currentAttribute = currentTagL3->firstAttribute;
 
 			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", currentEntity->ConditionNodeReverseListIterator->id;
+			sprintf(tempString, "%ld", (*(currentEntity->ConditionNodeReverseListIterator))->id);
 			currentAttribute->value = tempString;
 
 			XMLParserAttribute * newAttribute = new XMLParserAttribute();
@@ -1867,17 +1868,17 @@ bool generateXMLActionNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		
 
 		currentTagL2->name = NET_XML_TAG_ConditionNodeList;
-		firstTagL3 = new XMLParserTag();
+		XMLParserTag * firstTagL3 = new XMLParserTag();
 		currentTagL2->firstLowerLevelTag = firstTagL3;
 		XMLParserTag * currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentAction->ConditionNodeListIterator = currentAction->ConditionNodeList->begin(); currentAction->ConditionNodeListIterator < currentAction->ConditionNodeList->end(); currentAction->ConditionNodeListIterator++)
+		for(currentAction->ConditionNodeListIterator = currentAction->ConditionNodeList.begin(); currentAction->ConditionNodeListIterator < currentAction->ConditionNodeList.end(); currentAction->ConditionNodeListIterator++)
 		{	
 			currentTagL3->name = NET_XML_TAG_entityNodeReference;
 			
 			currentAttribute = currentTagL3->firstAttribute;
 
 			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", currentAction->ConditionNodeListIterator->id;
+			sprintf(tempString, "%ld", (*(currentAction->ConditionNodeListIterator))->id);
 			currentAttribute->value = tempString;
 
 			XMLParserAttribute * newAttribute = new XMLParserAttribute();
@@ -1898,14 +1899,14 @@ bool generateXMLActionNodeTagList(XMLParserTag * firstTagInSemanticNet, vector<G
 		firstTagL3 = new XMLParserTag();
 		currentTagL2->firstLowerLevelTag = firstTagL3;
 		currentTagL3 = currentTagL2->firstLowerLevelTag;
-		for(currentAction->ConditionNodeReverseListIterator = currentAction->ConditionNodeReverseList->begin(); currentAction->ConditionNodeReverseListIterator < currentAction->ConditionNodeReverseList->end(); currentAction->ConditionNodeReverseListIterator++)
+		for(currentAction->ConditionNodeReverseListIterator = currentAction->ConditionNodeReverseList.begin(); currentAction->ConditionNodeReverseListIterator < currentAction->ConditionNodeReverseList.end(); currentAction->ConditionNodeReverseListIterator++)
 		{	
 			currentTagL3->name = NET_XML_TAG_entityNodeReference;
 			
 			currentAttribute = currentTagL3->firstAttribute;
 
 			currentAttribute->name = NET_XML_ATTRIBUTE_id;
-			sprintf(tempString, "%ld", currentAction->ConditionNodeReverseListIterator->id;
+			sprintf(tempString, "%ld", (*(currentAction->ConditionNodeReverseListIterator))->id);
 			currentAttribute->value = tempString;
 
 			XMLParserAttribute * newAttribute = new XMLParserAttribute();
