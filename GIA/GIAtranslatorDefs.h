@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2b 18-November-2014
+ * Project Version: 2h2c 18-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -900,6 +900,9 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 #define FEATURE_POS_TAG_VERB_VBZ "VBZ"
 #ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
 #define FEATURE_POS_TAG_VERB_VBPOTENTIAL "VBPOTENTIAL"
+#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL_INVERSE
+#define FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE "VBPOTENTIALINVERSE"
+#endif
 #endif	
 #ifdef GIA_FEATURE_POS_TAG_VERB_STATE
 #define FEATURE_POS_TAG_VERB_VBSTATE "VBSTATE"
@@ -925,27 +928,28 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 #define FEATURE_NER_NAME_CONCATENATION_TOKEN "_" 	//use "_" for Relex format and/or GIA_USE_DATABASE compatibility, else may use " "
 
 #define FEATURE_POS_TAG_VERB_PAST_NUMBER_OF_TYPES 1
+static string posTagVerbPastArray[FEATURE_POS_TAG_VERB_PAST_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBD};
 #define FEATURE_POS_TAG_VERB_PRESENT_NUMBER_OF_TYPES 2
+static string posTagVerbPresentArray[FEATURE_POS_TAG_VERB_PRESENT_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBP, FEATURE_POS_TAG_VERB_VBZ};
 #define FEATURE_POS_TAG_VERB_PROGRESSIVE_NUMBER_OF_TYPES 1
+static string posTagVerbProgressiveArray[FEATURE_POS_TAG_VERB_PROGRESSIVE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBG};
 #define FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES 1
+static string posTagVerbInfinitiveOrImperativeArray[FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VB};
 #ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
+#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL_INVERSE
+#define FEATURE_POS_TAG_VERB_POTENTIAL_NUMBER_OF_TYPES 2	//not detected by POS standard
+static string posTagVerbPotentialArray[FEATURE_POS_TAG_VERB_POTENTIAL_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBPOTENTIAL, FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE};	//not detected by POS standard
+#else
 #define FEATURE_POS_TAG_VERB_POTENTIAL_NUMBER_OF_TYPES 1	//not detected by POS standard
+static string posTagVerbPotentialArray[FEATURE_POS_TAG_VERB_POTENTIAL_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBPOTENTIAL};	//not detected by POS standard
+#endif
 #endif
 #ifdef GIA_FEATURE_POS_TAG_VERB_STATE
 #define FEATURE_POS_TAG_VERB_STATE_NUMBER_OF_TYPES 1	//not detected by POS standard
-#endif
-static string posTagVerbPastArray[FEATURE_POS_TAG_VERB_PAST_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBD};
-static string posTagVerbPresentArray[FEATURE_POS_TAG_VERB_PRESENT_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBP, FEATURE_POS_TAG_VERB_VBZ};
-static string posTagVerbProgressiveArray[FEATURE_POS_TAG_VERB_PROGRESSIVE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBG};
-static string posTagVerbInfinitiveOrImperativeArray[FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VB};
-#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
-static string posTagVerbPotentialArray[FEATURE_POS_TAG_VERB_POTENTIAL_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBPOTENTIAL};	//not detected by POS standard
-#endif
-#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
 static string posTagVerbStateArray[FEATURE_POS_TAG_VERB_STATE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBSTATE};	//not detected by POS standard
-#endif
 //#define FEATURE_POS_TAG_VERB_STANFORD_CORENLP_POSSIBLE_STATE_NUMBER_OF_TYPES 1
 //static string posTagVerbStanfordCoreNLPpossibleStateArray[FEATURE_POS_TAG_VERB_STANFORD_CORENLP_POSSIBLE_STATE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VERB_VBN};
+#endif
 
 #define FEATURE_POS_TAG_PROPER_NOUN_NUMBER_OF_TYPES 2
 #define FEATURE_POS_TAG_COMMON_NOUN_NUMBER_OF_TYPES 2

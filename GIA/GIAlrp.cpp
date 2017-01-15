@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2b 18-November-2014
+ * Project Version: 2h2c 18-November-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -2035,7 +2035,7 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 			if(wordLowerCase == hypotheticalVerbVariantCase1a)
 			{
 				foundVerbCase = true;
-				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP;
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
 			//continuous rule 1b: running - "run" + "n" [run n] + "ing"
@@ -2043,7 +2043,7 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 			if(wordLowerCase == hypotheticalVerbVariantCase1b)
 			{
 				foundVerbCase = true;
-				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP;
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
 			//continuous rule 2: changing - "chang" [change e] + "ing"
@@ -2051,7 +2051,7 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 			if(wordLowerCase == hypotheticalVerbVariantCase2)
 			{
 				foundVerbCase = true;
-				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP;
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
 			/*
@@ -2060,7 +2060,7 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 			if(wordLowerCase == hypotheticalVerbVariantCase3a)
 			{
 				foundVerbCase = true;
-				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP;
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
 			*/
@@ -2075,7 +2075,7 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 			if(wordLowerCase == hypotheticalVerbVariantCase1a)
 			{
 				foundVerbCase = true;
-				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP;
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
 			//potential rule 1b: running - "run" + "n" [run n] + "able"
@@ -2083,7 +2083,7 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 			if(wordLowerCase == hypotheticalVerbVariantCase1b)
 			{
 				foundVerbCase = true;
-				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP;
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
 			/*
@@ -2092,7 +2092,7 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 			if(wordLowerCase == hypotheticalVerbVariantCase2)
 			{
 				foundVerbCase = true;
-				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP;
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
 			*/
@@ -2101,13 +2101,79 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 			if(wordLowerCase == hypotheticalVerbVariantCase3a)
 			{
 				foundVerbCase = true;
-				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			//cout << "potential hypotheticalVerbVariantCase1 = " << hypotheticalVerbVariantCase1 << endl;
+			//cout << "potential hypotheticalVerbVariantCase2 = " << hypotheticalVerbVariantCase2 << endl;
+			//cout << "potential hypotheticalVerbVariantCase3 = " << hypotheticalVerbVariantCase3 << endl;
+			
+			#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL_INVERSE
+			//added 2h2c
+			//potential rule 1ai: -> ive eg resistive/adaptive
+			string hypotheticalVerbVariantCase1ai = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase1ai)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			//potential rule 1aii: -> itive eg additive
+			string  hypotheticalVerbVariantCase1aii = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE1II;
+			if(wordLowerCase == hypotheticalVerbVariantCase1aii)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			//potential rule 1aiii: -> ative eg affirmative
+			string  hypotheticalVerbVariantCase1aiii = base + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE1III;
+			if(wordLowerCase == hypotheticalVerbVariantCase1aiii)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			/*
+			//potential rule 1b: running - "run" + "n" [run n] + "itive"
+			hypotheticalVerbVariantCase1b = base + lastCharacterInBase + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase1b)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			*/
+			//potential rule 2i: e -> itive eg competitive/definitive/accomodative
+			string hypotheticalVerbVariantCase2i = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE2;
+			if(wordLowerCase == hypotheticalVerbVariantCase2i)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			//potential rule 2ii: e -> ment + ive eg judgementive
+			string hypotheticalVerbVariantCase2ii = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE2II;
+			if(wordLowerCase == hypotheticalVerbVariantCase2ii)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			//potential rule 3a: y -> iment + ive eg supplimentive
+			hypotheticalVerbVariantCase3a = baseWithLastLetterDropped + GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE3;
+			if(wordLowerCase == hypotheticalVerbVariantCase3a)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP;
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
 			//cout << "potential hypotheticalVerbVariantCase1 = " << hypotheticalVerbVariantCase1 << endl;
 			//cout << "potential hypotheticalVerbVariantCase2 = " << hypotheticalVerbVariantCase2 << endl;
 			//cout << "potential hypotheticalVerbVariantCase3 = " << hypotheticalVerbVariantCase3 << endl;
 			#endif
+			#endif
+			
 			
 			#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
 			//added 2h2a

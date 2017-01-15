@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2b 18-November-2014
+ * Project Version: 2h2c 18-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -133,12 +133,14 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 	}
 	else
 	{
+		//FUTURE GIA - consider updating correctVerbPOStagAndLemma(); currently detecting all instances of "ing"/VBG. This is required such that appropriate instances can be marked as action concepts eg "swimming involves/requires...". Alternatively consider marking these words directly here as GRAMMATICAL_TENSE_MODIFIER_INFINITIVE (ie GRAMMATICAL_TENSE_MODIFIER_ACTIONCONCEPT) such that they can be assigned action concept by defineActionConcepts2() 
+			
 		//cout << "NB: GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS requires GIA_USE_LRP to be defined and -lrpfolder to be set" << endl;
 		//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
 		#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
 		if(determineIfWordIsIrregularVerbContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))
 		#elif defined GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
-		if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE))
+		if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP))
 		#endif
 		{
 			string stanfordPOS = FEATURE_POS_TAG_VERB_VBG;
@@ -162,8 +164,6 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 				extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
 				applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
 			}
-
-
 		}
 
 		/*
@@ -186,7 +186,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 	}
 
 	#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
-	if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_POTENTIAL))
+	if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP))
 	{
 		if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ)	//NB "able" words will be marked as JJ/adjective by Stanford/Relex POS tagger
 		{
@@ -214,6 +214,36 @@ bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature 
 			}
 		}
 	}
+	#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL_INVERSE
+	if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP))
+	{
+		if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ))	//NB "ive" words will be marked as JJ/adjective or NN/noun by Stanford/Relex POS tagger (but ignore nouns)
+		{
+			string stanfordPOS = FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE;
+			//cout << "foundVerb FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE" << endl;
+
+			string wordOrigLowerCase = convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
+			if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = runnable, and entityName (NLP identified lemma) = runnable; then apply the lemma correction
+			{
+				updatedLemma = true;
+
+				//cout << "2 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
+				//cout << "2 baseNameFound = " << baseNameFound << endl;
+				actionOrSubstanceEntity->entityName = baseNameFound;
+
+				//cout << "actionOrSubstanceEntity->wordOrig = " << actionOrSubstanceEntity->wordOrig << endl;
+				//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
+				//cout << "foundPotentialVerb" << endl;
+
+				currentFeature->stanfordPOS = stanfordPOS;
+				currentFeature->lemma = actionOrSubstanceEntity->entityName;
+
+				extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
+				applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity
+			}
+		}
+	}	
+	#endif
 	#endif
 	#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
 	if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && ((grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_OR_PRESENT_NOT_THIRD_PERSON_SINGULAR_OR_STATE_TEMP) || (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP)))
