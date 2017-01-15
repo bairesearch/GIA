@@ -91,7 +91,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		}				
 		else if(entityNode->hasAssociatedInstance)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated property)" << endl;	
+			cout << "entityNode = " << entityNode->entityName << " (has associated instance)" << endl;	
 		}
 		else if(entityNode->hasAssociatedInstanceIsAction)
 		{

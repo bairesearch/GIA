@@ -21,12 +21,14 @@
 #ifdef GIA_QUERY_TRACE_INSTANTIATIONS
 	//#define GIA_QUERY_TRACE_INSTANTIATIONS_OLD_TEXTUAL_OUTPUT
 #endif
-//#define GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER	//default: disabled //does not work with GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER, when the inexact answer expected is the object of the question, and not an arbitrary position within the question. need to identify answer entities in the question/text as a separate variable (eg object - but not necessarily) - not based on their incoming links.
-#ifdef GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER
-	#define GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER_ALLOW_SINGLE_ENTITY_MATCHES
+//#define GIA_QUERY_SUPPORT_NON_EXACT_QUERIES	//default: disabled (NB non-exact queries are not required for the text/query 'the dog is red' / 'is the dog red?'). non-exact queries used to be required for which questions, but not anymore [with GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES]	
+#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES
+	//#define GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER	 //OLD: does not work with GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER, when the inexact answer expected is the object of the question, and not an arbitrary position within the question. need to identify answer entities in the question/text as a separate variable (eg object - but not necessarily) - not based on their incoming links.
+	#ifdef GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER
+		//#define GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER_ALLOW_SINGLE_ENTITY_MATCHES	//default: disabled
+	#endif
 #endif
 
-//#define GIA_QUERY_SUPPORT_NON_EXACT_QUERIES
 
 //#define GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND
 //#define GIA_QUERY_USE_ARTIFICIALLY_ADJUSTED_MAX_CONFIDENCE

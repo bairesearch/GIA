@@ -573,7 +573,7 @@ int main(int argc,char **argv)
 		//cout << "b" << endl;
 		
 		double maxConfidence = determineMaxConfidenceOfQuerySemanticNetwork(conceptEntityNodesListQuery);		//OLD [simple]: entityNodesCompleteListQuery->size();
-	
+		
 		string answerString = "";
 				 
 		if(foundAnswer)
@@ -612,10 +612,30 @@ int main(int argc,char **argv)
 		}
 		else
 		{
-			#ifndef GIA_DO_NOT_PRINT_RESULTS
-			cout << "Answer Not Found." << endl;
-			#endif
-			answerString = answerString + "\nAnswer Not Found.";
+			if(foundComparisonVariable)
+			{		
+				#ifndef GIA_DO_NOT_PRINT_RESULTS
+				cout << "Answer Not Found." << endl;
+				#endif
+				answerString = answerString + "\nAnswer Not Found.";
+			}
+			else
+			{
+				if(confidence >= (maxConfidence-0.0001))
+				{
+					#ifndef GIA_DO_NOT_PRINT_RESULTS
+					cout << "Answer: Yes." << endl;
+					#endif
+					answerString = answerString + "\nAnswer: Yes.";				
+				}
+				else
+				{ 
+					#ifndef GIA_DO_NOT_PRINT_RESULTS
+					cout << "Answer: No." << endl;
+					#endif
+					answerString = answerString + "\nAnswer: No.";
+				}				
+			}
 		}
 			
 		if(foundAnswer && !foundComparisonVariable)
@@ -624,10 +644,6 @@ int main(int argc,char **argv)
 			cout << "Best Inexact Answer Found: " << queryAnswerNode->entityName << endl;
 			#endif
 			answerString = answerString + "\nBest Inexact Answer Found: " + queryAnswerNode->entityName;
-			if(queryAnswerNode->hasQuality)
-			{//added 29 June
-			
-			}
 		}
 
 		if(foundAnswer)
@@ -640,7 +656,7 @@ int main(int argc,char **argv)
 			#else
 			string printEntityNodeString = "";
 			printEntityNodeQualitiesOnly(queryAnswerNode, &printEntityNodeString);	
-			cout << printEntityNodeString << endl;
+			cout << printEntityNodeString;
 			answerString = answerString + printEntityNodeString;				
 			#endif
 					

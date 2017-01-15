@@ -234,9 +234,9 @@ public:
 	bool isQuery;
 	bool isWhichQuery;
 	bool isAnswerToQuery;				
-	#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES				
+	//#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES				
 	bool isAnswerContextToQuery;
-	#endif
+	//#endif
 	bool testedForQueryComparison;
 	
 	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for properties and actions; but relex does not appear to output this information]
