@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g5a 05-September-2014
+ * Project Version: 2g5b 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -610,15 +610,14 @@
 
 #ifdef USE_NLC
 	//#define NLC_ACTIVATE_PRE1j_CODE_FOR_DEBUG
-	#ifndef NLC_ACTIVATE_PRE1j_CODE_FOR_DEBUG
-		#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_USE_ADVANCED_REFERENCING 2g5a/05 September 2014	//added 2g5a - required for advanced referencing, dream mode (identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts():identifyReferenceSetDetermineNextCourseOfAction():identifyReferenceSet()), and NLC 1j2a+
-		//#define GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES	//untested and unused
-	#endif
-	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 [required for NLC 1j2a+]
-	#define GIA_STORE_CONNECTION_SENTENCE_INDEX	//added 2f15d/16-July-2014 [required for NLC 1g15a+]
 	#ifdef NLC_ACTIVATE_PRE1j_CODE_FOR_DEBUG
-		#define GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS	//added 2f21a/20-August-2014 [required for NLC 1i2a+]	//disabled NLC 1j2a+
+		#define GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS	//added 2f21a/20-August-2014 [required for NLC 1i2a+]	//disabled NLC 1j2b+
+	#else
+		#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING		//added 2g5a/05-September-2014 [required for NLC 1j2b+]
+		#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_USE_ADVANCED_REFERENCING 2g5a/05 September 2014	//added 2g5a - required for advanced referencing, dream mode (identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts():identifyReferenceSetDetermineNextCourseOfAction():identifyReferenceSet()), and NLC 1j2b+
+		//#define GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES	//untested and unused		
 	#endif
+	#define GIA_STORE_CONNECTION_SENTENCE_INDEX	//added 2f15d/16-July-2014 [required for NLC 1g15a+]
 	#define GIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES	//added 2f13a/14-July-2014
 	#define GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES	//added 2f8a/09-July-2014	//NB this is only required for NLC_SUPPORT_LOGICAL_CONDITION_OPERATIONS_ADVANCED	
 #endif
@@ -715,7 +714,7 @@
 //variables currently being tested (1q1a+)
 #define GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS	//required for NLC
 #ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-	#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_USE_ADVANCED_REFERENCING 2g5a/05 September 2014	//added 2g5a - required for advanced referencing, dream mode (identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts():identifyReferenceSetDetermineNextCourseOfAction():identifyReferenceSet()), and NLC 1j2a+
+	#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_USE_ADVANCED_REFERENCING 2g5a/05 September 2014	//added 2g5a - required for advanced referencing, dream mode (identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts():identifyReferenceSetDetermineNextCourseOfAction():identifyReferenceSet()), and NLC 1j2b+
 #endif
 
 #define GIA_QUERY_SIMPLIFIED_SEARCH
