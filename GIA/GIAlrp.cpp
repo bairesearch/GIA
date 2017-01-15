@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1b 14-November-2014
+ * Project Version: 2h1c 14-November-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *

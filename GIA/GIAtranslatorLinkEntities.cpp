@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1b 14-November-2014
+ * Project Version: 2h1c 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -169,7 +169,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, true);
 	paramA.numberOfRelations = 1;
 	paramA.useRelationArrayTest[REL1][REL_ENT3] = true; paramA.relationArrayTest[REL1][REL_ENT3] = relationTypePossessiveNameArray; paramA.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES;
-	paramA.mustGenerateConditionName = true; paramA.conditionEntityDefaultName = RELATION_ENTITY_SPECIAL_POSSESSIVE; paramA.mustGenerateConditionEntityIndex = true;	//create intermediary action 'have'
+	paramA.mustGenerateConditionName = true; paramA.conditionEntityDefaultName = RELATION_ENTITY_SPECIAL_POSSESSIVE;	//create intermediary action 'have'
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity;
 	paramA.functionEntityRelationID[FUNC_ENT1] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	paramA.functionEntityRelationID[FUNC_ENT2] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
@@ -775,7 +775,6 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	paramA.useRelationTest[REL2][REL_ENT3] = true; paramA.relationTest[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
 	paramA.useRelationTest[REL1][REL_ENT2] = true; paramA.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_HAVE;
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity;
-	paramA.mustGenerateConditionEntityIndex = true;
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramA.defaultSameSetRelationID = REL2; paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_CONDITIONS;
 	#endif
@@ -790,7 +789,6 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	paramB.useRelationTest[REL2][REL_ENT3] = true; paramB.relationTest[REL2][REL_ENT3] = RELATION_TYPE_OBJECT;
 	paramB.useRelationTest[REL1][REL_ENT2] = true; paramB.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_BE;
 	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity;
-	paramB.mustGenerateConditionEntityIndex = true;
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramB.defaultSameSetRelationID = REL2; paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS;
 	#endif
@@ -807,7 +805,6 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	paramC.parseDisabledRelation[REL2] = true;	//copula will have been disabled, so must explicitly allow it to be parsed
 	paramC.useRelationTest[REL2][REL_ENT2] = true; paramC.relationTest[REL2][REL_ENT2] = RELATION_ENTITY_BE;
 	paramC.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity;
-	paramC.mustGenerateConditionEntityIndex = true;
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramC.defaultSameSetRelationID = REL2; paramC.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS;
 	#endif
@@ -2204,7 +2201,6 @@ void linkObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIAen
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION;
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
-	param.mustGenerateConditionEntityIndex = true;	//shouldn't be required as conditionType corresponds to a relation subject or relation governor (rather than a relation type)
 	param.functionEntityRelationID[FUNC_ENT1] = REL2; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	param.functionEntityRelationID[FUNC_ENT2] = REL1; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
 	param.functionEntityRelationID[FUNC_ENT3] = REL2; param.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT1;
@@ -2318,9 +2314,6 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAentityN
 	param.entityNodesActiveListConcepts = entityNodesActiveListConcepts;
 	param.numberOfRelations = 1;
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
-	#ifndef GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES
-	param.mustGenerateConditionEntityIndex = true;	//shouldn't be required as conditionType is converted from "conj_and"/"conj_or" to "and"/"or" (which should be detected as features within the sentence)
-	#endif
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 	param.functionEntityRelationID[FUNC_ENT2] = REL1; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
 	param.functionEntityRelationID[FUNC_ENT3] = REL1; param.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT3;
@@ -2484,7 +2477,6 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 	paramC.functionEntityRelationID[FUNC_ENT1] = REL1; paramC.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 	paramC.functionEntityRelationID[FUNC_ENT2] = REL1; paramC.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
 	paramC.functionEntityRelationID[FUNC_ENT3] = REL1; paramC.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT3;
-	paramC.mustGenerateConditionEntityIndex = true;	//may be required as conditionType corresponds to a relation type (not relation subject or relation governor) [assuming a corresponding feature index for the relation type cannot be found in the feature array]
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramC.defaultSameSetRelationID = REL1; paramC.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;
 	#endif
@@ -2753,6 +2745,14 @@ void createConditionBasedUponPreposition(GIAentityNode * actionOrSubstanceCondit
 	{
 		//added 3 June 2012 for advanced referencing of prepositions
 		GIAentityNode * conditionConceptEntity;
+		#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
+		int featureIndexOfPreposition = currentRelationInList->relationTypeIndex;
+		if(featureIndexOfPreposition == INT_DEFAULT_VALUE)
+		{
+			featureIndexOfPreposition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
+			currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent + 1;
+		}		
+		#else
 		int featureIndexOfPreposition = INT_DEFAULT_VALUE;
 		bool prepositionFeatureFound = determineFeatureIndexOfPreposition(currentSentenceInList, currentRelationInList, &featureIndexOfPreposition);
 		if(!prepositionFeatureFound)
@@ -2760,6 +2760,7 @@ void createConditionBasedUponPreposition(GIAentityNode * actionOrSubstanceCondit
 			featureIndexOfPreposition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
 			currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent + 1;
 		}
+		#endif
 
 		bool entityAlreadyExistant = false;
 		string conditionTypeName = prepositionName;
@@ -2955,7 +2956,7 @@ void linkDependentActionsType2(Sentence * currentSentenceInList, bool GIAentityN
 	EntityCharacteristic relationTestSpecialCaseIsAction("isAction", "true");
 	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCaseIsAction);
 	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&relationTestSpecialCaseIsAction);
-	param.mustGenerateConditionName = true; param.conditionEntityDefaultName = GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_DEFAULT_CONDITION_NAME; param.mustGenerateConditionEntityIndex = true;
+	param.mustGenerateConditionName = true; param.conditionEntityDefaultName = GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_DEFAULT_CONDITION_NAME;
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	param.defaultSameSetRelationID = REL1; param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS;
 	#endif

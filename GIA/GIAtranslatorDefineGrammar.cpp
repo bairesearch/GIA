@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1b 14-November-2014
+ * Project Version: 2h1c 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -172,6 +172,10 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 			bool prepositionFeatureFound = determineFeatureIndexOfPreposition(currentSentenceInList, currentRelationInList, &prepositionEntityIndex);
 			if(prepositionFeatureFound)
 			{
+				#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
+				currentRelationInList->relationTypeIndex = prepositionEntityIndex;
+				#endif
+								
 				if(!(GIAentityNodeArrayFilled[prepositionEntityIndex]))
 				{
 					GIAentityNodeArrayFilled[prepositionEntityIndex] = true;
@@ -233,86 +237,62 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAen
 	{
 		if(GIAentityNodeArrayFilled[w])
 		{
-			#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_BAD2
-			//make sure it is not a preposition;
-			bool entityIsPreposition = false;
-			Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
- 			while(currentRelationInList->next != NULL)
-			{
-				bool prepositionFound = false;
-				string prepositionName = convertPrepositionToRelex(currentRelationInList->relationType, &prepositionFound);
-				if(prepositionFound)
-				{
-					if(GIAfeatureTempEntityNodeArray[w] == prepositionName)
-					{
-						entityIsPreposition = true;
-					}
-				}
-				currentRelationInList = currentRelationInList->next;
-			}
-			if(!entityIsPreposition)
-			{
+			GIAentityNode * featureTempEntityNode = GIAfeatureTempEntityNodeArray[w];
+			//cout << "featureTempEntityNode->entityName = " << featureTempEntityNode->entityName << endl;
+			//cout << "!(featureTempEntityNode->disabled) = " << !(featureTempEntityNode->disabled) << endl;
+
+			bool entityAlreadyExistant = false;
+			GIAentityNode * entity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(featureTempEntityNode->entityName), &entityAlreadyExistant, entityNodesActiveListConcepts, !(featureTempEntityNode->disabled));
+			//cout << "entity->disabled = " << entity->disabled << endl;
+			GIAentityNodeArray[w] = entity;
+			entity->hasAssociatedInstanceTemp = false;
+			sentenceConceptEntityNodesList->push_back(entity);
+			#ifdef GIA_TRANSLATOR_DEBUG
+			//cout << "entity->entityName = " << entity->entityName << endl;
 			#endif
 
-				GIAentityNode * featureTempEntityNode = GIAfeatureTempEntityNodeArray[w];
-				//cout << "featureTempEntityNode->entityName = " << featureTempEntityNode->entityName << endl;
-				//cout << "!(featureTempEntityNode->disabled) = " << !(featureTempEntityNode->disabled) << endl;
+			#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
+			entity->entityIndexTemp = featureTempEntityNode->entityIndexTemp;
+			entity->sentenceIndexTemp = featureTempEntityNode->sentenceIndexTemp;
+			#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
+			cout << "\nentity->entityName = " << entity->entityName << endl;
+			cout << "entity->entityIndexTemp = " << entity->entityIndexTemp << endl;
+			#endif
+			#endif
 
-				bool entityAlreadyExistant = false;
-				GIAentityNode * entity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(featureTempEntityNode->entityName), &entityAlreadyExistant, entityNodesActiveListConcepts, !(featureTempEntityNode->disabled));
-				//cout << "entity->disabled = " << entity->disabled << endl;
-				GIAentityNodeArray[w] = entity;
-				entity->hasAssociatedInstanceTemp = false;
-				sentenceConceptEntityNodesList->push_back(entity);
-				#ifdef GIA_TRANSLATOR_DEBUG
-				//cout << "entity->entityName = " << entity->entityName << endl;
-				#endif
-
-				#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
-				entity->entityIndexTemp = featureTempEntityNode->entityIndexTemp;
-				entity->sentenceIndexTemp = featureTempEntityNode->sentenceIndexTemp;
-				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
-				cout << "\nentity->entityName = " << entity->entityName << endl;
-				cout << "entity->entityIndexTemp = " << entity->entityIndexTemp << endl;
-				#endif
-				#endif
-				
-				#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
-				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)	//ie if(NLPdependencyRelationsType != GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)		//updated 2d1a, OLD: if(NLPfeatureParser == GIA_NLP_PARSER_RELEX) //ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
+			#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
+			if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)	//ie if(NLPdependencyRelationsType != GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)		//updated 2d1a, OLD: if(NLPfeatureParser == GIA_NLP_PARSER_RELEX) //ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
+			{
+				if(GIAfeatureTempEntityNodeArray[w]->isQuery)
 				{
-					if(GIAfeatureTempEntityNodeArray[w]->isQuery)
-					{
-						entity->isQuery = true;
-						setFoundComparisonVariable(true);
-						setComparisonVariableNode(entity);
-					}
+					entity->isQuery = true;
+					setFoundComparisonVariable(true);
+					setComparisonVariableNode(entity);
 				}
-				#endif
-				#ifdef GIA_SUPPORT_ALIASES
-				if(GIAfeatureTempEntityNodeArray[w]->isNameQuery)
-				{
-					entity->isNameQuery = true;
-				}
-				if(GIAfeatureTempEntityNodeArray[w]->isName)
-				{
-					entity->isName = true;
-				}
-				#endif
-				#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-				//this is required because negative assignment is now performed during redistribution
-				if(GIAfeatureTempEntityNodeArray[w]->negative)
-				{
-					entity->negative = true;
-				}
-				#endif
-				#ifndef NLC_PREPROCESSOR_MATH_OLD_NUMBER_OF_IMPLEMENTATION_USING_QVARS
-				if(GIAfeatureTempEntityNodeArray[w]->isNumberOf)
-				{
-					entity->isNumberOf = true;
-				}	
-				#endif
-			#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_BAD2
 			}
+			#endif
+			#ifdef GIA_SUPPORT_ALIASES
+			if(GIAfeatureTempEntityNodeArray[w]->isNameQuery)
+			{
+				entity->isNameQuery = true;
+			}
+			if(GIAfeatureTempEntityNodeArray[w]->isName)
+			{
+				entity->isName = true;
+			}
+			#endif
+			#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+			//this is required because negative assignment is now performed during redistribution
+			if(GIAfeatureTempEntityNodeArray[w]->negative)
+			{
+				entity->negative = true;
+			}
+			#endif
+			#ifndef NLC_PREPROCESSOR_MATH_OLD_NUMBER_OF_IMPLEMENTATION_USING_QVARS
+			if(GIAfeatureTempEntityNodeArray[w]->isNumberOf)
+			{
+				entity->isNumberOf = true;
+			}	
 			#endif
 		}
 	}

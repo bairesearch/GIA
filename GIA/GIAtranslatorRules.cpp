@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1b 14-November-2014
+ * Project Version: 2h1c 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -721,7 +721,6 @@ bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParame
 
 	genericEntityInterpretationApplyOptionbool(&(paramDepRel->mustGenerateConditionName), xmlAttribute, "mustGenerateConditionName", &foundMatch);
 	genericEntityInterpretationApplyOptionstring(&(paramDepRel->conditionEntityDefaultName), xmlAttribute, "conditionEntityDefaultName", &foundMatch);
-	genericEntityInterpretationApplyOptionbool(&(paramDepRel->mustGenerateConditionEntityIndex), xmlAttribute, "mustGenerateConditionEntityIndex", &foundMatch);	//not used
 
 	genericEntityInterpretationApplyOptionbool(&(paramDepRel->disableEntity[REL][REL_ENT]), xmlAttribute, "disableEntity", &foundMatch);
 	genericEntityInterpretationApplyOptionbool(&(paramDepRel->disableEntityUseOriginalValues[REL][REL_ENT]), xmlAttribute, "disableEntityUseOriginalValues", &foundMatch);

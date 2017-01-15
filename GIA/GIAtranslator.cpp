@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1b 14-November-2014
+ * Project Version: 2h1c 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -746,7 +746,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	
 	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
-	invertOrDuplicateConditionsIfRequired(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
+	invertOrDuplicateConditionsIfRequired(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, featureArrayTemp);
 	#endif
 	
 	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
@@ -777,38 +777,42 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		currentRelationInList = currentRelationInList->next;
 	}
 	cout << "features (tags): " << endl;
+	cout << "hello0" << endl;
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
 		if(GIAentityNodeArrayFilled[w])
 		{
+			cout << "w filled = " << w << endl;
 			if(!(GIAconceptNodeArray[w]->disabled))
 			{
+				cout << "w !disabled = " << w << endl;
 				Feature * currentFeature = featureArrayTemp[w];
 
 				cout << "Sentence Word Index = " << w;
-				cout << "Word = " << currentFeature->word;
-				cout << "Lemma = " << currentFeature->lemma;
-				cout << "Is Date or Time = " << convertBoolToString(currentFeature->grammaticalIsDateOrTime);
-				cout << "Tense = " << grammaticalTenseNameArray[currentFeature->grammaticalTense];
+				cout << " Word = " << currentFeature->word;
+				cout << " Lemma = " << currentFeature->lemma;
+				cout << " Is Date or Time = " << convertBoolToString(currentFeature->grammaticalIsDateOrTime);
+				cout << " Tense = " << grammaticalTenseNameArray[currentFeature->grammaticalTense];
 				for(int q=0; q<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES;q++)
 				{
-					cout << "Tense Modifier (" << grammaticalTenseModifierNameArray[q] << ") = " << convertBoolToString(currentFeature->grammaticalTenseModifierArray[q]);
+					cout << " Tense Modifier (" << grammaticalTenseModifierNameArray[q] << ") = " << convertBoolToString(currentFeature->grammaticalTenseModifierArray[q]);
 				}
-				cout << "Plurality = " << grammaticalNumberNameArray[currentFeature->grammaticalNumber];
-				cout << "Is Definite = " << convertBoolToString(currentFeature->grammaticalIsDefinite);
-				cout << "Is Indefinite Plural = " << convertBoolToString(currentFeature->grammaticalIsIndefinitePlural);
-				cout << "Is Proper Noun = " << convertBoolToString(currentFeature->grammaticalIsProperNoun);
-				cout << "Gender = " << grammaticalGenderNameArray[currentFeature->grammaticalGender];
-				cout << "Is Pronoun = " << convertBoolToString(currentFeature->grammaticalIsPronoun);
-				cout << "Wordtype = " << grammaticalWordTypeNameArray[currentFeature->grammaticalWordType];
+				cout << " Plurality = " << grammaticalNumberNameArray[currentFeature->grammaticalNumber];
+				cout << " Is Definite = " << convertBoolToString(currentFeature->grammaticalIsDefinite);
+				cout << " Is Indefinite Plural = " << convertBoolToString(currentFeature->grammaticalIsIndefinitePlural);
+				cout << " Is Proper Noun = " << convertBoolToString(currentFeature->grammaticalIsProperNoun);
+				cout << " Gender = " << grammaticalGenderNameArray[currentFeature->grammaticalGender];
+				cout << " Is Pronoun = " << convertBoolToString(currentFeature->grammaticalIsPronoun);
+				cout << " Wordtype = " << grammaticalWordTypeNameArray[currentFeature->grammaticalWordType];
 
-				cout << "NER = " << featureNERtypeArray[currentFeature->NER];
-				cout << "NormalizedNER = " << currentFeature->NormalizedNER;
-				cout << "Timex = " << currentFeature->Timex;
-				cout << "POS = " << currentFeature->stanfordPOS << endl;
+				cout << " NER = " << featureNERtypeArray[currentFeature->NER];
+				cout << " NormalizedNER = " << currentFeature->NormalizedNER;
+				cout << " Timex = " << currentFeature->Timex;
+				cout << " POS = " << currentFeature->stanfordPOS << endl;
 			}
 		}
 	}
+	cout << "hello1" << endl;
 	#endif
 
 	if(NLPassumePreCollapsedStanfordRelations)
@@ -836,6 +840,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 2; identify entity types [define entities as objects, subjects, and being possessive of substances];" << endl;
+	cout << "hello2" << endl;
 	#endif
 	identifyEntityTypes(currentSentenceInList, GIAfeatureTempEntityNodeArray, NLPdependencyRelationsType);
 
@@ -1253,7 +1258,7 @@ void createAndLinkNonSpecificConceptsForAllEntities(vector<GIAentityNode*> * ent
 #endif
 
 #ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
-void invertOrDuplicateConditionsIfRequired(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+void invertOrDuplicateConditionsIfRequired(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1276,7 +1281,7 @@ void invertOrDuplicateConditionsIfRequired(Sentence * currentSentenceInList, boo
 						//#ifdef GIA_TRANSLATOR_DEBUG
 						cout << "invertOrDuplicateConditionsIfRequired(): inverseConditionRequired: conditionName = " << conditionName  << endl;
 						//#endif
-						createNewInverseConditionEntity(currentRelationInList, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, inverseConditionName);
+						createNewInverseConditionEntity(currentRelationInList, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, inverseConditionName, featureArrayTemp);
 					}
 					else if(twoWayConditionRequired)
 					{
@@ -1288,7 +1293,7 @@ void invertOrDuplicateConditionsIfRequired(Sentence * currentSentenceInList, boo
 						{	
 							lastRelationInList = lastRelationInList->next;
 						}
-						createNewInverseConditionEntity(lastRelationInList, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, conditionName);
+						createNewInverseConditionEntity(lastRelationInList, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, conditionName, featureArrayTemp);
 						lastRelationInList->relationGovernor = currentRelationInList->relationDependent;
 						lastRelationInList->relationDependent = currentRelationInList->relationGovernor;
 						lastRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
@@ -1302,7 +1307,7 @@ void invertOrDuplicateConditionsIfRequired(Sentence * currentSentenceInList, boo
 	}
 }
 
-void createNewInverseConditionEntity(Relation * currentRelationInList, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], string inverseConditionName)
+void createNewInverseConditionEntity(Relation * currentRelationInList, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], string inverseConditionName, Feature * featureArrayTemp[])
 {
 	int inverseConditionEntityIndex = currentSentenceInList->conditionEntityArtificialIndexCurrent;
 	GIAentityNodeArrayFilled[inverseConditionEntityIndex] = true;
@@ -1310,8 +1315,13 @@ void createNewInverseConditionEntity(Relation * currentRelationInList, Sentence 
 	inverseConditionEntity->entityName = inverseConditionName; 
 	inverseConditionEntity->wordOrig = inverseConditionName;	//is this necessary?
 	currentRelationInList->relationType = string(STANFORD_PARSER_PREPOSITION_PREPEND) + inverseConditionName;
+	currentRelationInList->relationTypeIndex = inverseConditionEntityIndex;
 	currentRelationInList->inverseRelation = true;	//not required
 	GIAentityNodeArray[inverseConditionEntityIndex] = inverseConditionEntity;
+	featureArrayTemp[inverseConditionEntityIndex] = new Feature(); 
+	featureArrayTemp[inverseConditionEntityIndex]->word = inverseConditionName;
+	featureArrayTemp[inverseConditionEntityIndex]->lemma = inverseConditionName;	//is this necessary?
+	featureArrayTemp[inverseConditionEntityIndex]->entityIndex = inverseConditionEntityIndex;
 	currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 }					
 #endif

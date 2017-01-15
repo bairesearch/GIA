@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1b 14-November-2014
+ * Project Version: 2h1c 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -133,10 +133,13 @@ GIACoreference::~GIACoreference(void)
 Relation::Relation(void)
 {
 	relationType = "";
+	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
+	relationTypeIndex = INT_DEFAULT_VALUE;
+	#endif
 	relationDependent = "";
-	relationDependentIndex = 0;
+	relationDependentIndex = INT_DEFAULT_VALUE;
 	relationGovernor = "";
-	relationGovernorIndex = 0;
+	relationGovernorIndex = INT_DEFAULT_VALUE;
 
 	disabled = false;
 	//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
@@ -365,6 +368,9 @@ void copyRelations(Relation * firstRelationInListToCopy, Relation * firstRelatio
 	{
 
 		currentRelation->relationType = currentRelationToCopy->relationType;
+		#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
+		currentRelation->relationTypeIndex = currentRelationToCopy->relationTypeIndex;
+		#endif
 		currentRelation->relationDependent = currentRelationToCopy->relationDependent;
 		currentRelation->relationDependentIndex = currentRelationToCopy->relationDependentIndex;
 		currentRelation->relationGovernor = currentRelationToCopy->relationGovernor;

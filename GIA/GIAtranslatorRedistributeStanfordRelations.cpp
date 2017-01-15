@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1b 14-November-2014
+ * Project Version: 2h1c 14-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -734,6 +734,9 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 															currentRelationInList2->disabled = true;
 
 															currentRelationInList3->relationType = newPrepositionName;
+															#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
+															currentRelationInList3->relationTypeIndex = currentRelationInList3->relationDependentIndex;
+															#endif
 															currentRelationInList3->relationDependent = currentRelationInList2->relationDependent;
 															currentRelationInList3->relationDependentIndex = currentRelationInList2->relationDependentIndex;
 
@@ -984,6 +987,9 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 														newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + relexPreposition;
 
 														currentRelationInList3->relationType = newPrepositionName;
+														#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
+														currentRelationInList3->relationTypeIndex = currentRelationInList3->relationDependentIndex;
+														#endif
 														currentRelationInList3->relationDependentIndex = currentRelationInList2->relationDependentIndex;
 														currentRelationInList3->relationDependent = currentRelationInList2->relationDependent;
 
@@ -1073,6 +1079,9 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 									newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + relexPreposition;
 
 									currentRelationInList2->relationType = newPrepositionName;
+									#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
+									currentRelationInList2->relationTypeIndex = currentRelationInList2->relationDependentIndex;
+									#endif									
 									currentRelationInList2->relationDependentIndex = currentRelationInList->relationDependentIndex;
 									currentRelationInList2->relationDependent = currentRelationInList->relationDependent;
 
@@ -1821,6 +1830,11 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 															newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
 
 															currentRelationInList->relationType = newPrepositionName;
+															/*
+															#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW_ASSIGN_RELATIONTYPEINDEX_FOR_CONCATONATIONS
+															currentRelationInList->relationTypeIndex = entityContainingFirstWordOfMultiwordPreposition->entityIndex;
+															#endif
+															*/
 															currentRelationInList->prepositionCombinationAlreadyCreatedTemp = true;
 
 															currentRelationInList->relationGovernorIndex = currentRelationInList3->relationDependentIndex;
@@ -1864,6 +1878,11 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 														newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
 
 														currentRelationInList->relationType = newPrepositionName;
+														/*
+														#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW_ASSIGN_RELATIONTYPEINDEX_FOR_CONCATONATIONS
+														currentRelationInList->relationTypeIndex = entityContainingFirstWordOfMultiwordPreposition->entityIndex;
+														#endif
+														*/
 														currentRelationInList->prepositionCombinationAlreadyCreatedTemp = true;
 
 														currentRelationInList2->disabled = true;
@@ -1896,6 +1915,11 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 														newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
 
 														currentRelationInList->relationType = newPrepositionName;
+														/*
+														#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW_ASSIGN_RELATIONTYPEINDEX_FOR_CONCATONATIONS
+														currentRelationInList->relationTypeIndex = entityContainingFirstWordOfMultiwordPreposition->entityIndex;
+														#endif
+														*/
 														currentRelationInList->prepositionCombinationAlreadyCreatedTemp = true;
 
 														currentRelationInList->relationGovernorIndex = currentRelationInList3->relationGovernorIndex;
@@ -1928,6 +1952,11 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 														newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
 
 														currentRelationInList->relationType = newPrepositionName;
+														/*
+														#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW_ASSIGN_RELATIONTYPEINDEX_FOR_CONCATONATIONS
+														currentRelationInList->relationTypeIndex = entityContainingFirstWordOfMultiwordPreposition->entityIndex;
+														#endif
+														*/
 														currentRelationInList->prepositionCombinationAlreadyCreatedTemp = true;
 
 														currentRelationInList->relationGovernorIndex = currentRelationInList3->relationGovernorIndex;
@@ -2952,6 +2981,9 @@ void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(Sentence *
 								cout << "newRelationType = " << newRelationType << endl;
 								#endif
 								currentRelationInList->relationType = newRelationType;
+								#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
+								currentRelationInList->relationTypeIndex = oldPrepositionEntity->entityIndex;
+								#endif
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -3372,6 +3404,9 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 								string newPrepositionName = "";
 								newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + currentRelationInList->relationDependent;	//oldPreposition->entityName
 								currentRelationInList2->relationType = newPrepositionName;
+								#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
+								currentRelationInList2->relationTypeIndex = currentRelationInList->relationDependentIndex;
+								#endif
 								foundTemporalModifierOrObjectOfPreposition = true;
 							}
 						}
@@ -3403,6 +3438,9 @@ void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentence
 								string newPrepositionName = "";
 								newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + currentRelationInList->relationDependent;	//oldPreposition->entityName
 								currentRelationInList2->relationType = newPrepositionName;
+								#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
+								currentRelationInList2->relationTypeIndex = currentRelationInList->relationDependentIndex;
+								#endif
 								currentRelationInList2->relationGovernor =  currentRelationInList->relationGovernor;
 								currentRelationInList2->relationGovernorIndex = currentRelationInList->relationGovernorIndex;
 
@@ -4443,6 +4481,9 @@ void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSenten
 								newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + relexPreposition;
 
 								currentRelationInList2->relationType = newPrepositionName;
+								#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
+								currentRelationInList2->relationTypeIndex = currentRelationInList->relationGovernorIndex;
+								#endif
 								currentRelationInList2->relationDependentIndex = currentRelationInList->relationDependentIndex;
 								currentRelationInList2->relationDependent = currentRelationInList->relationDependent;
 
