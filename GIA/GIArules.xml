@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f18a 22-July-2014
+ * Project Version: 2f18b 22-July-2014
  *
  *******************************************************************************/
 -->
@@ -1166,6 +1166,21 @@
 				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_quantity" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
+				</paramDepRel>
+				
+				<example><!--interpret
+				Number of red dogs.
+				prep_of(number-4, dogs-7) -> _quantity(dog[8], _$qVar[1])
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="number|amount" relationArrayTestSize="2" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of|_poss" relationArrayTestSize="2" />	<!-- NB _poss test is an artefact and is no longer required -->
+				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityReassignment="_quantity" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
+				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_$qVar" /> <!-- convert "number" to _$qVar -->
+				<option disableEntity="true" REL="1" REL_ENT="3" />
 				</paramDepRel>
 			</function>
 			
