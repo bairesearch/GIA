@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j6a 01-May-2012
+ * Project Version: 1j6c 01-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -262,6 +262,10 @@ using namespace std;
 #define RELATION_TYPE_PHRASAL_VERB_PARTICLE "_prt"	       
 //#define RELATION_TYPE_SMALL_CLAUSE_COMPLEMENT_OF_VERB "_sc"  
 
+//stanford specific (non Relex) relations implemented in redistributeStanfordRelationsCreateQueryVars
+#define STANFORD_RELATION_TYPE_ATTRIBUTIVE "attr"	//eg attr(is-2, Who-1) / attr(is-2, What-1)
+#define RELATION_TYPE_ATTRIBUTIVE "_attr"
+
 //stanford specific (non Relex) relations implemented in fillGrammaticalArraysStanford() (grammar related):
 #define STANFORD_RELATION_TYPE_MODAL_AUX "aux" 						//aux (died, has) 	Reagan has died.					Relex: indicates the tense feature: tense(die, present_perfect) 		[addtogrammar: perfect?]
 #define STANFORD_RELATION_TYPE_PASSIVE_AUX "auxpass" 					//auxpass(killed, been) Kennedy has been killed. 				Relex indicates the tense feature: tense(kill, present_perfect_passive) 	[addtogrammar: passive]				
@@ -287,7 +291,6 @@ used
 //#define STANFORD_RELATION_TYPE_ARGUMENT "arg"		//high level relation - not used
 //#define STANFORD_RELATION_TYPE_COMPLEMENT "comp"	//high level relation - not used
 //#define STANFORD_RELATION_TYPE_ "pobj"		//not used in collapsed relations
-#define STANFORD_RELATION_TYPE_ATTRIBUTIVE "attr"
 #define STANFORD_RELATION_TYPE_COMPLEMENTIZER "compl"
 #define STANFORD_RELATION_TYPE_RELATIVE "rel"
 #define STANFORD_RELATION_TYPE_REFERENT "ref"
@@ -301,6 +304,8 @@ used
 #define STANFORD_RELATION_TYPE_SEMANTIC_DEPENDENT "sdep"
 #define STANFORD_RELATION_TYPE_XSUBJ "xsubj"
 */
+
+
 
 
 //negations;
