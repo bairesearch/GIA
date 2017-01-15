@@ -801,7 +801,7 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 	positionSVG.x = vect->x + GIA_DRAW_BASICENTITY_NODE_WIDTH/2;
 	positionSVG.y = vect->y;	
 	positionSVG.z = GIA_OUTPUT_Z_POSITION_NODES;
-	writeSVGBox(writeFileObject, &positionSVG, width, height, colour, GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG*thickness);
+	writeSVGBox(writeFileObject, &positionSVG, width, height, colour, GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG*thickness, GIA_USE_SVG_ELLIPTICAL_BOXES);
 	positionSVG.x = vect->x - GIA_DRAW_BASICENTITY_NODE_WIDTH/4;
 	positionSVG.y = vect->y;
 	positionSVG.z = GIA_OUTPUT_Z_POSITION_TEXT;
@@ -821,16 +821,6 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int width,
 	{
 		initiateOpenGL(width, height);
 	}
-	
-	if(!parseGIARulesXMLFile())
-	{
-		cout << "error: no rules file detected" << endl;
-		exit(0);
-	}
-	fillInLDSpriteExternVariables();
-
-	///GIA specific rules.xml file is not used at the moment	[once right variables have been decided upon they will be fed to xml]
-	//fillInGIARulesExternVariables();
 	
 	char * outputFileNameLDRcharstar = const_cast<char*>(outputFileNameLDR.c_str());
 	char * displayFileNamePPMcharstar = const_cast<char*>(outputFileNamePPM.c_str());
@@ -872,7 +862,7 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int width,
 		//re-parse, then re-write to create a collapsed referencelist file...
 		//method1:
 		char * topLevelSceneFileName = outputFileNameLDRcharstar;
-		char * topLevelSceneFileNameCollapsed = "sceneCollapsedForRaytracing.ldr";
+		char * topLevelSceneFileNameCollapsed = "sceneCollapsedForOpenGLDisplay.ldr";
 		Reference * initialReferenceInSceneFile = new Reference();
 		Reference * topLevelReferenceInSceneFile = new Reference(topLevelSceneFileName, 1, true);	//The information in this object is not required or meaningful, but needs to be passed into the parseFile/parseReferenceList recursive function
 		if(!parseFile(topLevelSceneFileName, initialReferenceInSceneFile, topLevelReferenceInSceneFile, true))
@@ -907,8 +897,11 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int width,
 		drawPrimitivesReferenceListToOpenGLAndCreateRGBMapBasic(initialReferenceInCollapsedSceneFile, width, height, rgbMap);
 			//due to opengl code bug, need to execute this function twice.
 
-		generatePixmapFromRGBMap(displayFileNamePPMcharstar, width, height, rgbMap);
-
+		if(useOutputPPMFile)
+		{
+			generatePixmapFromRGBMap(displayFileNamePPMcharstar, width, height, rgbMap);
+		}
+		
 		delete rgbMap;
 
 	}

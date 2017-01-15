@@ -34,7 +34,7 @@ using namespace std;
 #include "GIAXMLconversion.h"
 #include "XMLParserClass.h"
 #include "XMLrulesClass.h"
-
+#include "LDsprite.h"
 
 #define CFF_XML_TAG_nlparse ((string)"nlparse")
 #define CFF_XML_TAG_sentence ((string)"sentence")
@@ -53,6 +53,11 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-notshow           : do not display output in opengl"
 "\n\t-width [int]       : raster graphics width in pixels (def: 640)"
 "\n\t-height [int]      : raster graphics height in pixels (def: 480)"
+"\n"
+"\n\t-workingfolder [string] : working directory name for input files (def: same as exe)"
+"\n\t-exefolder [string]     : exe directory name for executables GIA.exe and (def: same as exe)"
+"\n\t-tempfolder [string]    : temp directory name for temporary and output files (def: same as exe)"
+"\n"
 "\n\n\t-version         : print version"
 "\n\n\tThis program performs GIA (General Intelligence Algorithm) operations - creates semantic network based upon RelEx dependencies file (.xml) or GIA semantic network file (.xml); outputs semantic network to GIA semantic network file (.xml); displays semantic network (using opengl); prints semantic network to raster image (.ppm), 3D vector graphics (.ldr), or 2D vector graphics (.svg).\n\n";
 
@@ -158,18 +163,57 @@ int main(int argc,char **argv)
 		{
 			displayInOpenGLAndOutputScreenshot = false;
 		}
-			
-		if (exists_argument(argc,argv,"-version"))
-		{
-			cout << "GIA.exe version: 1b10a" << endl;
-			exit(1);
-		}
-		
+
 		if (exists_argument(argc,argv,"-width"))
 		rasterImageWidth=get_float_argument(argc,argv,"-width");
 
 		if (exists_argument(argc,argv,"-height"))
 		rasterImageHeight=get_float_argument(argc,argv,"-height");
+		
+		char currentFolder[EXE_FOLDER_PATH_MAX_LENGTH];	
+		#ifdef LINUX
+		getcwd(currentFolder, EXE_FOLDER_PATH_MAX_LENGTH);					
+		#else
+		::GetCurrentDirectory(EXE_FOLDER_PATH_MAX_LENGTH, currentFolder);
+		#endif
+						
+		if (exists_argument(argc,argv,"-workingfolder"))
+		{
+			workingFolderCharStar=get_char_argument(argc,argv,"-workingfolder");
+		}
+		else
+		{
+			workingFolderCharStar = currentFolder;		
+		}
+		if (exists_argument(argc,argv,"-exefolder"))
+		{
+			exeFolderCharStar=get_char_argument(argc,argv,"-exefolder");
+		}
+		else
+		{
+			exeFolderCharStar = currentFolder;
+		}
+		if (exists_argument(argc,argv,"-tempfolder"))
+		{
+			tempFolderCharStar=get_char_argument(argc,argv,"-tempfolder");
+		}
+		else
+		{
+			tempFolderCharStar = currentFolder;
+		}
+
+		#ifdef LINUX
+		chdir(workingFolderCharStar);						
+		#else
+		::SetCurrentDirectory(workingFolderCharStar);
+		#endif		
+								
+		if (exists_argument(argc,argv,"-version"))
+		{
+			cout << "GIA.exe version: 1b10a" << endl;
+			exit(1);
+		}
+
 		
 	}
 	else
@@ -178,7 +222,7 @@ int main(int argc,char **argv)
 		printf(errmessage);
 		exit(1);
 	}
-	
+		
 	vector<GIAEntityNode*> * entityNodesCompleteList;
 	vector<GIAActionNode*> * actionNodesCompleteList;
 	vector<GIAConditionNode*> * conditionNodesCompleteList;
@@ -253,12 +297,8 @@ int main(int argc,char **argv)
 			firstSentenceInList->firstFeatureInList = newFeature;
 			Sentence * currentSentence = firstSentenceInList;
 
-			string relexOutputXMLFileName = "test-corpus-parsed.xml";
-
 			XMLParserTag * firstTagInXMLFile = new XMLParserTag();
-			readXMLFile(relexOutputXMLFileName, firstTagInXMLFile);
-
-			cout << "hasd" << endl;
+			readXMLFile(inputRelexXMLFileName, firstTagInXMLFile);
 
 			XMLParserTag * currentTag = firstTagInXMLFile;
 			currentTag = parseTagDownALevel(currentTag, CFF_XML_TAG_nlparse, &result);
@@ -326,6 +366,22 @@ int main(int argc,char **argv)
 		}
 	}
 	
+	
+	if(!parseGIARulesXMLFile())
+	{
+		cout << "error: no rules file detected" << endl;
+		exit(0);
+	}
+	fillInLDSpriteExternVariables();
+	///GIA specific rules.xml file is not used at the moment	[once right variables have been decided upon they will be fed to xml]
+	//fillInGIARulesExternVariables();
+	#ifdef LINUX
+	chdir(tempFolderCharStar);						
+	#else
+	::SetCurrentDirectory(tempFolderCharStar);
+	#endif
+	
+				
 	if(printOutput)
 	{	
 		printGIAnetworkNodes(entityNodesCompleteList, rasterImageWidth, rasterImageHeight, outputLDRFileName, outputSVGFileName, outputPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputLDRFile, useOutputPPMFile);

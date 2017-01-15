@@ -125,7 +125,7 @@ int calculateQuantityNumberInt(string quantityNumberString)
 	{
 		if(quantityNumberString == quantityMultiplierNameArray[i])
 		{
-			quantityNumberInt = pow(10, i);
+			quantityNumberInt = pow(10, double(i));
 			found = true;
 		}
 	}		
@@ -162,7 +162,7 @@ int calculateQuantityMultiplierInt(string quantityMultiplierString)
 	{
 		if(quantityMultiplierString == quantityMultiplierNameArray[i])
 		{
-			quantityMultiplierInt = pow(10, i);
+			quantityMultiplierInt = pow(10, double(i));
 			found = true;
 		}
 	}

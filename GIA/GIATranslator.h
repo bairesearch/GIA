@@ -59,7 +59,9 @@ using namespace std;
 //properties (derived from obj/subj relationships);					
 #define RELATION_FUNCTION_COMPOSITION_1 "contains"	//eg x contains y
 #define RELATION_FUNCTION_COMPOSITION_2 "comprises"
-#define RELATION_FUNCTION_COMPOSITION_3 "has"						
+#define RELATION_FUNCTION_COMPOSITION_3 "has"	
+#define RELATION_FUNCTION_COMPOSITION_4 "have"
+#define RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES (4)						
 //properties (descriptive relationships)
 #define RELATION_TYPE_ADJECTIVE_1 "_amod"		//eg x is happy
 #define RELATION_TYPE_ADJECTIVE_2 "_predadj"						
@@ -122,7 +124,6 @@ using namespace std;
 */
 
 #define RELATION_FUNCTION_DEFINITION_NUMBER_OF_TYPES (1)
-#define RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES (3)
 #define GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES (1)
 #define RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES (2)
 #define RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES (1)

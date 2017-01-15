@@ -29,6 +29,8 @@ using namespace std;
 #include "GIAActionNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
+#define GIA_USE_SVG_ELLIPTICAL_BOXES (true)
+
 #define MAX_GIA_TREE_DEPTH (10000)
 #define DRAW_X_INITIAL_OFFSET (150)
 #define DRAW_Y_INITIAL_OFFSET (150)

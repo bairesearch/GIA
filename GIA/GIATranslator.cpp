@@ -23,7 +23,7 @@ string relationTypeAdjectiveNameArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] =
 string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_POSSESSIVE, RELATION_TYPE_PRENOMIAL_MODIFIER};
 //int relationTypePossessiveNameLengthsArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {5, 3};
 
-string relationFunctionCompositionNameArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_COMPOSITION_1, RELATION_FUNCTION_COMPOSITION_2, RELATION_FUNCTION_COMPOSITION_3};
+string relationFunctionCompositionNameArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_COMPOSITION_1, RELATION_FUNCTION_COMPOSITION_2, RELATION_FUNCTION_COMPOSITION_3, RELATION_FUNCTION_COMPOSITION_4};
 //int relationFunctionCompositionNameLengthsArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {8, 9, 3};
 string relationFunctionDefinitionNameArray[RELATION_FUNCTION_DEFINITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_DEFINITION_1};
 
@@ -703,8 +703,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 		//exit(0);
 		
-		//pass A; locate/add all entities;
-		//pass 1;
+		cout << "pass A;" << endl;
+		cout << "pass 1; locate/add all entities" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{			
@@ -766,7 +766,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 		//cout << "as2" <<endl;
 	
-		//pass 1b; switch argument/functions where necessary
+		cout << "pass 1b; switch argument/functions where necessary" << endl;
 		if(GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_WHERE_NECESSARY)
 		{
 			currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -846,7 +846,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			}					
 		}
 				
-		//pass 2; identify entity types [define entities as objects, subjects, and being possessive of properties];
+		cout << "pass 2; identify entity types [define entities as objects, subjects, and being possessive of properties];" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{
@@ -931,7 +931,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}
 		
-		//pass 3; link references (eg his/her with joe/emily) 				//OLD: pass 5	
+		cout << "pass 3; link references (eg his/her with joe/emily)" << endl;
 		for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 		{	
 			//cout << "w = " << w << endl;
@@ -1094,27 +1094,27 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 		
 				
-		//pass B;	
-		
-		//0 pass; define properties (definite nouns); eg the house
+		cout << "pass B;" << endl;	
+		cout << "0 pass; define properties (definite nouns); eg the house" << endl;
 		if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS == 1)
 		{
 			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 			{
 				//if(GIAEntityNodeArrayFilled[i])
-				//{ condition not required; assumed true with GRAMMATICAL_DEFINITE
+				//{ //condition not required; assumed true with GRAMMATICAL_DEFINITE
 					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS_OR_DATES || (!GIAEntityNodeGrammaticalIsPersonArray[i] & !GIAEntityNodeIsDate[i]))
 					{
 						if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
 						{
-							//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
+							cout << "asd" << endl;
+							cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
 							addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
 						}
 					}
 				//}
 			}
 		}
-		//0b pass; define properties (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore properties] 
+		cout << "0b pass; define properties (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore properties]" << endl;
 		if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_NOUNS_WITH_DETERMINATES == 1)
 		{
 			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -1140,7 +1140,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			}
 		}
 		
-		//0c pass; define properties (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late] 
+		cout << "0c pass; define properties (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{	
@@ -1167,7 +1167,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}				
 		
-		//0d pass; define properties (quantities [not quantity mods/multipiers] and measures);
+		cout << "0d pass; define properties (quantities [not quantity mods/multipiers] and measures);" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{			
@@ -1192,7 +1192,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		
 					
 										
-		//1 pass; link properties (possessive relationships); eg joe's bike
+		cout << "1 pass; link properties (possessive relationships); eg joe's bike" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{
@@ -1224,7 +1224,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}
 	
-		//2 pass; link properties (descriptive relationships); eg joe is happy
+		cout << "2 pass; link properties (descriptive relationships); eg joe is happy" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{	
@@ -1254,7 +1254,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}					
 
-		//2b pass; link entity definitions (appositive of nouns only)
+		cout << "2b pass; link entity definitions (appositive of nouns only)" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{
@@ -1276,7 +1276,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 					
 		
- 		//3 pass; define dependent subject-object definition/composition/action relationships and independent subject/object action relationships
+ 		cout <<"3 pass; define dependent subject-object definition/composition/action relationships and independent subject/object action relationships" << endl;
  		currentRelationInList = currentSentenceInList->firstRelationInList;
 		bool subjectObjectRelationshipAlreadyAdded[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE;i++)
