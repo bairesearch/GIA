@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1c 22-May-2012
+ * Project Version: 1l1d 22-May-2012
  *
  *******************************************************************************/
 
@@ -23,7 +23,7 @@ GIAEntityNode::GIAEntityNode(void)
 {
 	idActiveList = 0;	
 	idActiveEntityTypeList = 0;	//temporary ID reserved for specific entity types; concept, action, property etc
-	reorderdIDforXMLsave = 0;
+	idActiveListReorderdIDforXMLsave = 0;
 	#ifdef GIA_USE_DATABASE
 	
 	#endif
@@ -112,6 +112,10 @@ GIAEntityNode::GIAEntityNode(void)
 	entityBasicConnectionsArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_OBJECT] = conditionObjectEntity;
 	entityBasicConnectionsArray[GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE] = entityNodeDefiningThisInstance;
 
+	#ifdef GIA_USE_DATABASE
+	setEntityConnectionsLoaded(true);	//for now, assume that a new entity will be configured with its connections loaded into RAM
+	#endif
+	
 	/*
 	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_DEFINITIONS] = EntityNodeDefinitionList;
 	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_PROPERTIES] = PropertyNodeList;

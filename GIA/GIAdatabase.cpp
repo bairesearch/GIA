@@ -3,7 +3,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1c 22-May-2012
+ * Project Version: 1l1d 22-May-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -37,10 +37,11 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 			conceptEntityNode = conceptEntityNodesListIterator->second;
 		}
 		else
+		{
 			//load the concept node from the database into RAM
-			#define GIA_DATABASE_NODE_CONCEPT_ID_IRRELEVANT (0)
-			int idActiveList = GIA_DATABASE_NODE_CONCEPT_ID_IRRELEVANT;
-			readEntityNodeFromDatabase(conceptEntityNode, GIA_DATABASE_NODE_CONCEPT, entityNodeName, idActiveList);
+			int idInstance = GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE;
+			conceptEntityNode = new GIAEntityNode();
+			DBreadEntityNode(entityNodeName, idInstance, GIA_DATABASE_NODE_CONCEPT, conceptEntityNode);
 			conceptEntityNodesList->insert(pair<string, GIAEntityNode*>(*entityNodeName, conceptEntityNode));
 		}
 			
@@ -603,8 +604,472 @@ long maximumLong(long a, long b)
 	}
 }
 
+#ifdef GIA_USE_DATABASE
+
+
+string DBgenerateServerName(string * entityName);
+{
+	char entityFirstCharacter = entityName[0];
+	if((entityFirstCharacter < ASCII_TABLE_INDEX_OF_a) || (entityFirstCharacter > ASCII_TABLE_INDEX_OF_z))
+	{
+		cout << "determineServerName error: (entityFirstCharacter < ASCII_TABLE_INDEX_OF_a) || (entityFirstCharacter > ASCII_TABLE_INDEX_OF_z)" << endl;
+		exit(0);
+	}
+
+	int entityFirstCharacterIndex = entityFirstCharacter - ASCII_TABLE_INDEX_OF_a;
+	string serverName = serverNameArray[entityFirstCharacterIndex]; 	//this could be a more complex algorithm; eg serverName = (string)"/mnt/" + serverNameArray[entityFirstCharacterIndex]
+	#ifdef GIA_DATABASE_DEBUG
+	cout << "serverName = " << serverName << endl;
+	#endif
+	return serverName;
+}
+
+//NB idInstance 0 corresponds to the concept entity (null instance)
+string DBgenerateFileName(string * entityName, long idInstance, int connectionType, bool vectorOrBasic, int fileType);
+{
+	//eg network/server/GIAdatabase/e/x/a/example/1/2/3/instance123000000/{vectorConnectionsReferencesConnectionTypeX}.txt	//OLD: //eg network/server/GIAdatabase/e/x/a/example/1/2/3/{vectorConnectionsReferencesConnectionTypeX}/instance123000000.txt
+	string serverName = generateServerName(entityName);
+	string databaseName = GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
+	string fileName = serverName + databaseName;
+	if(entityName.length() < GIA_DATABASE_CONCEPT_NAME_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS)
+	{
+		cout << "generateConnectionsReferencesFileListLocation error: (entityName.length() < GIA_DATABASE_CONCEPT_NAME_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS)" << endl;
+	}
+	for(int level=0; level<GIA_DATABASE_CONCEPT_NAME_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS; level++)
+	{
+		fileName = fileName + entityName[level] + "/";
+	}
+	fileName = fileName + entityName + "/";
+	
+	char idInstanceStringCharStar[GIA_DATABASE_INSTANCE_ID_MAX_ORDER+1];	//+1 for char * string null character \0
+	sprintf(idInstanceStringCharStar, GIA_DATABASE_INSTANCE_ID_STRING_FORMAT, idInstance);
+	string idInstanceString = idInstanceStringCharStar;
+	
+	for(int level=0; level<GIA_DATABASE_INSTANCE_ID_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS; level++)
+	{
+		fileName = fileName + idInstanceString[level] + "/";
+	}	
+	fileName = fileName + idInstanceString + "/";
+
+	if(fileType == GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY)
+	{
+		fileName = fileName + GIA_ENTITY_NODE_NAME;
+	
+		fileName = fileName + GIA_DATABASE_ENTITY_FILE_NAME_EXTENSION;
+	}
+	else if(fileType == GIA_DATABASE_GENERATE_FILENAME_FILE_TIME_CONDITION_NODE)
+	{
+		fileName = fileName + GIA_ENTITY_TIME_CONDITION_NODE_NAME;
+	
+		fileName = fileName + GIA_DATABASE_ENTITY_FILE_NAME_EXTENSION;	
+	}
+	else if(fileType == GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES)
+	{
+		if(connectionTypeIsVector)
+		{
+			fileName = fileName + entityVectorConnectionNameArray[connectionType];
+		}
+		else
+		{//connectionTypeIsBasic
+			fileName = fileName + entityBasicConnectionNameArray[connectionType];
+		}
+		fileName = fileName + GIA_DATABASE_REFERENCES_FILE_NAME_EXTENSION;
+	}
+	else
+	{
+		cout << "error: illegal fileType" << endl;
+		exit(0);
+	}
+	
+	#ifdef GIA_DATABASE_DEBUG
+	cout << "fileName = " << fileName << endl;
+	#endif
+	
+	return fileName;
+}
+
+//this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
+void DBreadVectorConnectionsReferences(string * entityName, long idInstance, int connectionType, vector<string> *entityVectorConnectionsNames, vector<long> *entityVectorConnectionsID)
+{
+	/*
+	Format:
+	entityName,idInstance
+	entityName,idInstance
+	entityName,idInstance
+	entityName,idInstance
+	*/
+	
+	string referencesFileName = generateConnectionsReferencesFileListLocation(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_CONNECTION_VECTOR, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
+	//now read file
+	
+
+ 	FILE * pFile;
+	const char * fileNameCharStar = entityFileName->c_str();
+  	pFile = fopen(fileNameCharStar,"w");
+	if(pFile == NULL)
+	{
+		cout << "DBreadVectorConnectionsReferences() error: referencesFileName, " << referencesFileName << " does not exist" << endl;
+	}
+	else
+	{
+		#ifdef GIA_DATABASE_SAVE_WITH_LEADING_ZEROS_FOR_FUTURE_DIRECT_IO_IMPLEMENTATION
+		cout << "error: GIA_DATABASE_SAVE_WITH_LEADING_ZEROS_FOR_FUTURE_DIRECT_IO_IMPLEMENTATION not yet coded to take advantage of fixed length file columns" << endl;
+		#else	
+		while (!feof(file))
+		{
+			char connectionEntityName[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH]; 
+			long connectionInstanceID; 
+			fscanf(pFile, "%s,%ld", &connectionEntityName, &connectionInstanceID); 		
+			entityVectorConnectionsNames->push_back(string(connectionEntityName));
+			entityVectorConnectionsID->push_back(connectionInstanceID);
+		}
+		#endif
+		
+		fclose(pFile);
+	}
+		
+}
+
+//this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
+void DBreadBasicConnectionsReferences(string * entityName, long idInstance, int connectionType, string *entityBasicConnectionName, long *entityBasicConnectionID)
+{
+	/*
+	Format:
+	entityName,idInstance
+	*/
+	
+	string referencesFileName = generateConnectionsReferencesFileListLocation(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_CONNECTION_BASIC, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
+	//now read file
+	
+
+ 	FILE * pFile;
+	const char * fileNameCharStar = entityFileName->c_str();
+  	pFile = fopen(fileNameCharStar,"w");
+	if(pFile == NULL)
+	{
+		cout << "DBreadVectorConnectionsReferences() error: referencesFileName, " << referencesFileName << " does not exist" << endl;
+	}
+	else
+	{
+		#ifdef GIA_DATABASE_SAVE_WITH_LEADING_ZEROS_FOR_FUTURE_DIRECT_IO_IMPLEMENTATION
+		cout << "error: GIA_DATABASE_SAVE_WITH_LEADING_ZEROS_FOR_FUTURE_DIRECT_IO_IMPLEMENTATION not yet coded to take advantage of fixed length file columns" << endl;
+		#else	
+		
+		char connectionEntityName[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH]; 
+		long connectionInstanceID; 
+		fscanf(pFile, "%s,%ld", &connectionEntityName, &connectionInstanceID); 		
+		*entityBasicConnectionName = connectionEntityName;
+		*entityBasicConnectionID = connectionInstanceID;
+		
+		fclose(pFile);
+	}
+}
+
+	
+
+//assumes entityVectorConnections list is not already populated (ie, not already intialised with null pointers / GIA entity nodes)	
+void DBreadVectorConnections(string * entityName, long idInstance, int connectionType, vector<string> *entityVectorConnectionsNames, vector<long> *entityVectorConnectionsID, vector<bool> *entityVectorConnectionsLoaded, vector<GIAEntityNode*> *entityVectorConnections)
+{
+	vector<long*>::iterator entityVectorConnectionsNamesIterator = entityVectorConnectionsNames->begin();
+	vector<bool>::iterator entityVectorConnectionsIDIterator = entityVectorConnectionsID->begin();
+	for(entityVectorConnectionsNamesIterator = entityVectorConnectionsNames->begin(); entityVectorConnectionsNamesIterator != entityVectorConnectionsNames->end(); entityVectorConnectionsNamesIterator++) 
+	{
+		string entityFileName = DBgenerateConnectionsReferencesFileListLocation(*entityVectorConnectionsNamesIterator, *entityVectorConnectionsIDIterator, connectionType, GIA_DATABASE_GENERATE_FILENAME_CONNECTION_VECTOR, GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY);
+		
+		GIAEntityNode * entity = new GIAEntityNode();
+		DBreadEntityFile(entityFileName, entity);
+		entityVectorConnections->push_back(entity);		
+		
+		entityVectorConnectionsIDIterator++;
+	}
+	
+}
+
+//assumes entityBasicConnections array is not already intialised with GIA entity nodes	
+void DBreadBasicConnections(string * entityName, long idInstance, int connectionType, string *entityBasicConnectionName, long *entityBasicConnectionID, bool *entityBasicConnectionLoaded, GIAEntityNode** entityBasicConnection)
+{
+	string entityFileName = DBgenerateConnectionsReferencesFileListLocation(entityBasicConnectionName, *entityBasicConnectionID, connectionType, GIA_DATABASE_GENERATE_FILENAME_CONNECTION_BASIC, GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY);
+	
+	GIAEntityNode * entity = new GIAEntityNode();
+	DBreadEntityFile(connectionsReferencesFileName, entity);
+	
+	*entityBasicConnection = entity;
+}
+
+
+void DBreadEntityNode(string * entityName, long idInstance, int connectionType, GIAEntityNode * entityNode)
+{
+	string entityFileName = DBgenerateConnectionsReferencesFileListLocation(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_CONNECTION_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY);
+	DBreadEntityNodeFile(entityFileName, entityNode);
+	
+	if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
+	{
+		entityNode->timeConditionNode = new GIATimeConditionNode();
+		string timeConditionFileName = DBgenerateConnectionsReferencesFileListLocation(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_CONNECTION_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_TIME_CONDITION_NODE);
+		DBreadTimeConditionNodeFile(timeConditionFileName, entityNode->timeConditionNode);
+	}
+	
+	setEntityConnectionsLoaded(false);
+	//do not read references
+}	
 
 
 
+//this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
+void DBwriteVectorConnectionsReferences(string * entityName, long idInstance, int connectionType, vector<string> *entityVectorConnectionsNames, vector<long> *entityVectorConnectionsID)
+{
+	/*
+	Format:
+	entityName,idInstance
+	entityName,idInstance
+	entityName,idInstance
+	entityName,idInstance
+	*/
+	
+	string referencesFileName = generateConnectionsReferencesFileListLocation(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_CONNECTION_VECTOR, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
+	//now write file
+	
 
+ 	FILE * pFile;
+	const char * fileNameCharStar = entityFileName->c_str();
+  	pFile = fopen(fileNameCharStar,"w");
+	if(pFile == NULL)
+	{
+		cout << "DBreadEntityNodeFile() error: entityFileName, " << *entityFileName << " does not exist" << endl;
+	}
+	else
+	{
+		#ifdef GIA_DATABASE_SAVE_WITH_LEADING_ZEROS_FOR_FUTURE_DIRECT_IO_IMPLEMENTATION
+		cout << "error: GIA_DATABASE_SAVE_WITH_LEADING_ZEROS_FOR_FUTURE_DIRECT_IO_IMPLEMENTATION not yet coded to take advantage of fixed length file columns" << endl;
+		#else	
+		
+		vector<bool>::iterator entityVectorConnectionsIDIterator = entityVectorConnectionsID->begin();
+		for(entityVectorConnectionsNamesIterator = entityVectorConnectionsNames->begin(); entityVectorConnectionsNamesIterator != entityVectorConnectionsNames->end(); entityVectorConnectionsNamesIterator++) 
+		{
+			char * connectionEntityName = const_cast<char*>((*entityVectorConnectionsNamesIterator).c_str()); 
+			long connectionInstanceID = *entityVectorConnectionsIDIterator; 		
+			fprintf(pFile, "%s,%ld", connectionEntityName, connectionInstanceID); 	
+			entityVectorConnectionsIDIterator++;
+		}
+		#endif
+		
+		fclose(pFile);
+	}
+}
+
+void DBwriteBasicConnectionsReferences(string * entityName, long idInstance, int connectionType, string *entityBasicConnectionName, long *entityBasicConnectionID)
+{
+	/*
+	Format:
+	entityName,idInstance
+	*/
+	
+	string referencesFileName = generateConnectionsReferencesFileListLocation(entityName, idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_CONNECTION_BASIC, GIA_DATABASE_GENERATE_FILENAME_FILE_REFERENCES);
+	//now write file
+	
+
+ 	FILE * pFile;
+	const char * fileNameCharStar = entityFileName->c_str();
+  	pFile = fopen(fileNameCharStar,"w");
+	if(pFile == NULL)
+	{
+		cout << "DBreadEntityNodeFile() error: entityFileName, " << *entityFileName << " does not exist" << endl;
+	}
+	else
+	{
+		#ifdef GIA_DATABASE_SAVE_WITH_LEADING_ZEROS_FOR_FUTURE_DIRECT_IO_IMPLEMENTATION
+		cout << "error: GIA_DATABASE_SAVE_WITH_LEADING_ZEROS_FOR_FUTURE_DIRECT_IO_IMPLEMENTATION not yet coded to take advantage of fixed length file columns" << endl;
+		#else	
+		
+		char * connectionEntityName = const_cast<char*>(entityBasicConnectionName->c_str()); 
+		long connectionInstanceID = *entityBasicConnectionID; 		
+		fprintf(pFile, "%s,%ld", connectionEntityName, connectionInstanceID); 	
+		
+		fclose(pFile);
+	}
+}
+
+	
+
+//this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
+void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
+{
+	/*
+	Format:
+	idActiveList,entityName,confidence,isConcept,isProperty,isAction,isCondition,hasAssociatedInstance,hasAssociatedInstanceIsAction,hasAssociatedPropertyIsCondition,hasAssociatedTime,hasQuality,disabled,conditionType,grammaticalNumber,hasQuantity,hasMeasure
+	//format derived from GIA XML file
+	*/
+	
+	//read file into c struct directly?
+	//use fscanf instead? (http://bytes.com/topic/c/answers/882529-read-text-file-into-formatted-struct-array)
+
+ 	FILE * pFile;
+	const char * fileNameCharStar = entityFileName->c_str();
+  	pFile = fopen(fileNameCharStar,"r");
+	if(pFile == NULL)
+	{
+		cout << "DBreadEntityNodeFile() error: entityFileName, " << *entityFileName << " does not exist" << endl;
+	}
+	else
+	{
+		#ifdef GIA_DATABASE_SAVE_WITH_LEADING_ZEROS_FOR_FUTURE_DIRECT_IO_IMPLEMENTATION
+		fscanf(pFile, "%10ld,%64s,%0.6f,%1d,%1d,%1d,%1d,%1d,%1d,%1d,%1d,%1d,%1d,%1d,%9d,%1d,%1d", &(entity->idActiveList) &(entity->entityName), &(entity->confidence), &(int(entity->isConcept)), &(int(entity->isProperty)), &(int(entity->isAction)), &(int(entity->isCondition)), &(int(entity->hasAssociatedInstance)), &(int(entity->hasAssociatedInstanceIsAction)), &(int(entity->hasAssociatedPropertyIsCondition)), &(int(entity->hasAssociatedTime)), &(int(entity->hasQuality)), &(int(entity->disabled)), &(entity->conditionType), &(entity->grammaticalNumber), &(int(entity->hasQuantity)), &(int(entity->hasMeasure))); 		
+		#else
+		fscanf(pFile, "%ld,%s,%0.6f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", &(entity->idActiveList) &(entity->entityName), &(entity->confidence), &(int(entity->isConcept)), &(int(entity->isProperty)), &(int(entity->isAction)), &(int(entity->isCondition)), &(int(entity->hasAssociatedInstance)), &(int(entity->hasAssociatedInstanceIsAction)), &(int(entity->hasAssociatedPropertyIsCondition)), &(int(entity->hasAssociatedTime)), &(int(entity->hasQuality)), &(int(entity->disabled)), &(entity->conditionType), &(entity->grammaticalNumber), &(int(entity->hasQuantity)), &(int(entity->hasMeasure))); 
+		#endif
+		fclose(pFile);
+	}
+  	
+	/*
+	ifstream parseFileObject(entityFileName->c_str());
+	if(!parseFileObject.rdbuf( )->is_open( ))
+	{
+		//xml file does not exist in current directory.
+		cout << "Error: GIA Entity File does not exist in current directory: " << *entityFileName << endl;
+		result = false;
+	}
+	else
+	{
+		char currentToken;
+		while(parseFileObject->get(currentToken))
+		{
+			
+		}
+	}
+	*/
+
+}
+
+//this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
+void DBwriteEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
+{
+	/*
+	Format:
+	idActiveList,entityName,confidence,isConcept,isProperty,isAction,isCondition,hasAssociatedInstance,hasAssociatedInstanceIsAction,hasAssociatedPropertyIsCondition,hasAssociatedTime,hasQuality,disabled,conditionType,grammaticalNumber,hasQuantity,hasMeasure
+	//format derived from GIA XML file
+	*/
+	
+ 	FILE * pFile;
+	const char * fileNameCharStar = entityFileName->c_str();
+  	pFile = fopen(fileNameCharStar,"w");
+	if(pFile == NULL)
+	{
+		cout << "DBreadEntityNodeFile() error: entityFileName, " << *entityFileName << " does not exist" << endl;
+	}
+	else
+	{
+		#ifdef GIA_DATABASE_SAVE_WITH_LEADING_ZEROS_FOR_FUTURE_DIRECT_IO_IMPLEMENTATION
+		fprintf(pFile, "%10ld,%64s,%0.6f,%1d,%1d,%1d,%1d,%1d,%1d,%1d,%1d,%1d,%1d,%1d,%9d,%1d,%1d", entity->idActiveList, entity->entityName, entity->confidence, int(entity->isConcept), int(entity->isProperty), int(entity->isAction), int(entity->isCondition), int(entity->hasAssociatedInstance), int(entity->hasAssociatedInstanceIsAction), int(entity->hasAssociatedPropertyIsCondition), int(entity->hasAssociatedTime), int(entity->hasQuality), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), int(entity->hasMeasure)); 		
+		#else
+		fprintf(pFile, "%ld,%s,%0.6f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", entity->idActiveList, entity->entityName, entity->confidence, int(entity->isConcept), int(entity->isProperty), int(entity->isAction), int(entity->isCondition), int(entity->hasAssociatedInstance), int(entity->hasAssociatedInstanceIsAction), int(entity->hasAssociatedPropertyIsCondition), int(entity->hasAssociatedTime), int(entity->hasQuality), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), int(entity->hasMeasure)); 
+		#endif
+		fclose(pFile);
+	}
+	
+	/*
+	ofstream writeFileObject(entityFileName->c_str());
+
+	writeFileObject.put(CHAR_NEW_LINE);
+
+	writeFileObject.close();
+	*/
+	
+	return result;
+}
+
+//this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
+void DBreadTimeConditionNodeFile(string * timeConditionFileName, GIATimeConditionNode* timeCondition)
+{
+	/*
+	Format:
+	conditionName,tense,second,hour,dayOfWeek,month,dayOfMonth,year,period,totalTimeInSeconds,tenseOnlyTimeCondition,isProgressive
+	//format derived from GIA XML file
+	*/
+	
+ 	FILE * pFile;
+	const char * fileNameCharStar = timeConditionFileName->c_str();
+  	pFile = fopen(fileNameCharStar,"r");
+	if(pFile == NULL)
+	{
+		cout << "DBreadTimeConditionNodeFile() error: timeConditionFileName, " << *timeConditionFileName << " does not exist" << endl;
+	}
+	else
+	{
+		#ifdef GIA_DATABASE_SAVE_WITH_LEADING_ZEROS_FOR_FUTURE_DIRECT_IO_IMPLEMENTATION
+		fscanf(pFile, "%64s,%2d,%0.6f,%2d,%1d,%2d,%2d,%10ld,%0.6f,%20ld,%1i,%1i", &(timeCondition->conditionName), &(timeCondition->tense), &(timeCondition->second), &(timeCondition->hour), &(timeCondition->dayOfWeek), &(timeCondition->month), &(timeCondition->dayOfMonth), &(timeCondition->year), &(timeCondition->period), &(timeCondition->totalTimeInSeconds), &(int(timeCondition->tenseOnlyTimeCondition)), &(int(timeCondition->isProgressive)));	//tenseOnlyTimeCondition + isProgressive are only in DB at the moment (not yet in XML i/o) 
+		#else
+		fscanf(pFile, "%s,%d,%0.6f,%d,%d,%d,%d,%ld,%0.6f,%ld,%i,%i", &(timeCondition->conditionName), &(timeCondition->tense), &(timeCondition->second), &(timeCondition->hour), &(timeCondition->dayOfWeek), &(timeCondition->month), &(timeCondition->dayOfMonth), &(timeCondition->year), &(timeCondition->period), &(timeCondition->totalTimeInSeconds), &(int(timeCondition->tenseOnlyTimeCondition)), &(int(timeCondition->isProgressive)));	//tenseOnlyTimeCondition + isProgressive are only in DB at the moment (not yet in XML i/o) 
+		#endif
+		fclose(pFile);
+	}
+  
+}
+
+//this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
+void DBwriteTimeConditionNodeFile(string * timeConditionFileName, GIATimeConditionNode* timeCondition)
+{
+	/*
+	Format:
+	conditionName,tense,second,hour,dayOfWeek,month,dayOfMonth,year,period,totalTimeInSeconds,tenseOnlyTimeCondition,isProgressive
+	//format derived from GIA XML file
+	*/
+	
+ 	FILE * pFile;
+	const char * fileNameCharStar = timeConditionFileName->c_str();
+  	pFile = fopen(fileNameCharStar,"w");
+	if(pFile == NULL)
+	{
+		cout << "DBreadTimeConditionNodeFile() error: timeConditionFileName, " << *timeConditionFileName << " does not exist" << endl;
+	}
+	else
+	{
+		#ifdef GIA_DATABASE_SAVE_WITH_LEADING_ZEROS_FOR_FUTURE_DIRECT_IO_IMPLEMENTATION
+		fprintf(pFile, "%64s,%2d,%0.6f,%2d,%1d,%2d,%2d,%10ld,%0.6f,%20ld,%1i,%1i", (timeCondition->conditionName), (timeCondition->tense), (timeCondition->second), (timeCondition->hour), (timeCondition->dayOfWeek), (timeCondition->month), (timeCondition->dayOfMonth), (timeCondition->year), (timeCondition->period), (timeCondition->totalTimeInSeconds), (int(timeCondition->tenseOnlyTimeCondition)), (int(timeCondition->isProgressive)));	//tenseOnlyTimeCondition + isProgressive are only in DB at the moment (not yet in XML i/o) 		
+		#else
+		fprintf(pFile, "%s,%d,%0.6f,%d,%d,%d,%d,%ld,%0.6f,%ld,%i,%i", (timeCondition->conditionName), (timeCondition->tense), (timeCondition->second), (timeCondition->hour), (timeCondition->dayOfWeek), (timeCondition->month), (timeCondition->dayOfMonth), (timeCondition->year), (timeCondition->period), (timeCondition->totalTimeInSeconds), (int(timeCondition->tenseOnlyTimeCondition)), (int(timeCondition->isProgressive)));	//tenseOnlyTimeCondition + isProgressive are only in DB at the moment (not yet in XML i/o) 
+		#endif
+		fclose(pFile);
+	}
+	
+	return result;
+}
+
+
+	
+void DBreadReferencesFile(string * referencesFileName, GIAEntityNode* entity)
+{
+	//read file into c struct
+	
+	ifstream parseFileObject(entityFileName->c_str());
+	if(!parseFileObject.rdbuf( )->is_open( ))
+	{
+		//xml file does not exist in current directory.
+		cout << "Error: GIA Entity File does not exist in current directory: " << *entityFileName << endl;
+		result = false;
+	}
+	else
+	{
+		char currentToken;
+		while(parseFileObject->get(currentToken))
+		{
+			
+		}
+	}
+}
+
+void setEntityConnectionsLoaded(GIAEntityNode * entityNode, bool loaded)
+{
+	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+	{
+		entityNode->entityVectorConnectionsReferenceListLoadedArray = loaded;
+	}
+	for(int i=0; i<GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES; i++)
+	{
+		entityNode->entityVectorBasicReferenceListLoadedArray = loaded;
+	}
+}
+
+
+	
+#endif
 

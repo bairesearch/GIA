@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1c 22-May-2012
+ * Project Version: 1l1d 22-May-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -133,11 +133,14 @@ static string grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS (6)
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS (7)
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES (8)
+static string entityVectorConnectionNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"actions", "incomingActions", "conditions", "incomingConditions", "properties", "reverseProperties", "definitions", "reverseDefinitions", "associatedInstances"};
 static string entityVectorConnectionSourceContextArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"is ", "", "", "", "has ", "possessed by ", "is ", "defines ", ""};
 static string entityVectorConnectionContextArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"outgoingAction(s)", "incomingAction(s)", "conditionNode(s)", "incomingConditionNode(s)", "propertyNode(s)", "propertyNode(s)", "entityNodeDefinition(s)", "incomingEntityNodeDefinition(s)", "associatedInstanceNodes(s)"};
 static bool entityVectorConnectionThisIsInstanceAndPreviousNodeWasDefinitionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, false, false, false, false, true};
 static bool entityVectorConnectionIsConditionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, true, true, false, false, false, false, false};
-
+#define GIA_ENTITY_TIME_CONDITION_NODE_NAME "timeCondition"
+#define GIA_ENTITY_NODE_NAME "entity"
+ 
 /*
 #define GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPES (2)
 */
@@ -148,7 +151,8 @@ static bool entityVectorConnectionIsConditionArray[GIA_ENTITY_NUMBER_OF_VECTOR_C
 #define GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_OBJECT (1)
 #define GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_SUBJECT (2)
 #define GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_OBJECT (3)
-#define GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE (4)
+#define GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE (4)	//GIA_ENTITY_BASIC_CONNECTION_TYPE_INSTANCE_DEFINITION
+static string entityBasicConnectionNameArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES] = {"actionSubject", "actionObject", "conditionSubject", "conditionObject", "nodeDefiningInstance"};	//instanceDefinition
 static string entityBasicConnectionSourceContextArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES] = {"is done by ", "", "", "", ""};
 static string entityBasicConnectionContextArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES] = {"actionSubjectEntity", "actionObjectEntity", "conditionSubjectEntity", "conditionObjectEntity", "entityNodeDefiningThisInstance"};
 static bool entityBasicConnectionThisIsInstanceAndPreviousNodeWasDefinitionArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES] = {false, false, false, false, false};
@@ -166,9 +170,9 @@ public:
 	
 	long idActiveList;
 	long idActiveEntityTypeList;
-	long reorderdIDforXMLsave;	//for CXL output only
+	long idActiveListReorderdIDforXMLsave;	//for CXL output only
 	#ifdef GIA_USE_DATABASE
-	long instanceId; 		//not for concepts (this instance idActiveList of the concept entityName)
+	long idInstance; 		//not for concepts (this instance idActiveList of the concept entityName)
 	#endif
 	
 	string entityName;
@@ -182,8 +186,9 @@ public:
 	bool hasAssociatedInstanceIsAction;
 	bool hasAssociatedInstanceIsCondition;
 	bool hasAssociatedTime;
-	bool hasProgressiveTemp;	//PRECISE ORIGINALNAME: isActionOrPropertyState		//eg The cat is lying on the bed. / Mark is being happy.
 	bool hasQuality;		//PRECISE ORIGINAL NAME: isPropertyQualityOrAffection	//eg 'the locked door..' / 'Jim runs quickly' / 'Mr. Smith is late' 	[Not: Tom has an arm'/'Tom's bike']
+
+	bool hasProgressiveTemp;	//PRECISE ORIGINALNAME: isActionOrPropertyState		//eg The cat is lying on the bed. / Mark is being happy.
 	
 	/*instances are now arbitrary, every entity is an instance of its parent(s) in some form or another...
 	enum
@@ -201,16 +206,18 @@ public:
 	#endif
 	
 	#ifdef GIA_USE_DATABASE
-	//for a low scale database (with < 200 000 references per instance), this may not be necessary; can just use 'added'/'modified' instead [and update the entire instance instead]
-	vector<bool> entityVectorConnectionsArrayInRAMArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];			//signifies whether the vector connection node has been loaded (eg from the db)
-	bool entityBasicConnectionsArrayInRAMArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];				//signifies whether the basic connection node has been loaded (eg from the db)
-		bool entityBasicConnectionsArrayAllInRAMArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//signifies whether all the vector connection nodes have been loaded (eg from the db)
-	vector<bool> entityVectorConnectionsNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//records the vector connection name (to enable loading from db)
-	bool entityBasicConnectionsNameArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];					//records the basic connection name (to enable loading from db)
-	vector<bool> entityVectorConnectionsIDArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//records the vector connection instance id (to enable loading from db)
-	bool entityBasicConnectionsIDArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];					//records the basic connection instance id (to enable loading from db)
-	vector<bool> entityVectorConnectionsParametersModifiedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];		//signifies whether the database needs to be updated upon exit with modified reference/node
-	bool entityBasicConnectionsParametersModifiedArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];			//signifies whether the database needs to be updated upon exit with modified reference/node
+	//for a high scale database (eg 200,000 references per instance, 200,000 instances per concept)
+	bool entityVectorConnectionsReferenceListLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];			//signifies whether the vector connections reference list has been loaded from file (to populate entityConnectionsNameArray/entityConnectionsIDArray - to enable loading of connections into RAM)
+	bool entityVectorBasicReferenceListLoadedArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];				//signifies whether the basic connections reference list has been loaded from file (to populate entityConnectionsNameArray/entityConnectionsIDArray - to enable loading of connections into RAM)	
+	vector<string> entityVectorConnectionsNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//records the vector connection name (to enable loading from db)
+	string entityBasicConnectionsNameArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];					//records the basic connection name (to enable loading from db)
+	vector<long> entityVectorConnectionsIDArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//records the vector connection instance id (to enable loading from db)
+	long entityBasicConnectionsIDArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];					//records the basic connection instance id (to enable loading from db)
+	vector<bool> entityVectorConnectionsLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//signifies whether the vector connection node has been loaded (eg from the db)
+	bool entityBasicConnectionsLoadedArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];					//signifies whether the basic connection node has been loaded (eg from the db)
+		bool entityAllVectorConnectionsLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//signifies whether all the vector connection nodes have been loaded (eg from the db)	
+	vector<bool> entityVectorConnectionsModifiedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];			//signifies whether the database needs to be updated upon exit with modified reference/node
+	bool entityBasicConnectionsModifiedArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];					//signifies whether the database needs to be updated upon exit with modified reference/node
 	#endif
 	/*
 	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPES];

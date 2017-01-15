@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1c 22-May-2012
+ * Project Version: 1l1d 22-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1290,43 +1290,76 @@ GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapper(string * entityNodeName, 
 
 
 /*these functions have been added for GIA Database compatibility*/
-void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int vectorConnectionType, bool sameReferenceSet)
+void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet)
 {
-	entityNode->entityVectorConnectionsArray[vectorConnectionType].push_back(existingProperty);
-	entityNode->entityVectorConnectionsParametersSameReferenceSetArray[vectorConnectionType].push_back(sameReferenceSet);
+	entityNode->entityVectorConnectionsArray[connectionType].push_back(existingProperty);
+	entityNode->entityVectorConnectionsParametersSameReferenceSetArray[connectionType].push_back(sameReferenceSet);
 	#ifdef GIA_USE_DATABASE
-	//entityNode->modified = true;
-	entityNode->entityVectorConnectionsArrayInRAMArray[vectorConnectionType].push_back(true);			//required for database syncronisation with RAM	
-	entityNode->entityVectorConnectionsNameArray[vectorConnectionType].push_back(entityNodeToAdd->entityName);	//required for database syncronisation with RAM
-	entityNode->entityBasicConnectionsIDArray[vectorConnectionType].push_back(entityNodeToAdd->instanceID);		//required for database syncronisation with RAM
-	entityNode->entityVectorConnectionsParametersModifiedArray[vectorConnectionType].push_back(true);		//required for database syncronisation with RAM
+	//entityNode->modified = true;		//not required; as an entity's connections can be modified without modifying the entity itself (ie, its properties)
+	if(!entityVectorConnectionsReferenceListLoadedArray[connectionType])
+	{
+		cout << "error: writeBasicConnection called, but entityVectorBasicReferenceListLoadedArray set to false" << endl;
+		exit(0);
+	}	
+	entityNode->entityVectorConnectionsNameArray[connectionType].push_back(entityNodeToAdd->entityName);	//required for database syncronisation with RAM
+	entityNode->entityVectorConnectionsIDArray[connectionType].push_back(entityNodeToAdd->idInstance);	//required for database syncronisation with RAM
+	entityNode->entityVectorConnectionsLoadedArray[connectionType].push_back(true);				//required for database syncronisation with RAM		
+	entityNode->entityVectorConnectionsModifiedArray[connectionType].push_back(true);			//required for database syncronisation with RAM [this is used such that only the single line in the vector connection list file {for the connectionType} is required to be updated; ie the entire the vector connection list file {for the connectionType} does not have to be rewritten]
 	#endif
 }
 
-void readVectorConnections(GIAEntityNode * entityNode, int vectorConnectionType)	//int vectorConnectionIndex?
+void writeBasicConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int connectionType, bool sameReferenceSet)
 {
-	if(entityNode->entityVectorConnectionsArrayAllInRAMArray[vectorConnectionType])
-	{
-	
-	}
-}
-
-void writeBasicConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int basicConnectionType, bool sameReferenceSet)
-{
-	entityNode->entityBasicConnectionsArray[basicConnectionType] = existingProperty;
-	entityNode->entityBasicConnectionsParametersSameReferenceSetArray[basicConnectionType] = sameReferenceSet;
+	entityNode->entityBasicConnectionsArray[connectionType] = existingProperty;
+	entityNode->entityBasicConnectionsParametersSameReferenceSetArray[connectionType] = sameReferenceSet;
 	#ifdef GIA_USE_DATABASE
-	//entityNode->modified = true;
-	entityNode->entityBasicConnectionsParametersModifiedArray[basicConnectionType] = true;		//required for database syncronisation with RAM
+	//entityNode->modified = true;		//not required; as an entity's connections can be modified without modifying the entity itself (ie, its properties)
+	if(!entityVectorBasicReferenceListLoadedArray[connectionType])
+	{
+		cout << "error: writeBasicConnection called, but entityVectorBasicReferenceListLoadedArray set to false" << endl;
+		exit(0);
+	}
+	entityNode->entityBasicConnectionsNameArray[connectionType].push_back(entityNodeToAdd->entityName);	//required for database syncronisation with RAM
+	entityNode->entityBasicConnectionsIDArray[connectionType].push_back(entityNodeToAdd->idInstance);	//required for database syncronisation with RAM	
+	entityNode->entityBasicConnectionsLoadedArray[connectionType].push_back(true);				//required for database syncronisation with RAM		
+	entityNode->entityBasicConnectionsModifiedArray[connectionType] = true;					//required for database syncronisation with RAM [is this required?]
 	#endif
 }
 
-GIAEntityNode * readBasicConnections(GIAEntityNode * entityNode, int vectorConnectionType)
-{
-	if(entityNode->entityBasicConnectionsArrayInRAMArray[vectorConnectionType])
+
+void readVectorConnections(GIAEntityNode * entityNode, int connectionType)
+{	
+	#ifdef GIA_USE_DATABASE_FILESYSTEM
+	if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
 	{
-	
+		DBreadVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsNameArray[connectionType]), &(entityNode->entityVectorConnectionsIDArray[connectionType]);
 	}
+	if(!(entityNode->entityAllVectorConnectionsLoadedArray[connectionType]))
+	{
+		DBreadVectorConnections(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityVectorConnectionsNameArray[connectionType]), &(entityNode->entityVectorConnectionsIDArray[connectionType]), &(entityNode->entityVectorConnectionsLoadedArray[connectionType]), &(entityNode->entityVectorConnectionsArray[connectionType]);	
+		entityNode->entityAllVectorConnectionsLoadedArray[connectionType] = true;
+	}
+	#else
+	cout << "error: must use GIA_USE_DATABASE_FILESYSTEM" << endl;
+	#endif		
+}
+
+
+void readBasicConnections(GIAEntityNode * entityNode, int connectionType)
+{
+	#ifdef GIA_USE_DATABASE_FILESYSTEM
+	if(!(entityNode->entityBasicConnectionsReferenceListLoadedArray[connectionType]))
+	{
+		DBreadBasicConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityBasicConnectionsNameArray[connectionType]), &(entityNode->entityBasicConnectionsIDArray[connectionType]);
+	}
+	if(!(entityNode->entityAllBasicConnectionsLoadedArray[connectionType]))
+	{
+		DBreadBasicConnections(&(entityNode->entityName), entityNode->idInstance, connectionType, &(entityNode->entityBasicConnectionsNameArray[connectionType]), &(entityNode->entityBasicConnectionsIDArray[connectionType]), &(entityNode->entityBasicConnectionsLoadedArray[connectionType]), &(entityNode->entityBasicConnectionsArray[connectionType]);	
+		entityNode->entityAllBasicConnectionsLoadedArray[connectionType] = true;
+	}
+	#else
+	cout << "error: must use GIA_USE_DATABASE_FILESYSTEM" << endl;
+	#endif		
 }
 
 

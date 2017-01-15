@@ -3,10 +3,10 @@
  * File Name: GIAXMLconversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1c 22-May-2012
+ * Project Version: 1l1d 22-May-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
- * NB this function creates entity reorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
- * NB this function creates entity idActiveList values upon read (it could create reorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
+ * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
+ * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
  *
  *******************************************************************************/
 
@@ -483,6 +483,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 	bool idFound = false;
 	bool entityNameFound = false;
 	bool confidenceFound = false;
+	bool isConceptFound = false;	
 	bool isPropertyFound = false;
 	bool isActionFound = false;
 	bool isConditionFound = false;
@@ -499,6 +500,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 	bool hasAssociatedPropertyIsActionFound = false;
 	bool hasAssociatedPropertyIsConditionFound = false;
 	bool hasAssociatedTimeFound = false;
+	bool hasQualityFound = false;	
 	bool disabledFound = false;
 	
 	bool grammaticalNumberFound = false;
@@ -552,6 +554,12 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			entityNode->confidence = attributeValue;
 			confidenceFound = true;
 		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isConcept)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->isConcept = attributeValue;
+			isConceptFound = true;
+		}		
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isProperty)
 		{
 			int attributeValue = atoi(currentAttribute->value.c_str());
@@ -594,6 +602,12 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			entityNode->hasAssociatedTime = attributeValue;
 			hasAssociatedTimeFound = true;
 		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasQuality)
+		{
+			bool attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->hasQuality = attributeValue;
+			hasQualityFound = true;
+		}		
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_disabled)
 		{
 			bool attributeValue = atoi(currentAttribute->value.c_str());
@@ -1021,7 +1035,7 @@ void resetIDsForNodeList(vector<GIAEntityNode*> *entityNodesList, long * current
 	for(vector<GIAEntityNode*>::iterator entityNodesCompleteListIterator = entityNodesList->begin(); entityNodesCompleteListIterator < entityNodesList->end(); entityNodesCompleteListIterator++)	
 	{
 		GIAEntityNode * currentEntity = *entityNodesCompleteListIterator;
-		currentEntity->reorderdIDforXMLsave = *currentEntityNodeIDInConceptEntityNodesList;
+		currentEntity->idActiveListReorderdIDforXMLsave = *currentEntityNodeIDInConceptEntityNodesList;
 		(*currentEntityNodeIDInConceptEntityNodesList) = (*currentEntityNodeIDInConceptEntityNodesList) + 1;
 
 		//cout << "h5f" << endl;
@@ -1116,6 +1130,10 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
 
+	currentAttribute->name = NET_XML_ATTRIBUTE_isConcept;
+	sprintf(tempString, "%d", int(currentEntity->isConcept));
+	currentAttribute->value = tempString;
+
 	currentAttribute->name = NET_XML_ATTRIBUTE_isProperty;
 	sprintf(tempString, "%d", int(currentEntity->isProperty));
 	currentAttribute->value = tempString;
@@ -1171,6 +1189,14 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	newAttribute = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;	
+	
+	currentAttribute->name = NET_XML_ATTRIBUTE_hasQuality;
+	sprintf(tempString, "%d", int(currentEntity->hasQuality));
+	currentAttribute->value = tempString;
+	
+	newAttribute = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute;
+	currentAttribute = currentAttribute->nextAttribute;	
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_disabled;
 	sprintf(tempString, "%d", int(currentEntity->disabled));
@@ -1187,7 +1213,7 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 		if(currentEntity->entityBasicConnectionsArray[i] != NULL)
 		{
 			currentAttribute->name = entityBasicConnectionXMLAttributeNameArray[i];
-			sprintf(tempString, "%ld", (currentEntity->entityBasicConnectionsArray[i]->reorderdIDforXMLsave));
+			sprintf(tempString, "%ld", (currentEntity->entityBasicConnectionsArray[i]->idActiveListReorderdIDforXMLsave));
 			currentAttribute->value = tempString;
 
 			newAttribute = new XMLParserAttribute();
@@ -1390,7 +1416,7 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 				currentAttribute = currentTagL3->firstAttribute;
 
 				currentAttribute->name = NET_XML_ATTRIBUTE_id;
-				sprintf(tempString, "%ld", (*(entityIter))->reorderdIDforXMLsave);
+				sprintf(tempString, "%ld", (*(entityIter))->idActiveListReorderdIDforXMLsave);
 				currentAttribute->value = tempString;
 
 				XMLParserAttribute * newAttribute = new XMLParserAttribute();

@@ -3,7 +3,7 @@
  * File Name: GIAXMLconversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1c 22-May-2012
+ * Project Version: 1l1d 22-May-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -114,6 +114,7 @@ using namespace std;
 #define NET_XML_ATTRIBUTE_entityName ((string)"entityName")
 #define NET_XML_ATTRIBUTE_confidence ((string)"confidence")
 //
+#define NET_XML_ATTRIBUTE_isConcept ((string)"isConcept")
 #define NET_XML_ATTRIBUTE_isProperty ((string)"isProperty")
 #define NET_XML_ATTRIBUTE_isAction ((string)"isAction")
 #define NET_XML_ATTRIBUTE_isCondition ((string)"isCondition")
@@ -121,6 +122,7 @@ using namespace std;
 #define NET_XML_ATTRIBUTE_hasAssociatedPropertyIsAction ((string)"hasAssociatedInstanceIsAction")
 #define NET_XML_ATTRIBUTE_hasAssociatedPropertyIsCondition ((string)"hasAssociatedPropertyIsCondition")
 #define NET_XML_ATTRIBUTE_hasAssociatedTime ((string)"hasAssociatedTime")
+#define NET_XML_ATTRIBUTE_hasQuality ((string)"hasQuality")
 #define NET_XML_ATTRIBUTE_disabled ((string)"disabled")
 
 //
