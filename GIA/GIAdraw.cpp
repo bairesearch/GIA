@@ -169,7 +169,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				pos3.x = entityNode->actionSubjectEntity->printX;
 				pos3.y = entityNode->actionSubjectEntity->printY;	
 				pos3.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos3, GIA_DRAW_ACTION_SUBJECT_CONNECTION_COLOUR, writeFileObject);
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos3, GIA_DRAW_ACTION_SUBJECT_CONNECTION_COLOUR, writeFileObject, "actionSubject");
 			}		
 		}
 		q = DRAW_Y_SPACE_BETWEEN_ACTION_NODES;
@@ -186,7 +186,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				pos4.x = entityNode->actionObjectEntity->printX;
 				pos4.y = entityNode->actionObjectEntity->printY;	
 				pos4.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR, writeFileObject);
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR, writeFileObject, "actionObject");
 			}		
 		}
 					
@@ -197,6 +197,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
 		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
 		vector<GIAEntityNode*>::iterator ConditionIter;
+		vector<string>::iterator ConditionNodeTypeListIterator = entityNode->ConditionNodeTypeList.begin();
 		for(ConditionIter = entityNode->ConditionNodeList.begin(); ConditionIter != entityNode->ConditionNodeList.end(); ConditionIter++) 
 		{	
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
@@ -208,8 +209,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				pos5.x = (*ConditionIter)->printX;
 				pos5.y = (*ConditionIter)->printY;	
 				pos5.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject);
-			}			
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject, *ConditionNodeTypeListIterator);
+			}
+			ConditionNodeTypeListIterator++;			
 		}				
 		if(entityNode->timeConditionNode != NULL)
 		{	
@@ -230,7 +232,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 					pos5.x = timeConditionNodePrintX;
 					pos5.y = timeConditionNodePrintY;	
 					pos5.z = DRAW_CONNECTION_Z;
-					currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject);
+					currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject, entityNode->timeConditionNode->conditionName);
 				}
 			}		
 		}
@@ -238,6 +240,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		//go reverse also...
 		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
 		r = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+		ConditionNodeTypeListIterator = entityNode->ConditionNodeTypeReverseList.begin();
 		for(ConditionIter = entityNode->ConditionNodeReverseList.begin(); ConditionIter != entityNode->ConditionNodeReverseList.end(); ConditionIter++) 
 		{	
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y-q, x-r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
@@ -249,8 +252,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				pos5.x = (*ConditionIter)->printX;
 				pos5.y = (*ConditionIter)->printY;	
 				pos5.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject);
-			}		
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject, *ConditionNodeTypeListIterator);
+			}	
+			ConditionNodeTypeListIterator++;		
 		}
 				
 		
@@ -293,7 +297,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				pos2.x = entityNode->entityNodeDefiningThisPropertyOrAction->printX;
 				pos2.y = entityNode->entityNodeDefiningThisPropertyOrAction->printY;	
 				pos2.z = DRAW_CONNECTION_Z;							
-				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR, writeFileObject);
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR, writeFileObject, "instance");
 			}
 				
 		}
@@ -311,7 +315,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				pos3.x = entityNode->entityNodeContainingThisProperty->printX;
 				pos3.y = entityNode->entityNodeContainingThisProperty->printY;	
 				pos3.z = DRAW_CONNECTION_Z;								
-				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos3, GIA_DRAW_PROPERTY_CONNECTION_COLOUR, writeFileObject);
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos3, GIA_DRAW_PROPERTY_CONNECTION_COLOUR, writeFileObject, "property");
 			}
 				
 		}
@@ -332,7 +336,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				pos4.x = (*entityIter)->printX;
 				pos4.y = (*entityIter)->printY;	
 				pos4.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_BASICENTITY_CONNECTION_COLOUR, writeFileObject);
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_BASICENTITY_CONNECTION_COLOUR, writeFileObject, "is");
 			}
 			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;
 
@@ -511,6 +515,36 @@ Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeCo
 	return currentReferenceInPrintList;	//does this need to be newCurrentReferenceInPrintList?
 }
 
+
+Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, ofstream * writeFileObject, string connectionTypeName)
+{
+	Reference * newCurrentReferenceInPrintList = currentReferenceInPrintList;
+	
+	createReferenceConnection(newCurrentReferenceInPrintList, pos1, pos2, colour, writeFileObject);
+
+	if(GIA_DRAW_USE_CONNECTION_TYPE_NAME_TEXT)
+	{
+		vec vect;
+		vect.x = (pos1->x + pos2->x)/2;
+		vect.y = (pos1->y + pos2->y)/2;
+		vect.z = (pos1->z + pos2->z)/2;
+
+		int numSpritesAdded;	//not used
+		vec positionLDR;
+		positionLDR.x = vect.x - GIA_DRAW_BASICENTITY_NODE_WIDTH/4;
+		positionLDR.y = vect.y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
+		positionLDR.z = vect.z - GIA_OUTPUT_Z_POSITION_CONNECTIONS;
+		newCurrentReferenceInPrintList = LDaddBasicTextualSpriteStringToReferenceList(&connectionTypeName, newCurrentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
+
+		vec positionSVG;
+		positionSVG.x = vect.x - GIA_DRAW_BASICENTITY_NODE_WIDTH/4;
+		positionSVG.y = vect.y;
+		positionSVG.z = GIA_OUTPUT_Z_POSITION_CONNECTIONS;
+		writeSVGText(writeFileObject, connectionTypeName, &positionSVG, SVG_SCALE_FACTOR*SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
+	}
+	
+	return newCurrentReferenceInPrintList;
+}
 
 Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, ofstream * writeFileObject)
 {

@@ -1531,7 +1531,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
 				cout << "actionOrPropertyConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
 									
-				addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType.substr(1, currentRelationInList->relationType.length()-1));				
+				addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType);				
+				//currentRelationInList->relationType.substr(1, currentRelationInList->relationType.length()-1)
 			}			
 						
 			currentRelationInList = currentRelationInList->next;

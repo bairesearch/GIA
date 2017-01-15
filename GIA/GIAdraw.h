@@ -37,6 +37,8 @@ using namespace std;
 #define GIA_DRAW_THICKNESS_NORMAL (1)
 #define GIA_DRAW_THICKNESS_THICK (2)
 
+#define GIA_DRAW_USE_CONNECTION_TYPE_NAME_TEXT (true)
+
 #define GIA_DRAW_CONDITION_NODE_COLOUR (DAT_FILE_COLOUR_RED)				//this was red in the original spec	
 #define GIA_DRAW_CONDITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was red in the original spec	
 #define GIA_DRAW_CONDITION_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_ORANGE)	//colour not defined in original GIA spec	
@@ -121,7 +123,8 @@ void initiateMaxXAtAParticularY();
 Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, int initialiseOrPrint, Reference * currentReferenceInPrintList, ofstream * writeFileObject);
 Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeConditionNode, int y, int x, int initialiseOrPrint, Reference * currentReferenceInPrintList, ofstream * writeFileObject);
 
-Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, ofstream * writeFileObject);
+Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, ofstream * writeFileObject, string connectionTypeName);
+	Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, ofstream * writeFileObject);
 Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, ofstream * writeFileObject, int thickness);
 
 
