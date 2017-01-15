@@ -24,8 +24,7 @@
 using namespace std;
 
 
-class GIAActionNode;
-class GIAConditionNode;
+#include "GIAConditionNodeClass.h"
 
 #define GRAMMATICAL_TENSE_UNDEFINED 0
 #define GRAMMATICAL_TENSE_PRESENT 1
@@ -83,6 +82,7 @@ public:
 	double confidence;
 		
 	bool isProperty;		//is this entity a property?
+	bool isAction;			//is this entity an action?
 	bool hasAssociatedProperty;	//this boolean appears to only represent whether this entity defines a child property node [and not whether it contains one]
 	bool hasAssociatedAction;
 	bool hasAssociatedTime;
@@ -101,26 +101,36 @@ public:
 	}instance;	//is the following entity known to be an instance?		
 	*/
 
+		//non-actions only;
 	//action connections;
 	//where this entity is the subject of the action
-	vector<GIAActionNode*> ActionNodeList;
-	vector<GIAActionNode*>::iterator ActionNodeListIterator;
+	vector<GIAEntityNode*> ActionNodeList;
+	vector<GIAEntityNode*>::iterator ActionNodeListIterator;
 	//where this entity is the object of the action
-	vector<GIAActionNode*> IncomingActionNodeList;
-	vector<GIAActionNode*>::iterator IncomingActionNodeListIterator;
-	
-		
+	vector<GIAEntityNode*> IncomingActionNodeList;
+	vector<GIAEntityNode*>::iterator IncomingActionNodeListIterator;
+
+		//actions only;
+	//NB actions can be performed by and on entities, and by and on properties
+	//record of entity that is the subject of this action instance
+	GIAEntityNode * actionSubjectEntity;
+	//record of which entity that is the object of this action instance
+	GIAEntityNode * actionObjectEntity;
+
+		//conditions only;
+	int conditionType;	//added 25 Sept 11	
+	GIATimeConditionNode * timeConditionNode;		//if conditionType == CONDITION_NODE_TYPE_TIME
+
 	//property connections;
 	//record list of all properties for this entity
 	vector<GIAEntityNode*> PropertyNodeList;
 	vector<GIAEntityNode*>::iterator PropertyNodeListIterator;
-	/*this has been removed 25 Sept - use entityNodeContainingThisProperty instead
-	vector<GIAEntityNode*> PropertyNodeReverseList;				//if property only: 
-	vector<GIAEntityNode*>::iterator PropertyNodeReverseListIterator;	//if property only:
-	*/
+	
 		//properties only
-	GIAEntityNode * entityNodeContainingThisProperty;				//if property only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
-	GIAEntityNode * entityNodeDefiningThisProperty;					//if property only:					//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
+	GIAEntityNode * entityNodeContainingThisProperty;				//if property/action only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
+	
+		//actions and properties only
+	GIAEntityNode * entityNodeDefiningThisProperty;					//if property/action only:					//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
 	
 		//pure entites only (not properties/"instances" of entities)
 	//entity connections;										
@@ -130,17 +140,20 @@ public:
 	vector<GIAEntityNode*> EntityNodeDefinitionReverseList;			//if not property only: 	//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
 	vector<GIAEntityNode*>::iterator EntityNodeDefinitionReverseListIterator;	//if not property only: 
 	//associated actions and properties [ie does this entity also define an action/verb or a property/adjective? [ie, it is not just a thing/noun]]
-	vector<GIAActionNode*> AssociatedActionNodeList;				//if not property only: if type == definesAnActionVerb
-	vector<GIAActionNode*>::iterator AssociatedActionNodeListIterator;	//if not property only: if type == definesAnActionVerb
+	vector<GIAEntityNode*> AssociatedActionNodeList;				//if not property only: if type == definesAnActionVerb
+	vector<GIAEntityNode*>::iterator AssociatedActionNodeListIterator;	//if not property only: if type == definesAnActionVerb
 	vector<GIAEntityNode*> AssociatedPropertyNodeList;			//if not property only: if type == definesAPropertyAdjective (ie, if this entity is not a property/instance but defines one or more properties/instances)
 	vector<GIAEntityNode*>::iterator AssociatedPropertyNodeListIterator;	//if not property only: if type == definesAPropertyAdjective (ie, if this entity is not a property/instance but defines one or more properties/instances)
 	
 	//conditions connections: conditions and reverse conditions (reason) lookups [condition and reason respectively]
-	vector<GIAConditionNode*> ConditionNodeList;		//this property requires the following...
-	vector<GIAConditionNode*>::iterator ConditionNodeListIterator;		
-	vector<GIAConditionNode*> ConditionNodeReverseList;	//this property is required by the following... //aka reason	[NB these may only be property, location, {and time action condtions}, not action conditions]
-	vector<GIAConditionNode*>::iterator ConditionNodeReverseListIterator;		
-	
+	vector<GIAEntityNode*> ConditionNodeList;		//this property requires the following...
+	vector<GIAEntityNode*>::iterator ConditionNodeListIterator;		
+	vector<GIAEntityNode*> ConditionNodeReverseList;	//this property is required by the following... //aka reason	[NB these may only be property, location, {and time action condtions}, not action conditions]
+	vector<GIAEntityNode*>::iterator ConditionNodeReverseListIterator;		
+	vector<string> ConditionNodeTypeList;		//this property requires the following...
+	vector<string>::iterator ConditionNodeTypeListIterator;		
+	vector<string> ConditionNodeTypeReverseList;	//this property is required by the following... //aka reason	[NB these may only be property, location, {and time action condtions}, not action conditions]
+	vector<string>::iterator ConditionNodeTypeReverseListIterator;		
 
 	int grammaticalNumber;
 	

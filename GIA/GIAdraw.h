@@ -26,7 +26,6 @@ using namespace std;
 
 #include "LDreferenceClass.h"
 #include "GIAEntityNodeClass.h"
-#include "GIAActionNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
 #define GIA_USE_SVG_ELLIPTICAL_BOXES (true)
@@ -120,8 +119,6 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *indexOfEntit
 
 void initiateMaxXAtAParticularY();
 Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, int initialiseOrPrint, Reference * currentReferenceInPrintList, ofstream * writeFileObject);
-Reference * initialiseActionNodeForPrinting(GIAActionNode * actionNode, int y, int x, int initialiseOrPrint, Reference * currentReferenceInPrintList, ofstream * writeFileObject);
-Reference * initialiseConditionNodeForPrinting(GIAConditionNode * conditionNode, int y, int x, int initialiseOrPrint, Reference * currentReferenceInPrintList, ofstream * writeFileObject);
 Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, ofstream * writeFileObject);
 Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, ofstream * writeFileObject, int thickness);
 

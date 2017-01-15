@@ -30,7 +30,6 @@ using namespace std;
 					
 #include "GIASentenceClass.h"
 #include "GIAEntityNodeClass.h"
-#include "GIAActionNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
 
@@ -43,8 +42,6 @@ using namespace std;
 #define GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_WHERE_NECESSARY (1)
 #define GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_ONLY_WHEN_REQUIRED (1)
 
-//#define GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_TO_DEFINITIVE_NOUNS_OLD
-//#define GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY_OLD
 
 #define SUBJECT_INDEX (0)
 #define OBJECT_INDEX (1)
@@ -169,11 +166,6 @@ using namespace std;
 #define REFERENCE_TYPE_PERSON_PLURAL_THEY "it"
 */
 
-/*
-extern vector<GIAEntityNode*> entityNodesCompleteList;
-extern vector<GIAActionNode*> actionNodesCompleteList;
-extern vector<GIAConditionNode*> conditionNodesCompleteList;
-*/
 
 
 /*
@@ -193,36 +185,21 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
 
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense);
-#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
-void addTenseOnlyTimeConditionToAction(GIAActionNode * actionNode, int tense);
-#endif
 
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity);
 
 void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
-GIAActionNode * addAction(GIAEntityNode * actionEntity);
+GIAEntityNode * addAction(GIAEntityNode * actionEntity);
 void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity);
 void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
 
-#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
-void addLocationConditionToAction(GIAActionNode * actionNode, GIAEntityNode * locationConditionEntity);
-void addTimeConditionToAction(GIAActionNode * actionNode, GIAEntityNode * timeConditionEntity);
-#endif
-void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity);
-void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity);
-#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
-void addActionConditionToAction(GIAActionNode * actionNode, GIAActionNode * actionConditionActionNode);
-void addPropertyConditionToAction(GIAActionNode * actionNode, GIAEntityNode * propertyConditionEntity);
-void addActionConditionToProperty(GIAEntityNode * propertyNode, GIAActionNode * actionConditionActionNode);
-#endif
-void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity);
+void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity, string conditionName);
+void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, string conditionName);
+void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, string conditionName);
 	//property to property relationship - these they in actual fact represent different levels of detail in information to property to action / action to action nodes - direct property to property relationships are missing the action/connectivity information
 
 
-
 vector<GIAEntityNode*> * getTranslatorEntityNodesCompleteList();
-vector<GIAActionNode*> * getTranslatorActionNodesCompleteList();
-vector<GIAConditionNode*> * getTranslatorConditionNodesCompleteList();
 
 long maxLong(long a, long b);
 

@@ -12,58 +12,6 @@
 
 
 
-GIAConditionNode::GIAConditionNode(void)
-{
-	id = 0;	
-	conditionName = "";
-	confidence = 1.0;
-
-	#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
-	conditionIsAction = false;
-	conditionAction = NULL;
-	#endif
-	conditionEntity = NULL;
-	
-	#ifdef GIA_ENABLE_ACTION_NODE_CONDITIONS
-	parentIsAction = false;
-	parentAction = NULL;
-	#endif
-	parentProperty = NULL;
-	
-	conditionType = CONDITION_NODE_TYPE_UNDEFINED;
-	timeConditionNode = NULL;
-	
-	initialisedForPrinting = false;
-	printed = false;
-	printX = 0;
-	printY = 0;
-	printXIndex = 0;
-	printYIndex = 0;
-	printTextX = 0;
-	printTextY = 0;
-}
-GIAConditionNode::~GIAConditionNode(void)
-{
-}
-
-/*
-GIAConditionNodeContainer::GIAConditionNodeContainer(void)
-{
-	id = 0;
-	node = NULL; 			
-	next = NULL;
-}
-GIAConditionNodeContainer::~GIAConditionNodeContainer(void)
-{	
-	//delete node		
-	if(next != NULL)
-	{
-		delete next;
-	}
-}
-*/
-
-
 
 
 //~? [eg past, wednesday, etc]

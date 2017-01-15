@@ -29,7 +29,6 @@ using namespace std;
 #include "GIAParser.h"
 #include "GIATranslator.h"
 #include "GIAEntityNodeClass.h"
-#include "GIAActionNodeClass.h"
 #include "GIAdraw.h"
 #include "GIAXMLconversion.h"
 #include "XMLParserClass.h"
@@ -271,9 +270,7 @@ int main(int argc,char **argv)
 		else
 		{		
 			entityNodesCompleteList = new vector<GIAEntityNode*>;
-			actionNodesCompleteList = new vector<GIAActionNode*>;
-			conditionNodesCompleteList = new vector<GIAConditionNode*>;
-			if(!readSemanticNetXMLFile(inputXMLFileName, entityNodesCompleteList, actionNodesCompleteList, conditionNodesCompleteList))
+			if(!readSemanticNetXMLFile(inputXMLFileName, entityNodesCompleteList))
 			{
 				result = false;
 			}
@@ -361,8 +358,6 @@ int main(int argc,char **argv)
 			convertSentenceRelationsIntoGIAnetworkNodes(&indexOfEntityNodes, &indexOfEntityNames, &indexOfTimeNodes, &indexOfTimeNumbers, firstSentenceInList);
 			
 			entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
-			actionNodesCompleteList = getTranslatorActionNodesCompleteList();
-			conditionNodesCompleteList = getTranslatorConditionNodesCompleteList();
 		}
 	}
 	
@@ -389,14 +384,14 @@ int main(int argc,char **argv)
 		
 	if(useOutputXMLFile)
 	{			
-		if(!writeSemanticNetXMLFile(outputXMLFileName, entityNodesCompleteList, actionNodesCompleteList, conditionNodesCompleteList))
+		if(!writeSemanticNetXMLFile(outputXMLFileName, entityNodesCompleteList))
 		{
 			result = false;
 		}
 	}
 		
 	#ifdef GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
-	if(!testReadSemanticNetXMLFile2(entityNodesCompleteList, actionNodesCompleteList, conditionNodesCompleteList))
+	if(!testReadSemanticNetXMLFile2(entityNodesCompleteList))
 	{
 		result = false;
 	}
