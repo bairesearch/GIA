@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c1b 13-January-2014
+ * Project Version: 2c2a 13-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -325,6 +325,45 @@ GIAentityNode * addSubstanceToSubstanceDefinition(GIAentityNode * substanceEntit
 	return newOrExistingSubstance;
 }
 
+GIAentityNode * addSubstance(GIAentityNode * entity)
+{
+
+	//configure substance node
+	GIAentityNode * newSubstance = new GIAentityNode();
+	#ifdef GIA_USE_DATABASE
+	newSubstance->added = true;
+	#endif
+
+	newSubstance->isSubstance = true;
+	addInstanceEntityNodeToActiveLists(newSubstance);
+
+	newSubstance->entityName = entity->entityName;
+	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
+	newSubstance->wordOrig = entity->wordOrig;
+	#endif
+	newSubstance->idInstance = determineNextIdInstance(entity);
+
+	entity->hasAssociatedInstance = true;
+	entity->hasAssociatedInstanceTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+	#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
+	newSubstance->isSubstanceConcept = entity->isSubstanceConcept;
+	entity->isSubstanceConcept = false;
+	#endif
+	forwardInfoToNewSubstance(entity, newSubstance);
+
+	writeVectorConnection(newSubstance, entity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+	writeVectorConnection(entity, newSubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+
+	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
+	entity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
+	#endif
+
+	return newSubstance;
+}
+
+
+
+
 void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubstance)
 {
 	newSubstance->hasAssociatedTime = entity->hasAssociatedTime;
@@ -407,261 +446,6 @@ void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubsta
 	}
 }
 
-GIAentityNode * addSubstance(GIAentityNode * entity)
-{
-
-	//configure substance node
-	GIAentityNode * newSubstance = new GIAentityNode();
-	#ifdef GIA_USE_DATABASE
-	newSubstance->added = true;
-	#endif
-
-	newSubstance->isSubstance = true;
-	addInstanceEntityNodeToActiveLists(newSubstance);
-
-	newSubstance->entityName = entity->entityName;
-	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
-	newSubstance->wordOrig = entity->wordOrig;
-	#endif
-	newSubstance->idInstance = determineNextIdInstance(entity);
-
-	entity->hasAssociatedInstance = true;
-	entity->hasAssociatedInstanceTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
-	newSubstance->isSubstanceConcept = entity->isSubstanceConcept;
-	entity->isSubstanceConcept = false;
-	#endif
-	forwardInfoToNewSubstance(entity, newSubstance);
-
-	writeVectorConnection(newSubstance, entity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
-	writeVectorConnection(entity, newSubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
-
-	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-	entity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
-	#endif
-
-	return newSubstance;
-}
-
-
-void upgradeSubstanceToAction(GIAentityNode * substance)
-{
-	GIAentityNode * existingAction = substance;
-
-	//CHECK THIS; must remove from substance list, and add to action list
-	getPrimaryConceptNodeDefiningInstance(existingAction)->hasAssociatedInstanceIsAction = true;
-	existingAction->isSubstance = false;
-	existingAction->isSubstanceConcept = false;	//added GIA 2a9a [needs to be tested that this change does not cause unexpected issues elsewhere]
-	existingAction->isAction = true;
-
-	if(saveNetwork)
-	{
-		eraseSubstanceFromSubstanceList(existingAction);
-
-		entityNodesActiveListActions->push_back(existingAction);
-		currentEntityNodeIDInActionEntityNodesList++;
-	}
-}
-
-/*
-void eraseActionFromActionList(GIAentityNode * existingAction)
-{
-	#ifdef GIA_TRANSLATOR_DEBUG
-	//cout << "existingEntity->idActiveEntityTypeList = " << existingEntity->idActiveEntityTypeList << endl;
-	#endif
-	int i=0;
-	bool actionEntityNodesListIteratorIsFound = false;
- 	vector<GIAentityNode*>::iterator actionEntityNodesListIteratorFound;
-	for(vector<GIAentityNode*>::iterator actionEntityNodesListIterator = entityNodesActiveListActions->begin(); actionEntityNodesListIterator != entityNodesActiveListActions->end(); actionEntityNodesListIterator++)
-	{
-		if((*actionEntityNodesListIterator)->idActiveEntityTypeList == existingEntity->idActiveEntityTypeList)
-		{
-			actionEntityNodesListIteratorFound = actionEntityNodesListIterator;
-			actionEntityNodesListIteratorIsFound = true;
-		}
-		#ifdef GIA_TRANSLATOR_DEBUG
-		//cout << "i = " << i << endl;
-		//cout << "(*actionEntityNodesListIterator)->entityName = " << (*actionEntityNodesListIterator)->entityName << endl;
-		#endif
-		i++;
-	}
-	if(!actionEntityNodesListIteratorIsFound)
-	{
-		cout << "error: !...EntityNodesListIteratorIsFound" << endl;
-		exit(0);
-	}
-	entityNodesActiveListActions->erase(actionEntityNodesListIteratorFound);
-}
-*/
-
-void eraseSubstanceFromSubstanceList(GIAentityNode * existingEntity)
-{
-	#ifdef GIA_TRANSLATOR_DEBUG
-	//cout << "existingEntity->idActiveEntityTypeList = " << existingEntity->idActiveEntityTypeList << endl;
-	#endif
-	int i=0;
-	bool substanceEntityNodesListIteratorIsFound = false;
- 	vector<GIAentityNode*>::iterator substanceEntityNodesListIteratorFound;
-	for(vector<GIAentityNode*>::iterator substanceEntityNodesListIterator = entityNodesActiveListSubstances->begin(); substanceEntityNodesListIterator != entityNodesActiveListSubstances->end(); substanceEntityNodesListIterator++)
-	{
-		if((*substanceEntityNodesListIterator)->idActiveEntityTypeList == existingEntity->idActiveEntityTypeList)
-		{
-			substanceEntityNodesListIteratorFound = substanceEntityNodesListIterator;
-			substanceEntityNodesListIteratorIsFound = true;
-		}
-		#ifdef GIA_TRANSLATOR_DEBUG
-		//cout << "i = " << i << endl;
-		//cout << "(*substanceEntityNodesListIterator)->entityName = " << (*substanceEntityNodesListIterator)->entityName << endl;
-		#endif
-		i++;
-	}
-	if(!substanceEntityNodesListIteratorIsFound)
-	{
-		cout << "error: !...EntityNodesListIteratorIsFound" << endl;
-		exit(0);
-	}
-	entityNodesActiveListSubstances->erase(substanceEntityNodesListIteratorFound);
-
-	/*//removed 8 May 2012
-	vector<GIAentityNode*>::iterator substanceEntityNodesListIterator = entityNodesActiveListSubstances->begin();
-	advance(substanceEntityNodesListIterator,existingAction->idActiveEntityTypeList);
-	entityNodesActiveListSubstances->erase(substanceEntityNodesListIterator);
-	currentEntityNodeIDInSubstanceEntityNodesList--;
-	*/
-}
-
-
-GIAentityNode * addActionToActionDefinitionDefineSubstances(GIAentityNode * actionEntity)
-{
-	GIAentityNode * newOrExistingAction = actionEntity;
-
-	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
-	if(!(actionEntity->disabled))
-	{
-	#endif
-		//configure action node
-		if(actionEntity->isConcept)
-		{
-			#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-				#ifdef GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
-				if(checkEntityHasSubstanceThatWasDeclaredInContext(actionEntity) && (actionEntity->grammaticalDefiniteTemp || actionEntity->grammaticalProperNounTemp))	//NB the grammaticalProperNounTemp condition should only be required here if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS is set to true
-				#else
-				if(checkEntityHasSubstanceThatWasDeclaredInContext(actionEntity))
-				#endif
-				{
-					newOrExistingAction = getEntitySubstanceThatWasDeclaredInContext(actionEntity);
-				}
-				else
-				{
-					newOrExistingAction = addAction(actionEntity);
-				}
-			#else
-				newOrExistingAction = addAction(actionEntity);
-			#endif
-		}
-		else
-		{
-			if(actionEntity->isAction == false)
-			{//upgrade associated substance to action
-				upgradeSubstanceToAction(actionEntity);
-				newOrExistingAction = actionEntity;
-			}
-			else
-			{
-				#ifdef GIA_USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
-				newOrExistingAction = addAction(actionEntity);
-				#else
-				newOrExistingAction = actionEntity;
-				#endif
-			}
-		}
-
-	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
-	}
-	#endif
-
-	return newOrExistingAction;
-}
-
-
-GIAentityNode * addActionToActionDefinition(GIAentityNode * actionEntity)
-{
-	GIAentityNode * newOrExistingAction = actionEntity;
-
-	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
-	if(!(actionEntity->disabled))
-	{
-	#endif
-		//configure action node
-		if(actionEntity->isConcept)
-		{
-			//always add new actions per sentence (never use actions defined from previous sentences)
-			newOrExistingAction = addAction(actionEntity);
-		}
-		else
-		{
-			if(actionEntity->isAction == false)
-			{//upgrade associated substance to action
-				upgradeSubstanceToAction(actionEntity);
-				newOrExistingAction = actionEntity;
-			}
-			else
-			{
-				#ifdef GIA_USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
-				newOrExistingAction = addAction(actionEntity);
-				#else
-				newOrExistingAction = actionEntity;
-				#endif
-			}
-		}
-
-	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
-	}
-	#endif
-
-	return newOrExistingAction;
-}
-
-
-	//conditions required to be added [eg when, where, how, why]
-GIAentityNode * addAction(GIAentityNode * actionEntity)
-{
-	GIAentityNode * newAction = new GIAentityNode();
-	#ifdef GIA_USE_DATABASE
-	newAction->added = true;
-	#endif
-
-	newAction->isAction = true;
-	addInstanceEntityNodeToActiveLists(newAction);
-
-	newAction->entityName = actionEntity->entityName;
-	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
-	newAction->wordOrig = actionEntity->wordOrig;
-	#endif
-	newAction->idInstance = determineNextIdInstance(actionEntity);
-
-	writeVectorConnection(newAction, actionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
-	writeVectorConnection(actionEntity, newAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
-
-	actionEntity->hasAssociatedInstance = true;
-	actionEntity->hasAssociatedInstanceIsAction = true;
-	actionEntity->hasAssociatedInstanceTemp = true;
-	//WHY WOULD THIS EVER BE REQURIED?; newAction->entityNodeContainingThisSubstance = NULL;
-
-	forwardInfoToNewSubstance(actionEntity, newAction);
-
-	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-	actionEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
-	#endif
-
-	return newAction;
-}
-
-
-
-
-
-
 
 /*
 #ifdef GIA_USE_TIME_NODE_INDEXING
@@ -717,6 +501,8 @@ void addDefinitionToEntity(GIAentityNode * thingEntity, GIAentityNode * definiti
 	}
 	#endif
 }
+
+
 
 	//conditions required to be added [eg when, where, how, why]
 	//replace action if already existant
@@ -839,6 +625,7 @@ GIAentityNode * addOrConnectActionToObject(GIAentityNode * objectEntity, GIAenti
 	return newOrExistingAction;
 }
 
+
 void connectActionInstanceToSubject(GIAentityNode * subjectEntity, GIAentityNode * newOrExistingAction, bool sameReferenceSet)
 {
 	//configure action subject entity node
@@ -857,6 +644,216 @@ void connectActionInstanceToObject(GIAentityNode * objectEntity, GIAentityNode *
 	objectEntity->isObjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 }
 
+GIAentityNode * addActionToActionDefinition(GIAentityNode * actionEntity)
+{
+	GIAentityNode * newOrExistingAction = actionEntity;
+
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(actionEntity->disabled))
+	{
+	#endif
+		//configure action node
+		if(actionEntity->isConcept)
+		{
+			//always add new actions per sentence (never use actions defined from previous sentences)
+			newOrExistingAction = addAction(actionEntity);
+		}
+		else
+		{
+			if(actionEntity->isAction == false)
+			{//upgrade associated substance to action
+				upgradeSubstanceToAction(actionEntity);
+				newOrExistingAction = actionEntity;
+			}
+			else
+			{
+				#ifdef GIA_USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
+				newOrExistingAction = addAction(actionEntity);
+				#else
+				newOrExistingAction = actionEntity;
+				#endif
+			}
+		}
+
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	}
+	#endif
+
+	return newOrExistingAction;
+}
+
+GIAentityNode * addActionToActionDefinitionDefineSubstances(GIAentityNode * actionEntity)
+{
+	GIAentityNode * newOrExistingAction = actionEntity;
+
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(actionEntity->disabled))
+	{
+	#endif
+		//configure action node
+		if(actionEntity->isConcept)
+		{
+			#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
+				#ifdef GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
+				if(checkEntityHasSubstanceThatWasDeclaredInContext(actionEntity) && (actionEntity->grammaticalDefiniteTemp || actionEntity->grammaticalProperNounTemp))	//NB the grammaticalProperNounTemp condition should only be required here if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS is set to true
+				#else
+				if(checkEntityHasSubstanceThatWasDeclaredInContext(actionEntity))
+				#endif
+				{
+					newOrExistingAction = getEntitySubstanceThatWasDeclaredInContext(actionEntity);
+				}
+				else
+				{
+					newOrExistingAction = addAction(actionEntity);
+				}
+			#else
+				newOrExistingAction = addAction(actionEntity);
+			#endif
+		}
+		else
+		{
+			if(actionEntity->isAction == false)
+			{//upgrade associated substance to action
+				upgradeSubstanceToAction(actionEntity);
+				newOrExistingAction = actionEntity;
+			}
+			else
+			{
+				#ifdef GIA_USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
+				newOrExistingAction = addAction(actionEntity);
+				#else
+				newOrExistingAction = actionEntity;
+				#endif
+			}
+		}
+
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	}
+	#endif
+
+	return newOrExistingAction;
+}
+
+
+	//conditions required to be added [eg when, where, how, why]
+GIAentityNode * addAction(GIAentityNode * actionEntity)
+{
+	GIAentityNode * newAction = new GIAentityNode();
+	#ifdef GIA_USE_DATABASE
+	newAction->added = true;
+	#endif
+
+	newAction->isAction = true;
+	addInstanceEntityNodeToActiveLists(newAction);
+
+	newAction->entityName = actionEntity->entityName;
+	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
+	newAction->wordOrig = actionEntity->wordOrig;
+	#endif
+	newAction->idInstance = determineNextIdInstance(actionEntity);
+
+	writeVectorConnection(newAction, actionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+	writeVectorConnection(actionEntity, newAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+
+	actionEntity->hasAssociatedInstance = true;
+	actionEntity->hasAssociatedInstanceIsAction = true;
+	actionEntity->hasAssociatedInstanceTemp = true;
+	//WHY WOULD THIS EVER BE REQURIED?; newAction->entityNodeContainingThisSubstance = NULL;
+
+	forwardInfoToNewSubstance(actionEntity, newAction);
+
+	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
+	actionEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
+	#endif
+
+	return newAction;
+}
+
+void upgradeSubstanceToAction(GIAentityNode * substance)
+{
+	GIAentityNode * existingAction = substance;
+
+	//CHECK THIS; must remove from substance list, and add to action list
+	getPrimaryConceptNodeDefiningInstance(existingAction)->hasAssociatedInstanceIsAction = true;
+	existingAction->isSubstance = false;
+	existingAction->isSubstanceConcept = false;	//added GIA 2a9a [needs to be tested that this change does not cause unexpected issues elsewhere]
+	existingAction->isAction = true;
+
+	if(saveNetwork)
+	{
+		eraseSubstanceFromSubstanceList(existingAction);
+
+		entityNodesActiveListActions->push_back(existingAction);
+		currentEntityNodeIDInActionEntityNodesList++;
+	}
+}
+
+/*
+void eraseActionFromActionList(GIAentityNode * existingAction)
+{
+	#ifdef GIA_TRANSLATOR_DEBUG
+	//cout << "existingEntity->idActiveEntityTypeList = " << existingEntity->idActiveEntityTypeList << endl;
+	#endif
+	int i=0;
+	bool actionEntityNodesListIteratorIsFound = false;
+ 	vector<GIAentityNode*>::iterator actionEntityNodesListIteratorFound;
+	for(vector<GIAentityNode*>::iterator actionEntityNodesListIterator = entityNodesActiveListActions->begin(); actionEntityNodesListIterator != entityNodesActiveListActions->end(); actionEntityNodesListIterator++)
+	{
+		if((*actionEntityNodesListIterator)->idActiveEntityTypeList == existingEntity->idActiveEntityTypeList)
+		{
+			actionEntityNodesListIteratorFound = actionEntityNodesListIterator;
+			actionEntityNodesListIteratorIsFound = true;
+		}
+		#ifdef GIA_TRANSLATOR_DEBUG
+		//cout << "i = " << i << endl;
+		//cout << "(*actionEntityNodesListIterator)->entityName = " << (*actionEntityNodesListIterator)->entityName << endl;
+		#endif
+		i++;
+	}
+	if(!actionEntityNodesListIteratorIsFound)
+	{
+		cout << "error: !...EntityNodesListIteratorIsFound" << endl;
+		exit(0);
+	}
+	entityNodesActiveListActions->erase(actionEntityNodesListIteratorFound);
+}
+*/
+
+void eraseSubstanceFromSubstanceList(GIAentityNode * existingEntity)
+{
+	#ifdef GIA_TRANSLATOR_DEBUG
+	//cout << "existingEntity->idActiveEntityTypeList = " << existingEntity->idActiveEntityTypeList << endl;
+	#endif
+	int i=0;
+	bool substanceEntityNodesListIteratorIsFound = false;
+ 	vector<GIAentityNode*>::iterator substanceEntityNodesListIteratorFound;
+	for(vector<GIAentityNode*>::iterator substanceEntityNodesListIterator = entityNodesActiveListSubstances->begin(); substanceEntityNodesListIterator != entityNodesActiveListSubstances->end(); substanceEntityNodesListIterator++)
+	{
+		if((*substanceEntityNodesListIterator)->idActiveEntityTypeList == existingEntity->idActiveEntityTypeList)
+		{
+			substanceEntityNodesListIteratorFound = substanceEntityNodesListIterator;
+			substanceEntityNodesListIteratorIsFound = true;
+		}
+		#ifdef GIA_TRANSLATOR_DEBUG
+		//cout << "i = " << i << endl;
+		//cout << "(*substanceEntityNodesListIterator)->entityName = " << (*substanceEntityNodesListIterator)->entityName << endl;
+		#endif
+		i++;
+	}
+	if(!substanceEntityNodesListIteratorIsFound)
+	{
+		cout << "error: !...EntityNodesListIteratorIsFound" << endl;
+		exit(0);
+	}
+	entityNodesActiveListSubstances->erase(substanceEntityNodesListIteratorFound);
+
+	/*//removed 8 May 2012
+	vector<GIAentityNode*>::iterator substanceEntityNodesListIterator = entityNodesActiveListSubstances->begin();
+	advance(substanceEntityNodesListIterator,existingAction->idActiveEntityTypeList);
+	entityNodesActiveListSubstances->erase(substanceEntityNodesListIterator);
+	currentEntityNodeIDInSubstanceEntityNodesList--;
+	*/
+}
 
 GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionEntityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet)
 {
@@ -1025,6 +1022,20 @@ GIAentityNode * addOrConnectConditionToObject(GIAentityNode * conditionEntityNod
 	return newOrExistingCondition;
 }
 
+void connectConditionInstanceToSubject(GIAentityNode * subjectEntity, GIAentityNode * newOrExistingCondition, bool sameReferenceSet)
+{
+	//configure condition subject entity node
+	writeVectorConnection(subjectEntity, newOrExistingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
+	writeVectorConnection(newOrExistingCondition, subjectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
+}
+
+void connectConditionInstanceToObject(GIAentityNode * objectEntity, GIAentityNode * newOrExistingCondition, bool sameReferenceSet)
+{
+	//configure condition object entity node
+	writeVectorConnection(objectEntity, newOrExistingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS, sameReferenceSet);
+	writeVectorConnection(newOrExistingCondition, objectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, sameReferenceSet);
+}
+
 GIAentityNode * addConditionToConditionDefinition(GIAentityNode * conditionTypeEntity)
 {
 	GIAentityNode * newOrExistingCondition = conditionTypeEntity;
@@ -1054,22 +1065,39 @@ GIAentityNode * addConditionToConditionDefinition(GIAentityNode * conditionTypeE
 	return newOrExistingCondition;
 }
 
-
-void connectConditionInstanceToSubject(GIAentityNode * subjectEntity, GIAentityNode * newOrExistingCondition, bool sameReferenceSet)
+GIAentityNode * addCondition(GIAentityNode * conditionEntity)
 {
-	//configure condition subject entity node
-	writeVectorConnection(subjectEntity, newOrExistingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
-	writeVectorConnection(newOrExistingCondition, subjectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
+	GIAentityNode * newCondition = new GIAentityNode();
+	#ifdef GIA_USE_DATABASE
+	newCondition->added = true;
+	#endif
+
+	newCondition->isCondition = true;
+	addInstanceEntityNodeToActiveLists(newCondition);
+
+	newCondition->entityName = conditionEntity->entityName;
+	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
+	newCondition->wordOrig = conditionEntity->wordOrig;
+	#endif
+	newCondition->idInstance = determineNextIdInstance(conditionEntity);
+
+	writeVectorConnection(newCondition, conditionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+	writeVectorConnection(conditionEntity, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+
+	conditionEntity->hasAssociatedInstance = true;
+	conditionEntity->hasAssociatedInstanceIsCondition = true;
+	conditionEntity->hasAssociatedInstanceTemp = true;
+	newCondition->negative = conditionEntity->negative;	//check forwardInfoToNewSubstance() is not required
+
+	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
+	conditionEntity->entityAlreadyDeclaredInThisContext = true;	//added 9 May 2012
+	#endif
+
+	return newCondition;
 }
 
-void connectConditionInstanceToObject(GIAentityNode * objectEntity, GIAentityNode * newOrExistingCondition, bool sameReferenceSet)
-{
-	//configure condition object entity node
-	writeVectorConnection(objectEntity, newOrExistingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS, sameReferenceSet);
-	writeVectorConnection(newOrExistingCondition, objectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, sameReferenceSet);
-}
 
-
+#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 GIAentityNode * addOrConnectBeingDefinitionConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionDefinitionNode, GIAentityNode * conditionTypeEntity, bool negative, bool sameReferenceSet)
 {
 	GIAentityNode * newOrExistingCondition = conditionTypeEntity;
@@ -1135,37 +1163,8 @@ GIAentityNode * addOrConnectHavingPropertyConditionToEntity(GIAentityNode * enti
 
 	return newOrExistingCondition;
 }
+#endif
 
-GIAentityNode * addCondition(GIAentityNode * conditionEntity)
-{
-	GIAentityNode * newCondition = new GIAentityNode();
-	#ifdef GIA_USE_DATABASE
-	newCondition->added = true;
-	#endif
-
-	newCondition->isCondition = true;
-	addInstanceEntityNodeToActiveLists(newCondition);
-
-	newCondition->entityName = conditionEntity->entityName;
-	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
-	newCondition->wordOrig = conditionEntity->wordOrig;
-	#endif
-	newCondition->idInstance = determineNextIdInstance(conditionEntity);
-
-	writeVectorConnection(newCondition, conditionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
-	writeVectorConnection(conditionEntity, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
-
-	conditionEntity->hasAssociatedInstance = true;
-	conditionEntity->hasAssociatedInstanceIsCondition = true;
-	conditionEntity->hasAssociatedInstanceTemp = true;
-	newCondition->negative = conditionEntity->negative;	//check forwardInfoToNewSubstance() is not required
-
-	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-	conditionEntity->entityAlreadyDeclaredInThisContext = true;	//added 9 May 2012
-	#endif
-
-	return newCondition;
-}
 
 //assumes prepositions have previously been converted to stanford prep_preposition format during preprocessor (for robustness)
 string convertPrepositionToRelex(string * preposition, bool * prepositionFound)
@@ -2183,15 +2182,15 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 		//found values
 	//NO LONGER INITIALISED: relation = {NULL, NULL, NULL, NULL};
 	//relationEntity = {{"", "", ""}, {"", "", ""}, {"", "", ""}, {"", "", ""}}; 	//internal compiler error: Segmentation fault
-	initialiseIntArray2D(&relationEntityIndex[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION, -1);
+	initialiseIntArray2D(&relationEntityIndex[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, -1);	//changed from GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION GIA 2c1c
 	initialiseBoolArray1D(relationEntityPrepFound, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, false);
 		//required to swap variables via redistributeRelationEntityIndexReassignmentUseOriginalValues;
 	//relationEntityOriginal = {{"", "", ""}, {"", "", ""}, {"", "", ""}, {"", "", ""}}; 	//internal compiler error: Segmentation fault
-	initialiseIntArray2D(&relationEntityIndexOriginal[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION, -1);
+	initialiseIntArray2D(&relationEntityIndexOriginal[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, -1);	//changed from GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION GIA 2c1c
 		//for further manipulation of variables after successful (match found) recursive execution of genericDependecyRelationInterpretation():
 	//relationFinalResult = {NULL, NULL, NULL, NULL, NULL};
 	//relationEntityFinalResult = {{"", "", ""}, {"", "", ""}, {"", "", ""}, {"", "", ""}}; 	//internal compiler error: Segmentation fault
-	initialiseIntArray2D(&relationEntityIndexFinalResult[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION, -1);
+	initialiseIntArray2D(&relationEntityIndexFinalResult[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, -1);	//changed from GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION GIA 2c1c
 
 		//predefined values tests
 	initialiseBoolArray2D(&useRelationTest[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, false);
@@ -2335,12 +2334,29 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 			param->relationEntity[currentRelationID][REL_ENT3] = convertPrepositionToRelex(&(param->relationEntity[currentRelationID][REL_ENT3]), &(param->relationEntityPrepFound[currentRelationID]));	//convert stanford prep_x to relex x
 			param->relationEntityIndex[currentRelationID][REL_ENT1] = param->relation[currentRelationID]->relationGovernorIndex;
 			param->relationEntityIndex[currentRelationID][REL_ENT2] = param->relation[currentRelationID]->relationDependentIndex;
+			
+			//added GIA 2c1c for redistributeStanfordRelationsMultiwordPreposition();
+			bool prepositionFound = false;
+			string prepositionName = convertPrepositionToRelex(&(param->relation[currentRelationID]->relationType), &prepositionFound);
+			if(prepositionFound)
+			{	
+				int prepositionEntityIndex = -1;
+				bool prepositionFeatureFound = determineFeatureIndexOfPreposition(param->currentSentenceInList, &prepositionName, &(param->relationEntityIndex[currentRelationID][REL_ENT3]));
+				if(prepositionFeatureFound)
+				{
+					//cout << "currentRelationID = " << currentRelationID << endl;
+					//cout << "REL_ENT3 = " << REL_ENT3 << endl;
+					//cout << "(param->relationEntityIndex[currentRelationID][REL_ENT3]) = " << (param->relationEntityIndex[currentRelationID][REL_ENT3]) << endl;
+				}
+			}
+			
 				//required to swap variables via redistributeRelationEntityIndexReassignmentUseOriginalValues;
 			param->relationEntityOriginal[currentRelationID][REL_ENT1] = param->relationEntity[currentRelationID][REL_ENT1];
 			param->relationEntityOriginal[currentRelationID][REL_ENT2] = param->relationEntity[currentRelationID][REL_ENT2];
 			param->relationEntityOriginal[currentRelationID][REL_ENT3] = param->relationEntity[currentRelationID][REL_ENT3];
 			param->relationEntityIndexOriginal[currentRelationID][REL_ENT1] = param->relationEntityIndex[currentRelationID][REL_ENT1];
 			param->relationEntityIndexOriginal[currentRelationID][REL_ENT2] = param->relationEntityIndex[currentRelationID][REL_ENT2];
+			param->relationEntityIndexOriginal[currentRelationID][REL_ENT3] = param->relationEntityIndex[currentRelationID][REL_ENT3];	//added GIA 2c1c
 			if(param->expectToFindPrepositionTest[currentRelationID])
 			{
 				if(!(param->relationEntityPrepFound[currentRelationID]))
@@ -2531,7 +2547,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 						for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
 						{
 							param->relationFinalResult[relationID] = param->relation[relationID];
-							for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION; relationEntityID++)
+							for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION; relationEntityID++)
 							{
 								param->relationEntityFinalResult[relationID][relationEntityID] = param->relationEntity[relationID][relationEntityID];
 								param->relationEntityIndexFinalResult[relationID][relationEntityID] = param->relationEntityIndex[relationID][relationEntityID];
@@ -2648,7 +2664,9 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								}
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity)
 								{
-									param->GIAentityNodeArray[functionEntityIndex2] =  addOrConnectPropertyToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
+									//cout << "param->GIAentityNodeArray[functionEntityIndex1]->entityName = " << param->GIAentityNodeArray[functionEntityIndex1]->entityName << endl;
+									//cout << "param->GIAentityNodeArray[functionEntityIndex2]->entityName = " << param->GIAentityNodeArray[functionEntityIndex2]->entityName << endl;
+									param->GIAentityNodeArray[functionEntityIndex2] = addOrConnectPropertyToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
@@ -2744,8 +2762,8 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									//cout << "negative = " << negative << endl;
 									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectHavingPropertyConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], negative, sameReferenceSet);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet);	//CHECKTHIS; must tag negative
-									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, functionEntityIndex3, functionEntityIndex2, sameReferenceSet);	//CHECKTHIS; must tag negative
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet);
+									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, functionEntityIndex3, functionEntityIndex2, sameReferenceSet);
 									#endif	
 								}
 								#endif
@@ -2801,6 +2819,8 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 											{
 												param->relationEntityIndex[relationID][relationEntityID] = param->relationEntityIndex[param->redistributeRelationEntityIndexReassignmentRelationID[relationID][relationEntityID]][param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID]];
 												param->relationEntity[relationID][relationEntityID] = param->relationEntity[param->redistributeRelationEntityIndexReassignmentRelationID[relationID][relationEntityID]][param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID]];
+												//cout << "param->redistributeRelationEntityIndexReassignmentRelationID[relationID][relationEntityID] = " << param->redistributeRelationEntityIndexReassignmentRelationID[relationID][relationEntityID] << endl;
+												//cout << "param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID] = " << param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID] << endl;												
 												//cout << "param->relationEntityIndex[relationID][relationEntityID] = " << param->relationEntityIndex[relationID][relationEntityID] << endl;
 												//cout << "param->relationEntity[relationID][relationEntityID] = " << param->relationEntity[relationID][relationEntityID] << endl;
 											}

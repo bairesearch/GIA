@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c1b 13-January-2014
+ * Project Version: 2c2a 13-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -125,7 +125,6 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 			if(!GIAentityNodeArrayFilled[relationIndex[i]])
 			{
 				GIAentityNodeArrayFilled[relationIndex[i]] = true;
-
 				GIAentityNode * featureTempEntity = new GIAentityNode();
 				featureTempEntity->entityName = name[i];
 				GIAfeatureTempEntityNodeArray[relationIndex[i]] = featureTempEntity;
@@ -145,21 +144,49 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 				}
 				#endif
 
-
-				GIAfeatureTempEntityNodeArray[relationIndex[i]]->isObjectTemp = false;
-				GIAfeatureTempEntityNodeArray[relationIndex[i]]->isSubjectTemp = false;
-				GIAfeatureTempEntityNodeArray[relationIndex[i]]->hasSubstanceTemp = false;
 				#ifdef GIA_USE_ADVANCED_REFERENCING
 				//this is required for fillGrammaticalArraysStanford findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet()	[nb these values are applied to concept entities only]
 				GIAfeatureTempEntityNodeArray[relationIndex[i]]->entityIndexTemp = relationIndex[i];
 				GIAfeatureTempEntityNodeArray[relationIndex[i]]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
 				#endif
 			}
-		}
-
+		}							
+										
 		currentRelationInList = currentRelationInList->next;
 	}
 
+	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
+	currentRelationInList = currentSentenceInList->firstRelationInList;
+ 	while(currentRelationInList->next != NULL)
+	{
+		bool prepositionFound = false;
+		string prepositionName = convertPrepositionToRelex(&(currentRelationInList->relationType), &prepositionFound);
+		if(prepositionFound)
+		{
+			int prepositionEntityIndex = -1;
+			//cout << "prepositionName = " << prepositionName << endl;
+			bool prepositionFeatureFound = determineFeatureIndexOfPreposition(currentSentenceInList, &prepositionName, &prepositionEntityIndex);
+			if(prepositionFeatureFound)
+			{
+				if(!(GIAentityNodeArrayFilled[prepositionEntityIndex]))
+				{
+					GIAentityNodeArrayFilled[prepositionEntityIndex] = true;
+					//cout << "prepositionEntityIndex = " << prepositionEntityIndex << endl;
+					/*
+					//NB if concept type entity name has already been defined (GIAentityNodeArrayFilled[functionEntityIndex3]), then findOrAddEntityNodeByNameSimpleWrapperCondition will use it instead
+					bool entityAlreadyExistant = false;
+					GIAentityNode * entity = findOrAddConceptEntityNodeByNameSimpleWrapper(&prepositionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+					*/
+					GIAentityNode * featureTempEntity = new GIAentityNode();
+					featureTempEntity->entityName = prepositionName;
+					GIAfeatureTempEntityNodeArray[prepositionEntityIndex] = featureTempEntity;
+				}
+			}
+		}
+		currentRelationInList = currentRelationInList->next;
+	}
+	#endif
+	
 	#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -189,7 +216,7 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 }
 
 
-void locateAndAddAllConceptEntities(bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType, int NLPfeatureParser, GIAentityNode * GIAfeatureTempEntityNodeArray[])
+void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType, int NLPfeatureParser, GIAentityNode * GIAfeatureTempEntityNodeArray[])
 {
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -200,42 +227,39 @@ void locateAndAddAllConceptEntities(bool GIAentityNodeArrayFilled[], GIAentityNo
 
 			bool entityAlreadyExistant = false;
 			GIAentityNode * entity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(featureTempEntityNode->entityName), &entityAlreadyExistant, entityNodesActiveListConcepts);
+			GIAentityNodeArray[w] = entity;
+			entity->hasAssociatedInstanceTemp = false;
+			sentenceConceptEntityNodesList->push_back(entity);
 			#ifdef GIA_TRANSLATOR_DEBUG
 			//cout << "entity->entityName = " << entity->entityName << endl;
 			#endif
-
-			GIAentityNodeArray[w] = entity;
-
-			GIAentityNodeArray[w]->hasAssociatedInstanceTemp = false;
-
-			sentenceConceptEntityNodesList->push_back(entity);
-
+			
 			#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 			if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
 			{
 				if(GIAfeatureTempEntityNodeArray[w]->isQuery)
 				{
-					GIAentityNodeArray[w]->isQuery = true;
+					entity->isQuery = true;
 					setFoundComparisonVariable(true);
-					setComparisonVariableNode(GIAentityNodeArray[w]);
+					setComparisonVariableNode(entity);
 				}
 			}
 			#endif
 			#ifdef GIA_SUPPORT_ALIASES
 			if(GIAfeatureTempEntityNodeArray[w]->isNameQuery)
 			{
-				GIAentityNodeArray[w]->isNameQuery = true;
+				entity->isNameQuery = true;
 			}
 			if(GIAfeatureTempEntityNodeArray[w]->isName)
 			{
-				GIAentityNodeArray[w]->isName = true;
+				entity->isName = true;
 			}
 			#endif
 			#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 			//this is required because negative assignment is now performed during redistribution
 			if(GIAfeatureTempEntityNodeArray[w]->negative)
 			{
-				GIAentityNodeArray[w]->negative = true;
+				entity->negative = true;
 			}
 			#endif
 		}

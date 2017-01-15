@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c1b 13-January-2014
+ * Project Version: 2c2a 13-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -274,6 +274,9 @@ using namespace std;
 #endif
 
 //#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC	//disabled GIA 2c1a
+#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+	#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR	//assumes GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS is true
+#endif
 #define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_DEFINITION_BASIC
 
 #define GIA_TRANSLATOR_ACTION_DEFINITION_CODE_SIMPLIFICATION
@@ -713,6 +716,8 @@ static string redistributionRelationsSupportNameOfSubjectDependentOrGovernorName
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_SUPPORTED_PREPOSITIONS_TYPEA (2)
 static string redistributionStanfordRelationsMultiwordPrepositionSupportedPrepositionsTypeA[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_SUPPORTED_PREPOSITIONS_TYPEA] = {RELATION_TYPE_PREPOSITION_TO, RELATION_TYPE_PREPOSITION_OF};	//OLD: RELATION_TYPE_PASSIVE_AUX, RELATION_TYPE_MODAL_AUX
 
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NEG_AND_ADV_RELATIONS (2)
+static string redistributionStanfordRelationsNegAndAdvRelations[GIA_REDISTRIBUTE_STANFORD_RELATIONS_NEG_AND_ADV_RELATIONS] = {RELATION_TYPE_NEGATIVE, RELATION_TYPE_ADJECTIVE_ADVMOD};
 
 
 //measures and quantities;
@@ -1078,6 +1083,8 @@ GIAentityNode * addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAentityNo
 GIAentityNode * addSubstanceToSubstanceDefinition(GIAentityNode * substanceEntity);
 	GIAentityNode * addSubstance(GIAentityNode * entity);
 
+void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubstance);
+
 void addTenseOnlyTimeConditionToSubstance(GIAentityNode * substanceNode, int tense, bool isProgressive);
 
 void addDefinitionToEntity(GIAentityNode * thingEntity, GIAentityNode * definitionEntity, bool sameReferenceSet);
@@ -1085,23 +1092,26 @@ void addDefinitionToEntity(GIAentityNode * thingEntity, GIAentityNode * definiti
 GIAentityNode * addOrConnectActionToEntity(GIAentityNode * subjectEntity, GIAentityNode * objectEntity, GIAentityNode * actionEntity, bool sameReferenceSetSubject, bool sameReferenceSetObject);
 GIAentityNode * addOrConnectActionToSubject(GIAentityNode * subjectEntity, GIAentityNode * actionEntity, bool sameReferenceSet);
 GIAentityNode * addOrConnectActionToObject(GIAentityNode * objectEntity, GIAentityNode * actionEntity, bool sameReferenceSet);
-	GIAentityNode * addActionToActionDefinition(GIAentityNode * actionEntity);
 	void connectActionInstanceToSubject(GIAentityNode * subjectEntity, GIAentityNode * newOrExistingAction, bool sameReferenceSet);
 	void connectActionInstanceToObject(GIAentityNode * objectEntity, GIAentityNode * newOrExistingAction, bool sameReferenceSet);
+GIAentityNode * addActionToActionDefinition(GIAentityNode * actionEntity);
 GIAentityNode * addActionToActionDefinitionDefineSubstances(GIAentityNode * actionEntity);
-		void upgradeSubstanceToAction(GIAentityNode * substance);
-			void eraseSubstanceFromSubstanceList(GIAentityNode * existingEntity);
-		GIAentityNode * addAction(GIAentityNode * actionEntity);
-
+	GIAentityNode * addAction(GIAentityNode * actionEntity);
+	void upgradeSubstanceToAction(GIAentityNode * substance);
+		void eraseSubstanceFromSubstanceList(GIAentityNode * existingEntity);
+		
 GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionEntityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet);
 GIAentityNode * addOrConnectConditionToSubject(GIAentityNode * entityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet);	
 GIAentityNode * addOrConnectConditionToObject(GIAentityNode * conditionEntity, GIAentityNode * conditionTypeEntity, bool sameReferenceSet);
-	GIAentityNode * addConditionToConditionDefinition(GIAentityNode * conditionTypeEntity);
 	void connectConditionInstanceToSubject(GIAentityNode * subjectEntity, GIAentityNode * newOrExistingCondition, bool sameReferenceSet);
 	void connectConditionInstanceToObject(GIAentityNode * objectEntity, GIAentityNode * newOrExistingCondition, bool sameReferenceSet);
+GIAentityNode * addConditionToConditionDefinition(GIAentityNode * conditionTypeEntity);
+	GIAentityNode * addCondition(GIAentityNode * conditionEntity);	
+
+#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 GIAentityNode * addOrConnectBeingDefinitionConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionDefinitionNode, GIAentityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
 GIAentityNode * addOrConnectHavingPropertyConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionSubstanceNode, GIAentityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
-		GIAentityNode * addCondition(GIAentityNode * conditionEntity);
+#endif	
 
 string convertPrepositionToRelex(string * preposition, bool * prepositionFound);	//converts prep_preposition to preposition
 
@@ -1160,8 +1170,6 @@ void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArr
 bool checkEntityHasSubstanceThatWasDeclaredInContext(GIAentityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7d 9 May 2012
 GIAentityNode * getEntitySubstanceThatWasDeclaredInContext(GIAentityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7g 9 May 2012
 #endif
-
-void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubstance);
 
 #ifdef GIA_USE_ADVANCED_REFERENCING
 bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relation * relation);
@@ -1269,15 +1277,15 @@ public:
 		//found values
 	Relation * relation[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
 	string relationEntity[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
-	int relationEntityIndex[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];
+	int relationEntityIndex[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//changed from GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION GIA 2c1c
 	bool relationEntityPrepFound[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
 		//required to swap variables via redistributeRelationEntityIndexReassignmentUseOriginalValues;
 	string relationEntityOriginal[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
-	int relationEntityIndexOriginal[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];
+	int relationEntityIndexOriginal[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//changed from GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION GIA 2c1c
 		//for further manipulation of variables after successful (match found) recursive execution of genericDependecyRelationInterpretation:
 	Relation * relationFinalResult[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
 	string relationEntityFinalResult[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//warning: will contain latest match if multiple matches found
-	int relationEntityIndexFinalResult[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];	//warning: will contain latest match if multiple matches found
+	int relationEntityIndexFinalResult[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//warning: will contain latest match if multiple matches found	//changed from GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION GIA 2c1c
 
 		//predefined values tests
 	bool useRelationTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];

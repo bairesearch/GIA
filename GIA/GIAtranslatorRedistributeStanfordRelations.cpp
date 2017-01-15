@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c1b 13-January-2014
+ * Project Version: 2c2a 13-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -199,13 +199,15 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 	redistributeStanfordRelationsDependencyPreposition(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 
+	/*
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "1c19 pass; redistributeStanfordRelationsAuxHave (eg Red dogs have flies.	aux(flies-4, have-3) + nsubj(flies-4, dogs-2) -> _predadj(dogs-2, flies-4" << endl;
 	#endif
 	redistributeStanfordRelationsAuxHave(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
-
+	*/
+	
 	#ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 	//added 12 July 2013
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -214,12 +216,14 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 	redistributeStanfordRelationsDisableAuxAndCop(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 
+	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//this has been shifted before linkHavingPropertyConditionsAndBeingDefinitionConditions - 1t2l
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "1c21 pass; collapseRedundantRelationAndMakeNegativeStanford (eg The chicken has not eaten a pie.: neg(eaten-5, not-4)" << endl;
 	#endif
 	collapseRedundantRelationAndMakeNegativeStanford(currentSentenceInList, GIAentityNodeArray);
+	#endif
 	#endif
 }
 
@@ -1102,12 +1106,30 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	prep_on(are-4, mechanism-17)
 	conj_and(frame-8, mechanism-17)
 	*/
-	//eg1 look for nsubj/prep combination, eg nsubj(are-4, claims-3) + prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)
-	//eg2 case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; The claims that are on the frame are blue. , nsubj(are-4, claims-2) + prep_on(are-4, frame-7) + rcmod(claims-2, are-4)
-		//OLD: look for nsubj/prep combination, eg nsubj(next-4, garage-2) + prep_to(next-4, house-7)	=> prep_subj(next_to, house) + prep_subj(next_to, garage)
-
 #ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	/*eg [case added GIA 2c1c] 
+	The chicken is not near the house.
+	nsubj(is-3, chicken-2) + prep_near(is-3, house-7) + neg(is-3, not-4) -> neg(near-5, not-4)
+	The chicken is sometimes near the house.
+	nsubj(is-3, chicken-2) + prep_near(is-3, house-7) + advmod(is-3, sometimes-4) -> advmod(near-5, sometimes-4)
+	*/
+	GIAgenericDepRelInterpretationParameters paramC2(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
+	paramC2.numberOfRelations = 3;
+	paramC2.useRelationTest[REL1][REL_ENT3] = true; paramC2.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
+	paramC2.expectToFindPrepositionTest[REL2] = true;
+	paramC2.useRelationArrayTest[REL3][REL_ENT3] = true; paramC2.relationArrayTest[REL3][REL_ENT3] = redistributionStanfordRelationsNegAndAdvRelations; paramC2.relationArrayTestSize[REL3][REL_ENT3] = GIA_REDISTRIBUTE_STANFORD_RELATIONS_NEG_AND_ADV_RELATIONS;
+	paramC2.useRelationIndexTest[REL2][REL_ENT1] = true; paramC2.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; paramC2.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
+	paramC2.useRelationIndexTest[REL3][REL_ENT1] = true; paramC2.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; paramC2.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
+	paramC2.useRelationTest[REL1][REL_ENT1] = true; paramC2.relationTest[REL1][REL_ENT1] = RELATION_ENTITY_BE;
+	paramC2.useRelationTest[REL2][REL_ENT1] = true; paramC2.relationTest[REL2][REL_ENT1] = RELATION_ENTITY_BE;
+	paramC2.useRelationTest[REL3][REL_ENT1] = true; paramC2.relationTest[REL3][REL_ENT1] = RELATION_ENTITY_BE;
+	paramC2.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT1] = true; paramC2.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT1] = REL2; paramC2.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT1] = REL_ENT3;
+	genericDependecyRelationInterpretation(&paramC2, REL1);
+
+	//eg1 look for nsubj/prep combination, eg nsubj(are-4, claims-3) + prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)
+	//eg2 case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; The claims that are on the frame are blue. , nsubj(are-4, claims-2) + prep_on(are-4, frame-7) + rcmod(claims-2, are-4)
+		//OLD: look for nsubj/prep combination, eg nsubj(next-4, garage-2) + prep_to(next-4, house-7)	=> prep_subj(next_to, house) + prep_subj(next_to, garage)	
 		//general parameters
 	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramC.numberOfRelations = 2;
@@ -4402,17 +4424,17 @@ void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSenten
 #endif
 }
 
+//redistributeStanfordRelationsAuxHave() was designed for faulty case "flies" is incorrectly tagged by stanford parser in "Red dogs have flies." STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS
+/*
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 void redistributeStanfordRelationsAuxHave(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	/*
 	eg Red dogs have flies.	aux(flies-4, have-3) + nsubj(flies-4, dogs-2) -> _predadj(dogs-2, flies-4)
 	nn(dogs-2, Red-1)
 	nsubj(flies-4, dogs-2)
 	aux(flies-4, have-3)
 	root(ROOT-0, flies-4)
 	Joe is happy.	_predadj(Joe[1], happy[3])
-	*/
 //#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 2;
@@ -4431,6 +4453,7 @@ void redistributeStanfordRelationsAuxHave(Sentence * currentSentenceInList, bool
 //#endif
 }
 #endif
+*/
 
 
 #ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
@@ -4460,6 +4483,15 @@ void redistributeStanfordRelationsDisableAuxAndCop(Sentence * currentSentenceInL
 	paramD.useRelationTest[REL1][REL_ENT3] = true; paramD.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DETERMINER;
 	paramD.disableRelation[REL1] = true;
 	genericDependecyRelationInterpretation(&paramD, REL1);
+	
+	#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+	//added GIA 1c1a
+	GIAgenericDepRelInterpretationParameters paramE(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
+	paramE.numberOfRelations = 1;
+	paramE.useRelationTest[REL1][REL_ENT3] = true; paramE.relationTest[REL1][REL_ENT3] = RELATION_TYPE_NEGATIVE;
+	paramE.disableEntity[REL1][REL_ENT2] = true;
+	genericDependecyRelationInterpretation(&paramE, REL1);
+	#endif
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)

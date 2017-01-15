@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c1b 13-January-2014
+ * Project Version: 2c2a 13-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -92,7 +92,7 @@ void linkEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFille
  	cout <<"3b pass; link dependent subject-object definition/composition/action relationships;" << endl;
 	cout << "eg1; The rabbit is 20 meters away. _subj(away[6], rabbit[2]) + _measure_distance(away[6], meter[5])" << endl;
 	cout << "eg2; A bat is an animal. _subj(be[3], bat[2]) + _obj(be[3], animal[5])" << endl;
-	cout << "eg3; The house has a table. _subj(have[3], house[2]) + _obj(have[3], table[5])" << endl;
+	cout << "OLD: eg3; The house has a table. _subj(have[3], house[2]) + _obj(have[3], table[5])" << endl;
 	cout << "eg4; Tom rides the bike. _subj(ride[2], Tom[1]) + _obj(ride[2], bike[4])" << endl;
 	#endif
 	linkSubjectObjectRelationships(currentSentenceInList, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);

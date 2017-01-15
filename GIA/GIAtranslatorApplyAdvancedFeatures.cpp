@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c1b 13-January-2014
+ * Project Version: 2c2a 13-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -39,36 +39,31 @@
 
 void applyAdvancedFeatures(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType, int NLPfeatureParser)
 {
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout <<"4a pass; extract dates; eg The battle happened on March 11th, 1973. _date_day(December, 3rd) /_date_year(December, 1990)" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
-	#endif
-	extractDates(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
-
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4b pass; extract quantities; eg He lost three dollars. /   He lost almost three dollars. / He lost three hundred dollars. _quantity(dollar, three) / _quantity_mod(three, almost) / _quantity_mult(hundred, three) " << endl;
-	#endif
-	extractQuantities(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPfeatureParser);
-
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4c pass; extract measures and link properties (measure-quantity relationships);  eg The boy is 4 feet away. / Take these 4 times a day. / The boy is 4 feet tall. / The birthday boy is 12 years old.	_measure_distance(away, foot) / _measure_per(times, day) / _measure_size(tall, feet) / _measure_time(old, years)" << endl;
+	cout << "4a pass; collapseRedundantRelationAndMakeNegativeStanford (eg The chicken has not eaten a pie.: neg(eaten-5, not-4)" << endl;
+	#endif
+	collapseRedundantRelationAndMakeNegativeStanford(currentSentenceInList, GIAentityNodeArray);
+
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "4b pass; extract measures and link properties (measure-quantity relationships);  eg The boy is 4 feet away. / Take these 4 times a day. / The boy is 4 feet tall. / The birthday boy is 12 years old.	_measure_distance(away, foot) / _measure_per(times, day) / _measure_size(tall, feet) / _measure_time(old, years)" << endl;
 	#endif
 	extractMeasures(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4d/4e pass; define to_be/to_do conditions;" << endl;
+	cout << "4c/4d pass; define to_be/to_do conditions;" << endl;
 	cout << "eg1 The pastry tasted awesome. _to-be(taste[3], awesome[4]) + _subj(taste[3], pastry[2])" << endl;
 	cout << "eg2 Jezel likes to draw. _to-do(like[2], draw[4]) + _subj(like[2], Jezel[1])" << endl;
 	#endif
 	defineToBeAndToDoConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4f pass; extract qualities; eg The broken pencil fell apart. / Giants are red. [Joe is happy.] / Tom runs quickly. _amod(pencil, broken) / _predadj(giants, red) / _advmod(run, quick)" << endl;
+	cout << "4e pass; extract qualities; eg The broken pencil fell apart. / Giants are red. [Joe is happy.] / Tom runs quickly. _amod(pencil, broken) / _predadj(giants, red) / _advmod(run, quick)" << endl;
 	#endif
 	extractQualities(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4g pass; link properties (parataxis); eg The guy, Akari said, left early in the morning. _parataxis(leave[7], say[5])" << endl;
+	cout << "4f pass; link properties (parataxis); eg The guy, Akari said, left early in the morning. _parataxis(leave[7], say[5])" << endl;
 	#endif
 	linkPropertiesParataxis(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 
@@ -77,7 +72,7 @@ void applyAdvancedFeatures(Sentence * currentSentenceInList, bool GIAentityNodeA
 		#ifdef GIA_USE_STANFORD_CORENLP
 		#ifndef GIA_TRANSLATOR_INTERPRET_CLAUSAL_COMPLEMENT_AS_ACTION_OBJECT_INSTEAD_OF_ACTION_PROPERTY
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "4h pass; define Clausal Complement Properties (ccomp); eg He says that you like to swim. ccomp(say, like)" << endl;
+		cout << "4g pass; define Clausal Complement Properties (ccomp); eg He says that you like to swim. ccomp(say, like)" << endl;
 		#endif
 		defineClausalComplementProperties(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 		#endif
@@ -85,23 +80,33 @@ void applyAdvancedFeatures(Sentence * currentSentenceInList, bool GIAentityNodeA
 	}
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4i pass; define tense only time conditions" << endl;
+	cout << "4h pass; define tense only time conditions" << endl;
 	#endif
 	defineTenseOnlyTimeConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 
 	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4j pass; define action concepts1 (ie specific action concepts)" << endl;
+	cout << "4i pass; define action concepts1 (ie specific action concepts)" << endl;
 	#endif
 	defineActionConcepts1(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 	#endif
 #endif
 
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout <<"4j pass; extract dates; eg The battle happened on March 11th, 1973. _date_day(December, 3rd) /_date_year(December, 1990)" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
+	#endif
+	extractDates(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
+
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "4k pass; extract quantities; eg He lost three dollars. /   He lost almost three dollars. / He lost three hundred dollars. _quantity(dollar, three) / _quantity_mod(three, almost) / _quantity_mult(hundred, three) " << endl;
+	#endif
+	extractQuantities(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPfeatureParser);
+
 	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4k pass; define action concepts (ie specific action concepts)" << endl;
+	cout << "4l pass; define action concepts (ie specific action concepts)" << endl;
 	#endif
 	defineActionConcepts2(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif

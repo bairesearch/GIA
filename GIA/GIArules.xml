@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c1b 13-January-2014
+ * Project Version: 2c2a 13-January-2014
  *
  *******************************************************************************/
 -->
@@ -464,6 +464,27 @@
 				prep_on(are-4, mechanism-17)
 				conj_and(frame-8, mechanism-17)
 				--></example>
+				
+				<example><!--
+				eg [case added GIA 2c1c] 
+				The chicken is not near the house.
+				nsubj(is-3, chicken-2) + prep_near(is-3, house-7) + neg(is-3, not-4) -> neg(near-5, not-4)
+				The chicken is sometimes near the house.
+				nsubj(is-3, chicken-2) + prep_near(is-3, house-7) + advmod(is-3, sometimes-4) -> advmod(near-5, sometimes-4)
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="3" />
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_subj" />
+				<option expectToFindPrepositionTest="true" REL="1" />
+				<option useRelationArrayTest="true" REL="2" REL_ENT="2" relationArrayTest="_neg|_advmod" relationArrayTestSize="2" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="0" relationIndexTestRelationID="0" relationIndexTestEntityID="0" />
+				<option useRelationTest="true" REL="0" REL_ENT="0" relationTest="be" />
+				<option useRelationTest="true" REL="1" REL_ENT="0" relationTest="be" />
+				<option useRelationTest="true" REL="2" REL_ENT="0" relationTest="be" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				</paramDepRel>
+				
 				<example><!--
 				eg1 look for nsubj/prep combination, eg nsubj(are-4, claims-3) + prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)
 				eg2 case added 15 May 2012 for ; The claims that are on the frame are blue. , nsubj(are-4, claims-2) + prep_on(are-4, frame-7) + rcmod(claims-2, are-4)
@@ -1691,10 +1712,12 @@
 				</paramDepRel>
 			</function>
 
+			<!-- redistributeStanfordRelationsAuxHave() was designed for faulty case "flies" is incorrectly tagged by stanford parser in "Red dogs have flies." STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS -->
+			<!--
 			<function name="redistributeStanfordRelationsAuxHave">
-				<example><!--
+				<example>
 				eg Red dogs have flies. aux(flies-4, have-3) + nsubj(flies-4, dogs-2) -> _predadj(dogs-2, flies-4)
-				--></example>
+				</example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="2" />
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_aux" />
@@ -1705,9 +1728,10 @@
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="0" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="0" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
 				<option disableRelation="true" REL="0" />
-				<option disableEntity="true" REL="0" REL_ENT="1" /> <!-- disable "have" entity -->
+				<option disableEntity="true" REL="0" REL_ENT="1" /> //disable "have" entity
 				</paramDepRel>
 			</function>
+			-->
 			
 			<!-- #ifdefGIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START -->
 			<function name="redistributeStanfordRelationsDisableAuxAndCop">
@@ -1733,23 +1757,34 @@
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_det" />
 				<option disableRelation="true" REL="0" />
+				<option disableEntity="true" REL="0" REL_ENT="1" /> <!-- disable "the/a" entity: why is this required now and wasn't required earlier? -->
 				</paramDepRel>
+				
+				<!-- #ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_neg" />
+				<option disableEntity="true" REL="0" REL_ENT="1" /> <!-- disable "not" entity -->
+				</paramDepRel>
+				<!-- #endif -->	
 			</function>
 			<!-- #endif -->
-
+			<!-- #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
+			<!--
 			<function name="collapseRedundantRelationAndMakeNegativeStanford">
-				<example><!--
+				<example>
 				eg The chicken has not eaten a pie.: neg(eaten-5, not-4)
-				--></example>
+				</example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_neg" />
 				<option disableRelation="true" REL="0" />
-				<option disableEntity="true" REL="0" REL_ENT="1" /> <!-- disable "not" entity -->
-				<!-- <option useRedistributeSpecialCaseNegativeAssignment="true" REL="0" REL_ENT="0" /> -->
+				<option disableEntity="true" REL="0" REL_ENT="1" /> // disable "not" entity
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="negative" value="true" REL="0" REL_ENT="0" />
 				</paramDepRel>
-			</function>			
+			</function>	
+			-->	
+			<!-- #endif -->	
 		</file>
 		<file name="GIAtranslatorRedistributeRelexRelations">
 					
@@ -3121,6 +3156,19 @@
 			</function>		
 		</file>
 		<file name="GIAtranslatorApplyAdvancedFeatures">
+			<!-- #ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
+			<function name="collapseRedundantRelationAndMakeNegativeStanford">
+				<example>
+				<!-- eg The chicken has not eaten a pie.: neg(eaten-5, not-4) -->
+				</example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="_neg" />
+				<option disableRelation="true" REL="0" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="negative" value="true" REL="0" REL_ENT="0" />
+				</paramDepRel>
+			</function>	
+			<!-- #endif -->	
 			<function name="extractMeasures">
 				<example><!--
 				eg The boy is 4 feet away. / Take these 4 times a day. / The boy is 4 feet tall. / The birthday boy is 12 years old. _measure_distance(away, foot) / _measure_per(times, day) / _measure_size(tall, feet) / _measure_time(old, years)
