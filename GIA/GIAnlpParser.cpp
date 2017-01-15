@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j12a 05-July-2015
+ * Project Version: 2j12b 05-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -657,7 +657,8 @@ void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsente
 		if(stanfordRelation.substr(0, RELATION_TYPE_PREPOSITION_MODIFIER2_LENGTH) == RELATION_TYPE_PREPOSITION_MODIFIER2)
 		{
 			stanfordPrepositionFound = true;
-			relationTypeRelexStandard = string(STANFORD_PARSER_PREPOSITION_PREPEND) + stanfordRelation.substr(RELATION_TYPE_PREPOSITION_MODIFIER2_LENGTH, stanfordRelation.length()-RELATION_TYPE_PREPOSITION_MODIFIER2_LENGTH);	//converts _nmod:[preposition] to prep_[preposition]
+			tempRelexPrepositionString = stanfordRelation.substr(RELATION_TYPE_PREPOSITION_MODIFIER2_LENGTH, stanfordRelation.length()-RELATION_TYPE_PREPOSITION_MODIFIER2_LENGTH);
+			relationTypeRelexStandard = string(STANFORD_PARSER_PREPOSITION_PREPEND) + tempRelexPrepositionString;	//converts _nmod:[preposition] to prep_[preposition]
 		}
 	}
 	#endif
@@ -684,6 +685,9 @@ void convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInLi
 		bool foundOfficialLRPreplacementString = false;
 		GIAfeature* tempFeature = new GIAfeature();
 		tempFeature->word = tempRelexPrepositionString;
+		//cout << "\n\t\tconvertStanfordRelationToRelexLRPreversion: tempRelexPrepositionString = " << tempRelexPrepositionString << endl;
+		//cout << "\t\tcurrentRelationInList->relationGovernor: " << currentRelationInList->relationGovernor << endl;
+		//cout << "\t\tcurrentRelationInList->relationDependent: " << currentRelationInList->relationDependent << endl;
 		revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, true, &foundOfficialLRPreplacementString);
 		if(foundOfficialLRPreplacementString)
 		{
@@ -693,8 +697,8 @@ void convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInLi
 				*relationTypeRelexStandard = "";
 				*relationTypeRelexStandard = *relationTypeRelexStandard + STANFORD_PARSER_PREPOSITION_PREPEND + officialLRPentityName;
 				#ifdef GIA_NLP_DEBUG
-				//cout << "stanfordPrepositionFound" << endl;
-				//cout << "relationTypeRelexStandard = " << relationTypeRelexStandard << endl;
+				cout << "stanfordPrepositionFound" << endl;
+				cout << "relationTypeRelexStandard = " << relationTypeRelexStandard << endl;
 				#endif
 			}
 			else
