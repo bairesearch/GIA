@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d2a 22-January-2014
+ * Project Version: 2d2b 22-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -641,20 +641,12 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		if(!(currentRelationInList->disabled))
-		{
-			string relationType = currentRelationInList->relationType;
-			string relationGoverner = currentRelationInList->relationGovernor;
-			string relationDependent = currentRelationInList->relationDependent;
-
-			cout << "relationType = " << currentRelationInList->relationType << endl;
-			cout << "relationGoverner = " << relationGoverner << endl;
-			cout << "relationDependent = " << relationDependent << endl;
-
-		}
+		string relationType = currentRelationInList->relationType;
+		cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << "-" << currentRelationInList->relationGovernorIndex << ", " << currentRelationInList->relationDependent << "-" << currentRelationInList->relationDependentIndex << ")" << endl;
 		currentRelationInList = currentRelationInList->next;
 	}
 	*/
+	
 	
 	#ifndef GIA_USE_ADVANCED_REFERENCING
 	bool linkPreestablishedReferencesGIA = true;	//irrelevant

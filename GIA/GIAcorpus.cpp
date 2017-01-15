@@ -23,7 +23,7 @@
  * File Name: GIAcorpus.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d2a 22-January-2014
+ * Project Version: 2d2b 22-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -84,7 +84,11 @@ bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParse
 			#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
 			cout << "warning: GIA2 corpus entry not found (will generate corpus entry)" << endl;			
 			#else
+			#ifdef GIA2_PARSE_PARTIALLY_FILLED_SEMANTIC_RELATIONS
+			cout << "error: GIA2 corpus entry not found (partial sentence will be parsed)" << endl;
+			#else
 			cout << "error: GIA2 corpus entry not found (sentences cannot be parsed)" << endl;
+			#endif
 			#endif
 			result = false;
 		}
@@ -97,7 +101,11 @@ bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParse
 			#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
 			cout << "warning: GIA2 corpus entry not found (will generate corpus entry)" << endl;			
 			#else
+			#ifdef GIA2_PARSE_PARTIALLY_FILLED_SEMANTIC_RELATIONS
+			cout << "error: GIA2 corpus entry not found (partial sentence will be parsed)" << endl;
+			#else
 			cout << "error: GIA2 corpus entry not found (sentences cannot be parsed)" << endl;
+			#endif
 			#endif
 			result = false;
 		}
@@ -152,7 +160,6 @@ bool lookupCorpusFiles(Paragraph * firstParagraphInList, int NLPfeatureParser)
 	return result;
 }
 
-//NB GIA2_CONNECTIONIST_NETWORK currently uses a simplified algorithm; a future implementation would not use GIA2_CONNECTIONIST_NETWORK_DO_NOT_ALLOW_OVERLAP, ie it would perform multiple lookups for a given sub-subset as determined by multiple overlapping subset files and rank them (eg take the largest sub-subset)  
 bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser)
 {
 	bool result = true;
@@ -162,6 +169,7 @@ bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser)
 		//cout << "here" << endl;
 		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 		//cout << "here2" << endl;
+		currentSentenceInList->corpusLookupSuccessful = true;
 		if(!loadCorpusFileSemanticDependencyRelations(currentSentenceInList, currentSentenceInList->firstFeatureInList))
 		{
 			#ifdef GIA2_CONNECTIONIST_NETWORK
@@ -182,28 +190,26 @@ bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser)
 			}
 			int subsetStillNotFoundMaxFeatureIndex = currentSentenceInList->maxNumberOfWordsInSentence;
 			bool notFoundASubsetForAtLeastTwoWords = false;
+			bool stillNotFoundASubset = true;
 			for(int centralWord=currentSentenceInList->maxNumberOfWordsInSentence; centralWord>=2; centralWord--)	//centralWord in subset [NB centralWord>=2 as a subset of 1 is not a subset]
 			{
-				#ifdef GIA2_CONNECTIONIST_NETWORK_DO_NOT_ALLOW_OVERLAP
-				if(centralWord <= subsetStillNotFoundMaxFeatureIndex)
+				if(stillNotFoundASubset)
 				{
-				#endif
-					//#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
-					cout << "centralWord = " << centralWord << ", " << centralFeatureInSentence->lemma << endl;
-					//#endif
-					Feature * recordOfFeatureAfterCentralFeatureInSentence = centralFeatureInSentence->next;
-					centralFeatureInSentence->next = dummyBlankFeature;	//temporarily disconnect node at end of sentence subset
-					bool foundACorpusSubsetForCentralWord = false;
-					Feature * firstFeatureInSentenceSubset = currentSentenceInList->firstFeatureInList;
-					for(int firstWord=1; firstWord<=centralWord-(GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1); firstWord++)	//firstWord in subset
+					#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
+					if(!notFoundASubsetForAtLeastTwoWords)	//NB !notFoundASubsetForAtLeastTwoWords condition is optional; it is used because syntactic relations will be used in this case regardless, see "warning: GIA2 corpus entry not found (will generate corpus entry)" 
 					{
-						if(!foundACorpusSubsetForCentralWord)
+					#endif
+						//#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
+						cout << "centralWord = " << centralWord << ", " << centralFeatureInSentence->lemma << endl;
+						//#endif
+						Feature * recordOfFeatureAfterCentralFeatureInSentence = centralFeatureInSentence->next;
+						centralFeatureInSentence->next = dummyBlankFeature;	//temporarily disconnect node at end of sentence subset
+						bool foundACorpusSubsetForCentralWord = false;
+						Feature * firstFeatureInSentenceSubset = currentSentenceInList->firstFeatureInList;
+						for(int firstWord=1; firstWord<=centralWord-(GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1); firstWord++)	//firstWord in subset
 						{
-							#ifdef GIA2_CONNECTIONIST_NETWORK_DO_NOT_ALLOW_OVERLAP
-							//don't find a subset if the first word is !1 && < GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE, as the remaining subset will be 2 small to be found
-							if(firstWord == 1 || firstWord >= GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE)
+							if(!foundACorpusSubsetForCentralWord)
 							{
-							#endif
 								//#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
 								cout << "firstWord = " << firstWord << ", " << firstFeatureInSentenceSubset->lemma << endl;
 								//#endif
@@ -214,30 +220,36 @@ bool lookupCorpusFiles(Sentence * firstSentenceInList, int NLPfeatureParser)
 								if(loadCorpusFileSemanticDependencyRelations(currentSentenceInList, firstFeatureInSentenceSubset))
 								{
 									foundACorpusSubsetForCentralWord = true;
-									subsetStillNotFoundMaxFeatureIndex = firstWord;
+									if(firstWord == 1)
+									{
+										stillNotFoundASubset = false;
+									}
 								}
-							#ifdef GIA2_CONNECTIONIST_NETWORK_DO_NOT_ALLOW_OVERLAP
 							}
-							#endif	
+							firstFeatureInSentenceSubset = firstFeatureInSentenceSubset->next;
 						}
-						firstFeatureInSentenceSubset = firstFeatureInSentenceSubset->next;
+						if(!foundACorpusSubsetForCentralWord)
+						{
+							cout << "************************ warning: notFoundASubsetForAtLeastTwoWords ******************" << endl;
+							notFoundASubsetForAtLeastTwoWords = true;
+						}
+						centralFeatureInSentence->next = recordOfFeatureAfterCentralFeatureInSentence;	//restore temporarily disconnected node at end of sentence subset					
+					#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
 					}
-					if(!foundACorpusSubsetForCentralWord)
-					{
-						notFoundASubsetForAtLeastTwoWords = true;
-					}
-					centralFeatureInSentence->next = recordOfFeatureAfterCentralFeatureInSentence;	//restore temporarily disconnected node at end of sentence subset
-				#ifdef GIA2_CONNECTIONIST_NETWORK_DO_NOT_ALLOW_OVERLAP
+					#endif
 				}
-				#endif
 				centralFeatureInSentence = centralFeatureInSentence->previous;
 			}
 			if(notFoundASubsetForAtLeastTwoWords)
 			{
 				result = false;
+				#ifndef GIA2_PARSE_PARTIALLY_FILLED_SEMANTIC_RELATIONS
+				currentSentenceInList->corpusLookupSuccessful = false;
+				#endif
 			}
 			#else
 			result = false;
+			currentSentenceInList->corpusLookupSuccessful = false;
 			#endif	
 		}
 

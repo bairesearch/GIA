@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d2a 22-January-2014
+ * Project Version: 2d2b 22-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -536,7 +536,8 @@
 		#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
 			#define GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 		#else
-			#define GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE 	
+			#define GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE 
+			//#define GIA2_PARSE_PARTIALLY_FILLED_SEMANTIC_RELATIONS 	
 		#endif
 	#else
 		//this compilation is for development purposes only:
@@ -563,7 +564,6 @@
 		#define GIA_CORPUS_DATABASE_FILESYSTEM_USE_FLAT_FILE	//temporarily enabled for debugging
 		//#define GIA2_CONNECTIONIST_NETWORK_DEBUG		//temporary
 		#define GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE (5)	//ie 5 words in subset is the minimimum
-		#define GIA2_CONNECTIONIST_NETWORK_DO_NOT_ALLOW_OVERLAP	//if this is disabled, then will need to work out a way of reconciling redundant semantic relations (eg deleting replicate semantic relations)
 	#else
 		#define GIA_CORPUS_DATABASE_FILESYSTEM_USE_FLAT_FILE
 	#endif

@@ -23,7 +23,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d2a 22-January-2014
+ * Project Version: 2d2b 22-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -390,18 +390,33 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			{
 				//cout << "(!NLPrelexCompatibilityMode || secondaryRelationDetected): secondaryRelationDetected = " << secondaryRelationDetected << endl;
 			#endif
-
-				#ifdef GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
-				if(currentRelation->relationType != RELATION_TYPE_ROOT)
+			
+				#ifdef GIA2_CONNECTIONIST_NETWORK
+				bool foundReplicateRelation = false;
+				if(parseGIA2file)
 				{
+					if(findReplicateRelation(currentSentenceInList, currentRelation))
+					{
+						foundReplicateRelation = true;
+					}
+				}
+				if(!parseGIA2file || !foundReplicateRelation)
+				{
+				#endif
+					#ifdef GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
+					if(currentRelation->relationType != RELATION_TYPE_ROOT)
+					{
+						Relation * newRelation = new Relation();
+						currentRelation->next = newRelation;
+						currentRelation = currentRelation->next;
+					}
+					#else
 					Relation * newRelation = new Relation();
 					currentRelation->next = newRelation;
 					currentRelation = currentRelation->next;
+					#endif
+				#ifdef GIA2_CONNECTIONIST_NETWORK
 				}
-				#else
-				Relation * newRelation = new Relation();
-				currentRelation->next = newRelation;
-				currentRelation = currentRelation->next;
 				#endif
 			#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 			}
@@ -495,6 +510,38 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 
 		characterIndex++;
 	}
+}
+bool findReplicateRelation(Sentence * currentSentenceInList, Relation * relation)
+{
+	bool foundReplicateRelation = false;
+	Relation * currentRelation = currentSentenceInList->firstRelationInList;
+	while(currentRelation->next != NULL)
+	{
+		if(currentRelation != relation)
+		{//do not compare relation to itself
+			if(compareRelations(currentRelation, relation))
+			{
+				//cout << "foundReplicateRelation" << endl;
+				foundReplicateRelation = true;
+			}
+		}
+		currentRelation = currentRelation->next;
+	}
+	return foundReplicateRelation;
+}
+
+bool compareRelations(Relation * relation1, Relation * relation2)
+{
+	bool result = false;
+	if((relation1->relationType == relation2->relationType) &&
+	(relation1->relationDependent == relation2->relationDependent) &&
+	(relation1->relationDependentIndex == relation2->relationDependentIndex) &&
+	(relation1->relationGovernor == relation2->relationGovernor) &&
+	(relation1->relationGovernorIndex == relation2->relationGovernorIndex))
+	{
+		result = true;
+	}
+	return result;
 }
 
 #ifdef GIA2_SUPPORT_QUERIES
