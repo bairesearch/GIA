@@ -3,7 +3,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j8b 10-May-2012
+ * Project Version: 1j7d 09-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1767,71 +1767,6 @@ void redistributeStanfordRelationsCreateQueryVarsWhat(Sentence * currentSentence
 		currentRelationInList = currentRelationInList->next;
 	}	
 }
-
-
-void redistributeStanfordRelationsPartmod(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
-{									
-	//eg Truffles picked during the spring are tasty.   partmod(truffle, pick) -> obj(pick, truffle) 
-	/*
-		during(pick, spring)
-		_predadj(truffle, tasty)
-		_obj(pick, truffle)
-			->
-		prep_during(pick, spring)
-		nsubj(tasty, truffle)
-		partmod(truffle, pick)
-		cop(tasty, be)	
-	*/
-			
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
-	while(currentRelationInList->next != NULL)
-	{	
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		if(!(currentRelationInList->disabled))
-		{			
-		#endif	
-			//cout << "here1" << endl;
-			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-				
-			if(currentRelationInList->relationType == RELATION_TYPE_PARTICIPIAL_MODIFIER)
-			{	
-				#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_PARTMOD_DEAL_WITH_PROGRESSIVE_ANOMALY
-				if(GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE]) 
-				{
-					/*
-					cout << "asf77" << endl;
-					cout << "relationType = " << currentRelationInList->relationType << endl;	    
-					cout << "relationGoverner = " << currentRelationInList->relationGovernor << endl;
-					cout << "relationDependent = " <<currentRelationInList->relationDependent << endl;				      
-					*/
-					//Eg An elevator governor rectifying/comprising a chicken.
-					currentRelationInList->relationType = RELATION_TYPE_SUBJECT;
-				}
-				else
-				{
-					currentRelationInList->relationType = RELATION_TYPE_OBJECT;
-				}
-				#else
-				currentRelationInList->relationType = RELATION_TYPE_OBJECT;
-				#endif
-				
-				//now switch governor and dependent;
-				int tempIndex = currentRelationInList->relationGovernorIndex;
-				string tempName = currentRelationInList->relationGovernor; 
-				currentRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
-				currentRelationInList->relationGovernor = currentRelationInList->relationDependent; 
-				currentRelationInList->relationDependentIndex = tempIndex;
-				currentRelationInList->relationDependent = tempName;				
-			}
-
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		}		
-		#endif
-			//cout << "here2" << endl;
-		currentRelationInList = currentRelationInList->next;
-	}	
-}
-
 
 
 
