@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1d 31-August-2016
+ * Project Version: 2m1e 31-August-2016
  *
  *******************************************************************************/
 
@@ -1428,3 +1428,16 @@ void deleteAllEntitiesInConceptEntityNodeList(unordered_map<string, GIAentityNod
 }
 */
 
+
+#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+string getParentClassEntityNameFromSubClassEntityName(string subClassEntityName)
+{
+	string parentEntityName = "";
+	int index = subClassEntityName.find(GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_SUBCLASS_DELIMITER);
+	if(index < subClassEntityName.length()-1)
+	{
+		parentEntityName = subClassEntityName.substr(index+1);
+	}
+	return parentEntityName;
+}
+#endif

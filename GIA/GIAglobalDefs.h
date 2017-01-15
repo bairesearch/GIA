@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m1d 31-August-2016
+ * Project Version: 2m1e 31-August-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -713,6 +713,7 @@
 	#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS	//2l9c - create subclasses based on prenominal modifiers (eg toyshop:shop)
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
 		#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_NEW	//2l9a/b
+		#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_SUBCLASS_DELIMITER "_"	//this must be set the same as STANFORD_PARSER_PREPOSITION_DELIMITER
 	#endif	
 	#define GIA_REFERENCING_WILD_CARDS	//2l3a	//interpret something/anything entities as GIA wild card - affects both GIA advanced referencing and queries
 	#ifdef GIA_REFERENCING_WILD_CARDS
