@@ -96,12 +96,34 @@ vector<GIAConditionNode*> * getTranslatorConditionNodesCompleteList()
 	
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity)
 {
+	#ifdef GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY_OLD
 	if(propertyEntity->hasAssociatedPropertyTemp)
+	#else
+	if(((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY != 1) && (propertyEntity->hasAssociatedPropertyTemp)) || ((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY != 1) && (propertyEntity->entityAlreadyDeclaredInThisContext)))
+	#endif
 	{
+		#ifndef GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY_OLD
+		if(!(propertyEntity->hasAssociatedPropertyTemp))
+		{
+			propertyEntity->hasAssociatedPropertyTemp = true;
+		}
+		#endif
+			
 		GIAEntityNode * existingProperty  = propertyEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
 
+		#ifdef GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY_OLD
 		if(thingEntity->hasAssociatedPropertyTemp)
+		#else
+		if(((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY != 1) && (thingEntity->hasAssociatedPropertyTemp)) || ((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY != 1) && (thingEntity->entityAlreadyDeclaredInThisContext)))
+		#endif
 		{
+			#ifndef GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY_OLD
+			if(!(thingEntity->hasAssociatedPropertyTemp))
+			{
+				thingEntity->hasAssociatedPropertyTemp = true;
+			}
+			#endif	
+					
 			thingEntity = thingEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
 		}
 
@@ -111,12 +133,25 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 		thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
 		existingProperty->entityNodeContainingThisProperty = thingEntity;		//added 26 Aug 11a	
+		
 	}
 	else
 	{
+		#ifdef GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY_OLD
 		if(thingEntity->hasAssociatedPropertyTemp)
+		#else
+		if(((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY != 1) && (thingEntity->hasAssociatedPropertyTemp)) || ((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY != 1) && (thingEntity->entityAlreadyDeclaredInThisContext)))
+		#endif
 		{
+			#ifndef GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY_OLD
+			if(!(thingEntity->hasAssociatedPropertyTemp))
+			{
+				thingEntity->hasAssociatedPropertyTemp = true;
+			}
+			#endif
+					
 			thingEntity = thingEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
+				
 		}
 	
 		//configure property node
@@ -143,6 +178,8 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 		//configure property definition node
 		propertyEntity->AssociatedPropertyNodeList.push_back(newProperty);
 		
+		propertyEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
+		
 		//configure entity node containing this property
 		thingEntity->PropertyNodeList.push_back(newProperty);		
 
@@ -153,12 +190,26 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 {
-	if(propertyEntity->hasAssociatedPropertyTemp && (GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_TO_DEFINITIVE_NOUNS != 1) && (propertyEntity->entityAlreadyDeclaredInThisContext))
+	#ifdef GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_TO_DEFINITIVE_NOUNS_OLD
+	if(propertyEntity->hasAssociatedPropertyTemp && (GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY != 1) && (propertyEntity->entityAlreadyDeclaredInThisContext))	
+	#else
+	if(((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY != 1) && (propertyEntity->hasAssociatedPropertyTemp)) || ((GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY != 1) && (propertyEntity->entityAlreadyDeclaredInThisContext)))
+	#endif
 	{
+		#ifndef GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_TO_DEFINITIVE_NOUNS_OLD
+		if(!(propertyEntity->hasAssociatedPropertyTemp))
+		{
+			propertyEntity->hasAssociatedPropertyTemp = true;
+		}
+		#endif	
+			
+		//cout << "break; propertyEntity->entityName = " << propertyEntity->entityName << endl;
 		propertyEntity = propertyEntity->AssociatedPropertyNodeList.back();	//added 4 May 11a
+		
 	}
 	else
 	{	
+		cout << "addPropertyToPropertyDefinition: propertyEntity->entityName = " << propertyEntity->entityName << endl;
 		//configure property node
 		GIAEntityNode * newProperty = new GIAEntityNode();
 		entityNodesCompleteList.push_back(newProperty);
@@ -644,7 +695,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			if((currentFeatureInList->grammar).find(FEATURE_GRAMMATICAL_TENSE_DATE) != -1)
 			{
 				GIAEntityNodeIsDate[currentFeatureInList->entityIndex] = true;
-				cout << "isDate currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+				//cout << "isDate currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 			}
 			
 			for(int grammaticalTenseIndex = 0; grammaticalTenseIndex < GRAMMATICAL_TENSE_NUMBER_OF_TYPES; grammaticalTenseIndex++)
@@ -654,7 +705,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				//if((currentFeatureInList->grammar).substr(0, grammaticalTenseNameLengthsArray[grammaticalTenseIndex]) == grammaticalTenseNameArray[grammaticalTenseIndex]) 
 				{
 					GIAEntityNodeGrammaticalTenseArray[currentFeatureInList->entityIndex] = grammaticalTenseIndex;
-					cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalTenseIndex = " << grammaticalTenseNameArray[grammaticalTenseIndex] << endl;
+					//cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalTenseIndex = " << grammaticalTenseNameArray[grammaticalTenseIndex] << endl;
 				}			
 			}
 			for(int grammaticalNumberIndex = 0; grammaticalNumberIndex < GRAMMATICAL_NUMBER_NUMBER_OF_TYPES; grammaticalNumberIndex++)
@@ -663,20 +714,20 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				if((currentFeatureInList->grammar).find(grammaticalNumberNameArray[grammaticalNumberIndex]) != -1) 				
 				{
 					GIAEntityNodeGrammaticalNumberArray[currentFeatureInList->entityIndex] = grammaticalNumberIndex;
-					cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalNumberIndex = " << grammaticalNumberNameArray[grammaticalNumberIndex] << endl;
+					//cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalNumberIndex = " << grammaticalNumberNameArray[grammaticalNumberIndex] << endl;
 				}			
 			}
 			if((currentFeatureInList->grammar).find(GRAMMATICAL_DEFINITE_NAME) != -1)
 			{
 				GIAEntityNodeGrammaticalIsDefiniteArray[currentFeatureInList->entityIndex] = GRAMMATICAL_DEFINITE;
-				cout << "isDefinite currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+				//cout << "isDefinite currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 				
 			}			
 
 			if((currentFeatureInList->grammar).find(GRAMMATICAL_PERSON_NAME) != -1)
 			{
 				GIAEntityNodeGrammaticalIsPersonArray[currentFeatureInList->entityIndex] = GRAMMATICAL_PERSON;
-				cout << "isPerson currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+				//cout << "isPerson currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 				
 			}
 			for(int grammaticalGenderIndex = 0; grammaticalGenderIndex < GRAMMATICAL_GENDER_NUMBER_OF_TYPES; grammaticalGenderIndex++)
@@ -686,7 +737,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				{
 					//NB it will always find "person" in relex grammar string if "person" is existant, but this will be overwritten by "feminine" or "masculine" if this is specified (not possible for bigender names like "joe")
 					GIAEntityNodeGrammaticalGenderArray[currentFeatureInList->entityIndex] = grammaticalGenderIndex;
-					cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalGenderIndex = " << grammaticalGenderNameArray[grammaticalGenderIndex] << endl;
+					//cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalGenderIndex = " << grammaticalGenderNameArray[grammaticalGenderIndex] << endl;
 				}			
 			}
 			
@@ -703,8 +754,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 		//exit(0);
 		
-		cout << "pass A;" << endl;
-		cout << "pass 1; locate/add all entities" << endl;
+		//cout << "pass A;" << endl;
+		//cout << "pass 1; locate/add all entities" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{			
@@ -766,7 +817,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 		//cout << "as2" <<endl;
 	
-		cout << "pass 1b; switch argument/functions where necessary" << endl;
+		//cout << "pass 1b; switch argument/functions where necessary" << endl;
 		if(GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_WHERE_NECESSARY)
 		{
 			currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -846,7 +897,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			}					
 		}
 				
-		cout << "pass 2; identify entity types [define entities as objects, subjects, and being possessive of properties];" << endl;
+		//cout << "pass 2; identify entity types [define entities as objects, subjects, and being possessive of properties];" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{
@@ -931,7 +982,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}
 		
-		cout << "pass 3; link references (eg his/her with joe/emily)" << endl;
+		//cout << "pass 3; link references (eg his/her with joe/emily)" << endl;
 		for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 		{	
 			//cout << "w = " << w << endl;
@@ -1094,8 +1145,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 		
 				
-		cout << "pass B;" << endl;	
-		cout << "0 pass; define properties (definite nouns); eg the house" << endl;
+		//cout << "pass B;" << endl;	
+		//cout << "0 pass; define properties (definite nouns); eg the house" << endl;
 		if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS == 1)
 		{
 			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -1106,15 +1157,15 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					{
 						if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
 						{
-							cout << "asd" << endl;
-							cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
+							//cout << "asd" << endl;
+							//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
 							addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
 						}
 					}
 				//}
 			}
 		}
-		cout << "0b pass; define properties (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore properties]" << endl;
+		//cout << "0b pass; define properties (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore properties]" << endl;
 		if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_NOUNS_WITH_DETERMINATES == 1)
 		{
 			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -1140,7 +1191,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			}
 		}
 		
-		cout << "0c pass; define properties (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
+		//cout << "0c pass; define properties (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{	
@@ -1167,7 +1218,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}				
 		
-		cout << "0d pass; define properties (quantities [not quantity mods/multipiers] and measures);" << endl;
+		//cout << "0d pass; define properties (quantities [not quantity mods/multipiers] and measures);" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{			
@@ -1192,7 +1243,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		
 					
 										
-		cout << "1 pass; link properties (possessive relationships); eg joe's bike" << endl;
+		//cout << "1 pass; link properties (possessive relationships); eg joe's bike" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{
@@ -1224,7 +1275,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}
 	
-		cout << "2 pass; link properties (descriptive relationships); eg joe is happy" << endl;
+		//cout << "2 pass; link properties (descriptive relationships); eg joe is happy" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{	
@@ -1254,7 +1305,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}					
 
-		cout << "2b pass; link entity definitions (appositive of nouns only)" << endl;
+		//cout << "2b pass; link entity definitions (appositive of nouns only)" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{
@@ -1276,7 +1327,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 					
 		
- 		cout <<"3 pass; define dependent subject-object definition/composition/action relationships and independent subject/object action relationships" << endl;
+ 		//cout <<"3 pass; define dependent subject-object definition/composition/action relationships and independent subject/object action relationships" << endl;
  		currentRelationInList = currentSentenceInList->firstRelationInList;
 		bool subjectObjectRelationshipAlreadyAdded[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE;i++)
@@ -1509,7 +1560,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 		
 		
-		 //3b pass; define indirect objects
+		 //cout << "3b pass; define indirect objects" << endl;
 		 currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{	
@@ -1551,7 +1602,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}			
 				
-		//4 pass; define action conditions
+		//cout << "4 pass; define action conditions" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{	
@@ -1958,7 +2009,16 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 	GIAEntityNode * entityNodeFound = NULL;
 	
 	long vectorSize = indexOfEntityNames->size();
-	
+
+	/*
+	cout << "debug entity" << endl;
+	vector<GIAEntityNode*>::iterator entityIter;
+	for (entityIter = indexOfEntityNodes->begin(); entityIter != indexOfEntityNodes->end(); entityIter++) 
+	{
+		cout << "entityName = " << (*entityIter)->entityName << endl;
+	}
+	*/
+		
 	//vector<long>::iterator indexOfEntityNamesIterator;
 	if(vectorSize == 0)
 	{
@@ -1999,8 +2059,9 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 		while(searchOptionsAvailable)
 		{
 			nameTemp = indexOfEntityNames->at(findIndex);
+			
 			/*
-			if(*entityNodeName == "ride")
+			if(*entityNodeName == "red")
 			{
 				cout << "vectorSize = "  << vectorSize << endl;
 				cout << "findIndex = " << findIndex << endl;
@@ -2019,13 +2080,13 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 			if(nameTemp > *entityNodeName)
 			{
 				/*
-				if(*entityNodeName == "ride")
+				if(*entityNodeName == "red")
 				{
 					cout << nameTemp << ">" << *entityNodeName << endl;
+					cout << "previousTempName = " << previousTempName << endl;
 				}
 				*/
-				//cout << nameTemp << ">" << *entityNodeName << endl;
-				//cout << "previousTempName = " << previousTempName << endl;
+								
 				if(((previousTempName < *entityNodeName) && (previousFindRange == 1)) || (vectorSize==1))	//&& (!first || (vectorSize==1))
 				{//optimum position lies inbetween
 					//cout << "as" <<endl;
@@ -2059,18 +2120,19 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 			else if(nameTemp < *entityNodeName)
 			{
 				/*
-				if(*entityNodeName == "ride")
+				if(*entityNodeName == "red")
 				{
 					cout << nameTemp << "<" << *entityNodeName << endl;
+					cout << "previousTempName = " << previousTempName << endl;
 				}
-				*/			
-				//cout << nameTemp << "<" << *entityNodeName << endl;	
+				*/		
 				
 				if(((previousTempName > *entityNodeName) && (previousFindRange == 1)) || (vectorSize==1))		//& (!first || (vectorSize==1))
 				{//optimum position lies inbetween
 					searchOptionsAvailable = false;
 					*found = false;
-					findIndex = previousFindIndex;
+					findIndex = findIndex+1;		//Added 9 October 2011
+					//cout << "here" << endl;
 				}
 				else
 				{	
@@ -2078,6 +2140,9 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 					long temp = (findIndex + findRange);
 					//findIndex = maximumLong(temp, 1);
 					findIndex = temp;
+					
+					//cout << "findIndex = " << findIndex << endl;
+					//cout << "(vectorSize-1) = " << (vectorSize-1) << endl;
 					
 					if(findIndex > (vectorSize-1))
 					{
@@ -2088,6 +2153,7 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 							//cout << "entityNodeName " << *entityNodeName << " not found " << endl;
 						searchOptionsAvailable = false;
 						*found = false;
+						findIndex = (vectorSize);
 							//addIfNonexistant... see below
 					}
 				}
@@ -2117,6 +2183,7 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 				entityNodesCompleteList.push_back(entityNodeFound);
 				entityNodeFound->id = currentEntityNodeIDInCompleteList++;
 				entityNodeFound->entityName = *entityNodeName;
+				
 				vector<GIAEntityNode*>::iterator indexOfEntityNodesIterator = indexOfEntityNodes->begin();
 				//indexOfEntityNodesIterator = indexOfEntityNodes->at(findIndex);
 				advance(indexOfEntityNodesIterator,findIndex);
@@ -2143,6 +2210,8 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 	{
 		cout << (*entityIter)->entityName << endl;
 	}
+	*/
+	/*
 	cout << "debug names" << endl;
 	vector<string>::iterator stringIter;
 	for (stringIter = indexOfEntityNames->begin(); stringIter != indexOfEntityNames->end(); stringIter++) 
