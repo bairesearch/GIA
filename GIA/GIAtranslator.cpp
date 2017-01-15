@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g9a 24-September-2014
+ * Project Version: 2g10a 17-October-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -490,7 +490,8 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	*/
 	#endif
 
-	int numberReferenceSets = identifyReferenceSets(sentenceConceptEntityNodesList, NLPdependencyRelationsType);	//NB NLPdependencyRelationsType is no longer used here
+	vector<GIAentityNode*> referenceSetDefiniteEntityList;
+	int numberReferenceSets = identifyReferenceSets(sentenceConceptEntityNodesList, NLPdependencyRelationsType, &referenceSetDefiniteEntityList);	//NB NLPdependencyRelationsType is no longer used here
 
 	#ifdef GIA_USE_DATABASE
 	setUseDatabase(useDatabaseOriginal);
@@ -503,7 +504,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
 	cout << "createGIAcoreferenceInListBasedUponIdentifiedReferenceSets:" << endl;
 	#endif
-	createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(sentenceConceptEntityNodesList, entityNodesActiveListConcepts, firstGIACoreferenceInList, numberReferenceSets);
+	createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(sentenceConceptEntityNodesList, entityNodesActiveListConcepts, firstGIACoreferenceInList, &referenceSetDefiniteEntityList);
 
 	#ifndef GIA_FREE_MEMORY2
 	setSaveNetwork(true);

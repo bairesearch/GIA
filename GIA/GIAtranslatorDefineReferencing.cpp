@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g9a 24-September-2014
+ * Project Version: 2g10a 17-October-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -989,7 +989,7 @@ void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList)
 }
 
 
-int identifyReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, bool NLPdependencyRelationsType)
+int identifyReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, bool NLPdependencyRelationsType, vector<GIAentityNode*> * referenceSetDefiniteEntityList)
 {
 	//cout << "\n******************** identifyReferenceSets *******************\n" << endl;
 
@@ -1012,7 +1012,7 @@ int identifyReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConcept
 		cout << "\t identifyDefiniteReferenceSets: " << entityNode->entityName << endl;
 		#endif
 
-		identifyReferenceSetConceptEntityEntrance(entityNode, &referenceSetID, haveSentenceEntityIndexOfDeterminers);
+		identifyReferenceSetConceptEntityEntrance(entityNode, &referenceSetID, haveSentenceEntityIndexOfDeterminers, referenceSetDefiniteEntityList);
 	}
 
 	int numberReferenceSets = referenceSetID;
@@ -1029,7 +1029,7 @@ void resetReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEn
 	}
 }
 
-void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int * referenceSetID, bool haveSentenceEntityIndexOfDeterminers)
+void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int * referenceSetID, bool haveSentenceEntityIndexOfDeterminers, vector<GIAentityNode*> * referenceSetDefiniteEntityList)
 {
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "identifyReferenceSetEntrance(): entityNode being traced = " << entityNode->entityName << endl;
@@ -1118,6 +1118,7 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 					if(identifyReferenceSetDetermineNextCourseOfAction(currentInstance, true, *referenceSetID, minimumEntityIndexOfReferenceSet, false))
 					{
 						*referenceSetID	= *referenceSetID + 1;
+						referenceSetDefiniteEntityList->push_back(currentInstance);
 						//cout << "*referenceSetID++ = " << *referenceSetID << endl;
 					}
 
@@ -1138,7 +1139,7 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 #ifdef GIA_USE_ADVANCED_REFERENCING
 
 //based on answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork();
-void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, GIACoreference * firstGIACoreferenceInList, int numberReferenceSets)	//bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]
+void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, GIACoreference * firstGIACoreferenceInList, vector<GIAentityNode*> * referenceSetDefiniteEntityList)	//bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]
 {
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "createGIAcoreferenceInListBasedUponIdentifiedReferenceSets()" << endl;
@@ -1156,14 +1157,23 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 
 	GIACoreference * currentGIAcoreferenceInList = firstGIACoreferenceInList;
 
-	for(int referenceSetID=0; referenceSetID<numberReferenceSets; referenceSetID++)
+	int referenceSetID = 0;
+	for(vector<GIAentityNode*>::iterator referenceSetDefiniteEntityIter = referenceSetDefiniteEntityList->begin(); referenceSetDefiniteEntityIter != referenceSetDefiniteEntityList->end(); referenceSetDefiniteEntityIter++)
 	{
+		GIAentityNode * referenceSetDefiniteEntity = *referenceSetDefiniteEntityIter;
+		
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
 		cout << "\n ****************************************** referenceSetID = " << referenceSetID << endl;
 		#endif
 
 		GIAreferenceTraceParameters referenceTraceParameters;
 		referenceTraceParameters.referenceSetID = referenceSetID;
+		
+		#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+		referenceTraceParameters.testReferenceSetContext = true;
+		referenceTraceParameters.referenceSetDefiniteEntity = referenceSetDefiniteEntity;
+		//referenceTraceParameters.firstSentenceInList = firstSentenceInList;
+		#endif
 
 		int maxNumberOfMatchedNodes = 0;
 		GIAentityNode * queryEntityWithMaxNumberNodesMatched = NULL;
@@ -1286,6 +1296,8 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		cout << "\nfinished reference trace round 2" << endl;
 		#endif
+		
+		referenceSetID++;
 	}
 
 	#ifdef GIA_DATABASE_CLEAR_CACHE_EVERY_SENTENCE
@@ -1872,13 +1884,6 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 				{
 					bool traceModeIsQuery = false;
 					
-					/*
-					if(currentSpecificConcept->entityName == "fruit")
-					{
-						cout << "identifyReferenceSetDetermineNextCourseOfAction passed" << endl;
-					}
-					*/
-					
 					//[*****^]
 					GIAreferenceTraceParameters referenceTraceParameters;
 					referenceTraceParameters.referenceSetID = referenceSetID;
@@ -1905,14 +1910,6 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 							if(!(entityNode->isConcept))
 							{
 								GIAqueryTraceParameters queryTraceParameters;		//not used
-								
-								/*
-								if(currentSpecificConcept->entityName == "fruit")
-								{
-									cout << "currentSpecificConcept->entityName = " << currentSpecificConcept->entityName << endl;
-									cout << "entityNode->entityName = " << entityNode->entityName << endl;
-								}
-								*/
 								
 								int numberOfMatchedNodesTemp = 0;
 								int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
@@ -1966,8 +1963,6 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 			}
 		}
 	}
-
-	int numberReferenceSets = referenceSetID;
 }
 
 #endif

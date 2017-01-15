@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g9a 24-September-2014
+ * Project Version: 2g10a 17-October-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -611,15 +611,13 @@
 #define GIA_SUPPORT_NUMBER_OF	//added 2g9a/24-September-2014
 
 #ifdef USE_NLC
-	//#define NLC_DISABLE_1i_CODE_FOR_DEBUG
-	//#define NLC_DISABLE_1j_CODE_FOR_DEBUG
-	//#define NLC_DISABLE_1k_CODE_FOR_DEBUG
-	#ifdef NLC_DISABLE_1j_CODE_FOR_DEBUG
-		#define GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS	//added 2f21a/20-August-2014 [required for NLC 1i2a+]	//disabled NLC 1j2b+
-	#else
-		#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING		//added 2g5a/05-September-2014 [required for NLC 1j2b+]
+	//#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
+	#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 		#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_USE_ADVANCED_REFERENCING 2g5a/05 September 2014	//added 2g5a - required for advanced referencing, dream mode (identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts():identifyReferenceSetDetermineNextCourseOfAction():identifyReferenceSet()), and NLC 1j2b+
-		//#define GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES	//untested and unused		
+		//#define GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES	//untested and unused
+	#else
+		#define GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION	//added 2g10a/17-October-2014	//requires NLC preprocessor to be executed to extract text indentation, NLCpreprocessorSentenceClass.h, and setNLCsentence() to be called before executing GIA
+		#define GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS	//added 2f21a/20-August-2014 - required for NLC 1i2a+, disabled NLC for 1j2b+, optional for NLC 1k11a+
 	#endif
 	#define GIA_STORE_CONNECTION_SENTENCE_INDEX	//added 2f15d/16-July-2014 [required for NLC 1g15a+]
 	#define GIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES	//added 2f13a/14-July-2014

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g9a 24-September-2014
+ * Project Version: 2g10a 17-October-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -53,7 +53,9 @@ using namespace std;
 #include "GIAentityConnectionClass.h"
 #include "GIAconditionNodeClass.h"
 #include "GIAtranslatorDefs.h"
-
+#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+#include "NLCpreprocessorSentenceClass.h"
+#endif
 
 
 
@@ -203,5 +205,11 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 #endif
 
 GIAentityNode * getPrimaryConceptNodeDefiningInstance(GIAentityNode * instanceEntity);
+
+#ifdef GIA_SUPPORT_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+NLCsentence * getFirstNLCsentenceInList();
+void setFirstNLCsentenceInList(NLCsentence * firstNLCsentenceInListNew);
+bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNode * indefiniteEntity, GIAentityNode * definiteEntity);
+#endif
 
 #endif

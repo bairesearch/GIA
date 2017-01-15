@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g9a 24-September-2014
+ * Project Version: 2g10a 17-October-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -67,13 +67,13 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 #ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList);
 
-int identifyReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, bool NLPdependencyRelationsType);
-	void resetReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList);
-	void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int * referenceSetID, bool haveSentenceEntityIndexOfDeterminers);
+int identifyReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, bool NLPdependencyRelationsType, vector<GIAentityNode*> * referenceSetDefiniteEntityList);
+	void resetReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList);	
+	void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int * referenceSetID, bool haveSentenceEntityIndexOfDeterminers, vector<GIAentityNode*> * referenceSetDefiniteEntityList);
 #endif
 
 #ifdef GIA_USE_ADVANCED_REFERENCING
-void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, GIACoreference * firstGIACoreferenceInList, int numberReferenceSets);	//bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]
+void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, GIACoreference * firstGIACoreferenceInList, vector<GIAentityNode*> * referenceSetDefiniteEntityList);
 	void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<string, GIAentityNode*> *entityNodesActiveListConceptsQuery, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, GIAreferenceTraceParameters *referenceTraceParameters, int *maxNumberOfMatchedNodes, GIAentityNode **queryEntityWithMaxNumberNodesMatched, GIAentityNode **networkEntityWithMaxNumberNodesMatched, bool *foundAtLeastOneMatch);
 	#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 	GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIAentityNode * entityNode, GIACoreference * currentGIAcoreferenceInList, bool intrasentenceReference);
