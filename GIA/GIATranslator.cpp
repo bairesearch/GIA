@@ -236,9 +236,18 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(
 		exit(0);
 	}
 	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;
-	Sentence * currentSentenceInList = firstSentenceInList;
-		
+	Sentence * currentSentenceInList;
+	
+	currentSentenceInList = firstSentenceInList;	
 	vector<CEClaim*>::iterator claimIter;
+	for(claimIter = claimsList->begin(); claimIter != claimsList->end(); claimIter++) 
+	{	
+		CEClaim * currentClaimInHeirachy = *claimIter;
+		currentClaimInHeirachy->sentence = currentSentenceInList;		
+		currentSentenceInList = currentSentenceInList->next;
+	}
+	
+	currentSentenceInList = firstSentenceInList;		
 	for(claimIter = claimsList->begin(); claimIter != claimsList->end(); claimIter++) 
 	{
 		CEClaim * currentClaimInHeirachy = *claimIter;
@@ -248,6 +257,9 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(
 		setAllClaimEntitiesInHeirachyToUndeclaredInThisContext(firstClaimInHeirachy);
 		setParentClaimEntitiesAsAlreadyDeclaredInThisContext(currentClaimInHeirachy);
 
+		Sentence * firstSentenceInArtificialList = currentSentenceInList;
+		generateArtificialSentenceListBasedUponParentClaims(currentClaimInHeirachy, firstSentenceInArtificialList);
+		
 		convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList, currentSentenceInList, sentenceConceptEntityNodesList);
 						
 		currentSentenceInList = currentSentenceInList->next;
