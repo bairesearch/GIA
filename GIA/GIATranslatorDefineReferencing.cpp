@@ -903,7 +903,7 @@ void identityReferenceSet(GIAEntityNode * entityNode, int referenceSetID)
 	{
 		if(entityNode->entityVectorConnectionsArray[i].begin() != entityNode->entityVectorConnectionsArray[i].end())
 		{
-			vector<int>::iterator entityNodeListParametersIterator = entityNode->entityVectorConnectionsParametersArray[i].begin();
+			vector<int>::iterator entityNodeListParametersIterator = entityNode->entityVectorConnectionsParametersSameReferenceSetArray[i].begin();
 			for(vector<GIAEntityNode*>::iterator entityNodeListIterator = entityNode->entityVectorConnectionsArray[i].begin(); entityNodeListIterator < entityNode->entityVectorConnectionsArray[i].end(); entityNodeListIterator++)
 			{
 				identityReferenceSetDetermineNextCourseOfAction((*(entityNodeListIterator)), (*(entityNodeListParametersIterator)), referenceSetID);
@@ -915,7 +915,7 @@ void identityReferenceSet(GIAEntityNode * entityNode, int referenceSetID)
 	{
 		if(entityNode->entityBasicConnectionsArray[i] != NULL)
 		{
-			identityReferenceSetDetermineNextCourseOfAction(entityNode->entityBasicConnectionsArray[i], entityNode->entityBasicConnectionsParametersArray[i], referenceSetID);
+			identityReferenceSetDetermineNextCourseOfAction(entityNode->entityBasicConnectionsArray[i], entityNode->entityBasicConnectionsParametersSameReferenceSetArray[i], referenceSetID);
 		}
 	}	
 }

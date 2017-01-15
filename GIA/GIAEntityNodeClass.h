@@ -154,6 +154,8 @@ static string entityBasicConnectionContextArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNE
 static bool entityBasicConnectionThisIsInstanceAndPreviousNodeWasDefinitionArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES] = {false, false, false, false, false};
 static bool entityBasicConnectionIsConditionArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES] = {false, false, true, true, false};
 
+#define VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN (true)
+#define BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN (true)
 
 class GIAEntityNode
 {
@@ -190,8 +192,8 @@ public:
 	vector<GIAEntityNode*> entityVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
 	GIAEntityNode* entityBasicConnectionsArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	vector<int> entityVectorConnectionsParametersArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
-	int entityBasicConnectionsParametersArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];
+	vector<int> entityVectorConnectionsParametersSameReferenceSetArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
+	int entityBasicConnectionsParametersSameReferenceSetArray[GIA_ENTITY_NUMBER_OF_BASIC_CONNECTION_TYPES];
 	GIAEntityNode* entityCorrespondingBestMatch;	//not possible in case of multiple diversions [assumes single matches only] //best match entity node corresponding to this assumed query entity node		
 	/*
 	#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS_NOT_YET_CODED

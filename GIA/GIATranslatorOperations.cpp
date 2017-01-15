@@ -172,6 +172,32 @@ bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, 
 	return passed2;
 }
 
+/*these functions have been added for GIA Database compatibility*/
+void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int vectorConnectionType, bool sameReferenceSet)
+{
+	entityNode->entityVectorConnectionsArray[vectorConnectionType].push_back(existingProperty);
+	entityNode->entityVectorConnectionsParametersSameReferenceSetArray[vectorConnectionType].push_back(sameReferenceSet);
+	entityNode->entityVectorConnectionsParametersModifiedArray[vectorConnectionType].push_back(true);	//required for database syncronisation with RAM
+}
+
+void readVectorConnection(GIAEntityNode * entityNode, int vectorConnectionType)	//int vectorConnectionIndex?
+{
+
+}
+
+void writeBasicConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int basicConnectionType, bool sameReferenceSet)
+{
+	entityNode->entityBasicConnectionsArray[basicConnectionType] = existingProperty;
+	entityNode->entityBasicConnectionsParametersSameReferenceSetArray[basicConnectionType] = sameReferenceSet;
+	entityNode->entityBasicConnectionsParametersModifiedArray[basicConnectionType] = true;		//required for database syncronisation with RAM
+}
+
+GIAEntityNode * readBasicConnection
+{
+
+}
+
+
 GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet)
 {
 	GIAEntityNode * newOrExistingProperty = propertyEntity;
@@ -193,16 +219,18 @@ GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEnt
 			}
 			*/
 
-			//configure entity node containing this property
-			thingEntity->PropertyNodeList.push_back(existingProperty);
-			thingEntity->PropertyNodeListParameters.push_back(sameReferenceSet);	
-
 			thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
+			//configure entity node containing this property
+			writeVectorConnection(thingEntity, existingProperty, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+			writeVectorConnection(existingProperty, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
+			/*
+			thingEntity->PropertyNodeList.push_back(existingProperty);
+			thingEntity->PropertyNodeListParameters.push_back(sameReferenceSet);				
 			existingProperty->PropertyNodeReverseList.push_back(thingEntity);
 			existingProperty->PropertyNodeReverseListParameters.push_back(sameReferenceSet);
-			//existingProperty->entityNodeContainingThisProperty = thingEntity;		//added 26 Aug 11a, removed 8 Dec 2011
-			
+			*/
+								
 			newOrExistingProperty = existingProperty;
 
 		}
@@ -219,14 +247,15 @@ GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEnt
 			}
 			*/
 
+			writeVectorConnection(newProperty, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
+			writeVectorConnection(thingEntity, newProperty, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+			/*
 			newProperty->PropertyNodeReverseList.push_back(thingEntity);
-			newProperty->PropertyNodeReverseListParameters.push_back(sameReferenceSet);
-			//newProperty->entityNodeContainingThisProperty = thingEntity;		//added 26 Aug 11a, removed 8 Dec 2011
-
-			//configure entity node containing this property
+			newProperty->PropertyNodeReverseListParameters.push_back(sameReferenceSet);			
 			thingEntity->PropertyNodeList.push_back(newProperty);	
 			thingEntity->PropertyNodeListParameters.push_back(sameReferenceSet);		
-
+			*/
+			
 			thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 		
 			newOrExistingProperty = newProperty;
@@ -348,21 +377,22 @@ GIAEntityNode * addProperty(GIAEntityNode * entity)
 	
 	newProperty->entityName = entity->entityName;
 	newProperty->isProperty = true;
-	//newProperty->entityNodeContainingThisProperty = NULL;
-	newProperty->entityNodeDefiningThisInstance = entity;
+
 	entity->hasAssociatedInstance = true;
 	entity->hasAssociatedInstanceTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	newProperty->wordNetPOS = entity->wordNetPOS;
-	
 	//if(entity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
 	//{
 	newProperty->grammaticalNumber = entity->grammaticalNumberTemp;
 	//}
-
 	forwardTimeInfoToNewProperty(entity, newProperty);
 
-	//configure property definition node
+	writeBasicConnection(newProperty, entity, GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);		
+	writeVectorConnection(entity, newProperty, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+	/*
+	newProperty->entityNodeDefiningThisInstance = entity;
 	entity->AssociatedInstanceNodeList.push_back(newProperty);
+	*/
 
 	entity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
 
@@ -560,12 +590,14 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 		currentEntityNodeIDInSentenceCompleteList++;
 	}
 
-	newAction->entityName = actionEntity->entityName;		
-	newAction->entityNodeDefiningThisInstance = actionEntity;
-
-	//cout << "as4b" << endl;
-
+	newAction->entityName = actionEntity->entityName;
+	
+	writeBasicConnection(newAction, actionEntity, GIA_ENTITY_BASIC_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);	
+	writeVectorConnection(actionEntity, newAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+	/*
+	newAction->entityNodeDefiningThisInstance = actionEntity;	
 	actionEntity->AssociatedInstanceNodeList.push_back(newAction);
+	*/
 	actionEntity->hasAssociatedInstance = true;
 	actionEntity->hasAssociatedInstanceIsAction = true;
 	actionEntity->hasAssociatedInstanceTemp = true;
@@ -655,13 +687,15 @@ void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definiti
 	{					
 	#endif
 
-		//configure entity node
+		//configure entity node and entity definition node
+		writeVectorConnection(thingEntity, definitionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);
+		writeVectorConnection(definitionEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);		
+		/*
 		thingEntity->EntityNodeDefinitionList.push_back(definitionEntity);
-		thingEntity->EntityNodeDefinitionListParameters.push_back(sameReferenceSet);
-		
-		//configure entity definition node
+		thingEntity->EntityNodeDefinitionListParameters.push_back(sameReferenceSet);		
 		definitionEntity->EntityNodeDefinitionReverseList.push_back(thingEntity);	
 		definitionEntity->EntityNodeDefinitionReverseListParameters.push_back(sameReferenceSet);
+		*/
 		
 	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
@@ -701,11 +735,15 @@ GIAEntityNode * addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode *
 void addActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet)
 {		
 	//configure subject entity node
+	writeVectorConnection(subjectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS, sameReferenceSet);			
+	writeBasicConnection(newOrExistingAction, subjectEntity, GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_SUBJECT, sameReferenceSet);				
+	/*
 	subjectEntity->ActionNodeList.push_back(newOrExistingAction);
 	subjectEntity->ActionNodeListParameters.push_back(sameReferenceSet);
-	
 	newOrExistingAction->actionSubjectEntity = subjectEntity;
-	newOrExistingAction->actionSubjectEntityParameters = sameReferenceSet;
+	newOrExistingAction->actionSubjectEntityParameters = sameReferenceSet;	
+	*/
+
 	//cout << "BUG SHOULD BE JOE; subjectEntity->entityName = " << subjectEntity->entityName << endl;
 	
 	subjectEntity->isSubjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
@@ -735,12 +773,15 @@ GIAEntityNode * addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode 
 void addActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet)
 {			
 	//configure object entity node
+	writeVectorConnection(objectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS, sameReferenceSet);	
+	writeBasicConnection(newOrExistingAction, objectEntity, GIA_ENTITY_BASIC_CONNECTION_TYPE_ACTION_OBJECT, sameReferenceSet);								
+	/*
 	objectEntity->IncomingActionNodeList.push_back(newOrExistingAction);
 	objectEntity->IncomingActionNodeListParameters.push_back(sameReferenceSet);
-	
 	newOrExistingAction->actionObjectEntity = objectEntity;
-	newOrExistingAction->actionObjectEntityParameters = sameReferenceSet;
-	
+	newOrExistingAction->actionObjectEntityParameters = sameReferenceSet;	
+	*/
+
 	objectEntity->isObjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 }
 
@@ -802,15 +843,20 @@ void addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GI
 		newCondition->negative = negative;	//overwrite negative with orrect one from context; ie that from "being" entity node
 		//cout << "negative = " << negative;
 
+		writeBasicConnection(newCondition, entityNode, GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
+		writeVectorConnection(entityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);				
+		writeVectorConnection(newCondition, conditionDefinitionNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);				
+		writeVectorConnection(conditionDefinitionNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet);						
+		/*
 		newCondition->conditionSubjectEntity = entityNode;	
-		newCondition->conditionSubjectEntityParameters = sameReferenceSet;
+		newCondition->conditionSubjectEntityParameters = sameReferenceSet;			
 		entityNode->ConditionNodeList.push_back(newCondition);
 		entityNode->ConditionNodeListParameters.push_back(sameReferenceSet);
-
 		newCondition->EntityNodeDefinitionList.push_back(conditionDefinitionNode);
 		newCondition->EntityNodeDefinitionListParameters.push_back(sameReferenceSet);
 		conditionDefinitionNode->EntityNodeDefinitionReverseList.push_back(newCondition);	
 		conditionDefinitionNode->EntityNodeDefinitionReverseListParameters.push_back(sameReferenceSet);	
+		*/
 		
 	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
@@ -833,17 +879,20 @@ void addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIA
 		GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
 		newCondition->negative = negative;	//overwrite negative with correct one from context; ie that from "having" entity node
 
+		writeBasicConnection(newCondition, entityNode, GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
+		writeVectorConnection(entityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);				
+		writeVectorConnection(conditionPropertyNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);				
+		writeVectorConnection(newCondition, conditionPropertyNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);	
+		/*
 		newCondition->conditionSubjectEntity = entityNode;
 		newCondition->conditionSubjectEntityParameters = sameReferenceSet;
 		entityNode->ConditionNodeList.push_back(newCondition);
 		entityNode->ConditionNodeListParameters.push_back(sameReferenceSet);
-		
 		conditionPropertyNode->PropertyNodeReverseList.push_back(newCondition);
 		conditionPropertyNode->PropertyNodeReverseListParameters.push_back(sameReferenceSet);
-		//conditionPropertyNode->entityNodeContainingThisProperty = newCondition;	//added 26 Aug 11a, removed 8 Dec 2011
-
 		newCondition->PropertyNodeList.push_back(conditionPropertyNode);	
 		newCondition->PropertyNodeListParameters.push_back(sameReferenceSet);	
+		*/
 		
 	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
@@ -867,16 +916,20 @@ void addConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * proper
 		//cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl;
 		GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
 
+		writeBasicConnection(newCondition, propertyNode, GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
+		writeBasicConnection(newCondition, propertyConditionEntity, GIA_ENTITY_BASIC_CONNECTION_TYPE_CONDITION_OBJECT, sameReferenceSet);
+		writeVectorConnection(propertyNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);	
+		writeVectorConnection(propertyConditionEntity, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS, sameReferenceSet);	
+		/*
 		newCondition->conditionSubjectEntity = propertyNode;
 		newCondition->conditionSubjectEntityParameters = sameReferenceSet;
 		newCondition->conditionObjectEntity = propertyConditionEntity;
 		newCondition->conditionObjectEntityParameters = sameReferenceSet;
-		
 		propertyNode->ConditionNodeList.push_back(newCondition);
 		propertyNode->ConditionNodeListParameters.push_back(sameReferenceSet);
 		propertyConditionEntity->IncomingConditionNodeList.push_back(newCondition);
 		propertyConditionEntity->IncomingConditionNodeListParameters.push_back(sameReferenceSet);
-		
+		*/
 	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
@@ -912,9 +965,14 @@ GIAEntityNode * addCondition(GIAEntityNode * conditionEntity)
 	}
 	
 	newCondition->entityName = conditionEntity->entityName;		
+	
+	writeBasicConnection(newCondition, conditionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);	
+	writeVectorConnection(conditionEntity, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);	
+	/*
 	newCondition->entityNodeDefiningThisInstance = conditionEntity;
-
 	conditionEntity->AssociatedInstanceNodeList.push_back(newCondition);
+	*/
+	
 	conditionEntity->hasAssociatedInstance = true;
 	conditionEntity->hasAssociatedInstanceIsCondition = true;
 	conditionEntity->hasAssociatedInstanceTemp = true;
