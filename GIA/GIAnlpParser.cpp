@@ -4,7 +4,9 @@
  *
  * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
- * only, as published by the Free Software Foundation.
+ * only, as published by the Free Software Foundation. The use of
+ * intermediary programs or interfaces including file i/o is considered
+ * remote network interaction.
  *
  * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,7 +25,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4g 19-April-2014
+ * Project Version: 2e5a 17-May-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -32,87 +34,11 @@
 
 
 #include "GIAnlpParser.h"
-#include "GIAtranslatorOperations.h"	//required for convertStanfordRelationToRelex
+#include "GIAtranslatorDefs.h"	//required for convertStanfordRelationToRelex
 #ifdef GIA_USE_LRP
 #include "GIAlrp.h"
 #endif
-#ifdef GIA_USE_CORPUS_DATABASE
-#include "GIAcorpusOperations.h"
-#endif
 #define MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA 150 //max characters of some word in input data. includes '\0' at end of a string
-
-
-void convertStanfordRelationToRelex(Relation * currentRelationInList, Sentence * currentSentenceInList)
-{
-	string stanfordRelation = currentRelationInList->relationType;
-
-	//prepend '_'
-	string relationTypeRelexStandard = "";
-	relationTypeRelexStandard = relationTypeRelexStandard + RELEX_DEPENDENCY_RELATION_PREPENDITION + stanfordRelation;
-
-	//now deal with anamolies between dependency relation definitions;
-	for(int i=0; i<GIA_NUMBER_OF_RELEX_VERSUS_STANFORD_DEPENDENCY_RELATION_DISCREPANCIES; i++)
-	{
-		#ifdef GIA_NLP_DEBUG
-		//cout << "relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i] = " << relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i] << endl;
-		//cout << "relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i] = " << relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i] << endl;
-		#endif
-
-		if(stanfordRelation == relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i])
-		{
-			relationTypeRelexStandard = relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i];
-		}
-	}
-
-	bool stanfordPrepositionFound = false;
-	string tempRelexPrepositionString = convertPrepositionToRelex(&stanfordRelation, &stanfordPrepositionFound);
-	if(stanfordPrepositionFound)
-	{
-		relationTypeRelexStandard = stanfordRelation;	//do not modify stanford preposition relations "prep_...." to "_prep_..."
-	}
-
-	#ifdef GIA_USE_LRP
-	//if(stanfordPrepositionFound)
-	//{
-	if(getUseLRP())
-	{
-		//if necessary revert temporary/dummy NLP multiword preposition to official LRP form
-		bool foundOfficialLRPreplacementString = false;
-		Feature * tempFeature = new Feature();
-		tempFeature->word = tempRelexPrepositionString;
-		revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, true, &foundOfficialLRPreplacementString);
-		if(foundOfficialLRPreplacementString)
-		{
-			string officialLRPentityName = tempFeature->word;
-			if(stanfordPrepositionFound)
-			{
-				relationTypeRelexStandard = "";
-				relationTypeRelexStandard = relationTypeRelexStandard + STANFORD_PARSER_PREPOSITION_PREPEND + officialLRPentityName;
-				#ifdef GIA_NLP_DEBUG
-				//cout << "stanfordPrepositionFound" << endl;
-				//cout << "relationTypeRelexStandard = " << relationTypeRelexStandard << endl;
-				#endif
-			}
-			else
-			{
-				cout << "!stanfordPrepositionFound" << endl;
-				relationTypeRelexStandard = officialLRPentityName;
-			}
-			#ifdef GIA_LRP_DEBUG
-			cout << "convertStanfordRelationToRelex() foundOfficialLRPreplacementString: tempRelexPrepositionString = " << tempRelexPrepositionString << ", relationTypeRelexStandard= " << relationTypeRelexStandard << endl;
-			#endif
-			//currentRelationInList->relationTypeForNLPonly = relationTypeRelexStandard;	//not required
-		}
-		delete tempFeature;
-	}
-	//}
-	#endif
-	currentRelationInList->relationType = relationTypeRelexStandard;
-	#ifdef GIA_NLP_DEBUG
-	//cout << "relationTypeRelexStandard = " << relationTypeRelexStandard << endl;
-	//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-	#endif
-}
 
 
 
@@ -172,7 +98,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 				//eg actionObject(6-cake, 4-eaten) [sameReferenceSet=false]
 				string sameReferenceSetString = currentItemString;
 				//cout << "sameReferenceSetString = " << sameReferenceSetString << endl;
-				if(sameReferenceSetString.find(createSameReferenceSetRecord(true)) != -1)
+				if(sameReferenceSetString.find(createSameReferenceSetRecord2(true)) != -1)
 				{
 					currentRelation->sameReferenceSet = true;
 				}
@@ -511,6 +437,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 		characterIndex++;
 	}
 }
+
 bool findReplicateRelation(Sentence * currentSentenceInList, Relation * relation)
 {
 	bool foundReplicateRelation = false;
@@ -553,6 +480,14 @@ bool findString(string entityName, string stringToFind)
 		foundqVar = true;
 	}
 	return foundqVar;
+}
+#endif
+
+#ifdef GIA_USE_CORPUS_DATABASE
+string createSameReferenceSetRecord2(bool sameReferenceSet)
+{
+	string sameReferenceSetRecord = "[sameReferenceSet=" + convertBoolToString(sameReferenceSet) + "]";
+	return sameReferenceSetRecord;
 }
 #endif
 
@@ -657,6 +592,99 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence *
 	}
 }
 
+void convertStanfordRelationToRelex(Relation * currentRelationInList, Sentence * currentSentenceInList)
+{
+	string stanfordRelation = currentRelationInList->relationType;
+
+	//prepend '_'
+	string relationTypeRelexStandard = "";
+	relationTypeRelexStandard = relationTypeRelexStandard + RELEX_DEPENDENCY_RELATION_PREPENDITION + stanfordRelation;
+
+	//now deal with anamolies between dependency relation definitions;
+	for(int i=0; i<GIA_NUMBER_OF_RELEX_VERSUS_STANFORD_DEPENDENCY_RELATION_DISCREPANCIES; i++)
+	{
+		#ifdef GIA_NLP_DEBUG
+		//cout << "relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i] = " << relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i] << endl;
+		//cout << "relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i] = " << relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i] << endl;
+		#endif
+
+		if(stanfordRelation == relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i])
+		{
+			relationTypeRelexStandard = relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i];
+		}
+	}
+
+	bool stanfordPrepositionFound = false;
+	string tempRelexPrepositionString = convertPrepositionToRelex2(&stanfordRelation, &stanfordPrepositionFound);
+	if(stanfordPrepositionFound)
+	{
+		relationTypeRelexStandard = stanfordRelation;	//do not modify stanford preposition relations "prep_...." to "_prep_..."
+	}
+
+	#ifdef GIA_USE_LRP
+	//if(stanfordPrepositionFound)
+	//{
+	if(getUseLRP())
+	{
+		//if necessary revert temporary/dummy NLP multiword preposition to official LRP form
+		bool foundOfficialLRPreplacementString = false;
+		Feature * tempFeature = new Feature();
+		tempFeature->word = tempRelexPrepositionString;
+		revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, true, &foundOfficialLRPreplacementString);
+		if(foundOfficialLRPreplacementString)
+		{
+			string officialLRPentityName = tempFeature->word;
+			if(stanfordPrepositionFound)
+			{
+				relationTypeRelexStandard = "";
+				relationTypeRelexStandard = relationTypeRelexStandard + STANFORD_PARSER_PREPOSITION_PREPEND + officialLRPentityName;
+				#ifdef GIA_NLP_DEBUG
+				//cout << "stanfordPrepositionFound" << endl;
+				//cout << "relationTypeRelexStandard = " << relationTypeRelexStandard << endl;
+				#endif
+			}
+			else
+			{
+				cout << "!stanfordPrepositionFound" << endl;
+				relationTypeRelexStandard = officialLRPentityName;
+			}
+			#ifdef GIA_LRP_DEBUG
+			cout << "convertStanfordRelationToRelex() foundOfficialLRPreplacementString: tempRelexPrepositionString = " << tempRelexPrepositionString << ", relationTypeRelexStandard= " << relationTypeRelexStandard << endl;
+			#endif
+			//currentRelationInList->relationTypeForNLPonly = relationTypeRelexStandard;	//not required
+		}
+		delete tempFeature;
+	}
+	//}
+	#endif
+	currentRelationInList->relationType = relationTypeRelexStandard;
+	#ifdef GIA_NLP_DEBUG
+	//cout << "relationTypeRelexStandard = " << relationTypeRelexStandard << endl;
+	//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+	#endif
+}
+
+//assumes prepositions have previously been converted to stanford prep_preposition format during preprocessor (for robustness)
+string convertPrepositionToRelex2(string * preposition, bool * prepositionFound)
+{
+	*prepositionFound = false;
+	string relexPreposition = *preposition;
+	for(int i=0; i<REFERENCE_TYPE_STANFORD_PARSER_PREPOSITION_PREPEND_NUMBER_OF_TYPES; i++)
+	{
+		string currentStanfordPrepositionPrepend = referenceTypeStanfordParserPrepositionPrependNameArray[i];
+		int foundStanfordPrepositionPrepend = preposition->find(currentStanfordPrepositionPrepend);
+
+		if(foundStanfordPrepositionPrepend != string::npos)
+		{
+			int indexOfFirstRealCharacterInPreposition = currentStanfordPrepositionPrepend.length();
+			int lengthOfPreposition = preposition->length() - (indexOfFirstRealCharacterInPreposition);
+			relexPreposition = preposition->substr(indexOfFirstRealCharacterInPreposition, lengthOfPreposition);
+			*prepositionFound = true;
+		}
+	}
+
+	return relexPreposition;
+}
 
 void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence)
 {
