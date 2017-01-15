@@ -523,9 +523,9 @@ bool findPreviousRelationship(GIAentityNode* instanceEntity, GIAentityNode* comp
 						
 						*targetEntityFound = actionObject;	//REDUNDANT
 						
-						//#ifdef GIA_TRANSLATOR_DEBUG
+						#ifdef GIA_TRANSLATOR_DEBUG
 						cout << "previousPropertyRelationshipFound" << endl;
-						//#endif						
+						#endif						
 					}
 				}
 			}
