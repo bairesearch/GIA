@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a8a 10-December-2013
+ * Project Version: 2a9a 10-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1861,10 +1861,10 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 							cout << "intrasentenceReferenceSourceIndex = " << intrasentenceReferenceSourceIndex << endl;
 							#endif
 
-							//#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE
 							cout << "linkAdvancedReferencesGIA: GIAentityNodeArray[referenceEntityIndex]->entityName = " << GIAentityNodeArray[referenceEntityIndex]->entityName << endl;
 							cout << "linkAdvancedReferencesGIA: GIAentityNodeArray[intrasentenceReferenceSourceIndex]->entityName = " << GIAentityNodeArray[intrasentenceReferenceSourceIndex]->entityName << endl;
-							//#endif
+							#endif
 						}
 						else
 						{
@@ -1904,7 +1904,7 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 							referenceSourceConcept->wasReference = true;
 							#endif
 
-							//#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE
 							cout << "linkAdvancedReferencesGIA: referenceSource->entityName = " << referenceSource->entityName << endl;
 							cout << "linkAdvancedReferencesGIA: GIAentityNodeArray[referenceEntityIndex]->entityName = " << GIAentityNodeArray[referenceEntityIndex]->entityName << endl;
 							/*
@@ -1914,7 +1914,7 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 								cout << "GIAentityNodeArray[referenceEntityIndex]->isSubstance" << endl;
 							}
 							*/
-							//#endif
+							#endif
 
 
 							#ifdef GIA_USE_DATABASE

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a8a 10-December-2013
+ * Project Version: 2a9a 10-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -445,6 +445,7 @@ void upgradeSubstanceToAction(GIAentityNode * substance)
 	//CHECK THIS; must remove from substance list, and add to action list
 	getPrimaryConceptNodeDefiningInstance(existingAction)->hasAssociatedInstanceIsAction = true;
 	existingAction->isSubstance = false;
+	existingAction->isSubstanceConcept = false;	//added GIA 2a9a [needs to be tested that this change does not cause unexpected issues elsewhere]
 	existingAction->isAction = true;
 
 	if(saveNetwork)
