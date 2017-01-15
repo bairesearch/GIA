@@ -18,7 +18,7 @@
 
 
 void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType)
-{	
+{		
 	bool expectToFindComparisonVariable = false;
 	if(currentSentenceInList->isQuestion)
 	{
@@ -73,9 +73,17 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 		bool argumentIsQuery = false;
 		if(name[1] == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 		{//modify relation index [to prevent overlapping of comparison variable indicies with other indicies]
+			
+			//update feature->entityIndex using featureArrayTemp - added 1 May 2012 after Relex Failure detected 
+			Feature * featureArrayTemp[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
+			generateTempFeatureArray(currentSentenceInList->firstFeatureInList, featureArrayTemp);			
+			Feature * featureOfQueryNode = featureArrayTemp[relationIndex[1]];
+			featureOfQueryNode->entityIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX;
+					
 			relationIndex[1] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX;
 			currentRelationInList->relationDependentIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX;
 			argumentIsQuery = true;
+			
 		}
 
 		for(int i=0; i<2; i++)

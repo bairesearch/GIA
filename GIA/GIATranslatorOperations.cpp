@@ -1163,6 +1163,15 @@ void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, stri
 
 void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArrayTemp[])
 {
+	Feature * currentFeatureInList = firstFeatureInList;
+	while(currentFeatureInList->next != NULL)
+	{
+		//cout << "currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+		featureArrayTemp[currentFeatureInList->entityIndex] = currentFeatureInList;
+		currentFeatureInList = currentFeatureInList->next;
+	}
+	
+	/*OLD: is not compatible with Relex query nodes (set to new entity index eg "199")
 	//generateFeatureArray;
 	int featureIndex = 1;
 	Feature * currentFeatureInList = firstFeatureInList;
@@ -1172,6 +1181,7 @@ void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArr
 		currentFeatureInList = currentFeatureInList->next;
 		featureIndex++;
 	}
+	*/
 }
 
 

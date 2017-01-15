@@ -18,7 +18,9 @@
 #include "GIATranslatorLinkEntities.h"
 #include "GIATranslatorApplyAdvancedFeatures.h"
 #include "GIAdatabase.h"
-
+#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG
+#include "GIAParser.h"
+#endif
 
 static int referenceTypeHasDeterminateCrossReferenceNumberArray[GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES] = {GRAMMATICAL_NUMBER_SINGULAR};
 
@@ -134,7 +136,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		//GIAActionNodeArrayFilled[w] = false;
 	}
 
-
+	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass A;" << endl;
 	cout << "pass 0; locate/add all entities" << endl;
@@ -142,8 +144,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	locateAndAddAllConceptEntities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, sentenceConceptEntityNodesList, NLPdependencyRelationsType);
 
 	Feature * featureArrayTemp[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
-	generateTempFeatureArray(currentSentenceInList->firstFeatureInList, featureArrayTemp);
-	
+	generateTempFeatureArray(currentSentenceInList->firstFeatureInList, featureArrayTemp);	//regeneration required for Relex in case query variables detected
+		
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1; fillGrammaticalArrays" << endl;
 	#endif
