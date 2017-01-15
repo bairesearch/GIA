@@ -13,7 +13,7 @@
 #include "GIAquery.h"
 #include "GIAdatabase.h"
 
-GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(map<string, GIAEntityNode*> *conceptEntityNodesList, map<string, GIAEntityNode*> *conceptEntityNodesListQuery, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, double * confidence, GIAEntityNode** queryAnswerPreviousNode, string * queryAnswerContext)
+GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesListQuery, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, double * confidence, GIAEntityNode** queryAnswerPreviousNode, string * queryAnswerContext)
 {
 	double bestConfidence = 0.0;
 	double bestConfidenceAssumingFoundAnswer = 0.0;
@@ -32,7 +32,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	
 	bool foundAtLeastOneMatch = false;
 		
-	map<string, GIAEntityNode*>::iterator entityIterQuery;
+	unordered_map<string, GIAEntityNode*>::iterator entityIterQuery;
 	for(entityIterQuery = conceptEntityNodesListQuery->begin(); entityIterQuery != conceptEntityNodesListQuery->end(); entityIterQuery++) 
 	{//for each node in query semantic net;
 		
@@ -1182,11 +1182,11 @@ void generateTexualContextEntityString(string * texualContextEntityString, GIAEn
 
 
 
-double determineMaxConfidenceOfQuerySemanticNetwork(map<string, GIAEntityNode*> *conceptEntityNodesListQuery)
+double determineMaxConfidenceOfQuerySemanticNetwork(unordered_map<string, GIAEntityNode*> *conceptEntityNodesListQuery)
 {
 	double bestConfidence = 0.0;
 				
-	map<string, GIAEntityNode*>::iterator entityIterQuery;
+	unordered_map<string, GIAEntityNode*>::iterator entityIterQuery;
 	for(entityIterQuery = conceptEntityNodesListQuery->begin(); entityIterQuery != conceptEntityNodesListQuery->end(); entityIterQuery++) 
 	{//for each node in query semantic net;
 		

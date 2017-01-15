@@ -369,7 +369,7 @@ int main(int argc,char **argv)
 	
 		
 	vector<GIAEntityNode*> * entityNodesCompleteList = new vector<GIAEntityNode*>;
-	map<string, GIAEntityNode*> * conceptEntityNodesList = new map<string, GIAEntityNode*>;
+	unordered_map<string, GIAEntityNode*> * conceptEntityNodesList = new unordered_map<string, GIAEntityNode*>;
 	vector<GIAEntityNode*> * propertyEntityNodesList = new vector<GIAEntityNode*>;
 	vector<GIAEntityNode*> * actionEntityNodesList = new vector<GIAEntityNode*>;
 	vector<GIAEntityNode*> * conditionEntityNodesList = new vector<GIAEntityNode*>;
@@ -377,7 +377,7 @@ int main(int argc,char **argv)
 	vector<long> * timeConditionNumbersList = new vector<long>;	
 		
 	vector<GIAEntityNode*> * entityNodesCompleteListQuery = new vector<GIAEntityNode*>;	
-	map<string, GIAEntityNode*> * conceptEntityNodesListQuery = new map<string, GIAEntityNode*>;
+	unordered_map<string, GIAEntityNode*> * conceptEntityNodesListQuery = new unordered_map<string, GIAEntityNode*>;
 	vector<GIAEntityNode*> * propertyEntityNodesListQuery = new  vector<GIAEntityNode*>;			//not required - declared for symmetry
 	vector<GIAEntityNode*> * actionEntityNodesListQuery = new vector<GIAEntityNode*>;			//not required - declared for symmetry
 	vector<GIAEntityNode*> * conditionEntityNodesListQuery = new vector<GIAEntityNode*>;			//not required - declared for symmetry	
@@ -754,7 +754,7 @@ void executeRelex(string inputTextPlainTXTFileName, string inputTextRelexXMLFile
 
 
 	
-bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery)
+bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery)
 {
 	bool result = true;
 	

@@ -13,11 +13,11 @@
 
 #ifdef GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
 //uses fast search algorithm
-GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCompleteList, map<string, GIAEntityNode*> *conceptEntityNodesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList)
+GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList)
 {
 	GIAEntityNode * entityNodeFound = NULL;
 	
-	map<string, GIAEntityNode*> ::iterator conceptEntityNodesListIterator;
+	unordered_map<string, GIAEntityNode*> ::iterator conceptEntityNodesListIterator;
 	conceptEntityNodesListIterator = conceptEntityNodesList->find(*entityNodeName);
 	
 	
