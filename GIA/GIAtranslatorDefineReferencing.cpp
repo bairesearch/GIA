@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f18b 22-July-2014
+ * Project Version: 2f19a 23-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1232,6 +1232,11 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 			cout << "numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
 			cout << "networkEntityWithMaxNumberNodesMatched->entityName = " << networkEntityWithMaxNumberNodesMatched->entityName << endl;
 			#endif
+			#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+			cout << "(foundAtLeastOneMatch) xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" << endl;
+			cout << "numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
+			cout << "networkEntityWithMaxNumberNodesMatched->entityName = " << networkEntityWithMaxNumberNodesMatched->entityName << endl;			
+			#endif
 
 			//now set the matched nodes as already passed (required such that they are not retraced...)
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -1252,7 +1257,11 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 			cout << "(foundAtLeastOneMatch)" << endl;
 			cout << "numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
 			#endif
-
+			#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+			cout << "(foundAtLeastOneMatch)" << endl;
+			cout << "numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;			
+			#endif
+			
 			//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
 			int irrelevantInt;
 			string irrelevantString = "";
@@ -1611,14 +1620,19 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 										cout << "foundReferenceSource: instance->idActiveList = " << instance->idActiveList << endl;
 										cout << "foundReferenceSource: instance->idInstance = " << instance->idInstance << endl;
 										#endif
-
+										#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+										cout << "foundReferenceSource: instance->entityName = " << instance->entityName << endl;
+										cout << "foundReferenceSource: instance->idActiveList = " << instance->idActiveList << endl;
+										cout << "foundReferenceSource: instance->idInstance = " << instance->idInstance << endl;
+										#endif
+										
 										referenceSource = instance;
 										#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 										referenceSourceConcept = referenceSourceConceptEntity;
 										#endif
 										foundReferenceSource = true;
 										sourceMentionInList = currentMentionInList;
-
+										
 										//#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE	//should this condition be enforced?
 										#ifdef GIA_USE_DATABASE
 										#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
@@ -1699,6 +1713,42 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 							cout << "!(currentMentionInList->representative): currentMentionInList->entityName = " << currentMentionInList->entityName << endl;
 							cout << "referenceEntityIndex = " << referenceEntityIndex << endl;
 							#endif
+						
+
+							#ifndef GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA
+							//copy reference aliases to referenceSource
+							GIAentityNode * reference = GIAentityNodeArray[referenceEntityIndex];
+							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+							cout << "reference->entityName = " << reference->entityName << endl;
+							#endif
+							if(reference->isConcept)
+							{
+								cout << "linkAdvancedReferencesGIA(): reference->isConcept" << endl;
+							}
+							if(reference->entityName != referenceSource->entityName)	//this may be required because the reference (with referenceEntityIndex as established by advanced referencing) is still a concept and has not a substance created	//this will be required depending on which node was declared the primary (alias or non alias) when the  entities where merged during the temporary execution of convertSentenceSemanticRelationsIntoGIAnetworkNodes() on the sentence (sentenceConceptEntityNodesList) for the creation of GIA advanced referencing coreference sets
+							{//advanced referencing has found an alias for the reference, merge it with the referenceSource
+								referenceSource->aliasList.push_back(reference->entityName);
+								#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+								cout << "linkAdvancedReferencesGIA(): add reference name (alias) to reference source alias list: " << reference->entityName << endl;
+								#endif
+							}
+							//for(int i((reference->aliasList).size() > 0)	
+							for(vector<string>::iterator aliasIter = reference->aliasList.begin(); aliasIter != reference->aliasList.end(); aliasIter++)	//this will be required depending on which node was declared the primary (alias or non alias) when the  entities where merged during the temporary execution of convertSentenceSemanticRelationsIntoGIAnetworkNodes() on the sentence (sentenceConceptEntityNodesList) for the creation of GIA advanced referencing coreference sets
+							{//advanced referencing has found an alias for the reference, merge it with the referenceSource
+								string referenceAlias = *aliasIter;
+								#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+								cout << "referenceAlias = " << referenceAlias << endl;
+								#endif
+								if(referenceAlias != referenceSource->entityName)
+								{
+									referenceSource->aliasList.push_back(referenceAlias);
+									#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+									cout << "linkAdvancedReferencesGIA(): add reference alias to reference source alias list: " << referenceAlias << endl;
+									#endif
+								}
+							}
+							//what about; A red dog is fat. The name of the red dog is Tom. Tom rides the bike. (merge must copy aliases across)
+							#endif	
 
 							#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS
 							if(GIAentityNodeArrayFilled[referenceEntityIndex])

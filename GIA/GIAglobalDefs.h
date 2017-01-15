@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f18b 22-July-2014
+ * Project Version: 2f19a 23-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -905,7 +905,7 @@
 
 //Debug [Disable these for official build];
 //#define GIA_INSTANCE_OR_REFERENCE_SET_ID_DEBUG
-//#define GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+#define GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
 //#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
 //#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
 
@@ -1047,7 +1047,7 @@
 	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 		#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 		#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-			//#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED		//more robust implementation (should activate when using GIA_USE_DATABASE to ensure all the semantic network connections are visible)
+			#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED		//more robust implementation (should activate when using GIA_USE_DATABASE to ensure all the semantic network connections are visible)
 		#endif
 	#endif
 #endif
