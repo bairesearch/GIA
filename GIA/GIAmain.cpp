@@ -87,6 +87,7 @@ using namespace std;
 #include "XMLParserClass.h"
 #include "XMLrulesClass.h"
 #include "LDsprite.h"
+#include "LDopengl.h"
 
 #define CFF_XML_TAG_nlparse ((string)"nlparse")
 #define CFF_XML_TAG_sentence ((string)"sentence")
@@ -414,6 +415,11 @@ int main(int argc,char **argv)
 				useOutputTextPPMFile = true;		
 				outputTextPPMFileName = outputTextAllFileName + ".ppm";
 			}
+		}
+		
+		if(displayInOpenGLAndOutputScreenshot)
+		{
+			initiateOpenGL(rasterImageWidth, rasterImageHeight);
 		}		
 	}
 
@@ -562,9 +568,9 @@ int main(int argc,char **argv)
 		GIAEntityNode* queryAnswerNode;
 		GIAEntityNode* queryAnswerPreviousNode;
 		string queryAnswerContext = "";
-		cout << "a" << endl;
+		//cout << "a" << endl;
 		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(conceptEntityNodesList, conceptEntityNamesList, conceptEntityNodesListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerPreviousNode, &queryAnswerContext);
-		cout << "b" << endl;
+		//cout << "b" << endl;
 		
 		double maxConfidence = determineMaxConfidenceOfQuerySemanticNetwork(conceptEntityNodesListQuery);		//OLD [simple]: entityNodesCompleteListQuery->size();
 	

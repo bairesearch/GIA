@@ -837,11 +837,6 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 
 void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesCompleteList, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile)
 {//most of this is copied from CSexecFlow.cpp
-
-	if(display)
-	{
-		initiateOpenGL(width, height);
-	}
 	
 	char * outputFileNameLDRcharstar = const_cast<char*>(outputFileNameLDR.c_str());
 	char * displayFileNamePPMcharstar = const_cast<char*>(outputFileNamePPM.c_str());
