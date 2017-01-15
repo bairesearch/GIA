@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p8b 23-September-2012
+ * Project Version: 1p9a 23-September-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -43,6 +43,9 @@
 
 #ifdef GIA_USE_DATABASE
 
+static int useDatabase;
+static string databaseFolderName; 	
+
 #ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 unordered_map<string, bool> *DBconceptEntityNodesLoadedList;		//load all references (ids/entity names) whenever a concept node is used
 #else
@@ -52,8 +55,6 @@ unordered_map<string, GIAconceptEntityLoaded*> *DBconceptEntityNodesLoadedList;	
 unordered_map<string, GIAEntityNode*> *entityNodesTempActiveListComplete;
 
 
-
-int useDatabase;
 
 GIAEntityNode * findOrAddConceptEntityNodeByName(vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList, bool saveNetwork)
 {
@@ -373,15 +374,17 @@ bool checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(string * folderName)
 }
 
 
-string DBgenerateServerName(string * entityName, int fileType)
+string DBgenerateServerDatabaseName(string * entityName, int fileType)
 {
-	string serverName;
+	string databaseName;
 	if(fileType == GIA_DATABASE_GENERATE_FILENAME_FILE_CONCEPT_ENTITY_NODES_LIST)
 	{
-		serverName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE;
+		databaseName = databaseFolderName;
 	}
 	else
 	{
+		string serverName;
+		
 		#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 		//cout << "entityName = " << *entityName << endl;
 		#endif
@@ -400,15 +403,17 @@ string DBgenerateServerName(string * entityName, int fileType)
 		//cout << "entityFirstCharacterIndex = " << entityFirstCharacterIndex << endl;
 		#endif
 		string serverName = serverNameArray[entityFirstCharacterIndex]; 	//this could be a more complex algorithm; eg serverName = (string)"/mnt/" + serverNameArray[entityFirstCharacterIndex]
+		databaseName = serverName + GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
 		#else
-		serverName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE;
+		databaseName = databaseFolderName;
 		#endif
+		
 	}
 	#ifdef GIA_DATABASE_DEBUG
-	cout << "serverName = " << serverName << endl;
+	cout << "databaseName = " << databaseName << endl;
 	#endif
 
-	return serverName;
+	return databaseName;
 }
 
 //NB idInstance 0 corresponds to the concept entity (null instance)
@@ -416,9 +421,8 @@ string DBgenerateFileName(string * entityName, long idInstance, int connectionTy
 {
 
 	//eg network/server/GIAdatabase/e/x/a/example/1/2/3/instance123000000/{vectorConnectionsReferencesConnectionTypeX}.txt	//OLD: //eg network/server/GIAdatabase/e/x/a/example/1/2/3/{vectorConnectionsReferencesConnectionTypeX}/instance123000000.txt
-	string serverName = DBgenerateServerName(entityName, fileType);
-	string databaseName = GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
-	string fileName = serverName + databaseName;
+	string serverName = DBgenerateServerDatabaseName(entityName, fileType);
+	string fileName = serverName;
 
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "1fileName = " << fileName << endl;
@@ -570,8 +574,10 @@ void DBreadReferencesFile(string * referencesFileName, GIAEntityNode* entity)
 
 
 
-void openDatabase(bool readFromDatabase)
+void openDatabase(bool readFromDatabase, string newDatabaseFolderName)
 {
+	databaseFolderName = newDatabaseFolderName;
+	
 	initialiseDBconceptEntityNodesLoadedList();
 
 	#ifndef GIA_DATABASE_CLEAR_CACHE_EVERY_SENTENCE
@@ -1588,7 +1594,6 @@ int getUseDatabase()
 {
 	return useDatabase;
 }
-
 
 GIAEntityNode * findEntityInActiveConceptList(string * entityName, long idInstance, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, bool * alreadyInRAM)
 {

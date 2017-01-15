@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p8b 23-September-2012
+ * Project Version: 1p9a 23-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -102,12 +102,19 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 #ifdef GIA_USE_DATABASE
 "\n\t-dbread            : read from database (GIA knowledge base) [improves referencing capacity]"
 "\n\t-dbwrite           : write to database (GIA knowledge base) [saves knowledge]"
+"\n\t-dbfolder          : database base folder path"
 #endif
+#ifdef GIA_USE_LRP
 "\n\t-lrp                               : language reduction preprocessor"
 "\n\t-olrptxt [string]                  : plain text .txt output filename with GIA language reduction preprocessor applied (def: inputTextWithLRP.txt)"
 "\n\t-olrptxtnlp [string]               : plain text .txt output filename with GIA language reduction preprocessor applied, word replacement with dummy prepositions/verbs for NLP compatibility (def: inputTextWithLRPforNLPonly.txt)"
 "\n\t-olrptxtq [string]                 : query plain text .txt output filename with GIA language reduction preprocessor applied (def: inputTextWithLRPQuery.txt)"
 "\n\t-olrptxtnlpq [string]              : query plain text .txt output filename with GIA language reduction preprocessor applied, word replacement with dummy prepositions/verbs for NLP compatibility (def: inputTextWithLRPforNLPonlyQuery.txt)"
+"\n\t-lrpfolder                         : folder of LRP data files (list of multiword verbs, multiword prepositions etc)"
+#endif
+#ifdef USE_WORDNET
+"\n\t-syndet                            : wordnet synonymn detection (0 - off, 1 - during queries only, 2 - during referencing and queries [def])"
+#endif
 "\n"
 "\n\t-workingfolder [string]            : working directory name for input files (def: same as exe)"
 "\n\t-nlprelexfolder [string]           : directory name for Relex (def: same as exe)"
@@ -133,12 +140,6 @@ int main(int argc,char **argv)
 	checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(wordExample, &wordIsFound, wordNetPOS);
 	//findSynonymsOLD(wordExample, &wordIsFound, listOfSynonyms, wordNetPOS);
 	exit(0);
-	#endif
-
-	#ifdef USE_WORDNET
-	#ifndef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES_NOT_DURING_ADVANCED_REFERENCING
-	initialiseWordNet();
-	#endif
 	#endif
 
 	//print execution time
@@ -231,6 +232,7 @@ int main(int argc,char **argv)
 	bool readFromDatabase = false;
 	bool writeToDatabase = false;
 	bool useDatabase = false;
+	string databaseFolderName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE + GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
 #endif
 
 #ifdef GIA_USE_LRP
@@ -246,8 +248,12 @@ int main(int argc,char **argv)
 	GIALRPtagTextCorrespondenceInfo * textGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();
 	GIALRPtagTextCorrespondenceInfo * queryGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();	
 	initialiseCurrentGIALRPtagTextCorrespondenceInfo();
+	string lrpDataFolderName = "";
 #endif
 
+#ifdef USE_WORDNET
+	int synonymnDetectionStatus = SYNONYMN_DETECTION_STATUS_QUERIES_AND_ADVANCED_REFERENCING;
+#endif
 
 	//bool train = false;
 	//bool form = true;
@@ -527,6 +533,10 @@ int main(int argc,char **argv)
 			writeToDatabase = true;
 			useDatabase = true;
 		}
+		if(exists_argument(argc,argv,"-dbfolder"))
+		{
+			databaseFolderName=get_char_argument(argc,argv,"-dbfolder");
+		}		
 	#endif
 
 	#ifdef GIA_USE_LRP
@@ -553,6 +563,20 @@ int main(int argc,char **argv)
 		{
 			outputQueryLRPTextForNLPonlyPlainTXTFileName=get_char_argument(argc,argv,"-olrptxtnlpq");
 			useOutputQueryLRPTextForNLPonlyPlainTXTFile = true;
+		}
+		if(exists_argument(argc,argv,"-lrpfolder"))
+		{
+			lrpDataFolderName=get_char_argument(argc,argv,"-lrpfolder");
+		}
+		else
+		{
+			lrpDataFolderName = currentFolder;
+		}		
+	#endif
+	#ifdef USE_WORDNET
+		if(exists_argument(argc,argv,"-syndet"))
+		{
+			synonymnDetectionStatus = int(get_float_argument(argc,argv,"-syndet"));
 		}
 	#endif
 
@@ -607,7 +631,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1p8b 23-September-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1p9a 23-September-2012" << endl;
 			exit(1);
 		}
 
@@ -639,7 +663,7 @@ int main(int argc,char **argv)
 	#ifdef GIA_USE_DATABASE
 	if(useDatabase)
 	{
-		openDatabase(readFromDatabase);
+		openDatabase(readFromDatabase, databaseFolderName);
 
 		#ifdef LINUX
 		chdir(workingFolderCharStar);
@@ -648,6 +672,10 @@ int main(int argc,char **argv)
 		#endif		
 	}
 	#endif
+	
+	#ifdef USE_WORDNET
+	initialiseWordNet(synonymnDetectionStatus);
+	#endif	
 
 	vector<GIAEntityNode*> * entityNodesActiveListComplete = new vector<GIAEntityNode*>;
 	unordered_map<string, GIAEntityNode*> * entityNodesActiveListConcepts = new unordered_map<string, GIAEntityNode*>;
@@ -833,6 +861,7 @@ int main(int argc,char **argv)
 #ifdef GIA_USE_LRP
 	if(useLRP)
 	{
+		initialiseLRP(lrpDataFolderName);
 		if(useInputQuery)
 		{
 			setCurrentGIALRPtagTextCorrespondenceInfo(true);	//required for local variable access
@@ -1212,14 +1241,7 @@ int main(int argc,char **argv)
 			2. return missing variables
 			3. NB for which/what questions, make the software just locate the identical structure, and if necessary return the parent of the primary substance (eg the parent of the "object" of the question)
 		*/
-
-		#ifdef USE_WORDNET
-		#ifdef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES_NOT_DURING_ADVANCED_REFERENCING
-		initialiseWordNet();
-		#endif
-		#endif
 		
-
 		bool foundComparisonVariable = getFoundComparisonVariable();
 		GIAEntityNode* comparisonVariableNode = getComparisonVariableNode();
 		bool foundAnswer = false;

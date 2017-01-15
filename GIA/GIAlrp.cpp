@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p8b 23-September-2012
+ * Project Version: 1p9a 23-September-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -37,7 +37,11 @@
 
 #include "GIAlrp.h"
 
-
+static string lrpDataFolderName; 	
+void initialiseLRP(string newlrpDataFolderName)
+{
+	lrpDataFolderName = newlrpDataFolderName;
+}
 
 GIALRPtag::GIALRPtag(void)
 {
@@ -122,21 +126,21 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 {
 	bool result = true;
 
-	string irregularVerbListFileName = GIA_LRP_IRREGULARVERB_DATABASE_FILE_NAME;
+	string irregularVerbListFileName = lrpDataFolderName + GIA_LRP_IRREGULARVERB_DATABASE_FILE_NAME;
 	GIALRPtag * firstTagInIrregularVerbList = new GIALRPtag();
 	if(!loadIrregularVerbList(irregularVerbListFileName, firstTagInIrregularVerbList))
 	{
 		result = false;
 	}
 
-	string phrasalVerbListFileName = GIA_LRP_PHRASALVERB_DATABASE_FILE_NAME;
+	string phrasalVerbListFileName = lrpDataFolderName + GIA_LRP_PHRASALVERB_DATABASE_FILE_NAME;
 	GIALRPtag * firstTagInPhrasalVerbList = new GIALRPtag();
 	if(!loadPhrasalVerbDataAndGenerateAllTenseVariants(phrasalVerbListFileName, firstTagInPhrasalVerbList, firstTagInIrregularVerbList))
 	{
 		result = false;
 	}
 	
-	string multiwordPrepositionListFileName = GIA_LRP_MULTIWORDPREPOSITION_DATABASE_FILE_NAME;
+	string multiwordPrepositionListFileName = lrpDataFolderName + GIA_LRP_MULTIWORDPREPOSITION_DATABASE_FILE_NAME;
 	GIALRPtag * firstTagInMultiwordPrepositionList = new GIALRPtag();
 	if(!loadMultiWordPrepositionData(multiwordPrepositionListFileName, firstTagInMultiwordPrepositionList))
 	{

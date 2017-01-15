@@ -23,7 +23,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p8b 23-September-2012
+ * Project Version: 1p9a 23-September-2012
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -35,14 +35,18 @@
 
 
 
-
+static int synonymnDetectionStatus;
 #define WORDNET_SENSE_STRING "Sense"
 
-
-void initialiseWordNet()
+int getSynonymnDetectionStatus()
 {
+	return synonymnDetectionStatus;
+}
+void initialiseWordNet(int newSynonymnDetectionStatus)
+{
+	synonymnDetectionStatus = newSynonymnDetectionStatus;
+	
 	wninit();
-
 
 	#ifdef GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
   	string wordExample = "go";

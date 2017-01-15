@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p8b 23-September-2012
+ * Project Version: 1p9a 23-September-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -363,18 +363,18 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 		#ifdef GIA_USE_SYNONYMN_DETECTION
 		else
 		{
-			#ifdef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES_NOT_DURING_ADVANCED_REFERENCING
-			if(traceModeIsQuery)
+			int synonymnDetectionStatus = getSynonymnDetectionStatus();
+			if(synonymnDetectionStatus != SYNONYMN_DETECTION_STATUS_OFF)
 			{
-			#endif
-				if(compareEntitySynonyms(queryEntityNode, entityNode))
+				if(traceModeIsQuery || (synonymnDetectionStatus == SYNONYMN_DETECTION_STATUS_QUERIES_AND_ADVANCED_REFERENCING))
 				{
-					compareEntityNamesResult = true;
-					*numberOfMatchedNodesRequiredSynonymnDetection = *numberOfMatchedNodesRequiredSynonymnDetection + 1;
+					if(compareEntitySynonyms(queryEntityNode, entityNode))
+					{
+						compareEntityNamesResult = true;
+						*numberOfMatchedNodesRequiredSynonymnDetection = *numberOfMatchedNodesRequiredSynonymnDetection + 1;
+					}
 				}
-			#ifdef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES_NOT_DURING_ADVANCED_REFERENCING	
 			}
-			#endif
 		}
 		#endif
 

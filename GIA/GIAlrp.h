@@ -23,7 +23,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p8b 23-September-2012
+ * Project Version: 1p9a 23-September-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -174,6 +174,7 @@ public:
 	GIALRPtagTextCorrespondenceInfo * next;
 };
 
+void initialiseLRP(string newlrpDataFolderName);
 
 GIALRPtagTextCorrespondenceInfo * getCurrentGIALRPtagTextCorrespondenceInfo();
 void setCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery);

@@ -23,7 +23,7 @@
  * File Name: GIAwordnet.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p8b 23-September-2012
+ * Project Version: 1p9a 23-September-2012
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -45,6 +45,10 @@
 #include <string>
 using namespace std;
 
+#define SYNONYMN_DETECTION_STATUS_OFF 0
+#define SYNONYMN_DETECTION_STATUS_QUERIES_ONLY 1
+#define SYNONYMN_DETECTION_STATUS_QUERIES_AND_ADVANCED_REFERENCING 2
+
 #define MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA 150 //max characters of some word in input data. includes '\0' at end of a string
 #define MAX_CHARACTERS_OF_WORDNET_FINDTHEINFO_OUTPUT (10000)
 #define MAX_CHARACTERS_OF_WORDNET_FINDTHEINFO_OUTPUT_LINE (1000)
@@ -65,7 +69,8 @@ static int wordnetDataEntryPointersIndicatingSimilarSynsetsArray[WORDNET_DATA_EN
 #endif
 #define CURRENTSYNSETPOINTERINDEX (-1)
 
-void initialiseWordNet();
+void initialiseWordNet(int newSynonymnDetectionStatus);
+int getSynonymnDetectionStatus();
 
 bool checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(string * word, string * otherWord, int wordNetPOS);
 	bool checkIfWordIsContainedWithinAnotherWordsSynsets(string * word, string * otherWord, int wordNetPOS);
