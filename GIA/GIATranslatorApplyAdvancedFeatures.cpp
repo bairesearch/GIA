@@ -3,7 +3,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j8b 10-May-2012
+ * Project Version: 1k2c 11-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -63,7 +63,12 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntit
 								timeEntity->timeConditionNode->conditionName = timeEntity->entityNodeDefiningThisInstance->NormalizedNERTemp;
 							}
 							else
-							{					
+							{
+								cout << "timeEntity->NormalizedNERTemp = " << timeEntity->NormalizedNERTemp << endl;
+								timeEntity->timeConditionNode->conditionName = timeEntity->NormalizedNERTemp;
+								
+								//this case appears to be required for queries... (_%qvar/_%atTime), noting that qVar is not assigned a property (but remains a concept node)
+								/*				
 								#ifdef GIA_TRANSLATOR_DEBUG
 								cout << "timeEntity->NormalizedNERTemp = " << timeEntity->NormalizedNERTemp << endl;
 								cout << "error: timeEntity->entityNodeDefiningThisInstance != NULL [1b]" << endl;
@@ -71,6 +76,7 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntit
 								cout << "error: [confidential 1b]" << endl;	
 								#endif
 								exit(0);						
+								*/
 							}
 						}
 					}
@@ -308,6 +314,9 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, GIAEntit
 					{
 						quantityProperty->quantityNumberString = currentRelationInList->relationDependent;
 					}
+					
+					int quantityNumberInt = calculateQuantityNumberInt(quantityProperty->quantityNumberString);
+					quantityProperty->quantityNumber = quantityNumberInt;					
 
 					disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationDependentIndex]);
 
