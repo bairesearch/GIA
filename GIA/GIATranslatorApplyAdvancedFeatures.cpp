@@ -23,7 +23,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2a 10-August-2012
+ * Project Version: 1o2b 10-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -625,7 +625,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAEntityNode
 
 						//reconnect refreshed quantity (times) node;
 						bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
-						connectPropertyToEntity(entityToConnectMeasurePerEntity, newQuantityTimesEntity, sameReferenceSet);
+						addOrConnectPropertyToEntity(entityToConnectMeasurePerEntity, newQuantityTimesEntity, sameReferenceSet);
 
 						if(newQuantityTimesEntity->hasAssociatedInstanceTemp)
 						{//assumed true since its substance was just explicitly created
@@ -822,7 +822,7 @@ void defineToBeAndToDoPropertiesAndConditions(Sentence * currentSentenceInList, 
 					GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
 
 					bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES; 	//eg The rose smelled sweet. / The chicken ate the pie that smelled sweet.
-					GIAEntityNodeArray[substanceIndex] = connectPropertyToEntity(entityNode, substanceEntity, sameReferenceSet);
+					GIAEntityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(entityNode, substanceEntity, sameReferenceSet);
 				}
 				else if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO)
 				{
@@ -886,7 +886,7 @@ void linkSubstancesParataxis(Sentence * currentSentenceInList, bool GIAEntityNod
 				//cout << "actionName = " << actionEntity->entityName << endl;
 
 				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PARATAXIS; 		//eg The guy, John said, left early in the morning.	[NB The guy, that John said was blue, left early in the morning. / He says that you like to swim.  does not generate parataxis, so these cases needn't be considered here...]
-				GIAEntityNodeArray[substanceIndex] = connectPropertyToEntity(actionEntity, substanceEntity, sameReferenceSet);
+				GIAEntityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(actionEntity, substanceEntity, sameReferenceSet);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
@@ -987,7 +987,7 @@ void defineClausalComplementSubstances(Sentence * currentSentenceInList, bool GI
 				//cout << "substanceName = " << substanceEntity->entityName << endl;
 
 				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CCCOMP; 	//eg The guy, that John said was blue, left early in the morning. / He says that you like to swim.
-				GIAEntityNodeArray[substanceIndex] = connectPropertyToEntity(actionEntity, substanceEntity, sameReferenceSet);
+				GIAEntityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(actionEntity, substanceEntity, sameReferenceSet);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}

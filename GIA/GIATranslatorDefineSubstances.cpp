@@ -580,7 +580,7 @@ void defineSubstancesToBe(Sentence * currentSentenceInList, GIAEntityNode * GIAE
 	}
 }
 
-void defineSubstancesToDo(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
+void defineActionsToDo(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
 {
 	//cout << "0i pass; define substances (to_do);" << endl;
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;

@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2a 10-August-2012
+ * Project Version: 1o2b 10-August-2012
  *
  *******************************************************************************/
 
@@ -87,7 +87,6 @@ GIAEntityNode::GIAEntityNode(void)
 	conditionType = CONDITION_NODE_TYPE_UNDEFINED;
 	timeConditionNode = NULL;
 
-	//entityNodeContainingThisSubstance = NULL;				//if substance only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given substance [considering a substance is an instance of an entity] - therefore this is not a Basic
 	entityNodeDefiningThisInstance = NULL;
 
 	hasQuantity = false;

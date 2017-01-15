@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2a 10-August-2012
+ * Project Version: 1o2b 10-August-2012
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -254,7 +254,7 @@ public:
 		//non-conditions only (?);
 	//conditions connections: conditions and reverse conditions (reason) lookups [condition and reason respectively]
 	vector<GIAEntityConnection*> * ConditionNodeList;		//this substance requires the following...
-	vector<GIAEntityConnection*> * IncomingConditionNodeList;	//this substance is required by the following... //aka reason	[NB these may only be substance, location, {and time action condtions}, not action conditions]
+	vector<GIAEntityConnection*> * IncomingConditionNodeList;	//this substance is required by the following... //aka reason
 
 		//conditions only;
 	//NB conditions can be performed by and on concepts, and by and on substances?
@@ -268,8 +268,6 @@ public:
 	//substance connections;
 	//record list of all substances for this entity
 	vector<GIAEntityConnection*> * PropertyNodeList;
-		//substances only [is this possible for actions also? - may require upgrade in future]
-	//GIAEntityConnection * entityNodeContainingThisSubstance;		//removed 8 Dec 2011			//OLD: if substance/action only:	//OLD: eg, Tom; OR;  Tom's Assets	//OLD: NB by definition, only 1 thing can contain any given substance [considering a substance is an instance of an entity] - therefore this is not a vector
 	vector<GIAEntityConnection*> * PropertyNodeReverseList;			//if substance/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given substance [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for concept entities [substance entities may possibly only be contained by {ie, be a substance of} a single entity]
 
 		//actions, substances, and conditions only
