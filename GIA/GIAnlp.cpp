@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k6b 27-July-2015
+ * Project Version: 2k6c 27-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -884,7 +884,11 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 		{
 			currentTagInDocument = currentTagInDocument->nextTag;
 			bool hasCoreferences = false;
-			XMLparserTag* firstTagInCoreferences = parseTagDownALevel(currentTagInDocument, StanfordCoreNLP_XML_TAG_coreferences, &hasCoreferences);
+			XMLparserTag* firstTagInCoreferences = NULL;
+			if(currentTagInDocument->name == StanfordCoreNLP_XML_TAG_coreferences)	//added 2k6c (as Stanford CoreNLP only adds coreferences tag if there is one or more coreferences)
+			{
+				firstTagInCoreferences = parseTagDownALevel(currentTagInDocument, StanfordCoreNLP_XML_TAG_coreferences, &hasCoreferences);
+			} 
 			if(hasCoreferences)
 			{
 				XMLparserTag* currentTagInnCoreferences = firstTagInCoreferences;
