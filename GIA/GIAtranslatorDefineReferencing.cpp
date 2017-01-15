@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i27a 04-February-2015
+ * Project Version: 2i27b 04-February-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1933,8 +1933,6 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 									//cout << "exactMatch" << endl;
 									if(numberOfMatchedNodesTemp > 0)
 									{
-										//cout << "exactMatch: numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
-
 										#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
 										if(numberOfMatchedNodesTemp == maxNumberOfMatchedNodesPossible)
 										{
@@ -1950,6 +1948,10 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 											{
 												//eg3 Blue birds are tall. The happy eagle is a blue bird.
 												
+												//cout << "exactMatch: numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
+												//cout << "currentSpecificConcept = " << currentSpecificConcept->entityName << endl;
+												//cout << "entityNode: = " << entityNode->entityName << endl;
+										
 												/*
 												//this method may not be appropriate for GIA_USE_ADVANCED_REFERENCING; if substance concepts advanced reference each other in the future:
 												if(!(entityNode->entityNodeDefinitionReverseList->empty())
