@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q4a 14-October-2012
+ * Project Version: 1q4b 14-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -211,6 +211,7 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 	The bat is Max. (double definition connection, bat = substance, animal = concept or substance [if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS] with isName==true)		GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_5_GOVERNOR_DEFINITE_DEPENDENT_NAME	[assumes defineSubstancesDefiniteNouns() executed]
 	Bat is the animal. (double definition connection, bat = concept or substance [if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS] with isName==true, animal = substance)	GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_6_GOVERNOR_NAME_DEPENDENT_DEFINITE
 	That is Jim. (double definition connection, that = substance, Jim = concept or substance [if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS])	GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_7_GOVERNOR_INDEFINITE_DEPENDENT_NAME
+	Max is Jim. (double definition connection, Max = concept or substance [if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS], Jim = concept or substance [if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS])	GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_8_GOVERNOR_NAME_DEPENDENT_NAME	//case added 14 October 2012
 	*/
 
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -352,7 +353,7 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 					//substance will be assigned to thing [only if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS]
 					featureArrayTemp[thingIndex]->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;
 				}
-				else if(definitionFeatureHasDeterminate && !definitionIsDefinite && definitionFeatureIsProperNoun)
+				else if(definitionFeatureHasDeterminate && !definitionIsDefinite && definitionFeatureIsProperNoun)	//changed 'else if' to 'if' 14 October 2012 to take into account case GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_8_GOVERNOR_NAME_DEPENDENT_NAME 
 				{
 					#ifdef GIA_ALIASES_DEBUG
 					cout << "GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES: substance will be assigned to definition [only if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS]" << endl;
