@@ -23,7 +23,7 @@
  * File Name: GIAcorpusDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d3a 29-January-2014
+ * Project Version: 2d4a 06-February-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -132,7 +132,7 @@ string corpusDBgenerateFileName(Feature * firstFeatureInList)
 	//#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	//cout << "1fileName = " << serverName << endl;
 	//#endif
-	setCurrentDirectory(&serverName);
+	DBsetCurrentDirectory(&serverName);
 
 	string fileName = "";
 

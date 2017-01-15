@@ -23,7 +23,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d3a 29-January-2014
+ * Project Version: 2d4a 06-February-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -54,6 +54,7 @@ using namespace std;
 #ifdef GIA_USE_LRP
 #include "GIAlrp.h"
 #endif
+#include "SHAREDvars.h"	//file io
 
 #ifndef LINUX
 	#include <windows.h>
@@ -67,11 +68,7 @@ void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfi
 	so must assume current folder has been set to the folder where the [pre-processed] plain text file exists (if not the actual working folder)
 	*/
 	char currentFolderCharStar[EXE_FOLDER_PATH_MAX_LENGTH];
-	#ifdef LINUX
-	getcwd(currentFolderCharStar, EXE_FOLDER_PATH_MAX_LENGTH);
-	#else
-	::GetCurrentDirectory(EXE_FOLDER_PATH_MAX_LENGTH, currentFolderCharStar);
-	#endif
+	getCurrentDirectory(currentFolderCharStar);
 
 	/*
 	int inputTextNLPParsedXMLFileNameLength = inputTextNLPXMLfileName.length();
@@ -130,22 +127,14 @@ void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfi
 	string executeNLPCommand = "";
 	executeNLPCommand = executeNLPCommand + NLPexeFolder + "/" + NLPParserExecutableName + " " + inputTextPlainTXTfileName + " " + inputTextNLPXMLfileName + " " + currentFolderCharStar + " " + tempFolderCharStar + " " + StanfordCoreNLPdefaultOutputFileExtensionAppend;
 
-	#ifdef LINUX
-	chdir(NLPexeFolder.c_str());
-	#else
-	::SetCurrentDirectory(NLPexeFolder.c_str());
-	#endif
+	setCurrentDirectory(NLPexeFolder.c_str());
 
 	#ifdef GIA_NLP_DEBUG
 	//cout << "system(" << executeNLPCommand << ");" << endl;
 	#endif
 	system(executeNLPCommand.c_str());
 
-	#ifdef LINUX
-	chdir(tempFolderCharStar);
-	#else
-	::SetCurrentDirectory(tempFolderCharStar);
-	#endif
+	setCurrentDirectory(tempFolderCharStar);
 
 	#ifdef GIA_USE_STANFORD_CORENLP
 	if(NLPParser == GIA_NLP_PARSER_STANFORD_CORENLP)
@@ -170,11 +159,7 @@ void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfi
 	}
 	#endif
 
-	#ifdef LINUX
-	chdir(currentFolderCharStar);
-	#else
-	::SetCurrentDirectory(currentFolderCharStar);
-	#endif
+	setCurrentDirectory(currentFolderCharStar);
 }
 
 
@@ -1093,7 +1078,7 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 		
 		/*
 		char currentFolder[EXE_FOLDER_PATH_MAX_LENGTH];
-		getcwd(currentFolder, EXE_FOLDER_PATH_MAX_LENGTH);
+		getCurrentDirectory(currentFolder);
 		cout << "currentFolder = " << currentFolder << endl;
 		*/
 		result = false;

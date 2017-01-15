@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d3a 29-January-2014
+ * Project Version: 2d4a 06-February-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -32,7 +32,6 @@
 
 #include "GIAtranslator.h"
 #include "GIAtranslatorDefineGrammar.h"
-
 /*
 #ifdef GIA_TEMPORARY_COMPILATION_GCC_FLAG_E_PREPROCESS_TRANSLATOR_XML_FILES
 #OCCLUDEDFORCSinclude "xmlConversion/GIAtranslatorRedistributeRelexRelations.xml"
@@ -70,7 +69,7 @@
 #include "GIAcorpusTranslator.h"
 #include "GIAcorpusDatabase.h"
 #endif
-
+#include "SHAREDvars.h"	//file io
 
 //required because parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences was shifted from GIAmain.cpp
 //Dependency Relationship Extractor
@@ -130,11 +129,7 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 
 	//cout << "ak3" << endl;
 	
-	#ifdef LINUX
-	chdir(tempFolderCharStar);
-	#else
-	::SetCurrentDirectory(tempFolderCharStar);
-	#endif
+	setCurrentDirectory(tempFolderCharStar);
 
 	//cout << "ak4" << endl;
 

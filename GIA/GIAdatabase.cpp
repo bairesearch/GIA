@@ -23,19 +23,14 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d3a 29-January-2014
+ * Project Version: 2d4a 06-February-2014
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
  *******************************************************************************/
 
 #include "GIAdatabase.h"
-#ifdef LINUX
-#include <sys/stat.h>
-#else
-//#include <dirent.h>
-#include <windows.h>
-#endif
+#include "SHAREDvars.h"	//file io
 
 #define CHAR_NEWLINE '\n'
 
@@ -301,72 +296,54 @@ long maximumLong(long a, long b)
 
 #ifdef GIA_USE_DATABASE
 
-bool directoryExists(string * folderName)
+bool DBdirectoryExists(string * folderName)
 {
-	bool folderExists = false;
-
-	#ifdef LINUX
-	struct stat st;
-	if(stat(folderName->c_str(), &st) == 0)
+	bool folderExists = directoryExists(folderName->c_str());
+	if(folderExists)
 	{
 		#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 		cout << "\tdirectoryExists: folderName = " << *folderName << endl;
 		#endif
-		folderExists = true;
 	}
-	#else
-	DWORD ftyp = GetFileAttributes(folderName->c_str());
-	if(ftyp != INVALID_FILE_ATTRIBUTES)
-	{
-		if(ftyp & FILE_ATTRIBUTE_DIRECTORY)
-		{
-			folderExists = true;
-		}
-	}
-	/*
-	if((GetFileAttributes(folderName->c_str())) != INVALID_FILE_ATTRIBUTES)
-	{
-		folderExists = true;
-	}
-	*/
-	#endif
 
 	return folderExists;
 }
 
-bool makeDirectory(string * folderName)
+bool DBcreateDirectory(string * folderName)
 {
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "\tmakeDirectory: folderName = " << *folderName << endl;
+	cout << "\tDBcreateDirectory: folderName = " << *folderName << endl;
 	#endif
 	bool result = true;
 
-	#ifdef LINUX
-	mkdir(folderName->c_str(), 0755);
-	#else
+	createDirectory(folderName->c_str());
+	/*removed debug support for Windows;
+	#ifndef LINUX
 	if(CreateDirectory(folderName->c_str(), 0) == 0)	//if( _mkdir(folderName->c_str()) != 0)	//
 	{
 		result = false;
 	}
 	#endif
+	*/
 
 	return result;
 }
 
-bool setCurrentDirectory(string * folderName)
+bool DBsetCurrentDirectory(string * folderName)
 {
 	bool result = true;
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "\tsetCurrentDirectory: folderName = " << *folderName << endl;
+	cout << "\tDBsetCurrentDirectory: folderName = " << *folderName << endl;
 	#endif
-	#ifdef LINUX
-	chdir(folderName->c_str());
-	#else
+	setCurrentDirectory(folderName->c_str());
+	/*removed debug support for Windows;
+	#ifndef LINUX
 	if(SetCurrentDirectory(folderName->c_str()) == 0)
 	{
 		result = false;
 	}
 	#endif
+	*/
 	return result;
 }
 
@@ -376,11 +353,11 @@ bool checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(string * folderName)
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "checkIfFolderExistsAndIfNotMakeAndSetAsCurrent: folderName = " << *folderName << endl;
 	#endif
-	if(!directoryExists(folderName))
+	if(!DBdirectoryExists(folderName))
 	{
-		makeDirectory(folderName);
+		DBcreateDirectory(folderName);
 	}
-	setCurrentDirectory(folderName);
+	DBsetCurrentDirectory(folderName);
 
 	return result;
 }
@@ -440,7 +417,7 @@ string DBgenerateFileName(string * entityName, long idInstance, int connectionTy
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "1fileName = " << fileName << endl;
 	#endif
-	setCurrentDirectory(&fileName);
+	DBsetCurrentDirectory(&fileName);
 
 	if(fileType == GIA_DATABASE_GENERATE_FILENAME_FILE_CONCEPT_ENTITY_NODES_LIST)
 	{

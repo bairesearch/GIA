@@ -23,7 +23,7 @@
  * File Name: GIAcorpus.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d3a 29-January-2014
+ * Project Version: 2d4a 06-February-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -50,10 +50,7 @@ using namespace std;
 #include "GIAcorpusDatabase.h"
 #include "GIAnlp.h"
 #include "GIAtranslator.h"
-
-#ifndef LINUX
-	#include <windows.h>
-#endif
+#include "SHAREDvars.h"	//file io
 
 #ifdef GIA_USE_CORPUS_DATABASE
 
@@ -116,11 +113,7 @@ bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParse
 	//cout << "cf2" << endl;
 
 	#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
-	#ifdef LINUX
-	chdir(tempFolderCharStar);
-	#else
-	::SetCurrentDirectory(tempFolderCharStar);
-	#endif
+	setCurrentDirectory(tempFolderCharStar);
 	bool onlyParseIfCorpusLookupFailed = true;
 	if(!parseNLPparserRelationsFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, createNewSentences, onlyParseIfCorpusLookupFailed))
 	{

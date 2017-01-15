@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d3a 29-January-2014
+ * Project Version: 2d4a 06-February-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -452,12 +452,7 @@ int main(int argc,char **argv)
 		rasterImageHeight=getFloatArgument(argc,argv,"-height");
 
 		char currentFolder[EXE_FOLDER_PATH_MAX_LENGTH];
-		#ifdef LINUX
-		getcwd(currentFolder, EXE_FOLDER_PATH_MAX_LENGTH);
-		#else
-		::GetCurrentDirectory(EXE_FOLDER_PATH_MAX_LENGTH, currentFolder);
-		#endif
-
+		getCurrentDirectory(currentFolder);
 
 		if(argumentExists(argc,argv,"-nlprelation"))
 		{
@@ -637,11 +632,7 @@ int main(int argc,char **argv)
 			tempFolderCharStar = currentFolder;
 		}
 
-		#ifdef LINUX
-		chdir(workingFolderCharStar);
-		#else
-		::SetCurrentDirectory(workingFolderCharStar);
-		#endif
+		setCurrentDirectory(workingFolderCharStar);
 
 		if (argumentExists(argc,argv,"-version"))
 		{
@@ -1046,11 +1037,7 @@ int main2(int argc,char **argv)
 
 	#ifdef GIA_USE_DATABASE
 	initialiseDatabase(readFromDatabase, databaseFolderName, useDatabase, entityNodesActiveListComplete, entityNodesActiveListConcepts);
-	#ifdef LINUX
-	chdir(workingFolderCharStar);
-	#else
-	::SetCurrentDirectory(workingFolderCharStar);
-	#endif
+	setCurrentDirectory(workingFolderCharStar);
 	#endif
 	
 	#ifdef GIA_USE_CORPUS_DATABASE
@@ -1281,11 +1268,7 @@ int main2(int argc,char **argv)
 
 	for(int inputFileNameIndex=0; inputFileNameIndex<numberOfInputFilesInList; inputFileNameIndex++)	//CHECKTHIS: change back to 0
 	{
-		#ifdef LINUX
-		chdir(workingFolderCharStar);
-		#else
-		::SetCurrentDirectory(workingFolderCharStar);
-		#endif
+		setCurrentDirectory(workingFolderCharStar);
 
 		if(inputFileList)
 		{
@@ -1420,11 +1403,7 @@ int main2(int argc,char **argv)
 				#endif
 				useInputTextNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
 				
-				#ifdef LINUX
-				chdir(tempFolderCharStar);
-				#else
-				::SetCurrentDirectory(tempFolderCharStar);
-				#endif
+				setCurrentDirectory(tempFolderCharStar);
 				
 				/*
 				#ifdef GIA_USE_LRP
@@ -1450,11 +1429,8 @@ int main2(int argc,char **argv)
 			else
 			{
 				char tempCurrentFolder[EXE_FOLDER_PATH_MAX_LENGTH];
-				#ifdef LINUX
-				getcwd(tempCurrentFolder, EXE_FOLDER_PATH_MAX_LENGTH);
-				#else
-				::GetCurrentDirectory(EXE_FOLDER_PATH_MAX_LENGTH, tempCurrentFolder);
-				#endif
+				getCurrentDirectory(tempCurrentFolder);
+
 				#ifdef GIA_MAIN_DEBUG
 				//cout << "tempCurrentFolder = " << tempCurrentFolder << endl;
 				#endif
@@ -1520,11 +1496,7 @@ int main2(int argc,char **argv)
 	}
 #endif
 
-	#ifdef LINUX
-	chdir(workingFolderCharStar);
-	#else
-	::SetCurrentDirectory(workingFolderCharStar);
-	#endif
+	setCurrentDirectory(workingFolderCharStar);
 
 #ifdef GIA_USE_LRP
 	if(useLRP)
@@ -1581,11 +1553,7 @@ int main2(int argc,char **argv)
 			#endif
 			useInputQueryNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
 			
-			#ifdef LINUX
-			chdir(tempFolderCharStar);
-			#else
-			::SetCurrentDirectory(tempFolderCharStar);
-			#endif
+			setCurrentDirectory(tempFolderCharStar);
 
 			/*
 			#ifdef GIA_USE_LRP
@@ -1865,11 +1833,7 @@ int main2(int argc,char **argv)
 		#endif
 
 		//cout << "tempFolderCharStar = " << tempFolderCharStar << endl;
-		#ifdef LINUX
-		chdir(tempFolderCharStar);
-		#else
-		::SetCurrentDirectory(tempFolderCharStar);
-		#endif
+		setCurrentDirectory(tempFolderCharStar);
 
 		/*
 		char * fileByteArray = const_cast<char*>(answerString.c_str());
@@ -1883,11 +1847,7 @@ int main2(int argc,char **argv)
 	}
 
 	//cout << "tempFolderCharStar = " << tempFolderCharStar << endl;
-	#ifdef LINUX
-	chdir(tempFolderCharStar);
-	#else
-	::SetCurrentDirectory(tempFolderCharStar);
-	#endif
+	setCurrentDirectory(tempFolderCharStar);
 
 	//cout << "ak7" << endl;
 	

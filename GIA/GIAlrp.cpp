@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d3a 29-January-2014
+ * Project Version: 2d4a 06-February-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -36,10 +36,7 @@
 #include <cmath>
 
 #include "GIAlrp.h"
-
-#ifndef LINUX
-	#include <windows.h>
-#endif
+#include "SHAREDvars.h"	//file io
 
 static string lrpDataFolderName;
 static bool useLRP;
@@ -228,11 +225,7 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 		result = false;
 	}
 
-	#ifdef LINUX
-	chdir(tempFolderCharStar);
-	#else
-	::SetCurrentDirectory(tempFolderCharStar);
-	#endif
+	setCurrentDirectory(tempFolderCharStar);
 
 	GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo = getCurrentGIALRPtagTextCorrespondenceInfo();
 	if(!searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(firstTagInPlainText, firstTagInPhrasalVerbList, firstTagInMultiwordPrepositionList, plainTextLRPoutputFileName, plainTextLRPforNLPoutputFileName, firstGIALRPtagCorrespondenceInfo))
