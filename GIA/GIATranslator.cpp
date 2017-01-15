@@ -568,8 +568,9 @@ GIAEntityNode * addCondition(GIAEntityNode * conditionEntity)
 	conditionEntity->hasAssociatedInstanceIsCondition = true;
 	conditionEntity->hasAssociatedInstanceTemp = true;
 	newCondition->isCondition = true;
-	newCondition->negative = conditionEntity->negative;	
-
+	newCondition->negative = conditionEntity->negative;
+	
+	return newCondition;	
 }
 
 
