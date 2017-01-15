@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m6a 09-September-2016
+ * Project Version: 2m6b 09-September-2016
  *
  *******************************************************************************/
 
@@ -1461,12 +1461,11 @@ string getParentClassEntityNameFromSubClassEntityName(string subClassEntityName)
 	}
 	else if(index < subClassEntityName.length()-1)
 	{
-		parentEntityName = subClassEntityName.substr(index+1);
+		parentEntityName = subClassEntityName.substr(index+string(GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER).length());
 	}
 	return parentEntityName;
 }
 
-/*
 string getChildClassEntityNameFromSubClassEntityName(string subClassEntityName)
 {
 	string childEntityName = "";
@@ -1477,11 +1476,10 @@ string getChildClassEntityNameFromSubClassEntityName(string subClassEntityName)
 	}
 	else
 	{
-		childEntityName = subClassEntityName.substr(index);
+		childEntityName = subClassEntityName.substr(0, index);
 	}
 	return childEntityName;
 }
-*/
 
 string createSubClassEntityName(string childEntityName, string parentEntityName)
 {
