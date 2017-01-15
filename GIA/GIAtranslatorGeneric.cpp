@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f9a 11-July-2014
+ * Project Version: 2f9b 11-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1158,6 +1158,12 @@ bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, Relati
 	#endif
 
 	bool prepositionFeatureFound = false;
+
+	//added GIA 2f9b 11-July-2014
+	bool centredPrepositionFeatureFound = false;
+	int featureIndexOfNonCentredPrepositionFeature = 0;
+	int numberOfPrepositionFeaturesFound = 0;
+	
 	
 	Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
@@ -1178,14 +1184,37 @@ bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, Relati
 
 		if(currentFeatureInList->lemma == singleWordPreposition)
 		{
+			/*
+			cout << "currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+			cout << "prepositionFeatureFound: " << prepositionName << " " << currentFeatureInList->entityIndex << endl;
+			cout << "prepositionRelation->relationGovernorIndex: " << prepositionRelation->relationGovernorIndex << endl;
+			cout << "prepositionRelation->relationDependentIndex: " << prepositionRelation->relationDependentIndex << endl;
+			*/
+			
+			prepositionFeatureFound = true;
 			if(((currentFeatureInList->entityIndex < prepositionRelation->relationGovernorIndex) && (currentFeatureInList->entityIndex > prepositionRelation->relationDependentIndex))
 			|| ((currentFeatureInList->entityIndex > prepositionRelation->relationGovernorIndex) && (currentFeatureInList->entityIndex < prepositionRelation->relationDependentIndex)))
-			{//added GIA 2f9a
-				prepositionFeatureFound = true;
+			{//added GIA 2f9a 11-July-2014
+				//cout << "centred prepositionFeatureFound: " << prepositionName << " " << currentFeatureInList->entityIndex << endl;
+				centredPrepositionFeatureFound = true;
 				*indexOfPreposition = currentFeatureInList->entityIndex;
 			}
+			else
+			{//added GIA 2f9b 11-July-2014
+				featureIndexOfNonCentredPrepositionFeature = currentFeatureInList->entityIndex;	
+			}
+			numberOfPrepositionFeaturesFound++;
 		}
 		currentFeatureInList = currentFeatureInList->next;
+	}
+	
+	if(prepositionFeatureFound && !centredPrepositionFeatureFound)
+	{//added GIA 2f9b 11-July-2014
+		if(numberOfPrepositionFeaturesFound > 1)
+		{
+			cout << "determineFeatureIndexOfPreposition(): !centredPrepositionFeatureFound && (numberOfPrepositionFeaturesFound > 1); cannot guarantee correct preposition feature index has been assigned" << endl;
+		}
+		*indexOfPreposition = featureIndexOfNonCentredPrepositionFeature;
 	}
 	return prepositionFeatureFound;
 }
