@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p7b 22-September-2012
+ * Project Version: 1p8a 23-September-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -345,7 +345,9 @@ bool loadPhrasalVerbDataAndGenerateAllTenseVariants(string phrasalVerbDatabaseFi
 
 					if(currentToken == CHAR_NEWLINE)
 					{
-						//cout <<	"adding Tag: tagName = " << currentTagInPhrasalVerbList->tagName << endl;				
+						#ifdef GIA_LRP_DEBUG
+						//cout << "adding Tag: tagName = " << currentTagInPhrasalVerbList->tagName << endl;				
+						#endif
 						currentTagInPhrasalVerbList->nextSentence = new GIALRPtag();
 						currentTagInPhrasalVerbList = currentTagInPhrasalVerbList->nextSentence;
 						if(currentPhrasalVerbAlternate)
@@ -542,6 +544,7 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagIn
 	char lastCharacterInBase = base[indexOfLastCharacterInBase];
 	char secondLastCharacterInBase = base[indexOfSecondLastCharacterInBase];
 	char thirdLastCharacterInBase = base[indexOfThirdLastCharacterInBase];
+	#ifdef GIA_LRP_DEBUG
 	/*
 	cout << "baseStringLength = " << baseStringLength << endl;	
 	cout << "indexOfLastCharacterInBase = " << indexOfLastCharacterInBase << endl;
@@ -551,6 +554,7 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagIn
 	cout << "secondLastCharacterInBase = " << secondLastCharacterInBase << endl;
 	cout << "thirdLastCharacterInBase = " << thirdLastCharacterInBase << endl;
 	*/
+	#endif
 	bool lastCharacterIsVowel = false;
 	bool secondLastCharacterIsVowel = false;
 	bool thirdLastCharacterIsVowel = false;
@@ -623,7 +627,9 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagIn
 	}
 
 	string baseWithLastLetterDropped = base.substr(0, baseStringLength-1);
+	#ifdef GIA_LRP_DEBUG
 	//cout << "baseWithLastLetterDropped = " << baseWithLastLetterDropped << endl;
+	#endif
 	
 	//generate (ie record) infinitive tense form [for consistency; even though this is the same as tagName...]
 	baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base;
@@ -876,10 +882,10 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlai
 					currentTagInPlainTextSentence->tagName = currentWord;
 					currentTagInPlainTextSentence->entityIndex = entityIndex;
 					currentTagInPlainTextSentence->sentenceIndex = sentenceIndex;
-					//cout << "currentTagInPlainTextSentence->sentenceIndex = " << currentTagInPlainTextSentence->sentenceIndex << endl;					
 					currentTagInPlainTextSentence->nextTag = new GIALRPtag();
 					#ifdef GIA_LRP_DEBUG
-					cout <<  "adding Tag: " << currentTagInPlainTextSentence->tagName << endl;								
+					cout <<  "adding Tag: " << currentTagInPlainTextSentence->tagName << endl;	
+					//cout << "currentTagInPlainTextSentence->sentenceIndex = " << currentTagInPlainTextSentence->sentenceIndex << endl;			
 					#endif
 					currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
 					entityIndex++;
@@ -896,8 +902,10 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlai
 
 						if(currentToken == CHAR_FULLSTOP)
 						{
+							#ifdef GIA_LRP_DEBUG
 							//cout << "CHAR_FULLSTOP" << endl;
 							//cout << "currentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;							
+							#endif
 							currentTagInPlainText->nextSentence = new GIALRPtag();
 							currentTagInPlainText = currentTagInPlainText->nextSentence;
 							currentTagInPlainTextSentence = currentTagInPlainText;						
@@ -945,20 +953,26 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 	GIALRPtag * currentTagInPlainText = firstTagInPlainText;
 	while(currentTagInPlainText->nextSentence != NULL)
 	{	
+		#ifdef GIA_LRP_DEBUG
 		//cout << "qcurrentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
-			
+		#endif
+		
 		GIALRPtag * firstTagInPlainTextSentence = currentTagInPlainText;
 		GIALRPtag * currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		GIALRPtag * previousTagInPlainTextSentence = NULL;
 		while(currentTagInPlainTextSentence->nextTag != NULL)
 		{
+			#ifdef GIA_LRP_DEBUG
 			//cout << "currentTagInPlainTextSentence->tagName = " << currentTagInPlainTextSentence->tagName << endl;
+			#endif
 			
 			bool foundAtLeastOnePhrasalVerbInSentenceAndCollapsed = false;
 			GIALRPtag * currentTagInPhrasalVerbList = firstTagInPhrasalVerbList;
 			while(currentTagInPhrasalVerbList->nextSentence != NULL)
 			{
+				#ifdef GIA_LRP_DEBUG
 				//cout << "currentTagInPhrasalVerbList->tagName = " << currentTagInPhrasalVerbList->tagName << endl;
+				#endif
 				
 				GIALRPtag * currentTagInPhrasalVerbListAlternate = currentTagInPhrasalVerbList;
 				bool alternatePhrasalVerb = false;
@@ -983,15 +997,18 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 					bool phrasalVerbHasTagSpecial = false;
 					while((currentTagInPhrasalVerb->nextTag != NULL) && (currentTagInPlainTextSentenceTemp->nextTag != NULL) && (stillFoundVerbMatchOfArbitraryTense))
 					{
+						#ifdef GIA_LRP_DEBUG
 						//cout << "currentTagInPhrasalVerb->tagName = " << currentTagInPhrasalVerb->tagName << endl;
 						//cout << "currentTagInPlainTextSentenceTemp->tagName = " << currentTagInPlainTextSentenceTemp->tagName << endl;
-						
+						#endif
 						bool currentTagInPhrasalVerbOptionalAndNotFound = false;
 						bool currentTagInPhrasalVerbSpecialAndNotFound = false;
 						
 						if(currentTagInPhrasalVerb->tagSpecialArbitraryName)
 						{
+							#ifdef GIA_LRP_DEBUG
 							//cout << "u1" << endl;
+							#endif
 							phrasalVerbHasTagSpecial = true;
 							
 							//NB the collapsed phrasal verb contains precisely 2 entities: phrasalVerbCollapsed, entity2: thing/place/body (eg belong_to + sb/Tom) - thing/place/bodies are not currently being differentiated by the LRP as this information is only first generated at NLP/GIA parse stage
@@ -1007,22 +1024,25 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 						}
 						else
 						{
+							#ifdef GIA_LRP_DEBUG
 							//cout << "u2" << endl;
-														
+							#endif						
 							bool foundVerbMatchOfArbitraryTenseTemp = false;
 							GIALRPtag * currentTagInPlainTextSentenceTempAlternate = currentTagInPlainTextSentenceTemp;
 							bool alternateTag = false;
 							string generatedTagNameLemma = "";
 							while(!alternateTag || (currentTagInPlainTextSentenceTempAlternate->alternateTag != NULL))
 							{
+								#ifdef GIA_LRP_DEBUG
 								//cout << "u3" << endl;
-								
+								#endif
 								if(currentTagInPhrasalVerb->base)
 								{
 									for(int i=0; i<GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS; i++)
 									{
 										for(int j=0; j<GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS; j++)
 										{
+											#ifdef GIA_LRP_DEBUG
 											/*
 											//cout << "currentTagInPhrasalVerb->tagName =" << currentTagInPhrasalVerb->tagName << endl;
 											//cout << "(currentTagInPhrasalVerb->tagName).length()  =" << (currentTagInPhrasalVerb->tagName).length() << endl;
@@ -1032,10 +1052,12 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 												cout << "currentTagInPlainTextSentenceTempAlternate->tagName = " << currentTagInPlainTextSentenceTempAlternate->tagName << endl;
 											}
 											*/
-
+											#endif
 											if(currentTagInPhrasalVerb->grammaticalTenseFormsArray[i][j] == currentTagInPlainTextSentenceTempAlternate->tagName)		//USED TO BE currentTagInCollapsedPhrasalVerb before 6 Sept 2012
 											{
+												#ifdef GIA_LRP_DEBUG
 												//cout << "u4" << endl;
+												#endif
 												currentTagInCollapsedPhrasalVerb->grammaticalTenseFormDetected = i;								//USED TO BE AND STILL IS currentTagInCollapsedPhrasalVerb before 6 Sept 2012
 												generatedTagNameLemma = currentTagInPhrasalVerb->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD];
 												foundVerbMatchOfArbitraryTenseTemp = true;
@@ -1058,25 +1080,35 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 								}
 								if(currentTagInPlainTextSentenceTempAlternate->alternateTag != NULL)
 								{
-									cout << "u4" << endl;
+									#ifdef GIA_LRP_DEBUG
+									//cout << "u4b" << endl;
+									#endif
 									currentTagInPlainTextSentenceTempAlternate = currentTagInPlainTextSentenceTempAlternate->alternateTag;
 								}
 								alternateTag = true;
+								#ifdef GIA_LRP_DEBUG
 								//cout << "u5" << endl;
+								#endif
 							}
 
 
 							if(!foundVerbMatchOfArbitraryTenseTemp)
 							{
+								#ifdef GIA_LRP_DEBUG
 								//cout << "u6" << endl;
+								#endif
 								if(currentTagInPhrasalVerb->optional)
 								{
+									#ifdef GIA_LRP_DEBUG
 									//cout << "u7" << endl;
+									#endif
 									currentTagInPhrasalVerbOptionalAndNotFound = true;
 								}
 								else if(currentlyParsingTagSpecial && (tagInPhrasalVerbSpecialAndNotFoundCount <= GIA_LRP_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_MAX_NUMBER_WORDS))
 								{
+									#ifdef GIA_LRP_DEBUG
 									//cout << "u8" << endl;
+									#endif
 									currentTagInCollapsedPhrasalVerb->nextTag->tagName = currentTagInCollapsedPhrasalVerb->nextTag->tagName + currentTagInPlainTextSentenceTemp->tagName + " ";
 									/*
 									//removed 7 Sept 2012b - now interpret: ask sb over/round -> ask_over sb
@@ -1087,7 +1119,9 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 								}
 								else
 								{
+									#ifdef GIA_LRP_DEBUG
 									//cout << "u9" << endl;
+									#endif
 									stillFoundVerbMatchOfArbitraryTense = false;
 								}
 							}
@@ -1095,7 +1129,9 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 							{
 								if(currentlyParsingTagSpecial)
 								{
+									#ifdef GIA_LRP_DEBUG
 									//cout << "u10" << endl;
+									#endif
 									/*
 									//removed 7 Sept 2012b - now interpret: ask sb over/round -> ask_over sb
 									currentTagInCollapsedPhrasalVerb->nextTag = new GIALRPtag();
@@ -1120,41 +1156,54 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 								cout << "currentTagInCollapsedPhrasalVerb->tagName  = " << currentTagInCollapsedPhrasalVerb->tagName << endl;
 								#endif
 							}
+							#ifdef GIA_LRP_DEBUG
 							//cout << "u11b" << endl;
+							#endif
 						}
 						
+						#ifdef GIA_LRP_DEBUG
 						//cout << "u11c" << endl;
-						
+						#endif
 						if(currentTagInPhrasalVerb->tagSpecialArbitraryName)
 						{
 							if(currentTagInPhrasalVerb->optional)
 							{
+								#ifdef GIA_LRP_DEBUG
 								//cout << "u12" << endl;
+								#endif
 								//special+optional tag found - just increment the phrasal verb for now [for this round]...
 								currentTagInPhrasalVerb = currentTagInPhrasalVerb->nextTag;
 							}
 							else
 							{
+								#ifdef GIA_LRP_DEBUG
 								//cout << "u13" << endl;
+								#endif
 								currentTagInPhrasalVerb = currentTagInPhrasalVerb->nextTag;
 								currentTagInPlainTextSentenceTemp = currentTagInPlainTextSentenceTemp->nextTag;
 							}
 						}
 						else if(currentTagInPhrasalVerbOptionalAndNotFound)
 						{
+							#ifdef GIA_LRP_DEBUG
 							//cout << "u14" << endl;
+							#endif
 							//optional phrasal verb tag not found - just increment the phrasal verb tag list...
 							currentTagInPhrasalVerb = currentTagInPhrasalVerb->nextTag;
 						}
 						else if(currentTagInPhrasalVerbSpecialAndNotFound)
 						{
+							#ifdef GIA_LRP_DEBUG
 							//cout << "u15" << endl;
+							#endif
 							//next phrasal verb tag not found yet - just increment the sentence tag list...
 							currentTagInPlainTextSentenceTemp = currentTagInPlainTextSentenceTemp->nextTag;
 						}
 						else
 						{
+							#ifdef GIA_LRP_DEBUG
 							//cout << "u16" << endl;
+							#endif
 							currentTagInPhrasalVerb = currentTagInPhrasalVerb->nextTag;
 							currentTagInPlainTextSentenceTemp = currentTagInPlainTextSentenceTemp->nextTag;						
 						}
@@ -1162,11 +1211,15 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 
 					if(stillFoundVerbMatchOfArbitraryTense && foundAtLeastOneMatch)
 					{
+						#ifdef GIA_LRP_DEBUG
 						//cout << "u17" << endl;
+						#endif
 						if(numberTagSpecialTagsFound <= 1)
 						{//do not preprocess phrasal verbs with more than one special tag (ie sth/sb/swh) - as this generally involves more than a verb [verb sth preposition sth1] - added 1p1aTEMP5
 							//reduce all entities
+							#ifdef GIA_LRP_DEBUG
 							//cout << "u18" << endl;
+							#endif
 							#ifdef GIA_LRP_DEBUG
 							cout << "currentTagInPlainTextSentenceTemp->tagName = " << currentTagInPlainTextSentenceTemp->tagName << endl;
 							#endif
@@ -1178,52 +1231,65 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 							{
 								currentTagInCollapsedPhrasalVerb->nextTag = currentTagInPlainTextSentenceTemp;	
 							}
+							#ifdef GIA_LRP_DEBUG
 							//cout << "u18b" << endl;
+							#endif
 							previousTagInPlainTextSentence->nextTag = firstTagInCollapsedPhrasalVerb;
 
 							foundAtLeastOnePhrasalVerbInSentenceAndCollapsed = true;
+							#ifdef GIA_LRP_DEBUG
 							//cout << "u18c" << endl;
+							#endif
 						}
 					}
 					/*
 					}
 					*/
+					#ifdef GIA_LRP_DEBUG
 					//cout << "u19" << endl;
-
+					#endif
 					if(currentTagInPhrasalVerbListAlternate->alternateSentence != NULL)
 					{
 						//cout << "u20" << endl;
 						currentTagInPhrasalVerbListAlternate = currentTagInPhrasalVerbListAlternate->alternateSentence;
 					}
+					#ifdef GIA_LRP_DEBUG
 					//cout << "u21" << endl;
+					#endif
 					alternatePhrasalVerb = true;
 				}
 				/*
-				cout << "u22" << endl;
 				if(currentTagInPhrasalVerbList->alternateSentence != NULL)
 				{
-					cout << "u23" << endl;
 					currentTagInPhrasalVerbList = currentTagInPhrasalVerbList->alternateSentence;
 				}
 				*/
 				currentTagInPhrasalVerbList = currentTagInPhrasalVerbList->nextSentence;
 			}
+			#ifdef GIA_LRP_DEBUG
 			//cout << "u23" << endl;
+			#endif
 			if(foundAtLeastOnePhrasalVerbInSentenceAndCollapsed)
 			{
 				#ifdef GIA_LRP_DEBUG
 				cout << "foundAtLeastOnePhrasalVerbInSentenceAndCollapsed" << endl;
-				#endif			
+				#endif
+				#ifdef GIA_LRP_DEBUG			
 				//cout << "u23b" << endl;
+				#endif
 				//renumberEntityIndiciesInSentence();
 				GIALRPtag * currentTagInPlainTextSentenceTemp2 = firstTagInPlainTextSentence;
 				int newEntityIndex = GIA_NLP_START_ENTITY_INDEX;
 				while(currentTagInPlainTextSentenceTemp2->nextTag != NULL)
 				{
+					#ifdef GIA_LRP_DEBUG
 					//cout << "u23c currentTagInPlainTextSentenceTemp2->tagName = " << currentTagInPlainTextSentenceTemp2->tagName << endl;
+					#endif
 					if(currentTagInPlainTextSentenceTemp2->collapsedPhrasalVerbExactDefinedSection)
 					{//create a new correspondenceInfo
+						#ifdef GIA_LRP_DEBUG
 						//cout << "u23d" << endl;
+						#endif
 						string tagNameLemma = currentTagInPlainTextSentenceTemp2->tagNameLemma;
 						string tagName = currentTagInPlainTextSentenceTemp2->tagName;
 						string tagNameLemmaWithLastLetterDropped = tagNameLemma.substr(0, tagNameLemma.length()-1);
@@ -1249,21 +1315,28 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 						currentCorrespondenceInfo->next = new GIALRPtagTextCorrespondenceInfo();
 						currentCorrespondenceInfo = currentCorrespondenceInfo->next;
 					}
+					#ifdef GIA_LRP_DEBUG
 					//cout << "u23e" << endl;
+					#endif
 					currentTagInPlainTextSentenceTemp2->entityIndex = newEntityIndex;
-					//cout << "u23f" << endl;
 					currentTagInPlainTextSentenceTemp2 = currentTagInPlainTextSentenceTemp2->nextTag;
+					#ifdef GIA_LRP_DEBUG
 					//cout << "u23g" << endl;
+					#endif
 					newEntityIndex++;
 				}
 			}
+			#ifdef GIA_LRP_DEBUG
 			//cout << "u24" << endl;
-
+			#endif
+			
 			GIALRPtag * currentTagInMultiwordPrepositionList = firstTagInMultiwordPrepositionList;
 			bool foundAtLeastOneMultiwordPrepositionInSentenceAndCollapsed = false;
 			while(currentTagInMultiwordPrepositionList->nextSentence != NULL)
 			{
+				#ifdef GIA_LRP_DEBUG
 				//cout << "u24a" << endl;
+				#endif
 				bool stillFoundPrepositionMatch = true;
 				bool foundAtLeastOneMatch = false;
 				GIALRPtag * currentTagInPlainTextSentenceTemp = currentTagInPlainTextSentence;
@@ -1275,16 +1348,22 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 				//cout << "currentTagInMultiwordPreposition->tagName = " << currentTagInMultiwordPreposition->tagName << endl; 
 				while((currentTagInMultiwordPreposition->nextTag != NULL) && (currentTagInPlainTextSentenceTemp->nextTag != NULL) && (stillFoundPrepositionMatch))
 				{
+					#ifdef GIA_LRP_DEBUG
 					//cout << "u24b" << endl;
+					#endif
 					if(currentTagInMultiwordPreposition->tagName != currentTagInPlainTextSentenceTemp->tagName)
 					{
+						#ifdef GIA_LRP_DEBUG
 						//cout << "u24c" << endl;
+						#endif
 						stillFoundPrepositionMatch = false;
 					}
 					else
 					{
+						#ifdef GIA_LRP_DEBUG
 						//cout << "u24b" << endl;
 						//cout << "currentTagInPlainTextSentenceTemp->tagName  = " << currentTagInPlainTextSentenceTemp->tagName << endl;
+						#endif
 						currentTagInCollapsedMultiwordPreposition->collapsedMultiwordPreposition = true;
 						currentTagInCollapsedMultiwordPreposition->tagName = currentTagInCollapsedMultiwordPreposition->tagName + currentTagInPlainTextSentenceTemp->tagName + "_";
 						foundAtLeastOneMatch = true;
@@ -1295,7 +1374,9 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 
 				if(stillFoundPrepositionMatch && foundAtLeastOneMatch)
 				{
+					#ifdef GIA_LRP_DEBUG
 					//cout << "u24d" << endl;
+					#endif
 					//reduce all entities
 					firstTagInCollapsedMultiwordPreposition->nextTag = currentTagInPlainTextSentenceTemp;
 					previousTagInPlainTextSentence->nextTag = firstTagInCollapsedMultiwordPreposition;
@@ -1305,7 +1386,9 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 
 				currentTagInMultiwordPrepositionList = currentTagInMultiwordPrepositionList->nextSentence;
 			}
+			#ifdef GIA_LRP_DEBUG
 			//cout << "u25a" << endl;
+			#endif
 			if(foundAtLeastOneMultiwordPrepositionInSentenceAndCollapsed)
 			{
 				//renumberEntityIndiciesInSentence();
@@ -1340,8 +1423,9 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 					newEntityIndex++;
 				}
 			}
+			#ifdef GIA_LRP_DEBUG
 			//cout << "u25" << endl;
-
+			#endif
 			previousTagInPlainTextSentence = currentTagInPlainTextSentence;
 			currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
 		}
@@ -1376,7 +1460,6 @@ bool writeTagListToFile(GIALRPtag * firstTagInPlainText, string plainTextLRPOutp
 			string plainTextLRPforNLPOutputTag = "";
 			if(currentTagInPlainTextSentence->collapsedPhrasalVerbExactDefinedSection)
 			{//create a new correspondenceInfo
-				//cout << "q2" << endl;
 				plainTextLRPforNLPOutputTag = lrpDummyCollapsedPhrasalVerbNameForNLPgrammaticalTenseFormsArray[currentTagInPlainTextSentence->grammaticalTenseFormDetected];	
 			}
 			else if(currentTagInPlainTextSentence->collapsedMultiwordPreposition)
@@ -1507,14 +1590,18 @@ void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentS
 							indexOfLastInstanceOfDependent = currentFeatureInList->entityIndex;
 							if((indexOfLastInstanceOfPreposition != ENTITY_INDEX_UNDEFINED) && (indexOfLastInstanceOfGovernor != ENTITY_INDEX_UNDEFINED))
 							{
+								#ifdef GIA_LRP_DEBUG2
 								//cout << "(indexOfLastInstanceOfPreposition != ENTITY_INDEX_UNDEFINED) && (indexOfLastInstanceOfGovernor != ENTITY_INDEX_UNDEFINED)" << endl;
+								#endif
 								
 								int proximityOfPrepositionToGovernor = indexOfLastInstanceOfPreposition - indexOfLastInstanceOfGovernor;
 								int proximityOfPrepositionToDependent = indexOfLastInstanceOfDependent - indexOfLastInstanceOfPreposition;
 								int totalProximityOfPrepositionToGovernorAndDependent = proximityOfPrepositionToGovernor + proximityOfPrepositionToDependent;
 								if(totalProximityOfPrepositionToGovernorAndDependent < minimumProximityOfGovernorDependentWords)
 								{
+									#ifdef GIA_LRP_DEBUG2
 									//cout << "minimumProximityOfGovernorDependentWords = " << minimumProximityOfGovernorDependentWords << endl;
+									#endif
 									minimumProximityOfGovernorDependentWords = totalProximityOfPrepositionToGovernorAndDependent;
 									indexOfPrepositionWithMinimumProximityOfGovernorDependentWords = indexOfLastInstanceOfPreposition;
 									foundPrepositionGovernorAndDependentInFeatureList = true;
@@ -1546,11 +1633,13 @@ void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentS
 				}
 				else
 				{
+					#ifdef GIA_LRP_DEBUG
 					/*
 					cout << "!isPreposition" << endl;
 					cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex << endl;
 					cout << "entityIndexForNonPrepositionsOnly = " << entityIndexForNonPrepositionsOnly << endl;
 					*/
+					#endif
 					if(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex == entityIndexForNonPrepositionsOnly)
 					{
 						feature->word = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP;
@@ -1567,9 +1656,7 @@ void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentS
 				}
 			}
 		}
-		//cout << "q25" << endl;
 		currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->next;
-		//cout << "q26" << endl;
 	}
 	if(!foundCorrespondingLRPtag)
 	{
@@ -1579,7 +1666,6 @@ void revertNLPtagNameToOfficialLRPtagName(Feature * feature, Sentence * currentS
 	{
 		*foundOfficialLRPreplacementString = true;
 	}
-	//cout << "q27" << endl;
 }
 
 string convertStringToLowerCase(string * arbitraryCaseString)

@@ -23,7 +23,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p7b 22-September-2012
+ * Project Version: 1p8a 23-September-2012
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -134,14 +134,18 @@ bool checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(string * word, str
 	if(checkIfWordIsContainedWithinAnotherWordsSynsets(word, otherWord, wordNetPOS))
 	{
 		entityNamesAreSynonymous = true;
+		#ifdef GIA_WORDNET_DEBUG
 		//cout << "\t synon FOUND" << endl;
+		#endif
 	}
 
 
 	if(checkIfWordIsContainedWithinAnotherWordsSynsets(otherWord, word, wordNetPOS))
 	{
 		entityNamesAreSynonymous = true;
+		#ifdef GIA_WORDNET_DEBUG
 		//cout << "\t synon FOUND" << endl;
+		#endif
 	}
 
 	#ifdef GIA_WORDNET_DEBUG_OUTPUT_SYNONYMNS
@@ -164,12 +168,14 @@ bool checkIfWordIsContainedWithinAnotherWordsSynsets(string * word, string * oth
 
 		bool wordIsFound = false;
 
+		#ifdef GIA_WORDNET_DEBUG
 		/*
 		cout << "*word = " << *word << endl;
 		cout << "*otherWord = " << *otherWord << endl;
 		cout << "wordNetPOS = " << wordNetPOS << endl;
 		cout << "similarityType = " << similarityType << endl;
 		*/
+		#endif
 
 		SynsetPtr firstSenseInList = findSynsets(word, &wordIsFound, wordNetPOS, similarityType);
 
@@ -245,19 +251,21 @@ SynsetPtr findSynsets(string * word, bool * wordIsFound, int wordNetPOS, int sim
 {
 	char * wordCharStar = const_cast<char*>(word->c_str());
 
-	/*
 	#ifdef GIA_WORDNET_DEBUG
+	/*
 	cout << "findSynsets()" << endl;
 	cout << "wordCharStar = " << wordCharStar << endl;
 	cout << "wordNetPOS = " << wordNetPOS << endl;
-	#endif
 	*/
+	#endif
 
 	SynsetPtr firstSenseInList = findtheinfo_ds(wordCharStar, wordNetPOS, similarityType, 0);	//returns pointer to the first Synset struct in a Synset struct linked list containing word/searchStr
 
+	#ifdef GIA_WORDNET_DEBUG
 	//char * sensePrintedOutput = findtheinfo(wordCharStar, wordNetPOS, similarityType, 0);		//similarityType/OVERVIEW
 	//cout << "findtheinfo sensePrintedOutput = " << sensePrintedOutput << endl;
-
+	#endif
+	
 	if(firstSenseInList == NULL)
 	{
 		*wordIsFound = false;
@@ -283,7 +291,9 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 	bool stillSensesToGo = true;
 	while(stillSensesToGo)
 	{
+		#ifdef GIA_WORDNET_DEBUG
 		//cout << "currentSenseInList->ptrcount = " << currentSenseInList->ptrcount << endl;
+		#endif
 		for(int pointerIndex = CURRENTSYNSETPOINTERINDEX; pointerIndex<currentSenseInList->ptrcount; pointerIndex++)	//updated 2 June 2012 to properly account for CURRENTSYNSETPOINTERINDEX
 		{
 			SynsetPtr currentRelatedSense = NULL;
@@ -300,11 +310,15 @@ SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSyns
 			{
 				for(int similarityTypeIndex = 0; similarityTypeIndex<WORDNET_DATA_ENTRY_POINTERS_INDICATING_RELATED_SYNSETS_NUMBER_OF_TYPES; similarityTypeIndex++)
 				{
+					#ifdef GIA_WORDNET_DEBUG
 					//cout << "similarityTypeIndex = " << similarityTypeIndex << endl;
+					#endif
 					if(currentSenseInList->ptrtyp[pointerIndex] == wordnetDataEntryPointersIndicatingRelatedSynsetsArray[similarityTypeIndex])
 					{	
+						#ifdef GIA_WORDNET_DEBUG
 						//cout << "passed" << endl;
 						//cout << "currentSenseInList->ptrtyp[pointerIndex] = " << currentSenseInList->ptrtyp[pointerIndex] << endl;
+						#endif
 						//if ptrtyp indicates related synset, then go to ptroff
 						passed = true;
 						char * wordInterestedIn = const_cast<char*>(word->c_str());
@@ -527,8 +541,10 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 		sprintf(senseString, "%d", sense);
 		string senseEntryTitleStringExpected = "";
 		senseEntryTitleStringExpected = senseEntryTitleStringExpected + WORDNET_SENSE_STRING + " " + senseString;
+		#ifdef GIA_WORDNET_DEBUG
 		//cout << "senseEntryTitleStringExpected = " << senseEntryTitleStringExpected << endl;
-
+		#endif
+		
 		string lineStringTemp = lineString;
 		if(senseEntryTitleStringExpected != lineStringTemp)
 		{

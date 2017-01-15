@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p7b 22-September-2012
+ * Project Version: 1p8a 23-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -79,7 +79,6 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesA
 			xInitial = maxXAtAParticularY[yInitial];
 
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			//cout << "h2" << endl;
 		}
         	else
 		{//NB if already initalised for printing, disregard
@@ -143,14 +142,11 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		{
 			cout << "entityNode = " << entityNode->entityName << endl;
 		}
-		#endif
-
-
-
 		//cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
 		//cout << "\tentityNode->isSubstance = " << entityNode->isSubstance << endl;
 		//cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
-		//cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;
+		//cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;		
+		#endif
 
 
 		entityNode->initialisedForPrinting = true;
@@ -169,7 +165,6 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		pos1.y = entityNode->printY;
 		pos1.z = DRAW_CONNECTION_Z;
 
-		//cout << "a1" << endl;
 
 		int entityDefinitionConnectionColour;
 		if(entityNode->isSubstance)
@@ -182,7 +177,6 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		}
 		else if(entityNode->isCondition)
 		{
-			//cout << "conditionFound" << endl;
 			entityDefinitionConnectionColour = GIA_DRAW_CONDITION_DEFINITION_CONNECTION_COLOUR;
 		}
 		else
@@ -237,14 +231,11 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
 		if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
 		{
-			//cout << "b7" << endl;
 			int timeConditionNodePrintX = x+r;
 			int timeConditionNodePrintY = y+q;
 			currentReferenceInPrintList = initialiseTimeConditionNodeForPrinting(entityNode->timeConditionNode, timeConditionNodePrintY, timeConditionNodePrintX, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-
-			//cout << "b8" << endl;
 
 			//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
 			vec pos2;
@@ -255,8 +246,6 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 
 		}
 
-
-		//cout << "a7" << endl;
 
 		if(initialiseOrPrint[DRAW_CREATE_LDR_OR_SVG_REFERENCES] == true)
 		{
@@ -281,12 +270,14 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			#endif
 			else if(entityNode->hasAssociatedInstanceIsAction)
 			{
+				#ifdef GIA_DRAW_DEBUG
 				/*
 				if(entityNode->isAction)
 				{
-					cout << "asd" << endl;
+					cout << "(entityNode->hasAssociatedInstanceIsAction) && (entityNode->isAction)" << endl;
 				}
 				*/
+				#endif
 				if(entityNode->hasMeasure)
 				{
 					entityColour = GIA_DRAW_SUBSTANCE_MEASURE_NODE_COLOUR;
@@ -392,7 +383,6 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 
 		}
 
-		//cout << "a8" << endl;
 
 		#ifdef GIA_DRAW_DEBUG
 		if(entityNode->isSubstance)
@@ -430,7 +420,6 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		#endif
 
 	}
-	//cout << "a0c" << endl;
 
 	return currentReferenceInPrintList;	//does this need to be newCurrentReferenceInPrintList?
 
@@ -460,7 +449,6 @@ Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeCo
 	int boxThickness = GIA_DRAW_THICKNESS_NORMAL;
 	if(timeConditionNode->isProgressive)
 	{
-		//cout << "box thickness is high" << endl;
 		boxThickness = GIA_DRAW_THICKNESS_THICK;
 	}
 	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_TIME_NODE_COLOUR, &(timeConditionNode->conditionName), writeFileObject, boxThickness, initialiseOrPrint);
@@ -523,9 +511,10 @@ Reference * createReferenceConnection(Reference * currentReferenceInPrintList, v
 
 	if(initialiseOrPrint[DRAW_CREATE_LDR_REFERENCES] == true)
 	{
-
+		#ifdef GIA_DRAW_DEBUG
 		//cout << "drawing connection" << endl;
-
+		#endif
+		
 		newCurrentReferenceInPrintList->type = REFERENCE_TYPE_LINE;
 		newCurrentReferenceInPrintList->colour = colour;
 
@@ -538,6 +527,7 @@ Reference * createReferenceConnection(Reference * currentReferenceInPrintList, v
 		newCurrentReferenceInPrintList->vertex2relativePosition.y = pos2->y;
 		newCurrentReferenceInPrintList->vertex2relativePosition.z = pos2->z;
 
+		#ifdef GIA_DRAW_DEBUG
 		/*
 		cout << "createFileOrFunctionReferenceConnection():" << endl;
 		cout << "currentReferenceInAboveList->name = " << currentReferenceInAboveList->name << endl;
@@ -551,6 +541,7 @@ Reference * createReferenceConnection(Reference * currentReferenceInPrintList, v
 		cout << "newCurrentReferenceInPrintList->vertex2relativePosition.y = " << newCurrentReferenceInPrintList->vertex2relativePosition.y << endl;
 		cout << "newCurrentReferenceInPrintList->vertex2relativePosition.z = " << newCurrentReferenceInPrintList->vertex2relativePosition.z << endl;
 		*/
+		#endif
 
 		Reference * newDispayReference = new Reference();
 		newCurrentReferenceInPrintList->next = newDispayReference;
@@ -597,6 +588,7 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 		newCurrentReferenceInPrintList->vertex4relativePosition.y = vect->y - height/2.0;
 		newCurrentReferenceInPrintList->vertex4relativePosition.z = vect->z;
 
+		#ifdef GIA_DRAW_DEBUG
 		/*
 		cout << "createFileOrFunctionReferenceBox():" << endl;
 		cout << "reference->name = " << reference->name << endl;
@@ -615,6 +607,7 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 		cout << "newCurrentReferenceInPrintList->vertex4relativePosition.y = " << newCurrentReferenceInPrintList->vertex4relativePosition.y << endl;
 		cout << "newCurrentReferenceInPrintList->vertex4relativePosition.z = " << newCurrentReferenceInPrintList->vertex4relativePosition.z << endl;
 		*/
+		#endif
 
 		Reference * newDispayReference;
 
@@ -743,14 +736,10 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 	Reference * firstReferenceInPrintList = new Reference();
 	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, initialiseOrPrint, firstReferenceInPrintList, writeFileObject);
 	/*
-	//cout << "h1" << endl;
 	initialiseOrPrint = DRAW_PRINT;
 	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, initialiseOrPrint, firstReferenceInPrintList, writeFileObject);
 	*/
 
-
-
-	//cout << "h2" << endl;
 
 	if(useOutputSVGFile)
 	{
@@ -758,8 +747,6 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 		writeFileObject->close();
 		delete writeFileObject;
 	}
-
-	//cout << "h3" <<endl;
 
 
 	if(initialiseOrPrint[DRAW_CREATE_LDR_REFERENCES] == true)
@@ -787,13 +774,11 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 		write2DReferenceListCollapsedTo1DToFile(topLevelSceneFileNameCollapsed, firstReferenceInPrintList);
 		*/
 		
-		#ifdef GIA_FREE_MEMORY
+		#ifdef GIA_FREE_MEMORY1
 		delete initialReferenceInSceneFile;
 		delete topLevelReferenceInSceneFile;
 		#endif
 		
-		//cout << "has" << endl;
-
 
 		unsigned char * rgbMap = new unsigned char[width*height*RGB_NUM];
 
@@ -813,7 +798,7 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 		drawPrimitivesReferenceListToOpenGLAndCreateRGBMapBasic(initialReferenceInCollapsedSceneFile, width, height, rgbMap);
 			//due to opengl code bug, need to execute this function twice.
 
-		#ifdef GIA_FREE_MEMORY
+		#ifdef GIA_FREE_MEMORY1
 		delete initialReferenceInCollapsedSceneFile;
 		delete topLevelReferenceInCollapsedSceneFile;
 		#endif
@@ -831,7 +816,7 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete,
 		//must use an external program to view the .ldr file (Eg LDView)
 	}
 	
-	#ifdef GIA_FREE_MEMORY
+	#ifdef GIA_FREE_MEMORY1
 	delete firstReferenceInPrintList;
 	#endif
 

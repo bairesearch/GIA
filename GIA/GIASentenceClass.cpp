@@ -23,7 +23,7 @@
  * File Name: GIASentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p7b 22-September-2012
+ * Project Version: 1p8a 23-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -107,7 +107,9 @@ GIACoreference::GIACoreference(void)
 
 GIACoreference::~GIACoreference(void)
 {
+	#ifdef GIA_FREE_MEMORY_DEBUG
 	//cout << "delete GIACoreference " << endl;
+	#endif
 	if(firstMentionInList != NULL)
 	{
 		delete firstMentionInList;
@@ -255,7 +257,7 @@ Sentence::~Sentence(void)
 		delete firstFeatureInList;
 	}
 
-	#ifdef GIA_FREE_MEMORY
+	#ifdef GIA_FREE_MEMORY1
 	#ifdef GIA_USE_STANFORD_CORENLP	
 	if(firstCoreferenceInList != NULL)	//added 21 Sept 2012 
 	{
@@ -335,9 +337,11 @@ void copyRelations(Relation * firstRelationInListToCopy, Relation * firstRelatio
 		currentRelation->relationGovernor = currentRelationToCopy->relationGovernor;
 		currentRelation->relationGovernorIndex = currentRelationToCopy->relationGovernorIndex;
 
+		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		//cout << "copy relation:" << endl;
 		//cout << currentRelation->relationType << "(" << currentRelation->relationGovernor << ", " << currentRelation->relationDependent << ")" << endl;
-
+		#endif
+		
 		Relation * newRelation = new Relation();
 		//newRelation->previous = currentRelation;
 		currentRelation->next = newRelation;
@@ -372,9 +376,11 @@ void copyFeatures(Feature * firstFeatureInListToCopy, Feature * firstFeatureInLi
 		currentFeature->Timex = currentFeatureToCopy->Timex;
 		#endif
 
+		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		//cout << "copy feature:" << endl;
 		//cout << currentFeature->lemma << endl;
-
+		#endif
+		
 		Feature * newFeature = new Feature();
 		newFeature->previous = currentFeature;
 		currentFeature->next = newFeature;
@@ -395,9 +401,11 @@ void copyStanfordCoreferences(StanfordCoreNLPCoreference * firstCoreferenceInLis
 		currentCoreferenceInList->firstMentionInList = new StanfordCoreNLPMention();
 		copyStanfordMention(currentCoreferenceInListToCopy->firstMentionInList, currentCoreferenceInList->firstMentionInList);
 
+		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		//cout << "copy Stanford coreference:" << endl;
 		//cout << currentCoreferenceInList->head << endl;
-
+		#endif
+		
 		StanfordCoreNLPCoreference * newCoreference = new StanfordCoreNLPCoreference();
 		currentCoreferenceInList->next = newCoreference;
 
@@ -418,9 +426,11 @@ void copyStanfordMention(StanfordCoreNLPMention * firstMentionInListToCopy, Stan
 		currentMentionInList->end = currentMentionInListToCopy->end;
 		currentMentionInList->head = currentMentionInListToCopy->head;
 
+		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		//cout << "copy Stanford Mention:" << endl;
 		//cout << currentMentionInList->head << endl;
-
+		#endif
+		
 		StanfordCoreNLPMention * newMention = new StanfordCoreNLPMention();
 		currentMentionInList->next = newMention;
 

@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p7b 22-September-2012
+ * Project Version: 1p8a 23-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -264,7 +264,6 @@ int main(int argc,char **argv)
 		{
 			inputTextPlainTXTFileName=get_char_argument(argc,argv,"-itxt");
 			useInputTextPlainTXTFile = true;
-			//cout << "DEBUGZ" << endl;
 		}
 
 	#ifdef USE_CE
@@ -280,13 +279,11 @@ int main(int argc,char **argv)
 		{
 			inputTextNLPrelationXMLFileName=get_char_argument(argc,argv,"-ionlprel");
 			useInputTextNLPrelationXMLFile = true;
-			//cout << "DEBUG ionlprel = " << inputTextNLPrelationXMLFileName << endl;
 		}
 		if(exists_argument(argc,argv,"-ionlptag"))
 		{
 			inputTextNLPfeatureXMLFileName=get_char_argument(argc,argv,"-ionlptag");
 			useInputTextNLPfeatureXMLFile = true;
-			//cout << "DEBUG ionlptag = " << inputTextNLPfeatureXMLFileName << endl;
 		}
 
 		if(exists_argument(argc,argv,"-ixml"))
@@ -308,14 +305,12 @@ int main(int argc,char **argv)
 			inputQueryNLPrelationXMLFileName=get_char_argument(argc,argv,"-ionlprelq");
 			useInputQueryNLPrelationXMLFile = true;
 			useInputQuery = true;
-			//cout << "DEBUG ionlprelq = " << inputQueryNLPrelationXMLFileName << endl;
 		}
 		if(exists_argument(argc,argv,"-ionlptagq"))
 		{
 			inputQueryNLPfeatureXMLFileName=get_char_argument(argc,argv,"-ionlptagq");
 			useInputQueryNLPfeatureXMLFile = true;
 			useInputQuery = true;
-			//cout << "DEBUG ionlptagq = " << inputQueryNLPfeatureXMLFileName << endl;
 		}
 
 		if(exists_argument(argc,argv,"-ixmlq"))
@@ -612,7 +607,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1p7b 22-September-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1p8a 23-September-2012" << endl;
 			exit(1);
 		}
 
@@ -625,12 +620,12 @@ int main(int argc,char **argv)
 		exit(1);
 	}
 
-	
+	#ifdef GIA_MAIN_DEBUG
 	//cout << "workingFolderCharStar = " << workingFolderCharStar << endl;
 	//cout << "tempFolderCharStar = " << tempFolderCharStar << endl;
 	//cout << "NPLrelationExeFolderCharStar = " << NPLrelationExeFolderCharStar << endl;
 	//cout << "NPLfeatureExeFolderCharStar = " << NPLfeatureExeFolderCharStar << endl;
-	
+	#endif
 
 	if(!parseGIARulesXMLFile())
 	{
@@ -806,7 +801,7 @@ int main(int argc,char **argv)
 	}
 
 
-	/*
+	#ifdef GIA_MAIN_DEBUG
 	cout << errmessage << endl;
 	cout << "Parameters to be used:" << endl;
 	cout << "inputTextPlainTXTFileName = " << inputTextPlainTXTFileName << endl;
@@ -833,7 +828,7 @@ int main(int argc,char **argv)
 	cout << "displayInOpenGLAndOutputScreenshot = " << displayInOpenGLAndOutputScreenshot << endl;
 	cout << "rasterImageWidth = " << rasterImageWidth << endl;
 	cout << "rasterImageHeight = " << rasterImageHeight << endl;
-	*/
+	#endif
 	
 #ifdef GIA_USE_LRP
 	if(useLRP)
@@ -905,12 +900,12 @@ int main(int argc,char **argv)
 			{
 				inputTextPlainTXTFileName = inputTextPlainTXTFileNameArray[inputFileNameIndex];
 			}
-		#ifdef USE_CE
+			#ifdef USE_CE
 			if(useInputTextCodeextensionsTXTFileName)
 			{
 				inputTextCodeextensionsTXTFileName = inputTextCodeextensionsTXTFileNameArray[inputFileNameIndex];
 			}
-		#endif
+			#endif
 			if(useInputTextNLPrelationXMLFile)
 			{
 				inputTextNLPrelationXMLFileName = inputTextNLPrelationXMLFileNameArray[inputFileNameIndex];
@@ -931,9 +926,9 @@ int main(int argc,char **argv)
 			outputLRPTextPlainTXTFileName = outputLRPTextPlainTXTFileNameBase + "." + inputFileNameIndexStringCharStar;
 			outputLRPTextForNLPonlyPlainTXTFileName = outputLRPTextForNLPonlyPlainTXTFileNameBase + "." + inputFileNameIndexStringCharStar;
 		}
-	#endif	
+#endif	
 		
-	#ifdef GIA_USE_LRP
+		#ifdef GIA_USE_LRP
 		if(useLRP)
 		{
 			setCurrentGIALRPtagTextCorrespondenceInfo(false);	//required for local variable access
@@ -943,9 +938,9 @@ int main(int argc,char **argv)
 			}
 			inputTextPlainTXTFileName = outputLRPTextForNLPonlyPlainTXTFileName;	//now perform NLP using NLP specific (dummy) version of LRP output
 		}
-	#endif
+		#endif
 
-	#ifdef USE_CE
+		#ifdef USE_CE
 		bool useCodeextensionsHeirachy = false;
 		CECodeextension * firstCodeextensionInHeirachy = NULL;
 		vector<CECodeextension*> * codeextensionsList;
@@ -987,16 +982,20 @@ int main(int argc,char **argv)
 				useInputTextPlainTXTFile = true;
 			}
 		}
-	#endif
+		#endif
 
-		cout << "inputTextPlainTXTFileName = " << inputTextPlainTXTFileName << endl;
-		cout << "inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
-		cout << "inputTextNLPfeatureXMLFileName = " << inputTextNLPfeatureXMLFileName << endl;
-
+		if(inputFileList)
+		{
+			cout << "inputTextPlainTXTFileName = " << inputTextPlainTXTFileName << endl;
+			cout << "inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
+			cout << "inputTextNLPfeatureXMLFileName = " << inputTextNLPfeatureXMLFileName << endl;
+		}
 
 		if(useInputTextPlainTXTFile)
 		{
-			//cout << "DEBUGA" << endl;
+			#ifdef GIA_MAIN_DEBUG
+			//cout << "useInputTextPlainTXTFile" << endl;
+			#endif
 			/*
 			if(useInputTextNLPrelationXMLFile)
 			{
@@ -1029,11 +1028,12 @@ int main(int argc,char **argv)
 
 		if(useInputTextNLPrelationXMLFile)
 		{
-			//cout << "DEBUGB" << endl;
+			#ifdef GIA_MAIN_DEBUG
+			//cout << "useInputTextNLPrelationXMLFile" << endl;
 			//cout << "inputTextNLPrelationXMLFileName = " << inputTextNLPrelationXMLFileName << endl;
 			//cout << "inputTextNLPfeatureXMLFileName = " << inputTextNLPfeatureXMLFileName << endl;
 			//cout << "outputTextCFFFileName = " << outputTextCFFFileName << endl;
-
+			#endif
 			if(useInputTextXMLFile)
 			{
 				cout << "error: useInputTextXMLFile && useInputTextNLPrelationXMLFile" << endl;
@@ -1047,9 +1047,10 @@ int main(int argc,char **argv)
 				#else
 				::GetCurrentDirectory(EXE_FOLDER_PATH_MAX_LENGTH, tempCurrentFolder);
 				#endif
+				#ifdef GIA_MAIN_DEBUG
 				//cout << "tempCurrentFolder = " << tempCurrentFolder << endl;
-
-				//cout << "as" << endl;
+				#endif
+				
 				#ifdef USE_CE
 				if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, firstCodeextensionInHeirachy, codeextensionsList, useCodeextensionsHeirachy))
 				#else
@@ -1058,14 +1059,14 @@ int main(int argc,char **argv)
 				{
 					result = false;
 				}
-
-				//cout << "as2" << endl;
 			}
 		}
 
 		if(useInputTextXMLFile)
 		{
-			//cout << "DEBUGC" << endl;
+			#ifdef GIA_MAIN_DEBUG
+			//cout << "useInputTextXMLFile" << endl;
+			#endif
 			if(useInputTextPlainTXTFile)
 			{
 				cout << "error: useInputTextXMLFile && useInputTextPlainTXTFile" << endl;
@@ -1093,7 +1094,9 @@ int main(int argc,char **argv)
 
 	if(useInputQueryPlainTXTFile)
 	{
-		//cout << "DEBUG2A" << endl;
+		#ifdef GIA_MAIN_DEBUG
+		//cout << "useInputQueryPlainTXTFile" << endl;
+		#endif
 		/*
 		if(useInputQueryNLPrelationXMLFile)
 		{
@@ -1128,8 +1131,9 @@ int main(int argc,char **argv)
 
 	if(useInputQueryNLPrelationXMLFile)
 	{
-		//cout << "DEBUG2B" << endl;
-
+		#ifdef GIA_MAIN_DEBUG
+		//cout << "useInputQueryNLPrelationXMLFile" << endl;
+		#endif
 		if(useInputQueryXMLFile)
 		{
 			cout << "error: useInputQueryXMLFile && useInputQueryNLPrelationXMLFile" << endl;
@@ -1160,8 +1164,9 @@ int main(int argc,char **argv)
 
 	if(useInputQueryXMLFile)
 	{
-		//cout << "DEBUG2C" << endl;
-
+		#ifdef GIA_MAIN_DEBUG
+		//cout << "useInputQueryXMLFile" << endl;
+		#endif
 		if(useInputQueryPlainTXTFile)
 		{
 			cout << "error: useInputQueryXMLFile && useInputQueryPlainTXTFile" << endl;
@@ -1222,9 +1227,7 @@ int main(int argc,char **argv)
 
 		GIAEntityNode* queryAnswerNode;
 		string queryAnswerContext = "";
-		//cout << "a" << endl;
 		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(entityNodesActiveListConcepts, entityNodesActiveListConceptsQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerContext);
-		//cout << "b" << endl;
 
 		double maxConfidence = determineMaxConfidenceOfQuerySemanticNetwork(entityNodesActiveListConceptsQuery);		//OLD [simple]: entityNodesActiveListCompleteQuery->size();
 
@@ -1271,7 +1274,6 @@ int main(int argc,char **argv)
 				}
 				*/
 			}
-			//cout << "ahsd2" << endl;
 		}
 		else
 		{
@@ -1525,7 +1527,7 @@ bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 	outputInternalRelationsInRelexFormat(&outputCFFFileName, &originalInputFileName, firstParagraphInList, NLPdependencyRelationsParser, NLPfeatureParser, NLPexeFolderArray);
 	#endif
 
-	#ifdef GIA_FREE_MEMORY
+	#ifdef GIA_FREE_MEMORY1
 	delete firstParagraphInList;
 	#endif
 	
@@ -1643,7 +1645,9 @@ int getFilesFromFileList(string inputListFileName, string * inputFileNameArray)
 			if(currentToken == CHAR_NEWLINE)
 			{
 				inputFileNameArray[fileNameIndex] = currentFileName;
+				#ifdef GIA_MAIN_DEBUG
 				//cout << "currentFileName = " << currentFileName << endl;
+				#endif
 				currentFileName = "";
 				fileNameIndex++;
 			}
@@ -1655,7 +1659,9 @@ int getFilesFromFileList(string inputListFileName, string * inputFileNameArray)
 		}
 		numberOfInputFilesInList = fileNameIndex;
 	}	
+	#ifdef GIA_MAIN_DEBUG
 	//cout << "numberOfInputFilesInList = " << numberOfInputFilesInList << endl;
+	#endif
 	return numberOfInputFilesInList;
 }
 #endif

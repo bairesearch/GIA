@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p7b 22-September-2012
+ * Project Version: 1p8a 23-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -64,7 +64,9 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 			if(currentRelationInList->relationDependentIndex < 0)
 			{//to prevent Relex 1.4.0 error where it uses a relation argument index of '-1' very occasionally
 				currentRelationInList->relationDependentIndex = GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1_REPLACEMENT_INDEX;
+				#ifdef GIA_TRANSLATOR_DEBUG
 				//cout << "\tGIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1_REPLACEMENT_INDEX = " << GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1_REPLACEMENT_INDEX << endl;
+				#endif
 			}
 			#endif
 		}
@@ -75,12 +77,13 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 		relationIndex[0] = currentRelationInList->relationGovernorIndex;
 		relationIndex[1] = currentRelationInList->relationDependentIndex;
 
-
+		#ifdef GIA_TRANSLATOR_DEBUG
 		//cout << "relationIndex[0]  = " << relationIndex[0] << endl;
 		//cout << "relationIndex[1]  = " << relationIndex[1] << endl;
 		//cout << "name[0]  = " << name[0] << endl;
 		//cout << "name[1]  = " << name[1] << endl;
-
+		#endif
+		
 		bool argumentIsQuery = false;
 		#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 		if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
@@ -168,8 +171,6 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 		currentRelationInList = currentRelationInList->next;
 	}
 
-	//exit(0);
-
 	#endif
 }
 
@@ -184,9 +185,8 @@ void locateAndAddAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNo
 
 			bool entityAlreadyExistant = false;
 			GIAEntityNode * entity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(featureTempEntityNode->entityName), &entityAlreadyExistant, entityNodesActiveListConcepts);
+			#ifdef GIA_TRANSLATOR_DEBUG
 			//cout << "entity->entityName = " << entity->entityName << endl;
-			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-			cout << "entity->entityName = " << entity->entityName << endl;
 			#endif
 
 			GIAEntityNodeArray[w] = entity;
@@ -226,8 +226,10 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 	Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
+		#ifdef GIA_TRANSLATOR_DEBUG
 		//cout << "currentFeatureInList->grammar = " << currentFeatureInList->grammar << endl;
-
+		#endif
+		
 		//this date code probably requires an update [there appear to be multiple ways in which dates are defined in relex...
 		#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5A_RELATIONS_ASSIGN_TIME_NODES_IN_RELEX_THE_SAME_AS_STANFORD
 		if((currentFeatureInList->grammar).find(FEATURE_RELEX_FLAG_DATE_NAME) != -1)
@@ -236,7 +238,9 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 		#endif
 		{
 			currentFeatureInList->grammaticalIsDateOrTime = true;
+			#ifdef GIA_TRANSLATOR_DEBUG
 			//cout << "isDate currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+			#endif
 		}
 
 		for(int grammaticalTenseIndex = 0; grammaticalTenseIndex < GRAMMATICAL_TENSE_NUMBER_OF_TYPES; grammaticalTenseIndex++)
@@ -246,7 +250,9 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 			//if((currentFeatureInList->grammar).substr(0, grammaticalTenseNameLengthsArray[grammaticalTenseIndex]) == grammaticalTenseNameArray[grammaticalTenseIndex])
 			{
 				currentFeatureInList->grammaticalTense = grammaticalTenseIndex;
+				#ifdef GIA_TRANSLATOR_DEBUG
 				//cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalTenseIndex = " << urrentFeatureInList->grammaticalTense << endl;
+				#endif
 			}
 		}
 		for(int grammaticalTenseModifierIndex = 0; grammaticalTenseModifierIndex < GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
@@ -254,9 +260,10 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 			//NB only the first characters of currentFeatureInList->grammar contain the tense type name
 			if((currentFeatureInList->grammar).find(grammaticalTenseModifierNameArray[grammaticalTenseModifierIndex]) != -1)
 			{
-				//cout << "grammaticalTenseModifierNameArray[grammaticalTenseModifierIndex] = " << grammaticalTenseModifierNameArray[grammaticalTenseModifierIndex] << endl;
 				currentFeatureInList->grammaticalTenseModifierArray[grammaticalTenseModifierIndex] = true;
+				#ifdef GIA_TRANSLATOR_DEBUG
 				//cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalTenseModifierIndex true = " << grammaticalTenseModifierArray[grammaticalTenseModifierIndex] << endl;
+				#endif
 			}
 		}
 
@@ -264,10 +271,8 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 		//interpret "present_perfect" relex flag as past tense
 		if(currentFeatureInList->grammaticalTense == GRAMMATICAL_TENSE_PRESENT)
 		{
-			//cout << "a" << endl;
 			if(currentFeatureInList->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PERFECT] == true)
 			{
-				//cout << "b" << endl;
 				currentFeatureInList->grammaticalTense = GRAMMATICAL_TENSE_PAST;
 			}
 		}
@@ -279,14 +284,17 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 			if((currentFeatureInList->grammar).find(grammaticalNumberNameArray[grammaticalNumberIndex]) != -1)
 			{
 				currentFeatureInList->grammaticalNumber = grammaticalNumberIndex;
+				#ifdef GIA_TRANSLATOR_DEBUG
 				//cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalNumberIndex = " << grammaticalNumberNameArray[grammaticalNumberIndex] << endl;
+				#endif
 			}
 		}
 		if((currentFeatureInList->grammar).find(GRAMMATICAL_DEFINITE_NAME) != -1)
 		{
 			currentFeatureInList->grammaticalIsDefinite = GRAMMATICAL_DEFINITE;
+			#ifdef GIA_TRANSLATOR_DEBUG
 			//cout << "isDefinite currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
-
+			#endif
 		}
 
 
@@ -297,7 +305,9 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 			{
 				//NB it will always find "person" in relex grammar string if "person" is existant, but this will be overwritten by "feminine" or "masculine" if this is specified (not possible for bigender names like "joe")
 				currentFeatureInList->grammaticalGender = grammaticalGenderIndex;
+				#ifdef GIA_TRANSLATOR_DEBUG
 				//cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalGenderIndex = " << grammaticalGenderNameArray[grammaticalGenderIndex] << endl;
+				#endif
 			}
 		}
 
@@ -306,14 +316,18 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 		if((currentFeatureInList->grammar).find(FEATURE_GRAMMATICAL_COUNT) != -1)
 		{
 			currentFeatureInList->grammaticalHasCount = true;
+			#ifdef GIA_TRANSLATOR_DEBUG
 			//cout << "hasCount currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+			#endif
 		}
 		*/
 
 		if((currentFeatureInList->grammar).find(GRAMMATICAL_PRONOUN_NAME) != -1)
 		{
 			currentFeatureInList->grammaticalIsPronoun = GRAMMATICAL_PRONOUN;
+			#ifdef GIA_TRANSLATOR_DEBUG
 			//cout << "isPronoun currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+			#endif
 		}
 
 		//fill wordNetPOS array for wordnet - added 26 April 2012
@@ -328,11 +342,9 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 			if((currentFeatureInList->grammar).find(featureRelexFlagTypeArray[featureRelexFlagIndex]) != -1)
 			{
 				currentFeatureInList->NER = featureRelexFlagIndex;
-				/*
 				#ifdef GIA_WORDNET_DEBUG
-				cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex " << featureRelexFlagIndex << " = " << featureRelexFlagTypeArray[featureRelexFlagIndex] << endl;
+				//cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex " << featureRelexFlagIndex << " = " << featureRelexFlagTypeArray[featureRelexFlagIndex] << endl;
 				#endif
-				*/
 			}
 		}
 		for(int i=0; i<FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_TYPES; i++)
@@ -340,19 +352,18 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 			if(currentFeatureInList->NER == featureNERindicatesProperNounTypeArray[i])
 			{
 				currentFeatureInList->grammaticalIsProperNoun = true;
-				/*
 				#ifdef GIA_WORDNET_DEBUG
-				cout << "isProperNoun currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+				//cout << "isProperNoun currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 				#endif
-				*/
 			}
 		}
 		#else
 		if((currentFeatureInList->grammar).find(GRAMMATICAL_PERSON_NAME) != -1)
 		{
 			currentFeatureInList->grammaticalIsProperNoun = GRAMMATICAL_PERSON;
+			#ifdef GIA_TRANSLATOR_DEBUG
 			//cout << "isPerson currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
-
+			#endif
 		}
 		#endif
 
@@ -377,10 +388,11 @@ void extractPastTenseFromPOStag(string * POStag, Feature * feature)
 	}
 	if(pastTenseDetected)
 	{
-		//cout << "ABC2 entityIndex = " << feature->entityIndex << endl;
+		#ifdef GIA_TRANSLATOR_DEBUG
+		//cout << "pastTenseDetected; entityIndex = " << feature->entityIndex << endl;
+		#endif
 		feature->grammaticalTense = GRAMMATICAL_TENSE_PAST;		//fixed in 28 April 2012
 	}
-	//cout << "ABC3" << endl;
 }
 
 //Preconditions: extractGrammaticalInformationStanford()/extractGrammaticalInformationFromPOStag() must be executed before relations (eg aux/cop) are processed, as they may [possibly] overwrite the tenses here established
@@ -502,7 +514,9 @@ void extractPastTense(Feature * featureWithEntityIndex, int entityIndexContainin
 		{
 			if(currentFeatureInList->entityIndex == entityIndexContainingTenseIndication)
 			{
-				//cout << "ABC entityIndex = " << entityIndexContainingTenseIndication << endl;
+				#ifdef GIA_TRANSLATOR_DEBUG
+				//cout << "extractPastTense; entityIndex = " << entityIndexContainingTenseIndication << endl;
+				#endif
 				extractPastTenseFromPOStag(&(currentFeatureInList->stanfordPOS), featureWithEntityIndex);
 			}
 			currentFeatureInList = currentFeatureInList->next;
@@ -549,9 +563,10 @@ void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * cu
 					if(*subjectObjectEntityWithAuxillaryEntityName == currentRelationInList->relationGovernor)	//CHECK THIS; this used to be currentRelationInList->relationDependent [before 1 June 2012]
 					{//this check is redundant
 						currentRelationInList->auxillaryIndicatesDifferentReferenceSet = true;
+						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 						//cout << "\t\t\t-2currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 						//cout << "\t\t\t-2auxillaryIndicatesDifferentReferenceSet = " << currentRelationInList->auxillaryIndicatesDifferentReferenceSet << endl;
-
+						#endif
 					}
 				}
 			#ifndef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILLARY_AND_SET_DIFFERENT_REFERENCE_SET
@@ -584,8 +599,6 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAEn
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
-			//cout << "here1" << endl;
-			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 			//perfect tense extraction:
 			if(currentRelationInList->relationType == RELATION_TYPE_MODAL_AUX)
 			{
@@ -605,7 +618,6 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAEn
 				#endif
 				*/
 
-				//cout << "ABC0a" << endl;
 				#ifdef GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILLARY_TO_SET_TENSE_OF_VERB
 				extractPastTense(featureArrayTemp[entityIndexOfVerb], entityIndexOfAuxillary, currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 				#endif
@@ -631,7 +643,6 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAEn
 				#endif
 				*/
 
-				//cout << "ABC0b" << endl;
 				#ifdef GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILLARY_TO_SET_TENSE_OF_VERB
 				extractPastTense(featureArrayTemp[entityIndexOfVerb], entityIndexOfAuxillary, currentSentenceInList->firstFeatureInList, GIAEntityNodeGrammaticalTenseArray, NLPfeatureParser);
 				#endif
@@ -659,9 +670,10 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAEn
 				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, entityIndexOfNoun, &entityNameOfNoun);
 				#endif
 
-				//cout << "ABC0c" << endl;
+				#ifdef GIA_TRANSLATOR_DEBUG
 				//cout << "entityIndexOfNoun = " << entityIndexOfNoun << endl;
 				//cout << "entityIndexOfCopula = " << entityIndexOfCopula << endl;
+				#endif
 				extractPastTense(featureArrayTemp[entityIndexOfNoun], entityIndexOfCopula, currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 
 			}
@@ -693,12 +705,13 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAEn
 				currentRelationInList->disabled = true;
 				#endif
 
-				//cout << "RELATION_TYPE_DETERMINER = " << RELATION_TYPE_DETERMINER << endl;
-				//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-
 				//eg det(cookie, the) 	the cookie.
 				string determiner = currentRelationInList->relationDependent;
-				//cout << "determiner = " << determiner << endl;
+				#ifdef GIA_TRANSLATOR_DEBUG
+				//cout << "RELATION_TYPE_DETERMINER = " << RELATION_TYPE_DETERMINER << endl;
+				//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+				//cout << "determiner = " << determiner << endl;				
+				#endif				
 				int entityIndexOfDeterminier = currentRelationInList->relationDependentIndex;
 				int entityIndexOfNoun = currentRelationInList->relationGovernorIndex;
 				GIAFeatureTempEntityNodeArray[entityIndexOfDeterminier]->disabled = true;
@@ -710,8 +723,11 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAEn
 					featureArrayTemp[entityIndexOfNoun]->grammaticalIsDefiniteIndexOfDeterminer = currentRelationInList->relationDependentIndex;
 					#endif
 
+					#ifdef GIA_TRANSLATOR_DEBUG
+					//cout << "(determiner == GRAMMATICAL_DETERMINER_DEFINITE)" << endl;
 					//cout << "GIAEntityNodeArray[entityIndexOfDeterminier]->entityName = " << GIAEntityNodeArray[entityIndexOfDeterminier]->entityName << endl;
 					//cout << "GIAEntityNodeArray[entityIndexOfNoun]->entityName = " << GIAEntityNodeArray[entityIndexOfNoun]->entityName << endl;
+					#endif
 				}
 				/*
 				else if(determiner == GRAMMATICAL_DETERMINER_INDEFINITE)
@@ -742,17 +758,17 @@ void applyGrammaticalInfoToAllEntities(bool GIAEntityNodeArrayFilled[], GIAEntit
 	Feature * currentFeatureInList = firstFeatureInSentence;
 	while(currentFeatureInList->next != NULL)
 	{
-		//cout << "w = " << w << endl;
 		if(GIAEntityNodeArrayFilled[w])
 		{
 			GIAEntityNode * entity = GIAEntityNodeArray[w];
+			#ifdef GIA_TRANSLATOR_DEBUG
 			//cout << "entity->entityName = " << entity->entityName << endl;
+			#endif
 			#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
 			entity->wordOrig = currentFeatureInList->word;
 			#endif
 
 			entity->hasAssociatedTime = currentFeatureInList->grammaticalIsDateOrTime;
-			//cout << "entity->hasAssociatedTime = " << entity->hasAssociatedTime << endl;
 
 			for(int grammaticalTenseModifierIndex=0; grammaticalTenseModifierIndex<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
 			{
@@ -772,8 +788,6 @@ void applyGrammaticalInfoToAllEntities(bool GIAEntityNodeArrayFilled[], GIAEntit
 			entity->NERTemp = currentFeatureInList->NER;
 			#ifdef GIA_USE_STANFORD_CORENLP
 			entity->stanfordPOSTemp = currentFeatureInList->stanfordPOS;
-			//cout << "1 entity->entityName = " << entity->entityName << endl;
-			//cout << "1 entity->stanfordPOSTemp = " << entity->stanfordPOSTemp << endl;
 			entity->NormalizedNERTemp = currentFeatureInList->NormalizedNER;
 			entity->TimexTemp = currentFeatureInList->Timex;
 			#endif

@@ -23,7 +23,7 @@
  * File Name: GIAConditionNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p7b 22-September-2012
+ * Project Version: 1p8a 23-September-2012
  *
  *******************************************************************************/
 
@@ -64,8 +64,6 @@ GIATimeConditionNode::~GIATimeConditionNode(void)
 
 string generateDateTimeConditionName(int dayOfMonth, int month, long year)
 {
-	//cout << "as3" << endl;
-
 	char dayOfMonthStringcharstar[20] = "";
 	char monthStringcharstar[20] = "";
 	char yearStringcharstar[20] = "";
@@ -103,7 +101,6 @@ string generateDateTimeConditionName(int dayOfMonth, int month, long year)
 		dateTimeConditionName = dateTimeConditionName + dayOfMonthStringcharstar + "/" + monthStringcharstar + "/" + yearStringcharstar;
 	}
 	return dateTimeConditionName;
-	//cout << "as4" << endl;
 }
 
 long calculateTotalTimeInSeconds(int dayOfMonth, int month, long year)

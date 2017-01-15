@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p7b 22-September-2012
+ * Project Version: 1p8a 23-September-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -382,9 +382,10 @@ string DBgenerateServerName(string * entityName, int fileType)
 	}
 	else
 	{
-		//cout << "db11" << endl;
+		#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 		//cout << "entityName = " << *entityName << endl;
-
+		#endif
+		
 		#ifdef GIA_DATABASE_FILESYSTEM_USE_MULTIPLE_SERVERS
 		char entityFirstCharacter = entityName->at(0);
 		if((entityFirstCharacter < ASCII_TABLE_INDEX_OF_a) || (entityFirstCharacter > ASCII_TABLE_INDEX_OF_z))
@@ -395,7 +396,9 @@ string DBgenerateServerName(string * entityName, int fileType)
 		}
 
 		int entityFirstCharacterIndex = entityFirstCharacter - ASCII_TABLE_INDEX_OF_a;
+		#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 		//cout << "entityFirstCharacterIndex = " << entityFirstCharacterIndex << endl;
+		#endif
 		string serverName = serverNameArray[entityFirstCharacterIndex]; 	//this could be a more complex algorithm; eg serverName = (string)"/mnt/" + serverNameArray[entityFirstCharacterIndex]
 		#else
 		serverName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE;
@@ -429,14 +432,16 @@ string DBgenerateFileName(string * entityName, long idInstance, int connectionTy
 	else
 	{
 		#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-		cout << "*entityName = " << *entityName << endl;
+		//cout << "*entityName = " << *entityName << endl;
 		#endif
 
 		int numberOfEntityNameLevels;
 		if(entityName->length() < GIA_DATABASE_CONCEPT_NAME_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS)
 		{
-			//cout << "DBgenerateFileName error: (entityName.length() < GIA_DATABASE_CONCEPT_NAME_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS)" << endl;
+			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
+			//cout << "DBgenerateFileName: (entityName.length() < GIA_DATABASE_CONCEPT_NAME_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS)" << endl;
 			//cout << "entityName = " << *entityName << endl;
+			#endif
 			numberOfEntityNameLevels = entityName->length();
 		}
 		else
@@ -573,7 +578,6 @@ void openDatabase(bool readFromDatabase)
 	initialiseDBentityNodesTempActiveListComplete();
 	#endif
 
-	//cout << "db1" << endl;
 	DBreadConceptEntityNodesLoadedList();
 
 	if(readFromDatabase)
@@ -587,9 +591,6 @@ void openDatabase(bool readFromDatabase)
 	/*
 	setUseDatabase(GIA_USE_DATABASE_TRUE_READ_INACTIVE);	//OLD: at initialisation (/by default), do not activate read (use active list instead)
 	*/
-
-	//cout << "db2" << endl;
-
 }
 
 void DBreadConceptEntityNodesLoadedList()	//unordered_map<string, bool> *DBconceptEntityNodesLoadedListLocal
@@ -599,7 +600,6 @@ void DBreadConceptEntityNodesLoadedList()	//unordered_map<string, bool> *DBconce
 	#endif
 
 	string conceptEntityNodesListFileName = DBgenerateFileName(NULL, NULL, NULL, GIA_DATABASE_GENERATE_FILENAME_FILE_CONCEPT_ENTITY_NODES_LIST);
-	//cout << "db1b" << endl;
 
 #ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 	ifstream parseFileObject(conceptEntityNodesListFileName.c_str());
@@ -642,7 +642,9 @@ void DBreadConceptEntityNodesLoadedList()	//unordered_map<string, bool> *DBconce
 			#endif
 			if(result > 0)	//&& (result != EOF)
 			{
+				#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 				//cout << "conceptEntityName = " << conceptEntityName << endl;
+				#endif
 				GIAconceptEntityLoaded * newConceptEntityLoaded = new GIAconceptEntityLoaded();
 				newConceptEntityLoaded->loaded = false;
 				newConceptEntityLoaded->numberOfInstances = conceptNumberOfInstances;
@@ -954,6 +956,7 @@ void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 		int result = fscanf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_READ, &(entity->idActiveList), entityNameCharStarTemp, wordOrigCharStarTemp, aliasesCharStarTemp, &(entity->confidence), &isConcept, &isSubstance, &isAction, &isCondition, &hasAssociatedInstance, &hasAssociatedInstanceIsAction, &hasAssociatedInstanceIsCondition, &hasAssociatedTime, &isSubstanceQuality, &disabled, &(entity->conditionType), &(entity->grammaticalNumber), &hasQuantity, &hasMeasure);
 		if(result > 0)	//&& (result != EOF)
 		{
+			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 			/*
 			cout << "\tDBreadEntityNodeFile(): isConcept = " << isConcept << endl;
 			cout << "\tDBreadEntityNodeFile(): isSubstance = " << isSubstance << endl;
@@ -968,12 +971,15 @@ void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 			cout << "\tDBreadEntityNodeFile(): hasQuantity = " << hasQuantity << endl;
 			cout << "\tDBreadEntityNodeFile(): entity->hasMeasure = " << hasMeasure << endl;
 			*/
+			#endif
 
 			entity->entityName = entityNameCharStarTemp;
 			#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
 			entity->wordOrig = DBreplaceBlankString(string(wordOrigCharStarTemp));
+			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 			//cout << "entityNameCharStarTemp = " << entityNameCharStarTemp << endl;
 			//cout << "wordOrigCharStarTemp = " << wordOrigCharStarTemp << endl;
+			#endif
 			#endif
 			#ifdef GIA_SUPPORT_ALIASES
 			string aliasesString = DBreplaceBlankString(string(aliasesCharStarTemp));
@@ -994,6 +1000,7 @@ void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 			entity->hasQuantity = bool(hasQuantity);
 			entity->hasMeasure = bool(hasMeasure);
 
+			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 			/*
 			cout << "\tDBreadEntityNodeFile(): entity->idActiveList = " << entity->idActiveList << endl;
 			cout << "\tDBreadEntityNodeFile(): entity->entityName = " << entity->entityName << endl;
@@ -1013,6 +1020,7 @@ void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 			cout << "\tDBreadEntityNodeFile(): entity->hasQuantity = " << int(entity->hasQuantity) << endl;
 			cout << "\tDBreadEntityNodeFile(): entity->hasMeasure = " << int(entity->hasMeasure) << endl;
 			*/
+			#endif
 		}
 		else
 		{
@@ -1113,7 +1121,9 @@ void writeAndCloseDatabase(vector<GIAEntityNode*> *entityNodesActiveListComplete
 
 	DBwriteConceptEntityNodesLoadedList();
 
+	#ifdef GIA_DATABASE_DEBUG
 	//cout << "writeAndCloseDatabase() finish" << endl;
+	#endif
 }
 
 void writeDatabase(vector<GIAEntityNode*> *entityNodesActiveListComplete)
@@ -1144,7 +1154,9 @@ void writeDatabase(vector<GIAEntityNode*> *entityNodesActiveListComplete)
 
 					if(entityNode->added || entityNode->entityVectorConnectionsRemovedArray[i])
 					{
-						//cout << "at1" << endl;
+						#ifdef GIA_DATABASE_DEBUG
+						//cout << "DBwriteVectorConnectionsReferences" << endl;
+						#endif
 						//write all vector connection references
 						DBwriteVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, i, &(entityNode->entityVectorConnectionsArray[i]));
 					}
@@ -1156,12 +1168,16 @@ void writeDatabase(vector<GIAEntityNode*> *entityNodesActiveListComplete)
 							GIAEntityConnection * connection = *connectionIter;
 							if(connection->modified)
 							{//modified; overwrite vector connection reference
+								#ifdef GIA_DATABASE_DEBUG
 								//cout << "DBmodifyVectorConnectionsReference" << endl;
+								#endif
 								DBmodifyVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance, referenceIndex);
 							}
 							else if(connection->added)
 							{//added; append vector connection reference
+								#ifdef GIA_DATABASE_DEBUG
 								//cout << "DBappendVectorConnectionsReference" << endl;
+								#endif
 								DBappendVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance);
 							}
 							referenceIndex++;
@@ -1170,10 +1186,13 @@ void writeDatabase(vector<GIAEntityNode*> *entityNodesActiveListComplete)
 				}
 				else
 				{
-					/*this may be the case when joining reference sets - so do not throw error
-					cout << "writeDatabase() error: entityVectorConnectionsReferenceListLoadedArray[i] != true" << endl;
+					//this may be the case when joining reference sets - so do not throw error
+					#ifdef GIA_DATABASE_DEBUG
+					/*
+					cout << "writeDatabase(): entityVectorConnectionsReferenceListLoadedArray[i] != true" << endl;
 					cout << "entityNode = " << entityNode->entityName << endl;
 					*/
+					#endif
 				}
 			}
 		#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
@@ -1181,10 +1200,11 @@ void writeDatabase(vector<GIAEntityNode*> *entityNodesActiveListComplete)
 		#endif
 	}
 
+	#ifdef GIA_DATABASE_DEBUG
 	//cout << "writeDatabase() finish" << endl;
+	#endif
 
-
-	/* this is done in DBwriteConceptEntityNodesLoadedList()
+	/* OLD: this is done in DBwriteConceptEntityNodesLoadedList()
 	string conceptEntityName = conceptEntityNodesLoadedListIterator->first;
 	const char * conceptEntityNameCharStar = conceptEntityName.c_str();
 	writeFileObject.write(conceptEntityNameCharStar, conceptEntityName.length());
@@ -1212,7 +1232,9 @@ void DBwriteEntityNode(string * entityName, long idInstance, GIAEntityNode * ent
 		string timeConditionFileName = DBgenerateFileName(entityName, idInstance, GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_TIME_CONDITION_NODE);
 		DBwriteTimeConditionNodeFile(&timeConditionFileName, entityNode->timeConditionNode);
 	}
+	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	//cout << "DBwriteEntityNode finish" << endl;
+	#endif
 }
 
 
@@ -1237,7 +1259,6 @@ void DBwriteEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 	}
 	else
 	{
-		//cout << "GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE = " << GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE << endl;
 		string wordOrig = "";
 		wordOrig = DBaddBlankString(entity->wordOrig);
 		string aliasesString = "";
@@ -1248,17 +1269,8 @@ void DBwriteEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 
 		fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str(), wordOrig.c_str(), aliasesString.c_str(), entity->confidence, int(entity->isConcept), int(entity->isSubstance), int(entity->isAction), int(entity->isCondition), int(entity->hasAssociatedInstance), int(entity->hasAssociatedInstanceIsAction), int(entity->hasAssociatedInstanceIsCondition), int(entity->hasAssociatedTime), int(entity->isSubstanceQuality), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), int(entity->hasMeasure));
 		//fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str());
-		//cout << "sf" << endl;
 		fclose(pFile);
 	}
-
-	/*
-	ofstream writeFileObject(entityFileName->c_str());
-
-	writeFileObject.put(CHAR_NEWLINE);
-
-	writeFileObject.close();
-	*/
 }
 
 //this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
@@ -1441,7 +1453,9 @@ void DBwriteConceptEntityNodesLoadedList()	//unordered_map<string, bool> *DBconc
 	for(unordered_map<string, bool>::iterator conceptEntityNodesLoadedListIterator = DBconceptEntityNodesLoadedList->begin(); conceptEntityNodesLoadedListIterator != DBconceptEntityNodesLoadedList->end(); conceptEntityNodesLoadedListIterator++)
 	{
 		string conceptEntityName = conceptEntityNodesLoadedListIterator->first;
+		#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 		//cout << "conceptEntityName = " << conceptEntityName << endl;
+		#endif
 		const char * conceptEntityNameCharStar = conceptEntityName.c_str();
 		writeFileObject.write(conceptEntityNameCharStar, conceptEntityName.length());
 		/*
@@ -1525,7 +1539,9 @@ long DBreadConceptEntityNumberOfInstances(string * entityNodeName)		//OLD: GIAEn
 	int idInstance = GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE;
 	int connectionType = GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES;
 	long numberOfReferences = DBreadNumberOfReferencesInList(entityNodeName, idInstance, connectionType);
+	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBreadConceptEntityNumberOfInstances(): numberOfReferences = " << numberOfReferences << endl;
+	#endif
 	return numberOfReferences;
 }
 
@@ -1541,10 +1557,13 @@ long DBreadNumberOfReferencesInList(string * entityNodeName, long idInstance, in
 	fseek(pFile, 0, SEEK_END);	//seek to the end of the file
 	long fileSize = ftell(pFile);	//get the file size in bytes
 
-	cout << "fileSize = " << fileSize << endl;
 	long numberOfReferences = fileSize/GIA_DATABASE_REFERENCES_FILE_NUMBER_CHARACTERS_PER_LINE;
+	
+	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
+	cout << "fileSize = " << fileSize << endl;	
 	cout << "numberOfReferences = " << numberOfReferences << endl;
-
+	#endif
+	
 	#else
 	cout << "error: readNumberOfReferencesInList() has only been coded with GIA_DATABASE_SAVE_WITH_LEADING_ZEROS" << endl;
 	#endif
@@ -1600,10 +1619,12 @@ GIAEntityNode * findEntityInActiveConceptList(string * entityName, long idInstan
 						GIAEntityNode * currentInstance = currentConnection->entity;
 						if(currentConnection->idInstance == idInstance)		//OR currentInstance->idInstance
 						{
+							#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 							cout << "findEntityInActiveConceptList(): found alreadyInRAM" << endl;
 							cout << "currentInstance->entityName = " << currentInstance->entityName << endl;
 							cout << "currentInstance->idInstance = " << currentInstance->idInstance << endl;
-
+							#endif
+							
 							*alreadyInRAM = true;
 							entityNodeFoundInRAM = currentInstance;
 						}

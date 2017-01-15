@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p7b 22-September-2012
+ * Project Version: 1p8a 23-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -520,8 +520,11 @@
 
 #define GIA_APPLY_BUG_WORKAROUND_WHERE_A_CONCEPT_ENTITY_OF_INSTANCE_0_CAN_HAVE_NODE_DEFINING_INSTANCE
 #define GIA_FREE_MEMORY
-#define GIA_FREE_MEMORY2
-#define GIA_FREE_MEMORY3
+#ifdef GIA_FREE_MEMORY
+	#define GIA_FREE_MEMORY1
+	#define GIA_FREE_MEMORY2
+	#define GIA_FREE_MEMORY3
+#endif
 
 #define GIA_SUPPORT_INPUT_FILE_LISTS
 #define GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
@@ -619,6 +622,10 @@
 //#define GIA_NLP_DEBUG
 //#define GIA_DRAW_DEBUG
 //#define GIA_SEMANTIC_NET_XML_DEBUG
+//#define GIA_SEMANTIC_NET_CXL_DEBUG
+//#define GIA_FREE_MEMORY_DEBUG
+//#define GIA_MAIN_DEBUG
+//#define GIA_PRONOUN_REFERENCING_DEBUG  
 
 //DebugOLD;
 //#define GIA_WORDNET_DEBUG_OUTPUT_SYNONYMNS	//Do not enable else will prematurely exit

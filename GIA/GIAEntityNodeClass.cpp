@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p7b 22-September-2012
+ * Project Version: 1p8a 23-September-2012
  *
  *******************************************************************************/
 
@@ -233,8 +233,9 @@ GIAEntityNode::~GIAEntityNode(void)
 	{
 		for(vector<GIAEntityConnection*>::iterator connectionIter = entityVectorConnectionsArray[i].begin(); connectionIter != entityVectorConnectionsArray[i].end(); connectionIter++)
 		{
-			//cout << "deleting: vector connection: " << endl;
-			//cout << "deleting: vector connection: " << (*connectionIter)->entityName << endl;
+			#ifdef GIA_FREE_MEMORY_DEBUG
+			cout << "deleting: vector connection: " << (*connectionIter)->entityName << endl;
+			#endif
 			delete *connectionIter;
 		}
 		entityVectorConnectionsArray[i].clear();
@@ -252,7 +253,9 @@ void deleteEntitiesInEntityNodeList(vector<GIAEntityNode*> * entityNodesActiveLi
 	for(vector<GIAEntityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 	{
 		GIAEntityNode * entityNode = *entityIter;
-		//cout << "deleting: entityNode: " << entityNode->entityName << endl;
+		#ifdef GIA_FREE_MEMORY_DEBUG
+		cout << "deleting: entityNode: " << entityNode->entityName << endl;
+		#endif
 		delete entityNode;
 	}
 }
