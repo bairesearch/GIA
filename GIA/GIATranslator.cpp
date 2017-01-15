@@ -36,6 +36,7 @@ string relationFunctionCompositionNameArray[RELATION_FUNCTION_COMPOSITION_NUMBER
 string relationFunctionDefinitionNameArray[RELATION_FUNCTION_DEFINITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_DEFINITION_1};
 
 string relationTypeObjectSpecialConditionNameArray[RELATION_TYPE_OBJECT_SPECIAL_CONDITION_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE};
+string relationTypeObjectSpecial2ConditionNameArray[RELATION_TYPE_OBJECT_SPECIAL2_CONDITION_NUMBER_OF_TYPES] = {RELATION_TYPE_COMPLIMENT_TO_DO};
 
 string relationTypeComplementsNameArray[RELATION_TYPE_COMPLEMENTS_NUMBER_OF_TYPES] = {RELATION_TYPE_COMPLIMENT_TO_BE, RELATION_TYPE_COMPLIMENT_TO_DO};
 
@@ -1018,9 +1019,9 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 		//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
 		if(actionOrPropertyConditionEntity->hasAssociatedInstanceTemp)
 		{
-			cout << "actionOrPropertyConditionEntity->hasAssociatedInstanceTemp" << endl;
+			//cout << "actionOrPropertyConditionEntity->hasAssociatedInstanceTemp" << endl;
 			actionOrPropertyConditionEntity = actionOrPropertyConditionEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-			cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl; 
+			//cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl; 
 		}
 
 		if(passedPropositionTime)
@@ -2201,7 +2202,16 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								partnerTypeRequiredFound = true;
 								partnerTypeObjectSpecialConditionFound = true;
 							}
-						}							
+						}		
+
+						for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL2_CONDITION_NUMBER_OF_TYPES; i++)
+						{
+							if(currentRelationInList2->relationType == relationTypeObjectSpecial2ConditionNameArray[i])
+							{
+								partnerTypeRequiredFound = true;
+							}
+						}
+																	
 					}
 					int relationFunctionIndex2 = currentRelationInList2->relationFunctionIndex;
 					int relationArgumentIndex2 = currentRelationInList2->relationArgumentIndex;
