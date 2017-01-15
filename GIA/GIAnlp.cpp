@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k9a 07-September-2015
+ * Project Version: 2l1a 14-October-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -334,8 +334,8 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIApar
 								if(!onlyParseIfCorpusLookupFailed || !(currentSentence->semanticParserSuccessful))
 								{
 									//locate and record sentence index
-									XMLParserAttribute* firstAttributeInSentenceTag = currentTag->firstAttribute;
-									XMLParserAttribute* currentAttributeInSentenceTag = firstAttributeInSentenceTag;
+									XMLparserAttribute* firstAttributeInSentenceTag = currentTag->firstAttribute;
+									XMLparserAttribute* currentAttributeInSentenceTag = firstAttributeInSentenceTag;
 									bool foundSentenceIndexAttribute = false;
 									while(currentAttributeInSentenceTag->nextAttribute != NULL)
 									{
@@ -1269,10 +1269,10 @@ void outputInternalRelationsInRelexFormat(string* nameOfRelexCompactFormatCFFfil
 	currentTagL0->name = Relex_CFF_XML_TAG_nlparse;
 	XMLparserTag* newTag0 = new XMLparserTag();	//had to add a null tag
 	currentTagL0->nextTag = newTag0;
-	XMLParserAttribute* currentAttribute = currentTagL0->firstAttribute;
+	XMLparserAttribute* currentAttribute = currentTagL0->firstAttribute;
 	currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_xmlns;
 	currentAttribute->value = Relex_CFF_XML_ATTRIBUTE_xmlns_DEFAULT_VALUE;
-	XMLParserAttribute* newAttribute = new XMLParserAttribute();
+	XMLparserAttribute* newAttribute = new XMLparserAttribute();
 	currentAttribute->nextAttribute = newAttribute;
 
 	XMLparserTag* firstTagL1 = new XMLparserTag();
@@ -1298,7 +1298,7 @@ void outputInternalRelationsInRelexFormat(string* nameOfRelexCompactFormatCFFfil
 	currentAttribute = currentTagL1->firstAttribute;
 	currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_url;
 	currentAttribute->value = *originalInputFileName;
-	newAttribute = new XMLParserAttribute();
+	newAttribute = new XMLparserAttribute();
 	currentAttribute->nextAttribute = newAttribute;
 	currentTagL1 = currentTagL1->nextTag;
 	newTag1 = new XMLparserTag();
@@ -1331,12 +1331,12 @@ void outputInternalRelationsInRelexFormat(string* nameOfRelexCompactFormatCFFfil
 			currentAttribute = currentTagL1b->firstAttribute;
 			currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_index;
 			currentAttribute->value = sentenceIndexString;
-			newAttribute = new XMLParserAttribute();
+			newAttribute = new XMLparserAttribute();
 			currentAttribute->nextAttribute = newAttribute;
 			currentAttribute = currentAttribute->nextAttribute;
 			currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_parses;
 			currentAttribute->value = "1";
-			newAttribute = new XMLParserAttribute();
+			newAttribute = new XMLparserAttribute();
 			currentAttribute->nextAttribute = newAttribute;
 
 			XMLparserTag* currentTagL2 = firstTagL2;
@@ -1346,7 +1346,7 @@ void outputInternalRelationsInRelexFormat(string* nameOfRelexCompactFormatCFFfil
 			currentAttribute = currentTagL2->firstAttribute;
 			currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_id;
 			currentAttribute->value = "1";
-			newAttribute = new XMLParserAttribute();
+			newAttribute = new XMLparserAttribute();
 			currentAttribute->nextAttribute = newAttribute;
 
 			XMLparserTag* currentTagL3 = firstTagL3;

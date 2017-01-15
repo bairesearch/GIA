@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k9a 07-September-2015
+ * Project Version: 2l1a 14-October-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -446,7 +446,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 			}
 			else if(currentConfigurationTag->name == RULES_XML_TAG_assert)
 			{//store especially defined conditions for pre/post processing of DepRel/Entity interpretation:
-				XMLParserAttribute* assertAttribute = currentConfigurationTag->firstAttribute;
+				XMLparserAttribute* assertAttribute = currentConfigurationTag->firstAttribute;
 				if(assertAttribute->name == RULES_XML_ATTRIBUTE_variable)
 				{
 					if(assertAttribute->value == "NLPfeatureParserStanfordCoreNLP")
@@ -729,7 +729,7 @@ bool genericDepRelInterpretationApplySpecialCase(GIAentityCharacteristic* entity
 bool genericDepRelInterpretationApplyOptions(GIAgenericDepRelInterpretationParameters* paramDepRel, XMLparserTag* xmlTag, int REL, int REL_ENT, int FUNC_ENT, int swapIndex)
 {
 	bool result = true;
-	XMLParserAttribute* currentAttribute = xmlTag->firstAttribute;
+	XMLparserAttribute* currentAttribute = xmlTag->firstAttribute;
 	while(currentAttribute->nextAttribute != NULL)
 	{
 		if(!genericDepRelInterpretationApplyOption(paramDepRel, currentAttribute, REL, REL_ENT, FUNC_ENT, swapIndex))
@@ -741,7 +741,7 @@ bool genericDepRelInterpretationApplyOptions(GIAgenericDepRelInterpretationParam
 	return result;
 }
 
-bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParameters* paramDepRel, XMLParserAttribute* xmlAttribute, int REL, int REL_ENT, int FUNC_ENT, int swapIndex)
+bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParameters* paramDepRel, XMLparserAttribute* xmlAttribute, int REL, int REL_ENT, int FUNC_ENT, int swapIndex)
 {
 	bool foundMatch = false;
 
@@ -860,7 +860,7 @@ bool genericEntityInterpretationApplySpecialCase(GIAentityCharacteristic* entity
 bool genericEntityInterpretationApplyOptions(GIAgenericEntityInterpretationParameters* paramEntity, XMLparserTag* xmlTag)
 {
 	bool result = true;
-	XMLParserAttribute* currentAttribute = xmlTag->firstAttribute;
+	XMLparserAttribute* currentAttribute = xmlTag->firstAttribute;
 	while(currentAttribute->nextAttribute != NULL)
 	{
 		if(!genericEntityInterpretationApplyOption(paramEntity, currentAttribute))
@@ -871,7 +871,7 @@ bool genericEntityInterpretationApplyOptions(GIAgenericEntityInterpretationParam
 	}
 	return result;
 }
-bool genericEntityInterpretationApplyOption(GIAgenericEntityInterpretationParameters* paramEntity, XMLParserAttribute* xmlAttribute)
+bool genericEntityInterpretationApplyOption(GIAgenericEntityInterpretationParameters* paramEntity, XMLparserAttribute* xmlAttribute)
 {
 	bool foundMatch = false;
 
@@ -893,7 +893,7 @@ bool genericEntityInterpretationApplyOption(GIAgenericEntityInterpretationParame
 }
 
 
-bool genericEntityInterpretationApplyOptionbool(bool* paramVal, XMLParserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch)
+bool genericEntityInterpretationApplyOptionbool(bool* paramVal, XMLparserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch)
 {
 	bool result = false;
 	if(xmlAttribute->name == iterationVariable)
@@ -920,7 +920,7 @@ bool genericEntityInterpretationApplyOptionbool(bool* paramVal, XMLParserAttribu
 	}
 	return result;
 }
-bool genericEntityInterpretationApplyOptionint(int* paramVal, XMLParserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch, bool subtractOne)
+bool genericEntityInterpretationApplyOptionint(int* paramVal, XMLparserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch, bool subtractOne)
 {
 	bool result = false;
 	if(xmlAttribute->name == iterationVariable)
@@ -938,7 +938,7 @@ bool genericEntityInterpretationApplyOptionint(int* paramVal, XMLParserAttribute
 	}
 	return result;
 }
-bool genericEntityInterpretationApplyOptionstring(string* paramVal, XMLParserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch)
+bool genericEntityInterpretationApplyOptionstring(string* paramVal, XMLparserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch)
 {
 	bool result = false;
 	if(xmlAttribute->name == iterationVariable)
@@ -952,7 +952,7 @@ bool genericEntityInterpretationApplyOptionstring(string* paramVal, XMLParserAtt
 	}
 	return result;
 }
-bool genericEntityInterpretationApplyOptionstringarray(string** paramVal, XMLParserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch)
+bool genericEntityInterpretationApplyOptionstringarray(string** paramVal, XMLparserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch)
 {
 	bool result = false;
 	if(xmlAttribute->name == iterationVariable)

@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k9a 07-September-2015
+ * Project Version: 2l1a 14-October-2015
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -528,7 +528,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 {
 	bool result = true;
 
-	XMLParserAttribute* currentAttribute = firstTagInEntityNode->firstAttribute;
+	XMLparserAttribute* currentAttribute = firstTagInEntityNode->firstAttribute;
 
 	bool idFound = false;
 	bool entityNameFound = false;
@@ -998,7 +998,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 			#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 			//cout <<  entityVectorConnectionXMLtagNameCrossReferenceNodeTypeArray[entityVectorConnectionIndex] << " nodeReference: " << endl;
 			#endif
-			XMLParserAttribute* currentAttribute = currentTagUpdatedL1->firstAttribute;
+			XMLparserAttribute* currentAttribute = currentTagUpdatedL1->firstAttribute;
 
 			long idActiveList = INT_DEFAULT_VALUE;
 			GIAentityConnection* newConnection = new GIAentityConnection();
@@ -1133,7 +1133,7 @@ bool parseTimeConditionNodeTag(XMLparserTag* firstTagInTimeConditionNode, GIAtim
 {
 	bool result = true;
 
-	XMLParserAttribute* currentAttribute = firstTagInTimeConditionNode->firstAttribute;
+	XMLparserAttribute* currentAttribute = firstTagInTimeConditionNode->firstAttribute;
 
 	bool conditionName = false;
 	bool tenseFound = false;
@@ -1412,7 +1412,7 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentTagL1->firstLowerLevelTag = firstTagL2;
 	XMLparserTag* currentTagL2 = currentTagL1->firstLowerLevelTag;
 
-	XMLParserAttribute* currentAttribute = currentTagL1->firstAttribute;
+	XMLparserAttribute* currentAttribute = currentTagL1->firstAttribute;
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_id;
 	/*
@@ -1772,7 +1772,7 @@ bool generateXMLconditionTimeNodeTagList(XMLparserTag* firstTagInConditionTimeNo
 {
 	bool result = true;
 
-	XMLParserAttribute* currentAttribute = firstTagInConditionTimeNode->firstAttribute;
+	XMLparserAttribute* currentAttribute = firstTagInConditionTimeNode->firstAttribute;
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_conditionName;
 	currentAttribute->value = conditionTimeNode->conditionName;

@@ -26,7 +26,7 @@
  * File Name: GIAcxlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k9a 07-September-2015
+ * Project Version: 2l1a 14-October-2015
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  *
@@ -66,7 +66,7 @@ bool writeCmapToolsCXLfile(string xmlFileName, vector<GIAentityNode*>* entityNod
 	XMLparserTag* newTag0 = new XMLparserTag();	//had to add a null tag
 	currentTagL0->nextTag = newTag0;
 
-	XMLParserAttribute* currentAttribute = currentTagL0->firstAttribute;
+	XMLparserAttribute* currentAttribute = currentTagL0->firstAttribute;
 
 		currentAttribute->name = NET_CXL_ATTRIBUTE_xmlns;
 		currentAttribute->value = NET_CXL_ATTRIBUTE_xmlns_DEFAULT_VALUE;
@@ -342,7 +342,7 @@ XMLparserTag* generateCXLentityNodeTag(XMLparserTag* currentTagL1, string entity
 	currentTagL1->firstLowerLevelTag = firstTagL2;
 	XMLparserTag* currentTagL2 = currentTagL1->firstLowerLevelTag;
 
-	XMLParserAttribute* currentAttribute = currentTagL1->firstAttribute;
+	XMLparserAttribute* currentAttribute = currentTagL1->firstAttribute;
 
 	currentAttribute->name = NET_CXL_ATTRIBUTE_id;
 	currentAttribute->value = convertLongToString(entityID);
@@ -688,12 +688,12 @@ XMLparserTag* generateCXLconnectionNodeTagAndLinkingPhraseTags(XMLparserTag* cur
 		{
 			int currentFromIDinList[2];
 			int currentToIDinList[2];
-			XMLParserAttribute* firstAttributeInList[2];
+			XMLparserAttribute* firstAttributeInList[2];
 			firstAttributeInList[0] = currentTagInList->firstAttribute;
 			firstAttributeInList[1] = currentTagInList->nextTag->firstAttribute;
 			for(int i=0; i<2; i++)
 			{
-				XMLParserAttribute* currentAttributeInList = firstAttributeInList[i];
+				XMLparserAttribute* currentAttributeInList = firstAttributeInList[i];
 				while(currentAttributeInList->nextAttribute != NULL)
 				{
 					if(currentAttributeInList->name == NET_CXL_TAG_fromid)
@@ -761,7 +761,7 @@ XMLparserTag* generateCXLconnectionNodeTag(XMLparserTag* currentTagL1, long from
 	currentTagL1->firstLowerLevelTag = firstTagL2;
 	XMLparserTag* currentTagL2 = currentTagL1->firstLowerLevelTag;
 
-	XMLParserAttribute* currentAttribute = currentTagL1->firstAttribute;
+	XMLparserAttribute* currentAttribute = currentTagL1->firstAttribute;
 
 	currentAttribute->name = NET_CXL_TAG_fromid;
 	currentAttribute->value = convertLongToString(fromID);
