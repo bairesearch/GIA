@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r1a 12-November-2012
+ * Project Version: 1r2a 12-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -490,13 +490,12 @@ void defineSubstancesNounsWithAdjectives(Sentence * currentSentenceInList, GIAEn
 				bool passed3 = isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(currentRelationInList, GIAEntityNodeArray, currentRelationInList->relationGovernorIndex, NLPdependencyRelationsType);
 
 				if(passed3)
-				{
+				{					
 					//create a new substance for the entity and assign a substance definition entity if not already created
 					string thingName = currentRelationInList->relationGovernor;
 					string substanceName = currentRelationInList->relationDependent;
 					int thingIndex = currentRelationInList->relationGovernorIndex;
 					int substanceIndex = currentRelationInList->relationDependentIndex;
-
 
 					GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
 					GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
@@ -509,6 +508,56 @@ void defineSubstancesNounsWithAdjectives(Sentence * currentSentenceInList, GIAEn
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
+	
+	#ifdef GIA_TRANSLATOR_DEFINE_NOUNS_WITH_PRENOMINAL_MODIFIERS_AS_SUBSTANCES
+	currentRelationInList = currentSentenceInList->firstRelationInList;
+ 	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			bool passed = false;
+			for(int i=0; i<RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypePrenominalModifierNameArray[i])
+				{
+					passed = true;
+				}
+			}
+			if(passed)
+			{
+				#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
+				//create a new substance for the entity and assign a substance definition entity if not already created
+				string thingName = currentRelationInList->relationGovernor;
+				string substanceName = currentRelationInList->relationDependent;
+				int thingIndex = currentRelationInList->relationGovernorIndex;
+				int substanceIndex = currentRelationInList->relationDependentIndex;
+
+				GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
+				GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
+
+				GIAEntityNodeArray[thingIndex] = addSubstanceToSubstanceDefinition(thingEntity);
+				#else
+				//create a new substance for the entity and assign a substance definition entity if not already created
+				string thingName = currentRelationInList->relationDependent;
+				string substanceName = currentRelationInList->relationGovernor;
+				int thingIndex = currentRelationInList->relationDependentIndex;
+				int substanceIndex = currentRelationInList->relationGovernorIndex;
+
+				GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
+				GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
+
+				GIAEntityNodeArray[thingIndex] = addSubstanceToSubstanceDefinition(thingEntity);				
+				
+				#endif	
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}
+	#endif	
 }
 
 void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
@@ -814,13 +863,13 @@ void defineSubstanceConcepts(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GI
 				if(!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)
 				{
 					//cout << "thingEntity->entityName = " << thingEntity->entityName << endl;			
-					//cout << "(!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)" << endl;
+					//cout << "\t(!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)" << endl;
 					thingEntity->isSubstanceConcept = true;
 				}
 				if(featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation)
 				{
 					//cout << "thingEntity->entityName = " << thingEntity->entityName << endl;
-					//cout << "(featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation)" << endl;			
+					//cout << "\t(featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation)" << endl;			
 					thingEntity->isSubstanceConcept = true;
 				}
 				#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS_AND_PROPERNOUNS
@@ -832,13 +881,13 @@ void defineSubstanceConcepts(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GI
 				if(thingFeatureIsPronoun)
 				{
 					//cout << "thingEntity->entityName = " << thingEntity->entityName << endl;
-					//cout << "thingFeatureIsPronoun" << endl;
+					//cout << "\tthingFeatureIsPronoun" << endl;
 					thingEntity->isSubstanceConcept = true;
 				}
 				if(thingFeatureIsProperNoun)
 				{
 					//cout << "thingEntity->entityName = " << thingEntity->entityName << endl;
-					//cout << "thingFeatureIsPronoun" << endl;
+					//cout << "\tthingFeatureIsProperNoun" << endl;
 					thingEntity->isSubstanceConcept = true;
 				}	
 				#endif

@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r1a 12-November-2012
+ * Project Version: 1r2a 12-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -326,9 +326,9 @@ using namespace std;
 //substances (possessive relationships)
 #define RELATION_TYPE_POSSESSIVE "_poss"	//eg his bike	[bike him]		/its bike
 #define RELATION_TYPE_PRENOMIAL_MODIFIER "_nn"
-#ifdef GIA_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY
+#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
 	#define RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES (1)
-	#define RELATION_TYPE_POSSESSIVE_REVERSED_NUMBER_OF_TYPES (1)
+	#define RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES (1)
 #else
 	#define RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES (2)
 #endif
@@ -847,9 +847,9 @@ static string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES
 static string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT};
 #endif
 static string relationTypeAdjectiveNameArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_PREDADJ, RELATION_TYPE_ADJECTIVE_ADVMOD};
-#ifdef GIA_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY
+#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
 static string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_POSSESSIVE};
-static string relationTypePossessiveReversedNameArray[RELATION_TYPE_POSSESSIVE_REVERSED_NUMBER_OF_TYPES] = {RELATION_TYPE_PRENOMIAL_MODIFIER};
+static string relationTypePrenominalModifierNameArray[RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES] = {RELATION_TYPE_PRENOMIAL_MODIFIER};
 #else
 static string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_POSSESSIVE, RELATION_TYPE_PRENOMIAL_MODIFIER};
 #endif
