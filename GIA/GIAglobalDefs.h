@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k4a 12-May-2012
+ * Project Version: 1k5a 14-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific version of shared globals (replace if compiling other projects)
  *
@@ -18,7 +18,7 @@
 //#define GIA_DISABLE_REFERENCING		//default: off	{this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}
 //#define GIA_STANFORD_CORE_NLP_DO_NOT_USE_CODEPENDENCIES	//default: off
 #ifndef GIA_STANFORD_CORE_NLP_DO_NOT_USE_CODEPENDENCIES
-	//#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL	//need to test enabling this
+	#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL	//need to test enabling this
 #endif
 #define WORDNET_SEARCH_RELATED_SYNSETS
 #define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		//{//this should only be enabled with Relex??} 	//this was (effectively) disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
@@ -43,7 +43,6 @@
 //#define GIA_DATABASE_DEBUG
 //#define GIA_QUERY_DEBUG
 //#define GIA_SEMANTIC_NET_XML_DEBUG
-
 
 //Wordnet
 #define USE_WORDNET	(takes into account synonymns) 

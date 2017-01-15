@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k4a 12-May-2012
+ * Project Version: 1k5a 14-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -380,7 +380,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 #ifdef GIA_USE_STANFORD_CORENLP
 void linkAllReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAConceptNodeArray[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, StanfordCoreNLPCoreference * firstCoreferenceInList, Feature * featureArrayTemp[])
 {
-	//cout << "linkAllReferencesStanfordCoreNLP(): error - function not yet coded" << endl;
+	//cout << "linkAllReferencesStanfordCoreNLP()" << endl;
 	//exit(0); 
 	StanfordCoreNLPCoreference * currentCoreferenceInList = firstCoreferenceInList;
 	while(currentCoreferenceInList->next != NULL)
@@ -429,15 +429,17 @@ void linkAllReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 										long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();								
 										GIAEntityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &entityName, &entityAlreadyExistant, &entityIndex, false, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
 
-										//cout << "entityName = " << entityName << endl;
-										//cout << "referenceSourceSentenceIndex = " << referenceSourceSentenceIndex << endl;
-										//cout << "referenceSourceEntityNodeIndex = " << referenceSourceEntityNodeIndex << endl;
-
+										/*
+										cout << "\tentityName = " << entityName << endl;
+										cout << "\treferenceSourceSentenceIndex = " << referenceSourceSentenceIndex << endl;
+										cout << "\treferenceSourceEntityNodeIndex = " << referenceSourceEntityNodeIndex << endl;
+										*/
+										
 										if(entityAlreadyExistant)
 										{
 											referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
 
-											//cout << "referenceSource->entityName = " << referenceSource->entityName << endl;										
+											//cout << "\t\treferenceSource->entityName = " << referenceSource->entityName << endl;										
 											foundReferenceSource = true;
 										}
 
@@ -468,9 +470,12 @@ void linkAllReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 					
 					if(currentMentionInList->sentence == currentSentenceInList->sentenceIndex)
 					{
+						//cout << "ad1" << endl;
+						
 						int currentSentenceEntityNodeIndex = currentMentionInList->head;
 						if(GIAEntityNodeArrayFilled[currentSentenceEntityNodeIndex])
 						{
+							//cout << "ad2" << endl;
 							GIAEntityNode * reference = GIAConceptNodeArray[currentSentenceEntityNodeIndex];
 							
 							bool coreferenceIsPronoun = false;
@@ -499,12 +504,26 @@ void linkAllReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 							#ifndef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
 							else
 							{
+								//cout << "ad3" << endl;
+								
 								//now find the property in the referenceSource concept entity that matches the referenceSource sentence/entity index
 								for(vector<GIAEntityNode*>::iterator entityIter = referenceSource->AssociatedInstanceNodeList.begin(); entityIter != referenceSource->AssociatedInstanceNodeList.end(); entityIter++) 
 								{
+									//cout << "ad4" << endl;
+									
 									GIAEntityNode * property = *entityIter;
+									/*
+									cout << "property->sentenceIndexTemp = " << property->sentenceIndexTemp << endl;
+									cout << "property->entityIndexTemp = " << property->entityIndexTemp << endl;
+									cout << "referenceSourceSentenceIndex = " << referenceSourceSentenceIndex << endl;
+									cout << "referenceSourceEntityNodeIndex = " << referenceSourceEntityNodeIndex << endl;
+									*/
 									if((property->sentenceIndexTemp == referenceSourceSentenceIndex) && (property->entityIndexTemp == referenceSourceEntityNodeIndex))
 									{
+										#ifdef GIA_TRANSLATOR_DEBUG
+										cout << "NonPronoun/property referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
+										#endif
+										
 										//found the property in the referenceSource concept entity that matches the referenceSource sentence/entity index 
 										//now only link them
 										#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
