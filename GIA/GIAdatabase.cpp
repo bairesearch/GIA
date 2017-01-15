@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r10a 28-November-2012
+ * Project Version: 1r10b 28-November-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -610,47 +610,72 @@ void DBreadDatabase(vector<GIAentityNode*> *entityNodesActiveListComplete, unord
 		cout << "\t\tconceptEntityLoaded->numberOfInstances = " << conceptEntityLoaded->numberOfInstances << endl;
 		#endif		
 
-		//load the concept node from the database into RAM
-		GIAentityNode* conceptEntityNode = new GIAentityNode();
-		DBreadConceptEntityNode(&conceptEntityName, conceptEntityNode);
-		entityNodesActiveListConcepts->insert(pair<string, GIAentityNode*>(conceptEntityName, conceptEntityNode));
-		addEntityNodesActiveListCompleteFastIndexDBcache(conceptEntityNode);
-		
-		#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
-		conceptEntityNodesLoadedListIterator->second = true;
-		#else
-		conceptEntityLoaded->loaded = true;
-		conceptEntityNode->conceptEntityLoaded = conceptEntityLoaded;
-		#endif
-		#ifdef GIA_DATABASE_DEBUG
-		cout << "   conceptEntityNode->entityName = " << conceptEntityNode->entityName << endl;
-		#endif
-		
-		//based on code from GIAquery()
-		//now load all instances into RAM 
-		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+		//check to see if entity already loaded into RAM via a different connection (in TempActiveList; ie, DB only)...
+		bool entityFoundInActiveListCompleteFastIndexDBcache = false;
+		GIAentityNode * entityNodeFoundDBcache = findEntityNodesActiveListCompleteFastIndexDBcache(&(conceptEntityName), GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE, &entityFoundInActiveListCompleteFastIndexDBcache);
+
+		if(entityFoundInActiveListCompleteFastIndexDBcache)
 		{
-			//read all instances
-			DBreadVectorConnections(conceptEntityNode, i);	
-		}	
-		
-		//cout << "done reading concept connections" << endl;
-		
-		#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-		conceptEntityNode->wasReference = true;	//required for node to be printed		
-		#endif
-		for(vector<GIAentityConnection*>::iterator connectionIter = (conceptEntityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]).begin(); connectionIter != (conceptEntityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]).end(); connectionIter++)
-		{
-			GIAentityNode* entityNode = (*connectionIter)->entity;
-			#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-			entityNode->wasReference = true;	//required for node to be printed
+			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
+			cout << "\tDBreadDatabase() - concept node already in RAM (cache)" << endl;
+			cout << "\tentityNodeFoundDBcache->conceptEntityName = " << entityNodeFoundDBcache->entityName << endl;
 			#endif
+			entityNodesActiveListConcepts->insert(pair<string, GIAentityNode*>(conceptEntityName, entityNodeFoundDBcache));
+			entityNodesActiveListComplete->push_back(entityNodeFoundDBcache);
+
+			#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
+			conceptEntityNodesLoadedListIterator->second = true;
+			#else
+			conceptEntityLoaded->loaded = true;
+			entityNodeFoundDBcache->conceptEntityLoaded = conceptEntityLoaded;
+			#endif			
+		}
+		else
+		{
+			//load the concept node from the database into RAM
+			GIAentityNode* conceptEntityNode = new GIAentityNode();
+			DBreadConceptEntityNode(&conceptEntityName, conceptEntityNode);
+			entityNodesActiveListConcepts->insert(pair<string, GIAentityNode*>(conceptEntityName, conceptEntityNode));
+			entityNodesActiveListComplete->push_back(conceptEntityNode);
+			addEntityNodesActiveListCompleteFastIndexDBcache(conceptEntityNode);
+
+			#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
+			conceptEntityNodesLoadedListIterator->second = true;
+			#else
+			conceptEntityLoaded->loaded = true;
+			conceptEntityNode->conceptEntityLoaded = conceptEntityLoaded;
+			#endif
+			#ifdef GIA_DATABASE_DEBUG
+			cout << "   conceptEntityNode->entityName = " << conceptEntityNode->entityName << endl;
+			#endif
+
+			//based on code from GIAquery()
+			//now load all instances into RAM 
 			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 			{
 				//read all instances
-				DBreadVectorConnections(entityNode, i);
-			}
-		}			
+				DBreadVectorConnections(conceptEntityNode, i);	
+			}	
+
+			//cout << "done reading concept connections" << endl;
+
+			#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+			conceptEntityNode->wasReference = true;	//required for node to be printed		
+			#endif
+			for(vector<GIAentityConnection*>::iterator connectionIter = (conceptEntityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]).begin(); connectionIter != (conceptEntityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]).end(); connectionIter++)
+			{
+				GIAentityNode* entityNode = (*connectionIter)->entity;
+				entityNodesActiveListComplete->push_back(entityNode);				
+				#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+				entityNode->wasReference = true;	//required for node to be printed
+				#endif
+				for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+				{
+					//read all instances
+					DBreadVectorConnections(entityNode, i);
+				}
+			}	
+		}		
 	}
 	
 	//cout << "temp exit" << endl;
