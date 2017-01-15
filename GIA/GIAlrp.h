@@ -26,7 +26,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i17b 30-January-2015
+ * Project Version: 2i18a 31-January-2015
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -38,6 +38,11 @@
 
 #include "GIAglobalDefs.h"
 #include "GIAsentenceClass.h"
+
+#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS
+#define GIA_LRP_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES (65)	//must sync with NLC_PREPROCESSOR_MATH_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES
+static char GIALRPNLPparsableCharacters[GIA_LRP_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '.','\''};	//must sync with preprocessorMathNLPparsableCharacters
+#endif
 
 //#define GIA_LRP_USE_OLD_PREPOSITION_SPECIFIC_CODE_NOT_REQUIRED
 
@@ -240,6 +245,9 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 			void copyDefaultVerbTenseFormsToAlternateTenseForms(GIALRPtag* baseTag, bool irregularVerbFound);
 	bool loadMultiWordPrepositionData(string multiwordPrepositionListFileName, GIALRPtag* firstTagInMultiwordPrepositionList);
 	bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag* firstTagInPlainText);
+		#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS
+		bool isIntrawordFullStop(char currentToken, int indextOfCurrentToken, string* lineContents);
+		#endif
 	bool searchAndReplacePhrasalVerbs(GIALRPtag* firstTagInPlainText, GIALRPtag* firstTagInPhrasalVerbList, GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo);
 	bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, GIALRPtag* firstTagInMultiwordPrepositionList, GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo);
 	bool writeTagListToFile(GIALRPtag* firstTagInPlainText, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName);

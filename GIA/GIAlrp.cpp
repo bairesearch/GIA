@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i17b 30-January-2015
+ * Project Version: 2i18a 31-January-2015
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -291,7 +291,6 @@ bool loadVerbList(string irregularVerbListFileName, GIALRPtag* firstTagInIrregul
 				currentTagInIrregularVerbList->nextSentence = new GIALRPtag();
 				currentTagInIrregularVerbList = currentTagInIrregularVerbList->nextSentence;
 				currentWord = "";
-
 			}
 			else
 			{
@@ -463,14 +462,12 @@ bool loadPhrasalVerbDataAndGenerateAllTenseVariants(string phrasalVerbDatabaseFi
 						}
 					}
 					bool foundTagArbitraryName = false;
-					for(int i=0; i<GIA_LRP_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMEBODY_NUMBER_OF_TYPES; i++)
+					int i;
+					if(textInTextArray(currentWord, lrpPhrasalVerbDatabaseTagArbitraryNameArray, GIA_LRP_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMEBODY_NUMBER_OF_TYPES, &i))
 					{
-						if(currentWord == lrpPhrasalVerbDatabaseTagArbitraryNameArray[i])
-						{
-							foundTagArbitraryName = true;
-							currentTagInPhrasalVerb->tagSpecialArbitraryName = true;
-							currentTagInPhrasalVerb->tagSpecialArbitraryNameType = i;
-						}
+						foundTagArbitraryName = true;
+						currentTagInPhrasalVerb->tagSpecialArbitraryName = true;
+						currentTagInPhrasalVerb->tagSpecialArbitraryNameType = i;
 					}
 					if(currentTagInPhrasalVerb->base)
 					{
@@ -570,14 +567,12 @@ bool loadPhrasalVerbDataAndGenerateAllTenseVariants(string phrasalVerbDatabaseFi
 					}
 				}
 				bool foundTagArbitraryName = false;
-				for(int i=0; i<GIA_LRP_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMEBODY_NUMBER_OF_TYPES; i++)
+				int i;
+				if(textInTextArray(currentWord, lrpPhrasalVerbDatabaseTagArbitraryNameArray, GIA_LRP_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMEBODY_NUMBER_OF_TYPES, &i))
 				{
-					if(currentWord == lrpPhrasalVerbDatabaseTagArbitraryNameArray[i])
-					{
-						foundTagArbitraryName = true;
-						currentTagInPhrasalVerb->tagSpecialArbitraryName = true;
-						currentTagInPhrasalVerb->tagSpecialArbitraryNameType = i;
-					}
+					foundTagArbitraryName = true;
+					currentTagInPhrasalVerb->tagSpecialArbitraryName = true;
+					currentTagInPhrasalVerb->tagSpecialArbitraryNameType = i;
 				}
 				if(currentTagInPhrasalVerb->base)
 				{
@@ -711,26 +706,17 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag* baseTag, GIALRPtag* firstTagInIr
 	bool secondLastCharacterIsVowel = false;
 	bool thirdLastCharacterIsVowel = false;
 	//bool verbDoubleConsonantRule1LastLetterException = false;
-	for(int i = 0; i<GIA_LRP_NUMBER_OF_VOWELS; i++)
+	if(charInCharArray(lastCharacterInBase, englishVowelArray, GIA_LRP_NUMBER_OF_VOWELS))
 	{
-		if(lastCharacterInBase == englishVowelArray[i])
-		{
-			lastCharacterIsVowel = true;
-		}
+		lastCharacterIsVowel = true;
 	}
-	for(int i = 0; i<GIA_LRP_NUMBER_OF_VOWELS; i++)
+	if(charInCharArray(secondLastCharacterInBase, englishVowelArray, GIA_LRP_NUMBER_OF_VOWELS))
 	{
-		if(secondLastCharacterInBase == englishVowelArray[i])
-		{
-			secondLastCharacterIsVowel = true;
-		}
+		secondLastCharacterIsVowel = true;
 	}
-	for(int i = 0; i<GIA_LRP_NUMBER_OF_VOWELS; i++)
+	if(charInCharArray(thirdLastCharacterInBase, englishVowelArray, GIA_LRP_NUMBER_OF_VOWELS))
 	{
-		if(thirdLastCharacterInBase == englishVowelArray[i])
-		{
-			thirdLastCharacterIsVowel = true;
-		}
+		thirdLastCharacterIsVowel = true;
 	}
 	/*
 	for(int i = 0; i<GIA_LRP_VERB_DOUBLE_CONSONANT_RULE1_LAST_LETTER_EXCEPTIONS_NUMBER_OF_TYPES; i++)
@@ -1014,165 +1000,159 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag* firstTagInPlain
 	GIALRPtag* firstTagInPlainTextSentence = currentTagInPlainText;
 	GIALRPtag* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 
-	ifstream parseFileObject(plainTextInputFileName.c_str());
-	if(!parseFileObject.rdbuf( )->is_open( ))
+	string fileContents = getFileContents(plainTextInputFileName);
+	
+	int charCount = 0;
+	char currentToken;
+	bool whiteSpace = false;
+	string currentWord = "";
+	int entityIndex = GIA_NLP_START_ENTITY_INDEX;	//only assigned after collapse?
+	int sentenceIndex = GIA_NLP_START_SENTENCE_INDEX;	//only assigned after collapse?
+	#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
+	bool readingQuotation = false;
+	#endif
+	while(charCount < fileContents.length())
 	{
-		//txt file does not exist in current directory.
-		cout << "Error: Plain Text Input File does not exist in current directory: " << plainTextInputFileName << endl;
-		result = false;
-	}
-	else
-	{
-		int charCount = 0;
-		char currentToken;
-		bool whiteSpace = false;
-		string currentWord = "";
-		int entityIndex = GIA_NLP_START_ENTITY_INDEX;	//only assigned after collapse?
-		int sentenceIndex = GIA_NLP_START_SENTENCE_INDEX;	//only assigned after collapse?
-		#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
-		bool readingQuotation = false;
-		#endif
-		while(parseFileObject.get(currentToken))
+		currentToken = fileContents[charCount];
+		bool punctuationMarkFound = false;
+		if(charInCharArray(currentToken, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
 		{
-			bool punctuationMarkFound = false;
-			for(int i=0; i<GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS; i++)
+			#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS
+			if(!isIntrawordFullStop(currentToken, charCount, &fileContents))
 			{
-				if(currentToken == nlpPunctionMarkCharacterArray[i])
-				{
-					punctuationMarkFound = true;
-				}
+			#endif
+				punctuationMarkFound = true;
+			#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS
 			}
-			bool whiteSpaceFound = false;
-			for(int i=0; i<GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS; i++)
+			#endif
+		}
+		bool whiteSpaceFound = false;
+		if(charInCharArray(currentToken, nlpWhitespaceCharacterArray, GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS))
+		{
+			whiteSpaceFound = true;
+		}
+		#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
+		bool quotationMarkFound = false;
+		if(charInCharArray(currentToken, nlpQuotationMarkCharacterArray, GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS))
+		{
+			quotationMarkFound = true;
+		}
+		if(quotationMarkFound)
+		{//NB imbedded/recursive quotation marks not currently supported eg "'hello'"
+			if(!readingQuotation)
 			{
-				if(currentToken == nlpWhitespaceCharacterArray[i])
-				{
-					whiteSpaceFound = true;
-				}
-			}
-			#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
-			bool quotationMarkFound = false;
-			for(int i=0; i<GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS; i++)
-			{
-				if(currentToken == nlpQuotationMarkCharacterArray[i])
-				{
-					quotationMarkFound = true;
-				}
-			}
-			if(quotationMarkFound)
-			{//NB imbedded/recursive quotation marks not currently supported eg "'hello'"
-				if(!readingQuotation)
-				{
-					readingQuotation = true;
-				}
-				else
-				{
-					readingQuotation = false;
-				}
-				if(!whiteSpace)
-				{
-					currentTagInPlainTextSentence->tagName = currentWord;
-					currentTagInPlainTextSentence->entityIndex = entityIndex;
-					currentTagInPlainTextSentence->sentenceIndex = sentenceIndex;
-					currentTagInPlainTextSentence->nextTag = new GIALRPtag();
-					#ifdef GIA_LRP_DEBUG
-					cout <<  "adding Tag: " << currentTagInPlainTextSentence->tagName << endl;
-					//cout << "currentTagInPlainTextSentence->sentenceIndex = " << currentTagInPlainTextSentence->sentenceIndex << endl;
-					#endif
-					currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
-					entityIndex++;
-					currentWord = "";
-				}
+				readingQuotation = true;
 			}
 			else
 			{
-			#endif
-				if(whiteSpaceFound || punctuationMarkFound)
+				readingQuotation = false;
+			}
+			if(!whiteSpace)
+			{
+				currentTagInPlainTextSentence->tagName = currentWord;
+				currentTagInPlainTextSentence->entityIndex = entityIndex;
+				currentTagInPlainTextSentence->sentenceIndex = sentenceIndex;
+				currentTagInPlainTextSentence->nextTag = new GIALRPtag();
+				#ifdef GIA_LRP_DEBUG
+				cout <<  "adding Tag: " << currentTagInPlainTextSentence->tagName << endl;
+				//cout << "currentTagInPlainTextSentence->sentenceIndex = " << currentTagInPlainTextSentence->sentenceIndex << endl;
+				#endif
+				currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
+				entityIndex++;
+				currentWord = "";
+			}
+		}
+		else
+		{
+		#endif
+			if(whiteSpaceFound || punctuationMarkFound)
+			{
+				#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
+				if(readingQuotation)
 				{
-					#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
-					if(readingQuotation)
-					{
-						currentWord = currentWord + GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER;
-					}
-					else
-					{
-					#endif
-						if(!whiteSpace)
-						{
-							#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
-							if(currentWord != "")
-							{//do not add empty tag after closing quotation marks
-							#endif
-								currentTagInPlainTextSentence->tagName = currentWord;
-								currentTagInPlainTextSentence->entityIndex = entityIndex;
-								currentTagInPlainTextSentence->sentenceIndex = sentenceIndex;
-								currentTagInPlainTextSentence->nextTag = new GIALRPtag();
-								#ifdef GIA_LRP_DEBUG
-								cout <<  "adding Tag: " << currentTagInPlainTextSentence->tagName << endl;
-								//cout << "currentTagInPlainTextSentence->sentenceIndex = " << currentTagInPlainTextSentence->sentenceIndex << endl;
-								#endif
-								currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
-								entityIndex++;
-							#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
-							}
-							#endif
-							if(punctuationMarkFound)
-							{
-								currentTagInPlainTextSentence->tagName = currentToken;
-								currentTagInPlainTextSentence->entityIndex = entityIndex;
-								currentTagInPlainTextSentence->sentenceIndex = sentenceIndex;
-								currentTagInPlainTextSentence->nextTag = new GIALRPtag();
-								#ifdef GIA_LRP_DEBUG
-								cout <<  "adding Tag: " << currentTagInPlainTextSentence->tagName << endl;
-								#endif
-								currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
-
-								bool endOfSentencePunctuationMarkFound = false;
-								for(int i=0; i<GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE; i++)
-								{
-									if(currentToken == nlpPunctionMarkCharacterEndOfSentenceArray[i])
-									{
-										endOfSentencePunctuationMarkFound = true;
-									}
-								}
-								if(endOfSentencePunctuationMarkFound)
-								{
-									#ifdef GIA_LRP_DEBUG
-									//cout << "endOfSentencePunctuationMarkFound" << endl;
-									//cout << "currentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
-									#endif
-									currentTagInPlainText->nextSentence = new GIALRPtag();
-									currentTagInPlainText = currentTagInPlainText->nextSentence;
-									currentTagInPlainTextSentence = currentTagInPlainText;
-									sentenceIndex++;
-									entityIndex = 0;
-								}
-								else
-								{
-									entityIndex++;
-								}
-							}
-							currentWord = "";
-						}
-						else
-						{//skip (do not parse) multiple white space/punctuation characters (eg ". ")
-						}
-						whiteSpace = true;
-					#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
-					}
-					#endif
+					currentWord = currentWord + GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER;
 				}
 				else
 				{
-					whiteSpace = false;
-					currentWord = currentWord + currentToken;
+				#endif
+					if(!whiteSpace)
+					{
+						#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
+						if(currentWord != "")
+						{//do not add empty tag after closing quotation marks
+						#endif
+							currentTagInPlainTextSentence->tagName = currentWord;
+							currentTagInPlainTextSentence->entityIndex = entityIndex;
+							currentTagInPlainTextSentence->sentenceIndex = sentenceIndex;
+							currentTagInPlainTextSentence->nextTag = new GIALRPtag();
+							#ifdef GIA_LRP_DEBUG
+							cout <<  "adding Tag: " << currentTagInPlainTextSentence->tagName << endl;
+							//cout << "currentTagInPlainTextSentence->sentenceIndex = " << currentTagInPlainTextSentence->sentenceIndex << endl;
+							#endif
+							currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
+							entityIndex++;
+						#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
+						}
+						#endif
+						if(punctuationMarkFound)
+						{
+							currentTagInPlainTextSentence->tagName = currentToken;
+							currentTagInPlainTextSentence->entityIndex = entityIndex;
+							currentTagInPlainTextSentence->sentenceIndex = sentenceIndex;
+							currentTagInPlainTextSentence->nextTag = new GIALRPtag();
+							#ifdef GIA_LRP_DEBUG
+							cout <<  "adding Tag: " << currentTagInPlainTextSentence->tagName << endl;
+							#endif
+							currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
+
+							bool endOfSentencePunctuationMarkFound = false;
+							if(charInCharArray(currentToken, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
+							{
+								#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS
+								if(!isIntrawordFullStop(currentToken, charCount, &fileContents))
+								{
+								#endif
+									endOfSentencePunctuationMarkFound = true;
+								#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS
+								}
+								#endif
+							}
+							if(endOfSentencePunctuationMarkFound)
+							{
+								#ifdef GIA_LRP_DEBUG
+								//cout << "endOfSentencePunctuationMarkFound" << endl;
+								//cout << "currentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
+								#endif
+								currentTagInPlainText->nextSentence = new GIALRPtag();
+								currentTagInPlainText = currentTagInPlainText->nextSentence;
+								currentTagInPlainTextSentence = currentTagInPlainText;
+								sentenceIndex++;
+								entityIndex = 0;
+							}
+							else
+							{
+								entityIndex++;
+							}
+						}
+						currentWord = "";
+					}
+					else
+					{//skip (do not parse) multiple white space/punctuation characters (eg ". ")
+					}
+					whiteSpace = true;
+				#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
 				}
-			#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
+				#endif
 			}
-			#endif
-			charCount++;
+			else
+			{
+				whiteSpace = false;
+				currentWord = currentWord + currentToken;
+			}
+		#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
 		}
-		parseFileObject.close();
+		#endif
+		charCount++;
 	}
 
 	#ifdef GIA_LRP_DEBUG
@@ -1193,6 +1173,24 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag* firstTagInPlain
 
 	return result;
 }
+
+#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS
+bool isIntrawordFullStop(char currentToken, int indextOfCurrentToken, string* lineContents)
+{
+	bool isFullStopImmediatelySucceededByAlphabeticalCharacter = false;
+	if(currentToken == CHAR_FULLSTOP)
+	{
+		if(indextOfCurrentToken < lineContents->length()-1)	//ensure fullstop is not immediately succeded by an alphabetical character, which indicates that the fullstop is part of a filename, eg "people.xml"
+		{	
+			char characterImmediatelySucceedingFullStop = (*lineContents)[indextOfCurrentToken+1];
+			isFullStopImmediatelySucceededByAlphabeticalCharacter = charInCharArray(characterImmediatelySucceedingFullStop, GIALRPNLPparsableCharacters, GIA_LRP_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES);
+			//cout << "fullStopImmediatelySucceededByAlphabeticalCharacter: characterImmediatelySucceedingFullStop = " << characterImmediatelySucceedingFullStop << endl;
+			//cout << "fullStopImmediatelySucceededByAlphabeticalCharacter: fullStopImmediatelySucceededByAlphabeticalCharacter = " << fullStopImmediatelySucceededByAlphabeticalCharacter << endl;
+		}
+	}
+	return isFullStopImmediatelySucceededByAlphabeticalCharacter;
+}
+#endif
 
 
 //NB the collapsed phrasal verb contains precisely 2 entities: phrasalVerbCollapsed, entity2: thing/place/body (eg belong_to + sb/Tom) - thing/place/bodies are not currently being differentiated by the LRP as this information is only first generated at NLP/GIA parse stage
