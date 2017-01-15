@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b3b 22-December-2013
+ * Project Version: 2b3c 31-December-2013
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -247,15 +247,6 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 		}
 	}
 	#endif
-
-	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-	if(!linkPreestablishedReferencesGIA)
-	{
-		string sentenceText = "";	//required to add new line at end of parsingTypedDependencies as per Stanford Parser specification (see parseStanfordParserFile)
-		saveTextToCurrentCorpusFile(sentenceText);
-		closeCorpusFile();
-	}
-	#endif
 	//cout << "Q11" << endl;
 
 }
@@ -469,9 +460,7 @@ void defineSubstancesBasedOnSemanticRelations(Sentence * currentSentenceInList, 
 			GIAentityNode * entity = GIAentityNodeArray[i];
 			bool isConcept = false;
 			if(entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_NOUN)
-			{
-				cout << "GRAMMATICAL_WORD_TYPE_NOUN" << endl;
-				
+			{				
 				bool hasDeterminer = false;
 				bool indefiniteDeterminer = false;
 				string determinerString = "";
@@ -555,7 +544,7 @@ void defineSubstancesBasedOnSemanticRelations(Sentence * currentSentenceInList, 
 			
 			if(isConcept)
 			{
-				cout << "isConcept" << endl;
+				//cout << "isConcept" << endl;
 				GIAentityNodeArray[i]->isSubstanceConcept = true;
 			}
 			
