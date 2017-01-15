@@ -3183,16 +3183,7 @@
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isAction" value="true" REL="0" REL_ENT="0" />
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isActionConcept" value="true" REL="0" REL_ENT="0" />
 				</paramDepRel>
-			</function>		
-			
-			<!-- NLPI Only (testing) -->
-			<function name="NLPIdefineUnreferencedDefinite">
-				<paramEntity mode="redistribute">
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isDefinite" value="true" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wasReference" value="false" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isUnreferencedDefinite" value="true" />
-				</paramEntity>
-			</function>								
+			</function>										
 		</file>								
 	</translator>
 </rules>

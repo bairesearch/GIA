@@ -434,7 +434,6 @@ public:
 	#ifdef USE_NLPI
 	bool parsedForNLPIcodeBlocks;
 	//bool parsedForNLPIclassHeirarchy;
-	bool isUnreferencedDefinite;
 	#endif
 };
 

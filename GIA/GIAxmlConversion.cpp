@@ -551,7 +551,8 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 
 	#ifdef USE_NLPI
 	bool sentenceIndexFound = false;
-	bool isUnreferencedDefiniteFound = false;
+	bool grammaticalDefiniteTempFound = false;
+	bool grammaticalProperNounTempFound = false;
 	#endif
 
 	bool entityVectorConnectionNodeFoundArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
@@ -796,11 +797,17 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 			entityNode->sentenceIndexTemp = attributeValue;
 			sentenceIndexFound = true;
 		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isUnreferencedDefinite)
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalDefiniteTemp)
 		{
 			int attributeValue = atoi(currentAttribute->value.c_str());
-			entityNode->isUnreferencedDefinite = attributeValue;
-			isUnreferencedDefiniteFound = true;
+			entityNode->grammaticalDefiniteTemp = attributeValue;
+			grammaticalDefiniteTempFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalProperNounTemp)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->grammaticalProperNounTemp = attributeValue;
+			grammaticalProperNounTempFound = true;
 		}
 		#endif
 
@@ -1503,8 +1510,16 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
 
-	currentAttribute->name = NET_XML_ATTRIBUTE_isUnreferencedDefinite;
-	sprintf(tempString, "%d", int(currentEntity->isUnreferencedDefinite));
+	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalDefiniteTemp;
+	sprintf(tempString, "%d", int(currentEntity->grammaticalDefiniteTemp));
+	currentAttribute->value = tempString;
+
+	newAttribute = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute;
+	currentAttribute = currentAttribute->nextAttribute;
+	
+	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalProperNounTemp;
+	sprintf(tempString, "%d", int(currentEntity->grammaticalProperNounTemp));
 	currentAttribute->value = tempString;
 
 	newAttribute = new XMLParserAttribute();
