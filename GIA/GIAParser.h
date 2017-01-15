@@ -29,8 +29,11 @@ using namespace std;
 
 
 string convertStanfordRelationToRelex(string * stanfordRelation);
-void GIATHparseRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode);
+void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode);
+void GIATHparseStanfordParserRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence);
 void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList, bool * isQuestion);
+
+
 
 
 #endif

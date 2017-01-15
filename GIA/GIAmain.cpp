@@ -9,12 +9,16 @@
  *
  *******************************************************************************/
  
-/* Additional Dependencies: Relex
+/* Additional Dependencies: NLP (Relex/Standord Core NLP/Stanford Parser)
 install relex as per relex installation instructions	"relex installation procedure EL6.txt"
 su root
 cp -rf relex-1.3.0 /home/baiappserver/bin
 cd /home/baiappserver/bin
-chown -R baiappserver:baiappserver /home/baiappserver/bin/relex-1.3.0
+chown -R baiappserver:baiappserver /home/baiappserver/bin/APPLICATION
+
+where APPLICATION = relex-1.3.0 / relex-1.4.0 / stanford-parser-2012-03-09 / stanford-corenlp-2012-04-03
+
+/* Additional Dependencies: Relex
 
 NB execute-relex.sh contains the following text;
 
@@ -53,7 +57,7 @@ NB execute-relex.sh contains the following text;
 
 	cat $3/$1 | java $VM_OPTS $RELEX_OPTS $CLASSPATH relex.WebFormat -g --url "$3/$1" > $3/$2
 
-Make sure to set the exefolder to the folder where relex-1.3.0 presides, eg;
+Make sure to set the exefolder to the folder where relex-1.x.0 presides, eg;
 
 ./GIA.exe -itxt text.txt -oxml semanticNet.xml -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -exefolder "/home/rich/soft/BAISource/relex/relex-1.3.0"
 OR
@@ -63,10 +67,21 @@ OR
 
 /* Additional Dependencies: Stanford NLP Core
 
+NB execute-stanfordCoreNLP.sh contains the following text;
+
+java -cp stanford-corenlp-2012-04-03.jar:stanford-corenlp-2012-03-09-models.jar:xom.jar:joda-time.jar -Xmx3g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file $3/$1 -outputDirectory $4 -outputExtension $5
 
 */
 
-	
+/* Additional Dependencies: Stanford Parser
+
+NB execute-stanfordParser.sh contains the following text;
+
+#!/usr/bin/env bash
+scriptdir=`dirname $0`
+java -mx150m -cp "$scriptdir/*:" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz $3/$1 > $4/$2
+
+*/	
 
 
 #include <ctime>
@@ -125,7 +140,7 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-notshow           : do not display outputText in opengl"
 "\n\t-width [int]       : raster graphics width in pixels (def: 640)"
 "\n\t-height [int]      : raster graphics height in pixels (def: 480)"
-"\n\t-nlpparser [int]   : NLP parser to be executed by GIA (1 - Relex [def], 2 - Stanford Core NLP, 3 - Stanford Parser [UNTESTED])"
+"\n\t-nlpparser [int]   : NLP parser to be executed by GIA (1 - Relex [def], 2 - Stanford Core NLP, 3 - Stanford Parser)"
 "\n\t-nlpcomp           : NLP Parser dependency relations (sets Relex into Stanford compatibilty mode) [UNTESTED]"
 "\n"
 "\n\t-workingfolder [string] : working directory name for input files (def: same as exe)"

@@ -14,7 +14,7 @@
 #include "GIAParser.h"
 #include "GIATranslatorOperations.h"	//required for convertStanfordRelationToRelex
 
-#define MAX_CHARACTERS_GIATH 150 //max characters of some word in input data. includes '\0' at end of a string
+#define MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA 150 //max characters of some word in input data. includes '\0' at end of a string
 
 #define CHAR_TAB '\t'
 #define CHAR_COMMA ','
@@ -23,7 +23,7 @@
 #define CHAR_CLOSE_BRACKET ')'
 #define CHAR_OPEN_SQUARE_BRACKET '['
 #define CHAR_CLOSE_SQUARE_BRACKET ']'
-
+#define CHAR_DASH '-'
 
 string convertStanfordRelationToRelex(string * stanfordRelation)
 {
@@ -54,13 +54,13 @@ string convertStanfordRelationToRelex(string * stanfordRelation)
 }
 
 
-void GIATHparseRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode)
+void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode)
 {
 	*maxNumberOfWordsInSentence = 0;
 	
 	int numberOfCharactersInRelationsText = relationsText->length();
 	
-	char currentItemString[MAX_CHARACTERS_GIATH] = "";
+	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
 	currentItemString[0] = '\0';	
 
 	/* Data file layout example
@@ -183,11 +183,124 @@ void GIATHparseRelationsText(string * relationsText, Relation * firstRelationInL
 
 
 
+void GIATHparseStanfordParserRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence)
+{
+	*maxNumberOfWordsInSentence = 0;
+	
+	int numberOfCharactersInRelationsText = relationsText->length();
+	
+	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
+	currentItemString[0] = '\0';	
+
+	/* Data file layout example
+
+		det(fish-2, The-1)
+		nsubj(swam-7, fish-2)
+	*/
+
+	Relation * currentRelation = firstRelationInList;
+	
+	int relationIndex = 0;
+	int characterIndex = 0;
+		
+	int currentRelationPart = 0; 
+	//cout << "h1" << endl;
+
+	while(characterIndex < numberOfCharactersInRelationsText)
+	{
+		char c = (*relationsText)[characterIndex];
+		//cout << "c = " << c << endl;
+		
+		if(c == CHAR_NEW_LINE)
+		{
+			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
+			cout << "relation added;" << endl;
+			cout << "currentRelation->relationType = " << currentRelation->relationType << endl;
+			cout << "currentRelation->relationFunction = " << currentRelation->relationFunction << endl;
+			cout << "currentRelation->relationArgument = " << currentRelation->relationArgument << endl;
+			cout << "currentRelation->relationFunctionIndex = " << currentRelation->relationFunctionIndex << endl;
+			cout << "currentRelation->relationArgumentIndex = " << currentRelation->relationArgumentIndex << endl;
+			#endif
+			
+			#ifdef GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
+			if(currentRelation->relationType != RELATION_TYPE_ROOT)
+			{
+				Relation * newRelation = new Relation();
+				currentRelation->next = newRelation;
+				currentRelation = currentRelation->next;			
+			}
+			#else
+			Relation * newRelation = new Relation();
+			currentRelation->next = newRelation;
+			currentRelation = currentRelation->next;
+			#endif
+			
+			currentRelationPart = 0;
+			currentItemString[0] = '\0';
+
+			relationIndex++;
+		}
+		else if(c == CHAR_OPEN_BRACKET)
+		{
+			string relationType = currentItemString;
+
+			relationType = convertStanfordRelationToRelex(&relationType);
+
+			currentRelation->relationType = relationType;
+			currentItemString[0] = '\0';
+			currentRelationPart++;
+		}	
+		else if(c == CHAR_DASH)
+		{
+			if(currentRelationPart == 1)
+			{	
+				currentRelation->relationFunction = currentItemString;
+			}
+			else if(currentRelationPart == 2)
+			{
+				currentRelation->relationArgument = currentItemString;
+			}
+			currentItemString[0] = '\0';
+		}
+		else if((c == CHAR_COMMA) || (c == CHAR_CLOSE_BRACKET))
+		{
+			if(currentRelationPart == 1)
+			{	
+				currentRelation->relationFunctionIndex = int(atof(currentItemString));
+			}
+			else if(currentRelationPart == 2)
+			{
+				currentRelation->relationArgumentIndex = int(atof(currentItemString));
+			}
+
+			if(currentRelation->relationArgumentIndex > *maxNumberOfWordsInSentence)
+			{
+				*maxNumberOfWordsInSentence = currentRelation->relationArgumentIndex;
+			}
+
+			currentItemString[0] = '\0';
+			currentRelationPart++; 
+		}
+		else
+		{
+			char characterString[2];
+			characterString[0] = c;
+			characterString[1] = '\0';
+			strcat(currentItemString, characterString);
+		}
+		
+		characterIndex++;
+	}
+}
+
+
+
+
 void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList, bool * isQuestion)
 {	
 	int numberOfCharactersInRelationsText = featuresText->length();
 	
-	char currentItemString[MAX_CHARACTERS_GIATH] = "";
+	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
 	currentItemString[0] = '\0';	
 
 	/* Data file layout example

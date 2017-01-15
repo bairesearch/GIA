@@ -25,6 +25,7 @@
 #include <vector>
 using namespace std;
 
+#define CHAR_NEW_LINE '\n'
 
 #include "GIAnlp.h"
 #include "XMLParserClass.h"
@@ -197,7 +198,7 @@ bool parseRelexFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragrap
 									{
 										//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
 										int maxNumberOfWordsInSentence = 0;
-										GIATHparseRelationsText(&(currentTagInParse->value), currentSentence->firstRelationInList, &maxNumberOfWordsInSentence, NLPrelexCompatibilityMode);
+										GIATHparseRelexRelationsText(&(currentTagInParse->value), currentSentence->firstRelationInList, &maxNumberOfWordsInSentence, NLPrelexCompatibilityMode);
 										currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
 									}
 									else if(currentTagInParse->name == Relex_CFF_XML_TAG_features)
@@ -540,12 +541,81 @@ bool parseStanfordCoreNLPFile(string inputTextNLPParsedXMLFileName, bool isQuery
 
 #endif
 
-
 #ifdef GIA_USE_STANFORD_PARSER
 bool parseStanfordParserFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList)
 {
-	cout << "isolated Stanford Parser not implemented - use Stanford CoreNLP instead." << endl;
-	exit(0);
+	bool result = true;
+	
+	Paragraph * currentParagraph = firstParagraphInList;
+	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;	
+	Sentence * currentSentence = firstSentenceInList;
+
+	string currentDependencyRelationSetString = "";
+	
+	bool parsingDependencyRelations = false;	//parse tree is first set in list
+	
+	ifstream parseFileObject(inputTextNLPParsedXMLFileName.c_str());
+	if(!parseFileObject.rdbuf( )->is_open( ))
+	{
+		//xml file does not exist in current directory.
+		cout << "Error: Stanford Parser Output File does not exist in current directory: " << inputTextNLPParsedXMLFileName << endl;
+		result = false;
+	}
+	else
+	{
+		int charCount = 0;
+		char currentToken;
+		bool newLineDetected = false;
+		while(parseFileObject.get(currentToken))
+		{
+			if(currentToken == CHAR_NEW_LINE)
+			{
+				if(newLineDetected)
+				{
+					newLineDetected = false;
+					//two consecutive new line characters detected..
+					if(parsingDependencyRelations)
+					{
+						int maxNumberOfWordsInSentence = 0;
+						Relation * firstRelationInList = currentSentence->firstRelationInList;
+						GIATHparseStanfordParserRelationsText(&currentDependencyRelationSetString, firstRelationInList, &maxNumberOfWordsInSentence);
+						//cout << "currentDependencyRelationSetString = " << currentDependencyRelationSetString << endl;
+						currentDependencyRelationSetString = "";
+						Sentence * newSentence = new Sentence();
+						newSentence->previous = currentSentence;						
+						currentSentence->next = newSentence;
+						currentSentence = currentSentence->next;
+						
+						parsingDependencyRelations = false;					
+					}
+					else
+					{
+						parsingDependencyRelations = true;
+					}
+				}
+				else
+				{
+					if(parsingDependencyRelations)
+					{
+						currentDependencyRelationSetString = currentDependencyRelationSetString + currentToken;
+					}
+					newLineDetected = true;
+				}
+			}
+			else
+			{
+				newLineDetected = false;
+				
+				if(parsingDependencyRelations)
+				{
+					//parsing dependency relations
+					currentDependencyRelationSetString = currentDependencyRelationSetString + currentToken;
+				}
+			}
+		
+			charCount++;
+		}
+	}	
 }
 #endif
 

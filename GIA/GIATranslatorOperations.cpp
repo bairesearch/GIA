@@ -122,8 +122,7 @@ bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, 
 	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 	{
-	#endif	
-			
+	#endif			
 		if(currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3)
 		{
 			Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;

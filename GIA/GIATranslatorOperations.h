@@ -224,7 +224,9 @@ using namespace std;
 #define RELATION_TYPE_COPULA "_cop"												       
 #define RELATION_TYPE_DETERMINER "_det"  		       
 
-
+#define STANFORD_RELATION_TYPE_ROOT "root"  	
+#define RELATION_TYPE_ROOT "_root"  	
+#define GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
 
 //negations;
 #define RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES (1)

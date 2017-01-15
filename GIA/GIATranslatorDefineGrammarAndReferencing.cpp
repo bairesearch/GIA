@@ -109,6 +109,7 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 		currentRelationInList = currentRelationInList->next;
 	}
 	
+	#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 	/*
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{	
@@ -120,23 +121,20 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 	}
 	*/
 		
-	/*
 	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		string relationType = currentRelationInList->relationType;
-		GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];				
-		GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+		GIAEntityNode * relationGoverner = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];				
+		GIAEntityNode * relationDependent = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
 		
-		cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;	      
-		cout << "defineActionPropertyConditions actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;
-		cout << "defineActionPropertyConditions actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;		
+		cout << "relationType = " << currentRelationInList->relationType << endl;	      
+		cout << "relationGoverner = " << relationGoverner->entityName << endl;
+		cout << "relationDependent = " << relationDependent->entityName << endl;		
 		
-		currentRelationInList = currentRelationInList->next;
-				
+		currentRelationInList = currentRelationInList->next;		
 	}
-	*/
-	
+	#endif
 		
 }
 

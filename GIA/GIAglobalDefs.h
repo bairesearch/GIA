@@ -15,15 +15,15 @@
 #include "SHAREDglobalDefs.h"
 
 //variables currently under attention for testing purposes
-//#define GIA_DISABLE_REFERENCING		//default: off	{this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}
+#define GIA_DISABLE_REFERENCING		//default: off	{this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}
 //#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		{//this should only be enabled with Relex??} 	//this was (effectively) disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
 #define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 #define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
 
 
 //Debug;
-//#define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-//#define GIA_TRANSLATOR_DEBUG
+#define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
+#define GIA_TRANSLATOR_DEBUG
 //#define GIA_NLP_DEBUG
 //#define GIA_DRAW_DEBUG
 //#define GIA_DATABASE_DEBUG
@@ -52,7 +52,7 @@
 #endif
 #ifdef GIA_USE_STANFORD_PARSER
 	#define GIA_USE_STANFORD_DEPENDENCY_RELATIONS
-	#define GIA_STANFORD_PARSER_EXECUTABLE_NAME "execute-stanford.sh"
+	#define GIA_STANFORD_PARSER_EXECUTABLE_NAME "execute-stanfordParser.sh"
 #endif
 #define GIA_NLP_PARSER_RELEX (0)
 #define GIA_NLP_PARSER_STANFORD_CORENLP (1)
