@@ -77,6 +77,8 @@ public:
 	GIATimeConditionNode(void);
 	~GIATimeConditionNode(void);
 	
+	string conditionName;
+	
 	//temporal coordinate system here - this needs to be replaced with a system time (or added to) 
 	int tense;
 	/*

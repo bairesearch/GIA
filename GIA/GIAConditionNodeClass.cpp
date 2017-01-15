@@ -17,6 +17,7 @@
 //~? [eg past, wednesday, etc]
 GIATimeConditionNode::GIATimeConditionNode(void)
 {	
+	conditionName = "";
 	tense = GRAMMATICAL_TENSE_UNDEFINED;
 	//tense = tenseundefined;
 	second = -1.0;

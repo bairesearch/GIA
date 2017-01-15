@@ -198,6 +198,7 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense
 	propertyNode->conditionType = CONDITION_NODE_TYPE_TIME;
 	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
 	newTimeCondition->tense = tense;
+	newTimeCondition->conditionName = grammaticalTenseNameArray[tense];
 	propertyNode->timeConditionNode = newTimeCondition;
 }
 
@@ -246,7 +247,6 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 		//convert property to action
 		newOrExistingAction = actionEntity->AssociatedPropertyNodeList.back();
 		
-		
 		newOrExistingAction->isProperty = false;
 		actionEntity->hasAssociatedPropertyTemp = false;
 		actionEntity->AssociatedPropertyNodeList.pop_back();
@@ -254,7 +254,6 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 		{
 			actionEntity->hasAssociatedProperty = false;
 		}
-		
 	}
 	else
 	{
@@ -1458,38 +1457,45 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 	
 		
-		//4b pass; extract dates	[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
+		cout <<"4b pass; extract dates" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
 		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 		{
 			if(GIAEntityNodeArrayFilled[i])
 			{
 				GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
 				if(currentEntity->hasAssociatedTime)
-				{			
-					GIAEntityNode * timeConditionEntity = currentEntity;
-					//cout << "as1" << endl;
-					if(timeConditionEntity->ConditionNodeReverseList.back() != NULL)
-					{
-						//cout << "as2" << endl;
+				{
+					if(currentEntity->timeConditionNode != NULL)
+					{	
+						if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
+						{	
+							GIAEntityNode * timeConditionEntity = currentEntity;
+							//cout << "as1" << endl;
 
-						GIAEntityNode * tempTimeCondition = timeConditionEntity->ConditionNodeReverseList.back();
-						string monthString = timeConditionEntity->entityName;
-						int monthInt = TIME_MONTH_UNDEFINED;
-						for(int i=0; i<TIME_MONTH_NUMBER_OF_TYPES; i++)
-						{
-							if(monthString == timeMonthStringArray[i])
+							string monthString = timeConditionEntity->entityName;
+							int monthInt = TIME_MONTH_UNDEFINED;
+							for(int i=0; i<TIME_MONTH_NUMBER_OF_TYPES; i++)
 							{
-								monthInt = i+1;
+								if(monthString == timeMonthStringArray[i])
+								{
+									monthInt = i+1;
+								}
 							}
+							timeConditionEntity->timeConditionNode->month = monthInt;
+
+							//update/regenerate timeConditionName
+							timeConditionEntity->timeConditionNode->conditionName = generateDateTimeConditionName(timeConditionEntity->timeConditionNode->dayOfMonth, timeConditionEntity->timeConditionNode->month, timeConditionEntity->timeConditionNode->year);
+							//OLD; timeConditionEntity->entityName
 						}
-						tempTimeCondition->timeConditionNode->month = monthInt;
-						
-						//update/regenerate timeConditionName
-						tempTimeCondition->entityName = generateDateTimeConditionName(tempTimeCondition->timeConditionNode->dayOfMonth, tempTimeCondition->timeConditionNode->month, tempTimeCondition->timeConditionNode->year);
+						else
+						{
+							cout << "error: isolated date node found (not declared as a condition)" << endl;
+							exit(0);	//remove this later						
+						}
 					}
 					else
 					{
-						cout << "error: isolated date node found" << endl;
+						cout << "error: isolated date node found (not declared as a condition)" << endl;
 						exit(0);	//remove this later
 					}
 				}
@@ -1515,34 +1521,47 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 
 							if(timeConditionEntity->entityName == currentRelationInList->relationFunction)
 							{	
-								if(timeConditionEntity->ConditionNodeReverseList.back() != NULL)
-								{
-									GIAEntityNode * tempTimeCondition = timeConditionEntity->ConditionNodeReverseList.back();
+								if(currentEntity->timeConditionNode != NULL)
+								{	
+									if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
+									{
+										if(currentRelationInList->relationType == RELATION_TYPE_DATE_DAY)
+										{
+											//http://www.cplusplus.com/reference/clibrary/cstdlib/atoi/
+												//The string can contain additional characters after those that form the integral number, which are ignored and have no effect on the behavior of this function.	[eg "3rd" -> 3]
+											string dayOfMonthString = currentRelationInList->relationArgument;
+											char * dayOfMonthStringcharstar = const_cast<char*>(dayOfMonthString.c_str());
+											int dayOfMonthInt = atoi(dayOfMonthStringcharstar);
+											timeConditionEntity->timeConditionNode->dayOfMonth = dayOfMonthInt;
+											cout << "adding day of month: " << dayOfMonthInt << endl;
 
-									if(currentRelationInList->relationType == RELATION_TYPE_DATE_DAY)
-									{
-										//http://www.cplusplus.com/reference/clibrary/cstdlib/atoi/
-											//The string can contain additional characters after those that form the integral number, which are ignored and have no effect on the behavior of this function.	[eg "3rd" -> 3]
-										string dayOfMonthString = currentRelationInList->relationArgument;
-										char * dayOfMonthStringcharstar = const_cast<char*>(dayOfMonthString.c_str());
-										int dayOfMonthInt = atoi(dayOfMonthStringcharstar);
-										tempTimeCondition->timeConditionNode->dayOfMonth = dayOfMonthInt;
-										cout << "adding day of month: " << dayOfMonthInt << endl;
-										
-										//update/regenerate timeConditionName
-										tempTimeCondition->entityName = generateDateTimeConditionName(tempTimeCondition->timeConditionNode->dayOfMonth, tempTimeCondition->timeConditionNode->month, tempTimeCondition->timeConditionNode->year);
+											//update/regenerate timeConditionName
+											timeConditionEntity->timeConditionNode->conditionName = generateDateTimeConditionName(timeConditionEntity->timeConditionNode->dayOfMonth, timeConditionEntity->timeConditionNode->month, timeConditionEntity->timeConditionNode->year);
+											//timeConditionEntity->entityName  =
+										}
+										if(currentRelationInList->relationType == RELATION_TYPE_DATE_YEAR)
+										{
+											string yearString = currentRelationInList->relationArgument;
+											char * yearStringcharstar = const_cast<char*>(yearString.c_str());
+											int yearInt = atoi(yearStringcharstar);
+											timeConditionEntity->timeConditionNode->year = yearInt;
+											cout << "adding year: " << yearInt << endl;
+
+											//update/regenerate timeConditionName
+											timeConditionEntity->timeConditionNode->conditionName = generateDateTimeConditionName(timeConditionEntity->timeConditionNode->dayOfMonth, timeConditionEntity->timeConditionNode->month, timeConditionEntity->timeConditionNode->year);
+											//tempTimeCondition->entityName
+										}
 									}
-									if(currentRelationInList->relationType == RELATION_TYPE_DATE_YEAR)
+									else
 									{
-										string yearString = currentRelationInList->relationArgument;
-										char * yearStringcharstar = const_cast<char*>(yearString.c_str());
-										int yearInt = atoi(yearStringcharstar);
-										tempTimeCondition->timeConditionNode->year = yearInt;
-										cout << "adding year: " << yearInt << endl;
-										
-										//update/regenerate timeConditionName
-										tempTimeCondition->entityName = generateDateTimeConditionName(tempTimeCondition->timeConditionNode->dayOfMonth, tempTimeCondition->timeConditionNode->month, tempTimeCondition->timeConditionNode->year);
+										cout << "error: isolated date node found (not declared as a condition)" << endl;
+										exit(0);	//remove this later						
 									}
+								}
+								else
+								{
+									cout << "error: isolated date node found (not declared as a condition)" << endl;
+									exit(0);	//remove this later
 								}
 							}
 						}
@@ -1552,7 +1571,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;		
 		}
 		
-		//4c pass; extract quantities	
+		cout << "4c pass; extract quantities" << endl;	
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{	
@@ -1562,7 +1581,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			if(currentRelationInList->relationType == RELATION_TYPE_QUANTITY)
 			{
 				GIAEntityNode * quantityEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
-				if(quantityEntity->AssociatedPropertyNodeList.back() != NULL)
+				if(quantityEntity->AssociatedPropertyNodeList.size() >= 1)
+				//if(quantityEntity->AssociatedPropertyNodeList.back() != NULL) - this is dangerous/impossible to use; it will not return NULL if pop_back() has been executed on the vector				
 				{
 					GIAEntityNode * quantityProperty = quantityEntity->AssociatedPropertyNodeList.back();
 					quantityProperty->hasQuantity = true;
@@ -1604,7 +1624,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;		
 		}
 		
-		//4d pass; extract measures
+		cout << "4d pass; extract measures" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{	
@@ -1623,11 +1643,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			if(pass)
 			{
 				GIAEntityNode * measureEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
-				if(measureEntity->AssociatedPropertyNodeList.back() != NULL)
+				if(measureEntity->AssociatedPropertyNodeList.size() >= 1)
+				//if(measureEntity->AssociatedPropertyNodeList.back() != NULL) - this is dangerous/impossible to use; it will not return NULL if pop_back() has been executed on the vector
 				{
 					GIAEntityNode * measureProperty = measureEntity->AssociatedPropertyNodeList.back();
 					measureProperty->hasMeasure = true;
 					measureProperty->measureType = measureTypeIndex;
+					
+					cout << "tsdf2" << endl;
 					
 					//string measurePropertyName = currentRelationInList->relationFunction; 
 					//string quantityName = currentRelationInList->relationArgument; 
@@ -1644,6 +1667,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			}
 			currentRelationInList = currentRelationInList->next;		
 		}
+		cout << "4d2 pass; extract measures" << endl;
 				
 		/*
 		//restore critical variables; temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed

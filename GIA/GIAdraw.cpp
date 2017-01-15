@@ -189,7 +189,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR, writeFileObject);
 			}		
 		}
-		
+					
 		
 		//cout << "a2" << endl;
 		
@@ -210,7 +210,31 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				pos5.z = DRAW_CONNECTION_Z;
 				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject);
 			}			
+		}				
+		if(entityNode->timeConditionNode != NULL)
+		{	
+			if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
+			{
+				//cout << "b7" << endl;
+				int timeConditionNodePrintX = x+r;
+				int timeConditionNodePrintY = y+q;
+				currentReferenceInPrintList = initialiseTimeConditionNodeForPrinting(entityNode->timeConditionNode, timeConditionNodePrintY, timeConditionNodePrintX, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+				
+				q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+				
+				//cout << "b8" << endl;
+				if(initialiseOrPrint == DRAW_PRINT)
+				{	
+					//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
+
+					pos5.x = timeConditionNodePrintX;
+					pos5.y = timeConditionNodePrintY;	
+					pos5.z = DRAW_CONNECTION_Z;
+					currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject);
+				}
+			}		
 		}
+				
 		//go reverse also...
 		q = DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
 		r = DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
@@ -458,6 +482,31 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 	
 	return currentReferenceInPrintList;	//does this need to be newCurrentReferenceInPrintList?
 		
+}
+
+
+
+
+Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeConditionNode, int y, int x, int initialiseOrPrint, Reference * currentReferenceInPrintList, ofstream * writeFileObject)
+{
+	int timeConditionNodePrintX = x;
+	int timeConditionNodePrintY = y;
+
+	vec pos1;
+	vec pos2;
+	vec pos3;
+
+	pos1.x = timeConditionNodePrintX;
+	pos1.y = timeConditionNodePrintY;	
+	pos1.z = DRAW_CONNECTION_Z;
+	
+	//may accidentially overwrite adjacent nodes/connections that have already been printed here; be careful...
+
+	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_NODE_COLOUR, &(timeConditionNode->conditionName), writeFileObject, GIA_DRAW_THICKNESS_NORMAL);
+
+	cout << "Exiting: timeConditionNode = " << timeConditionNode->conditionName << endl;
+
+	return currentReferenceInPrintList;	//does this need to be newCurrentReferenceInPrintList?
 }
 
 
