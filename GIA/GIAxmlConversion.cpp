@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n1f 12-September-2016
+ * Project Version: 2n1g 12-September-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -162,8 +162,14 @@ bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>
 	vector<GIAentityNode*> entityNodesActiveListConditions;
 	vector<GIAentityNode*> entityNodesActiveListConcepts;
 	vector<GIAentityNode*> entityNodesActiveListQualities;
-	vector<GIAentityNode*>* entityNodesActiveListArray[GIA_ENTITY_NUMBER_OF_TYPES] = {entityNodesActiveListNetworkIndexes, &entityNodesActiveListSubstances, &entityNodesActiveListActions, &entityNodesActiveListConditions, &entityNodesActiveListConcepts, &entityNodesActiveListQualities};
-
+	vector<GIAentityNode*>* entityNodesActiveListArray[GIA_ENTITY_NUMBER_OF_TYPES]; 
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX] = entityNodesActiveListNetworkIndexes;
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_TYPE_SUBSTANCE] = &entityNodesActiveListSubstances;
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_TYPE_ACTION] = &entityNodesActiveListActions;
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_TYPE_CONDITION] = &entityNodesActiveListConditions;
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_TYPE_CONCEPT] = &entityNodesActiveListConcepts;
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_TYPE_QUALITY] = &entityNodesActiveListQualities;
+		
 	if(currentTagUpdatedL1->name == NET_XML_TAG_semanticNetwork)
 	{
 	}
@@ -182,6 +188,10 @@ bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>
 		{
 			if(currentTagUpdatedL2->name == entityTypeNodeContainerXMLtags[entityType])
 			{
+				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
+				//cout << "entityTypeNodeContainerXMLtags[entityType] = " << entityTypeNodeContainerXMLtags[entityType] << endl;
+				#endif
+				
 				if(!parseSemanticEntityTypeNodeContainerTag(currentTagUpdatedL2, entityNodesActiveListComplete, entityNodesActiveListArray[entityType], linkConnections, &currentEntityNodeIDinCompleteList))
 				{
 					result = false;
@@ -210,80 +220,36 @@ bool parseSemanticEntityTypeNodeContainerTag(XMLparserTag* currentTagUpdatedL2, 
 		if(currentTagUpdatedL3->name == NET_XML_TAG_entityNode)
 		{
 			#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-			if(currentTagUpdatedL3->firstAttribute->name == NET_XML_ATTRIBUTE_id)
-			{
-				//cout << "Entity Node ID: " << currentTagUpdatedL3->firstAttribute->value << endl;
-			}
+			cout << "currentEntityNodeIDinCompleteList = " << *currentEntityNodeIDinCompleteList << endl;
 			#endif
-
+			
+			GIAentityNode* currentEntity = NULL;
+			
 			if(linkConnections)
 			{
-				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-				//cout << "currentEntityNodeIDinCompleteList = " << currentEntityNodeIDinCompleteList << endl;
-				#endif
-				GIAentityNode* currentEntity = entityNodesActiveListComplete->at(*currentEntityNodeIDinCompleteList);
-				currentEntityNodeIDinCompleteList++;
-				if(!parseEntityNodeTag(currentTagUpdatedL3, currentEntity, entityNodesActiveListComplete))
-				{
-					result = false;
-				}
+				currentEntity = entityNodesActiveListComplete->at(*currentEntityNodeIDinCompleteList);
+
+				(*currentEntityNodeIDinCompleteList)++;			
 			}
 			else
 			{
-				GIAentityNode* newEntity = new GIAentityNode();
+				currentEntity = new GIAentityNode();
 
-				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-				int attributeValue = convertStringToInt(currentTagUpdatedL3->firstAttribute->value);
-				newEntity->idActiveList = attributeValue;
-				newEntity->entityName = currentTagUpdatedL3->firstAttribute->nextAttribute->value.c_str();
-				//cout << "newEntity->entityName = " << newEntity->entityName << endl;
-				#endif
-
-				entityNodesActiveListComplete->push_back(newEntity);
-				currentEntityNodeIDinCompleteList++;
-				entityNodesActiveListType->push_back(newEntity);
+				entityNodesActiveListComplete->push_back(currentEntity);
+				(*currentEntityNodeIDinCompleteList)++;
+				entityNodesActiveListType->push_back(currentEntity);
 				currentEntityNodeIDinEntityTypeNodeList++;
-
-				#ifdef GIA_ENABLE_XML_READ_DEBUG
-				if(currentTagUpdatedL3->firstAttribute != NULL)
-				{
-					if(currentTagUpdatedL3->firstAttribute->nextAttribute->name != NET_XML_ATTRIBUTE_id)
-					{
-						if(currentTagUpdatedL3->firstAttribute->nextAttribute != NULL)
-						{
-							if(currentTagUpdatedL3->firstAttribute->nextAttribute->name != NET_XML_ATTRIBUTE_name)
-							{
-
-							}
-							else
-							{
-								cout << "error: networkIndex entityTag does not have name as second attribute" << endl;
-								exit(0);
-							}
-						}
-						else
-						{
-							cout << "error: networkIndex entityTag does not have name" << endl;
-							exit(0);
-						}
-					}
-					else
-					{
-						cout << "error: networkIndex entityTag does not have idActiveList as first attribute" << endl;
-						exit(0);
-					}
-				}
-				else
-				{
-					cout << "error: networkIndex entityTag does not have ID" << endl;
-					exit(0);
-				}
-				#endif
-
-				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-				cout << "NetworkIndex Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;
-				#endif
 			}
+			
+			if(!parseEntityNodeTag(currentTagUpdatedL3, currentEntity, entityNodesActiveListComplete, linkConnections))
+			{
+				result = false;
+			}
+			
+			#ifdef GIA_SEMANTIC_NET_XML_DEBUG
+			cout << "currentEntity->entityName = " << currentEntity->entityName << endl;
+			cout << "currentEntity->idActiveList = " << currentEntity->idActiveList << endl;
+			#endif
 		}
 		else
 		{
@@ -304,11 +270,9 @@ bool parseSemanticEntityTypeNodeContainerTag(XMLparserTag* currentTagUpdatedL2, 
 
 
 
-bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entityNode, vector<GIAentityNode*>* entityNodesActiveListComplete)
+bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entityNode, vector<GIAentityNode*>* entityNodesActiveListComplete, bool linkConnections)
 {
 	bool result = true;
-
-	XMLparserAttribute* currentAttribute = firstTagInEntityNode->firstAttribute;
 
 	bool idFound = false;
 	bool entityNameFound = false;
@@ -322,15 +286,12 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 	
 	bool entityTypeFound = false;
 	bool isActionConceptFound = false;
-
-	bool conditionTypeFound = false;
-
 	bool hasAssociatedInstanceFound = false;
 	bool hasAssociatedTimeFound = false;
-	bool negativeFound = false;
-	bool disabledFound = false;
+	bool negativeFound = false;	
+	
+	bool conditionTypeFound = false;
 
-	bool grammaticalNumberFound = false;
 	bool hasQuantityFound = false;
 	bool quantityNumberFound = false;
 	bool quantityNumberStringFound = false;
@@ -347,19 +308,25 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 	bool printTextXFound = false;
 	bool printTextYFound = false;
 
+	bool grammaticalNumberFound = false;
 	#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
-	bool sentenceIndexTempFound = false;
+	bool grammaticalTenseModifierArrayTempFound = false;
 	bool grammaticalDefiniteTempFound = false;
 	bool grammaticalIndefinitePluralTempFound = false;
 	bool grammaticalProperNounTempFound = false;
 	#ifdef GIA_SUPPORT_PREDETERMINERS
 	bool grammaticalPredeterminerTempFound = false;
 	#endif
+	
 	bool entityIndexFound = false;
 	bool wasReferenceFound = false;
 	bool isQueryFound = false;
-	bool grammaticalTenseModifierArrayTempFound = false;
+	
+	bool sentenceIndexTempFound = false;
 	#endif
+	
+	bool disabledFound = false;
+	
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
 	bool conditionType2Found = false;
@@ -372,348 +339,361 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 	#endif
 	#endif
 
-	bool entityVectorConnectionNodeFoundArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
-	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-	{
-		entityVectorConnectionNodeFoundArray[i] = false;
-	}
-
 	bool timeConditionNodeFound = false;
 
-	//incase network is never trained, but output for visualisation purposes, set these values to dummy values
-	//parseEntityNodeTag->... = 0;
-
-	while(currentAttribute->nextAttribute != NULL)
+	if(!linkConnections)
 	{
-		if(currentAttribute->name == NET_XML_ATTRIBUTE_id)
-		{
-			long attributeValue = convertStringToLong(currentAttribute->value);
-			entityNode->idActiveList = attributeValue;
-			idFound = true;
-			#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-			//cout << "entityNode->idActiveList = " << entityNode->idActiveList << endl;
-			#endif
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityName)
-		{
-			string attributeValue = currentAttribute->value.c_str();
-			entityNode->entityName = attributeValue;
-			entityNameFound = true;
-		}
-		#ifdef GIA_USE_WORD_ORIG
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_wordOrig)
-		{
-			string attributeValue = currentAttribute->value.c_str();
-			entityNode->wordOrig = attributeValue;
-			wordOrigFound = true;
-		}
-		#endif
-		#ifdef GIA_SUPPORT_ALIASES
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_aliases)
-		{
-			string attributeValue = currentAttribute->value.c_str();
-			convertAliasesStringToAliases(entityNode, attributeValue);
-			aliasesFound = true;
-		}
-		#endif
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_confidence)
-		{
-			double attributeValue = convertStringToDouble(currentAttribute->value);
-			entityNode->confidence = attributeValue;
-			confidenceFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityType)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->entityType = attributeValue;
-			entityTypeFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedInstance)
-		{
-			bool attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->hasAssociatedInstance = attributeValue;
-			hasAssociatedInstanceFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isActionConcept)
-		{
-			bool attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->isActionConcept = attributeValue;
-			isActionConceptFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedTime)
-		{
-			bool attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->hasAssociatedTime = attributeValue;
-			hasAssociatedTimeFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_negative)
-		{
-			bool attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->negative = attributeValue;
-			negativeFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_disabled)
-		{
-			bool attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->disabled = attributeValue;
-			disabledFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionType)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->conditionType = attributeValue;
-			conditionTypeFound = true;
-		}
+		//incase network is never trained, but output for visualisation purposes, set these values to dummy values
+		//parseEntityNodeTag->... = 0;
+		XMLparserAttribute* currentAttribute = firstTagInEntityNode->firstAttribute;
 
-
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalNumber)
+		while(currentAttribute->nextAttribute != NULL)
 		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->grammaticalNumber = attributeValue;
-			grammaticalNumberFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasQuantity)
-		{
-			bool attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->hasQuantity = attributeValue;
-			hasQuantityFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityNumber)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->quantityNumber = attributeValue;
-			quantityNumberFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityNumberString)
-		{
-			string attributeValue = currentAttribute->value.c_str();
-			entityNode->quantityNumberString = attributeValue;
-			quantityNumberStringFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityModifier)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->quantityModifier = attributeValue;
-			quantityModifierFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityModifierString)
-		{
-			string attributeValue = currentAttribute->value.c_str();
-			entityNode->quantityModifierString = attributeValue;
-			quantityModifierStringFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasQuantityMultiplier)
-		{
-			bool attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->hasQuantityMultiplier = attributeValue;
-			hasQuantityMultiplierFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasMeasure)
-		{
-			bool attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->hasMeasure = attributeValue;
-			hasMeasureFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_measureType)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->measureType = attributeValue;
-			measureTypeFound = true;
-		}
-
-
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printX)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->printX = attributeValue;
-			printXFound = true;
-			entityNode->printCoordsAlreadyDefined = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printY)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->printY = attributeValue;
-			printYFound = true;
-			entityNode->printCoordsAlreadyDefined = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printXIndex)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->printXIndex = attributeValue;
-			printXIndexFound = true;
-			entityNode->printCoordsAlreadyDefined = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printYIndex)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->printYIndex = attributeValue;
-			printYIndexFound = true;
-			entityNode->printCoordsAlreadyDefined = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextX)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->printTextX = attributeValue;
-			printTextXFound = true;
-			entityNode->printCoordsAlreadyDefined = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextY)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->printTextY = attributeValue;
-			printTextYFound = true;
-			entityNode->printCoordsAlreadyDefined = true;
-		}
-
-		#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_sentenceIndexTemp)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->sentenceIndexTemp = attributeValue;
-			sentenceIndexTempFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalDefiniteTemp)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->grammaticalDefiniteTemp = attributeValue;
-			grammaticalDefiniteTempFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalIndefinitePluralTemp)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->grammaticalIndefinitePluralTemp = attributeValue;
-			grammaticalIndefinitePluralTempFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalProperNounTemp)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->grammaticalProperNounTemp = attributeValue;
-			grammaticalProperNounTempFound = true;
-		}
-		#ifdef GIA_SUPPORT_PREDETERMINERS
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalPredeterminerTemp)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->grammaticalPredeterminerTemp = attributeValue;
-			grammaticalPredeterminerTempFound = true;
-		}
-		#endif
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityIndexTemp)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->entityIndexTemp = attributeValue;
-			entityIndexFound = true;
-		}
-		#ifdef GIA_USE_ADVANCED_REFERENCING
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_wasReference)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->wasReference = attributeValue;
-			wasReferenceFound = true;
-		}
-		#endif
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isQuery)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->isQuery = attributeValue;
-			isQueryFound = true;
-		}
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp)
-		{
-			string attributeValue = currentAttribute->value;
-			convertStringToBooleanArray(attributeValue, entityNode->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
-			grammaticalTenseModifierArrayTempFound = true;
-		}
-		#endif
-
-		#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-		#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionType2)
-		{
-			string attributeValue = currentAttribute->value.c_str();
-			entityNode->conditionType2 = attributeValue;
-			conditionType2Found = true;
-		}
-		#endif
-		#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionTwoWay)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->conditionTwoWay = attributeValue;
-			conditionTwoWayFound = true;
-		}
-		#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
-		else if(currentAttribute->name == NET_XML_ATTRIBUTE_inverseConditionTwoWay)
-		{
-			int attributeValue = convertStringToInt(currentAttribute->value);
-			entityNode->inverseConditionTwoWay = attributeValue;
-			inverseConditionTwoWayFound = true;
-		}
-		#endif
-		#endif
-		#endif
-
-		currentAttribute = currentAttribute->nextAttribute;
-	}
-
-	XMLparserTag* currentTagUpdatedL3 = firstTagInEntityNode->firstLowerLevelTag;
-	while(currentTagUpdatedL3->nextTag != NULL)
-	{
-		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-		{
-			if(currentTagUpdatedL3->name == entityVectorConnectionXMLtagNameArray[i])
+			if(currentAttribute->name == NET_XML_ATTRIBUTE_id)
 			{
-				if(!parseEntityVectorConnectionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesActiveListComplete, i))
-				{
-					result = false;
-				}
-				entityVectorConnectionNodeFoundArray[i] = true;
+				long attributeValue = convertStringToLong(currentAttribute->value);
+				entityNode->idActiveList = attributeValue;
+				idFound = true;
+				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
+				//cout << "entityNode->idActiveList = " << entityNode->idActiveList << endl;
+				#endif
 			}
-		}
-
-		if(currentTagUpdatedL3->name == NET_XML_TAG_timeConditionNode)
-		{
-			#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-			//cout << "timeConditionNode: " << endl;
-			#endif
-			entityNode->timeConditionNode = new GIAtimeConditionNode();
-			if(!parseTimeConditionNodeTag(currentTagUpdatedL3, entityNode->timeConditionNode))
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityName)
 			{
-				result = false;
+				string attributeValue = currentAttribute->value.c_str();
+				entityNode->entityName = attributeValue;
+				entityNameFound = true;
 			}
-			timeConditionNodeFound = true;
-		}
+			#ifdef GIA_USE_WORD_ORIG
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_wordOrig)
+			{
+				string attributeValue = currentAttribute->value.c_str();
+				entityNode->wordOrig = attributeValue;
+				wordOrigFound = true;
+			}
+			#endif
+			#ifdef GIA_SUPPORT_ALIASES
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_aliases)
+			{
+				string attributeValue = currentAttribute->value.c_str();
+				convertAliasesStringToAliases(entityNode, attributeValue);
+				aliasesFound = true;
+			}
+			#endif
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_confidence)
+			{
+				double attributeValue = convertStringToDouble(currentAttribute->value);
+				entityNode->confidence = attributeValue;
+				confidenceFound = true;
+			}
 
-		currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
-	}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityType)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->entityType = attributeValue;
+				entityTypeFound = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_isActionConcept)
+			{
+				bool attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->isActionConcept = attributeValue;
+				isActionConceptFound = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedInstance)
+			{
+				bool attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->hasAssociatedInstance = attributeValue;
+				hasAssociatedInstanceFound = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedTime)
+			{
+				bool attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->hasAssociatedTime = attributeValue;
+				hasAssociatedTimeFound = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_negative)
+			{
+				bool attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->negative = attributeValue;
+				negativeFound = true;
+			}
 
-	if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
-	{
-		/*
-		if(!entityNodeContainingThisSubstanceFound)
-		{
-			result = false;
+
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionType)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->conditionType = attributeValue;
+				conditionTypeFound = true;
+			}
+
+
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasQuantity)
+			{
+				bool attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->hasQuantity = attributeValue;
+				hasQuantityFound = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityNumber)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->quantityNumber = attributeValue;
+				quantityNumberFound = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityNumberString)
+			{
+				string attributeValue = currentAttribute->value.c_str();
+				entityNode->quantityNumberString = attributeValue;
+				quantityNumberStringFound = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityModifier)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->quantityModifier = attributeValue;
+				quantityModifierFound = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityModifierString)
+			{
+				string attributeValue = currentAttribute->value.c_str();
+				entityNode->quantityModifierString = attributeValue;
+				quantityModifierStringFound = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasQuantityMultiplier)
+			{
+				bool attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->hasQuantityMultiplier = attributeValue;
+				hasQuantityMultiplierFound = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasMeasure)
+			{
+				bool attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->hasMeasure = attributeValue;
+				hasMeasureFound = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_measureType)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->measureType = attributeValue;
+				measureTypeFound = true;
+			}
+
+
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_printX)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->printX = attributeValue;
+				printXFound = true;
+				entityNode->printCoordsAlreadyDefined = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_printY)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->printY = attributeValue;
+				printYFound = true;
+				entityNode->printCoordsAlreadyDefined = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_printXIndex)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->printXIndex = attributeValue;
+				printXIndexFound = true;
+				entityNode->printCoordsAlreadyDefined = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_printYIndex)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->printYIndex = attributeValue;
+				printYIndexFound = true;
+				entityNode->printCoordsAlreadyDefined = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextX)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->printTextX = attributeValue;
+				printTextXFound = true;
+				entityNode->printCoordsAlreadyDefined = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextY)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->printTextY = attributeValue;
+				printTextYFound = true;
+				entityNode->printCoordsAlreadyDefined = true;
+			}
+
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalNumber)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->grammaticalNumber = attributeValue;
+				grammaticalNumberFound = true;
+			}
+			#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp)
+			{
+				string attributeValue = currentAttribute->value;
+				convertStringToBooleanArray(attributeValue, entityNode->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
+				grammaticalTenseModifierArrayTempFound = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalDefiniteTemp)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->grammaticalDefiniteTemp = attributeValue;
+				grammaticalDefiniteTempFound = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalIndefinitePluralTemp)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->grammaticalIndefinitePluralTemp = attributeValue;
+				grammaticalIndefinitePluralTempFound = true;
+			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalProperNounTemp)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->grammaticalProperNounTemp = attributeValue;
+				grammaticalProperNounTempFound = true;
+			}
+			#ifdef GIA_SUPPORT_PREDETERMINERS
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalPredeterminerTemp)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->grammaticalPredeterminerTemp = attributeValue;
+				grammaticalPredeterminerTempFound = true;
+			}
+			#endif
+
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityIndexTemp)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->entityIndexTemp = attributeValue;
+				entityIndexFound = true;
+			}
+			#ifdef GIA_USE_ADVANCED_REFERENCING
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_wasReference)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->wasReference = attributeValue;
+				wasReferenceFound = true;
+			}
+			#endif
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_isQuery)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->isQuery = attributeValue;
+				isQueryFound = true;
+			}
+
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_sentenceIndexTemp)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->sentenceIndexTemp = attributeValue;
+				sentenceIndexTempFound = true;
+			}
+			#endif
+
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_disabled)
+			{
+				bool attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->disabled = attributeValue;
+				disabledFound = true;
+			}
+
+			#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
+			#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionType2)
+			{
+				string attributeValue = currentAttribute->value.c_str();
+				entityNode->conditionType2 = attributeValue;
+				conditionType2Found = true;
+			}
+			#endif
+			#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionTwoWay)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->conditionTwoWay = attributeValue;
+				conditionTwoWayFound = true;
+			}
+			#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_inverseConditionTwoWay)
+			{
+				int attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->inverseConditionTwoWay = attributeValue;
+				inverseConditionTwoWayFound = true;
+			}
+			#endif
+			#endif
+			#endif
+
+			currentAttribute = currentAttribute->nextAttribute;
 		}
-		*/
-		#ifndef GIA_TEMPORARILY_DISABLE_GIA_XML_READ_CHECKS
-		if(!entityVectorConnectionNodeFoundArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE])
-		{
-			cout << "parseEntityNodeTag error: isSubstanceFound && entityNode->isSubstance && !entityNodeDefiningThisSubstanceFound" << endl;
-			result = false;
-		}
-		#endif
 	}
 	else
 	{
 
-	}
+		bool entityVectorConnectionNodeFoundArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
+		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+		{
+			entityVectorConnectionNodeFoundArray[i] = false;
+		}
 
-	/*
-	if(printXFound && printYFound && printXIndexFound && printYIndexFound && printTextXFound && printTextYFound)
-	{
-		entityNode->initialisedForPrinting = true;
+		XMLparserTag* currentTagUpdatedL3 = firstTagInEntityNode->firstLowerLevelTag;
+		while(currentTagUpdatedL3->nextTag != NULL)
+		{
+			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+			{
+				if(currentTagUpdatedL3->name == entityVectorConnectionXMLtagNameArray[i])
+				{
+					if(!parseEntityVectorConnectionNodeListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesActiveListComplete, i))
+					{
+						result = false;
+					}
+					entityVectorConnectionNodeFoundArray[i] = true;
+				}
+			}
+
+			if(currentTagUpdatedL3->name == NET_XML_TAG_timeConditionNode)
+			{
+				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
+				//cout << "timeConditionNode: " << endl;
+				#endif
+				entityNode->timeConditionNode = new GIAtimeConditionNode();
+				if(!parseTimeConditionNodeTag(currentTagUpdatedL3, entityNode->timeConditionNode))
+				{
+					result = false;
+				}
+				timeConditionNodeFound = true;
+			}
+
+			currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
+		}
+
+		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
+		{
+			/*
+			if(!entityNodeContainingThisSubstanceFound)
+			{
+				result = false;
+			}
+			*/
+			#ifndef GIA_TEMPORARILY_DISABLE_GIA_XML_READ_CHECKS
+			if(!entityVectorConnectionNodeFoundArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE])
+			{
+				cout << "parseEntityNodeTag error: isSubstanceFound && entityNode->isSubstance && !entityNodeDefiningThisSubstanceFound" << endl;
+				result = false;
+			}
+			#endif
+		}
+		else
+		{
+
+		}
+
+		/*
+		if(printXFound && printYFound && printXIndexFound && printYIndexFound && printTextXFound && printTextYFound)
+		{
+			entityNode->initialisedForPrinting = true;
+		}
+		*/
 	}
-	*/
 
 	return result;
 }
@@ -817,20 +797,21 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 			}
 			if(idFound)
 			{
-				GIAentityNode* entity = findActiveEntityNodeByID(idActiveList, entityNodesActiveListComplete);
-				newConnection->entity = entity;
+				GIAentityNode* targetEntity = findActiveEntityNodeByID(idActiveList, entityNodesActiveListComplete);
+				newConnection->entity = targetEntity;
 				#ifdef GIA_USE_DATABASE
 				newConnection->referenceLoaded = true;
-				newConnection->entityName = entity->entityName;
-				newConnection->idInstance = entity->idInstance;
+				newConnection->entityName = targetEntity->entityName;
+				newConnection->idInstance = targetEntity->idInstance;
 				newConnection->loaded = true;
 				newConnection->modified = false;
 				newConnection->added = true;
 				#endif
 				entityNode->entityVectorConnectionsArray[entityVectorConnectionIndex].push_back(newConnection);
 				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-				//cout << "attributeValue = " << attributeValue << endl;
-				//cout << "refID = " << findActiveEntityNodeByID(attributeValue, entityNodesActiveListComplete)->idActiveList << endl;
+				cout << "linking " << entityNode->entityName << " to " << targetEntity->entityName << endl;
+				cout << "entityVectorConnectionIndex = " << entityVectorConnectionIndex << endl;
+				cout << "idActiveList = " << idActiveList << endl;
 				#endif
 			}
 			else
@@ -989,7 +970,7 @@ bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*>* entityN
 	currentEntityNodeIDinEntityNodesActiveCompleteList = 0;
 	for(int entityType=0; entityType<GIA_ENTITY_NUMBER_OF_TYPES; entityType++)
 	{
-		resetIDsForNodeList(entityNodesActiveListNetworkIndexes, &currentEntityNodeIDinEntityNodesActiveCompleteList, entityType);
+		resetIDsForNodeList(entityNodesActiveListComplete, &currentEntityNodeIDinEntityNodesActiveCompleteList, entityType);
 	}
 	#endif
 
@@ -1029,9 +1010,9 @@ bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*>* entityN
 
 
 #ifdef GIA_SEMANTIC_NET_XML_REORDER_NETWORK_INDEX_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
-void resetIDsForNodeList(vector<GIAentityNode*>* entityNodesList, long* currentEntityNodeIDinEntityNodesActiveCompleteList, int entityType)
+void resetIDsForNodeList(vector<GIAentityNode*>* entityNodesActiveListComplete, long* currentEntityNodeIDinEntityNodesActiveCompleteList, int entityType)
 {
-	for(vector<GIAentityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesList->begin(); entityNodesActiveCompleteListIterator < entityNodesList->end(); entityNodesActiveCompleteListIterator++)
+	for(vector<GIAentityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesActiveListComplete->begin(); entityNodesActiveCompleteListIterator < entityNodesActiveListComplete->end(); entityNodesActiveCompleteListIterator++)
 	{
 		GIAentityNode* currentEntity = (*entityNodesActiveCompleteListIterator);
 		#ifdef GIA_SEMANTIC_NET_DO_NOT_WRITE_DISABLED_ENTITY_NODES
@@ -1128,6 +1109,7 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentAttribute->value = convertDoubleToString((currentEntity->confidence), "%0.6f");
 	currentAttribute = createNewAttribute(currentAttribute);
 
+
 	currentAttribute->name = NET_XML_ATTRIBUTE_entityType;
 	currentAttribute->value = convertIntToString(currentEntity->entityType);
 	currentAttribute = createNewAttribute(currentAttribute);
@@ -1148,17 +1130,11 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentAttribute->value = convertIntToString(int(currentEntity->negative));
 	currentAttribute = createNewAttribute(currentAttribute);
 
-	currentAttribute->name = NET_XML_ATTRIBUTE_disabled;
-	currentAttribute->value = convertIntToString(int(currentEntity->disabled));
-	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_conditionType;
 	currentAttribute->value = convertIntToString(currentEntity->conditionType);
 	currentAttribute = createNewAttribute(currentAttribute);
-
-	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalNumber;
-	currentAttribute->value = convertIntToString((currentEntity->grammaticalNumber));
-	currentAttribute = createNewAttribute(currentAttribute);
+	
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_hasQuantity;
 	currentAttribute->value = convertIntToString(int(currentEntity->hasQuantity));
@@ -1239,11 +1215,16 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	}
 	#endif
 
-	#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
-	currentAttribute->name = NET_XML_ATTRIBUTE_sentenceIndexTemp;
-	currentAttribute->value = convertIntToString((currentEntity->sentenceIndexTemp));
-	currentAttribute = createNewAttribute(currentAttribute);
 
+	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalNumber;
+	currentAttribute->value = convertIntToString((currentEntity->grammaticalNumber));
+	currentAttribute = createNewAttribute(currentAttribute);
+	#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
+
+	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp;
+	currentAttribute->value = convertBooleanArrayToString(currentEntity->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
+	currentAttribute = createNewAttribute(currentAttribute);
+	
 	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalDefiniteTemp;
 	currentAttribute->value = convertIntToString(int(currentEntity->grammaticalDefiniteTemp));
 	currentAttribute = createNewAttribute(currentAttribute);
@@ -1261,6 +1242,7 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentAttribute->value = convertIntToString(int(currentEntity->grammaticalPredeterminerTemp));
 	currentAttribute = createNewAttribute(currentAttribute);
 	#endif
+	
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_entityIndexTemp;
 	currentAttribute->value = convertIntToString((currentEntity->entityIndexTemp));
@@ -1276,10 +1258,17 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentAttribute->value = convertIntToString(int(currentEntity->isQuery));
 	currentAttribute = createNewAttribute(currentAttribute);
 
-	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp;
-	currentAttribute->value = convertBooleanArrayToString(currentEntity->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
+
+	currentAttribute->name = NET_XML_ATTRIBUTE_sentenceIndexTemp;
+	currentAttribute->value = convertIntToString((currentEntity->sentenceIndexTemp));
 	currentAttribute = createNewAttribute(currentAttribute);
 	#endif
+
+
+	currentAttribute->name = NET_XML_ATTRIBUTE_disabled;
+	currentAttribute->value = convertIntToString(int(currentEntity->disabled));
+	currentAttribute = createNewAttribute(currentAttribute);
+
 
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
