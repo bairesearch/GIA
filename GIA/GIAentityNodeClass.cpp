@@ -278,17 +278,19 @@ GIAentityNode::GIAentityNode(void)
 	#endif
 	#endif
 }
+/*
 #ifdef USE_NLC
+//#ifdef NLC_NONOO
 GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the above constructor - NB must create GIAentityNode::initialiseVariables if this constructor is actually in use
 {
-	/*GIA Internal Entity Referencing*/
+	GIA Internal Entity Referencing
 	idActiveList = 0;
 	idActiveEntityTypeList = 0;	//temporary ID reserved for specific entity types; concept, action, substance etc
 	idActiveListReorderdIDforXMLsave = 0;
 	idInstance = 0;		//set as concept by default (GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE)
 
 
-	/*GIA Entity Name*/
+	GIA Entity Name
 	entityName = newEntityName;
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
 	wordOrig = "";		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
@@ -296,7 +298,7 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	confidence = 1.0;
 
 
-	/*GIA Entity Type*/
+	GIA Entity Type
 	isConcept = false;
 	isSubstance = false;
 	isAction = false;
@@ -311,7 +313,7 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	negative = false;
 
 
-	/*GIA Special Variables (Quantities/Measures)*/
+	//GIA Special Variables (Quantities/Measures)
 	hasQuantity = false;
 	quantityNumber = QUANTITY_NUMBER_UNDEFINED;
 	quantityModifier = QUANTITY_MODIFIER_UNDEFINED;	//not yet implemented
@@ -321,7 +323,7 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	measureType = MEASURE_TYPE_UNDEFINED;
 
 
-	/*GIA Draw Variables*/
+	//GIA Draw Variables
 	initialisedForPrinting = false;
 	//printed = false;
 	printX = 0;
@@ -333,7 +335,7 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	printCoordsAlreadyDefined = false;
 
 
-	/*GIA Translator Temporary Variables - Grammar*/
+	//GIA Translator Temporary Variables - Grammar
 	grammaticalNumber = GRAMMATICAL_NUMBER_UNDEFINED;
 	grammaticalWordTypeTemp = GRAMMATICAL_WORD_TYPE_UNDEFINED;
 	for(int grammaticalTenseModifierIndex=0; grammaticalTenseModifierIndex<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
@@ -351,17 +353,17 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	grammaticalIndexOfDeterminerTemp = GIA_ENTITY_INDEX_UNDEFINED;
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
-	/*
-	CharacterOffsetBeginTemp = INT_DEFAULT_VALUE;
-	CharacterOffsetEndTemp = INT_DEFAULT_VALUE;
-	*/
+	
+	//CharacterOffsetBeginTemp = INT_DEFAULT_VALUE;
+	//CharacterOffsetEndTemp = INT_DEFAULT_VALUE;
+	
 	stanfordPOStemp = "";
 	NERTemp = FEATURE_NER_UNDEFINED;
 	NormalizedNERtemp = "";
 	TimexTemp = "";
 	#endif
 
-	/*GIA Translator Temporary Variables*/
+	//GIA Translator Temporary Variables
 	isSubjectTemp = false;
 	isObjectTemp = false;
 	hasSubstanceTemp = false;
@@ -383,7 +385,7 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	isNumberOf = false;
 	#endif
 	
-	/*GIA Connections*/
+	//GIA Connections
 	//to minimise query/referencing code
 	actionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS]);
 	incomingActionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS]);
@@ -402,23 +404,22 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	#ifdef GIA_USE_DATABASE
 	DBsetEntityConnectionsReferenceListsLoaded(this, true);	//for now, assume that a new entity will be configured with its connections loaded into RAM
 	#endif
-	/*
-	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_DEFINITIONS] = entityNodeDefinitionList;
-	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_SUBSTANCES] = propertyNodeList;
-	*/
+
+	//entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_DEFINITIONS] = entityNodeDefinitionList;
+	//entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_SUBSTANCES] = propertyNodeList;
+
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	/* initialisation shouldnt be necessary...
-	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-	{
-		entityVectorConnectionsParametersSameReferenceSetArray[i] = new vector<GIAentityNode*>();
-	}
-	*/
+	// initialisation shouldnt be necessary...
+	//for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+	//{
+	//	entityVectorConnectionsParametersSameReferenceSetArray[i] = new vector<GIAentityNode*>();
+	//}
 	#endif
 	conditionType = CONDITION_NODE_TYPE_UNDEFINED;
 	timeConditionNode = NULL;
 
 
-	/*Query Variables*/
+	//Query Variables
 	isQuery = false;
 	isWhichOrEquivalentWhatQuery = false;
 	isAnswerToQuery = false;
@@ -431,7 +432,7 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	#endif
 
 
-	/*GIA Miscellaneous Internal Variables*/
+	//GIA Miscellaneous Internal Variables
 	disabled = false;
 	permanentConcept = false;
 	firstSentenceToAppearInNetwork = true;
@@ -499,7 +500,9 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	#endif
 	#endif
 }
+//#endif
 #endif
+*/
 GIAentityNode::~GIAentityNode(void)
 {
 	//delete all connections

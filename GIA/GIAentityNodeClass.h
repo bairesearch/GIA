@@ -260,7 +260,9 @@ public:
 
 	GIAentityNode(void);
 	#ifdef USE_NLC
+	//#ifdef NLC_NONOO
 	GIAentityNode(string newEntityName);
+	//#endif
 	#endif
 	~GIAentityNode(void);
 
