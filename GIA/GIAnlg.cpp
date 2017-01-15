@@ -23,7 +23,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q4e 14-October-2012
+ * Project Version: 1q4f 14-October-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -831,7 +831,7 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 		//inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_PREP];	//no inflection for prepositions
 		posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_PREP];
 	}
-	else if((entityNode->isSubstance) || !(entityNode->isSubstanceConcept))
+	else if((entityNode->isSubstance) && !(entityNode->isSubstanceConcept))
 	{
 		#ifdef NLG_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
 		bool isSubstanceQuality = false;
@@ -1058,7 +1058,7 @@ string calcDeterminate(GIAEntityNode * entityNode)
 	{
 
 	}
-	else if((entityNode->isSubstance) || !(entityNode->isSubstanceQuality))
+	else if((entityNode->isSubstance) && !(entityNode->isSubstanceConcept))
 	{
 		if(!(entityNode->isSubstanceQuality))
 		{
