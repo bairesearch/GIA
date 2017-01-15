@@ -23,7 +23,7 @@
  * File Name: GIAXMLconversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2c 11-August-2012
+ * Project Version: 1o3a 12-August-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -630,7 +630,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasQuality)
 		{
 			bool attributeValue = atoi(currentAttribute->value.c_str());
-			entityNode->hasQuality = attributeValue;
+			entityNode->isSubstanceQuality = attributeValue;
 			hasQualityFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_disabled)
@@ -1226,7 +1226,7 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	currentAttribute = currentAttribute->nextAttribute;
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_hasQuality;
-	sprintf(tempString, "%d", int(currentEntity->hasQuality));
+	sprintf(tempString, "%d", int(currentEntity->isSubstanceQuality));
 	currentAttribute->value = tempString;
 
 	newAttribute = new XMLParserAttribute();

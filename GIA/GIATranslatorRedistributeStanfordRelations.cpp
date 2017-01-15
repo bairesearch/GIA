@@ -23,7 +23,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2c 11-August-2012
+ * Project Version: 1o3a 12-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1483,7 +1483,6 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 	}
 
 
-	//either do eg1 or eg2 ;
 	//eg1 Kane is late 		nsubj(late-3, Kane-1) / cop(late-3, is-2) -> _predadj(kane-1, late-3) 				[NB non-determinate of governer and dependent of subject relation; take as indicator of substance]
 	//or
 	//eg2 She is the one 		nsubj(one-4, She-1) / cop(one-4, is-2) / det(one-4, the-3) -> appos(She-1, one-4)		[NB determinate of dependent of subject relation; take as an indicator of definition]
@@ -1574,6 +1573,9 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 												currentRelationInList->relationDependent = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName;
 
 												currentRelationInList2->disabled =  true;
+												
+												//cout << "1o3a debug issue #2" << endl;
+												//cout << "subjectGovernorEntity->entityName = " << subjectGovernorEntity->entityName << endl;												
 											}
 											else if(subjectGovernorNounFound)
 											{

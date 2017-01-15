@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2c 11-August-2012
+ * Project Version: 1o3a 12-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -83,13 +83,13 @@
 
 #define GIA_USE_1N1ATEMP1TO8_CHANGES	//added 1n1aTEMP9
 
-//#define GIA_USE_DATABASE	//this needs to be debugged (not yet tested)
+//#define GIA_USE_DATABASE	//requires further testing
 #ifdef GIA_USE_DATABASE
 	#define GIA_USE_DATABASE_FILESYSTEM
 	//#define GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 	#define GIA_DATABASE_CLEAR_CACHE_EVERY_SENTENCE
 #endif
-#define GIA_USE_ADVANCED_REFERENCING	//this needs to be debugged (not yet tested)
+#define GIA_USE_ADVANCED_REFERENCING	//requires further testing
 #ifdef GIA_USE_ADVANCED_REFERENCING
 	#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	//#define GIA_ADVANCED_REFERENCING_UPDATE_NOT_NECESSARY_OR_TESTED
@@ -119,7 +119,7 @@
 //Debug [Disable these for official build];
 //#define GIA_NLG_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
-//#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
+#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
 //#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
 #ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
 	//#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS_WORK_WITH_MULTIPLE_SENTENCES

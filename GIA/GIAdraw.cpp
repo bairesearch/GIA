@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2c 11-August-2012
+ * Project Version: 1o3a 12-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -307,7 +307,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 					boxThickness = GIA_DRAW_THICKNESS_THICK;
 				}
 
-				if(entityNode->hasQuality)
+				if(entityNode->isSubstanceQuality)
 				{
 					entityColour = GIA_DRAW_SUBSTANCE_QUALITY_NODE_COLOUR;
 				}

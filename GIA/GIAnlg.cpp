@@ -23,7 +23,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2c 11-August-2012
+ * Project Version: 1o3a 12-August-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -340,7 +340,7 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 							bool passAdditionalExtraRequirements = false;
 							if(vectorConnectionIndex == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)
 							{
-								if(entityNodeAdditional->hasQuality)
+								if(entityNodeAdditional->isSubstanceQuality)
 								{
 									passAdditionalExtraRequirements = true;
 								}
@@ -561,10 +561,10 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 			//cout << "helsinki" << endl;
 
 			#ifdef NLG_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
-			bool hasQuality = false;
-			if(entityNode2->hasQuality)
+			bool isSubstanceQuality = false;
+			if(entityNode2->isSubstanceQuality)
 			{
-				hasQuality = true;
+				isSubstanceQuality = true;
 				if(entityNode1->isAction)
 				{
 					#ifdef GIA_USE_NLG2
@@ -581,7 +581,7 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 					#endif
 				}
 			}
-			if(!hasQuality)
+			if(!isSubstanceQuality)
 			{
 			#endif
 				//eg possessive and/or tom has a bike
@@ -837,10 +837,10 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 	else if(entityNode->isSubstance)
 	{
 		#ifdef NLG_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
-		bool hasQuality = false;
-		if(entityNode->hasQuality)
+		bool isSubstanceQuality = false;
+		if(entityNode->isSubstanceQuality)
 		{
-			hasQuality = true;
+			isSubstanceQuality = true;
 			bool substanceOwnerIsAction = false;
 			if(!(entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES].empty()))
 			{
@@ -858,7 +858,7 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 				posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_ADJ];
 			}
 		}
-		if(!hasQuality)
+		if(!isSubstanceQuality)
 		{
 		#endif
 			inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_NOUN];
@@ -1063,7 +1063,7 @@ string calcDeterminate(GIAEntityNode * entityNode)
 	}
 	else if(entityNode->isSubstance)
 	{
-		if(!(entityNode->hasQuality))
+		if(!(entityNode->isSubstanceQuality))
 		{
 			if(entityNode->sourceReferencedInLanguageGeneration)
 			{

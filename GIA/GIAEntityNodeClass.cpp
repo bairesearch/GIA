@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2c 11-August-2012
+ * Project Version: 1o3a 12-August-2012
  *
  *******************************************************************************/
 
@@ -74,7 +74,7 @@ GIAEntityNode::GIAEntityNode(void)
 	hasAssociatedInstanceIsCondition = false;
 	hasAssociatedTime = false;
 	hasProgressiveTemp = false;
-	hasQuality = false;
+	isSubstanceQuality = false;
 
 	//type = undefinedEntityType;
 	//instance = undefinedInstance;

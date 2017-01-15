@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2c 11-August-2012
+ * Project Version: 1o3a 12-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -98,7 +98,8 @@ using namespace std;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 		#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY	//this is required considering reference look up of non definite sets is never desired
 		#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
-			#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY
+			//#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY	//removed 12 August 2012 (NB original isObjectTemp/isSubjectTemp values are not retained currently - especially after advanced referencing update [GIA1n] - only derived isObjectTemp/isSubjectTemp values are retained [where as original values are left inside GIAFeatureTempEntityNodeArray], which do not include subjects/objects not involved in actions - eg property relationships as opposed to action relationships) 
+			#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY_ACCEPT_PROPERNOUNS 	//added 12 August 2012	
 		#endif
 		#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
 		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES

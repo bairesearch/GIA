@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2c 11-August-2012
+ * Project Version: 1o3a 12-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1096,7 +1096,8 @@ void identifyReferenceSetConceptEntityEntrance(GIAEntityNode * entityNode, int *
 		for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].begin(); connectionIter < entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].end(); connectionIter++)
 		{
 			GIAEntityNode * currentInstance = (*connectionIter)->entity;
-
+			//cout << "currentInstance->entityName = " << currentInstance->entityName << endl;
+			
 			#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
 			//do: CHECKTHIS; may need to re-execute identifyEntityTypes on EntityNodeArray after finishing executing GIATranslator.cpp convertSentenceRelationsIntoGIAnetworkNodes
 			#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY
@@ -1107,7 +1108,11 @@ void identifyReferenceSetConceptEntityEntrance(GIAEntityNode * entityNode, int *
 				cout << "subj Found" << endl;
 				#endif
 
+				#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY_ACCEPT_PROPERNOUNS
+				if((currentInstance->grammaticalDefiniteTemp) || (currentInstance->grammaticalRelexPersonOrStanfordProperNounTemp))
+				#else
 				if(currentInstance->grammaticalDefiniteTemp)
+				#endif
 				{
 			#endif
 					#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET

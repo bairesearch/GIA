@@ -23,7 +23,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2c 11-August-2012
+ * Project Version: 1o3a 12-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -780,7 +780,7 @@ void extractQualities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayF
 					GIAEntityNode * thingEntity = GIAEntityNodeArray[relationGovernorIndex];
 					GIAEntityNode * substanceEntity = GIAEntityNodeArray[relationDependentIndex];
 
-					substanceEntity->hasQuality = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
+					substanceEntity->isSubstanceQuality = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
 				}
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
