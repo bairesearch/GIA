@@ -26,7 +26,7 @@
  * File Name: GIAcxlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h15a 25-January-2015
+ * Project Version: 2h16a 26-January-2015
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h15a 25-January-2015
+ * Project Version: 2h16a 26-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -425,6 +425,33 @@ void extractQuantities(Sentence * currentSentenceInList, bool GIAentityNodeArray
 void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	
+	#ifdef GIA_TRANSLATOR_CONVERT_AMOD_WITH_NUMBERS_TO_QUANTITY_RELATION
+	//convert amod(piece, 1) to num(piece, 1)
+	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			if(currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_AMOD)
+			{
+				string s = currentRelationInList->relationDependent;
+				int value = atoi(s.c_str());
+				if(value || (s == "0"))
+				{
+					currentRelationInList->relationType = RELATION_TYPE_QUANTITY;
+				}
+			}	
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		}
+		#endif
+		
+		currentRelationInList = currentRelationInList->next;
+	}
+	#endif
+	
+	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
