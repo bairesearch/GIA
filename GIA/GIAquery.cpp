@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f19d 23-July-2014
+ * Project Version: 2f19e 24-July-2014
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -645,12 +645,14 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode * queryEntityNode,
 							if(referenceTraceParameters->intrasentenceReference)
 							{
 								passIntrasentenceReferenceRequirements = false;
-								/*
+								
+								#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
 								cout << "\nqueryEntityNode->entityName = " << queryEntityNode->entityName << endl;
 								cout << "queryEntityNode->referenceSetID = " << queryEntityNode->referenceSetID << endl;
 								cout << "queryEntityNode->minimumEntityIndexOfReferenceSet = " << queryEntityNode->minimumEntityIndexOfReferenceSet << endl;
 								cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
-								*/
+								#endif
+								
 								if(entityNode->entityIndexTemp < queryEntityNode->minimumEntityIndexOfReferenceSet)
 								{
 									passIntrasentenceReferenceRequirements = true;

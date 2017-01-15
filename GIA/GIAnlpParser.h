@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f19d 23-July-2014
+ * Project Version: 2f19e 24-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *

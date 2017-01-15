@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f19d 23-July-2014
+ * Project Version: 2f19e 24-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1971,17 +1971,21 @@ bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode,
 			referenceSetAlreadyAssigned = true;
 		}
 
-		/*
+		#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
 		cout << "\nentityNode->entityName = " << entityNode->entityName << endl;
 		cout << "entityNode->referenceSetID = " << entityNode->referenceSetID << "(" << referenceSetAlreadyAssigned << ")" << endl;
 		cout << "entityNode->isConcept = " << entityNode->isConcept << endl;
 		cout << "minimumEntityIndexOfReferenceSet = " << minimumEntityIndexOfReferenceSet << endl;
 		cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
 		cout << "entityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
-		*/
+		#endif
 
 		#ifdef GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET
+		#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
+		if((!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)) && ((entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) || isProperty) && !(entityNode->isConcept))	//!isConcept test added 2f19e 24-July-2014
+		#else
 		if((!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)) && ((entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) || isProperty))
+		#endif
 		/*
 		NB1 entityNode->minimumEntityIndexOfReferenceSet is only assigned when referenceSetAlreadyAssigned (referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)
 		NB2 (!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)): only replace reference set id when definining an earlier (ie larger) reference set in the sentence
@@ -1997,7 +2001,9 @@ bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode,
 		if(!referenceSetAlreadyAssigned)
 		#endif
 		{
-			//cout << "\tpass" << endl;
+			#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
+			cout << "\tpass" << endl;
+			#endif
 			result =  true;
 			identifyReferenceSet(entityNode, referenceSetID, minimumEntityIndexOfReferenceSet);
 		}

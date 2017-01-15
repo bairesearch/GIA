@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f19d 23-July-2014
+ * Project Version: 2f19e 24-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -657,7 +657,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	bool linkPreestablishedReferencesGIA = true;	//irrelevant
 	#endif
 
-	//cout << "linkPreestablishedReferencesGIA = " << linkPreestablishedReferencesGIA << endl;
+	//cout << "\n\n\nconvertSentenceSyntacticRelationsIntoGIAnetworkNodes() linkPreestablishedReferencesGIA = " << linkPreestablishedReferencesGIA << endl;
 
 	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	string corpusFileName = "";
@@ -1339,17 +1339,60 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 			#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 			if(!(GIAentityNodeArray[w]->wasReference))
 			{
+				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
+				cout << "\nw = " << w << endl;
+				cout << "currentSentenceInList->sentenceIndex = " << currentSentenceInList->sentenceIndex << endl;
+				cout << "GIAentityNodeArray[w]->entityIndexTemp = " << GIAentityNodeArray[w]->entityIndexTemp << endl;
+				cout << "GIAentityNodeArray[w]->sentenceIndexTemp = " << GIAentityNodeArray[w]->sentenceIndexTemp << endl;
+				#endif
 				if(GIAentityNodeArray[w]->entityIndexTemp == GIA_ENTITY_INDEX_UNDEFINED)
 				{
 					//do not overwrite sentence index of source
 					GIAentityNodeArray[w]->entityIndexTemp = w;
-					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes() warning: GIAentityNodeArray[" << w << "] entityIndexTemp undefined, is this an artificial entity?" << endl;
+					#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
+					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes() warning: GIAentityNodeArray[" << w << "] entityIndexTemp undefined, this is an artificial entity" << endl;
+					#endif
 				}
 				if(GIAentityNodeArray[w]->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
 				{
 					//do not overwrite sentence index of source
 					GIAentityNodeArray[w]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
-					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes() warning: GIAentityNodeArray[" << w << "] sentenceIndexTemp undefined, is this an artificial entity?" << endl;
+					#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
+					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes() warning: GIAentityNodeArray[" << w << "] sentenceIndexTemp undefined, this is an artificial entity" << endl;
+					#endif
+				}
+				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
+				if(GIAentityNodeArray[w]->entityIndexTemp != w)
+				{
+					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes() warning: GIAentityNodeArray[" << w << "] entityIndexTemp != " << w << endl;
+				}
+				if(GIAentityNodeArray[w]->sentenceIndexTemp != currentSentenceInList->sentenceIndex)
+				{
+					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes() warning: GIAentityNodeArray[" << w << "] sentenceIndexTemp != " << currentSentenceInList->sentenceIndex << endl;
+				}
+				#endif
+				//look for double references, and if found assume possible intrasentence referencing capabilities (assign unique entityIndexTemp values; ie their original entity indices); 
+				if(featureArrayTemp[w] != NULL)
+				{
+					for(int w2=0; w2<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w2++)
+					{
+						if(featureArrayTemp[w2] != NULL)
+						{
+							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
+							cout << "featureArrayTemp[w2]->lemma =" << featureArrayTemp[w2]->lemma << ", w2 = " << w2 << endl;
+							#endif
+							if(featureArrayTemp[w2]->lemma == featureArrayTemp[w]->lemma)
+							{
+								if(w != w2)
+								{
+									#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
+									cout << "w != w2" << endl;
+									#endif
+									GIAentityNodeArray[w]->entityIndexTemp = w;	//this is required for intrasentence advanced referencing (reactivated 2f19e 24-July-2014)
+								}
+							}
+						}
+					} 
 				}
 			}
 			#else

@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f19d 23-July-2014
+ * Project Version: 2f19e 24-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -906,8 +906,8 @@
 //#define GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
 
 //Debug [Disable these for official build];
-//#define GIA_INSTANCE_OR_REFERENCE_SET_ID_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
+//#define GIA_INSTANCE_OR_REFERENCE_SET_ID_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
 //#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
 
@@ -923,6 +923,7 @@
 	//#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS_WORK_WITH_MULTIPLE_SENTENCES
 #endif
 //#define GIA_ALIASES_DEBUG
+//#define GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
 //#define GIA_ADVANCED_REFERENCING_DEBUG  	  //finished first debug using this (1l5f)
 //#define GIA_QUERY_DEBUG
 //#define GIA_QUERY_MULTIPLE_ANSWERS_DEBUG      //finished first debug using this (1l2a)
