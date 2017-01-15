@@ -976,9 +976,19 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									#endif
 								}
 								else
-								{
-									cout << "illegal functionToExecuteUponFind: " << param->functionToExecuteUponFind << endl;
-									//exit(0);
+								{	
+									bool exitProgram = true;
+									#ifndef GIA_USE_CORPUS_DATABASE
+									if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addAuxiliaryToEntity)
+									{
+										exitProgram = false;	//allow GIArules.xml to attempt to execute disabled function
+									}
+									#endif
+									if(exitProgram)
+									{
+										cout << "illegal functionToExecuteUponFind: " << param->functionToExecuteUponFind << endl;
+										exit(0);
+									}
 								}
 							}
 							else
