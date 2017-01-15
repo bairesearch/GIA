@@ -110,6 +110,8 @@ public:
 	
 	long id;
 	long idSecondary;
+	long reorderdIDforXMLsave;
+
 	string entityName;
 	double confidence;
 		
@@ -252,6 +254,7 @@ public:
 	bool disabled;	//if true, this entity has been deemed redundant in semantic network generation
 
 	bool CXLdummyNode;
+	
 };
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode);

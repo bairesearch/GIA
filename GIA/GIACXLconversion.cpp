@@ -226,11 +226,15 @@ XMLParserTag * addToCXLEntityNodeTagList(XMLParserTag * currentTagL1, vector<GIA
 		
 		if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
 		{//this exception is required because timeCondition nodes have a separate id in Cmap maps / CXL
-			currentEntity->timeConditionNode->id = (*currentCmapNodeIDInCmapNodeList);
+			//cout << "asd" << endl;
+			currentEntity->timeConditionNode->id = (*currentCmapNodeIDInCmapNodeList);			
+			currentTagL1 = generateCXLEntityNodeTag(currentTagL1, currentEntity->timeConditionNode->conditionName, *currentCmapNodeIDInCmapNodeList, currentEntity->timeConditionNode->printX, currentEntity->timeConditionNode->printY, conceptOrLinkingPhraseList, appearanceList);		
 			(*currentCmapNodeIDInCmapNodeList) = (*currentCmapNodeIDInCmapNodeList) + 1;
 		}
 			
 		#ifdef GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
+		currentEntity->reorderdIDforXMLsave = *currentCmapNodeIDInCmapNodeList;
+		//cout << "currentEntity->reorderdIDforXMLsave = " << currentEntity->reorderdIDforXMLsave << endl;
 		currentTagL1 = generateCXLEntityNodeTag(currentTagL1, currentEntity->entityName, *currentCmapNodeIDInCmapNodeList, currentEntity->printX, currentEntity->printY, conceptOrLinkingPhraseList, appearanceList);
 		#else		
 		currentTagL1 = generateCXLEntityNodeTag(currentTagL1, currentEntity->entityName, currentEntity->id, currentEntity->printX, currentEntity->printY, conceptOrLinkingPhraseList, appearanceList);
@@ -304,7 +308,7 @@ XMLParserTag * generateCXLEntityNodeTag(XMLParserTag * currentTagL1, string enti
 	else
 	{
 		currentAttribute->name = NET_CXL_ATTRIBUTE_x;
-		sprintf(tempString, "%d", printX);
+		sprintf(tempString, "%d", printX*GIA_CXL_EXPAND_RATIO);
 		currentAttribute->value = tempString;
 
 		newAttribute = new XMLParserAttribute();
@@ -312,7 +316,7 @@ XMLParserTag * generateCXLEntityNodeTag(XMLParserTag * currentTagL1, string enti
 		currentAttribute = currentAttribute->nextAttribute;
 
 		currentAttribute->name = NET_CXL_ATTRIBUTE_y;
-		sprintf(tempString, "%d", printY);
+		sprintf(tempString, "%d", printY*GIA_CXL_EXPAND_RATIO);
 		currentAttribute->value = tempString;
 
 		newAttribute = new XMLParserAttribute();
@@ -571,7 +575,11 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 				fakeTimeEntity.entityName = currentEntity->timeConditionNode->conditionName;
 				fakeTimeEntity.printX = currentEntity->timeConditionNode->printX;
 				fakeTimeEntity.printY = currentEntity->timeConditionNode->printY;
-				fakeTimeEntity.id = currentEntity->timeConditionNode->id;
+				#ifdef GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
+				fakeTimeEntity.reorderdIDforXMLsave = currentEntity->timeConditionNode->id;
+				#else
+				fakeTimeEntity.id = currentEntity->timeConditionNode->id;				
+				#endif
 				string connectionTypeName = "time";
 				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, &fakeTimeEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList);
 			}
@@ -590,8 +598,15 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 
 XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * currentTagL1, GIAEntityNode * entity1, GIAEntityNode * entity2, string connectionTypeName, long * currentCmapNodeIDInCmapNodeList, XMLParserTag ** currentTagInLinkingPhraseList, XMLParserTag ** currentTagInLinkingPhraseAppearanceList, XMLParserTag * firstTagInConnectionsList)
 {
+	#ifdef GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
+	//cout << "entity1->reorderdIDforXMLsave = " << entity1->reorderdIDforXMLsave << endl;
+	//cout << "entity2->reorderdIDforXMLsave = " << entity2->reorderdIDforXMLsave << endl;
+	int entity1ID = entity1->reorderdIDforXMLsave;
+	int entity2ID = entity2->reorderdIDforXMLsave;	
+	#else
 	int entity1ID = entity1->id;
-	int entity2ID = entity2->id;
+	int entity2ID = entity2->id;	
+	#endif
 	int entity1X =  entity1->printX;
 	int entity2X =  entity2->printX;
 	int entity1Y =  entity1->printY;

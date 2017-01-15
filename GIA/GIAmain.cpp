@@ -732,6 +732,9 @@ int main(int argc,char **argv)
 		{
 			result = false;
 		}
+	}
+	if(useOutputTextCXLFile)
+	{
 		if(!writeCMapToolsCXLFileOptimised(outputTextCXLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList))
 		{
 			result = false;

@@ -30,6 +30,7 @@ GIAEntityNode::GIAEntityNode(void)
 {
 	id = 0;	
 	idSecondary = 0;	//temporary ID reserved for specific entity types; concept, action, property etc
+	reorderdIDforXMLsave = 0;
 				
 	entityName = "";
 	confidence = 1.0;
