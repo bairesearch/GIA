@@ -137,7 +137,9 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirac
 			Relation * currentRelationInList = firstSentenceInArtificialList->firstRelationInList;
 			while(currentRelationInList->next != NULL)
 			{
+				#ifdef GIA_WITH_CE_DEBUG
 				cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
+				#endif
 				currentRelationInList = currentRelationInList->next;
 			}		
 			currentSentenceInArtificialList = currentSentenceInArtificialList->next;
