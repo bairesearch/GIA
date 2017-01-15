@@ -80,6 +80,10 @@ string generateDateTimeConditionName(int dayOfMonth, int month, long year)
 	//cout << "as4" << endl;
 }
 
+long calculateTotalTimeInSeconds(int dayOfMonth, int month, long year)
+{
+
+}
 
 
 

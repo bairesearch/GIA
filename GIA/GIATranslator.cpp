@@ -6,12 +6,13 @@
  * Project Version: 1b10b 28-Sept-11
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
- * TO DO: replace vectors indexOfEntityNodes/indexOfEntityNames with a map, and replace vectors GIATimeConditionNode/indexOfTimeNumbers with a map
+ * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
  * TO DO: extract date information of entities from relex <features> tag area
  *******************************************************************************/
 
 
 #include "GIATranslator.h"
+#include "GIAdatabase.h"
 
 string relationTypePropositionTimeNameArray[RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES] = {"in", "at", "on", "after", "ago", "before", "between", "by", "during", "for", "to", "till", "until", "past", "since", "up_to", "within", REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN};
 	//http://www.englisch-hilfen.de/en/grammar/preposition_time.htm + is [time is] etc
@@ -61,21 +62,42 @@ bool referenceTypePersonCrossReferenceDefiniteArray[REFERENCE_TYPE_PERSON_NUMBER
 bool referenceTypePersonCrossReferencePersonArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {GRAMMATICAL_PERSON_UNDEFINED, GRAMMATICAL_PERSON, GRAMMATICAL_PERSON, GRAMMATICAL_PERSON_UNDEFINED, GRAMMATICAL_PERSON_UNDEFINED};
 
 static long currentEntityNodeIDInCompleteList;
-static vector<GIAEntityNode*> entityNodesCompleteList;
+static vector<GIAEntityNode*> * entityNodesCompleteList;
+static long currentEntityNodeIDInConceptEntityNodesList;
+//static vector<GIAEntityNode*> * conceptEntityNodesList;
+static long currentEntityNodeIDInPropertyEntityNodesList;
+static vector<GIAEntityNode*> * propertyEntityNodesList;
+static long currentEntityNodeIDInActionEntityNodesList;
+static vector<GIAEntityNode*> * actionEntityNodesList;
 
 static bool foundComparisonVariable;
 static GIAEntityNode* comparisonVariableNode;
 
-vector<GIAEntityNode*> * getTranslatorEntityNodesCompleteList()
+
+void setTranslatorEntityNodesCompleteList(vector<GIAEntityNode*> * newEntityNodesCompleteList)
 {
-	return &entityNodesCompleteList;
+	entityNodesCompleteList = newEntityNodesCompleteList;
 }
+/*
+void setTranslatorConceptEntityNodesList(vector<GIAEntityNode*> * newConceptEntityNodesList)
+{
+	conceptEntityNodesList = newConceptEntityNodesList;
+}
+*/
+void setTranslatorPropertyEntityNodesList(vector<GIAEntityNode*> * newPropertyEntityNodesList)
+{
+	propertyEntityNodesList = newPropertyEntityNodesList;
+}
+void setTranslatorActionEntityNodesList(vector<GIAEntityNode*> * newActionEntityNodesList)
+{
+	actionEntityNodesList = newActionEntityNodesList;
+}
+
 	
 bool getFoundComparisonVariable()
 {
 	return foundComparisonVariable;
 }
-
 GIAEntityNode* getComparisonVariableNode()
 {
 	return comparisonVariableNode;
@@ -127,8 +149,13 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 	
 		//configure property node
 		GIAEntityNode * newProperty = new GIAEntityNode();
-		entityNodesCompleteList.push_back(newProperty);
-		newProperty->id = currentEntityNodeIDInCompleteList++;
+		newProperty->id = currentEntityNodeIDInCompleteList;
+		
+		entityNodesCompleteList->push_back(newProperty);
+		currentEntityNodeIDInCompleteList++;
+		propertyEntityNodesList->push_back(newProperty);
+		currentEntityNodeIDInPropertyEntityNodesList++;
+		
 		newProperty->entityName = propertyEntity->entityName;
 		newProperty->isProperty = true;
 		newProperty->entityNodeContainingThisProperty = thingEntity;
@@ -177,8 +204,13 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 		cout << "addPropertyToPropertyDefinition: propertyEntity->entityName = " << propertyEntity->entityName << endl;
 		//configure property node
 		GIAEntityNode * newProperty = new GIAEntityNode();
-		entityNodesCompleteList.push_back(newProperty);
-		newProperty->id = currentEntityNodeIDInCompleteList++;
+		newProperty->id = currentEntityNodeIDInCompleteList;
+		
+		entityNodesCompleteList->push_back(newProperty);
+		currentEntityNodeIDInCompleteList++;
+		propertyEntityNodesList->push_back(newProperty);
+		currentEntityNodeIDInPropertyEntityNodesList++;
+		
 		newProperty->entityName = propertyEntity->entityName;
 		newProperty->isProperty = true;
 		newProperty->entityNodeContainingThisProperty = NULL;
@@ -207,7 +239,7 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 void addActionToActionDefinition(GIAEntityNode * actionEntity)
 {
 	if((actionEntity->hasAssociatedPropertyTemp) || (actionEntity->entityAlreadyDeclaredInThisContext))
-	{
+	{//CHECK THIS; need to convert to action node here also? ie hasAssociatedPropertyIsAction->true? [must look at generated semanticNet.xml and see if any propertyNodeContainers contain action nodes..., or if any actionNodeContainers do not contain property nodes...]
 		if(!(actionEntity->hasAssociatedPropertyTemp))
 		{
 			actionEntity->hasAssociatedPropertyTemp = true;
@@ -221,8 +253,13 @@ void addActionToActionDefinition(GIAEntityNode * actionEntity)
 		cout << "addPropertyToPropertyDefinition: actionEntity->entityName = " << actionEntity->entityName << endl;
 		//configure property node
 		GIAEntityNode * newAction = new GIAEntityNode();
-		entityNodesCompleteList.push_back(newAction);
-		newAction->id = currentEntityNodeIDInCompleteList++;
+		newAction->id = currentEntityNodeIDInCompleteList;
+		
+		entityNodesCompleteList->push_back(newAction);
+		currentEntityNodeIDInCompleteList++;
+		actionEntityNodesList->push_back(newAction);
+		currentEntityNodeIDInActionEntityNodesList++;
+				
 		newAction->entityName = actionEntity->entityName;
 		newAction->isAction = true;
 		newAction->entityNodeContainingThisProperty = NULL;
@@ -248,11 +285,30 @@ void addActionToActionDefinition(GIAEntityNode * actionEntity)
 	}	
 }
 
-
+/*
+#ifdef GIA_USE_TIME_NODE_INDEXING
+void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, vector<GIATimeConditionNode*> *timeConditionNodesList, vector<long> *timeConditionNumbersList)
+#else
+void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense)
+#endif
+*/
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense)
 {
 	propertyNode->conditionType = CONDITION_NODE_TYPE_TIME;
+	
+	/*
+	#ifdef GIA_USE_TIME_NODE_INDEXING
+	int timeConditionEntityIndex = -1;
+	bool argumentEntityAlreadyExistant = false;
+	long timeConditionTotalTimeInSeconds = 0; //cannot assign absolute time to an event which occurs in the past.... //calculateTotalTimeInSeconds();
+	GIATimeConditionNode * newTimeCondition = findOrAddTimeNodeByNumber(timeConditionNodesList, conceptEntityNamesList, timeConditionAbsoluteTimeValue, &argumentEntityAlreadyExistant, &timeConditionEntityIndex, true);
+	#else
 	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
+	#endif
+	*/
+	
+	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
+	
 	newTimeCondition->tense = tense;
 	newTimeCondition->conditionName = grammaticalTenseNameArray[tense];
 	propertyNode->timeConditionNode = newTimeCondition;
@@ -311,12 +367,16 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 	else
 	{		
 		newOrExistingAction = new GIAEntityNode();
-		newOrExistingAction->id = currentEntityNodeIDInCompleteList++;
+		newOrExistingAction->id = currentEntityNodeIDInCompleteList;
+		
+		entityNodesCompleteList->push_back(newOrExistingAction);
+		currentEntityNodeIDInCompleteList++;
+		actionEntityNodesList->push_back(newOrExistingAction);
+		currentEntityNodeIDInActionEntityNodesList++;
+				
 		newOrExistingAction->entityName = actionEntity->entityName;		
 		newOrExistingAction->entityNodeDefiningThisPropertyOrAction = actionEntity;
 		
-		entityNodesCompleteList.push_back(newOrExistingAction);
-
 		actionEntity->AssociatedPropertyNodeList.push_back(newOrExistingAction);
 		actionEntity->hasAssociatedProperty = true;
 		actionEntity->hasAssociatedPropertyIsAction = true;
@@ -377,10 +437,30 @@ void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntit
 	objectEntity->isObjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 }
 
+/*
+#ifdef GIA_USE_TIME_NODE_INDEXING
+void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, string conditionName, vector<GIATimeConditionNode*> *timeConditionNodesList, vector<long> *timeConditionNumbersList)
+#else
+void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, string conditionName)
+#endif
+*/
 void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, string conditionName)
 {	
 	timeConditionEntity->conditionType = CONDITION_NODE_TYPE_TIME;
+	
+	/*
+	#ifdef GIA_USE_TIME_NODE_INDEXING
+	int timeConditionEntityIndex = -1;
+	bool argumentEntityAlreadyExistant = false;
+	long timeConditionTotalTimeInSeconds = calculateTotalTimeInSeconds(timeConditionEntity->entityName);
+	GIATimeConditionNode * newTimeCondition = findOrAddTimeNodeByNumber(timeConditionNodesList, conceptEntityNamesList, timeConditionAbsoluteTimeValue, &argumentEntityAlreadyExistant, &timeConditionEntityIndex, true);
+	#else	
 	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
+	#endif
+	*/
+	
+	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
+	
 	timeConditionEntity->timeConditionNode = newTimeCondition;	
 	
 	propertyNode->ConditionNodeList.push_back(timeConditionEntity);
@@ -434,11 +514,13 @@ void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntity
 }
 
 
-
-void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, vector<string> *indexOfEntityNames, vector<GIATimeConditionNode*> *indexOfTimeNodes, vector<long> *indexOfTimeNumbers, Sentence * firstSentenceInList)
+void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, vector<GIATimeConditionNode*> *timeConditionNodesList, vector<long> *timeConditionNumbersList, Sentence * firstSentenceInList)
 {
 	
 	currentEntityNodeIDInCompleteList = 0;
+	currentEntityNodeIDInConceptEntityNodesList = 0;
+	currentEntityNodeIDInPropertyEntityNodesList = 0;
+	currentEntityNodeIDInActionEntityNodesList = 0;
 	
 	vector<GIAEntityNode*>::iterator indexOfEntityNodesIterator;
 	vector<string*>::iterator indexOfEntityNamesIterator;
@@ -447,41 +529,41 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 
 
 	/*
-	//initialise indexOfEntityNodes;	[should be moved elsewhere]
+	//initialise conceptEntityNodesList;	[should be moved elsewhere]
 	string firstEntityNameInNetwork = "universe";
 	GIAEntityNode * firstEntityNodeInNetwork = new GIAEntityNode();
 	firstEntityNodeInNetwork->entityName = firstEntityNameInNetwork;
-	indexOfEntityNodes->push_back(firstEntityNodeInNetwork);
-	indexOfEntityNames->push_back(firstEntityNameInNetwork);
+	conceptEntityNodesList->push_back(firstEntityNodeInNetwork);
+	conceptEntityNamesList->push_back(firstEntityNameInNetwork);
 	
 	//DEBUG
-	//indexOfEntityNames->push_back("za");
-	//indexOfEntityNames->push_back("zb");
-	//indexOfEntityNames->push_back("zc");
-	//indexOfEntityNames->push_back("zd");
-	//indexOfEntityNames->push_back("ze");
-	//indexOfEntityNames->push_back("zf");
-	//indexOfEntityNames->push_back("zg");
-	//indexOfEntityNames->push_back("zh");
-	//indexOfEntityNames->push_back("zi");
-	//indexOfEntityNames->push_back("zj");
+	//conceptEntityNamesList->push_back("za");
+	//conceptEntityNamesList->push_back("zb");
+	//conceptEntityNamesList->push_back("zc");
+	//conceptEntityNamesList->push_back("zd");
+	//conceptEntityNamesList->push_back("ze");
+	//conceptEntityNamesList->push_back("zf");
+	//conceptEntityNamesList->push_back("zg");
+	//conceptEntityNamesList->push_back("zh");
+	//conceptEntityNamesList->push_back("zi");
+	//conceptEntityNamesList->push_back("zj");
 	
 	
-	//initialise indexOfTimeNodes;		[should be moved elsewhere]	
+	//initialise timeConditionNodesList;		[should be moved elsewhere]	
 	long firstTimeInNetwork = -14*(10^9)*SECONDS_IN_YEAR;
 	string firstTimeNameInNetwork = "beginning";
 	GIATimeConditionNode * firstTimeNodeInNetwork = new GIATimeConditionNode();
 	firstTimeNodeInNetwork->conditionName = firstTimeNameInNetwork;
 	firstTimeNodeInNetwork->totalTimeInSeconds = firstTimeInNetwork;
-	indexOfTimeNodes->push_back(firstTimeNodeInNetwork);
-	indexOfTimeNumbers->push_back(firstTimeInNetwork);		
+	timeConditionNodesList->push_back(firstTimeNodeInNetwork);
+	timeConditionNumbersList->push_back(firstTimeInNetwork);		
 	
 	
 	//DEBUG	
 	//bool resultTemp = true;
 	//string tempName = "zh";
 	//long findIndex = -1;
-	//GIAEntityNode * tempEntity = findOrAddEntityNodeByName(indexOfEntityNodes, indexOfEntityNames, &tempName, &resultTemp, &findIndex);
+	//GIAEntityNode * tempEntity = findOrAddEntityNodeByName(conceptEntityNodesList, conceptEntityNamesList, &tempName, &resultTemp, &findIndex);
 	//if(resultTemp)
 	//{
 	//	cout << "tempEntity->entityName = " << tempEntity->entityName << endl;
@@ -654,7 +736,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				
 			if(!GIAEntityNodeArrayFilled[relationFunctionIndex])
 			{
-				GIAEntityNode * functionEntity = findOrAddEntityNodeByName(indexOfEntityNodes, indexOfEntityNames, &functionName, &functionEntityAlreadyExistant, &functionEntityIndex, true);
+				//cout << "wf2" <<endl;
+				GIAEntityNode * functionEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &functionName, &functionEntityAlreadyExistant, &functionEntityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+				//cout << "wf3" <<endl;
 				GIAEntityNodeArrayFilled[relationFunctionIndex] = true;
 				GIAEntityNodeArray[relationFunctionIndex] = functionEntity;
 				functionEntity->hasAssociatedTime = GIAEntityNodeIsDate[relationFunctionIndex]; 
@@ -675,7 +759,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			if(!GIAEntityNodeArrayFilled[relationArgumentIndex])
 			{
 
-				GIAEntityNode * argumentEntity = findOrAddEntityNodeByName(indexOfEntityNodes, indexOfEntityNames, &argumentName, &argumentEntityAlreadyExistant, &argumentEntityIndex, true);
+				GIAEntityNode * argumentEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &argumentName, &argumentEntityAlreadyExistant, &argumentEntityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
 				GIAEntityNodeArrayFilled[relationArgumentIndex] = true;
 				GIAEntityNodeArray[relationArgumentIndex] = argumentEntity;				
 				argumentEntity->hasAssociatedTime = GIAEntityNodeIsDate[relationArgumentIndex]; 
@@ -918,7 +1002,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 								if(entityName != "")
 								{
 								
-									GIAEntityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddEntityNodeByName(indexOfEntityNodes, indexOfEntityNames, &entityName, &entityAlreadyExistant, &entityIndex, false);
+									GIAEntityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &entityName, &entityAlreadyExistant, &entityIndex, false, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
 
 									if(entityAlreadyExistant)
 									{
@@ -1893,10 +1977,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
 				if(currentEntity->hasAssociatedTime)
 				{
-					if(currentEntity->timeConditionNode != NULL)
-					{	
-						if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
-						{	
+					if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
+					{
+						if(currentEntity->timeConditionNode != NULL)
+						{
+												
 							GIAEntityNode * timeConditionEntity = currentEntity;
 							//cout << "as1" << endl;
 
@@ -1913,19 +1998,20 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 
 							//update/regenerate timeConditionName
 							timeConditionEntity->timeConditionNode->conditionName = generateDateTimeConditionName(timeConditionEntity->timeConditionNode->dayOfMonth, timeConditionEntity->timeConditionNode->month, timeConditionEntity->timeConditionNode->year);
-							//OLD; timeConditionEntity->entityName
+								//OLD; timeConditionEntity->entityName
 						}
 						else
 						{
-							cout << "error: isolated date node found (not declared as a condition)" << endl;
-							exit(0);	//remove this later						
+							cout << "error: isolated date node found (not declared as a time condition)" << endl;
+							exit(0);	//remove this later
 						}
 					}
 					else
 					{
-						cout << "error: isolated date node found (not declared as a condition)" << endl;
-						exit(0);	//remove this later
+						cout << "error: isolated date node found (not declared as a time condition)" << endl;
+						exit(0);	//remove this later						
 					}
+
 				}
 			}
 		}	
@@ -1949,10 +2035,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 
 							if(timeConditionEntity->entityName == currentRelationInList->relationFunction)
 							{	
-								if(currentEntity->timeConditionNode != NULL)
-								{	
-									if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
-									{
+								if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
+								{
+									if(currentEntity->timeConditionNode != NULL)
+									{									
 										if(currentRelationInList->relationType == RELATION_TYPE_DATE_DAY)
 										{
 											//http://www.cplusplus.com/reference/clibrary/cstdlib/atoi/
@@ -1982,14 +2068,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 									}
 									else
 									{
-										cout << "error: isolated date node found (not declared as a condition)" << endl;
-										exit(0);	//remove this later						
-									}
+										cout << "error: isolated date node found (not declared as a time condition)" << endl;
+										exit(0);	//remove this later
+									}										
 								}
 								else
 								{
-									cout << "error: isolated date node found (not declared as a condition)" << endl;
-									exit(0);	//remove this later
+									cout << "error: isolated date node found (not declared as a time condition)" << endl;
+									exit(0);	//remove this later						
 								}
 							}
 						}
@@ -1998,6 +2084,43 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			}
 			currentRelationInList = currentRelationInList->next;		
 		}
+		#ifdef GIA_USE_TIME_NODE_INDEXING
+		//cout <<"4b2 pass; add time condition nodes to index [for fast lookup by time]" << endl;
+		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+		{
+			if(GIAEntityNodeArrayFilled[i])
+			{
+				GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
+				if(currentEntity->hasAssociatedTime)
+				{
+					if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
+					{
+						if(currentEntity->timeConditionNode != NULL)
+						{
+							//replace current entity time condition node with generated time condition node.
+							
+							int timeConditionEntityIndex = -1;
+							bool argumentEntityAlreadyExistant = false;
+							long timeConditionTotalTimeInSeconds = calculateTotalTimeInSeconds(timeConditionEntity->timeConditionNode->dayOfMonth, timeConditionEntity->timeConditionNode->month, timeConditionEntity->timeConditionNode->year);
+							currentEntity->timeConditionNode = findOrAddTimeNodeByNumber(timeConditionNodesList, conceptEntityNamesList, timeConditionTotalTimeInSeconds, &argumentEntityAlreadyExistant, &timeConditionEntityIndex, true, currentEntity->timeConditionNode);
+						
+						}
+						else
+						{
+							cout << "error: isolated date node found (not declared as a time condition)" << endl;
+							exit(0);	//remove this later
+						}
+					}
+					else
+					{
+						cout << "error: isolated date node found (not declared as a time condition)" << endl;
+						exit(0);	//remove this later						
+					}
+
+				}
+			}
+		}	
+		#endif	
 		
 		//cout << "4c pass; extract quantities" << endl;	
 		currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -2232,10 +2355,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				
 		#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_CLEAR_REFERENCES_EVERY_SENTENCE	
 		//restore critical variables: used for GIA translator reference paser only - cleared every time a new sentence is parsed (Clearing should actually be applied to each paragraph/manuscript instead)
-		long vectorSize = indexOfEntityNames->size();
+		long vectorSize = conceptEntityNamesList->size();
 		for(int entityIndex=0; entityIndex<vectorSize; entityIndex++)
 		{	
-			GIAEntityNode * entityNode = indexOfEntityNodes->at(entityIndex);
+			GIAEntityNode * entityNode = conceptEntityNodesList->at(entityIndex);
 			entityNode->entityAlreadyDeclaredInThisContext = false;
 		}
 		#endif
@@ -2245,410 +2368,16 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 
 	#ifndef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_CLEAR_REFERENCES_EVERY_SENTENCE	
 	//restore critical variables: used for GIA translator reference paser only - cleared every time a new sentence is parsed (Clearing should actually be applied to each paragraph/manuscript instead)
-	long vectorSize = indexOfEntityNames->size();
+	long vectorSize = conceptEntityNamesList->size();
 	for(int entityIndex=0; entityIndex<vectorSize; entityIndex++)
 	{	
-		GIAEntityNode * entityNode = indexOfEntityNodes->at(entityIndex);
+		GIAEntityNode * entityNode = conceptEntityNodesList->at(entityIndex);
 		entityNode->entityAlreadyDeclaredInThisContext = false;
 	}
 	#endif
 
 }
 
-long maximumLong(long a, long b)
-{
-	if(a > b)
-	{
-		return a;
-	}
-	else
-	{
-		return b;
-	}
-}
-
-//uses fast search algorithm
-GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityNodes, vector<string> *indexOfEntityNames, string * entityNodeName, bool * found, long * index, bool addIfNonexistant)
-{
-	GIAEntityNode * entityNodeFound = NULL;
-	
-	long vectorSize = indexOfEntityNames->size();
-
-	/*
-	cout << "debug entity" << endl;
-	vector<GIAEntityNode*>::iterator entityIter;
-	for (entityIter = indexOfEntityNodes->begin(); entityIter != indexOfEntityNodes->end(); entityIter++) 
-	{
-		cout << "entityName = " << (*entityIter)->entityName << endl;
-	}
-	*/
-		
-	//vector<long>::iterator indexOfEntityNamesIterator;
-	if(vectorSize == 0)
-	{
-		//cout << "vectorSize = "  << vectorSize << endl;
-		//cout << "as" << endl;
-		cout << "adding entity node; " << *entityNodeName << endl;
-
-		entityNodeFound = new GIAEntityNode();
-		entityNodesCompleteList.push_back(entityNodeFound);
-		entityNodeFound->id = currentEntityNodeIDInCompleteList++;
-		entityNodeFound->entityName = *entityNodeName;
-			//configure property definition node
-		indexOfEntityNodes->push_back(entityNodeFound);	
-		indexOfEntityNames->push_back(*entityNodeName);	
-					
-	}
-	else
-	{
-		long findIndex = vectorSize/2;
-		long findRange = maximumLong(findIndex/2, 1);	//maximumLong(((findIndex+1)/2), 1);
-		long previousFindRange = findRange;
-		
-		//indexOfEntityNamesIterator = indexOfEntityNames->begin() + startingPoint;
-
-		//cout << "indexOfEntityNamesIterator = " << indexOfEntityNamesIterator << endl;
-
-		int findRangeAtMinimaTimes = 0;
-
-		bool searchOptionsAvailable = true;
-		string previousTempName;
-		string nameTemp;
-		long previousFindIndex = findIndex;
-		
-		previousTempName = indexOfEntityNames->at(findIndex);	//requires start value
-		
-		bool first = true;
-		
-		while(searchOptionsAvailable)
-		{
-			nameTemp = indexOfEntityNames->at(findIndex);
-			
-			/*
-			if(*entityNodeName == "red")
-			{
-				cout << "vectorSize = "  << vectorSize << endl;
-				cout << "findIndex = " << findIndex << endl;
-				cout << "findRange = " << findRange << endl;		      
-				cout << "nameTemp = " << nameTemp << endl;
-				cout << "*entityNodeName = " << *entityNodeName << endl;		      
-			}
-			*/
-			
-			//cout << "vectorSize = "  << vectorSize << endl;
-			//cout << "findIndex = " << findIndex << endl;
-			//cout << "findRange = " << findRange << endl;			
-			//cout << "nameTemp = " << nameTemp << endl;
-			//cout << "*entityNodeName = " << *entityNodeName << endl;
-			
-			if(nameTemp > *entityNodeName)
-			{
-				/*
-				if(*entityNodeName == "red")
-				{
-					cout << nameTemp << ">" << *entityNodeName << endl;
-					cout << "previousTempName = " << previousTempName << endl;
-				}
-				*/
-								
-				if(((previousTempName < *entityNodeName) && (previousFindRange == 1)) || (vectorSize==1))	//&& (!first || (vectorSize==1))
-				{//optimum position lies inbetween
-					//cout << "as" <<endl;
-					searchOptionsAvailable = false;
-					*found = false;	
-					//findIndex = findIndex [use current findIndex, nb vectors get inserted before the current index]			
-				}
-				else
-				{
-					previousFindIndex = findIndex;
-					long temp = (findIndex - findRange);
-					//cout << "temp = " << temp;
-					//findIndex = maximumLong(temp, 1);
-					findIndex = temp;
-					
-					if(findIndex < 0)
-					{
-						//cout << "error: (findIndex < 0)" << endl;
-							//cout << "entityNodeName " << *entityNodeName << " not found " << endl;
-						searchOptionsAvailable = false;
-						*found = false;
-						findIndex = 0; //findIndex++;
-							//addIfNonexistant... see below
-					}
-				}
-
-				previousFindRange = findRange;
-				findRange = maximumLong(findRange/2, 1);	//findRange = (findRange+1)/2;
-
-			}
-			else if(nameTemp < *entityNodeName)
-			{
-				/*
-				if(*entityNodeName == "red")
-				{
-					cout << nameTemp << "<" << *entityNodeName << endl;
-					cout << "previousTempName = " << previousTempName << endl;
-				}
-				*/		
-				
-				if(((previousTempName > *entityNodeName) && (previousFindRange == 1)) || (vectorSize==1))		//& (!first || (vectorSize==1))
-				{//optimum position lies inbetween
-					searchOptionsAvailable = false;
-					*found = false;
-					findIndex = findIndex+1;		//Added 9 October 2011
-					//cout << "here" << endl;
-				}
-				else
-				{	
-					previousFindIndex = findIndex;			
-					long temp = (findIndex + findRange);
-					//findIndex = maximumLong(temp, 1);
-					findIndex = temp;
-					
-					//cout << "findIndex = " << findIndex << endl;
-					//cout << "(vectorSize-1) = " << (vectorSize-1) << endl;
-					
-					if(findIndex > (vectorSize-1))
-					{
-
-							//cout << "findIndex = " << findIndex << endl;
-							//cout << "*entityNodeName = " << *entityNodeName << endl;
-						//cout << "error: (findIndex > (vectorSize-1))" << endl;
-							//cout << "entityNodeName " << *entityNodeName << " not found " << endl;
-						searchOptionsAvailable = false;
-						*found = false;
-						findIndex = (vectorSize);
-							//addIfNonexistant... see below
-					}
-				}
-
-				previousFindRange = findRange;
-				findRange = maximumLong(findRange/2, 1);	//findRange = (findRange+1)/2;
-
-			}
-			else if(nameTemp == *entityNodeName)
-			{
-				*index = findIndex;
-				entityNodeFound = indexOfEntityNodes->at(findIndex);
-
-				cout << "\tentity node found; " << *entityNodeName << endl;
-				//cout << "findIndex = " << findIndex << endl;
-				
-				searchOptionsAvailable = false;
-				*found = true;
-			}
-			
-			if((searchOptionsAvailable == false) && (*found == false) && (addIfNonexistant))
-			{
-				cout << "\t\tadding entity node; " << *entityNodeName << endl;
-				//cout << "previousFindIndex = " << previousFindIndex << endl;
-				
-				entityNodeFound = new GIAEntityNode();
-				entityNodesCompleteList.push_back(entityNodeFound);
-				entityNodeFound->id = currentEntityNodeIDInCompleteList++;
-				entityNodeFound->entityName = *entityNodeName;
-				
-				vector<GIAEntityNode*>::iterator indexOfEntityNodesIterator = indexOfEntityNodes->begin();
-				//indexOfEntityNodesIterator = indexOfEntityNodes->at(findIndex);
-				advance(indexOfEntityNodesIterator,findIndex);
-				indexOfEntityNodes->insert(indexOfEntityNodesIterator, entityNodeFound);
-
-				vector<string>::iterator indexOfEntityNamesIterator = indexOfEntityNames->begin();
-				//indexOfEntityNamesIterator = indexOfEntityNames->at(findIndex);
-				advance(indexOfEntityNamesIterator,findIndex);
-				indexOfEntityNames->insert(indexOfEntityNamesIterator, *entityNodeName);
-			}
-			
-			first = false;
-			
-			previousTempName = nameTemp;
-			
-
-		}
-	}
-
-	/*
-	cout << "debug entity" << endl;
-	vector<GIAEntityNode*>::iterator entityIter;
-	for (entityIter = indexOfEntityNodes->begin(); entityIter != indexOfEntityNodes->end(); entityIter++) 
-	{
-		cout << (*entityIter)->entityName << endl;
-	}
-	*/
-	/*
-	cout << "debug names" << endl;
-	vector<string>::iterator stringIter;
-	for (stringIter = indexOfEntityNames->begin(); stringIter != indexOfEntityNames->end(); stringIter++) 
-	{
-		cout << (*stringIter) << endl;
-	}	
-	*/			
-				
-	return entityNodeFound;
-}
-
-
-//CHECK THIS, it has been updated based upon above code as a template
-GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *indexOfTimeNodes, vector<long> *indexOfTimeNumbers, long * timeNodeNumber, bool * found, long * index, bool addIfNonexistant)
-{
-	GIATimeConditionNode * timeNodeFound = NULL;
-	
-	long vectorSize = indexOfTimeNumbers->size();
-	
-	//vector<long>::iterator indexOfEntityNamesIterator;
-	if(vectorSize == 0)
-	{
-		//cout << "vectorSize = "  << vectorSize << endl;
-		cout << "adding time node; " << *timeNodeNumber << endl;
-
-		timeNodeFound = new GIATimeConditionNode();
-		timeNodeFound->totalTimeInSeconds = *timeNodeNumber;
-			//configure property definition node
-		indexOfTimeNodes->push_back(timeNodeFound);	
-		indexOfTimeNumbers->push_back(*timeNodeNumber);	
-					
-	}
-	else
-	{
-		long findIndex = vectorSize/2;
-		long findRange = maximumLong(findIndex/2, 1);	//maximumLong(((findIndex+1)/2), 1);
-		long previousFindRange = findRange;
-		
-		int findRangeAtMinimaTimes = 0;
-
-		bool searchOptionsAvailable = true;
-		long previousTempTime;
-		long timeTemp;
-		long previousFindIndex = findIndex;
-		
-		previousTempTime = indexOfTimeNumbers->at(findIndex);	//requires start value
-		
-		while(searchOptionsAvailable)
-		{
-			//cout << "vectorSize = "  << vectorSize << endl;
-			//cout << "findIndex = " << findIndex << endl;
-			//cout << "findRange = " << findRange << endl;
-			timeTemp = indexOfTimeNumbers->at(findIndex);
-			//cout << "timeTemp = " << timeTemp << endl;
-
-			
-
-			if(timeTemp > *timeNodeNumber)
-			{
-				if(((previousTempTime < *timeNodeNumber) && (previousFindRange == 1)) || (vectorSize==1))
-				{//optimum position lies inbetween
-					searchOptionsAvailable = false;
-					*found = false;	
-					//findIndex = findIndex [use current findIndex, nb vectors get inserted before the current index]			
-				}
-				else
-				{
-					previousFindIndex = findIndex;
-					long temp = (findIndex - findRange);
-					//findIndex = maximumLong(temp, 1);
-					findIndex = temp;
-					
-					//cout << timeTemp << ">" << *timeNodeNumber << endl;
-					if(findIndex < 0)
-					{
-						//cout << "error: (findIndex < 0)" << endl;
-						//cout << "timeNodeNumber " << *timeNodeNumber << " not found " << endl;
-						searchOptionsAvailable = false;
-						*found = false;
-						findIndex = 0; //findIndex++;
-							//addIfNonexistant... see below
-					}
-				}
-
-				previousFindRange = findRange;
-				findRange = maximumLong(findRange/2, 1);	//findRange = (findRange+1)/2;
-
-			}
-			else if(timeTemp < *timeNodeNumber)
-			{
-				if(((previousTempTime > *timeNodeNumber) && (previousFindRange == 1)) || (vectorSize==1))
-				{//optimum position lies inbetween
-					searchOptionsAvailable = false;
-					*found = false;
-					findIndex = previousFindIndex;
-				}
-				else
-				{	
-					previousFindIndex = findIndex;			
-					long temp = (findIndex + findRange);
-					//findIndex = maximumLong(temp, 1);
-					findIndex = temp;
-					
-					//cout << timeTemp << "<" << *timeNodeNumber << endl;		
-					if(findIndex > (vectorSize-1))
-					{
-
-						//cout << "findIndex = " << findIndex << endl;
-						//cout << "*timeNodeNumber = " << *timeNodeNumber << endl;
-						//cout << "error: (findIndex > (vectorSize-1))" << endl;
-						//cout << "timeNodeNumber " << *timeNodeNumber << " not found " << endl;
-						searchOptionsAvailable = false;
-						*found = false;
-							//addIfNonexistant... see below
-					}
-				}
-
-				previousFindRange = findRange;
-				findRange = maximumLong(findRange/2, 1);	//findRange = (findRange+1)/2;
-
-			}
-			else if(timeTemp == *timeNodeNumber)
-			{
-				*index = findIndex;
-				timeNodeFound = indexOfTimeNodes->at(findIndex);
-
-				cout << "time node found; " << *timeNodeNumber << endl;
-				//cout << "findIndex = " << findIndex << endl;
-				
-				searchOptionsAvailable = false;
-				*found = true;
-			}
-			
-			if((searchOptionsAvailable == false) && (*found == false) && (addIfNonexistant))
-			{
-				cout << "adding time node; " << *timeNodeNumber << endl;
-
-				timeNodeFound = new GIATimeConditionNode();
-				timeNodeFound->totalTimeInSeconds = *timeNodeNumber;
-				vector<GIATimeConditionNode*>::iterator indexOfTimeNodesIterator = indexOfTimeNodes->begin();
-				//indexOfTimeNodesIterator = indexOfTimeNodes->at(findIndex);
-				advance(indexOfTimeNodesIterator,findIndex);
-				indexOfTimeNodes->insert(indexOfTimeNodesIterator, timeNodeFound);
-
-				vector<long>::iterator indexOfTimeNumbersIterator = indexOfTimeNumbers->begin();
-				//indexOfTimeNumbersIterator = indexOfTimeNumbers->at(findIndex);
-				advance(indexOfTimeNumbersIterator,findIndex);
-				indexOfTimeNumbers->insert(indexOfTimeNumbersIterator, *timeNodeNumber);
-			}
-			
-			previousTempTime = timeTemp;
-			
-
-		}
-	}
-
-	/*
-	cout << "debug entity" << endl;
-	vector<GIAEntityNode*>::iterator entityIter;
-	for (entityIter = indexOfEntityNodes->begin(); entityIter != indexOfEntityNodes->end(); entityIter++) 
-	{
-		cout << (*entityIter)->entityName << endl;
-	}
-	cout << "debug names" << endl;
-	vector<string>::iterator stringIter;
-	for (stringIter = indexOfEntityNames->begin(); stringIter != indexOfEntityNames->end(); stringIter++) 
-	{
-		cout << (*stringIter) << endl;
-	}	
-	*/			
-				
-	return timeNodeFound;
-}
 
 
 

@@ -66,6 +66,10 @@ using namespace std;
 #define GIA_DRAW_PROPERTY_QUANTITY_NODE_COLOUR (DAT_FILE_COLOUR_PURPLE)
 #define GIA_DRAW_PROPERTY_MEASURE_NODE_COLOUR (DAT_FILE_COLOUR_LIGHTGREY)
 
+#define GIA_DRAW_QUERY_QUESTION_NODE_COLOUR (DAT_FILE_COLOUR_YELLOW)
+#define GIA_DRAW_QUERY_ANSWER_NODE_COLOUR (DAT_FILE_COLOUR_YELLOW)
+#define GIA_DRAW_QUERY_ANSWER_CONTEXT_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)
+
 #define GIA_DRAW_CONDITION_NODE_HEIGHT (5)
 #define GIA_DRAW_CONDITION_NODE_WIDTH (20)
 #define GIA_DRAW_ACTION_NODE_HEIGHT (5)
@@ -119,9 +123,9 @@ using namespace std;
 #define GIA_OUTPUT_Z_POSITION_TEXT (0.2)
 
 
-void printGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile);
+void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesCompleteList, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile);
 
-void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int initialiseOrPrint, Reference * firstReferenceInPrintList, ofstream * writeFileObject);
+void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesCompleteList, int initialiseOrPrint, Reference * firstReferenceInPrintList, ofstream * writeFileObject);
 
 void initiateMaxXAtAParticularY();
 Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, int initialiseOrPrint, Reference * currentReferenceInPrintList, ofstream * writeFileObject);

@@ -82,6 +82,7 @@ using namespace std;
 #include "GIATranslator.h"
 #include "GIAEntityNodeClass.h"
 #include "GIAdraw.h"
+#include "GIAquery.h"
 #include "GIAXMLconversion.h"
 #include "XMLParserClass.h"
 #include "XMLrulesClass.h"
@@ -94,18 +95,18 @@ using namespace std;
 #define CFF_XML_TAG_features ((string)"features")
 
 static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any of the following\n"
-"\n\n\t-itxt [string]  : Plain text .txt input filename to be parsed by Relex (def: text.txt)"
+"\n\n\t-itxt [string]  : plain text .txt input filename to be parsed by Relex (def: text.txt)"
 "\n\n\t-irelex [string] : RelEx compact output .xml input filename (def: relexCompactOutput.xml)"
 "\n\n\t-ixml [string]   : semantic network definition .xml input filename (def: semanticNet.xml)"
 "\n\n\t-qtxt [string]  : plain text .txt query filename to be parsed by Relex (def: textQuery.txt)"
 "\n\n\t-qrelex [string] : RelEx compact output .xml query filename (def: relexCompactOutputQuery.xml)"
-"\n\n\t-qxml [string]   : semantic network query .xml query filename (def: semanticNetQuery.xml)"
+"\n\n\t-qxml [string]   : semantic network definition .xml query filename (def: semanticNetQuery.xml)"
 "\n\n\t-oxml [string]   : semantic network definition .xml output filename (def: semanticNet.xml)"
 "\n\t-osvg [string]     : semantic network display .svg 2D vector graphics output filename (def: semanticNet.svg)"
 "\n\t-oldr [string]     : semantic network display .ldr 3D vector graphics output filename (def: semanticNet.ldr)"
 "\n\t-oppm [string]     : semantic network display .ppm raster graphics output filename (def: semanticNet.ppm)"
 "\n\t-oall [string]     : semantic network display xml/.svg/.ldr/.ppm default generic output filename (def: semanticNet)"
-"\n\t-oanswer [string]  : Plain text .txt file containing the answer to the query (def: answer.txt)"
+"\n\t-oanswer [string]  : plain text .txt file containing the answer to the query (def: answer.txt)"
 "\n\t-notshow           : do not display output in opengl"
 "\n\t-width [int]       : raster graphics width in pixels (def: 640)"
 "\n\t-height [int]      : raster graphics height in pixels (def: 480)"
@@ -327,10 +328,25 @@ int main(int argc,char **argv)
 		exit(1);
 	}
 		
-	vector<GIAEntityNode*> * entityNodesCompleteList;
-	vector<GIAEntityNode*> * entityNodesCompleteListQuery;
-	
+		
 
+		
+	vector<GIAEntityNode*> * entityNodesCompleteList = new vector<GIAEntityNode*>;
+	vector<GIAEntityNode*> * conceptEntityNodesList = new vector<GIAEntityNode*>;
+	vector<GIAEntityNode*> * propertyEntityNodesList = new vector<GIAEntityNode*>;
+	vector<GIAEntityNode*> * actionEntityNodesList = new vector<GIAEntityNode*>;
+	vector<string> * conceptEntityNamesList = new vector<string>;
+	vector<GIATimeConditionNode*> * timeConditionNodesList = new vector<GIATimeConditionNode*>;
+	vector<long> * timeConditionNumbersList = new vector<long>;	
+		
+	vector<GIAEntityNode*> * entityNodesCompleteListQuery = new vector<GIAEntityNode*>;	
+	vector<GIAEntityNode*> * conceptEntityNodesListQuery = new vector<GIAEntityNode*>;			//not required - declared for symmetry
+	vector<GIAEntityNode*> * propertyEntityNodesListQuery = new  vector<GIAEntityNode*>;			//not required - declared for symmetry
+	vector<GIAEntityNode*> * actionEntityNodesListQuery = new vector<GIAEntityNode*>;			//not required - declared for symmetry
+	vector<string> * conceptEntityNamesListQuery = new vector<string>;					//not required - declared for symmetry
+	vector<GIATimeConditionNode*> * timeConditionNodesListQuery = new vector<GIATimeConditionNode*>;
+	vector<long> * timeConditionNumbersListQuery = new vector<long>;	
+			
 	if(printOutput)
 	{
 		if(!useOutputXMLFile)
@@ -379,28 +395,11 @@ int main(int argc,char **argv)
 		}
 		else
 		{	
-			//execute Relex on plain text
-			string executeRelexCommand = "";	
-			executeRelexCommand = executeRelexCommand + exeFolderCharStar + "/" + GIA_RELEX_EXECUTABLE_NAME + " " + inputPlainTXTFileName + " " + inputRelexXMLFileName + " " + tempFolderCharStar;
-
-			#ifdef LINUX
-			chdir(exeFolderCharStar);						
-			#else
-			::SetCurrentDirectory(exeFolderCharStar);
-			#endif	
-
-			cout << "system(" << executeRelexCommand << ");" << endl;
-			system(executeRelexCommand.c_str());
-
-			#ifdef LINUX
-			chdir(tempFolderCharStar);						
-			#else
-			::SetCurrentDirectory(tempFolderCharStar);
-			#endif	
-			
+			executeRelex(inputPlainTXTFileName, inputRelexXMLFileName);			
 			useInputRelexXMLFile = true;	//now will parse the relex file
 		}
 	}
+	
 	
 	if(useInputRelexXMLFile)
 	{
@@ -411,7 +410,12 @@ int main(int argc,char **argv)
 		}
 		else
 		{
-			entityNodesCompleteList = parseRelexFile(inputRelexXMLFileName);
+			//cout << "as" << endl;
+			if(!parseRelexFile(inputRelexXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conceptEntityNamesList, timeConditionNodesList, timeConditionNumbersList))
+			{
+				result = false;
+			}
+			//cout << "as2" << endl;
 		}
 	}
 	
@@ -430,7 +434,7 @@ int main(int argc,char **argv)
 		else
 		{		
 			entityNodesCompleteList = new vector<GIAEntityNode*>;
-			if(!readSemanticNetXMLFile(inputXMLFileName, entityNodesCompleteList))
+			if(!readSemanticNetXMLFile(inputXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conceptEntityNamesList))
 			{
 				result = false;
 			}
@@ -452,25 +456,7 @@ int main(int argc,char **argv)
 		}
 		else
 		{	
-			//execute Relex on plain text
-			string executeRelexCommand = "";	
-			executeRelexCommand = executeRelexCommand + exeFolderCharStar + "/" + GIA_RELEX_EXECUTABLE_NAME + " " + queryPlainTXTFileName + " " + queryRelexXMLFileName + " " + tempFolderCharStar;
-
-			#ifdef LINUX
-			chdir(exeFolderCharStar);						
-			#else
-			::SetCurrentDirectory(exeFolderCharStar);
-			#endif	
-
-			cout << "system(" << executeRelexCommand << ");" << endl;
-			system(executeRelexCommand.c_str());
-
-			#ifdef LINUX
-			chdir(tempFolderCharStar);						
-			#else
-			::SetCurrentDirectory(tempFolderCharStar);
-			#endif	
-			
+			executeRelex(queryPlainTXTFileName, queryRelexXMLFileName);			
 			useQueryRelexXMLFile = true;	//now will parse the relex file
 		}
 	}
@@ -484,7 +470,10 @@ int main(int argc,char **argv)
 		}
 		else
 		{
-			entityNodesCompleteListQuery = parseRelexFile(queryRelexXMLFileName);
+			if(!parseRelexFile(queryRelexXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conceptEntityNamesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery))
+			{
+				result = false;
+			}
 		}
 	}
 		
@@ -503,7 +492,7 @@ int main(int argc,char **argv)
 		else
 		{		
 			entityNodesCompleteListQuery = new vector<GIAEntityNode*>;
-			if(!readSemanticNetXMLFile(queryXMLFileName, entityNodesCompleteListQuery))
+			if(!readSemanticNetXMLFile(queryXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conceptEntityNamesListQuery))
 			{
 				result = false;
 			}
@@ -525,7 +514,6 @@ int main(int argc,char **argv)
 	#else
 	::SetCurrentDirectory(tempFolderCharStar);
 	#endif
-	
 
 
 	if(useQuery)
@@ -542,35 +530,40 @@ int main(int argc,char **argv)
 		bool foundAnswer = false;
 		double confidence = 0.0;
 		
-		//GIAEntityNode * queryAnswerNode = answerQueryOrFindAndHighlightMatchingStructureInSemanticNetwork(entityNodesCompleteList, entityNodesCompleteListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, &confidence);
-		GIAEntityNode * queryAnswerNode;
+		GIAEntityNode* queryAnswerNode;
+		answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(conceptEntityNodesList, conceptEntityNamesList, conceptEntityNodesListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence);
 		
+		double maxConfidence = entityNodesCompleteListQuery->size();
+	
 		string answerString = "";
-		 
+				 
 		if(foundAnswer)
 		{
-			answerString = answerString + "Answer found";
-			
+			answerString = answerString + "\nAnswer found";
 			if(foundComparisonVariable)
-			{//if the question contained a comparisonVariable, just set the answer to the question as the name of located queryAnswerNode
-				answerString = answerString + "Answer = " + queryAnswerNode->entityName;
+			{
+				answerString = answerString + "Exact Answer found: " + queryAnswerNode->entityName;	
 			}
-			else
-			{//if question does not contain a comparisonVariable, set the answer to the question as the parent of the primary property (eg the parent of the "object" of the question)
-				answerString = answerString + "Answer = " + queryAnswerNode->entityName;
-				answerString = answerString + printEntityNode(queryAnswerNode);												
-			}
-			
-			//add confidence to answer
-			char tempConfidenceStringCharStar[100]; 
-			sprintf(tempConfidenceStringCharStar, "%0.6f", confidence);
-			answerString = answerString + "\nconfidence = " + tempConfidenceStringCharStar;			
 		}
 		else
 		{
-			answerString = answerString + "Answer Not Found";
+			answerString = answerString + "\nAnswer Not Found";
 		}
 		
+		if(!(foundAnswer && foundComparisonVariable))
+		{
+			answerString = answerString + "\nBest Inexact Answer Found:" + queryAnswerNode->entityName;
+			answerString = answerString + printEntityNode(queryAnswerNode);	
+		}
+					
+		//add confidence to answer
+		char tempConfidenceStringCharStar[100]; 
+		sprintf(tempConfidenceStringCharStar, "%0.6f", confidence);
+		char tempMaxConfidenceStringCharStar[100]; 
+		sprintf(tempMaxConfidenceStringCharStar, "%0.6f", maxConfidence);		
+		answerString = answerString + "\nconfidence = " + tempConfidenceStringCharStar;			
+		answerString = answerString + "\nmax confidence = " + tempMaxConfidenceStringCharStar;	
+								
 		char * fileByteArray = const_cast<char*>(answerString.c_str());
 		char * outputAnswerPlainTXTFileNameCharStar = const_cast<char*>(outputAnswerPlainTXTFileName.c_str());	
 		writeByteArrayToFile(outputAnswerPlainTXTFileNameCharStar, fileByteArray, answerString.length());		
@@ -579,16 +572,15 @@ int main(int argc,char **argv)
 	{
 		cout << "error: output answer require a query to be set" << endl;
 	}
-	
-					
+				
 	if(printOutput)
 	{	
 		printGIAnetworkNodes(entityNodesCompleteList, rasterImageWidth, rasterImageHeight, outputLDRFileName, outputSVGFileName, outputPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputLDRFile, useOutputPPMFile);
 	}			
-		
+				
 	if(useOutputXMLFile)
 	{			
-		if(!writeSemanticNetXMLFile(outputXMLFileName, entityNodesCompleteList))
+		if(!writeSemanticNetXMLFile(outputXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList))
 		{
 			result = false;
 		}
@@ -597,7 +589,7 @@ int main(int argc,char **argv)
 
 		
 	#ifdef GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
-	if(!testReadSemanticNetXMLFile2(entityNodesCompleteList))
+	if(!testReadSemanticNetXMLFile2(entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conceptEntityNamesList))
 	{
 		result = false;
 	}
@@ -605,6 +597,28 @@ int main(int argc,char **argv)
 	
 }
 
+void executeRelex(string inputPlainTXTFileName, string inputRelexXMLFileName)
+{
+	//execute Relex on plain text
+	string executeRelexCommand = "";	
+	executeRelexCommand = executeRelexCommand + exeFolderCharStar + "/" + GIA_RELEX_EXECUTABLE_NAME + " " + inputPlainTXTFileName + " " + inputRelexXMLFileName + " " + tempFolderCharStar;
+
+	#ifdef LINUX
+	chdir(exeFolderCharStar);						
+	#else
+	::SetCurrentDirectory(exeFolderCharStar);
+	#endif	
+
+	cout << "system(" << executeRelexCommand << ");" << endl;
+	system(executeRelexCommand.c_str());
+
+	#ifdef LINUX
+	chdir(tempFolderCharStar);						
+	#else
+	::SetCurrentDirectory(tempFolderCharStar);
+	#endif	
+			
+}
 string printEntityNode(GIAEntityNode * queryAnswerNode)
 {
 	string printEntityNodeString = "";
@@ -704,7 +718,9 @@ string printEntityNode(GIAEntityNode * queryAnswerNode)
 
 
 }
-vector<GIAEntityNode*> * parseRelexFile(string inputRelexXMLFileName)
+	
+	
+bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<string> * conceptEntityNamesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList)
 {
 	bool result = true;
 	
@@ -769,15 +785,10 @@ vector<GIAEntityNode*> * parseRelexFile(string inputRelexXMLFileName)
 		}
 
 	}
-
-	vector<GIAEntityNode*> indexOfEntityNodes;
-	vector<string> indexOfEntityNames;
-	vector<GIATimeConditionNode*> indexOfTimeNodes;
-	vector<long> indexOfTimeNumbers;
-
-	convertSentenceRelationsIntoGIAnetworkNodes(&indexOfEntityNodes, &indexOfEntityNames, &indexOfTimeNodes, &indexOfTimeNumbers, firstSentenceInList);
-
-	vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+	setTranslatorEntityNodesCompleteList(entityNodesCompleteList);
+	setTranslatorPropertyEntityNodesList(propertyEntityNodesList);
+	setTranslatorActionEntityNodesList(actionEntityNodesList);
+	convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, conceptEntityNamesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList);
 	
-	return entityNodesCompleteList;
+	return result;
 }

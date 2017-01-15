@@ -14,15 +14,14 @@
 
 #include "GIAEntityNodeClass.h"
  
-int main(int argc,char **argv);
-
-string printEntityNode(GIAEntityNode * queryAnswerNode);
-
-//#define GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
+ //#define GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
 
 #define GIA_RELEX_EXECUTABLE_NAME "execute-relex.sh"
 //OLD: #define GIA_RELEX_EXECUTABLE_RELATIVE_PATH_NAME "/relex-1.3.0/"	//gets added to executable path name
 
-vector<GIAEntityNode*> * parseRelexFile(string inputRelexXMLFileName);
+int main(int argc,char **argv);
+bool parseRelexFile(string inputRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<string> * conceptEntityNamesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList);
+void executeRelex(string inputPlainTXTFileName, string inputRelexXMLFileName);
+string printEntityNode(GIAEntityNode * queryAnswerNode);
 
 #endif

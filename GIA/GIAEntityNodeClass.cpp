@@ -85,6 +85,9 @@ GIAEntityNode::GIAEntityNode(void)
 	hasAssociatedPropertyTemp = false;
 	
 	isQuery = false;
+	isAnswerToQuery = false;
+	isAnswerContextToQuery = false;
+	testedForQueryComparison = false;
 }
 GIAEntityNode::~GIAEntityNode(void)
 {

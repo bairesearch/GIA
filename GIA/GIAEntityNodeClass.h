@@ -209,6 +209,9 @@ public:
 	bool hasAssociatedPropertyTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 
 	bool isQuery;
+	bool isAnswerToQuery;
+	bool isAnswerContextToQuery;
+	bool testedForQueryComparison;
 	
 };
 

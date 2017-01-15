@@ -208,12 +208,8 @@ verb = rides
 adjective = happy
 */
 
-long maximumLong(long a, long b);
 
-void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, vector<string> *indexOfEntityNames, vector<GIATimeConditionNode*> *indexOfTimeNodes, vector<long> *indexOfTimeNumbers, Sentence * firstSentenceInList);
-
-GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityNodes, vector<string> *indexOfEntityNames, string * entityNodeName, bool * found, long * index, bool addIfNonexistant);
-GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *indexOfTimeNodes, vector<long> *indexOfTimeNumbers, long * timeNodeNumber, bool * found, long * index, bool addIfNonexistant);
+void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, vector<GIATimeConditionNode*> *timeConditionNodesList, vector<long> *timeConditionNumbersList, Sentence * firstSentenceInList);
 
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity);
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
@@ -237,10 +233,17 @@ void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntity
 	//property to property relationship - these they in actual fact represent different levels of detail in information to property to action / action to action nodes - direct property to property relationships are missing the action/connectivity information
 
 
-vector<GIAEntityNode*> * getTranslatorEntityNodesCompleteList();
+
+
+void setTranslatorEntityNodesCompleteList(vector<GIAEntityNode*> * newEntityNodesCompleteList);
+//void setTranslatorConceptEntityNodesList(vector<GIAEntityNode*> * newConceptEntityNodesList);
+void setTranslatorPropertyEntityNodesList(vector<GIAEntityNode*> * newPropertyEntityNodesList);
+void setTranslatorActionEntityNodesList(vector<GIAEntityNode*> * newActionEntityNodesList);
+
+
 bool getFoundComparisonVariable();
 GIAEntityNode* getComparisonVariableNode();
 
-long maxLong(long a, long b);
+
 
 #endif

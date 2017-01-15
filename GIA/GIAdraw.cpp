@@ -35,19 +35,20 @@ void initiateMaxXAtAParticularY()
 }
 
 
-void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int initialiseOrPrint, Reference * firstReferenceInPrintList, ofstream * writeFileObject)
+void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesCompleteList, int initialiseOrPrint, Reference * firstReferenceInPrintList, ofstream * writeFileObject)
 {
 	vector<GIAEntityNode*>::iterator entityIter;
 	
 	Reference * currentReferenceInPrintList = firstReferenceInPrintList;
-	
+		
 	initiateMaxXAtAParticularY();
 	int xInitial = DRAW_X_INITIAL_OFFSET;
 	int yInitial = DRAW_Y_INITIAL_OFFSET;
 	maxXAtAParticularY[yInitial] = xInitial;
 	//first pass; determine maxXAtAParticularY	[and use these to centre each row {at a given y} respectively]
-	for (entityIter = indexOfEntityNodes->begin(); entityIter != indexOfEntityNodes->end(); entityIter++) 
-	{
+		
+	for (entityIter = entityNodesCompleteList->begin(); entityIter != entityNodesCompleteList->end(); entityIter++) 
+	{		
 		if(!((*entityIter)->initialisedForPrinting))
 		{
 			cout << "tracing..." << endl;
@@ -336,7 +337,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				pos4.x = (*entityIter)->printX;
 				pos4.y = (*entityIter)->printY;	
 				pos4.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_BASICENTITY_CONNECTION_COLOUR, writeFileObject, "is");
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_BASICENTITY_CONNECTION_COLOUR, writeFileObject, "definition");
 			}
 			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;
 
@@ -373,7 +374,19 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			int boxThickness = GIA_DRAW_THICKNESS_NORMAL;
 			
 			int entityColour;
-			if(entityNode->hasAssociatedPropertyIsAction)
+			if(entityNode->isQuery)
+			{
+				entityColour = GIA_DRAW_QUERY_QUESTION_NODE_COLOUR;
+			}			
+			else if(entityNode->isAnswerToQuery)
+			{
+				entityColour = GIA_DRAW_QUERY_ANSWER_NODE_COLOUR;
+			}
+			else if(entityNode->isAnswerContextToQuery)
+			{
+				entityColour = GIA_DRAW_QUERY_ANSWER_CONTEXT_NODE_COLOUR;
+			}
+			else if(entityNode->hasAssociatedPropertyIsAction)
 			{
 				if(entityNode->hasMeasure)
 				{
@@ -727,7 +740,7 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 
 
 
-void printGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile)
+void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesCompleteList, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile)
 {//most of this is copied from CSexecFlow.cpp
 
 	if(display)
@@ -746,11 +759,11 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int width,
 	
 	Reference * firstReferenceInPrintList = new Reference();
 	int initialiseOrPrint = DRAW_PRINT;
-	determineBasicPrintPositionsOfAllNodes(indexOfEntityNodes, initialiseOrPrint, firstReferenceInPrintList, &writeFileObject);
+	determineBasicPrintPositionsOfAllNodes(entityNodesCompleteList, initialiseOrPrint, firstReferenceInPrintList, &writeFileObject);
 	/*
 	//cout << "h1" << endl;
 	initialiseOrPrint = DRAW_PRINT;
-	determineBasicPrintPositionsOfAllNodes(indexOfEntityNodes, initialiseOrPrint, firstReferenceInPrintList, &writeFileObject);
+	determineBasicPrintPositionsOfAllNodes(entityNodesCompleteList, initialiseOrPrint, firstReferenceInPrintList, &writeFileObject);
 	*/
 		
 

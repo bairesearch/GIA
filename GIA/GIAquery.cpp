@@ -4,54 +4,119 @@
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1b10b 28-Sept-11
- * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
- * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
+ * Requirements: requires a GIA network created for both existing knowledge and the query (question)
+ * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
  *******************************************************************************/
 
 
-#include "GIAdraw.h"
-#include "XMLrulesClass.h"
+#include "GIAquery.h"
+#include "GIAdatabase.h"
 
-
-void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *indexOfEntityNodes, int initialiseOrPrint, Reference * firstReferenceInPrintList, ofstream * writeFileObject)
+void answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, vector<GIAEntityNode*> *conceptEntityNodesListQuery, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, double * confidence)
 {
-	vector<GIAEntityNode*>::iterator entityIter;
+	double bestConfidence = 0.0;
+	double bestConfidenceAssumingFoundAnswer = 0.0;
 	
-	Reference * currentReferenceInPrintList = firstReferenceInPrintList;
-	
-	initiateMaxXAtAParticularY();
-	int xInitial = DRAW_X_INITIAL_OFFSET;
-	int yInitial = DRAW_Y_INITIAL_OFFSET;
-	maxXAtAParticularY[yInitial] = xInitial;
-	//first pass; determine maxXAtAParticularY	[and use these to centre each row {at a given y} respectively]
-	for (entityIter = indexOfEntityNodes->begin(); entityIter != indexOfEntityNodes->end(); entityIter++) 
-	{
-		if(!((*entityIter)->initialisedForPrinting))
+	GIAEntityNode * networkEntityNodeWhenSearchedResultsInBestConfidence = NULL;
+	GIAEntityNode * queryEntityNodeWhenSearchedResultsInBestConfidence = NULL;
+		
+	vector<GIAEntityNode*>::iterator entityIterQuery;
+	for(entityIterQuery = conceptEntityNodesListQuery->begin(); entityIterQuery != conceptEntityNodesListQuery->end(); entityIterQuery++) 
+	{//for each node in query semantic net;
+		
+		GIAEntityNode* currentQueryEntityNode = *entityIterQuery;
+		
+		bool foundQueryEntityNodeName = false;
+		long queryEntityNodeIndex = -1;
+		string queryEntityNodeName = currentQueryEntityNode->entityName;
+		GIAEntityNode * conceptEntityMatchingCurrentQueryEntity = findOrAddEntityNodeByName(NULL, conceptEntityNodesList, conceptEntityNamesList, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL);
+		
+		if(foundQueryEntityNodeName)
 		{
-			cout << "tracing..." << endl;
-				
-			//initiateMaxXAtAParticularY();
-			xInitial = maxXAtAParticularY[yInitial];
-								
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			//cout << "h2" << endl;
-		}	
-        	else
-		{//NB if already initalised for printing, disregard
-	
+			//now start matching structure search for all properties of the identical concept node (to current query entity name) in Semantic Network
+			
+			int numberOfMatchedNodes = 0;	
+			bool foundAnswerTemp = false;
+			GIAEntityNode* queryAnswerNodeTemp;
+
+			testEntityNodeForQuery(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodes, false);
+
+			double currentConfidence = (double)numberOfMatchedNodes;	//NB confidence value definition for query network structure matching is currently very simple; it is just equal to the number of matched nodes found 
+
+			if(detectComparisonVariable)
+			{
+				if(foundAnswerTemp)
+				{//if comparisonVariable is identified within the query, then an exact answer is required... 
+					if(currentConfidence > bestConfidenceAssumingFoundAnswer)
+					{
+						bestConfidenceAssumingFoundAnswer = currentConfidence;
+						queryAnswerNode = queryAnswerNodeTemp;
+						*foundAnswer = true;
+						*confidence = bestConfidenceAssumingFoundAnswer;
+					}
+				}
+			}
+
+			if(currentConfidence > bestConfidence)
+			{
+				bestConfidence = currentConfidence;
+				networkEntityNodeWhenSearchedResultsInBestConfidence = conceptEntityMatchingCurrentQueryEntity;
+				queryEntityNodeWhenSearchedResultsInBestConfidence = currentQueryEntityNode;
+			}				
+
+			
 		}
 	}
+	
+	if(!detectComparisonVariable || !(*foundAnswer))
+	{//now set draw parameters for optimium solution...
+	
+		bool foundAnswerTemp = false;
+		GIAEntityNode* queryAnswerNodeTemp;
+		int numberOfMatchedNodes = 0;
+		
+		testEntityNodeForQuery(queryEntityNodeWhenSearchedResultsInBestConfidence, networkEntityNodeWhenSearchedResultsInBestConfidence, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodes, true);
+	
+		if(!detectComparisonVariable && foundAnswerTemp)
+		{
+			*foundAnswer = true;
+			queryAnswerNode = queryAnswerNodeTemp;
+		}
+		*confidence = (double)numberOfMatchedNodes;
+	}
+				
 }
 
-
-
-Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, int initialiseOrPrint, Reference * currentReferenceInPrintList, ofstream * writeFileObject)
+//current queryEntityNode, currentEntityNode
+void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters)
 {
-	
-	//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
-	if(!(entityNode->initialisedForPrinting))
+	*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+		
+	/*
+	bool searchingForExactMatchAtThisQueryEntityNode = false;
+	//test for exact match
+	if(detectComparisonVariable)
 	{
+		if(comparisonVariableNode->entityName == queryEntityNode->entityName)
+		{
+			cout << "comparisonVariableNode->entityName = " << comparisonVariableNode->entityName << endl;	//should equal something like _$qVar
+			searchingForExactMatchAtThisQueryEntityNode = true;
+		}
+	}
+	*/
+						
+	if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters && !(entityNode->isAnswerContextToQuery)))
+	{//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]
+	
+		if(findBestInexactAnswerAndSetDrawParameters)
+		{
+			entityNode->isAnswerContextToQuery = true;			 
+		}
+		else
+		{
+			entityNode->testedForQueryComparison = true;				
+		}
 		
 		if(entityNode->isProperty)
 		{
@@ -86,154 +151,194 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		cout << "\tentityNode->hasAssociatedPropertyIsAction = " << entityNode->hasAssociatedPropertyIsAction << endl;
 		*/
 		
-		entityNode->initialisedForPrinting = true;
-		
-		maxXAtAParticularY[y] = maxXAtAParticularY[y] + DRAW_X_SPACE_BETWEEN_ENTITIES;	//only used, for indepdendent network visualisation (eg, when rendering next sentence)
-		
-		entityNode->printX = x;
-		entityNode->printY = y;
-		
-		
-		int q, r;
-	
-		vec pos1;
-		vec pos2;
-		vec pos3;
-		vec pos4;
-		vec pos5;
-		
-		pos1.x = entityNode->printX;
-		pos1.y = entityNode->printY;	
-		pos1.z = DRAW_CONNECTION_Z;
-		
-		//cout << "a1" << endl;
-				
-		//action connections;
-		q = -DRAW_Y_SPACE_BETWEEN_ACTION_NODES;
-		r = -DRAW_X_SPACE_BETWEEN_ACTION_NODES;		
+		entityNode->testedForQueryComparison = true;		//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]	
+			
+		vector<GIAEntityNode*>::iterator actionIterQuery;
 		vector<GIAEntityNode*>::iterator actionIter;
-		for(actionIter = entityNode->IncomingActionNodeList.begin(); actionIter != entityNode->IncomingActionNodeList.end(); actionIter++) 
+		for(actionIterQuery = queryEntityNode->IncomingActionNodeList.begin(); actionIterQuery != queryEntityNode->IncomingActionNodeList.end(); actionIterQuery++) 
 		{
-			//cout << "A" << endl;
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*actionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			//cout << "AA" << endl;
-			q = q + DRAW_Y_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE;
-		}
-		q = DRAW_Y_SPACE_BETWEEN_ACTION_NODES;
-		r = DRAW_X_SPACE_BETWEEN_ACTION_NODES;				
-		for(actionIter = entityNode->ActionNodeList.begin(); actionIter != entityNode->ActionNodeList.end(); actionIter++) 
+			for(actionIter = entityNode->IncomingActionNodeList.begin(); actionIter != entityNode->IncomingActionNodeList.end(); actionIter++) 
+			{
+				//cout << "A" << endl;
+				if((*actionIterQuery)->entityName == (*actionIter)->entityName)
+				{
+					testEntityNodeForQuery(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
+				}
+				else if(detectComparisonVariable)
+				{
+					if((*actionIterQuery)->entityName == comparisonVariableNode->entityName)
+					{//exact match found
+						*foundAnswer = true; 
+						queryAnswerNode = *actionIter;
+						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
+					}
+				}
+				//cout << "AA" << endl;
+			}
+		}			
+		for(actionIterQuery = queryEntityNode->ActionNodeList.begin(); actionIterQuery != queryEntityNode->ActionNodeList.end(); actionIterQuery++) 
 		{
-			//cout << "AAA" << endl;	
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*actionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			//cout << "AAAA" << endl;
-			q = q + DRAW_Y_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE;
+			for(actionIter = entityNode->ActionNodeList.begin(); actionIter != entityNode->ActionNodeList.end(); actionIter++) 
+			{
+				//cout << "AAA" << endl;	
+				if((*actionIterQuery)->entityName == (*actionIter)->entityName)
+				{
+					testEntityNodeForQuery(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
+				}
+				else if(detectComparisonVariable)
+				{
+					if((*actionIterQuery)->entityName == comparisonVariableNode->entityName)
+					{//exact match found
+						*foundAnswer = true; 
+						queryAnswerNode = *actionIter;
+						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
+					}
+				}				
+				//cout << "AAAA" << endl;
+			}
 		}	
 
 
 
-
-		q = -DRAW_Y_SPACE_BETWEEN_ACTION_NODES;
-		r = -DRAW_X_SPACE_BETWEEN_ACTION_NODES;			
-		if(entityNode->actionSubjectEntity != NULL)
+		
+		if(queryEntityNode->actionSubjectEntity != NULL)
 		{		
-			//cout << "b5" << endl;
-			//cout << "entityNode->actionSubjectEntity->initialisedForPrinting = " << entityNode->actionSubjectEntity->initialisedForPrinting << endl;
-			//cout << "entityNode->actionSubjectEntity->entityName = " << entityNode->actionSubjectEntity->entityName << endl;
-			//cout << "entityNode->actionObjectEntity->entityName = " << entityNode->actionObjectEntity->entityName << endl;
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->actionSubjectEntity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			//cout << "b6" << endl;
-			if(initialiseOrPrint == DRAW_PRINT)
-			{	
-				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				pos3.x = entityNode->actionSubjectEntity->printX;
-				pos3.y = entityNode->actionSubjectEntity->printY;	
-				pos3.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos3, GIA_DRAW_ACTION_SUBJECT_CONNECTION_COLOUR, writeFileObject, "subject");
-			}		
-		}
-		q = DRAW_Y_SPACE_BETWEEN_ACTION_NODES;
-		r = DRAW_X_SPACE_BETWEEN_ACTION_NODES;				
-		if(entityNode->actionObjectEntity != NULL)
+			if(entityNode->actionSubjectEntity != NULL)
+			{		
+				//cout << "b5" << endl;
+				//cout << "entityNode->actionSubjectEntity->testedForQueryComparison = " << entityNode->actionSubjectEntity->testedForQueryComparison << endl;
+				//cout << "entityNode->actionSubjectEntity->entityName = " << entityNode->actionSubjectEntity->entityName << endl;
+				//cout << "entityNode->actionObjectEntity->entityName = " << entityNode->actionObjectEntity->entityName << endl;
+				if(queryEntityNode->actionSubjectEntity->entityName == entityNode->actionSubjectEntity->entityName)
+				{
+					testEntityNodeForQuery(queryEntityNode->actionSubjectEntity, entityNode->actionSubjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
+				}
+				else if(detectComparisonVariable)
+				{
+					if(queryEntityNode->actionSubjectEntity->entityName == comparisonVariableNode->entityName)
+					{//exact match found
+						*foundAnswer = true; 
+						queryAnswerNode = entityNode->actionSubjectEntity;
+						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
+					}
+				}				
+				//cout << "b6" << endl;		
+			}	
+		}			
+		if(queryEntityNode->actionObjectEntity != NULL)
 		{		
-			//cout << "b7" << endl;
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->actionObjectEntity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);	
-			//cout << "b8" << endl;
-			if(initialiseOrPrint == DRAW_PRINT)
-			{	
-				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
+			if(entityNode->actionObjectEntity != NULL)
+			{		
+				//cout << "b7" << endl;
+				if(queryEntityNode->actionObjectEntity->entityName == entityNode->actionObjectEntity->entityName)
+				{
+					testEntityNodeForQuery(queryEntityNode->actionObjectEntity, entityNode->actionObjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
+				
+					if(findBestInexactAnswerAndSetDrawParameters)
+					{
+						entityNode->isAnswerToQuery = true;
+						queryAnswerNode = entityNode->actionObjectEntity;
+						*foundAnswer = true;
+						//set queryAnswerNode if entityNode is an object;
+						/*eg;
+						Which house does did Jane buy?
+						Which house is that?
+						What day is it?
+						What house did Jane buy?
+						*/
 
-				pos4.x = entityNode->actionObjectEntity->printX;
-				pos4.y = entityNode->actionObjectEntity->printY;	
-				pos4.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR, writeFileObject, "object");
-			}		
+					}
+		
+				}
+				else if(detectComparisonVariable)
+				{
+					if(queryEntityNode->actionObjectEntity->entityName == comparisonVariableNode->entityName)
+					{//exact match found
+						*foundAnswer = true; 
+						queryAnswerNode = entityNode->actionObjectEntity;
+						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
+					}					
+				}
+				//cout << "b8" << endl;		
+			}	
 		}
 					
 		
 		//cout << "a2" << endl;
 		
 		//conditions connections
-		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
-		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
+		vector<GIAEntityNode*>::iterator ConditionIterQuery;
 		vector<GIAEntityNode*>::iterator ConditionIter;
-		vector<string>::iterator ConditionNodeTypeListIterator = entityNode->ConditionNodeTypeList.begin();
-		for(ConditionIter = entityNode->ConditionNodeList.begin(); ConditionIter != entityNode->ConditionNodeList.end(); ConditionIter++) 
+		vector<string>::iterator ConditionNodeTypeListIteratorQuery;
+		vector<string>::iterator ConditionNodeTypeListIterator;
+		
+		//CHECK THIS; need to take into account condition types for match
+		ConditionNodeTypeListIteratorQuery = queryEntityNode->ConditionNodeTypeList.begin();
+		for(ConditionIterQuery = queryEntityNode->ConditionNodeList.begin(); ConditionIterQuery != queryEntityNode->ConditionNodeList.end(); ConditionIterQuery++) 
 		{	
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-			
-			if(initialiseOrPrint == DRAW_PRINT)
+			ConditionNodeTypeListIterator = entityNode->ConditionNodeTypeList.begin();		
+			for(ConditionIter = entityNode->ConditionNodeList.begin(); ConditionIter != entityNode->ConditionNodeList.end(); ConditionIter++) 
 			{	
-				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				pos5.x = (*ConditionIter)->printX;
-				pos5.y = (*ConditionIter)->printY;	
-				pos5.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject, *ConditionNodeTypeListIterator);
-			}
-			ConditionNodeTypeListIterator++;			
-		}				
-		if(entityNode->timeConditionNode != NULL)
-		{	
-			if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
-			{
-				//cout << "b7" << endl;
-				int timeConditionNodePrintX = x+r;
-				int timeConditionNodePrintY = y+q;
-				currentReferenceInPrintList = initialiseTimeConditionNodeForPrinting(entityNode->timeConditionNode, timeConditionNodePrintY, timeConditionNodePrintX, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-				
-				q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-				
-				//cout << "b8" << endl;
-				if(initialiseOrPrint == DRAW_PRINT)
-				{	
-					//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-
-					pos5.x = timeConditionNodePrintX;
-					pos5.y = timeConditionNodePrintY;	
-					pos5.z = DRAW_CONNECTION_Z;
-					currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject, "time");
+				if((*ConditionIterQuery)->entityName == (*ConditionIter)->entityName)
+				{
+					testEntityNodeForQuery(*ConditionIterQuery, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
 				}
+				else if(detectComparisonVariable)
+				{
+					if((*ConditionIterQuery)->entityName == comparisonVariableNode->entityName)
+					{//exact match found
+						*foundAnswer = true; 
+						queryAnswerNode = *ConditionIter;
+						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
+					}				
+				}
+				ConditionNodeTypeListIterator++;			
+			}			
+			ConditionNodeTypeListIteratorQuery++;			
+		}				
+		if(queryEntityNode->timeConditionNode != NULL)
+		{	
+			if(queryEntityNode->conditionType == CONDITION_NODE_TYPE_TIME)
+			{
+				if(entityNode->timeConditionNode != NULL)
+				{	
+					if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
+					{
+						if(queryEntityNode->timeConditionNode->conditionName == entityNode->timeConditionNode->conditionName)
+						{
+							*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+							//CHECK THIS; need to parse timeConditionNodes and test exact matching?
+						}
+						/*CHECKTHIS; cannot currently match timeConditionNodes*/						
+					}		
+				}			
 			}		
 		}
-				
-		//go reverse also...
-		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
-		r = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
-		ConditionNodeTypeListIterator = entityNode->ConditionNodeTypeReverseList.begin();
-		for(ConditionIter = entityNode->ConditionNodeReverseList.begin(); ConditionIter != entityNode->ConditionNodeReverseList.end(); ConditionIter++) 
-		{	
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y-q, x-r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 		
-			if(initialiseOrPrint == DRAW_PRINT)
+		//CHECK THIS; need to take into account condition types for match		
+		//go reverse also...
+		ConditionNodeTypeListIteratorQuery = queryEntityNode->ConditionNodeTypeReverseList.begin();
+		for(ConditionIterQuery = queryEntityNode->ConditionNodeReverseList.begin(); ConditionIterQuery != queryEntityNode->ConditionNodeReverseList.end(); ConditionIterQuery++) 
+		{	
+			ConditionNodeTypeListIterator = entityNode->ConditionNodeTypeReverseList.begin();
+			for(ConditionIter = entityNode->ConditionNodeReverseList.begin(); ConditionIter != entityNode->ConditionNodeReverseList.end(); ConditionIter++) 
 			{	
-				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				pos5.x = (*ConditionIter)->printX;
-				pos5.y = (*ConditionIter)->printY;	
-				pos5.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject, *ConditionNodeTypeListIterator);
+				if((*ConditionIterQuery)->entityName == (*ConditionIter)->entityName)
+				{
+					testEntityNodeForQuery(*ConditionIterQuery, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
+				}
+				else if(detectComparisonVariable)
+				{
+					if((*ConditionIterQuery)->entityName == comparisonVariableNode->entityName)
+					{//exact match found
+						*foundAnswer = true; 
+						queryAnswerNode = *ConditionIter;
+						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
+					}				
+				}
+				ConditionNodeTypeListIterator++;		
 			}	
-			ConditionNodeTypeListIterator++;		
+			ConditionNodeTypeListIteratorQuery++;		
 		}
 				
 		
@@ -241,110 +346,153 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		//cout << "a3" << endl;
 		
 		//property connections	
-		vector<GIAEntityNode*>::iterator entityIter;
-		q = DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES;
-		r = DRAW_X_SPACE_BETWEEN_PROPERTY_NODES;		
-		for(entityIter = entityNode->PropertyNodeList.begin(); entityIter != entityNode->PropertyNodeList.end(); entityIter++) 
+		vector<GIAEntityNode*>::iterator entityIterQuery;
+		vector<GIAEntityNode*>::iterator entityIter;	
+		for(entityIterQuery = queryEntityNode->PropertyNodeList.begin(); entityIterQuery != queryEntityNode->PropertyNodeList.end(); entityIterQuery++) 
 		{//DRAW SHOULD NOT BE REQUIRED	
-			//cout << "a31" << endl;
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			q = q+DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE;
+			for(entityIter = entityNode->PropertyNodeList.begin(); entityIter != entityNode->PropertyNodeList.end(); entityIter++) 
+			{//DRAW SHOULD NOT BE REQUIRED	
+				//cout << "a31" << endl;
+				if((*entityIterQuery)->entityName == (*entityIter)->entityName)
+				{
+					testEntityNodeForQuery(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
+				}
+				else if(detectComparisonVariable)
+				{
+					if((*entityIterQuery)->entityName == comparisonVariableNode->entityName)
+					{//exact match found
+						*foundAnswer = true; 
+						queryAnswerNode = *entityIter;
+						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
+					}					
+				}
+			}		
 		}
 		/*this has been removed 25 Sept - use entityNodeContainingThisProperty instead
-		//go reverse also...
-		q = -DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES;
-		r = -DRAW_X_SPACE_BETWEEN_PROPERTY_NODES;			
+		//go reverse also...		
 		for(entityIter = entityNode->PropertyNodeReverseList.begin(); entityIter != entityNode->PropertyNodeReverseList.end(); entityIter++) 
 		{//DRAW SHOULD NOT BE REQUIRED
 			//cout << "a32" << endl;	
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			q = q+DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE;			//this was - not +
+			currentReferenceInPrintList = testEntityNodeForQuery((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 		}
 		*/	
 		//cout << "a3b" << endl;
-		//go upwards also...
-		q = -DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;
-		r = -DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;		
-		if(entityNode->entityNodeDefiningThisPropertyOrAction != NULL)
+		//go upwards also...	
+		if(queryEntityNode->entityNodeDefiningThisPropertyOrAction != NULL)
 		{
-			//cout << "a33" << endl;
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->entityNodeDefiningThisPropertyOrAction, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			
-			if(initialiseOrPrint == DRAW_PRINT)
-			{	
-				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				pos2.x = entityNode->entityNodeDefiningThisPropertyOrAction->printX;
-				pos2.y = entityNode->entityNodeDefiningThisPropertyOrAction->printY;	
-				pos2.z = DRAW_CONNECTION_Z;							
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR, writeFileObject, "instance");
-			}
-				
+			if(entityNode->entityNodeDefiningThisPropertyOrAction != NULL)
+			{
+				//cout << "a33" << endl;
+				if(queryEntityNode->entityNodeDefiningThisPropertyOrAction->entityName == entityNode->entityNodeDefiningThisPropertyOrAction->entityName)
+				{
+					testEntityNodeForQuery(queryEntityNode->entityNodeDefiningThisPropertyOrAction, entityNode->entityNodeDefiningThisPropertyOrAction, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
+				}
+				else if(detectComparisonVariable)
+				{
+					if(queryEntityNode->entityNodeDefiningThisPropertyOrAction->entityName == comparisonVariableNode->entityName)
+					{//exact match found
+						*foundAnswer = true; 
+						queryAnswerNode = entityNode->entityNodeDefiningThisPropertyOrAction;
+						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
+					}								
+				}
+			}		
 		}
 		//cout << "a3c" << endl;
-		q = -DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES;		//this used to be - not +
-		r = -DRAW_X_SPACE_BETWEEN_PROPERTY_NODES;			
-		if(entityNode->entityNodeContainingThisProperty != NULL)
+		if(queryEntityNode->entityNodeContainingThisProperty != NULL)
 		{
-			//cout << "a34" << endl;
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting(entityNode->entityNodeContainingThisProperty, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			
-			if(initialiseOrPrint == DRAW_PRINT)
-			{	
-				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				pos3.x = entityNode->entityNodeContainingThisProperty->printX;
-				pos3.y = entityNode->entityNodeContainingThisProperty->printY;	
-				pos3.z = DRAW_CONNECTION_Z;								
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos3, GIA_DRAW_PROPERTY_CONNECTION_COLOUR, writeFileObject, "property");
+			if(entityNode->entityNodeContainingThisProperty != NULL)
+			{
+				//cout << "a34" << endl;
+				if(queryEntityNode->entityNodeContainingThisProperty->entityName == entityNode->entityNodeContainingThisProperty->entityName)
+				{
+					testEntityNodeForQuery(queryEntityNode->entityNodeContainingThisProperty, entityNode->entityNodeContainingThisProperty, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
+				}
+				else if(detectComparisonVariable)
+				{
+					if(queryEntityNode->entityNodeContainingThisProperty->entityName == comparisonVariableNode->entityName)
+					{//exact match found
+						*foundAnswer = true; 
+						queryAnswerNode = entityNode->entityNodeContainingThisProperty;
+						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
+					}				
+				}
 			}
-				
 		}
 		//cout << "a4" << endl;
 		
 
 		
-		//cout << "a5" << endl;
-		
-		q = -DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;
-		r = -DRAW_X_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;				
-		for(entityIter = entityNode->EntityNodeDefinitionList.begin(); entityIter != entityNode->EntityNodeDefinitionList.end(); entityIter++) 
+		//cout << "a5" << endl;				
+		for(entityIterQuery = queryEntityNode->EntityNodeDefinitionList.begin(); entityIterQuery != queryEntityNode->EntityNodeDefinitionList.end(); entityIterQuery++) 
 		{
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			if(initialiseOrPrint == DRAW_PRINT)
-			{	
-				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
-				pos4.x = (*entityIter)->printX;
-				pos4.y = (*entityIter)->printY;	
-				pos4.z = DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos4, GIA_DRAW_BASICENTITY_CONNECTION_COLOUR, writeFileObject, "is");
+			for(entityIter = entityNode->EntityNodeDefinitionList.begin(); entityIter != entityNode->EntityNodeDefinitionList.end(); entityIter++) 
+			{
+				if((*entityIterQuery)->entityName == (*entityIter)->entityName)
+				{
+					testEntityNodeForQuery(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
+				}
+				else if(detectComparisonVariable)
+				{
+					if((*entityIterQuery)->entityName == comparisonVariableNode->entityName)
+					{//exact match found
+						*foundAnswer = true; 
+						queryAnswerNode = *entityIter;
+						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
+					}
+				}									
 			}
-			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;
-
 		}
-		//go reverse also...
-		q = DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;
-		r = DRAW_X_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;			
-		for(entityIter = entityNode->EntityNodeDefinitionReverseList.begin(); entityIter != entityNode->EntityNodeDefinitionReverseList.end(); entityIter++) 
+		//go reverse also...	
+		for(entityIterQuery = queryEntityNode->EntityNodeDefinitionReverseList.begin(); entityIterQuery != queryEntityNode->EntityNodeDefinitionReverseList.end(); entityIterQuery++) 
 		{//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			q = q+DRAW_Y_SPACE_BETWEEN_ENTITIES_OF_SAME_NODE;
+			for(entityIter = entityNode->EntityNodeDefinitionReverseList.begin(); entityIter != entityNode->EntityNodeDefinitionReverseList.end(); entityIter++) 
+			{//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
+				if((*entityIterQuery)->entityName == (*entityIter)->entityName)
+				{
+					testEntityNodeForQuery(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
+				}
+				else if(detectComparisonVariable)
+				{
+					if((*entityIterQuery)->entityName == comparisonVariableNode->entityName)
+					{//exact match found
+						*foundAnswer = true; 
+						queryAnswerNode = *entityIter;
+						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
+					}
+				}						
+			}
 		}
 		//cout << "a6" << endl;
 		
 				
 		//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
-		//associated actions and properties [ie does this entity also define an action/verb or a property/adjective? [ie, it is not just a thing/noun]]
-		q = DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;
-		r = DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITION_NODES;	//this used to be - not +		
-		for(entityIter = entityNode->AssociatedPropertyNodeList.begin(); entityIter != entityNode->AssociatedPropertyNodeList.end(); entityIter++) 
+		//associated actions and properties [ie does this entity also define an action/verb or a property/adjective? [ie, it is not just a thing/noun]]	
+		for(entityIterQuery = queryEntityNode->AssociatedPropertyNodeList.begin(); entityIterQuery != queryEntityNode->AssociatedPropertyNodeList.end(); entityIterQuery++) 
 		{
-			//cout << "as0" << endl;
-			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-			//cout << "as1" << endl;
-			q = q+DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE;
+			for(entityIter = entityNode->AssociatedPropertyNodeList.begin(); entityIter != entityNode->AssociatedPropertyNodeList.end(); entityIter++) 
+			{
+				//cout << "as0" << endl;
+				if((*entityIterQuery)->entityName == (*entityIter)->entityName)
+				{
+					testEntityNodeForQuery(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
+				}
+				else if(detectComparisonVariable)
+				{
+					if((*entityIterQuery)->entityName == comparisonVariableNode->entityName)
+					{//exact match found
+						*foundAnswer = true; 
+						queryAnswerNode = *entityIter;
+						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
+					}
+				}						
+				//cout << "as1" << endl;
+			}
 		}	
 		
 		//cout << "a7" << endl;
 		
+		/*
 		if(initialiseOrPrint == DRAW_PRINT)
 		{	
 			//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
@@ -391,12 +539,10 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			{
 				entityColour = GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR;	//clear identify a time node
 			}
-			/*
-			else if(entityNode->hasConditionTime)
-			{
-				entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clear identify a time node
-			}
-			*/		
+			//else if(entityNode->hasConditionTime)
+			//{
+			//	entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clear identify a time node
+			//}		
 			else if(entityNode->hasAssociatedProperty)
 			{//the original spec seemed to imply that entities that have associated properties (ie, that define properties) are special but they don't appear to be
 				if(!(entityNode->isProperty))
@@ -435,6 +581,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, writeFileObject, boxThickness);
 
 		}
+		*/
 		
 		//cout << "a8" << endl;	
 		
@@ -465,7 +612,140 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 							
 	}
 	//cout << "a0c" << endl;
-	
-	return currentReferenceInPrintList;	//does this need to be newCurrentReferenceInPrintList?
 		
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+void answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, vector<GIAEntityNode*> *entityNodesCompleteListQuery, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, double * confidence)
+{
+	#ifdef GIA_QUERY_ADVANCED_DEBUG
+	int numberOfQueryEntities = entityNodesCompleteListQuery->end() - entityNodesCompleteListQuery->begin();
+	double bestConfidenceForCurrentQueryEntityArray = new double[numberOfQueryEntities];
+	int queryEntityIndex = 0;
+	#endif
+	
+	double bestConfidence = 0.0;
+	
+	GIAEntityNode * networkEntityNodeWhenSearchedResultsInBestConfidence = NULL;
+	GIAEntityNode * queryEntityNodeWhenSearchedResultsInBestConfidence = NULL;
+		
+	vector<GIAEntityNode*>::iterator entityIterQuery;
+	for(entityIterQuery = entityNodesCompleteListQuery->begin(); entityIterQuery != entityNodesCompleteListQuery->end(); entityIterQuery++) 
+	{//for each node in query semantic net;
+		
+		GIAEntityNode* currentQueryEntityNode = *entityIterQuery;
+		
+		bool foundQueryEntityNodeName = false;
+		int queryEntityNodeIndex = -1;
+		string queryEntityNodeName = currentQueryEntityNode->entityName;
+		GIAEntityNode * conceptEntityMatchingCurrentQueryEntity = findOrAddEntityNodeByName(conceptEntityNodesList, conceptEntityNamesList, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false);
+		
+		#ifdef GIA_QUERY_ADVANCED_DEBUG
+		double bestConfidenceForCurrentQueryEntity = 0.0;
+		#endif
+		if(foundQueryEntityNodeName)
+		{
+			//now start matching structure search for all properties of the identical concept node (to current query entity name) in Semantic Network
+			
+			#ifdef GIA_QUERY_ADVANCED_DEBUG
+			int numberOfPropertyEntities = conceptEntityMatchingCurrentQueryEntity->PropertyNodeList.end() - conceptEntityMatchingCurrentQueryEntity->PropertyNodeList.begin();
+			double confidenceForCurrentPropertyEntityArray = new double[numberOfPropertyEntities];
+			int propertyEntityIndex = 0;
+			#endif
+			
+			for(conceptEntityMatchingCurrentQueryEntity->PropertyNodeListIterator = conceptEntityMatchingCurrentQueryEntity->PropertyNodeList.begin(); conceptEntityMatchingCurrentQueryEntity->PropertyNodeListIterator < conceptEntityMatchingCurrentQueryEntity->PropertyNodeList.end(); conceptEntityMatchingCurrentQueryEntity->PropertyNodeListIterator++)
+			{
+				int numberOfMatchedNodes = 0;	
+				bool foundAnswerTemp = false;
+				GIAEntityNode* queryAnswerNodeTemp;
+				
+				
+				GIAEntityNode* currentNetworkEntityPropertyNode = *(conceptEntityMatchingCurrentQueryEntity->PropertyNodeListIterator);
+				
+				testEntityNodeForQuery(currentQueryEntityNode, currentNetworkEntityPropertyNode, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, &queryAnswerNodeTemp, &numberOfMatchedNodes, false);
+
+				currentConfidence = (double)numberOfMatchedNodes;	//NB confidence value definition for query network structure matching is currently very simple; it is just equal to the number of matched nodes found 
+					
+				if(detectComparisonVariable)
+				{
+					if(!foundAnswer)
+					{//if comparisonVariable is identified within the query, then an exact answer is required... 
+						currentConfidence = 0.0;
+					}
+					else
+					{
+						if(currentConfidence > bestConfidence)
+						{
+							queryAnswerNode = queryAnswerNodeTemp;
+							*foundAnswer = true;
+						}
+					}
+				}
+				
+				if(currentConfidence > bestConfidence)
+				{
+					bestConfidence = currentConfidence;
+					networkEntityNodeWhenSearchedResultsInBestConfidence = currentNetworkEntityPropertyNode;
+					queryEntityNodeWhenSearchedResultsInBestConfidence = currentQueryEntityNode;
+				}				
+				
+				#ifdef GIA_QUERY_ADVANCED_DEBUG
+				confidenceForCurrentPropertyEntityArray[propertyEntityIndex] = currentConfidence;
+				propertyEntityIndex++;			
+				#endif
+			}
+			
+			#ifdef GIA_QUERY_ADVANCED_DEBUG
+			highestConfidenceAcrossAllProperties = 0.0;
+			for(int propertyEntityIndex=0; propertyEntityIndex<numberOfPropertyEntities;propertyEntityIndex++)
+			{
+				if(confidenceForCurrentPropertyEntityArray[propertyEntityIndex] > highestConfidenceAcrossAllProperties)
+				{
+					highestConfidenceAcrossAllProperties = confidenceForCurrentPropertyEntityArray[propertyEntityIndex];
+				}
+			}
+			bestConfidenceForCurrentQueryEntityArray[queryEntityIndex] = highestConfidenceAcrossAllProperties;					
+			#endif
+		}
+		#ifdef GIA_QUERY_ADVANCED_DEBUG
+		else
+		{
+			bestConfidenceForCurrentQueryEntityArray[queryEntityIndex] = 0.0;
+		}
+		
+		queryEntityIndex++;
+		#endif
+	}
+
+	#ifdef GIA_QUERY_ADVANCED_DEBUG
+	highestConfidenceAcrossAllQueryEntities = 0.0;
+	for(int queryEntityIndex=0; queryEntityIndex<numberOfQueryEntities;queryEntityIndex++)
+	{
+		if(bestConfidenceForCurrentQueryEntityArray[queryEntityIndex] > highestConfidenceAcrossAllQueryEntities)
+		{
+			highestConfidenceAcrossAllQueryEntities = bestConfidenceForCurrentQueryEntityArray[queryEntityIndex];
+		}
+	}
+	#endif
+	
+	if(detectComparisonVariable || !(*foundAnswer))
+	{//now set draw parameters for optimium solution...
+		testEntityNodeForQuery(queryEntityNodeWhenSearchedResultsInBestConfidence, networkEntityNodeWhenSearchedResultsInBestConfidence, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, &queryAnswerNodeTemp, &numberOfMatchedNodes, true);
+	}
+				
+}
+*/
+
