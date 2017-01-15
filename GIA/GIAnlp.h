@@ -22,6 +22,8 @@
 #define Relex_CFF_XML_TAG_relations ((string)"relations")
 #define Relex_CFF_XML_TAG_features ((string)"features")
 
+#define RELEX_DEPENDENCY_RELATION_PREPENDITION "_"
+
 #define StanfordCoreNLP_XML_TAG_root ((string)"root")
 	#define StanfordCoreNLP_XML_TAG_document ((string)"document")
 		#define StanfordCoreNLP_XML_TAG_sentences ((string)"sentences")

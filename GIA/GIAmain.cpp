@@ -125,6 +125,7 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-width [int]       : raster graphics width in pixels (def: 640)"
 "\n\t-height [int]      : raster graphics height in pixels (def: 480)"
 "\n\t-nlpparser [int]   : NLP parser to be executed by GIA (1 - Relex [def], 2 - Stanford Core NLP, 3 - Stanford Parser)"
+"\n\t-nlpcomp           : NLP Parser dependency relations (sets Relex into Stanford compatibilty mode)"
 "\n"
 "\n\t-workingfolder [string] : working directory name for input files (def: same as exe)"
 "\n\t-exefolder [string]     : exe directory name for executables GIA.exe and (def: same as exe)"
@@ -134,6 +135,8 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\n\tThis program performs GIA (General Intelligence Algorithm) operations - creates semantic network based upon NPL dependencies file (.xml) or GIA semantic network file (.xml); outputTexts semantic network to GIA semantic network file (.xml); displays semantic network (using opengl); prints semantic network to raster image (.ppm), 3D vector graphics (.ldr), or 2D vector graphics (.svg).\n\n";
 
 //Dependency Relationship Extractor
+
+static int dependencyRelationFormationType[GIA_NLP_PARSER_NUMBER_OF_TYPES] = {GIA_NLP_PARSER_RELEX_DEFAULT_DEPENDENCY_RELATIONS_TYPE, GIA_NLP_PARSER_STANFORD_CORENLP_DEFAULT_DEPENDENCY_RELATIONS_TYPE, GIA_NLP_PARSER_STANFORD_PARSER_DEFAULT_DEPENDENCY_RELATIONS_TYPE}; 
 
 int main(int argc,char **argv)
 {
@@ -149,6 +152,8 @@ int main(int argc,char **argv)
 	bool result = true;
 
 	int NLPparserType = GIA_DEFAULT_NLP_PARSER;
+	int NLPdependencyRelationsType = dependencyRelationFormationType[GIA_DEFAULT_NLP_PARSER];
+	bol NLPrelexCompatibilityMode =	false;		//sets Relex dependency Relations to Stanford type
 	
 	bool useInputTextPlainTXTFile = false;
 	string inputTextPlainTXTFileName = "inputText.txt";
@@ -387,7 +392,16 @@ int main(int argc,char **argv)
 		{
 			NLPparserType = int(get_float_argument(argc,argv,"-nlpparser"));
 		}
-		
+		NLPdependencyRelationsType = dependencyRelationFormationType[NLPparserType];
+		if(exists_argument(argc,argv,"-nlpcomp"))
+		{
+			if(NLPparserType == GIA_NLP_PARSER_RELEX)
+			{
+				NLPdependencyRelationsType = GIA_DEPENDENCY_RELATION_FORMATION_STANFORD;
+			}
+			NLPrelexCompatibilityMode = true
+		}
+				
 								
 		if (exists_argument(argc,argv,"-workingfolder"))
 		{
@@ -652,9 +666,9 @@ int main(int argc,char **argv)
 		
 			//cout << "as" << endl;
 			#ifdef USE_CE	
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPParsedXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, false, NLPparserType, firstClaimInHeirachy, claimsList))
+			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPParsedXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, false, NLPparserType, NLPdependencyRelationsType, firstClaimInHeirachy, claimsList))
 			#else
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPParsedXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, false, NLPparserType))
+			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPParsedXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, false, NLPparserType, NLPdependencyRelationsType))
 			#endif
 			{
 				result = false;
@@ -718,9 +732,9 @@ int main(int argc,char **argv)
 		else
 		{
 			#ifdef USE_CE	
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPParsedXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, NLPparserType, firstClaimInHeirachy, claimsList))
+			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPParsedXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, NLPparserType, NLPdependencyRelationsType, firstClaimInHeirachy, claimsList))
 			#else
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPParsedXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, NLPparserType))			
+			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPParsedXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, NLPparserType, NLPdependencyRelationsType))			
 			#endif
 			{
 				result = false;
@@ -959,9 +973,9 @@ int main(int argc,char **argv)
 
 
 #ifdef USE_CE	
-bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPParsedXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPparserType, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList)
+bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPParsedXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPparserType, bool NLPrelexCompatibilityMode, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList)
 #else
-bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPParsedXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPparserType)
+bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPParsedXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPparserType, bool NLPrelexCompatibilityMode)
 #endif
 {
 	bool result = true;
@@ -974,9 +988,9 @@ bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 	}
 
 	#ifdef USE_CE	
-	if(!createSemanticNetworkBasedUponDependencyGrammarParsedSentences(firstParagraphInList, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, isQuery, NLPparserType, firstClaimInHeirachy, claimsList))
+	if(!createSemanticNetworkBasedUponDependencyGrammarParsedSentences(firstParagraphInList, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, isQuery, NLPparserType, NLPdependencyRelationsType, firstClaimInHeirachy, claimsList))
 	#else
-	if(!createSemanticNetworkBasedUponDependencyGrammarParsedSentences(firstParagraphInList, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, isQuery, NLPparserType))
+	if(!createSemanticNetworkBasedUponDependencyGrammarParsedSentences(firstParagraphInList, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, isQuery, NLPparserType, NLPdependencyRelationsType))
 	#endif
 	{
 		result = false;
@@ -986,9 +1000,9 @@ bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 }
 
 #ifdef USE_CE	
-bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPparserType, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList)
+bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPparserType, int NLPdependencyRelationsType, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList)
 #else
-bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPparserType)
+bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPparserType, int NLPdependencyRelationsType)
 #endif
 {
 	bool result = true;
@@ -1012,12 +1026,12 @@ bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * 
 		}
 		Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;
 		#endif
-		convertSentenceListRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList, firstClaimInHeirachy, claimsList, NLPparserType);				
+		convertSentenceListRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList, firstClaimInHeirachy, claimsList, NLPparserType, NLPdependencyRelationsType);				
 	#else	
 		#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-		convertParagraphSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstParagraphInList, NLPparserType);
+		convertParagraphSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstParagraphInList, NLPparserType, NLPdependencyRelationsType);
 		#else
-		convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList, NLPparserType);	
+		convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList, NLPparserType, NLPdependencyRelationsType);	
 		#endif
 	#endif
 	

@@ -22,12 +22,17 @@
 //#define GIA_QUERY_DEBUG
 //#define GIA_SEMANTIC_NET_XML_DEBUG
 #define GIA_NLP_DEBUG
+#define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 
 //~External NLP Parser
 #define GIA_USE_RELEX
 #define GIA_USE_STANFORD_CORENLP
 #define GIA_USE_STANFORD_PARSER
 #ifdef GIA_USE_RELEX
+	//#define GIA_USE_RELEX_IN_STANFORD_COMPATIBILITY_MODE	//untested - not implemented
+	#ifdef GIA_USE_RELEX_IN_STANFORD_COMPATIBILITY_MODE
+		#define GIA_USE_STANFORD_DEPENDENCY_RELATIONS
+	#endif
 	#define GIA_RELEX_EXECUTABLE_NAME "execute-relex.sh"
 	#define GIA_USE_RELEX_1.4.0	//default: enabled (otherwise use Relex 1.3.0)
 	#ifdef GIA_USE_RELEX_1.4.0
@@ -35,18 +40,25 @@
 	#endif
 #endif
 #ifdef GIA_USE_STANFORD_CORENLP		//a more advanced implementation of stanford parser (with lemma, entity name detection, etc: Stanford CoreNLP integrates all our NLP tools for the English language, including the part-of-speech (POS) tagger, the named entity recognizer (NER), the parser, and the coreference resolution system)
-	#define GIA_USE_STANFORD
+	#define GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	#define GIA_STANFORD_NLP_EXECUTABLE_NAME "execute-stanfordCoreNLP.sh"
 #endif
 #ifdef GIA_USE_STANFORD_PARSER
-	#define GIA_USE_STANFORD
+	#define GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	#define GIA_STANFORD_PARSER_EXECUTABLE_NAME "execute-stanford.sh"
 #endif
-#define GIA_NLP_PARSER_RELEX (1)
-#define GIA_NLP_PARSER_STANFORD_CORENLP (2)
-#define GIA_NLP_PARSER_STANFORD_PARSER (3)
+#define GIA_NLP_PARSER_RELEX (0)
+#define GIA_NLP_PARSER_STANFORD_CORENLP (1)
+#define GIA_NLP_PARSER_STANFORD_PARSER (2)
+#define GIA_NLP_PARSER_NUMBER_OF_TYPES (3)
 #define GIA_DEFAULT_NLP_PARSER (GIA_NLP_PARSER_RELEX)		//NB GIA_NLP_PARSER_STANFORD_CORENLP will be default in future, once it has been implemented and debugged.
 
+#define GIA_DEPENDENCY_RELATION_FORMATION_RELEX (0)
+#define GIA_DEPENDENCY_RELATION_FORMATION_STANFORD (1)
+#define GIA_DEPENDENCY_RELATION_FORMATION_NUMBER_OF_TYPES (2)		//Relex and Stanford tags
+#define GIA_NLP_PARSER_RELEX_DEFAULT_DEPENDENCY_RELATIONS_TYPE (GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
+#define GIA_NLP_PARSER_STANFORD_CORENLP_DEFAULT_DEPENDENCY_RELATIONS_TYPE (GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+#define GIA_NLP_PARSER_STANFORD_PARSER_DEFAULT_DEPENDENCY_RELATIONS_TYPE (GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
 
 //~GIATranslator
 #define GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR	//this is required (the current set of code has had the alternative case removed - see GIATranslator.cpp.copyWithDataStructureOptions for an example set of code that supports disabling this feature)

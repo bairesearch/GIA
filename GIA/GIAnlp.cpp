@@ -146,7 +146,7 @@ bool parseNLPParserFile(string inputTextNLPParsedXMLFileName, bool isQuery, Para
 
 		
 #ifdef GIA_USE_RELEX
-bool parseRelexFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList)
+bool parseRelexFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragraph * firstParagraphInList, bool NLPrelexCompatibilityMode)
 {
 	bool result = true;
 	
@@ -196,7 +196,7 @@ bool parseRelexFile(string inputTextNLPParsedXMLFileName, bool isQuery, Paragrap
 									{
 										//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
 										int maxNumberOfWordsInSentence = 0;
-										GIATHparseRelationsText(&(currentTagInParse->value), currentSentence->firstRelationInList, &maxNumberOfWordsInSentence);
+										GIATHparseRelationsText(&(currentTagInParse->value), currentSentence->firstRelationInList, &maxNumberOfWordsInSentence, NLPrelexCompatibilityMode);
 										currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
 									}
 									else if(currentTagInParse->name == Relex_CFF_XML_TAG_features)
@@ -359,7 +359,8 @@ bool parseStanfordCoreNLPFile(string inputTextNLPParsedXMLFileName, bool isQuery
 					XMLParserTag * governerTagInDep = firstTagInDep; 
 					XMLParserTag * dependentTagInDep = firstTagInDep->nextTag;
 
-					currentRelationInList->relationType = currentTagInDependencies->firstAttribute->value;
+					string relationTypeRelexStandard = convertStanfordRelationToRelex(&(currentTagInDependencies->firstAttribute->value));
+					currentRelationInList->relationType = relationTypeRelexStandard;
 
 					string relationArgumentIndexString = governerTagInDep->firstAttribute->value;
 					string relationFunctionIndexString = dependentTagInDep->firstAttribute->value;

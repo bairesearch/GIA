@@ -12,7 +12,7 @@
 
 
 #include "GIAParser.h"
-
+#include "GIATranslator.h"	//required for convertStanfordRelationToRelex
 
 #define MAX_CHARACTERS_GIATH 150 //max characters of some word in input data. includes '\0' at end of a string
 
@@ -25,9 +25,24 @@
 #define CHAR_CLOSE_SQUARE_BRACKET ']'
 
 
+string convertStanfordRelationToRelex(string * stanfordRelation)
+{
+	//prepend '_'
+	string relationTypeRelexStandard = relationTypeRelexStandard + RELEX_DEPENDENCY_RELATION_PREPENDITION + *stanfordRelation;
+	
+	//now deal with anamolies between dependency relation definitions;
+	for(int i=0; i<GIA_NUMBER_OF_RELEX_VERSUS_STANFORD_DEPENDENCY_RELATION_DISCREPANCIES; i++)
+	{
+		if(*stanfordRelation == relexVersusStanfordDependencyRelations[i][GIA_DEPENDENCY_RELATION_FORMATION_STANFORD])
+		{
+			relationTypeRelexStandard = relexVersusStanfordDependencyRelations[i][GIA_DEPENDENCY_RELATION_FORMATION_RELEX];
+		}
+	}
+	return relationTypeRelexStandard;
+}
 
 
-void GIATHparseRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence)
+void GIATHparseRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode)
 {
 	*maxNumberOfWordsInSentence = 0;
 	
@@ -83,7 +98,12 @@ void GIATHparseRelationsText(string * relationsText, Relation * firstRelationInL
 			}
 			case CHAR_OPEN_BRACKET:
 			{
-				currentRelation->relationType = currentItemString;
+				string relationType = currentItemString;
+				if(NLPrelexCompatibilityMode)
+				{
+					relationType = convertStanfordRelationToRelex(&relationType);
+				}
+				currentRelation->relationType = relationType;
 				currentItemString[0] = '\0';
 				currentRelationPart++;
 				
