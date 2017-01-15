@@ -23,7 +23,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b6b 09-January-2014
+ * Project Version: 2b6c 09-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -195,10 +195,10 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			#ifdef GIA_NLP_DEBUG
 			//cout << "convertStanfordRelationToRelex" << endl;
 			#endif
-			currentRelation->relationGovernor = relationGovernor;
-			currentRelation->relationDependent = relationDependent;
 			if(!parseGIA2file)
 			{
+				currentRelation->relationGovernor = relationGovernor;
+				currentRelation->relationDependent = relationDependent;
 				convertStanfordRelationToRelex(currentRelation, currentSentenceInList);
 			}
 			
@@ -212,20 +212,34 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 				currentRelation->relationGovernor = relationGovernor;
 				currentRelation->relationDependent = relationDependent;
 				*/
-				Feature * currentFeatureInList = firstFeatureInList;
-				for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationDependentIndex; f++)
+				if(!parseGIA2file || (currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY))
 				{
-					currentFeatureInList = currentFeatureInList->next;
+					Feature * currentFeatureInList = firstFeatureInList;
+					for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationDependentIndex; f++)
+					{
+						currentFeatureInList = currentFeatureInList->next;
+					}
+					currentRelation->relationDependent = currentFeatureInList->lemma;
+					//cout << "currentRelation->relationDependent = " << currentRelation->relationDependent << endl;
 				}
-				currentRelation->relationDependent = currentFeatureInList->lemma;
-				//cout << "currentRelation->relationDependent = " << currentRelation->relationDependent << endl;
-				currentFeatureInList = firstFeatureInList;
-				for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationGovernorIndex; f++)
+				else
 				{
-					currentFeatureInList = currentFeatureInList->next;
+					currentRelation->relationDependent = relationDependent;	//eg "_measure" of _measure-993
 				}
-				currentRelation->relationGovernor = currentFeatureInList->lemma;
-				//cout << "currentRelation->relationGovernor = " << currentRelation->relationGovernor << endl;
+				if(!parseGIA2file || (currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY))
+				{
+					Feature * currentFeatureInList = firstFeatureInList;
+					for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationGovernorIndex; f++)
+					{
+						currentFeatureInList = currentFeatureInList->next;
+					}
+					currentRelation->relationGovernor = currentFeatureInList->lemma;
+					//cout << "currentRelation->relationGovernor = " << currentRelation->relationGovernor << endl;
+				}
+				else
+				{
+					currentRelation->relationGovernor = relationGovernor;	//eg "_measure" of _measure-993
+				}
 			}
 
 			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG

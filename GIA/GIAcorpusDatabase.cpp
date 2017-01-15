@@ -23,7 +23,7 @@
  * File Name: GIAcorpusDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b6b 09-January-2014
+ * Project Version: 2b6c 09-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -99,7 +99,7 @@ bool loadCorpusFileSemanticDependencyRelations(Sentence * currentSentenceInList)
 	bool createNewSentences = false;
 	bool parseGIA2file = true;
 	bool isQuery = false;	//irrelevant
-	//cout << "g2" << endl;
+	cout << "g2" << endl;
 	if(!parseStanfordParserFile(corpusFileName, isQuery, currentSentenceInList, createNewSentences, parseGIA2file, false))		//CHECK THIS; need to account for corpus.txt having multiple entries [eg different text but identical layout]
 	{
 		result = false;
@@ -111,7 +111,7 @@ bool loadCorpusFileSemanticDependencyRelations(Sentence * currentSentenceInList)
 		//cout << "1 corpusLookupSuccessful" << endl;
 		currentSentenceInList->corpusLookupSuccessful = true;
 	}
-	//cout << "g3" << endl;
+	cout << "g3" << endl;
 	return result;
 }
 

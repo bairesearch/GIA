@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b6b 09-January-2014
+ * Project Version: 2b6c 09-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -79,7 +79,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 		GIAentityNodeArray[w] = NULL;
 	}
 	//cout << "Q2" << endl;
-
+	
 	locateAndAddAllConceptEntitiesBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAconceptNodeArray, entityNodesActiveListConcepts, sentenceConceptEntityNodesList, NLPfeatureParser);
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -285,6 +285,8 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(Sentence * currentSe
 				bool entityAlreadyExistant = false;
 				GIAentityNode * conceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(name[i]), &entityAlreadyExistant, entityNodesActiveListConcepts);
 				GIAconceptNodeArray[relationIndex[i]] = conceptEntity;
+				
+				cout << "creating concept = " << conceptEntity->entityName << endl;
 
 				conceptEntity->hasAssociatedInstanceTemp = false;
 

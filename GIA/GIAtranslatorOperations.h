@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b6b 09-January-2014
+ * Project Version: 2b6c 09-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -530,6 +530,7 @@ static string relationGovernorDefinitionNameArray[RELATION_GOVERNOR_DEFINITION_N
 #define FEATURE_INDEX_OF_ACTION_DEPENDENCY_GENERATED_CONDITION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-10)
 #define FEATURE_INDEX_OF_SPECIAL_CONDITION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-11)
 #define FEATURE_INDEX_OF_TOBE_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-12)
+#define FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY (FEATURE_INDEX_OF_TOBE_UNKNOWN)
 
 //questions;
 #define REFERENCE_TYPE_QUESTION_QUERY_WHO "who"

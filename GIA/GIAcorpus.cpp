@@ -23,7 +23,7 @@
  * File Name: GIAcorpus.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b6b 09-January-2014
+ * Project Version: 2b6c 09-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -63,6 +63,8 @@ bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParse
 		
 	bool result = true;
 	
+	//cout << "cf1" << endl;
+	
 	#ifdef STANFORD_PARSER_USE_POS_TAGS
 	cout << "error: performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences() doesn't support STANFORD_PARSER_USE_POS_TAGS" << endl;
 	#endif
@@ -71,6 +73,8 @@ bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParse
 	{
 		result = false;
 	}
+	
+	//cout << "cf1b" << endl;
 	
 	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
@@ -101,6 +105,8 @@ bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParse
 	}
 	#endif	
 
+	//cout << "cf2" << endl;
+
 	#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
 	#ifdef LINUX
 	chdir(tempFolderCharStar);
@@ -118,11 +124,16 @@ bool performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParse
 	NLPrelexCompatibilityMode = false; 		//irrelevant (not used) - only used when parsing syntatic dependency relations of a Relex file, and performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences() does not parse any syntactic dependency relations
 	NLPassumePreCollapsedStanfordRelations = false;	//irrelevant (not used) - only used when executing convertSentenceSyntacticRelationsIntoGIAnetworkNodes(), and performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences() does not execute convertSentenceSyntacticRelationsIntoGIAnetworkNodes()
 	#endif	
-		
+
+	//cout << "cf3" << endl;
+	
 	if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputCFFfileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, true))	//inputTextNLPrelationXMLfileName/inputTextNLPfeatureXMLfileName/NLPfeatureParser/NLPdependencyRelationsParser/NLPrelexCompatibilityMode/NLPassumePreCollapsedStanfordRelations not used (relations and features have already been parsed)
 	{
 		result = false;
-	}	
+	}
+
+	//cout << "cf4" << endl;
+	
 }
 
 bool lookupCorpusFiles(Paragraph * firstParagraphInList, int NLPfeatureParser)
