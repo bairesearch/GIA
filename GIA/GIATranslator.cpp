@@ -1,4 +1,24 @@
 /*******************************************************************************
+ * 
+ * This file is part of BAIPROJECT.
+ * 
+ * BAIPROJECT is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License version 3
+ * only, as published by the Free Software Foundation.
+ * 
+ * BAIPROJECT is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
+ * for a copy of the AGPLv3 License.
+ * 
+ *******************************************************************************/
+ 
+/*******************************************************************************
  *
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
@@ -65,55 +85,6 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		#endif
 		currentParagraphInList = currentParagraphInList->next;
 	}
-}
-#endif
-
-#ifdef USE_CE
-void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations)
-{
-	//link GIAsentences with each generated CEclaim
-	Sentence * currentSentenceInList = firstSentenceInList;
-	vector<CEClaim*>::iterator claimIter;
-	for(claimIter = claimsList->begin(); claimIter != claimsList->end(); claimIter++)
-	{
-		CEClaim * currentClaimInHeirachy = *claimIter;
-		currentClaimInHeirachy->sentence = currentSentenceInList;
-		currentSentenceInList = currentSentenceInList->next;
-	}
-
-	#ifdef GIA_WITH_CE_USE_ALL_CLAIM_COMBINATIONS
-	for(claimIter = claimsList->begin(); claimIter != claimsList->end(); claimIter++)
-	{
-	#else
-		claimIter = claimsList->begin();
-	#endif
-		CEClaim * currentClaimInHeirachy = *claimIter;
-		currentSentenceInList = currentClaimInHeirachy->sentence;
-
-		Sentence * firstSentenceInArtificialList = currentSentenceInList;
-		generateArtificialSentenceListBasedUponParentClaims(currentClaimInHeirachy, firstSentenceInArtificialList);
-
-		/*
-		cout << "currentClaimInHeirachy->claimTextRaw = " << currentClaimInHeirachy->claimTextRaw << endl;
-		Relation * currentRelationInList = firstSentenceInArtificialList->firstRelationInList;
-		while(currentRelationInList->next != NULL)
-		{
-			cout << "1: " << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
-			currentRelationInList = currentRelationInList->next;
-		}
-		*/
-
-		#ifdef GIA_WITH_CE_OLD
-		vector<GIAEntityNode*> *sentenceConceptEntityNodesList = &(currentClaimInHeirachy->relevantConceptEntityNodeList);
-		setAllClaimEntitiesInHeirachyToUndeclaredInThisContext(firstClaimInHeirachy);
-		setParentClaimEntitiesAsAlreadyDeclaredInThisContext(currentClaimInHeirachy);
-		convertSentenceRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInArtificialList, currentSentenceInList, sentenceConceptEntityNodesList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);		//used to be firstSentenceInList, not firstSentenceInArtificialList
-		#else
-		convertSentenceRelationsIntoGIAnetworkNodesWrapper(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInArtificialList, currentSentenceInList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);		//used to be firstSentenceInList, not firstSentenceInArtificialList
-		#endif
-	#ifdef GIA_WITH_CE_USE_ALL_CLAIM_COMBINATIONS
-	}
-	#endif
 }
 #endif
 
@@ -255,7 +226,6 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 }
 
 
-//NB vector<GIAEntityNode*> *sentenceConceptEntityNodesList is for GIA_USE_CE only
 void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations, bool linkPreestablishedReferencesGIA,  GIACoreference * firstGIACoreferenceInList)
 {
 	Relation * currentRelationInList;

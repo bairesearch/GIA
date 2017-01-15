@@ -11,7 +11,7 @@ SOURCES= GIAmain.cpp GIAParser.cpp GIATranslator.cpp GIATranslatorDefineGrammar.
 LIBTOOLFLAGS = --silent --tag=CC --mode=link gcc -std=gnu99 -g -O2
 
 OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=GIA.exe
+EXECUTABLE=OpenGIA.exe
 
 all: $(SOURCES) $(EXECUTABLE)
 	

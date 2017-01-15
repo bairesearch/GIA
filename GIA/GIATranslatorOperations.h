@@ -1,4 +1,24 @@
 /*******************************************************************************
+ * 
+ * This file is part of BAIPROJECT.
+ * 
+ * BAIPROJECT is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License version 3
+ * only, as published by the Free Software Foundation.
+ * 
+ * BAIPROJECT is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
+ * for a copy of the AGPLv3 License.
+ * 
+ *******************************************************************************/
+ 
+/*******************************************************************************
  *
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
@@ -73,23 +93,6 @@ using namespace std;
 		#endif
 	#endif
 #endif
-
-#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
-	#ifdef USE_CE
-		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
-			#define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING_ONLY_ACCEPT_INTRASENTENCE_STANFORD_COREFERENCES		//this is required, as CE will construct temporary claim heirachies not containing every sentence; thereby nullifying stanford coreNLP codependencies out of these temporary heirachies
-		#endif
-	#endif
-#endif
-
-#ifdef USE_CE
-	#ifdef GIA_WITH_CE_USE_ALL_CLAIM_COMBINATIONS
-		#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-			#define GIA_WITH_CE_OLD
-		#endif
-	#endif
-#endif
-
 
 #define GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE		//this was previously disabled because it was deemed inappropriate for 'The disaster happened over night.'  [prt(happened-3, over-4)] - but this case has now been integrated
 

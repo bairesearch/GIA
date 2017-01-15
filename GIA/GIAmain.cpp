@@ -1,4 +1,24 @@
 /*******************************************************************************
+ * 
+ * This file is part of BAIPROJECT.
+ * 
+ * BAIPROJECT is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License version 3
+ * only, as published by the Free Software Foundation.
+ * 
+ * BAIPROJECT is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
+ * for a copy of the AGPLv3 License.
+ * 
+ *******************************************************************************/
+ 
+/*******************************************************************************
  *
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
@@ -61,8 +81,8 @@ NB execute-relex.sh contains the following text;
 
 Make sure to set the nlprelexfolder to the folder where relex-1.x.0 presides, eg;
 
-./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelexfolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlprelation 0 -notshow
-./GIA.exe -itxt inputText.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelexfolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -notshow
+./OpenGIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlprelation 0 -notshow
+./OpenGIA.exe -itxt inputText.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -notshow
 
 */
 
@@ -76,7 +96,7 @@ NB execute-stanfordCoreNLP.bat contains the following text;
 
 	"C:\Program Files\Java\jre7\bin\java.exe" -d64 -cp stanford-corenlp-2012-04-03.jar;stanford-corenlp-2012-03-09-models.jar;xom.jar;joda-time.jar -Xmx3g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file %3/%1 -outputDirectory %4 -outputExtension %5
 
-./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlpstanfordcorenlpfolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlprelation 1 -notshow
+./OpenGIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlprelation 1 -notshow
 
 */
 
@@ -86,33 +106,33 @@ NB execute-stanfordParser.sh contains the following text;
 
 	#!/usr/bin/env bash
 	scriptdir=`dirname $0`
-	java -mx2000m -cp "$scriptdir/*:" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz $3/$1 > $4/$2
+	java -mx2000m -cp "$scriptdir/*:" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "wordsAndTags,penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz $3/$1 > $4/$2
 
 NB execute-stanfordParser.bat contains the following text;
 
 	@echo off
 	:: Runs the English PCFG parser on one or more files, printing trees only
 	:: usage: lexparser fileToparse
-	"C:\Program Files\Java\jre7\bin\java.exe" -d64 -mx150m -cp "*;" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz %3/%1 > %4/%2
+	"C:\Program Files\Java\jre7\bin\java.exe" -d64 -mx150m -cp "*;" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "wordsAndTags,penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz %3/%1 > %4/%2
 
-./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlpstanfordparserfolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -nlprelation 2 -notshow
+./OpenGIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-2012-03-09" -nlprelation 2 -notshow
 
 */
 
 /*
 Additional example where relations + features are parsed from different NLP files;
-./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelation 2 -nlpfeature 1 -nlprelexfolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -notshow
-./GIA.exe -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelexfolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -notshow
-GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelation 2 -nlpfeature 1 -nlprelexfolder "E:/Files/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "E:/Files/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "E:/Files/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -notshow
-GIA.exe -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelexfolder "E:/Files/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "E:/Files/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "E:/Files/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -notshow
+./OpenGIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelation 2 -nlpfeature 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-2012-03-09" -notshow
+./OpenGIA.exe -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-2012-03-09" -notshow
+OpenGIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelation 2 -nlpfeature 1 -nlprelexfolder "E:/Files/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "E:/Files/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "E:/Files/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -notshow
+OpenGIA.exe -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelexfolder "E:/Files/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "E:/Files/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "E:/Files/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -notshow
 
 Additional example where relations + features parsed from different NLP file, queries parsed using different NLP file;
-./GIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -notshow
+./OpenGIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-2012-03-09" -notshow
 [Relex not supported in Windows]
 
 Additional example where relations + features parsed from different NLP file, queries parsed using same/corresponding NLP files;
-./GIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -notshow
-GIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "E:/Files/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "E:/Files/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "E:/Files/soft/BAISource/stanford/parser/stanford-parser-2012-03-09"
+./OpenGIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-2012-03-09" -notshow
+OpenGIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "E:/Files/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "E:/Files/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "E:/Files/soft/BAISource/stanford/parser/stanford-parser-2012-03-09"
 
 */
 
@@ -140,10 +160,6 @@ GIA Database is a (Linux) filesystem structure of the format:
 #include "XMLrulesClass.h"
 #include "LDsprite.h"
 #include "LDopengl.h"
-#ifdef USE_CE
-	#include "CEcreateLayout.h"
-	#include "CEvars.h"
-#endif
 #ifdef USE_WORDNET
 #include "GIAwordnet.h"
 #endif
@@ -159,10 +175,7 @@ GIA Database is a (Linux) filesystem structure of the format:
 #ifdef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
 static char errmessage[] = "GIA Usage Requirement Failure. Please re-specify parameters.\n";
 #else
-static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any of the following\n"
-#ifdef USE_CE
-"\n\t-iclaims [string]  : enumerated claims layout .txt filename to be parsed/generated by CE.exe (def: claimsEnumerated.txt) [must still specify -itxt [eg same] OR -ionlp]"
-#endif
+static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are any of the following\n"
 "\n\t-itxt [string]     : plain text .txt input filename to be parsed by the NLP parser (def: inputText.txt)"
 "\n\t-ionlprel [string] : NLP dependency relation parser .xml intermediary input/output filename (def: inputNLPrelation.xml)"
 "\n\t-ionlptag [string] : NLP feature tag parser .xml intermediary input/output filename (def: inputNLPfeature.xml)"
@@ -256,11 +269,6 @@ int main(int argc,char **argv)
 	bool useInputTextPlainTXTFile = false;
 	string inputTextPlainTXTFileName = "inputText.txt";
 
-#ifdef USE_CE
-	bool useInputTextClaimsTXTFileName = false;
-	string inputTextClaimsTXTFileName = "claimsEnumerated.txt";
-#endif
-
 	bool useInputTextNLPrelationXMLFile = false;
 	string inputTextNLPrelationXMLFileName = "inputNLPrelation.xml";
 
@@ -342,11 +350,7 @@ int main(int argc,char **argv)
 
 	//basic execution flow outline; if no dataset or xml inputText file is specified, just form network - do not train network
 
-	#ifdef USE_CE
-	if(exists_argument(argc,argv,"-iclaims"))
-	#else
 	if(exists_argument(argc,argv,"-itxt") || exists_argument(argc,argv,"-ionlprel") || exists_argument(argc,argv,"-ixml"))
-	#endif
 	{
 		if(exists_argument(argc,argv,"-itxt"))
 		{
@@ -354,14 +358,6 @@ int main(int argc,char **argv)
 			useInputTextPlainTXTFile = true;
 			//cout << "DEBUGZ" << endl;
 		}
-
-	#ifdef USE_CE
-		if(exists_argument(argc,argv,"-iclaims"))
-		{
-			inputTextClaimsTXTFileName=get_char_argument(argc,argv,"-iclaims");
-			useInputTextClaimsTXTFileName = true;
-		}
-	#endif
 
 		if(exists_argument(argc,argv,"-ionlprel"))
 		{
@@ -664,7 +660,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe - Project Version: 1n6a 28-July-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1n6a 28-July-2012" << endl;
 			exit(1);
 		}
 
@@ -861,48 +857,6 @@ int main(int argc,char **argv)
 	cout << "rasterImageHeight = " << rasterImageHeight << endl;
 	*/
 
-#ifdef USE_CE
-	bool useClaimsHeirachy = false;
-	CEClaim * firstClaimInHeirachy = NULL;
-	vector<CEClaim*> * claimsList;
-	if(useInputTextClaimsTXTFileName)
-	{
-		useClaimsHeirachy = true;
-
-		//generate claims heirachy
-		//NB claimLayoutFileName = inputTextPlainTXTFileName;
-		//NB claimEnumeratedFileName = inputTextClaimsTXTFileName;
-		string subclaimPrependPartA = CE_SUB_CLAIM_PREPEND_PART_A_DEFAULT;
-		string subclaimPrependPartC = CE_SUB_CLAIM_PREPEND_PART_C_DEFAULT;
-		#ifdef GIA_WITH_CE_DERIVE_SUBCLAIM_PREPEND
-		bool deriveSubclaimPrepend = true;
-		#else
-		bool deriveSubclaimPrepend = false;
-		#endif
-
-		bool generateClaimClassHeirachy = true;		//NB this is required for external applications needing to extract claims layout information using CE
-		firstClaimInHeirachy = new CEClaim();
-		claimsList = new vector<CEClaim*>;
-
-		if(!deriveSubclaimPrependAndCreateClaimsLayout(inputTextClaimsTXTFileName, inputTextPlainTXTFileName, subclaimPrependPartA, subclaimPrependPartC, deriveSubclaimPrepend, generateClaimClassHeirachy, firstClaimInHeirachy, claimsList))
-		{
-			result = false;
-		}
-
-		/*//need to explicitly state whether to use a plain text file, else will use NLP xml file
-		if(!useInputTextNLPrelationXMLFile)
-		{//if NLP parsed claims not available, then execute NLP parser on generated claims summary (inputTextPlainTXTFileName)
-			useInputTextPlainTXTFile = true;
-		}
-		*/
-
-		if(useInputTextNLPrelationXMLFile && !(fileExists(&inputTextNLPrelationXMLFileName)))
-		{
-			useInputTextPlainTXTFile = true;
-		}
-	}
-#endif
-
 	if(useInputTextPlainTXTFile)
 	{
 		//cout << "DEBUGA" << endl;
@@ -945,11 +899,7 @@ int main(int argc,char **argv)
 		else
 		{
 			//cout << "as" << endl;
-			#ifdef USE_CE
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListProperties, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, firstClaimInHeirachy, claimsList, useClaimsHeirachy))
-			#else
 			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListProperties, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations))
-			#endif
 			{
 				result = false;
 			}
@@ -1023,11 +973,7 @@ int main(int argc,char **argv)
 		}
 		else
 		{
-			#ifdef USE_CE
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListPropertiesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, firstClaimInHeirachy, claimsList, false))
-			#else
 			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListPropertiesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations))
-			#endif
 			{
 				result = false;
 			}
@@ -1348,11 +1294,8 @@ int main(int argc,char **argv)
 }
 
 
-#ifdef USE_CE
-bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPrelationXMLFileName, string inputTextNLPfeatureXMLFileName, string outputCFFFileName, string NLPexeFolderArray[], vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *entityNodesActiveListProperties, vector<GIAEntityNode*> *entityNodesActiveListActions, vector<GIAEntityNode*> *entityNodesActiveListConditions, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList, bool useClaimsHeirachy)
-#else
+
 bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPrelationXMLFileName, string inputTextNLPfeatureXMLFileName, string outputCFFFileName, string NLPexeFolderArray[], vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *entityNodesActiveListProperties, vector<GIAEntityNode*> *entityNodesActiveListActions, vector<GIAEntityNode*> *entityNodesActiveListConditions, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations)
-#endif
 {
 
 	bool result = true;
@@ -1364,11 +1307,7 @@ bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 		result = false;
 	}
 
-	#ifdef USE_CE
-	if(!createSemanticNetworkBasedUponDependencyGrammarParsedSentences(firstParagraphInList, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListProperties, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsParser, NLPassumePreCollapsedStanfordRelations, firstClaimInHeirachy, claimsList, useClaimsHeirachy))
-	#else
 	if(!createSemanticNetworkBasedUponDependencyGrammarParsedSentences(firstParagraphInList, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListProperties, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsParser, NLPassumePreCollapsedStanfordRelations))
-	#endif
 	{
 		result = false;
 	}
@@ -1382,11 +1321,8 @@ bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 	return result;
 }
 
-#ifdef USE_CE
-bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *entityNodesActiveListProperties, vector<GIAEntityNode*> *entityNodesActiveListActions, vector<GIAEntityNode*> *entityNodesActiveListConditions, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPassumePreCollapsedStanfordRelations, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList, bool useClaimsHeirachy)
-#else
+
 bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * firstParagraphInList, vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *entityNodesActiveListProperties, vector<GIAEntityNode*> *entityNodesActiveListActions, vector<GIAEntityNode*> *entityNodesActiveListConditions, unordered_map<long, GIATimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPassumePreCollapsedStanfordRelations)
-#endif
 {
 	bool result = true;
 
@@ -1402,36 +1338,20 @@ bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * 
 
 	initialiseGIATranslatorForTexualContext();
 
-	#ifdef USE_CE
-	if(useClaimsHeirachy)
+
+	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
+	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
-		#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-		if(firstParagraphInList->next->next != NULL)
-		{
-			cout << "convertParagraphSentenceRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(): error - CE only supports a single paragraph of text, one claim per line" << endl;
-			exit(0);
-		}
-		#endif
-		convertSentenceListRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, firstClaimInHeirachy, claimsList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
+		convertParagraphSentenceRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstParagraphInList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
 	}
 	else
 	{
-	#endif
-		#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-		if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
-		{
-			convertParagraphSentenceRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstParagraphInList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
-		}
-		else
-		{
-			convertSentenceListRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
-		}
-		#else
 		convertSentenceListRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
-		#endif
-	#ifdef USE_CE
 	}
+	#else
+	convertSentenceListRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations);
 	#endif
+
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "record concept nodes as disabled if they are not permanent (used for printing/xml write purposes)" << endl;

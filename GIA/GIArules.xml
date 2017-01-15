@@ -9,7 +9,7 @@
 		<miscellaneousItem name="SPRITE_TEXT_PADDING_IN_LDRAW_UNITS" stringValue="" fractionalValue="1.0" />
 		
 		<miscellaneousItem name="SPRITES_FLOATING_WIDTH_IN_LDRAW_UNITS" stringValue="" fractionalValue="0" />
-		<miscellaneousItem name="SPRITES_FLOATING_HEIGHT_IN_LDRAW_UNITS" stringValue="" fractionalValue="0" />
+		<miscellaneousItem name="SPRITES_FLOATING_HEIGHT_IN_LDRAW_UNITS" stringValue="" fractionalValue="-5" />
 		
 		<miscellaneousItem name="SPRITE_NAME_START" stringValue="sprite" fractionalValue="" />
 		<miscellaneousItem name="SPRITE_EXTENSION" stringValue=".ldr" fractionalValue="" />
@@ -56,7 +56,9 @@
 		<miscellaneousItem name="GIA_ACTION_NODE_COLOUR" stringValue="" fractionalValue="2" />
 		<miscellaneousItem name="GIA_CONDITION_NODE_COLOUR" stringValue="" fractionalValue="3" />
 		
-		
+	
+		<!--not used... -->
+	
 		<miscellaneousItem name="GIA_LAYER_4_COLOUR" stringValue="" fractionalValue="4" />
 		<miscellaneousItem name="GIA_LAYER_5_COLOUR" stringValue="" fractionalValue="22" />
 		<miscellaneousItem name="GIA_LAYER_6_COLOUR" stringValue="" fractionalValue="25" />
