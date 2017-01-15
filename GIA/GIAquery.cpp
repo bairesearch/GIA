@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f22a 21-August-2014
+ * Project Version: 2f23a 24-August-2014
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -40,6 +40,7 @@
 	#include "GIAwordnet.h"
 	#include "wn.h"
 #endif
+#include "GIAtranslatorOperations.h"	//required for getPrimaryConceptNodeDefiningInstance()
 
 
 GIAqueryTraceParameters::GIAqueryTraceParameters(void)

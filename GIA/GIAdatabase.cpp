@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f22a 21-August-2014
+ * Project Version: 2f23a 24-August-2014
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -1967,30 +1967,6 @@ string DBaddBlankString(string word)
 	return wordWithBlankStringAdded;
 }
 
-
-GIAentityNode * getPrimaryConceptNodeDefiningInstance(GIAentityNode * instanceEntity)
-{
-	GIAentityNode * primaryConceptNodeDefiningInstance = NULL;
-
-	if(!(instanceEntity->entityNodeDefiningThisInstance->empty()))
-	{
-		primaryConceptNodeDefiningInstance = (instanceEntity->entityNodeDefiningThisInstance->back())->entity;
-
-		#ifdef GIA_SUPPORT_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
-		for(vector<GIAentityConnection*>::iterator connectionIter = instanceEntity->entityNodeDefiningThisInstance->begin(); connectionIter != instanceEntity->entityNodeDefiningThisInstance->end(); connectionIter++)
-		{
-			GIAentityNode * conceptEntityNode = (*connectionIter)->entity;
-			if(instanceEntity->entityName == conceptEntityNode->entityName)
-			{
-				//cout << "primaryConceptNodeDefiningInstance = conceptEntityNode" << endl;
-				primaryConceptNodeDefiningInstance = conceptEntityNode;
-			}
-		}
-		#endif
-	}
-
-	return primaryConceptNodeDefiningInstance;
-}
 
 
 #endif
