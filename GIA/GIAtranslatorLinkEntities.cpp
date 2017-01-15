@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h14a 25-January-2015
+ * Project Version: 2h14b 25-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -176,7 +176,19 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(Relation* currentRelat
 								//#ifdef GIA_TRANSLATOR_DEBUG
 								cout << "previousDefinitionRelationshipFound" << endl;
 								//#endif
-								addDefinitionToEntity(entity1, entity2, sameReferenceSet);
+									
+								#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_SWITCH_DEFINITION_LINKS_IF_NON_MATCHING_SUBSTANCE_CONCEPTS
+								if(((definitionEntity->isSubstanceConcept) && (entity2->isSubstanceConcept)) || (!(definitionEntity->isSubstanceConcept) && !(entity2->isSubstanceConcept)))
+								{
+								#endif
+									addDefinitionToEntity(entity1, entity2, sameReferenceSet);
+								#ifdef GIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_SWITCH_DEFINITION_LINKS_IF_NON_MATCHING_SUBSTANCE_CONCEPTS
+								}
+								else
+								{
+									addDefinitionToEntity(entity2, entity1, sameReferenceSet);
+								}
+								#endif
 							}
 						}
 					}
