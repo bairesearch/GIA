@@ -24,7 +24,7 @@
 /*******************************************************************************
  *
  * File Name: GIAnlg.h
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 2h5c 13-January-2015
  * Requirements: requires GIA translated data, and NLG2 to be installed
