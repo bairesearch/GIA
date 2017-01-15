@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n4d 26-September-2016
+ * Project Version: 2n5a 30-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -460,6 +460,7 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 	#ifdef GIA_SUPPORT_ALIASES
 	if(entity->isName)
 	{
+		entity->isName = false;	//added 2n5a
 		newSubstance->isName = true;
 	}
 	#endif
@@ -494,11 +495,13 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 	//this propogation was only defined for substance instances [generalised 1t1m 24 July 2013]:
 	if(entity->isToBeComplimentOfActionTemp)
 	{
+		entity->isToBeComplimentOfActionTemp = false;	//added 2n5a
 		newSubstance->isToBeComplimentOfActionTemp = true;
 	}
 
 	if(entity->negative)
 	{
+		entity->negative = false;	//added 2n5a
 		newSubstance->negative = true;
 	}
 
@@ -513,13 +516,25 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 	#endif
 
 	#ifdef GIA_SUPPORT_NUMBER_OF
-	newSubstance->isNumberOf = entity->isNumberOf;
+	if(entity->isNumberOf)
+	{
+		entity->isNumberOf = false;	//added 2n5a
+		newSubstance->isNumberOf = true;
+	}
 	#endif
 
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
-	newSubstance->convertToSubClass = entity->convertToSubClass;
+	if(entity->convertToSubClass)
+	{
+		entity->convertToSubClass = false;	//added 2n5a
+		newSubstance->convertToSubClass = true;
+	}
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
-	newSubstance->addSubClass = entity->addSubClass;
+	if(entity->addSubClass)
+	{
+		entity->addSubClass = false;	//added 2n5a
+		newSubstance->addSubClass = true;
+	}
 	#endif
 	#endif
 }
