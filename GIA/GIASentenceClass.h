@@ -23,7 +23,7 @@
  * File Name: GIASentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q9a 08-November-2012
+ * Project Version: 1q10a 12-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -70,6 +70,11 @@ using namespace std;
 #define FEATURE_RELEX_POS_TYPE_VERB_NAME "verb"
 #define FEATURE_RELEX_POS_TYPE_WORD_NAME "WORD"
 #define FEATURE_RELEX_POS_NUMBER_OF_TYPES (11)
+/*
+add this "abbr" to POS types (eg Mr. -> wordnet noun)?
+see relex/relex-1.4.0/data/relex-tagging-algs.txt
+NB pronouns are "already tagged as nouns"
+*/
 static string featureRelexPOSTypeArray[FEATURE_RELEX_POS_NUMBER_OF_TYPES] = {FEATURE_RELEX_POS_TYPE_PUNCTUATION_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME, FEATURE_RELEX_POS_TYPE_CONJUNCTION_NAME, FEATURE_RELEX_POS_TYPE_DETERMINATE_NAME, FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_PARTICLE_NAME, FEATURE_RELEX_POS_TYPE_PREP_NAME, FEATURE_RELEX_POS_TYPE_PUNCTUATION_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_WORD_NAME};
 
 
