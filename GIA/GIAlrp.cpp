@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7d 29-June-2013
+ * Project Version: 1s7e 29-June-2013
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -1797,7 +1797,6 @@ bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * first
 {
 	bool foundIrregularVerbContinuousCase = false;
 	
-	bool irregularVerbFound = false;
 	GIALRPtag * currentTagInIrregularVerbList = firstTagInIrregularVerbList;
 	while(currentTagInIrregularVerbList->nextSentence != NULL)
 	{
@@ -1805,12 +1804,15 @@ bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * first
 		GIALRPtag * currentTagInIrregularVerb = currentTagInIrregularVerbList;
 		while(currentTagInIrregularVerb->nextTag != NULL)
 		{
+			//cout << "\t currentTagInIrregularVerb->tagName = " << currentTagInIrregularVerb->tagName << endl;
+			string wordLowerCase = convertStringToLowerCase(&word);
+
 			if(irregularVerbTagIndex == 3)
 			{
-				if(word == currentTagInIrregularVerb->tagName)
+				if(wordLowerCase == currentTagInIrregularVerb->tagName)
 				{
-					//cout << "foundIrregularVerbContinuousCase" << endl;
-					//cout << "irregularVerbBaseForm = " << currentTagInIrregularVerbList->tagName << endl;
+					cout << "foundIrregularVerbContinuousCase" << endl;
+					cout << "irregularVerbBaseForm = " << currentTagInIrregularVerbList->tagName << endl;
 					foundIrregularVerbContinuousCase = true;
 					*baseNameFound = currentTagInIrregularVerbList->tagName;					
 				}
@@ -1818,6 +1820,8 @@ bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * first
 			currentTagInIrregularVerb = currentTagInIrregularVerb->nextTag;
 			irregularVerbTagIndex++;
 		}
+		
+		//cout << "currentTagInIrregularVerbList->tagName = " << currentTagInIrregularVerbList->tagName << endl;
 		
 		/*OLD (before RBB addition of continuous cases to wikipedia english irregular verb list - ie final/4th column of WikipediaIrregularVerbs.txt):
 		cout << "currentTagInIrregularVerbList->tagName = " << currentTagInIrregularVerbList->tagName << endl;

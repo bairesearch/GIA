@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7d 29-June-2013
+ * Project Version: 1s7e 29-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -36,6 +36,9 @@
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 	#include "GIAlrp.h"
 #endif
+
+
+#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 
 
 #ifdef GIA_USE_STANFORD_CORENLP
@@ -130,11 +133,6 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 	}
 }
 #endif
-
-
-
-
-#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 
 void disableRedundantNodesStanfordParser(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
@@ -2778,7 +2776,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 
 #ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS
 //Added 28 October 2012b
-void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType)
+void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType, int NLPfeatureParser)
 {
 	//eg What is wood used in the delivering of?   interpret prep_of(xing, y) as obj(xing, y) )
 
@@ -2799,69 +2797,26 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 			bool stanfordPrepositionFound = false;
 			if(convertStanfordPrepositionToRelex(&relationType, NLPdependencyRelationsType, &stanfordPrepositionFound) == RELATION_TYPE_OF)
 			{
-				#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS
 				//cout << "actionOrSubstanceEntity->stanfordPOStemp = " << actionOrSubstanceEntity->stanfordPOStemp << endl;
-				//cout << "actionOrSubstanceEntity->wordNetPOS = " << actionOrSubstanceEntity->wordNetPOS << endl;				
-				bool foundContinuousVerb = false;
-				if(actionOrSubstanceEntity->stanfordPOStemp == FEATURE_POS_TAG_VBG)
-				//if(actionOrSubstanceEntity->wordNetPOS == GRAMMATICAL_WORD_TYPE_VERB)
-				{
-					/*
-					Wood is used for delivering milk.
-					NB delivering is correctly tagged as VBG by stanford CoreNLP (NN by Stanford Parser; and this incorrect value is recorded assuming STANFORD_PARSER_USE_POS_TAGS is set)
-					*/
-					//cout << "foundVerb1" << endl;
-					foundContinuousVerb = true;
-				}
-				else 
-				{
-					#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
-					//cout << "NB: GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS requires GIA_USE_LRP to be defined and -lrpfolder to be set" << endl;					
-					string baseNameFound = "";
-					if(determineIfWordIsIrregularVerbContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))
-					{
-						//cout << "foundVerb2a" << endl;
-						/*
-						Wood is used for making milk.
-						What is wood used in the making of?
-						NB making is an irregular verb and will be tagged incorrectly by both Stanford coreNLP and Stanford Parser					
-						*/	
-						if(actionOrSubstanceEntity->wordOrig == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)
-						{	
-							//change irregular verb name eg making to base irregular verb base name eg make
-							actionOrSubstanceEntity->entityName = baseNameFound;
-							currentRelationInList->relationGovernor = baseNameFound;
-						}
-						
-						foundContinuousVerb = true;
-					}
-					#endif	
-					
-					//STANFORD_PARSER_USE_POS_TAGS is no longer supported by GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS/redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs()...
-					/*
-					#ifdef STANFORD_PARSER_USE_POS_TAGS			
-					if(determineIfWordIsVerbContinuousCase(&(actionOrSubstanceEntity->wordOrig)))	//OR &(currentRelationInList->relationGovernor)	//NB must use wordOrig as only wordOrig is guaranteed to still have "ing" attached - the word may be stripped by stanford corenlp in generation of the lemma 
-					{
-						//cout << "foundVerb2b" << endl;
-						//What is wood used in the delivering of?
-						//						
-						//	Wood is used for making milk.
-						//	What is wood used in the making of?
-						//	NB making is an irregular verb and will be tagged incorrectly by both Stanford coreNLP and Stanford Parser	
-						//	still fails because "making" remains recorded as the lemma not "make"
-						//	a solution involves GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS														
-						foundContinuousVerb = true;
-					}
+				//cout << "actionOrSubstanceEntity->wordNetPOS = " << actionOrSubstanceEntity->wordNetPOS << endl;	
+				#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION							
+				/*
+				if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+				{//to work effectively/best, this function requires a) GIA_NLP_PARSER_STANFORD_CORENLP as NLPfeatureParser
+					#ifndef STANFORD_PARSER_USE_POS_TAGS
+					//to work effectively/best, this function requires b) Stanford CoreNLP as pos tagger (ie it is incompatible with STANFORD_PARSER_USE_POS_TAGS, as stanford Parser tags a lot more -ing words as NN [rather than VBG] as compared to Stanford CoreNLP)
+				*/	
+				correctContinuousVerbPOStagAndLemma(actionOrSubstanceEntity);
+				currentRelationInList->relationGovernor = actionOrSubstanceEntity->entityName;
+				/*	
 					#endif
-					*/
-					
-				}
-				
-				if(foundContinuousVerb)
+				}	
+				*/
+				#endif
+				if(actionOrSubstanceEntity->stanfordPOStemp == FEATURE_POS_TAG_VBG)
 				{
 					currentRelationInList->relationType = RELATION_TYPE_OBJECT;				
 				}
-				#endif
 			}
 
 		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -2870,26 +2825,6 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 
 		currentRelationInList = currentRelationInList->next;
 	}
-}
-
-/*
-NB determineIfWordIsIrregularVerbContinuousCaseWrapper() could be used instead of determineIfWordIsVerbContinuousCase(), as Stanford CoreNLP only has a problem identifying verbs (pos tag "VBG") when they are irregular verbs. NB Stanford Parser appears to have a problem with all irregular continous verbs.
-*/
-bool determineIfWordIsVerbContinuousCase(string * word)
-{
-	bool foundVerbContinuousCase = false;
-	int wordStringLength = word->length();
-	//cout << "word = " << *word << endl;
-	//cout << "wordStringLength = " << wordStringLength << endl;
-	int wordTenseFormContinuousAppendLength = string(GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND).length();
-	string lastThreeLettersOfWord = word->substr(wordStringLength-wordTenseFormContinuousAppendLength, wordTenseFormContinuousAppendLength);
-	//cout << "wordTenseFormContinuousAppendLength = " << wordTenseFormContinuousAppendLength << endl;
-	//cout << "lastThreeLettersOfWord = " << lastThreeLettersOfWord << endl;
-	if(lastThreeLettersOfWord == GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND)
-	{
-		foundVerbContinuousCase = true;
-	}
-	return foundVerbContinuousCase;
 }
 #endif
 
@@ -2958,6 +2893,154 @@ void redistributeStanfordRelationsExpletives(Sentence * currentSentenceInList, b
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
+}
+#endif
+
+#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
+
+#ifndef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION
+void redistributeStanfordRelationsCorrectPOStagsAndLemmasOfAllContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
+{
+	//eg What is wood used in the delivering of?   interpret prep_of(xing, y) as obj(xing, y) )
+
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
+		{
+		//#endif
+
+			int governorIndex = currentRelationInList->relationGovernorIndex;
+			int dependentIndex = currentRelationInList->relationDependentIndex;
+			GIAentityNode * governorEntity = GIAentityNodeArray[governorIndex];
+			GIAentityNode * dependentEntity = GIAentityNodeArray[dependentIndex];		
+			
+			//cout << governorEntity->entityName << endl;
+			//cout << dependentEntity->entityName << endl;
+			if(correctContinuousVerbPOStagAndLemma(governorEntity))
+			{
+				featureArrayTemp[governorIndex]->stanfordPOS = FEATURE_POS_TAG_VBG;
+				featureArrayTemp[governorIndex]->lemma = governorEntity->entityName;
+				currentRelationInList->relationGovernor = governorEntity->entityName;
+			}
+			if(correctContinuousVerbPOStagAndLemma(dependentEntity))
+			{
+				featureArrayTemp[dependentIndex]->stanfordPOS = FEATURE_POS_TAG_VBG;
+				featureArrayTemp[dependentIndex]->lemma = dependentEntity->entityName;
+				currentRelationInList->relationDependent = dependentEntity->entityName;
+			}			
+			
+			
+		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}
+		//#endif
+
+		currentRelationInList = currentRelationInList->next;
+	}	
+}
+
+Feature * getFeatureInList(Feature * firstFeatureInSentence, int featureIndexToGet)
+{
+	Feature * foundFeature = NULL;
+	Feature * currentFeatureInList = firstFeatureInSentence;
+	int featureIndex = 0;
+	while(currentFeatureInList->next != NULL)
+	{
+		if(featureIndex == featureIndexToGet)
+		{
+			foundFeature = currentFeatureInList;
+		}
+		currentFeatureInList = currentFeatureInList->next;
+		featureIndex++;
+	}
+	return foundFeature;
+}
+#endif
+
+//note this function tags all "continuous verbs" as VBG (even those which perhaps should be left as NNP because they appear at the beginning at the sentence eg "Swimming is good exercise.") 
+//note this function can perhaps only be strictly used in circumstances where the continuous verb appears at the end of the sentence eg GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION (because "-ing" cannot be used in itself to detect continuous verbs - as there are some which perhaps should be left as NNP when they appear at the beginning at the sentence eg "Swimming is good exercise.")
+bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity)
+{
+	bool foundContinuousVerb = false;
+	
+	if(actionOrSubstanceEntity->stanfordPOStemp == FEATURE_POS_TAG_VBG)
+	//if(actionOrSubstanceEntity->wordNetPOS == GRAMMATICAL_WORD_TYPE_VERB)
+	{
+		/*
+		Wood is used for delivering milk.
+		NB delivering is correctly tagged as VBG by stanford CoreNLP (NN by Stanford Parser; and this incorrect value is recorded assuming STANFORD_PARSER_USE_POS_TAGS is set)
+		*/
+		//cout << "foundVerb1" << endl;
+		foundContinuousVerb = true;
+	}
+	else 
+	{
+		//cout << "NB: GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS requires GIA_USE_LRP to be defined and -lrpfolder to be set" << endl;					
+		string baseNameFound = "";
+		//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
+		if(determineIfWordIsIrregularVerbContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))
+		{
+			//cout << "foundVerb2a" << endl;
+			/*
+			Wood is used for making milk.
+			What is wood used in the making of?
+			NB making is an irregular verb and will be tagged incorrectly by both Stanford coreNLP and Stanford Parser					
+			*/	
+			string wordOrigLowerCase = convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
+			if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = Swimming, and entityName = swimming; then apply the lemma correction 
+			{
+				//change irregular verb name eg making to base irregular verb base name eg make
+				cout << "2 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
+				cout << "2 baseNameFound = " << baseNameFound << endl;
+				actionOrSubstanceEntity->entityName = baseNameFound;
+				actionOrSubstanceEntity->stanfordPOStemp = FEATURE_POS_TAG_VBG;
+				actionOrSubstanceEntity->wordNetPOS = GRAMMATICAL_WORD_TYPE_VERB;
+			}
+
+			foundContinuousVerb = true;
+		}
+
+		//STANFORD_PARSER_USE_POS_TAGS is no longer supported by GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS/redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs()...
+		/*
+		#ifdef STANFORD_PARSER_USE_POS_TAGS			
+		if(determineIfWordIsVerbContinuousCase(&(actionOrSubstanceEntity->wordOrig)))	//OR &(currentRelationInList->relationGovernor)	//NB must use wordOrig as only wordOrig is guaranteed to still have "ing" attached - the word may be stripped by stanford corenlp in generation of the lemma 
+		{
+			//cout << "foundVerb2b" << endl;
+			//What is wood used in the delivering of?
+			//						
+			//	Wood is used for making milk.
+			//	What is wood used in the making of?
+			//	NB making is an irregular verb and will be tagged incorrectly by both Stanford coreNLP and Stanford Parser	
+			//	still fails because "making" remains recorded as the lemma not "make"
+			//	a solution involves GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS														
+			foundContinuousVerb = true;
+		}
+		#endif
+		*/
+
+	}
+	return foundContinuousVerb;
+}
+
+/*
+NB determineIfWordIsIrregularVerbContinuousCaseWrapper() could be used instead of determineIfWordIsVerbContinuousCase(), as Stanford CoreNLP only has a problem identifying verbs (pos tag "VBG") when they are irregular verbs. NB Stanford Parser appears to have a problem with all irregular continous verbs.
+*/
+bool determineIfWordIsVerbContinuousCase(string * word)
+{
+	bool foundVerbContinuousCase = false;
+	int wordStringLength = word->length();
+	//cout << "word = " << *word << endl;
+	//cout << "wordStringLength = " << wordStringLength << endl;
+	int wordTenseFormContinuousAppendLength = string(GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND).length();
+	string lastThreeLettersOfWord = word->substr(wordStringLength-wordTenseFormContinuousAppendLength, wordTenseFormContinuousAppendLength);
+	//cout << "wordTenseFormContinuousAppendLength = " << wordTenseFormContinuousAppendLength << endl;
+	//cout << "lastThreeLettersOfWord = " << lastThreeLettersOfWord << endl;
+	if(lastThreeLettersOfWord == GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND)
+	{
+		foundVerbContinuousCase = true;
+	}
+	return foundVerbContinuousCase;
 }
 #endif
 
