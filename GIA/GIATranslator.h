@@ -59,8 +59,9 @@ using namespace std;
 #define RELATION_FUNCTION_DEFINITION_1 "be"	//eg x is y
 
 
-#define RELATION_TYPE_OBJECT "_obj"	//eg is y	[be y]
-#define RELATION_TYPE_SUBJECT "_subj"	//eg x is 	[be x]
+#define RELATION_TYPE_OBJECT "_obj"	//eg eats y	[? be y]
+#define RELATION_TYPE_OBJECT_TO "to"	//eg to y	//NB "to" is currently interpreted as an object of an action
+#define RELATION_TYPE_SUBJECT "_subj"	//eg x eats 	[? be x]
 
 //action/property conditions
 #define RELATION_TYPE_ON "on"		//eg rides on tuesday		[ride tuesday]		//this forms the action condition; "when"

@@ -448,7 +448,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
 			int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
 												
-			if((currentRelationInList->relationType == RELATION_TYPE_SUBJECT) || (currentRelationInList->relationType == RELATION_TYPE_OBJECT))
+			if((currentRelationInList->relationType == RELATION_TYPE_SUBJECT) || ((currentRelationInList->relationType == RELATION_TYPE_OBJECT) || (currentRelationInList->relationType == RELATION_TYPE_OBJECT_TO)))
 			{
 				if(subjectObjectRelationshipAlreadyAdded[relationFunctionIndex] != true)
 				{
@@ -473,7 +473,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						firstIndex = SUBJECT_INDEX;
 						secondIndex = OBJECT_INDEX;			
 					}
-					else if(currentRelationInList->relationType == RELATION_TYPE_OBJECT)
+					else if((currentRelationInList->relationType == RELATION_TYPE_OBJECT) || (currentRelationInList->relationType == RELATION_TYPE_OBJECT_TO))
 					{
 						firstIndex = OBJECT_INDEX;
 						secondIndex = SUBJECT_INDEX;									
