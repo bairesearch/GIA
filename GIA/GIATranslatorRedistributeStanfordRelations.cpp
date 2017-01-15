@@ -3,7 +3,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j6c 01-May-2012
+ * Project Version: 1j6f 01-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1211,8 +1211,10 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 								if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
 								{
 									if((currentRelationInList2->relationGovernor == RELATION_ENTITY_BE) && (currentRelationInList->relationGovernor == RELATION_ENTITY_BE))
-									{//found a matching relationship						
+									{//found a matching relationship
+											#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG						
 											cout << "redistributeStanfordRelationsCreateQueryVarsWhoWhat" << endl;
+											#endif
 											
 										#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
 							
@@ -1328,9 +1330,11 @@ void redistributeStanfordRelationsCreateQueryVarsHowMuchHowMany(Sentence * curre
 						if(queryHowMuchSecondRelationFound)
 						{		
 							if(currentRelationInList2->relationDependentIndex == currentRelationInList->relationGovernorIndex)
-							{//found a matching relationship						
+							{//found a matching relationship	
+								#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG							
 								cout << "redistributeStanfordRelationsCreateQueryVarsHowMuchHowMany" << endl;
-										
+								#endif
+								
 								currentRelationInList->disabled =  true;
 								GIAEntityNode * oldRedundantBeEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];	//disable how							
 								disableEntityBasedUponFirstSentenceToAppearInNetwork(oldRedundantBeEntity);
@@ -1467,8 +1471,10 @@ void redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy(Sentence * curr
 					if(currentRelationInList->relationGovernor != RELATION_ENTITY_BE)
 					{//check is used to prevent a situation in the case a disabled relation has been used [NB should really utilise GIA_DO_NOT_PARSE_DISABLED_RELATIONS here...]
 					*/
-					 					
+					 	#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG				
 						cout << "redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy: " << currentRelationInList->relationDependent << endl;
+						#endif
+						
 						//interpret 'who is that' / 'what is the time.' advmod(happen-5, How-1) / [advmod(leave-4, When-1)?] / advmod(is-2, Where-1) / advmod(fall-5, Why-1) -> how(happen[5], _$qVar[1]) / _%atTime(leave[4], _$qVar[1]) / [_%atLocation(ball[4], _$qVar[1])?] / _%because(fall[5], _$qVar[1])	
 
 						currentRelationInList->relationType = featureQueryWordHowWhenWhereWhyCrossReferenceQueryVariableNameArray[queryWordHowWhenWhereWhyFoundIndex];		// prep_how / _%atTime / _%because 

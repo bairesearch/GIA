@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j6c 01-May-2012
+ * Project Version: 1j6f 01-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific version of shared globals (replace if compiling other projects)
  *
@@ -27,6 +27,7 @@
 #define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 
 //Debug;
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 //#define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG
 //#define GIA_WORDNET_DEBUG_OUTPUT_SYNONYMNS

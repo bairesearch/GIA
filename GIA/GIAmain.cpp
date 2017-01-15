@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j6c 01-May-2012
+ * Project Version: 1j6f 01-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
@@ -63,6 +63,7 @@ NB execute-relex.sh contains the following text;
 Make sure to set the nlprelexfolder to the folder where relex-1.x.0 presides, eg;
 
 ./GIA.exe -itxt inputText.txt -oxml semanticNet.xml -ocxl semanticNet.cxl -osvg semanticNet.svg -oldr semanticNet.ldr -oppm semanticNet.ppm -nlprelexfolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlprelation 0 -notshow
+./GIA.exe -itxt inputText.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelexfolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -notshow
 
 */	
 
@@ -94,6 +95,9 @@ Additional example where relations + features are parsed from different NLP file
 
 Additional example where relations + features parsed from different NLP file, queries parsed using different NLP file;
 ./GIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -notshow
+
+Additional example where relations + features parsed from different NLP file, queries parsed using same/corresponding NLP files;
+./GIA.exe -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/rich/soft/BAISource/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/rich/soft/BAISource/stanford/coreNLP/stanford-corenlp-2012-04-03" -nlpstanfordparserfolder "/home/rich/soft/BAISource/stanford/parser/stanford-parser-2012-03-09" -notshow
 
 */	
 
@@ -574,7 +578,7 @@ int main(int argc,char **argv)
 								
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe - Project Version: 1j6c 01-May-2012" << endl;
+			cout << "GIA.exe - Project Version: 1j6f 01-May-2012" << endl;
 			exit(1);
 		}
 
