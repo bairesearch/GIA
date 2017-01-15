@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i32a 11-February-2015
+ * Project Version: 2i33a 13-February-2015
  *
  *******************************************************************************/
 -->
@@ -3857,12 +3857,33 @@
 					_predadj(city[2], fast[7])
 					prep_with(city[2], house[5])
 				--></example>
+				
+				<!-- #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
+				<!--
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="with" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" />
 				<option disableRelationDuringLink="true" REL="1" />
 				<option functionToExecuteUponFind="3" />
+				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
+				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
+				//#ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
+				<option disableEntity="true" REL="1" REL_ENT="3" />
+				//#endif
+				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
+				//#endif
+				-->
+				
+				<!-- #else -->
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="with" relationArrayTestSize="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" />
+				<option disableRelationDuringLink="true" REL="1" />
+				<option mustGenerateConditionName="true" conditionEntityDefaultName="have" />
+				<option functionToExecuteUponFind="5" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
@@ -3872,6 +3893,8 @@
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				</paramDepRel>
+				<!-- #endif -->
+				
 			</function>
 			
 			<function name="linkConditions">
