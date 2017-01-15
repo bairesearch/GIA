@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h11e 20-January-2015
+ * Project Version: 2h12a 21-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -923,15 +923,17 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										cout << currentRelationID << ": [SpecialCaseAuxCheck]: " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
 										#endif
 										bool auxiliaryIndicatesDifferentReferenceSet = true;
+										bool rcmodIndicatesSameReferenceSet = false;
 										GIAgenericDepRelInterpretationParameters paramTemp = *param;
 										if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1)))
 										{
-											auxiliaryIndicatesDifferentReferenceSet = false;
+											rcmodIndicatesSameReferenceSet = true;
 										}
 										#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 										cout << "auxiliaryIndicatesDifferentReferenceSet = " << auxiliaryIndicatesDifferentReferenceSet << endl;
 										#endif
 										param->relation[relationID]->auxiliaryIndicatesDifferentReferenceSet = auxiliaryIndicatesDifferentReferenceSet;
+										param->relation[relationID]->rcmodIndicatesSameReferenceSet = rcmodIndicatesSameReferenceSet;
 									}
 									#endif
 

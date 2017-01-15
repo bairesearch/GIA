@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h11e 20-January-2015
+ * Project Version: 2h12a 21-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -960,12 +960,12 @@ void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList)
 										//found action subject pair
 										currentRelationInList3->rcmodIndicatesSameReferenceSet = true;
 
-										#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+										//#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 										cout << "fillExplicitReferenceSameSetTags:" << endl;
 										cout << "currentRelationInList3->relationType = " << currentRelationInList3->relationType << endl;
 										cout << "currentRelationInList3->relationGovernor = " << currentRelationInList3->relationGovernor << endl;
 										cout << "currentRelationInList3->relationDependent = " << currentRelationInList3->relationDependent << endl;
-										#endif
+										//#endif
 									}
 								}
 
