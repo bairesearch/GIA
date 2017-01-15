@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q1d 15-Sept-2013
+ * Project Version: 1q2b 28-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -102,7 +102,21 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		#endif
 		currentParagraphInList = currentParagraphInList->next;
 	}
+	
+	#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+	dreamModeLinkSpecificConceptsAndActions(NLPdependencyRelationsType);
+	#endif
 }
+#endif
+
+#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+void dreamModeLinkSpecificConceptsAndActions(int NLPdependencyRelationsType)
+{
+	vector<GIAentityNode*> * entityNodesActiveListComplete = getTranslatorEntityNodesCompleteList();
+	
+	int numberReferenceSets = identifyReferenceSetsSpecificConcepts(entityNodesActiveListComplete, NLPdependencyRelationsType)
+}
+
 #endif
 
 #ifdef USE_CE
@@ -481,68 +495,6 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#endif
  	applyGrammaticalInfoToAllEntities(GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, currentSentenceInList->firstFeatureInList);
 
-	/*
-	#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG
-	cout << "dependency relations: " << endl;
-	currentRelationInList = currentSentenceInList->firstRelationInList;
-	while(currentRelationInList->next != NULL)
-	{
-		if(!(currentRelationInList->disabled))
-		{
-			string relationType = currentRelationInList->relationType;
-			GIAentityNode * relationGoverner = GIAconceptNodeArray[currentRelationInList->relationGovernorIndex];
-			GIAentityNode * relationDependent = GIAconceptNodeArray[currentRelationInList->relationDependentIndex];
-
-			cout << "relationType = " << currentRelationInList->relationType << endl;
-			cout << "relationGoverner = " << relationGoverner->entityName << endl;
-			cout << "relationDependent = " << relationDependent->entityName << endl;
-
-		}
-		currentRelationInList = currentRelationInList->next;
-	}
-	cout << "features (tags): " << endl;
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		if(GIAentityNodeArrayFilled[w])
-		{
-			if(!(GIAconceptNodeArray[w]->disabled))
-			{
-				Feature * currentFeature = featureArrayTemp[w];
-
-				cout << "Sentence Word Index = " << w;
-				cout << "Word = " << currentFeature->word;
-				cout << "Lemma = " << currentFeature->lemma;
-				cout << "Is Date or Time = " << convertBoolToString(currentFeature->grammaticalIsDateOrTime);
-				cout << "Tense = " << grammaticalTenseNameArray[currentFeature->grammaticalTense];
-				for(int q=0; q<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES;q++)
-				{
-					cout << "Tense Modifier (" << grammaticalTenseModifierNameArray[q] << ") = " << convertBoolToString(currentFeature->grammaticalTenseModifierArray[q]);
-				}
-				cout << "Plurality = " << grammaticalNumberNameArray[currentFeature->grammaticalNumber];
-				cout << "Is Definite = " << convertBoolToString(currentFeature->grammaticalIsDefinite);
-				cout << "Is Proper Noun = " << convertBoolToString(currentFeature->grammaticalIsProperNoun);
-				cout << "Gender = " << grammaticalGenderNameArray[currentFeature->grammaticalGender];
-				cout << "Is Pronoun = " << convertBoolToString(currentFeature->grammaticalIsPronoun);
-				cout << "Wordtype = " << grammaticalWordTypeNameArray[currentFeature->grammaticalWordType];
-
-				cout << "NER = " << featureNERtypeArray[currentFeature->NER];
-				cout << "NormalizedNER = " << currentFeature->NormalizedNER;
-				cout << "Timex = " << currentFeature->Timex;
-				cout << "POS = " << currentFeature->stanfordPOS << endl;
-			}
-		}
-	}
-	#endif
-
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		if(GIAentityNodeArrayFilled[w])
-		{
-			cout << "GIAconceptNodeArray[w]->disabled = " << GIAconceptNodeArray[w]->entityName << ", " << int(GIAconceptNodeArray[w]->disabled) << endl;
-		}
-	}
-	*/
-
 
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 	#ifndef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION
@@ -834,22 +786,6 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#endif
  	applyGrammaticalInfoToAllEntities(GIAentityNodeArrayFilled, GIAentityNodeArray, currentSentenceInList->firstFeatureInList);
 	#endif
-	
-	/*
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		if(GIAentityNodeArrayFilled[w])
-		{
-			if(!(GIAentityNodeArray[w]->disabled))
-			{
-				cout << "entity enabled: " << GIAentityNodeArray[w]->entityName << endl;
-				cout << "w = " << w << endl;
-				cout << GIAentityNodeArray[w]->grammaticalNumber << endl;	
-				
-			}
-		}
-	}
-	*/
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1b; identify comparison variable" << endl;
@@ -972,24 +908,6 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		}
 	}
 	#endif
-	
-	/*
-	//test code only;
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		if(GIAentityNodeArrayFilled[w])
-		{
-			if(!(GIAentityNodeArray[w]->disabled))
-			{
-				cout << "entity enabled: " << GIAentityNodeArray[w]->entityName << endl;
-				cout << "w" << endl;
-				cout << GIAentityNodeArray[w]->grammaticalNumber << endl;	
-			}
-		}
-	}
-	*/
-	
-
 
 }
 
