@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i15a 27-January-2015
+ * Project Version: 2i16a 27-January-2015
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -197,6 +197,7 @@
 #endif
 #ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 #define NET_XML_ATTRIBUTE_sameReferenceSet ((string)"sameReferenceSet")	//this is only used for NLC
+#define NET_XML_ATTRIBUTE_rcmodIndicatesSameReferenceSet ((string)"rcmodIndicatesSameReferenceSet")	//this is only used for NLC
 #endif
 #ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 #define NET_XML_ATTRIBUTE_isAlias ((string)"isAlias")	//this is only used for NLC
@@ -251,7 +252,7 @@ bool writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAentityNode*>
 		//void resetIDsForNodeMap(unordered_map<string, GIAentityNode*>* entityNodesMap, long* currentEntityNodeIDinEntityNodesActiveCompleteList);
 		#endif
 
-bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* conceptEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions);
+bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* conceptEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences);
 	bool readSemanticNetXMLfile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions);
 		bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, bool linkConnections);
 			bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entityNode, vector<GIAentityNode*>* entityNodesActiveListComplete);

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i15a 27-January-2015
+ * Project Version: 2i16a 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1939,11 +1939,13 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 											//found instance in network matching substance concept...
 											#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 											bool sameReferenceSet = false;
+											bool rcmodIndicatesSameReferenceSet = false;
 											#else
 											bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+											bool rcmodIndicatesSameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 											#endif
 
-											addDefinitionToEntity(entityNode, currentSpecificConcept, sameReferenceSet);
+											addDefinitionToEntity(entityNode, currentSpecificConcept, sameReferenceSet, rcmodIndicatesSameReferenceSet);
 											#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 											cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(): addDefinitionToEntity" << endl;
 											#endif

@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i15a 27-January-2015
+ * Project Version: 2i16a 27-January-2015
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -90,7 +90,7 @@ bool testReadSemanticNetXMLFile2(vector<GIAentityNode*>* entityNodesActiveListCo
 }
 #endif
 
-bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* conceptEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions)
+bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* conceptEntityNodesListMap, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences)
 {
 	bool result = false;
 
@@ -105,6 +105,22 @@ bool readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*>*
 		//entityNodesActiveListConcepts[entityNodeName] = entityNodeFound;
 		conceptEntityNodesListMap->insert(pair<string, GIAentityNode*>(entityNode->entityName, entityNode));
 	}
+	
+	//create entityNodesActiveListSentences based on entityNodesActiveListComplete (just fill every sentence with the same vector entityNodesActiveListComplete, since there is no way a sentence's cross-sentence entity references can be derived from the xml file as they will have different sentenceIndexes. FUTURE: Consider storing a per sentence entity reference list in the GIA xml file);
+	int maxSentenceIndex = 0;
+	for(vector<GIAentityNode*>::iterator entityNodeListIterator = entityNodesActiveListComplete->begin(); entityNodeListIterator < entityNodesActiveListComplete->end(); entityNodeListIterator++)
+	{
+		GIAentityNode* entity = *entityNodeListIterator;
+		if(entity->sentenceIndexTemp > maxSentenceIndex)
+		{
+			maxSentenceIndex = entity->sentenceIndexTemp;
+		}
+	}	
+	for(int sentenceIndex=GIA_NLP_START_SENTENCE_INDEX; sentenceIndex<maxSentenceIndex; sentenceIndex++)
+	{
+		entityNodesActiveListSentences->insert(pair<int, vector<GIAentityNode*>*>(sentenceIndex, entityNodesActiveListComplete));
+	}
+	
 	#ifdef GIA_FREE_MEMORY1
 	delete entityNodesActiveListConcepts;
 	#endif
@@ -988,6 +1004,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 			#endif
 			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 			bool sameReferenceSetFound = false;
+			bool rcmodIndicatesSameReferenceSetFound = false;
 			#endif
 			#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 			bool isAliasFound = false;
@@ -1038,6 +1055,16 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 					bool attributeValue = atoi(currentAttribute->value.c_str());
 					newConnection->sameReferenceSet = attributeValue;
 					sameReferenceSetFound = true;
+					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
+					//cout << "connection idActiveList = " << idActiveList << endl;
+					#endif
+
+				}
+				else if(currentAttribute->name == NET_XML_ATTRIBUTE_rcmodIndicatesSameReferenceSet)
+				{
+					bool attributeValue = atoi(currentAttribute->value.c_str());
+					newConnection->rcmodIndicatesSameReferenceSet = attributeValue;
+					rcmodIndicatesSameReferenceSetFound = true;
 					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 					//cout << "connection idActiveList = " << idActiveList << endl;
 					#endif
@@ -1838,6 +1865,14 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 						#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 						currentAttribute->name = NET_XML_ATTRIBUTE_sameReferenceSet;
 						sprintf(tempString, "%d", int(connection->sameReferenceSet));
+						currentAttribute->value = tempString;
+
+						newAttribute = new XMLParserAttribute();
+						currentAttribute->nextAttribute = newAttribute;
+						currentAttribute = currentAttribute->nextAttribute;
+						
+						currentAttribute->name = NET_XML_ATTRIBUTE_rcmodIndicatesSameReferenceSet;
+						sprintf(tempString, "%d", int(connection->rcmodIndicatesSameReferenceSet));
 						currentAttribute->value = tempString;
 
 						newAttribute = new XMLParserAttribute();

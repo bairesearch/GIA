@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i15a 27-January-2015
+ * Project Version: 2i16a 27-January-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -717,10 +717,11 @@ void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInLis
 			GIAentityNode* entity1 = GIAentityNodeArray[entity1Index];
 			GIAentityNode* entity2 = GIAentityNodeArray[entity2Index];
 			bool sameReferenceSet = currentRelationInList->sameReferenceSet;
-
+			bool rcmodIndicatesSameReferenceSet = currentRelationInList->rcmodIndicatesSameReferenceSet;
+			
 			if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES])
 			{
-				GIAentityNodeArray[entity2Index] = addOrConnectPropertyToEntity(entity1, entity2, sameReferenceSet);
+				GIAentityNodeArray[entity2Index] = addOrConnectPropertyToEntity(entity1, entity2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
 				currentRelationInList->disabled = true;
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT])
@@ -730,7 +731,6 @@ void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInLis
  				while(currentRelationInList2->next != NULL)
 				{
 					int entity2Index2 = currentRelationInList2->relationDependentIndex;
-					bool sameReferenceSet2 = currentRelationInList2->sameReferenceSet;
 					if(currentRelationInList2->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT])
 					{
 						if(entity2Index == entity2Index2)
@@ -740,7 +740,7 @@ void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInLis
 							int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
 							GIAentityNode* entity2relation2 = GIAentityNodeArray[entity2IndexRelation2];
 
-							GIAentityNodeArray[entity3Index] = addOrConnectActionToEntity(entity1, entity2relation2, entity3, sameReferenceSet, sameReferenceSet2);
+							GIAentityNodeArray[entity3Index] = addOrConnectActionToEntity(entity1, entity2relation2, entity3, sameReferenceSet, rcmodIndicatesSameReferenceSet);
 							foundMatchingObject = true;
 							currentRelationInList2->disabled = true;
 						}
@@ -750,13 +750,13 @@ void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInLis
 
 				if(!foundMatchingObject)
 				{
-					GIAentityNodeArray[entity2Index] = addOrConnectActionToSubject(entity1, entity2, sameReferenceSet);
+					GIAentityNodeArray[entity2Index] = addOrConnectActionToSubject(entity1, entity2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
 				}
 				currentRelationInList->disabled = true;
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT])
 			{
-				GIAentityNodeArray[entity2Index] = addOrConnectActionToObject(entity1, entity2, sameReferenceSet);
+				GIAentityNodeArray[entity2Index] = addOrConnectActionToObject(entity1, entity2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
 				currentRelationInList->disabled = true;
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT])
@@ -775,7 +775,7 @@ void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInLis
 							int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
 							GIAentityNode* entity2relation2 = GIAentityNodeArray[entity2IndexRelation2];
 
-							GIAentityNodeArray[entity3Index] = addOrConnectConditionToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
+							GIAentityNodeArray[entity3Index] = addOrConnectConditionToEntity(entity1, entity2relation2, entity3, sameReferenceSet, rcmodIndicatesSameReferenceSet);
 							currentRelationInList2->disabled = true;
 							foundMatchingObject = true;
 						}
@@ -784,17 +784,17 @@ void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInLis
 				}
 				if(!foundMatchingObject)
 				{
-					GIAentityNodeArray[entity2Index] = addOrConnectConditionToSubject(entity1, entity2, sameReferenceSet);
+					GIAentityNodeArray[entity2Index] = addOrConnectConditionToSubject(entity1, entity2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
 				}
 				currentRelationInList->disabled = true;
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT])
 			{//THIS SHOULDNT BE required as there is never an isolated condition-object connection declared according to current GIA specification [but due to bug, it is requierd for Relex with measure dependency cases eg 'He runs every hour.'];
-				GIAentityNodeArray[entity2Index] = addOrConnectConditionToObject(entity1, entity2, sameReferenceSet);
+				GIAentityNodeArray[entity2Index] = addOrConnectConditionToObject(entity1, entity2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS])
 			{
-				addDefinitionToEntity(entity1, entity2, sameReferenceSet);
+				addDefinitionToEntity(entity1, entity2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
 				currentRelationInList->disabled = true;
 			}
 			#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
@@ -984,7 +984,7 @@ bool generateAllPermutationsFromSemanticRelationsFile(string corpusFileName, int
 					&& (currentRelationInList->relationDependentIndex >= firstWord) && ((currentRelationInList->relationDependentIndex <= centralWord) || (currentRelationInList->relationDependentIndex > FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)))
 					{
 						//regenerate semantic relation based on parsed GIArelation object
-						string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationSimple(currentRelationInList->relationGovernor, currentRelationInList->relationDependent, currentRelationInList->relationType, currentRelationInList->relationGovernorIndex, currentRelationInList->relationDependentIndex, currentRelationInList->sameReferenceSet);
+						string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationSimple(currentRelationInList->relationGovernor, currentRelationInList->relationDependent, currentRelationInList->relationType, currentRelationInList->relationGovernorIndex, currentRelationInList->relationDependentIndex, currentRelationInList->sameReferenceSet, currentRelationInList->rcmodIndicatesSameReferenceSet);
 						GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + STRING_NEW_LINE;
 						sentenceText = sentenceText + GIA2semanticDependencyRelation;
 						foundAtLeastOneRelation = true;
