@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n2c 15-September-2016
+ * Project Version: 2n3a 21-September-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -64,7 +64,7 @@
 	#define NET_XML_TAG_substanceEntityNodeContainer ((string)"substanceEntityNodeContainer")
 	#define NET_XML_TAG_actionEntityNodeContainer ((string)"actionEntityNodeContainer")
 	#define NET_XML_TAG_conditionEntityNodeContainer ((string)"conditionEntityNodeContainer")
-	#define NET_XML_TAG_conceptEntityNodeContainer ((string)"conceptEntityNodeContainer")	
+	#define NET_XML_TAG_conceptEntityNodeContainer ((string)"conceptEntityNodeContainer")
 	#define NET_XML_TAG_qualityEntityNodeContainer ((string)"qualityEntityNodeContainer")
 		#define NET_XML_TAG_timeConditionNode ((string)"timeConditionNode")
 		#define NET_XML_TAG_entityNode ((string)"entityNode")

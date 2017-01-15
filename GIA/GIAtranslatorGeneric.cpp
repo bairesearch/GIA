@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n2c 15-September-2016
+ * Project Version: 2n3a 21-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -335,13 +335,13 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 					#ifdef GIA_DEBUG
 					//cout << "\t useRelationTest: " << currentRelationID << ", " << relationEntityID << " = " << param->relationTest[currentRelationID][relationEntityID] << endl;
 					#endif
-					
+
 					if(passedRelation)
 					{
 						#ifdef GIA_DEBUG
 						//cout << "\t passedRelation useRelationTest: " << currentRelationID << ", " << relationEntityID << " = " << param->relationTest[currentRelationID][relationEntityID] << endl;
 						#endif
-						
+
 						passedRelation = false;
 						if(param->relationTestIsNegative[currentRelationID][relationEntityID])
 						{//negative
@@ -369,7 +369,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 						#ifdef GIA_DEBUG
 						//cout << "relationArrayTestSize = " << relationArrayTestSize << endl;
 						#endif
-						
+
 						for(int j=0; j<param->relationArrayTestSize[currentRelationID][relationEntityID]; j++)
 						{
 							if(param->relationEntity[currentRelationID][relationEntityID] == (param->relationArrayTest[currentRelationID][relationEntityID])[j])
@@ -527,9 +527,9 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 						//cout << "currentRelationID = " << currentRelationID << endl;
 						//cout << "\t\t\genericDependecyRelationInterpretation() passed: function = " << param->functionName << endl;
 						#endif
-						
+
 						result = true;
-						
+
 						//record final values for further manipulation of variables after successful (match found) recursive execution of genericDependecyRelationInterpretation:
 						for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
 						{
@@ -550,7 +550,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 							#ifdef GIA_DEBUG
 							//cout << "!specialCaseRelationCheck: currentRelationID = " << currentRelationID << endl;
 							#endif
-							
+
 							//special case reference set checks
 							for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
 							{
@@ -820,7 +820,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									//cout << "param->GIAentityNodeArray[functionEntityIndex3] = " << param->GIAentityNodeArray[functionEntityIndex3]->entityName << endl;
 									//cout << "sameReferenceSet = " << sameReferenceSet << endl;
 									#endif
-									
+
 									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], sameReferenceSet);
 
 									#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED	//CHECKTHIS
@@ -1329,7 +1329,7 @@ bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters* param
 					cout << "\t\tgenericEntityArrayInterpretation: " << param->GIAentityNodeArray[i]->entityName << endl;
 					cout << "\t\tentityType: " << param->GIAentityNodeArray[i]->entityType << endl;
 					#endif
-					
+
 					if(param->executeOrReassign)
 					{
 						if(param->functionToExecuteUponFind == GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition)
@@ -1356,11 +1356,11 @@ bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters* param
 					}
 					*/
 					setEntityCharacteristics(param->GIAentityNodeArray[i], &(param->specialCaseCharacteristicsAssignmentVector));	//this has been moved out in the case reassignment is required along with execution
-					
+
 					#ifdef GIA_DEBUG
 					//cout << "\t\tisConcept after: " << param->GIAentityNodeArray[i]->isConcept << endl;
 					#endif
-					
+
 				}
 
 				//for cleanup

@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n2c 15-September-2016
+ * Project Version: 2n3a 21-September-2016
  *
  *******************************************************************************/
 
@@ -462,7 +462,7 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	isPronounReference = false;
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
 	mustNotSetIsConceptBasedOnPrenomonalModifierRelation = false;
-	#endif	
+	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
 	isSubClass = false;
@@ -911,7 +911,7 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 	#ifdef GIA_DEBUG
 	//cout << "testEntityCharacteristic{}:" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
 	#endif
-	
+
 	/*GIA Entity Type*/
 	testEntityCharacteristicIterationint(entity->entityType, entityCharacteristic, "entityType", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->isActionConcept, entityCharacteristic, "isActionConcept", &foundMatch);
@@ -987,13 +987,13 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 	testEntityCharacteristicIterationbool(entity->isPronounReference, entityCharacteristic, "isPronounReference", &foundMatch);
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
 	testEntityCharacteristicIterationbool(entity->mustNotSetIsConceptBasedOnPrenomonalModifierRelation, entityCharacteristic, "mustNotSetIsConceptBasedOnPrenomonalModifierRelation", &foundMatch);
-	#endif	
+	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	testEntityCharacteristicIterationbool(entity->convertToSubClass, entityCharacteristic, "convertToSubClass", &foundMatch);
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
 	testEntityCharacteristicIterationbool(entity->addSubClass, entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
-	#endif	
+	#endif
 
 	bool result = false;
 	if(entityCharacteristic->isNegative)
@@ -1090,7 +1090,7 @@ bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	#ifdef GIA_DEBUG
 	//cout << "setEntityCharacteristic{}:" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
 	#endif
-	
+
 	/*GIA Entity Type*/
 	setEntityCharacteristicIterationint(&(entity->entityType), entityCharacteristic, "entityType", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->isActionConcept), entityCharacteristic, "isActionConcept", &foundMatch);
@@ -1169,7 +1169,7 @@ bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	setEntityCharacteristicIterationbool(&(entity->addSubClass), entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
 	#endif
-		
+
 	if(!foundMatch)
 	{
 		cout << "setEntityCharacteristic{} error: entityCharacteristic not found:" << entityCharacteristic->name << endl;
@@ -1311,7 +1311,7 @@ bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	getEntityCharacteristicIterationbool(entity->addSubClass, entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
 	#endif
-		
+
 	if(!foundMatch)
 	{
 		cout << "getEntityCharacteristic{} error: entityCharacteristic not found:" << entityCharacteristic->name << endl;

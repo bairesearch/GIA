@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n2c 15-September-2016
+ * Project Version: 2n3a 21-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1084,7 +1084,7 @@ void identifyReferenceSetNetworkIndexEntityEntrance(GIAentityNode* entityNode, i
 					passDefiniteSetChecks = false;
 				}
 				#endif
-				
+
 				#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DISABLE_REFERENCING_OF_SUBCLASS_ARTIFICIAL_ENTITIES
 				if(currentInstance->entityIndexTemp == GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ARTIFICAL_ENTITY_INDEX)
 				{
@@ -1627,13 +1627,13 @@ void linkAdvancedReferencesGIA(GIAsentence* currentSentenceInList, bool GIAentit
 					#ifdef GIA_DEBUG
 					//cout << "!foundReferenceSource" << endl;
 					#endif
-					
+
 					if(currentMentionInList->representative)
 					{
 						#ifdef GIA_DEBUG
 						//cout << "(currentMentionInList->representative)" << endl;
 						#endif
-						
+
 						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 						if(currentMentionInList->intrasentenceReference)
 						{
@@ -1838,7 +1838,7 @@ void linkAdvancedReferencesGIA(GIAsentence* currentSentenceInList, bool GIAentit
 								GIAnetworkIndexNodeArray[referenceEntityIndex] = referenceSource;			//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
 							}
 							#endif
-							
+
 
 							GIAentityNodeArray[referenceEntityIndex] = referenceSource;
 							#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS

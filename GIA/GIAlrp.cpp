@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n2c 15-September-2016
+ * Project Version: 2n3a 21-September-2016
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -2140,11 +2140,11 @@ bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag* firstT
 			currentTagInIrregularVerb = currentTagInIrregularVerb->nextTag;
 			irregularVerbTagIndex++;
 		}
-		
+
 		#ifdef GIA_DEBUG
 		//cout << "currentTagInIrregularVerbList->tagName = " << currentTagInIrregularVerbList->tagName << endl;
 		#endif
-		
+
 		/*OLD (before RBB addition of continuous cases to wikipedia english irregular verb list - ie final/4th column of WikipediaIrregularVerbs.txt):
 
 		string irregularVerbBaseForm = currentTagInIrregularVerbList->tagName;

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n2c 15-September-2016
+ * Project Version: 2n3a 21-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -318,7 +318,7 @@ GIAentityNode* addInstanceToInstanceDefinition(GIAentityNode* entity, int instan
 				#ifdef GIA_TRANSLATOR_DEBUG
 				//cout << "\tbreak; adding: entity->entityName = " << entity->entityName << endl;
 				#endif
-				newOrExistingInstance = addInstance(entity, instanceType);	
+				newOrExistingInstance = addInstance(entity, instanceType);
 			}
 			#else
 			newOrExistingInstance = addInstance(entity, instanceType);
@@ -330,7 +330,7 @@ GIAentityNode* addInstanceToInstanceDefinition(GIAentityNode* entity, int instan
 			//{
 				entity->entityType = instanceType;	//upgrade substance to action/condition/concept etc
 			//}
-						
+
 			newOrExistingInstance = entity;
 		}
 
@@ -342,7 +342,7 @@ GIAentityNode* addInstanceToInstanceDefinition(GIAentityNode* entity, int instan
 }
 
 GIAentityNode* addInstance(GIAentityNode* entity, int instanceType)
-{	
+{
 	//configure substance node
 	GIAentityNode* newInstance = new GIAentityNode();
 	#ifdef GIA_USE_DATABASE
@@ -369,7 +369,7 @@ GIAentityNode* addInstance(GIAentityNode* entity, int instanceType)
 	{
 		cout << "addInstance{} error: illegal instanceType, instanceType = " << instanceType << endl;
 	}
-	
+
 	addInstanceEntityNodeToActiveLists(newInstance);
 
 	newInstance->entityName = entity->entityName;
@@ -389,7 +389,7 @@ GIAentityNode* addInstance(GIAentityNode* entity, int instanceType)
 	}
 	#endif
 	*/
-	
+
 	if(instanceType == GIA_ENTITY_TYPE_TYPE_CONDITION)
 	{
 		newInstance->negative = entity->negative;	//check forwardInfoToNewSubstance{} is not required
@@ -405,7 +405,7 @@ GIAentityNode* addInstance(GIAentityNode* entity, int instanceType)
 	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 	entity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
 	#endif
-	
+
 	return newInstance;
 }
 
@@ -429,7 +429,7 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 		addTenseOnlyTimeConditionToSubstance(newSubstance, entity->grammaticalTenseTemp, entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE]);
 	}
 	*/
-	
+
 	for(int i=0; i<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; i++)
 	{
 		newSubstance->grammaticalTenseModifierArrayTemp[i] = entity->grammaticalTenseModifierArrayTemp[i];	//including GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE eg "substance has progressive (eg lying/sitting/being happy)"
@@ -515,7 +515,7 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 	#ifdef GIA_SUPPORT_NUMBER_OF
 	newSubstance->isNumberOf = entity->isNumberOf;
 	#endif
-	
+
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	newSubstance->convertToSubClass = entity->convertToSubClass;
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
@@ -1292,7 +1292,7 @@ void generateTempFeatureArray(GIAfeature* firstFeatureInList, GIAfeature* featur
 
 	GIAfeature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
-	{	
+	{
 		#ifdef GIA_DEBUG
 		//cout << "currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 		#endif
@@ -2031,7 +2031,7 @@ void setFirstNLCsentenceInList(NLCsentence* firstNLCsentenceInListNew)
 bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNode* indefiniteEntity, GIAentityNode* definiteEntity, int* indentationDifferenceFound)
 {
 	bool foundIndefiniteEntity = false;
-	
+
 	//assume plurality tests already performed;
 	//if(((indefiniteEntity->grammaticalNumber == GRAMMATICAL_NUMBER_SINGULAR) && (definiteEntity->grammaticalNumber == GRAMMATICAL_NUMBER_SINGULAR)) || (indefiniteEntity->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL))
 	//{
@@ -2051,7 +2051,7 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 			}
 		}
 		NLCsentence* indefiniteEntityNLCsentenceInList = currentNLCsentenceInList;
-		
+
 		if(foundIndefiniteEntitySentence)
 		{
 			bool foundDefiniteEntitySentence = false;
@@ -2148,7 +2148,7 @@ GIAentityNode* createNewNonspecificConcept(GIAentityNode* networkIndexEntity)
 	#endif
 	return nonspecificConcept;
 }
-					
+
 GIAentityNode* getNonspecificConceptEntityFromNetworkIndex(GIAentityNode* networkIndexEntity)
 {
 	GIAentityNode* nonspecificConceptEntity = NULL;
@@ -2159,8 +2159,8 @@ GIAentityNode* getNonspecificConceptEntityFromNetworkIndex(GIAentityNode* networ
 		{
 			nonspecificConceptEntity = conceptEntity;
 		}
-	}	
-	
+	}
+
 	return nonspecificConceptEntity;
 }
 
@@ -2176,7 +2176,7 @@ GIAentityNode* getNonspecificConceptEntityFromInstance(GIAentityNode* instanceEn
 			nonspecificConceptEntity = conceptEntity;
 		}
 	}
-	
+
 	return nonspecificConceptEntity;
 }
 
@@ -2213,7 +2213,7 @@ bool isNonspecificConceptEntity(GIAentityNode* entity)
 		}
 	}
 	return nonspecificConcept;
-}	
+}
 
 #endif
 #endif

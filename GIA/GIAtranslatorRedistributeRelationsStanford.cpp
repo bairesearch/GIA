@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelationsStanford.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n2c 15-September-2016
+ * Project Version: 2n3a 21-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -380,7 +380,7 @@ void disableRedundantNodesStanfordCoreNLP(GIAsentence* currentSentenceInList, bo
 					//cout << "governerEntity->entityName = " << governerEntity->entityName << endl;
 					//cout << "dependentEntity->entityName = " << dependentEntity->entityName << endl;
 					#endif
-					
+
 					bool featureNERindicatesNameConcatenationRequired = false;
 					for(int i=0; i<FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_OF_TYPES; i++)
 					{
@@ -654,7 +654,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 		#ifdef GIA_DEBUG
 		//cout << "GIArelation: " << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
 		#endif
-		
+
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
@@ -674,7 +674,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 					#ifdef GIA_DEBUG
 					//cout << "Relation2: " << currentRelationInList2->relationType << "(" << currentRelationInList2->relationGovernor << ", " << currentRelationInList2->relationDependent << ")" << endl;
 					#endif
-					
+
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					if(!(currentRelationInList2->disabled))
 					{

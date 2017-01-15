@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n2c 15-September-2016
+ * Project Version: 2n3a 21-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -112,7 +112,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 		//cout << "\tcorrectVerbPOStagAndLemma{}:" << endl;
 		//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
 		#endif
-		
+
 		string baseNameFound = "";
 		int grammaticalTenseModifier = INT_DEFAULT_VALUE;
 
@@ -122,7 +122,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 		//cout << "actionOrSubstanceEntity->wordOrig = " << actionOrSubstanceEntity->wordOrig << endl;
 		//cout << "baseNameFound = " << baseNameFound << endl;
 		#endif
-		
+
 		//This section of code cannot be used as originally intended as some verb infinitives are also nouns (eg "yarn") - therefore must formally rely on correct infinitive tagging of verbs...
 		if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && ((actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true) || (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE] == true)))
 		{
@@ -173,7 +173,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 				#ifdef GIA_DEBUG
 				//cout << "GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS: 2 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
 				#endif
-				
+
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBG;
 				/*
 				Wood is used for making milk.
@@ -186,7 +186,7 @@ bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeatur
 					#ifdef GIA_DEBUG
 					//cout << "3 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
 					#endif
-					
+
 					updatedLemma = true;
 					actionOrSubstanceEntity->entityName = baseNameFound;	//change irregular verb name eg making to base irregular verb base name eg make
 					currentFeature->lemma = actionOrSubstanceEntity->entityName;

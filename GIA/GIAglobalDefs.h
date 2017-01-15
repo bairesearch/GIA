@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n2c 15-September-2016
+ * Project Version: 2n3a 21-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -730,7 +730,7 @@
 #ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DISABLE_PROPERTIES_OR_DEFINITIONS
 	#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS
 #endif
-#ifndef GIA_DISABLE_2l_CODE_FOR_DEBUG	
+#ifndef GIA_DISABLE_2l_CODE_FOR_DEBUG
 	#define GIA_REFERENCING_WILD_CARDS	//2l3a	//interpret something/anything entities as GIA wild card - affects both GIA advanced referencing and queries
 	#ifdef GIA_REFERENCING_WILD_CARDS
 		#define GIA_REFERENCING_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES (2)

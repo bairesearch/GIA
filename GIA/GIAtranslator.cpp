@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n2c 15-September-2016
+ * Project Version: 2n3a 21-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -178,7 +178,7 @@ bool createSemanticNetworkBasedUponDependencyParsedSentences(GIAparagraph* first
 	GIAsentence* firstSentenceInList = firstParagraphInList->firstSentenceInList;
 
 	setTranslatorEntityNodesCompleteList(entityNodesActiveListComplete);
-	
+
 	initialiseGIATranslatorForTexualContext();
 
 	#ifdef USE_CE
@@ -934,7 +934,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#else
 	defineSubstances(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp, NLPdependencyRelationsType);
 	#endif
-	
+
 	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//Stanford version is executed after all substances have been generated (including actions)... [Upgrade translator - do not associate feature/grammatical info with networkIndex entities; just leave them in the feature array until the networkIndex instances have been generated]
 	#ifdef GIA_USE_RELEX
@@ -984,7 +984,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	detectUserDeclaredSubclassEntities(GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 	#endif
-	
+
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B3; linkEntitiesDynamic{}:" << endl;
 	#endif
@@ -1259,7 +1259,7 @@ void disableEntitiesBasedOnFeatureTempEntityNodeArray(bool GIAentityNodeArrayFil
 
 
 
-	
+
 #ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 void createParentsOfSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentityNode* GIAnetworkIndexNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList)
 {
@@ -1273,13 +1273,13 @@ void createParentsOfSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentityN
 				#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
 				subclassNetworkIndexEntity->isSubClass = true;
 				#endif
-		
+
 				string parentClassName = getParentClassEntityNameFromSubClassEntityName(subclassNetworkIndexEntity->entityName);
-				
+
 				#ifdef GIA_DEBUG
 				//cout << "adding parentClassName: " << parentClassName << endl;
 				#endif
-				
+
 				bool parentNetworkIndexEntityAlreadyExistant = false;
 				GIAentityNode* parentClassNetworkIndexEntity = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&parentClassName, &parentNetworkIndexEntityAlreadyExistant, entityNodesActiveListNetworkIndexes);
 				if(!parentNetworkIndexEntityAlreadyExistant)
@@ -1290,14 +1290,14 @@ void createParentsOfSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentityN
 					#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 					parentClassNetworkIndexEntity->entityIndexTemp = GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ARTIFICAL_ENTITY_INDEX;	//there is no entity index associated with the artifically added subclass parent networkIndex
 					parentClassNetworkIndexEntity->sentenceIndexTemp = subclassNetworkIndexEntity->sentenceIndexTemp;
-					#endif	
-					
-					linkSubclassEntitiesWithParentClassEntities(subclassNetworkIndexEntity, parentClassNetworkIndexEntity, false, false);		
-				}	
+					#endif
+
+					linkSubclassEntitiesWithParentClassEntities(subclassNetworkIndexEntity, parentClassNetworkIndexEntity, false, false);
+				}
 				else
-				{	
+				{
 					linkSubclassEntitiesWithParentClassEntities(subclassNetworkIndexEntity, parentClassNetworkIndexEntity, false, true);
-				}	
+				}
 			}
 		}
 	}
@@ -1308,7 +1308,7 @@ void createAdditionalSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentity
 {
 	//eg The red bat is a xenomorph. -> create xenomorph_bat, alias link xenomorph concept with xenomorph_bat concept
 		//OLD: eg The red bat is a xenomorph. -> create xenomorph_bat, definition link xenomorph_bat concept with xenomorph concept, and definitition link red bat to xenomorph_bat concept
-	
+
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
 		if(GIAentityNodeArrayFilled[w])
@@ -1338,14 +1338,14 @@ void createAdditionalSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentity
 							#endif
 						}
 					}
-					
+
 					if(foundDefinitionEntity)
 					{
 						#ifdef GIA_DEBUG
 						cout << "createAdditionalSubclassEntities{}: entity: " << entity->entityName << endl;
 						cout << "createAdditionalSubclassEntities{}: definitionEntity: " << definitionEntity->entityName << endl;
 						#endif
-							
+
 						string subClassEntityName = createSubClassEntityName(definitionEntity->entityName, entity->entityName);	//eg apple_fruit / xenomorph_bat
 						//cout << "subClassEntityName = " << subClassEntityName << endl;
 						bool subClassNetworkIndexEntityAlreadyExistant = false;
@@ -1355,7 +1355,7 @@ void createAdditionalSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentity
 							#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
 							subClassNetworkIndexEntity->isSubClass = true;
 							#endif
-		
+
 							#ifdef GIA_DEBUG
 							cout << "createAdditionalSubclassEntities{}: creating subClassNetworkIndexEntity: " << subClassEntityName << endl;
 							#endif
@@ -1364,7 +1364,7 @@ void createAdditionalSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentity
 							#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 							subClassNetworkIndexEntity->entityIndexTemp = GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ARTIFICAL_ENTITY_INDEX;	//there is no entity index associated with the artifically added subclass parent networkIndex
 							subClassNetworkIndexEntity->sentenceIndexTemp = entity->sentenceIndexTemp;
-							#endif	
+							#endif
 
 							GIAentityNode* definitionNetworkIndexEntity = getPrimaryNetworkIndexNodeDefiningInstance(definitionEntity);
 							linkSubclassEntitiesWithParentClassEntities(definitionNetworkIndexEntity, subClassNetworkIndexEntity, false, false);	//links xenomorph concept with xenomorph_bat concept
@@ -1380,13 +1380,13 @@ void createAdditionalSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentity
 							cout << "createAdditionalSubclassEntities{}: linking entity: " << entity->entityName << " to " << subclassNonspecificConcept->entityName << endl;
 							//#endif
 							#else
-							addDefinitionToEntity(entity, subClassNetworkIndexEntity, sameReferenceSet);	//links red bat to xenomorph_bat networkIndex							
+							addDefinitionToEntity(entity, subClassNetworkIndexEntity, sameReferenceSet);	//links red bat to xenomorph_bat networkIndex
 							#endif
 							#endif
 							*/
 						}
 					}
-				}			
+				}
 			}
 		}
 	}
@@ -1397,7 +1397,7 @@ void createAdditionalSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentity
 void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassNetworkIndexEntity, GIAentityNode* parentClassNetworkIndexEntity, bool linkAsAlias, bool onlyLinkIfSubclassOrParentConceptNotFound)
 {
 	string parentClassName = parentClassNetworkIndexEntity->entityName;
-				
+
 	#ifdef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES
 	bool subclassToParentEntityConnectionAlreadyMade = false;
 	GIAentityNode* subclassNonspecificConcept = getNonspecificConceptEntityFromNetworkIndex(subclassNetworkIndexEntity);
@@ -1429,9 +1429,9 @@ void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassNetworkI
 	if(!subclassToParentEntityConnectionAlreadyMade)
 	{
 		//should a new subclassNonspecificConcept be defined here regardless; ie GIAentityNode* subclassNonspecificConcept = createNewNonspecificConcept(subclassNetworkIndexEntity)? (because new concepts are created every sentence, even for non-specific concepts; eg "Pies are apples. Pies are berries.")
-		
+
 		bool performLink = false;
-		
+
 		GIAentityNode* parentClassNonspecificConcept = getNonspecificConceptEntityFromNetworkIndex(parentClassNetworkIndexEntity);
 		if(parentClassNonspecificConcept == NULL)
 		{
@@ -1465,7 +1465,7 @@ void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassNetworkI
 			}
 			#endif
 		}
-	}		
+	}
 	#else
 	bool subclassToParentEntityConnectionAlreadyMade = false;
 	for(vector<GIAentityConnection*>::iterator definitionNodeListIterator = subclassNetworkIndexEntity->entityNodeDefinitionList->begin(); definitionNodeListIterator < subclassNetworkIndexEntity->entityNodeDefinitionList->end(); definitionNodeListIterator++)
@@ -1498,7 +1498,7 @@ void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassNetworkI
 		}
 		#endif
 	}
-	#endif							
+	#endif
 
 }
 
@@ -1514,11 +1514,11 @@ void detectUserDeclaredSubclassEntities(bool GIAentityNodeArrayFilled[], GIAenti
 			{
 				if((entity->entityName).find(GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 				{
-					entity->isSubClass = true;	
+					entity->isSubClass = true;
 				}
 			}
 		}
-	}		
+	}
 }
 #endif
 
@@ -1530,7 +1530,7 @@ void dreamModeLinkSpecificConceptsAndActions()
 	vector<GIAentityNode*>* entityNodesActiveListComplete = getTranslatorEntityNodesCompleteList();
 
 	identifyReferenceSetsSpecificConceptsAndLinkWithConcepts(entityNodesActiveListComplete);
-		
+
 	#ifdef GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES
 	createAndLinkNonSpecificConceptsForAllEntities(entityNodesActiveListComplete);
 	#endif
