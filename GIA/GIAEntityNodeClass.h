@@ -97,7 +97,18 @@ using namespace std;
 #define MEASURE_DEPENDENCY_UNKNOWN (5)
 #define MEASURE_TYPE_UNDEFINED (-1)
 
-
+#define FEATURE_NER_UNDEFINED (0)
+#define FEATURE_NER_DATE (1)
+#define FEATURE_NER_TIME (2) 
+#define FEATURE_NER_MONEY (3)
+#define FEATURE_NER_NUMBER (4)
+#define FEATURE_NER_PERSON (5)
+#define FEATURE_NER_LOCATION (6)
+#define FEATURE_NER_ORGANIZATION (7)
+#define FEATURE_NER_MISC (8)
+#define FEATURE_NER_DURATION (9)
+#define FEATURE_NER_NUMBER_TYPES (10)
+#define FEATURE_NER_EXPLICIT_NUMBER_TYPES (9)
 
 extern string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
 extern string grammaticalTenseModifierNameArray[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];
@@ -236,10 +247,10 @@ public:
 	int CharacterOffsetEndTemp;
 	*/
 	string POSTemp;
-	string NERTemp;
 	string NormalizedNERTemp;
 	string TimexTemp;
 	#endif
+	int NERTemp;
 	
 	
 	//bool isReferenceEntityInThisSentence;	//temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed

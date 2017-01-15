@@ -16,7 +16,10 @@
 
 //variables currently under attention for testing purposes
 //#define GIA_DISABLE_REFERENCING		//default: off	{this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}
-#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		{//this should only be enabled with Relex??} 	//this was (effectively) disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
+//#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		//{//this should only be enabled with Relex??} 	//this was (effectively) disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
+#ifndef GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS
+	#define FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION 	//added 26 April 2012
+#endif
 #define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 #define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
 //#define GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP

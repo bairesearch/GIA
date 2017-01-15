@@ -496,6 +496,13 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense
 	propertyNode->conditionType = CONDITION_NODE_TYPE_TIME;
 	
 	/*
+	if(isProgressive)
+	{
+		cout << "isProgressive sdf" << endl;
+	}
+	*/
+	
+	/*
 	#ifdef GIA_USE_TIME_NODE_INDEXING
 	int timeConditionEntityIndex = -1;
 	bool argumentEntityAlreadyExistant = false;

@@ -147,7 +147,7 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 
 
 #ifdef GIA_USE_RELEX
-void fillGrammaticalArraysRelex(Sentence * currentSentenceInList, bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], int GIAEntityNodeWordTypeArray[])
+void fillGrammaticalArraysRelex(Sentence * currentSentenceInList, bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], int GIAEntityNodeNERArray[], int GIAEntityNodeWordTypeArray[])
 {
 	Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
@@ -211,12 +211,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList, bool GIAEntity
 
 		}			
 
-		if((currentFeatureInList->grammar).find(GRAMMATICAL_PERSON_NAME) != -1)
-		{
-			GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[currentFeatureInList->entityIndex] = GRAMMATICAL_PERSON;
-			//cout << "isPerson currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 
-		}
 		for(int grammaticalGenderIndex = 0; grammaticalGenderIndex < GRAMMATICAL_GENDER_NUMBER_OF_TYPES; grammaticalGenderIndex++)
 		{
 			//NB only the first characters of currentFeatureInList->grammar contain the grammatical Gender type name 
@@ -243,10 +238,46 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList, bool GIAEntity
 			//cout << "isDefinite currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;	
 		}					
 	
+		//fill wordType array for wordnet - added 26 April 2012
 		int wordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
 		convertRelexPOSTypeToWordnetWordType(&(currentFeatureInList->type), &wordType);
 		GIAEntityNodeWordTypeArray[currentFeatureInList->entityIndex] = wordType;
-		
+				
+		#ifdef FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION
+		//fill NER array after Relex Parse for Stanford equivalent proper noun detection - added 26 April 2012
+		for(int featureRelexFlagIndex = 0; featureRelexFlagIndex < FEATURE_RELEX_FLAG_NUMBER_TYPES; featureRelexFlagIndex++)
+		{
+			if((currentFeatureInList->grammar).find(featureRelexFlagTypeArray[featureRelexFlagIndex]) != -1) 				
+			{
+				GIAEntityNodeNERArray[currentFeatureInList->entityIndex] = featureRelexFlagIndex;
+				/*
+				#ifdef GIA_WORDNET_DEBUG
+				cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex " << featureRelexFlagIndex << " = " << featureRelexFlagTypeArray[featureRelexFlagIndex] << endl;
+				#endif
+				*/
+			}			
+		}
+		for(int i=0; i<FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_TYPES; i++)
+		{
+			if(GIAEntityNodeNERArray[currentFeatureInList->entityIndex] == featureNERindicatesProperNounTypeArray[i])
+			{
+				GIAEntityNodeGrammaticalIsProperNounArray[currentFeatureInList->entityIndex] = true;
+				/*
+				#ifdef GIA_WORDNET_DEBUG
+				cout << "isProperNoun currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;			
+				#endif
+				*/
+			}
+		}
+		#else
+		if((currentFeatureInList->grammar).find(GRAMMATICAL_PERSON_NAME) != -1)
+		{
+			GIAEntityNodeGrammaticalIsProperNounArray[currentFeatureInList->entityIndex] = GRAMMATICAL_PERSON;
+			//cout << "isPerson currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+
+		}		
+		#endif
+				
 		currentFeatureInList = currentFeatureInList->next;
 	}
 }
@@ -273,7 +304,7 @@ void extractPastTenseFromPOStag(string * POStag, int entityIndex, int GIAEntityN
 }
 
 //Preconditions: extractGrammaticalInformationStanford()/extractGrammaticalInformationFromPOStag() must be executed before relations (eg aux/cop) are processed, as they may [possibly] overwrite the tenses here established
-void extractGrammaticalInformationFromPOStag(string * POStag, int entityIndex, int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], bool GIAEntityNodeGrammaticalIsPronounArray[])
+void extractGrammaticalInformationFromPOStag(string * POStag, int entityIndex, int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsProperNounArray[], bool GIAEntityNodeGrammaticalIsPronounArray[])
 {
 	//past tense extraction;
 	//this is required for past tense verbs without auxillaries; eg He ran fast.     nsubj ( ran-2 , He-1 ), advmod ( ran-2 , fast-3 ) . 
@@ -331,7 +362,7 @@ void extractGrammaticalInformationFromPOStag(string * POStag, int entityIndex, i
 	}
 	if(properNounDetected)
 	{
-		GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[entityIndex] = true;
+		GIAEntityNodeGrammaticalIsProperNounArray[entityIndex] = true;
 	}
 	
 	//pronoun detection;
@@ -349,7 +380,7 @@ void extractGrammaticalInformationFromPOStag(string * POStag, int entityIndex, i
 }
 
 
-void extractGrammaticalInformationStanford(Feature * firstFeatureInList, bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], string GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[], string GIAEntityNodePOSArray[], int GIAEntityNodeWordTypeArray[], int NLPfeatureParser)
+void extractGrammaticalInformationStanford(Feature * firstFeatureInList, bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsProperNounArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], int GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[], string GIAEntityNodePOSArray[], int GIAEntityNodeWordTypeArray[], int NLPfeatureParser)
 {
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
@@ -357,9 +388,23 @@ void extractGrammaticalInformationStanford(Feature * firstFeatureInList, bool GI
 		while(currentFeatureInList->next != NULL)
 		{	
 			int currentFeatureIndex = currentFeatureInList->entityIndex;
-			extractGrammaticalInformationFromPOStag(&(currentFeatureInList->POS), currentFeatureIndex, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray, GIAEntityNodeGrammaticalIsPronounArray);
+			extractGrammaticalInformationFromPOStag(&(currentFeatureInList->POS), currentFeatureIndex, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeGrammaticalIsPronounArray);
+				
+			int currentNER = FEATURE_NER_UNDEFINED;
+			for(int i=0; i<FEATURE_NER_NUMBER_TYPES; i++)
+			{
+				if(currentFeatureInList->NER == featureNERTypeArray[i])
+				{
+					currentNER = i;
+					/*
+					#ifdef GIA_WORDNET_DEBUG
+					cout << "nerType currentFeatureIndex = " << currentNER << endl;			
+					#endif
+					*/
+				}
+			}	
 			
-			GIAEntityNodeNERArray[currentFeatureIndex] = currentFeatureInList->NER;
+			GIAEntityNodeNERArray[currentFeatureIndex] = currentNER;
 			GIAEntityNodeNormalizedNERArray[currentFeatureIndex] = currentFeatureInList->NormalizedNER;
 			GIAEntityNodeTimexArray[currentFeatureIndex] = currentFeatureInList->Timex;
 			GIAEntityNodePOSArray[currentFeatureIndex] = currentFeatureInList->POS;
@@ -367,14 +412,14 @@ void extractGrammaticalInformationStanford(Feature * firstFeatureInList, bool GI
 			convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(&(currentFeatureInList->POS), &(currentFeatureInList->type), &wordType);
 			GIAEntityNodeWordTypeArray[currentFeatureIndex] = wordType;
 			
-			if((currentFeatureInList->NER == FEATURE_NER_DATE) || (currentFeatureInList->NER == FEATURE_NER_TIME))
+			if((currentNER == FEATURE_NER_DATE) || (currentNER == FEATURE_NER_TIME))
 			{
 				GIAEntityNodeIsDateOrStanfordTime[currentFeatureIndex] = true;
 			}
-			/*//NB the GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray array for stanford core nlp does not relate to persons (only proper nouns)
-			if(currentFeatureInList->NER == FEATURE_NER_PERSON)
+			/*//NB the GIAEntityNodeGrammaticalIsProperNounArray array for stanford core nlp does not relate to persons (only proper nouns)
+			if(currentNER == FEATURE_NER_PERSON)
 			{
-				GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[currentFeatureIndex] = true;		
+				GIAEntityNodeGrammaticalIsProperNounArray[currentFeatureIndex] = true;		
 			}
 			*/
 					
@@ -404,12 +449,12 @@ void extractPastTense(int entityIndex, int entityIndexContainingTenseIndication,
 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 //NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford() 
-void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], string GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[], string GIAEntityNodePOSArray[], int GIAEntityNodeWordTypeArray[], int NLPfeatureParser)
+void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], int GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[], string GIAEntityNodePOSArray[], int GIAEntityNodeWordTypeArray[], int NLPfeatureParser)
 {
 	//uses Stanford specific relations (grammar related)
 
 	//past tense [preliminary only; aux/cop takes precedence], progressive tense, isDate, plurality, isProperNoun extraction
-	extractGrammaticalInformationStanford(currentSentenceInList->firstFeatureInList, GIAEntityNodeIsDateOrStanfordTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeNERArray, GIAEntityNodeNormalizedNERArray, GIAEntityNodeTimexArray, GIAEntityNodePOSArray, GIAEntityNodeWordTypeArray, NLPfeatureParser);					
+	extractGrammaticalInformationStanford(currentSentenceInList->firstFeatureInList, GIAEntityNodeIsDateOrStanfordTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsProperNounArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeNERArray, GIAEntityNodeNormalizedNERArray, GIAEntityNodeTimexArray, GIAEntityNodePOSArray, GIAEntityNodeWordTypeArray, NLPfeatureParser);					
 
 	 
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -526,7 +571,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 
 
 
-void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], string GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[], string GIAEntityNodePOSArray[], int GIAEntityNodeWordTypeArray[])
+void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], int GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[], string GIAEntityNodePOSArray[], int GIAEntityNodeWordTypeArray[])
 {
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{	
@@ -547,7 +592,7 @@ void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], G
 			entity->grammaticalTenseTemp = GIAEntityNodeGrammaticalTenseArray[w];
 			entity->grammaticalNumberTemp = GIAEntityNodeGrammaticalNumberArray[w];
 			entity->grammaticalDefiniteTemp = GIAEntityNodeGrammaticalIsDefiniteArray[w];
-			entity->grammaticalRelexPersonOrStanfordProperNounTemp = GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[w];
+			entity->grammaticalRelexPersonOrStanfordProperNounTemp = GIAEntityNodeGrammaticalIsProperNounArray[w];
 			entity->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[w];
 			entity->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[w];	
 			
@@ -1020,7 +1065,7 @@ void linkReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEnt
 }
 #endif
 			
-void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], bool GIAEntityNodeIsAReference[])
+void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], bool GIAEntityNodeIsAReference[])
 {		
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{	

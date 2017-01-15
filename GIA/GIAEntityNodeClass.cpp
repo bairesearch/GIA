@@ -100,7 +100,7 @@ GIAEntityNode::GIAEntityNode(void)
 	CharacterOffsetEndTemp = -1;
 	*/
 	POSTemp = "";
-	NERTemp = "";
+	NERTemp = FEATURE_NER_UNDEFINED;
 	NormalizedNERTemp = "";
 	TimexTemp = "";
 	#endif
