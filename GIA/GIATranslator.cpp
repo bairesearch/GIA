@@ -479,6 +479,60 @@ void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntit
 	objectEntity->isObjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 }
 
+
+void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, GIAEntityNode * conditionTypeConceptEntity)
+{
+	if(entityNode->hasAssociatedInstanceTemp)
+	{
+		entityNode = entityNode->AssociatedInstanceNodeList.back();
+	}
+	if(conditionEntityNode->hasAssociatedInstanceTemp)
+	{
+		conditionEntityNode = conditionEntityNode->AssociatedInstanceNodeList.back();
+	}										
+	addConditionToProperty(entityNode, conditionEntityNode, conditionTypeConceptEntity);
+}
+
+void addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionDefinitionNode, GIAEntityNode * conditionTypeConceptEntity)
+{
+	if(entityNode->hasAssociatedInstanceTemp)
+	{
+		entityNode = entityNode->AssociatedInstanceNodeList.back();
+	}
+	if(conditionDefinitionNode->hasAssociatedInstanceTemp)
+	{
+		conditionDefinitionNode = conditionDefinitionNode->AssociatedInstanceNodeList.back();
+	}
+	
+	GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
+	
+	newCondition->conditionSubjectEntity = entityNode;	
+	entityNode->ConditionNodeList.push_back(newCondition);
+	
+	newCondition->EntityNodeDefinitionList.push_back(conditionDefinitionNode);
+	conditionDefinitionNode->EntityNodeDefinitionReverseList.push_back(newCondition);		
+}
+
+void addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionPropertyNode, GIAEntityNode * conditionTypeConceptEntity)
+{
+	if(entityNode->hasAssociatedInstanceTemp)
+	{
+		entityNode = entityNode->AssociatedInstanceNodeList.back();
+	}
+	if(conditionPropertyNode->hasAssociatedInstanceTemp)
+	{
+		conditionPropertyNode = conditionPropertyNode->AssociatedInstanceNodeList.back();
+	}	
+	
+	GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
+	
+	newCondition->conditionSubjectEntity = entityNode;
+	entityNode->ConditionNodeList.push_back(newCondition);
+	
+	conditionPropertyNode->entityNodeContainingThisProperty = newCondition;
+	newCondition->PropertyNodeList.push_back(conditionPropertyNode);	
+}
+
 /*
 #ifdef GIA_USE_TIME_NODE_INDEXING
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, GIAEntityNode * conditionTypeConceptEntity, vector<GIATimeConditionNode*> *timeConditionNodesList, vector<long> *timeConditionNumbersList)
@@ -525,7 +579,6 @@ void addReasonConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * 
 
 void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, GIAEntityNode * conditionTypeConceptEntity)
 {
-	
 	//timeConditionEntity->conditionType = CONDITION_NODE_TYPE_UNDEFINED;
 	
 	addConditionToProperty(propertyNode, propertyConditionEntity, conditionTypeConceptEntity);
@@ -533,6 +586,17 @@ void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode 
 
 void addConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity, GIAEntityNode * conditionTypeConceptEntity)
 {	
+	GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
+	
+	newCondition->conditionSubjectEntity = propertyNode;
+	newCondition->conditionObjectEntity = propertyConditionEntity;
+		
+	propertyNode->ConditionNodeList.push_back(newCondition);
+	propertyConditionEntity->IncomingConditionNodeList.push_back(newCondition);
+}
+
+GIAEntityNode * addCondition(GIAEntityNode * conditionEntity)
+{
 	GIAEntityNode * newCondition = new GIAEntityNode();
 	newCondition->id = currentEntityNodeIDInCompleteList;
 	newCondition->idSecondary = currentEntityNodeIDInConditionEntityNodesList;
@@ -542,35 +606,18 @@ void addConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * proper
 	conditionEntityNodesList->push_back(newCondition);
 	currentEntityNodeIDInConditionEntityNodesList++;
 
-	newCondition->entityName = conditionTypeConceptEntity->entityName;		
-	newCondition->entityNodeDefiningThisInstance = conditionTypeConceptEntity;
-	newCondition->conditionSubjectEntity = propertyNode;
-	newCondition->conditionObjectEntity = propertyConditionEntity;
-	
-	conditionTypeConceptEntity->AssociatedInstanceNodeList.push_back(newCondition);
-	conditionTypeConceptEntity->hasAssociatedInstance = true;
-	conditionTypeConceptEntity->hasAssociatedInstanceIsCondition = true;
-	conditionTypeConceptEntity->hasAssociatedInstanceTemp = true;
+	newCondition->entityName = conditionEntity->entityName;		
+	newCondition->entityNodeDefiningThisInstance = conditionEntity;
+
+	conditionEntity->AssociatedInstanceNodeList.push_back(newCondition);
+	conditionEntity->hasAssociatedInstance = true;
+	conditionEntity->hasAssociatedInstanceIsCondition = true;
+	conditionEntity->hasAssociatedInstanceTemp = true;
 	newCondition->isCondition = true;
-	newCondition->negative = conditionTypeConceptEntity->negative;	
-	
-	propertyNode->ConditionNodeList.push_back(newCondition);
-	propertyConditionEntity->IncomingConditionNodeList.push_back(newCondition);
+	newCondition->negative = conditionEntity->negative;	
+
 }
 
-
-void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, GIAEntityNode * conditionTypeConceptEntity)
-{
-	if(entityNode->hasAssociatedInstanceTemp)
-	{
-		entityNode = entityNode->AssociatedInstanceNodeList.back();
-	}
-	if(conditionEntityNode->hasAssociatedInstanceTemp)
-	{
-		conditionEntityNode = conditionEntityNode->AssociatedInstanceNodeList.back();
-	}										
-	addPropertyConditionToProperty(entityNode, conditionEntityNode, conditionTypeConceptEntity);
-}
 
 
 void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, vector<GIATimeConditionNode*> *timeConditionNodesList, vector<long> *timeConditionNumbersList, Sentence * firstSentenceInList)
@@ -1558,6 +1605,8 @@ void linkReferences(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 
 void collapseRedundantRelationAndMakeNegative(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
 {
+	//_subj(not[5], by[4]), _subj(have[6], not[5])
+	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{	
@@ -2184,12 +2233,14 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								{
 									if(subjectEntityTemp->entityName == currentRelationInList3->relationArgument)
 									{//subject is connected to an _advmod
-										subjectIsConnectedToAnAdvMod = true;
+										
 
 
 										GIAEntityNode * actionOrPropertyConditionEntity;
 										GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[currentRelationInList3->relationFunctionIndex];
 										GIAEntityNode * conditionTypeConceptEntity = subjectEntityTemp;										
+										
+										subjectIsConnectedToAnAdvMod = true;
 										
 										/*eg;  Space is saved by having a chicken.
 										_obj(save[3], space[1]) 	[IRRELEVANT]
@@ -2197,7 +2248,44 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 										_obj(have[5], chicken[7])
 										_subj(have[5], by[4])
 										*/
+										
+										
+									#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
+									
+										if(0)
+										{
+										
+										}
+										#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_CONDITION_DEFINITION									
+										else if(passdefinition || partnerTypeObjectSpecialConditionFound)
+										{
+											subjectIsConnectedToAnAdvMod = true;
+											actionOrPropertyConditionEntity = objectEntityTemp;
+											addOrConnectBeingDefinitionConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);
+										}
+										#endif
+										#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_CONDITION_PROPERTY
+										else if(passcomposition)
+										{
+											subjectIsConnectedToAnAdvMod = true;
+											actionOrPropertyConditionEntity = objectEntityTemp;	//= subjectObjectEntityArray[SUBJECT_INDEX], = old subjectEntityTemp;
+											addOrConnectHavingPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);
+										}
+										#endif
+										else
+										{
+											//standard action/property condion (ie action condition in this context)
+											actionOrPropertyConditionEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
+											//cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
+											addActionToActionDefinition(actionOrPropertyConditionEntity);	//not required is done later?
+											addOrConnectPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);
+										
+											GIAEntityNode * actionEntity = actionOrPropertyConditionEntity;
+											addActionToObject(objectEntityTemp, actionEntity);																			
+										}									
 
+									#else
+									
 										#ifdef ARBITRARY_SUBJECT_FINAL_IMPLEMENTATION
 										cout << "error: ARBITRARY_SUBJECT_FINAL_IMPLEMENTATION not yet coded; in final implementation, the arbitrary subject should be determined during the referencing stage of sentence parsing" << endl;
 										#else
@@ -2206,103 +2294,132 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 										long entityIndex = -1;
 										bool entityAlreadyExistant = false;											
 										GIAEntityNode * arbitrarySubjectSpecialConceptEntityNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &arbitrarySubjectSpecialConceptEntityNodeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
-										subjectEntityTemp = arbitrarySubjectSpecialConceptEntityNode;
+										subjectEntityTemp = arbitrarySubjectSpecialConceptEntityNode;		//overwrites subjectEntityTemp
 										#endif
+																				
+										if(0)
+										{
 										
+										}
+										#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_AN_ARBITRARY_SUBJECT_DEFINITION
 										//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-										if(passdefinition || partnerTypeObjectSpecialConditionFound)
+										else if(passdefinition)
 										{
 											actionOrPropertyConditionEntity = arbitrarySubjectSpecialConceptEntityNode;
 										}
+										#endif
+										#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_AN_ARBITRARY_SUBJECT_PROPERTY
 										else if(passcomposition)
 										{
 											actionOrPropertyConditionEntity = objectEntityTemp;	//= subjectObjectEntityArray[SUBJECT_INDEX], = old subjectEntityTemp;
 										}
+										#endif
 										else
 										{
 											actionOrPropertyConditionEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
 											//cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
 											addActionToActionDefinition(actionOrPropertyConditionEntity);	//not required is done later?
 										}
+										
+										#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_AN_ARBITRARY_SUBJECT_DEFINITION
+										passdefinition = false;		//treat "being" as an action
+										#endif
+										#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_AN_ARBITRARY_SUBJECT_PROPERTY
+										passpasscomposition = false;		//treat "being" as an action
+										#endif
 
-										addOrConnectPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);	
+										addOrConnectPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);
+									#endif	
 
 									}
 								}
 								currentRelationInList3 = currentRelationInList3->next;
 							}	
 
-
-
-							//if(currentRelationInList->relationFunction == RELATION_FUNCTION_DEFINITION_1) 
-							if(passdefinition)
-							{//expected subject-object relationship is a definition "is"
-
-								//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-									//NB definitions are only assigned to entities, not properties (instances of entities)
-
-								if(subjectEntityTemp->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+							#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
+							if(!subjectIsConnectedToAnAdvMod)
+							#else
+							if(1)
+							#endif
+							{
+								if(0)
 								{
-								#ifdef GIA_TRANSLATOR_DISABLE_OBJ_SUB_QVARIABLE_ANOMALY
-									//switch object/subject variables [transform question into answer form]
-									addDefinitionToEntity(objectEntityTemp, subjectEntityTemp);
-								#else
-									//added 20 October 2011 [what is the time?]
-									GIAEntityNode * actionOrPropertyEntity = objectEntityTemp;				
-									GIAEntityNode * actionOrPropertyConditionEntity = subjectEntityTemp;
-									GIAEntityNode * conditionTypeConceptEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
-									
-									addOrConnectPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);
-								#endif	
+
+								}
+								#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_DEFINITION_BASIC
+								//if(currentRelationInList->relationFunction == RELATION_FUNCTION_DEFINITION_1) 
+								else if(passdefinition)
+								{//expected subject-object relationship is a definition "is"
+
+									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
+										//NB definitions are only assigned to entities, not properties (instances of entities)
+
+									if(subjectEntityTemp->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+									{
+									#ifdef GIA_TRANSLATOR_DISABLE_OBJ_SUB_QVARIABLE_ANOMALY
+										//switch object/subject variables [transform question into answer form]
+										addDefinitionToEntity(objectEntityTemp, subjectEntityTemp);
+									#else
+										//added 20 October 2011 [what is the time?]
+										GIAEntityNode * actionOrPropertyEntity = objectEntityTemp;				
+										GIAEntityNode * actionOrPropertyConditionEntity = subjectEntityTemp;
+										GIAEntityNode * conditionTypeConceptEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
+
+										addOrConnectPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);
+									#endif	
+									}
+									else
+									{
+
+										addDefinitionToEntity(subjectEntityTemp, objectEntityTemp);
+									}
+								}
+								#endif
+								#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+								//else if((currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_1) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_2) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_3))
+								else if(passcomposition)
+								{//subject-object relationship is a composition [property]
+									addOrConnectPropertyToEntity(subjectEntityTemp, objectEntityTemp);
+										//check can use properties for composition/comprises ; ie, does "tom is happy" = "tom comprises happiness" ?
+								}
+								#endif
+								else if(partnerTypeObjectSpecialConditionFound)
+								{
+									GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;
+									GIAEntityNode * specialConditionNode = GIAEntityNodeArray[relationFunctionIndex2];
+									//cout << "subjectEntityOrProperty->entityName = " << subjectEntityOrProperty->entityName << endl;
+									//cout << "specialConditionNode->entityName = " << specialConditionNode->entityName << endl;	
+
+									string conditionTypeName = "specialCondition";
+									long entityIndex = -1;
+									bool entityAlreadyExistant = false;									
+									GIAEntityNode * conditionTypeConceptEntity  = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+
+									addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity);
 								}
 								else
-								{
+								{//assume that the subject-object relationships is an action
+									string actionName = currentRelationInList->relationFunction;
+									//cout << "1 actionName = " << actionName << endl;
+									GIAEntityNode * actionEntity = GIAEntityNodeArray[relationFunctionIndex];
 
-									addDefinitionToEntity(subjectEntityTemp, objectEntityTemp);
+									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
+
+									/*
+									cout << "SUBJECT_INDEX = " << SUBJECT_INDEX << endl;
+									cout << "OBJECT_INDEX = " << OBJECT_INDEX << endl;									
+									cout << "firstIndex = " << firstIndex << endl;
+									cout << "secondIndex = " << secondIndex << endl;
+									cout << "subjectObjectName[SUBJECT_INDEX] = " << subjectObjectName[SUBJECT_INDEX] << endl;
+									cout << "subjectObjectName[OBJECT_INDEX] = " << subjectObjectName[OBJECT_INDEX] << endl;
+									cout << "subjectEntityTemp->entityName = " << subjectEntityTemp->entityName << endl;																	
+									cout << "objectEntityTemp->entityName = " << objectEntityTemp->entityName << endl;
+									cout << "relationArgumentIndex = " << relationArgumentIndex << endl;
+									cout << "relationArgumentIndex2 = " << relationArgumentIndex2 << endl;
+									*/
+
+									addActionToEntity(subjectEntityTemp, objectEntityTemp, actionEntity);
 								}
-							}
-							//else if((currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_1) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_2) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_3))
-							else if(passcomposition)
-							{//subject-object relationship is a composition [property]
-								addOrConnectPropertyToEntity(subjectEntityTemp, objectEntityTemp);
-									//check can use properties for composition/comprises ; ie, does "tom is happy" = "tom comprises happiness" ?
-							}
-							else if(partnerTypeObjectSpecialConditionFound)
-							{
-								GIAEntityNode * subjectEntityOrProperty = subjectEntityTemp;
-								GIAEntityNode * specialConditionNode = GIAEntityNodeArray[relationFunctionIndex2];
-								//cout << "subjectEntityOrProperty->entityName = " << subjectEntityOrProperty->entityName << endl;
-								//cout << "specialConditionNode->entityName = " << specialConditionNode->entityName << endl;	
-
-								string conditionTypeName = "specialCondition";
-								long entityIndex = -1;
-								bool entityAlreadyExistant = false;									
-								GIAEntityNode * conditionTypeConceptEntity  = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
-										
-								addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity);
-							}
-							else
-							{//assume that the subject-object relationships is an action
-								string actionName = currentRelationInList->relationFunction;
-								//cout << "1 actionName = " << actionName << endl;
-								GIAEntityNode * actionEntity = GIAEntityNodeArray[relationFunctionIndex];
-
-								//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-
-								/*
-								cout << "SUBJECT_INDEX = " << SUBJECT_INDEX << endl;
-								cout << "OBJECT_INDEX = " << OBJECT_INDEX << endl;									
-								cout << "firstIndex = " << firstIndex << endl;
-								cout << "secondIndex = " << secondIndex << endl;
-								cout << "subjectObjectName[SUBJECT_INDEX] = " << subjectObjectName[SUBJECT_INDEX] << endl;
-								cout << "subjectObjectName[OBJECT_INDEX] = " << subjectObjectName[OBJECT_INDEX] << endl;
-								cout << "subjectEntityTemp->entityName = " << subjectEntityTemp->entityName << endl;																	
-								cout << "objectEntityTemp->entityName = " << objectEntityTemp->entityName << endl;
-								cout << "relationArgumentIndex = " << relationArgumentIndex << endl;
-								cout << "relationArgumentIndex2 = " << relationArgumentIndex2 << endl;
-								*/
-
-								addActionToEntity(subjectEntityTemp, objectEntityTemp, actionEntity);
 							}
 							foundPartner = true;	
 

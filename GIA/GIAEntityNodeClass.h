@@ -176,6 +176,10 @@ public:
 	vector<GIAEntityNode*> AssociatedInstanceNodeList;			//if not property only: if type == definesAPropertyAdjective (ie, if this entity is not a property/instance but defines one or more properties/instances)
 	vector<GIAEntityNode*>::iterator AssociatedInstanceNodeListIterator;	//if not property only: if type == definesAPropertyAdjective (ie, if this entity is not a property/instance but defines one or more properties/instances)
 	
+	
+	//CHECKTHIS; what is the difference between EntityNodeDefinitionList and entityNodeDefiningThisInstance? - it appears to achieve a similar purpose; ANSWER - one is direct definition [definition of instance] the other is not
+	//CHECKTHIS; what is the difference between EntityNodeDefinitionReverseList and AssociatedInstanceNodeList? - it appears to achieve a similar purpose; ANSWER - one is direct definition [definition of instance] the other is not
+	
 	int grammaticalNumber;
 	
 	bool hasQuantity;
