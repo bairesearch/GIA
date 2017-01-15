@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m6b 09-September-2016
+ * Project Version: 2m7a 11-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -303,12 +303,12 @@ void locateAndAddAllConceptEntities(GIAsentence* currentSentenceInList, bool GIA
 				entity->isNumberOf = true;
 			}
 			#endif
-			#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+			#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 			if(GIAfeatureTempEntityNodeArray[w]->convertToSubClass)
 			{
 				entity->convertToSubClass = true;
 			}
-			#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
+			#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
 			if(GIAfeatureTempEntityNodeArray[w]->addSubClass)
 			{
 				entity->addSubClass = true;

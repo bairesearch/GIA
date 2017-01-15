@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m6b 09-September-2016
+ * Project Version: 2m7a 11-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -500,9 +500,9 @@ void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstanc
 	newSubstance->isNumberOf = entity->isNumberOf;
 	#endif
 	
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	newSubstance->convertToSubClass = entity->convertToSubClass;
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
 	newSubstance->addSubClass = entity->addSubClass;
 	#endif
 	#endif
@@ -2447,7 +2447,7 @@ bool checkIfSentenceIsMathTextParsablePhrase(GIAsentence* currentSentenceInList)
 #endif
 
 
-#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 #ifdef GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
 
 GIAentityNode* createNewNonspecificSubstanceConcept(GIAentityNode* conceptEntity)
@@ -2456,7 +2456,7 @@ GIAentityNode* createNewNonspecificSubstanceConcept(GIAentityNode* conceptEntity
 	nonspecificSubstanceConcept->isSubstanceConcept = true;
 	#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 	//this enables GIA drawing of substance concept
-	nonspecificSubstanceConcept->entityIndexTemp = GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ARTIFICAL_ENTITY_INDEX;	//there is no entity index associated with the artifically added substance concept
+	nonspecificSubstanceConcept->entityIndexTemp = GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ARTIFICAL_ENTITY_INDEX;	//there is no entity index associated with the artifically added substance concept
 	nonspecificSubstanceConcept->sentenceIndexTemp = conceptEntity->sentenceIndexTemp;
 	#endif
 	return nonspecificSubstanceConcept;

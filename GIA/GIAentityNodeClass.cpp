@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m6b 09-September-2016
+ * Project Version: 2m7a 11-September-2016
  *
  *******************************************************************************/
 
@@ -239,12 +239,12 @@ GIAentityNode::GIAentityNode(void)
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT
 	mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation = false;
 	#endif
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
 	isSubClass = false;
 	#endif
 	convertToSubClass = false;
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
 	addSubClass = false;
 	#endif
 	#endif
@@ -477,12 +477,12 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT
 	mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation = false;
 	#endif	
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
 	isSubClass = false;
 	#endif
 	convertToSubClass = false;
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
 	addSubClass = false;
 	#endif
 	#endif
@@ -1003,9 +1003,9 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT
 	testEntityCharacteristicIterationbool(entity->mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation, entityCharacteristic, "mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation", &foundMatch);
 	#endif	
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	testEntityCharacteristicIterationbool(entity->convertToSubClass, entityCharacteristic, "convertToSubClass", &foundMatch);
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
 	testEntityCharacteristicIterationbool(entity->addSubClass, entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
 	#endif	
@@ -1185,9 +1185,9 @@ bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT
 	setEntityCharacteristicIterationbool(&(entity->mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation), entityCharacteristic, "mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation", &foundMatch);
 	#endif
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	setEntityCharacteristicIterationbool(&(entity->convertToSubClass), entityCharacteristic, "convertToSubClass", &foundMatch);
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
 	setEntityCharacteristicIterationbool(&(entity->addSubClass), entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
 	#endif
@@ -1334,9 +1334,9 @@ bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT
 	getEntityCharacteristicIterationbool(entity->mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation, entityCharacteristic, "mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation", &foundMatch);
 	#endif
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	getEntityCharacteristicIterationbool(entity->convertToSubClass, entityCharacteristic, "convertToSubClass", &foundMatch);
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
 	getEntityCharacteristicIterationbool(entity->addSubClass, entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
 	#endif
@@ -1450,7 +1450,7 @@ void deleteAllEntitiesInConceptEntityNodeList(unordered_map<string, GIAentityNod
 */
 
 
-#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 string getParentClassEntityNameFromSubClassEntityName(string subClassEntityName)
 {
 	string parentEntityName = "";

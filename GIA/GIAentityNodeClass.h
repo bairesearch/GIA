@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m6b 09-September-2016
+ * Project Version: 2m7a 11-September-2016
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -490,12 +490,12 @@ public:
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT
 	bool mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation;
 	#endif
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
 	bool isSubClass;
 	#endif
 	bool convertToSubClass;
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS_ENABLE_INCONSISTENT_REFERENCING
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
 	bool addSubClass;
 	#endif
 	#endif
@@ -615,7 +615,7 @@ void setEntityCharacteristics(GIAentityNode* entity, vector<GIAentityCharacteris
 bool isActionSpecialPossessive(GIAentityNode* actionEntity);
 #endif
 
-#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEFINITIONS
+#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 string getParentClassEntityNameFromSubClassEntityName(string subClassEntityName);
 string getChildClassEntityNameFromSubClassEntityName(string subClassEntityName);
 string createSubClassEntityName(string childEntityName, string parentEntityName);
