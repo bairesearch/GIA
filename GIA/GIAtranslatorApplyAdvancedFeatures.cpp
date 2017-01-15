@@ -474,7 +474,6 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 						setComparisonVariableNode(quantitySubstance);
 					}
 
-
 					//now locate quantity modifiers
 					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 					while(currentRelationInList2->next != NULL)
