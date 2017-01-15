@@ -589,25 +589,40 @@ int main(int argc,char **argv)
 			#endif
 			answerString = answerString + "\nAnswer Not Found.";
 		}
-		
+			
 		if(foundAnswer && !foundComparisonVariable)
 		{
 			#ifndef GIA_DO_NOT_PRINT_RESULTS
 			cout << "Best Inexact Answer Found: " << queryAnswerNode->entityName << endl;
 			#endif
 			answerString = answerString + "\nBest Inexact Answer Found: " + queryAnswerNode->entityName;
-			//answerString = answerString + printEntityNode(queryAnswerNode);	
+			if(queryAnswerNode->hasQuality)
+			{//added 29 June
+			
+			}
 		}
-		
+
 		if(foundAnswer)
 		{
+			#ifdef GIA_COMPILE_PRINT_INEXACT_ANSWER_AMBIENT_CONTEXT
+			int irrelevant;
+			string printEntityNodeString = "";
+			traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_PRINT, &irrelevant, &printEntityNodeString);	
+			answerString = answerString + printEntityNodeString;	
+			#else
+			string printEntityNodeString = "";
+			printEntityNodeQualitiesOnly(queryAnswerNode, &printEntityNodeString);	
+			cout << printEntityNodeString << endl;
+			answerString = answerString + printEntityNodeString;				
+			#endif
+					
 			//print AnswerPreviousNode relationship with answerNode
 			#ifndef GIA_DO_NOT_PRINT_RESULTS
-			cout << "Answer Context: " << queryAnswerContext << endl;
 			answerString = answerString + "\nAnswer Context: " + queryAnswerContext;
+			cout << "Answer Context: " << queryAnswerContext << endl;
 			#endif
 		}
-		
+					
 					
 		//add confidence to answer
 		char tempConfidenceStringCharStar[100]; 

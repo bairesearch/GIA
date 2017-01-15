@@ -211,7 +211,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 						
 						if(findBestInexactAnswerAndSetDrawParameters)
 						{
-							cout << "IE3" << endl;
+							//cout << "IE3" << endl;
 							foundMatch = true;
 							#ifdef GIA_QUERY_DEBUG
 							cout << "foundBestInexactAnswerAndSetDrawParameters:" << entityNode->entityName << endl;
@@ -950,6 +950,30 @@ double determineMaxConfidenceOfQuerySemanticNetwork(vector<GIAEntityNode*> *conc
 	#endif
 }
 
+
+void printEntityNodeQualitiesOnly(GIAEntityNode * entityNode, string * printEntityNodeString)
+{	
+	*printEntityNodeString = *printEntityNodeString + "(";	
+
+	int numberQualities = 0;
+	//cout << "entityNode->entityName = " << entityNode->entityName << endl;
+	for(entityNode->PropertyNodeListIterator = entityNode->PropertyNodeList.begin(); entityNode->PropertyNodeListIterator < entityNode->PropertyNodeList.end(); entityNode->PropertyNodeListIterator++)
+	{
+		GIAEntityNode * propertyNode = *(entityNode->PropertyNodeListIterator);
+		if(propertyNode->hasQuality)
+		{
+			if(numberQualities > 0)
+			{
+				*printEntityNodeString = *printEntityNodeString + "\n";	
+			}		
+			numberQualities++;
+			
+			*printEntityNodeString = *printEntityNodeString + "Type: " + propertyNode->entityName;
+		}	
+	}
+	
+	*printEntityNodeString = *printEntityNodeString + ")";	
+}
 
 void traceEntityNodeDetermineNextCourseOfAction(string * printEntityNodeString, GIAEntityNode * entityNode, string context, int function, int * numberOfMatchedNodes)
 {

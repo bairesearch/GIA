@@ -42,3 +42,5 @@ void generateTexualContextWithPreviousNodeForwards(string * queryAnswerContext, 
 double determineMaxConfidenceOfQuerySemanticNetwork(vector<GIAEntityNode*> *conceptEntityNodesListQuery);
 	void traceEntityNode(GIAEntityNode * entityNode, int function, int * numberOfMatchedNodes, string * printEntityNodeString);
 		void traceEntityNodeDetermineNextCourseOfAction(string * printEntityNodeString, GIAEntityNode * entityNode, string context, int function, int * numberOfMatchedNodes);
+
+void printEntityNodeQualitiesOnly(GIAEntityNode * entityNode, string * printEntityNodeString);
