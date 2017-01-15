@@ -279,6 +279,14 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 		if(*foundAnswer)
 		{
 			*queryAnswerContext = *queryAnswerContext + queryAnswerContextTemp;
+			/*
+			if(entityNode->hasQuantity)
+			{
+				cout << "SFH" << endl;
+				cout << entityNode->quantityNumber << endl;
+				
+			}*/
+			
 			generateTexualContextBackwards(queryAnswerContext, sourceContext, entityNode);
 			/*
 			#ifndef GIA_QUERY_USE_EXTRA_LONG_CONTEXT_TRACE
@@ -880,6 +888,8 @@ void generateTexualContextEntityString(string * texualContextEntityString, GIAEn
 	{
 		entityPosttext = entityPosttext + "(not) ";
 	}
+
+	//cout << "HERE2" << endl;
 	
 	/*
 	if(entityNode->isDefinite)
@@ -888,7 +898,13 @@ void generateTexualContextEntityString(string * texualContextEntityString, GIAEn
 	}
 	*/
 	
-	if(entityNode->isProperty)
+	if(entityNode->hasQuantity)
+	{
+		char tempQuantityNumberStringCharStar[100]; 
+		sprintf(tempQuantityNumberStringCharStar, "%d", entityNode->quantityNumber);	
+		entityPretext = entityPretext + tempQuantityNumberStringCharStar + " ";
+	}	
+	else if(entityNode->isProperty)
 	{
 	}
 	else if(entityNode->isAction)
