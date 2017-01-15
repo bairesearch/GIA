@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a11a 14-December-2013
+ * Project Version: 2b1a 17-December-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -288,7 +288,10 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#ifdef GIA_USE_DATABASE
 	setUseDatabase(GIA_USE_DATABASE_FALSE);
 	#endif
-
+	#ifdef GIA_RECORD_LINK_PREESTABLISHED_REFERENCES_GIA
+	setLinkPreestablishedReferencesGIA(false);
+	#endif
+	
 	GIACoreference * firstGIACoreferenceInList = new GIACoreference();
 	unordered_map<string, GIAentityNode*> * sentenceConceptEntityNodesList = new unordered_map<string, GIAentityNode*>;
 	unordered_map<long, GIAtimeConditionNode*> * sentenceTimeConditionNodesList = new unordered_map<long, GIAtimeConditionNode*>;
@@ -343,7 +346,10 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#ifndef GIA_FREE_MEMORY2
 	setSaveNetwork(true);
 	#endif
-
+	#ifdef GIA_RECORD_LINK_PREESTABLISHED_REFERENCES_GIA
+	setLinkPreestablishedReferencesGIA(true);
+	#endif
+	
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (4convertSentenceRelationsIntoGIAnetworkNodes)\n" << endl;
 	#endif
@@ -423,6 +429,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, vector<GIAentityNode*> *sentenceConceptEntityNodesList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations)
 #endif
 {
+	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+	if(!linkPreestablishedReferencesGIA)
+	{
+		string sentenceText = regenerateSentenceText(currentSentenceInList);
+		cout << sentenceText << endl;
+	}
+	#endif
+	
 	Relation * currentRelationInList;
 
 	#ifdef GIA_TRANSLATOR_DEBUG
