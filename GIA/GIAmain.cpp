@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q5a 19-October-2012
+ * Project Version: 1q6a 28-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -102,7 +102,7 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 #ifdef GIA_USE_DATABASE
 "\n\t-dbread            : read from database (GIA knowledge base) [improves referencing capacity]"
 "\n\t-dbwrite           : write to database (GIA knowledge base) [saves knowledge]"
-"\n\t-dbfolder          : database base folder path"
+"\n\t-dbfolder          : database base folder path (def: /home/systemusername/source/GIAKBdatabase/)"
 #endif
 #ifdef GIA_USE_LRP
 "\n\t-lrp                               : language reduction preprocessor"
@@ -110,7 +110,7 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 "\n\t-olrptxtnlp [string]               : plain text .txt output filename with GIA language reduction preprocessor applied, word replacement with dummy prepositions/verbs for NLP compatibility (def: inputTextWithLRPforNLPonly.txt)"
 "\n\t-olrptxtq [string]                 : query plain text .txt output filename with GIA language reduction preprocessor applied (def: inputTextWithLRPQuery.txt)"
 "\n\t-olrptxtnlpq [string]              : query plain text .txt output filename with GIA language reduction preprocessor applied, word replacement with dummy prepositions/verbs for NLP compatibility (def: inputTextWithLRPforNLPonlyQuery.txt)"
-"\n\t-lrpfolder                         : folder of LRP data files (list of multiword verbs, multiword prepositions etc)"
+"\n\t-lrpfolder                         : folder of LRP data files (list of multiword verbs, multiword prepositions etc) (def: same as exe)"
 #endif
 #ifdef USE_WORDNET
 "\n\t-syndet                            : wordnet synonymn detection (0 - off, 1 - during queries only, 2 - during referencing and queries [def])"
@@ -628,7 +628,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1q5a 19-October-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1q6a 28-October-2012" << endl;
 			exit(1);
 		}
 
@@ -1408,6 +1408,7 @@ int main(int argc,char **argv)
 			int irrelevant;
 			string printEntityNodeString = "";
 			bool traceInstantiations = false;
+			/*
 			traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
 			if(firstNLGsentence->NLGInputViewText == "")
 			{
@@ -1422,6 +1423,7 @@ int main(int argc,char **argv)
 				NLGSentence * currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 3);
 				traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
 			}
+			*/
 
 			currentNLGsentence = firstNLGsentence;
 			while(currentNLGsentence->next != NULL)
