@@ -765,6 +765,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}
 		
+		#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS
 		//cout << "pass 3; link references (eg his/her with joe/emily)" << endl;
 		for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 		{	
@@ -779,8 +780,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				{
 					//cout << "i = " << i << endl;
 
-					if((currentGIAEntityNode->entityName == referenceTypePossessiveNameArray[i]) || (currentGIAEntityNode->entityName == referenceTypePersonNameArray[i]))
-					{
+					if(((currentGIAEntityNode->entityName == referenceTypePossessiveNameArray[i]) || (currentGIAEntityNode->entityName == referenceTypePersonNameArray[i])) && (currentGIAEntityNode->grammaticalPronounTemp == GRAMMATICAL_PRONOUN))
+					{//pronoun required for currentGIAEntityNode
 						cout << "currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
 						//now go for a search in tree for given / this sentence + previous sentence until find candidate reference source
 
@@ -856,12 +857,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 												entityPassesGrammaticalTestsForReference = false;
 											}
 											
-											/*
-											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPronounTemp != referenceTypePersonCrossReferencePronounArray[i])
+											
+											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPronounTemp == GRAMMATICAL_PRONOUN)
 											{
 												entityPassesGrammaticalTestsForReference = false;
 											}
-											*/
+											
+											
 																						
 										//}
 										if(entityPassesGrammaticalTestsForReference)
@@ -869,16 +871,16 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 										
 											cout << "entityPassesGrammaticalTestsForReference" << endl;
 											
-											/*
-											cout << "referenceTypePersonCrossReferenceNumberArray[i] = " << referenceTypePersonCrossReferenceNumberArray[i] << endl;
-											cout << "referenceTypePersonCrossReferenceGenderArray[i] = " << referenceTypePersonCrossReferenceGenderArray[i] << endl;
-											cout << "referenceTypePersonCrossReferenceDefiniteArray[i] = " << referenceTypePersonCrossReferenceDefiniteArray[i] << endl;
-											cout << "referenceTypePersonCrossReferencePersonArray[i] = " << referenceTypePersonCrossReferencePersonArray[i] << endl;
-											cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumberTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumberTemp << endl;
-											cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp << endl;
-											cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp << endl;
-											cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPersonTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPersonTemp << endl;
-											*/
+											
+											//cout << "referenceTypePersonCrossReferenceNumberArray[i] = " << referenceTypePersonCrossReferenceNumberArray[i] << endl;
+											//cout << "referenceTypePersonCrossReferenceGenderArray[i] = " << referenceTypePersonCrossReferenceGenderArray[i] << endl;
+											//cout << "referenceTypePersonCrossReferenceDefiniteArray[i] = " << referenceTypePersonCrossReferenceDefiniteArray[i] << endl;
+											//cout << "referenceTypePersonCrossReferencePersonArray[i] = " << referenceTypePersonCrossReferencePersonArray[i] << endl;
+											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumberTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumberTemp << endl;
+											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp << endl;
+											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp << endl;
+											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPersonTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPersonTemp << endl;
+											
 																																										
 											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp)
 											{
@@ -934,6 +936,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				}
 			}
 		}
+		#endif
 		
 				
 		//cout << "pass B;" << endl;	
@@ -1230,7 +1233,6 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					}
 					int firstIndex;
 					int secondIndex;
-					int indexMapping[2];	//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 					
 					bool passsubject = false;
 					bool passobject = false;
@@ -1263,7 +1265,6 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					}
 					partnerTypeRequired = partnerTypeRequiredArray[secondIndex];
 					subjectObjectName[firstIndex] = currentRelationInList->relationArgument;
-					indexMapping[firstIndex] = relationArgumentIndex;	//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 					cout << partnerTypeRequiredArray[firstIndex] << " name = " << subjectObjectName[firstIndex] << endl;
 					subjectObjectEntityArray[firstIndex] = GIAEntityNodeArray[relationArgumentIndex];					
 					//cout << "subjectObjectEntityArray[firstIndex]->entityName = " << subjectObjectEntityArray[firstIndex]->entityName << endl;	
@@ -1335,10 +1336,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 								int relationArgumentIndex2 = currentRelationInList2->relationArgumentIndex;
 												
 								subjectObjectName[secondIndex] = currentRelationInList2->relationArgument;
-								indexMapping[secondIndex] = relationArgumentIndex2;	//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-															
-								cout << partnerTypeRequiredArray[secondIndex] << " name = " << subjectObjectName[secondIndex] << endl;
 								subjectObjectEntityArray[secondIndex] = GIAEntityNodeArray[relationArgumentIndex2];
+								cout << partnerTypeRequiredArray[secondIndex] << " name = " << subjectObjectName[secondIndex] << endl;
 								//cout << "subjectObjectEntityArray[secondIndex]->entityName = " << subjectObjectEntityArray[secondIndex]->entityName << endl;	
 
 								//cout << "subjectObjectEntityArray[SUBJECT_INDEX]->entityName = " << subjectObjectEntityArray[SUBJECT_INDEX]->entityName << endl;	
@@ -1376,12 +1375,19 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 									GIAEntityNode * subjectEntityTemp = subjectObjectEntityArray[SUBJECT_INDEX];
 									GIAEntityNode * objectEntityTemp = subjectObjectEntityArray[OBJECT_INDEX];
-									
-									cout << "subjectEntityTemp = " << subjectEntityTemp->entityName << endl;																	
-									cout << "objectEntityTemp = " << objectEntityTemp->entityName << endl;
-									
+
+									/*
+									cout << "SUBJECT_INDEX = " << SUBJECT_INDEX << endl;
+									cout << "OBJECT_INDEX = " << OBJECT_INDEX << endl;									
+									cout << "firstIndex = " << firstIndex << endl;
+									cout << "secondIndex = " << secondIndex << endl;
+									cout << "subjectObjectName[SUBJECT_INDEX] = " << subjectObjectName[SUBJECT_INDEX] << endl;
+									cout << "subjectObjectName[OBJECT_INDEX] = " << subjectObjectName[OBJECT_INDEX] << endl;
+									cout << "subjectObjectEntityArray[SUBJECT_INDEX]->entityName = " << subjectObjectEntityArray[SUBJECT_INDEX]->entityName << endl;																	
+									cout << "subjectObjectEntityArray[OBJECT_INDEX]->entityName = " << subjectObjectEntityArray[OBJECT_INDEX]->entityName << endl;
 									cout << "relationArgumentIndex = " << relationArgumentIndex << endl;
 									cout << "relationArgumentIndex2 = " << relationArgumentIndex2 << endl;
+									*/
 									
 									addActionToEntity(subjectEntityTemp, objectEntityTemp, actionEntity);
 								}
