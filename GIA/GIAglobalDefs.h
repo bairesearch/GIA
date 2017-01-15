@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p2b 13-September-2012
+ * Project Version: 1p3a 18-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -548,8 +548,9 @@
 
 #define GIA_USE_1N1ATEMP1TO8_CHANGES	//added 1n1aTEMP9
 
-//#define GIA_USE_DATABASE	//requires further testing
+#define GIA_USE_DATABASE	//requires further testing
 #ifdef GIA_USE_DATABASE
+	#define GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME "/home/rich/source/"	//"/home/systemusername/source/" //this could be "/mnt/serverNameX/" once configuring appropriate NFS Linux File Sharing in /etc/fstab
 	//#define GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 	#define GIA_USE_DATABASE_FILESYSTEM
 	//#define GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS

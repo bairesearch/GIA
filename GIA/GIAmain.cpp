@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p2b 13-September-2012
+ * Project Version: 1p3a 18-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -597,7 +597,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1p2b 13-September-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1p3a 18-September-2012" << endl;
 			exit(1);
 		}
 
@@ -610,12 +610,12 @@ int main(int argc,char **argv)
 		exit(1);
 	}
 
-	/*
-	cout << "workingFolderCharStar = " << workingFolderCharStar << endl;
-	cout << "tempFolderCharStar = " << tempFolderCharStar << endl;
-	cout << "NPLrelationExeFolderCharStar = " << NPLrelationExeFolderCharStar << endl;
-	cout << "NPLfeatureExeFolderCharStar = " << NPLfeatureExeFolderCharStar << endl;
-	*/
+	
+	//cout << "workingFolderCharStar = " << workingFolderCharStar << endl;
+	//cout << "tempFolderCharStar = " << tempFolderCharStar << endl;
+	//cout << "NPLrelationExeFolderCharStar = " << NPLrelationExeFolderCharStar << endl;
+	//cout << "NPLfeatureExeFolderCharStar = " << NPLfeatureExeFolderCharStar << endl;
+	
 
 	if(!parseGIARulesXMLFile())
 	{
@@ -630,6 +630,12 @@ int main(int argc,char **argv)
 	if(useDatabase)
 	{
 		openDatabase(readFromDatabase);
+
+		#ifdef LINUX
+		chdir(workingFolderCharStar);
+		#else
+		::SetCurrentDirectory(workingFolderCharStar);
+		#endif		
 	}
 	#endif
 
@@ -926,6 +932,14 @@ int main(int argc,char **argv)
 		}
 		else
 		{
+			char tempCurrentFolder[EXE_FOLDER_PATH_MAX_LENGTH];
+			#ifdef LINUX
+			getcwd(tempCurrentFolder, EXE_FOLDER_PATH_MAX_LENGTH);
+			#else
+			::GetCurrentDirectory(EXE_FOLDER_PATH_MAX_LENGTH, tempCurrentFolder);
+			#endif
+			//cout << "tempCurrentFolder = " << tempCurrentFolder << endl;
+				
 			//cout << "as" << endl;
 			#ifdef USE_CE
 			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, firstCodeextensionInHeirachy, codeextensionsList, useCodeextensionsHeirachy))
@@ -1267,12 +1281,14 @@ int main(int argc,char **argv)
 		cout << "error: outputText answer require a query to be set" << endl;
 	}
 
+	/*
 	#ifdef LINUX
 	chdir(tempFolderCharStar);
 	#else
 	::SetCurrentDirectory(tempFolderCharStar);
 	#endif
-
+	*/
+	
 	if(printOutput)
 	{
 		printGIAnetworkNodes(entityNodesActiveListComplete, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile, useOutputTextSVGFile);
@@ -1378,6 +1394,12 @@ bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 		result = false;
 	}
 
+	#ifdef LINUX
+	chdir(tempFolderCharStar);
+	#else
+	::SetCurrentDirectory(tempFolderCharStar);
+	#endif
+	
 	#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 	string originalInputFileName = "";
 	originalInputFileName = originalInputFileName + inputTextNLPrelationXMLFileName + " " + inputTextNLPfeatureXMLFileName;
