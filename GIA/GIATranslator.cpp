@@ -1299,7 +1299,9 @@ void identifyComparisonVariable(Sentence * currentSentenceInList, bool GIAEntity
 					entityNode->isQuery = true;
 					foundComparisonVariable = true;
 					comparisonVariableNode = entityNode;	
+					#ifdef GIA_TRANSLATOR_DEBUG
 					cout << "foundComparisonVariable" << endl;				
+					#endif
 				}
 			}			
 		}

@@ -125,6 +125,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	cout << "finished query round 1" << endl;
 	#endif
 	
+	#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES	
 	#ifndef GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND
 	if(!detectComparisonVariable || !(*foundAnswer))
 	{//now set draw parameters for optimium solution...
@@ -163,7 +164,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	#ifndef GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND	
 	}
 	#endif
-	
+	#endif
 
 		
 	#ifdef GIA_QUERY_DEBUG
@@ -191,7 +192,11 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 		*/
 	//}
 	
+	#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES
 	if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters && !(entityNode->isAnswerContextToQuery)))
+	#else
+	if(!(entityNode->testedForQueryComparison))	
+	#endif
 	{
 		//cout << "IE-2" << endl;
 
@@ -256,6 +261,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 				//#endif
 				else
 				{
+					#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES
 					//cout << "IE1" << endl;
 					if(isSuitableNodeTypeForInexactAnswer)
 					{
@@ -279,6 +285,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 
 						}			
 					}
+					#endif
 				}
 			}
 			else if(detectComparisonVariable)
@@ -311,15 +318,19 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 			cout << "foundAnswer:" << entityNode->entityName << endl;
 			#endif
 			//CHECKTHIS; need to take into account vector of answers (not just a single answer)
-
+	
+			#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES
 			if(findBestInexactAnswerAndSetDrawParameters)
 			{
 				entityNode->isAnswerContextToQuery = true;			 
 			}
 			else
 			{
+			#endif
 				entityNode->testedForQueryComparison = true;		//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]				
+			#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES
 			}	
+			#endif
 
 		}
 		
@@ -382,8 +393,12 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		}
 	}
 	*/
-						
+	
+	#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES					
 	if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters && !(entityNode->isAnswerContextToQuery)))
+	#else
+	if(!(entityNode->testedForQueryComparison))	
+	#endif
 	{//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]
 	
 		/*
@@ -790,9 +805,9 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
 		//associated actions and properties [ie does this entity also define an action/verb or a property/adjective? [ie, it is not just a thing/noun]]	
 		for(entityIterQuery = queryEntityNode->AssociatedInstanceNodeList.begin(); entityIterQuery != queryEntityNode->AssociatedInstanceNodeList.end(); entityIterQuery++) 
-		{
+		{			
 			for(entityIter = entityNode->AssociatedInstanceNodeList.begin(); entityIter != entityNode->AssociatedInstanceNodeList.end(); entityIter++) 
-			{
+			{				
 				#ifdef GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER
 					#ifdef GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER_ALLOW_SINGLE_ENTITY_MATCHES
 					bool isSuitableNodeTypeForInexactAnswer = true;
