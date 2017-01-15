@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAtranslatorLinkEntities.h
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -42,7 +42,7 @@
 
 
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
-void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType, bool linkPreestablishedReferencesGIA)
+void linkEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType, const bool linkPreestablishedReferencesGIA)
 {
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B2a; link properties (possessive relationships); eg Joe's bike is blue. _poss(bike[3], Joe[1]) / Hamish smoked at the toy shop. _nn(shop[6], toy[5])" << endl;
@@ -304,7 +304,7 @@ void linkPropertiesPossessiveRelationships(GIAsentence* currentSentenceInList, G
 }
 
 
-void linkPropertiesDescriptiveRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], int NLPdependencyRelationsType)
+void linkPropertiesDescriptiveRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], const int NLPdependencyRelationsType)
 {
 	/*
 	Joe is happy.	_predadj(Joe[1], happy[3])	[NB Stanford nsubj(happy-3, Joe-1) + cop(happy-3, is-2) gets redistributed to _predadj(Joe[1], happy[3])]
@@ -429,7 +429,7 @@ void linkPropertiesDescriptiveRelationships(GIAsentence* currentSentenceInList, 
 }
 
 
-void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], bool linkPreestablishedReferencesGIA)
+void linkEntityDefinitionsAppositiveOfNouns(const GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], const bool linkPreestablishedReferencesGIA)
 {
 	/*
 	The fish, a carp, swam deeply.	_appo(fish[2], carp[5])
@@ -506,7 +506,7 @@ void linkEntityDefinitionsAppositiveOfNouns(GIAsentence* currentSentenceInList, 
 	genericDependecyRelationInterpretation(&paramC, REL1);
 
 #else
-	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	const GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -763,7 +763,7 @@ void linkDependentActionsType1(GIAsentence* currentSentenceInList, GIAentityNode
 }
 
 #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-void linkHavingPropertyConditionsAndBeingDefinitionConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
+void linkHavingPropertyConditionsAndBeingDefinitionConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType)
 {
 #ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	/*
@@ -1061,7 +1061,7 @@ void linkIndirectObjects(GIAsentence* currentSentenceInList, GIAentityNode* GIAe
 #endif
 }
 
-void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
+void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType)
 {
 #ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 
@@ -1948,7 +1948,7 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 #endif
 }
 
-void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
+void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], const unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType)
 {
 	/*
 	Tom runs quickly. 	_subj(run[2], Tom[1])
@@ -2215,7 +2215,7 @@ void linkSubjectOrObjectRelationships(GIAsentence* currentSentenceInList, GIAent
 }
 
 //is this still used by Stanford? [appears to be Relex only]
-void linkObjectSubjectOfPreposition(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
+void linkObjectSubjectOfPreposition(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType)
 {
 #ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	/*
@@ -2433,7 +2433,7 @@ void linkConjunctionConditions(GIAsentence* currentSentenceInList, bool GIAentit
 #endif
 }
 
-void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType)
+void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType)
 {
 #ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 
@@ -2666,7 +2666,7 @@ void linkConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayF
 }
 
 #ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
-void createConditionBasedUponPreposition(GIAentityNode* actionOrSubstanceConditionSubjectEntity, GIAentityNode* actionOrSubstanceConditionObjectEntity, GIArelation* currentRelationInList, bool negative, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, int NLPdependencyRelationsType, bool sameReferenceSet)
+void createConditionBasedUponPreposition(GIAentityNode* actionOrSubstanceConditionSubjectEntity, GIAentityNode* actionOrSubstanceConditionObjectEntity, const GIArelation* currentRelationInList, const bool negative, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType, bool sameReferenceSet)
 {
 	string relationType = currentRelationInList->relationType;
 

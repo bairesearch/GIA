@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAmain.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -131,7 +131,7 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 "\n\n\tThis program performs GIA (General Intelligence Algorithm) operations - creates semantic network based upon NLP dependencies file (.xml) or GIA semantic network file (.xml); outputs semantic network to GIA semantic network file (.xml); displays semantic network (using opengl); prints semantic network to raster image (.ppm), 3D vector graphics (.ldr), or 2D vector graphics (.svg).\n\n";
 
 #ifndef USE_NLC
-int main(int argc, char** argv)
+int main(const int argc, const char** argv)
 {
 	//print execution time
 	struct tm* current;
@@ -627,7 +627,7 @@ int main(int argc, char** argv)
 
 		if(argumentExists(argc, argv, "-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 2p2f 12-December-2016" << endl;
+			cout << "OpenGIA.exe - Project Version: 2p3a 14-January-2017" << endl;
 			exit(1);
 		}
 
@@ -1922,7 +1922,7 @@ bool executeGIA2()
 
 
 #ifdef GIA_INPUT_FILE_LISTS
-int getFilesFromFileList(string inputListFileName, string* inputFileNameArray)
+int getFilesFromFileList(const string inputListFileName, string* inputFileNameArray)
 {
 	bool result = true;
 	int numberOfInputFilesInList = 0;

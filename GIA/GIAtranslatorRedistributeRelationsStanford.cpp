@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAtranslatorRedistributeRelationsStanford.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -42,7 +42,7 @@
 
 #ifdef GIA_STANFORD_DEPENDENCY_RELATIONS
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
-void redistributeStanfordRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser, GIAfeature* featureArrayTemp[])
+void redistributeStanfordRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser, GIAfeature* featureArrayTemp[])
 {
 	#ifdef GIA_STANFORD_CORENLP
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
@@ -840,7 +840,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 #endif
 }
 
-void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	GIArelation* currentRelationInList;
 
@@ -2391,7 +2391,7 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(GIAsentence* curre
 
 
 
-void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser)
+void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser)
 {
 	/*
 	eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) + advmod(is-3, away-6) - > _predadj(rabbit-2, away-6)
@@ -2551,7 +2551,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(GIAsentence* 
 #endif
 }
 
-void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser)
+void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser)
 {
 	/*
 	eg1 Kane is late. 		nsubj(late-3, Kane-1) + cop(late-3, is-2) -> _predadj(kane-1, late-3) 				[NB non-determinate of governer and dependent of subject relation; take as indicator of substance]
@@ -3344,7 +3344,7 @@ void redistributeStanfordRelationsGenerateMeasures(GIAsentence* currentSentenceI
 #endif
 }
 
-void redistributeStanfordRelationsPhrasalVerbParticle(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void redistributeStanfordRelationsPhrasalVerbParticle(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 
@@ -3537,7 +3537,7 @@ void redistributeStanfordRelationsCreateQueryVars(GIAsentence* currentSentenceIn
 	*/
 }
 
-void redistributeStanfordRelationsCreateQueryVarsWhoWhat(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
+void redistributeStanfordRelationsCreateQueryVarsWhoWhat(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
 {
 	//interpret; 'Who is that?' / 'What is the time?'  attr(is-2, What-1) + nsubj(is-2, time-4) -> appos(time-4, _$qVar-1)   /   attr(is-2, Who-1) + nsubj(is-2, that-3) -> appos(That-3, _$qVar-1)	[NB _$qVar can be switched in both cases with respect to GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY]
 	//interpret; 'Who rode the bike?' / 'What broke the glass?' -> nsubj(rode-2, Who-1) -> nsubj(rode-2, _$qVar-1)  /  nsubj(broke-2, What-1) -> nsubj(broke-2, _$qVar-1) [added 7 August 2012]
@@ -3951,7 +3951,7 @@ void redistributeStanfordRelationsCreateQueryVarsHowMuchHowMany(GIAsentence* cur
 #endif
 }
 
-void redistributeStanfordRelationsCreateQueryVarsWhich(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void redistributeStanfordRelationsCreateQueryVarsWhich(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], constEffective GIAentityNode* GIAentityNodeArray[])
 {
 	//nothing is required here: see identifyComparisonVariableAlternateMethod{}
 }
@@ -4181,7 +4181,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhat(GIAsentence* currentSenten
 #endif
 }
 
-void redistributeStanfordRelationsPartmod(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void redistributeStanfordRelationsPartmod(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], constEffective GIAentityNode* GIAentityNodeArray[])
 {
 	//eg Truffles picked during the spring are tasty.   partmod(truffle, pick) -> obj(pick, truffle)
 	/*
@@ -4272,7 +4272,7 @@ void redistributeStanfordRelationsPartmod(GIAsentence* currentSentenceInList, bo
 
 #ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS
 //Added 28 October 2012b
-void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser, GIAfeature* featureArrayTemp[])
+void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser, constEffective GIAfeature* featureArrayTemp[])
 {
 	//eg What is wood used in the delivering of?   interpret prep_of(xing, y) as obj(xing, y) )
 
@@ -4568,7 +4568,7 @@ void redistributeStanfordRelationsAuxHave(GIAsentence* currentSentenceInList, bo
 
 
 #ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
-void redistributeStanfordRelationsDisableAuxAndCop(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void redistributeStanfordRelationsDisableAuxAndCop(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], constEffective GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);

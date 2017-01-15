@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAtranslatorDefineSubstances.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -41,7 +41,7 @@
 
 
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
-void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], GIAfeature* featureArrayTemp[], int NLPdependencyRelationsType)
+void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int referenceTypeHasDeterminateCrossReferenceNumberArray[], GIAfeature* featureArrayTemp[], const int NLPdependencyRelationsType)
 {
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B0; defineSubstancesExpletives (expletives eg 'there' in 'there is a place');" << endl;
@@ -216,7 +216,7 @@ void defineSubstancesExpletives(GIAsentence* currentSentenceInList, GIAentityNod
 
 #ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 //Added 09 August 2012 [INCOMPLETE]
-void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], GIAfeature* featureArrayTemp[])
+void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[],  const int referenceTypeHasDeterminateCrossReferenceNumberArray[], GIAfeature* featureArrayTemp[])
 {
 	/* Added 09 August 2012
 	The bat is an animal - (definition connection, bat = substance, animal = networkIndex)	GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_1_GOVERNOR_DEFINITE_DEPENDENT_INDEFINITE [assumes defineSubstancesDefiniteNouns() executed]
@@ -567,7 +567,7 @@ void defineSubstancesNonExplicitPronouns(GIAsentence* currentSentenceInList, boo
 
 
 #ifdef GIA_SPECIFIC_CONCEPTS
-void defineConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], GIAfeature* featureArrayTemp[])
+void defineConcepts(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[],  const int referenceTypeHasDeterminateCrossReferenceNumberArray[], constEffective GIAfeature* featureArrayTemp[])
 {
 #ifdef GIA_GENERIC_ENTITY_INTERPRETATION
 
@@ -776,7 +776,7 @@ void defineSubstancesActionsToDo(GIAsentence* currentSentenceInList, GIAentityNo
 #endif
 }
 
-void defineSubstancesTagIsToBeComplimentOfAction(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
+void defineSubstancesTagIsToBeComplimentOfAction(const GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	/*
@@ -792,7 +792,7 @@ void defineSubstancesTagIsToBeComplimentOfAction(GIAsentence* currentSentenceInL
 	genericDependecyRelationInterpretation(&paramA, REL1);
 
 #else
-	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	const GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -817,7 +817,7 @@ void defineSubstancesTagIsToBeComplimentOfAction(GIAsentence* currentSentenceInL
 #ifndef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES
 
 
-void defineSubstancesObjectsAndSubjectsWithSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAentityNode* GIAfeatureTempEntityNodeArray[])
+void defineSubstancesObjectsAndSubjectsWithSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], constEffective GIAentityNode* GIAfeatureTempEntityNodeArray[])
 {
 #ifdef GIA_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
@@ -846,7 +846,7 @@ void defineSubstancesObjectsAndSubjectsWithSubstances(GIAsentence* currentSenten
 #endif
 }
 
-void defineSubstancesDefiniteNouns(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
+void defineSubstancesDefiniteNouns(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], constEffective GIAfeature* featureArrayTemp[])
 {
 #ifdef GIA_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
@@ -896,7 +896,7 @@ void defineSubstancesDefiniteNouns(GIAsentence* currentSentenceInList, bool GIAe
 }
 
 
-void defineSubstancesNounsWithDeterminates(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], GIAfeature* featureArrayTemp[])
+void defineSubstancesNounsWithDeterminates(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int referenceTypeHasDeterminateCrossReferenceNumberArray[], constEffective GIAfeature* featureArrayTemp[])
 {
 #ifdef GIA_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
@@ -959,7 +959,7 @@ void defineSubstancesNounsWithDeterminates(GIAsentence* currentSentenceInList, b
 #endif
 }
 
-void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], int NLPdependencyRelationsType)
+void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], const int NLPdependencyRelationsType)
 {
 #ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, true);
@@ -1172,7 +1172,7 @@ void defineSubstancesQuantityModifiers(GIAsentence* currentSentenceInList, GIAen
 #endif
 }
 
-void defineSubstancesPronouns(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
+void defineSubstancesPronouns(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], constEffective GIAfeature* featureArrayTemp[])
 {
 #ifdef GIA_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
@@ -1246,7 +1246,7 @@ void defineSubstancesToBe(GIAsentence* currentSentenceInList, GIAentityNode* GIA
 #endif
 }
 
-void defineSubstancesHasTime(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
+void defineSubstancesHasTime(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], constEffective GIAfeature* featureArrayTemp[])
 {
 #ifdef GIA_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
@@ -1491,7 +1491,7 @@ void defineSubstancesAllNodes(GIAsentence* currentSentenceInList, bool GIAentity
 }
 
 #ifdef GIA_SPECIFIC_ACTION_NETWORK_INDEXES
-void defineSubstancesActionNetworkIndexes(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
+void defineSubstancesActionNetworkIndexes(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], constEffective GIAfeature* featureArrayTemp[])
 {
 	/*
 	eg 'swim' in 'To swim to the beach requires strength.'

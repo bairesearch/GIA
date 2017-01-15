@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAtranslatorRedistributeRelationsRelex.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -43,7 +43,7 @@
 
 
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
-void redistributeRelexRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser, GIAfeature* featureArrayTemp[])
+void redistributeRelexRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser, GIAfeature* featureArrayTemp[])
 {
 #ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -251,7 +251,7 @@ void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationAllWithADefini
 
 #ifdef GIA_ALIASES_RELEX_COMPATIBILITY
 //required for aliasing to work
-void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser, GIAfeature* featureArrayTemp[])
+void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser, GIAfeature* featureArrayTemp[])
 {
 	/*
 	She is the one.		_subj(be[2], she[1]) + _obj(be[2], one[4]) -> appos(She-1, one-4)
@@ -507,7 +507,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(GIAsentence
 #endif
 #ifdef GIA_WHO_QUERY_ALIAS_ANSWERS
 //required for aliasing to work
-void redistributeRelexRelationsDetectNameQueries(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
+void redistributeRelexRelationsDetectNameQueries(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], constEffective GIAfeature* featureArrayTemp[])
 {
 	bool firstWordOfSentenceIsWho = false;
 
@@ -753,7 +753,7 @@ void redistributeRelexRelationsDisregardRedundantDefinitionRelations(GIAsentence
 }
 #endif
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_RELATION_AS_ACTION_CONDITION
-void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], constEffective GIAentityNode* GIAentityNodeArray[])
 {
 	/*eg 1 Space is saved by running fast.	_subj(run[5], by[4]) + _advmod(save[3], by[4]) -> by(save[3], run[5])
 	_subj(run[5], by[4])
@@ -797,7 +797,7 @@ void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(GIAsen
 #endif
 
 
-void switchArgumentsAndFunctionsWhereNecessaryRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void switchArgumentsAndFunctionsWhereNecessaryRelex(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], constEffective GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, false);

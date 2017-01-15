@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAdraw.h
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -48,7 +48,7 @@
 
 int maxXAtAParticularY[MAX_GIA_TREE_DEPTH];
 
-void printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile, int maxNumberSentences)
+void printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, int width, const int height, const string outputFileNameLDR, const string outputFileNameSVG, const string outputFileNamePPM, const bool display, const bool useOutputLDRfile, const bool useOutputPPMfile, const bool useOutputSVGfile, int maxNumberSentences)
 {//most of this is copied from CSexecFlow.cpp
 	bool result = true;
 
@@ -651,7 +651,7 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 
 
 
-LDreference* initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, int y, int x, bool printType[], LDreference* currentReferenceInPrintList, XMLparserTag** currentTag)
+LDreference* initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, const int y, const int x, bool printType[], LDreference* currentReferenceInPrintList, XMLparserTag** currentTag)
 {
 
 	int timeConditionNodePrintX = x;
@@ -730,7 +730,7 @@ LDreference* createReferenceConnectionWithText(LDreference* currentReferenceInPr
 	return newCurrentReferenceInPrintList;
 }
 
-LDreference* createReferenceConnection(LDreference* currentReferenceInPrintList, vec* pos1, vec* pos2, int colour, XMLparserTag** currentTag, bool printType[])
+LDreference* createReferenceConnection(LDreference* currentReferenceInPrintList, vec* pos1, vec* pos2, int colour, XMLparserTag** currentTag, const bool printType[])
 {
 	LDreference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
@@ -787,7 +787,7 @@ LDreference* createReferenceConnection(LDreference* currentReferenceInPrintList,
 
 //consider using elipse instead; <ellipse cx="240" cy="100" rx="220" ry="30">
 
-LDreference* createBox(LDreference* currentReferenceInPrintList, vec* vect, double width, double height, int colour, string* text, XMLparserTag** currentTag, int thickness, bool printType[])
+LDreference* createBox(LDreference* currentReferenceInPrintList, vec* vect, const double width, const double height, int colour, string* text, XMLparserTag** currentTag, const int thickness, const bool printType[])
 {
 	LDreference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
 

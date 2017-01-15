@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAsentenceClass.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -511,10 +511,10 @@ void copyStanfordMention(GIAstanfordCoreNLPmention* firstMentionInListToCopy, GI
 	}
 }
 
-int calculateNumberOfWordsInSentence(GIAfeature* firstFeatureInList)
+int calculateNumberOfWordsInSentence(const GIAfeature* firstFeatureInList)
 {
 	int maxNumberOfWordsInSentence = 0;
-	GIAfeature* currentFeatureInList = firstFeatureInList;
+	const GIAfeature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
 		maxNumberOfWordsInSentence++;

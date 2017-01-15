@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAtranslatorDefineGrammar.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -39,7 +39,7 @@
 
 
 
-void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], int NLPdependencyRelationsType)
+void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], const int NLPdependencyRelationsType)
 {
 	if(currentSentenceInList->isQuestion)
 	{
@@ -241,7 +241,7 @@ void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool
 }
 
 
-void locateAndAddAllNetworkIndexEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, int NLPdependencyRelationsType, GIAentityNode* GIAfeatureTempEntityNodeArray[])
+void locateAndAddAllNetworkIndexEntities(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, const int NLPdependencyRelationsType, GIAentityNode* GIAfeatureTempEntityNodeArray[])
 {
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -525,7 +525,7 @@ void fillGrammaticalArraysRelex(GIAsentence* currentSentenceInList)
 
 #ifdef GIA_STANFORD_DEPENDENCY_RELATIONS
 //NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford()
-void fillGrammaticalArraysStanford(GIAsentence* currentSentenceInList,  bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], int NLPfeatureParser, GIAfeature* featureArrayTemp[])
+void fillGrammaticalArraysStanford(GIAsentence* currentSentenceInList,  const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], const int NLPfeatureParser, GIAfeature* featureArrayTemp[])
 {
 	//uses Stanford specific relations (grammar related)
 
@@ -733,11 +733,11 @@ void fillGrammaticalArraysStanford(GIAsentence* currentSentenceInList,  bool GIA
 	}
 }
 
-void extractPastTense(GIAfeature* featureWithEntityIndex, int entityIndexContainingTenseIndication, GIAfeature* firstFeatureInList, int NLPfeatureParser)
+void extractPastTense(GIAfeature* featureWithEntityIndex, const int entityIndexContainingTenseIndication, const GIAfeature* firstFeatureInList, const int NLPfeatureParser)
 {
 	//use the copular to set the tense of the noun
 
-	GIAfeature* currentFeatureInList = firstFeatureInList;
+	const GIAfeature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
 		if(currentFeatureInList->entityIndex == entityIndexContainingTenseIndication)
@@ -750,7 +750,7 @@ void extractPastTense(GIAfeature* featureWithEntityIndex, int entityIndexContain
 		currentFeatureInList = currentFeatureInList->next;
 	}
 }
-void extractPastTenseFromPOStag(string* POStag, GIAfeature* feature)
+void extractPastTenseFromPOStag(const string* POStag, GIAfeature* feature)
 {
 	bool pastTenseDetected = false;
 
@@ -771,7 +771,7 @@ void extractPastTenseFromPOStag(string* POStag, GIAfeature* feature)
 	}
 }
 
-void extractGrammaticalInformationStanford(GIAfeature* firstFeatureInList, int NLPfeatureParser)
+void extractGrammaticalInformationStanford(GIAfeature* firstFeatureInList, const int NLPfeatureParser)
 {
 	bool toDetected = false;
 	GIAfeature* currentFeatureInList = firstFeatureInList;
@@ -842,7 +842,7 @@ void extractPOSrelatedGrammaticalInformationStanford(GIAfeature* currentFeature)
 }
 
 //Preconditions: extractGrammaticalInformationStanford()/extractGrammaticalInformationFromPOStag() must be executed before relations (eg aux/cop) are processed, as they may [possibly] overwrite the tenses here established
-void extractGrammaticalInformationFromPOStag(string* POStag, GIAfeature* feature)
+void extractGrammaticalInformationFromPOStag(const string* POStag, GIAfeature* feature)
 {
 	//past tense extraction;
 	//this is required for past tense verbs without auxillaries; eg He ran fast.     nsubj ( ran-2 , He-1 ), advmod ( ran-2 , fast-3 ) .
@@ -973,7 +973,7 @@ void extractGrammaticalInformationFromPOStag(string* POStag, GIAfeature* feature
 
 
 #ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
-void findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(GIAsentence* currentSentenceInList, int subjectObjectEntityWithAuxiliaryEntityIndex, string* subjectObjectEntityWithAuxiliaryEntityName)
+void findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(GIAsentence* currentSentenceInList, const int subjectObjectEntityWithAuxiliaryEntityIndex, const string* subjectObjectEntityWithAuxiliaryEntityName)
 {
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1030,7 +1030,7 @@ void findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(GIAsentence* 
 
 
 
-void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* firstFeatureInSentence)
+void applyGrammaticalInfoToAllEntities(const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* firstFeatureInSentence)
 {
 	int w = 1;
 	GIAfeature* currentFeatureInList = firstFeatureInSentence;

@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAtranslatorOperations.h
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -64,22 +64,22 @@ void initialiseGIATranslatorForTexualContextOperations();
 
 //double check that isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe and isAdjectiveNotConnectedToObjectOrSubject and are no longer required with GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 #ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(GIArelation* currentRelationInList, GIAentityNode* GIAentityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType);
-bool isAdjectiveNotConnectedToObjectOrSubject(GIAsentence* currentSentenceInList, GIArelation* currentRelationInList, int NLPdependencyRelationsType);								//Stanford Compatible
+bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(const GIArelation* currentRelationInList, GIAentityNode* GIAentityNodeArray[], int relationGovernorIndex, const int NLPdependencyRelationsType);
+bool isAdjectiveNotConnectedToObjectOrSubject(const GIAsentence* currentSentenceInList, const GIArelation* currentRelationInList, const int NLPdependencyRelationsType);								//Stanford Compatible
 #endif
 
 GIAentityNode* addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet);
 	GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet);
-		GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet, GIAentityNode* auxHaveEntity);
+		GIAentityNode* connectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet, const GIAentityNode* auxHaveEntity);
 	GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet);
-		GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet, GIAentityNode* auxHaveEntity);
+		GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentityNode* propertyEntity, bool sameReferenceSet, const GIAentityNode* auxHaveEntity);
 
 GIAentityNode* addInstanceToInstanceDefinition(GIAentityNode* entity, int instanceType);
-	GIAentityNode* addInstance(GIAentityNode* entity, int instanceType);
+	GIAentityNode* addInstance(GIAentityNode* entity, const int instanceType);
 
 void forwardInfoToNewSubstance(GIAentityNode* entity, GIAentityNode* newSubstance);
 
-void addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, int tense, bool isProgressive);
+void addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, const int tense, const bool isProgressive);
 
 void addDefinitionToEntity(GIAentityNode* thingEntity, GIAentityNode* definitionEntity, bool sameReferenceSet);
 #ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
@@ -103,7 +103,7 @@ GIAentityNode* addOrConnectBeingDefinitionConditionToEntity(GIAentityNode* condi
 GIAentityNode* addOrConnectHavingPropertyConditionToEntity(GIAentityNode* conditionSubjectEntity, GIAentityNode* conditionSubstanceNode, GIAentityNode* conditionEntity, bool negative, bool sameReferenceSet);
 #endif
 
-string convertPrepositionToRelex(string* preposition, bool* prepositionFound);	//converts prep_preposition to preposition
+string convertPrepositionToRelex(const string* preposition, bool* prepositionFound);	//converts prep_preposition to preposition
 
 
 
@@ -113,16 +113,16 @@ void setTranslatorEntityNodesCompleteList(vector<GIAentityNode*>* newEntityNodes
 vector<GIAentityNode*>* getTranslatorEntityNodesCompleteList();
 //vector<GIAentityNode*>* getTranslatorNetworkIndexEntityNodesList();
 
-void setSaveNetwork(bool val);
+void setSaveNetwork(const bool val);
 bool getSaveNetwork();
 #ifdef GIA_RECORD_LINK_PREESTABLISHED_REFERENCES_GIA
-void setLinkPreestablishedReferencesGIA(bool val);
+void setLinkPreestablishedReferencesGIA(const bool val);
 bool getLinkPreestablishedReferencesGIA();
 #endif
 
 bool getFoundComparisonVariable();
 GIAentityNode* getComparisonVariableNode();
-void setFoundComparisonVariable(bool value);
+void setFoundComparisonVariable(const bool value);
 void setComparisonVariableNode(GIAentityNode* newComparisonVariableNode);
 
 long* getCurrentEntityNodeIDinCompleteList();
@@ -133,10 +133,10 @@ long* getCurrentEntityNodeIDinSentenceNetworkIndexEntityNodesList();
 
 #ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 int getCurrentSentenceIndex();
-void setCurrentSentenceIndex(int value);
+void setCurrentSentenceIndex(const int value);
 #endif
 
-void applyNetworkIndexEntityAlreadyExistsFunction(GIAentityNode* entity, bool entityAlreadyExistant, bool tempEntityEnabled);
+void applyNetworkIndexEntityAlreadyExistsFunction(GIAentityNode* entity, const bool entityAlreadyExistant, const bool tempEntityEnabled);
 void disableNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNode* entity);
 void disableEntity(GIAentityNode* entity);
 void disableNetworkIndexEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAentityNode* entity);	//not used
@@ -146,31 +146,31 @@ void recordSentenceNetworkIndexNodesAsPermanentIfTheyAreStillEnabled(unordered_m
 void recordNetworkIndexNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap);
 void recordNetworkIndexNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap);
 
-void convertRelexPOStypeToWordnetWordType(string* relexPOStype, int* grammaticalWordTypeTemp);
-void convertStanfordPOStagToRelexPOStypeAndWordnetWordType(string* POStag, string* relexPOStype, int* grammaticalWordTypeTemp);
+void convertRelexPOStypeToWordnetWordType(const string* relexPOStype, int* grammaticalWordTypeTemp);
+void convertStanfordPOStagToRelexPOStypeAndWordnetWordType(const string* POStag, string* relexPOStype, int* grammaticalWordTypeTemp);
 
 void generateTempFeatureArray(GIAfeature* firstFeatureInList, GIAfeature* featureArrayTemp[]);	//used for intrafunction memory allocation purposes only
 
 #ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 //bool checkEntityHasSubstanceThatWasDeclaredInContextAndIsUnique(GIAentityNode* entityNode, int entityIndexTemp, int sentenceIndexTemp);		//NOT REQUIRED: redundant: this unique check is redundant considering if a networkIndex entity has a substance that was declared in the immediate context, ie sentence, then the entity node being queried will be the substance itself (and not its networkIndex)	//added 1j8a 10 May 2012
-bool checkEntityHasSubstanceThatWasDeclaredInContext(GIAentityNode* entityNode);			//current textual context (eg current paragraph) 	//added 1j7d 9 May 2012
+bool checkEntityHasSubstanceThatWasDeclaredInContext(const GIAentityNode* entityNode);			//current textual context (eg current paragraph) 	//added 1j7d 9 May 2012
 GIAentityNode* getEntitySubstanceThatWasDeclaredInContext(GIAentityNode* entityNode);			//current textual context (eg current paragraph) 	//added 1j7g 9 May 2012
 #endif
 
 #ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, GIArelation* relation);
+bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, const GIArelation* relation);
 #endif
 
 GIAentityNode* findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int featureIndex, string* entityNodeName, bool* entityAlreadyExistant, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes);
 	GIAentityNode* findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(string* entityNodeName, bool* entityAlreadyExistant, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes);
-		GIAentityNode* findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(string* entityNodeName, bool* entityAlreadyExistant, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, bool tempEntityEnabled);
+		GIAentityNode* findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(string* entityNodeName, bool* entityAlreadyExistant, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const bool tempEntityEnabled);
 
-GIAentityConnection* writeVectorConnection(GIAentityNode* entityNode, GIAentityNode* entityNodeToAdd, int connectionType, bool sameReferenceSet);
-	GIAentityConnection* findEntityNodePointerInVector(GIAentityNode* entityNode, GIAentityNode* entityNodeToFind, int connectionType, bool* foundNode);
+GIAentityConnection* writeVectorConnection(GIAentityNode* entityNode, GIAentityNode* entityNodeToAdd, const int connectionType, bool sameReferenceSet);
+	GIAentityConnection* findEntityNodePointerInVector(GIAentityNode* entityNode, const GIAentityNode* entityNodeToFind, const int connectionType, bool* foundNode);
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS_IN_SAME_SENTENCE
-	GIAentityConnection* findSameSentenceEntityNodePointerInVector(GIAentityNode* entityNode, GIAentityNode* entityNodeToFind, int connectionType, bool* foundNode, int sentenceIndex);
+	GIAentityConnection* findSameSentenceEntityNodePointerInVector(GIAentityNode* entityNode, const GIAentityNode* entityNodeToFind, const int connectionType, bool* foundNode, const int sentenceIndex);
 	#endif
-	GIAentityConnection* findEntityNodeNameInVector(GIAentityNode* entityNode, string* entityNodeNameToFind, int connectionType, bool* foundNode);
+	GIAentityConnection* findEntityNodeNameInVector(GIAentityNode* entityNode, const string* entityNodeNameToFind, const int connectionType, bool* foundNode);
 
 long determineNextIdInstance(GIAentityNode* entity);
 
@@ -192,10 +192,10 @@ GIAentityNode* getPrimaryNetworkIndexNodeDefiningInstance(GIAentityNode* instanc
 NLCsentence* getFirstNLCsentenceInListGIA();
 void setFirstNLCsentenceInListGIA(NLCsentence* firstNLCsentenceInListNew);
 #ifdef GIA_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
-bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContextGIA(GIAentityNode* indefiniteEntity, GIAentityNode* definiteEntity, int* indentationDifferenceFound);
+bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContextGIA(const GIAentityNode* indefiniteEntity, const GIAentityNode* definiteEntity, int* indentationDifferenceFound);
 #endif
 #ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
-bool checkIfSentenceIsMathTextParsablePhrase(GIAsentence* currentSentenceInList);
+bool checkIfSentenceIsMathTextParsablePhrase(const GIAsentence* currentSentenceInList);
 #endif
 #endif
 

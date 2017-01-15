@@ -19,9 +19,9 @@
 /*******************************************************************************
  *
  * File Name: GIAsemanticParser.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -36,7 +36,7 @@
 
 #ifdef USE_GIA2
 
-bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAparagraph* firstParagraphInList, string inputPlainTXTFileName, string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, string outputCFFfileName, string NLPexeFolderArray[], vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, int* maxNumberSentences)
+bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAparagraph* firstParagraphInList, const string inputPlainTXTFileName, string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName, const string NLPexeFolderArray[], vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, const bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, int* maxNumberSentences)
 {
 	bool parseGIA2file = true;
 
@@ -108,7 +108,7 @@ bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDepende
 	}
 }
 
-bool lookupSemanticParserFiles(GIAparagraph* firstParagraphInList, int NLPfeatureParser)
+bool lookupSemanticParserFiles(GIAparagraph* firstParagraphInList, const int NLPfeatureParser)
 {
 	bool result = true;
 	GIAparagraph* currentParagraphInList = firstParagraphInList;
@@ -124,7 +124,7 @@ bool lookupSemanticParserFiles(GIAparagraph* firstParagraphInList, int NLPfeatur
 	return result;
 }
 
-bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
+bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfeatureParser)
 {
 	bool result = true;
 	GIAsentence* currentSentenceInList = firstSentenceInList;

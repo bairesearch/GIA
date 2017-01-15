@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAtranslatorRedistributeRelationsStanford.h
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -45,13 +45,13 @@
 
 #ifdef GIA_STANFORD_DEPENDENCY_RELATIONS
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
-void redistributeStanfordRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser, GIAfeature* featureArrayTemp[]);
+void redistributeStanfordRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser, GIAfeature* featureArrayTemp[]);
 	#ifdef GIA_STANFORD_CORENLP
 	void disableRedundantNodesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
 	#endif
 	void disableRedundantNodesStanfordParser(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
 	void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
-	void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);		//Stanford Specific
+	void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);		//Stanford Specific
 	#ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
 	void redistributeStanfordRelationsInterpretOfAsPossessive(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);		//this should be supported for both Stanford + Relex, but has been untested for Relex
 	#endif
@@ -61,23 +61,23 @@ void redistributeStanfordRelations(GIAsentence* currentSentenceInList, bool GIAe
 	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 	void redistributeStanfordRelationsInterpretNameOfAsDefinition(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);			//Stanford Specific? (may require Relex equivalent redistribution function)
 	#endif
-	void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser);	//Stanford Specific
-	void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser);	//Stanford Specific [alternative relex function now provided redistributeStanfordRelationsDependencyPreposition()]
+	void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser);	//Stanford Specific
+	void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser);	//Stanford Specific [alternative relex function now provided redistributeStanfordRelationsDependencyPreposition()]
 	void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);				//Stanford Specific
 	void redistributeStanfordRelationsClausalSubject(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);						//Stanford Specific
 	void redistributeStanfordRelationsConjunctionAndCoordinate(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);					//Stanford Specific
 	void redistributeStanfordRelationsGenerateUnparsedQuantityModifers(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);				//Stanford Specific [makes up for deficency in Stanford Parser where it does not always generate quantity modifiers where expected]
 	void redistributeStanfordRelationsGenerateMeasures(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);						//Stanford Specific
-	void redistributeStanfordRelationsPhrasalVerbParticle(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);						//Stanford Specific
+	void redistributeStanfordRelationsPhrasalVerbParticle(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);						//Stanford Specific
 	void redistributeStanfordRelationsCreateQueryVars(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[]);						//Stanford Specific? (may require Relex equivalent redistribution function)
-		void redistributeStanfordRelationsCreateQueryVarsWhoWhat(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[]);
+		void redistributeStanfordRelationsCreateQueryVarsWhoWhat(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[]);
 		void redistributeStanfordRelationsCreateQueryVarsHowMuchHowMany(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
-		void redistributeStanfordRelationsCreateQueryVarsWhich(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
+		void redistributeStanfordRelationsCreateQueryVarsWhich(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], constEffective GIAentityNode* GIAentityNodeArray[]);
 		void redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
 		void redistributeStanfordRelationsCreateQueryVarsWhat(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
-	void redistributeStanfordRelationsPartmod(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
+	void redistributeStanfordRelationsPartmod(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], constEffective GIAentityNode* GIAentityNodeArray[]);
 	#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS
-	void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser, GIAfeature* featureArrayTemp[]);	//Stanford Specific? (may require Relex equivalent redistribution function)
+	void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser, constEffective GIAfeature* featureArrayTemp[]);	//Stanford Specific? (may require Relex equivalent redistribution function)
 	#endif
 	#ifdef GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES
 	void redistributeStanfordRelationsExpletives(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);	//Stanford Specific? (may require Relex equivalent redistribution function)
@@ -89,7 +89,7 @@ void redistributeStanfordRelations(GIAsentence* currentSentenceInList, bool GIAe
 	#endif
 	#endif
 	#ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
-	void redistributeStanfordRelationsDisableAuxAndCop(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
+	void redistributeStanfordRelationsDisableAuxAndCop(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], constEffective GIAentityNode* GIAentityNodeArray[]);
 	#endif
 	void collapseRedundantRelationAndMakeNegativeStanford(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[]);						//Stanford Specific
 #endif

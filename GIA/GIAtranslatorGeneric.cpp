@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAtranslatorGeneric.h
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -170,14 +170,14 @@ GIAgenericDepRelInterpretationParameters::~GIAgenericDepRelInterpretationParamet
 {
 }
 
-void initialiseBoolArray1D(bool* boolArray, int size, int value)
+void initialiseBoolArray1D(bool* boolArray, const int size, int value)
 {
 	for(int i=0; i<size; i++)
 	{
 		boolArray[i] = value;
 	}
 }
-void initialiseBoolArray2D(bool* boolArray, int size1, int size2, int value)
+void initialiseBoolArray2D(bool* boolArray, const int size1, const int size2, int value)
 {
 	for(int i=0; i<size1; i++)
 	{
@@ -187,14 +187,14 @@ void initialiseBoolArray2D(bool* boolArray, int size1, int size2, int value)
 		}
 	}
 }
-void initialiseIntArray1D(int* intArray, int size, int value)
+void initialiseIntArray1D(int* intArray, const int size, int value)
 {
 	for(int i=0; i<size; i++)
 	{
 		intArray[i] = value;
 	}
 }
-void initialiseIntArray2D(int* intArray, int size1, int size2, int value)
+void initialiseIntArray2D(int* intArray, const int size1, const int size2, int value)
 {
 	for(int i=0; i<size1; i++)
 	{
@@ -204,7 +204,7 @@ void initialiseIntArray2D(int* intArray, int size1, int size2, int value)
 		}
 	}
 }
-void initialiseIntArray3D(int* intArray, int size1, int size2, int size3, int value)
+void initialiseIntArray3D(int* intArray, const int size1, const int size2, const int size3, int value)
 {
 	for(int i=0; i<size1; i++)
 	{
@@ -1451,7 +1451,7 @@ bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters* param
 
 #endif
 
-bool determineFeatureIndexOfPreposition(GIAsentence* currentSentenceInList, GIArelation* prepositionRelation, int* indexOfPreposition)
+bool determineFeatureIndexOfPreposition(GIAsentence* currentSentenceInList, const GIArelation* prepositionRelation, int* indexOfPreposition)
 {
 	string prepositionName = prepositionRelation->relationType;
 

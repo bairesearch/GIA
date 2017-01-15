@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAnlg.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -190,7 +190,7 @@ GIANLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, GIANLG
 
 
 //startEntityIndex should be 1 for first calcs...
-void generateThreeEntitySentenceFromEntityNode(GIAentityNode* entityNode0, string* generatedText, int connectionType1, int connectionType2, int startEntityIndex, bool supportAdditionalLinks)
+void generateThreeEntitySentenceFromEntityNode(GIAentityNode* entityNode0, string* generatedText, int connectionType1, int connectionType2, const int startEntityIndex, const bool supportAdditionalLinks)
 {
 	#ifdef GIA_NLG_DEBUG
 	cout << "\ngenerateThreeEntitySentenceFromEntityNode: " << entityNode0->entityName << endl;
@@ -509,7 +509,7 @@ void generateThreeEntitySentenceFromEntityNode(GIAentityNode* entityNode0, strin
 	#endif
 }
 
-void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, GIAentityConnection* entityConnection, string* generatedText, int connectionType, int startEntityIndex, bool additionalLink)
+void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, GIAentityConnection* entityConnection, string* generatedText, const int connectionType, const int startEntityIndex, const bool additionalLink)
 {
 	/*
 	if(!(entityConnection->parsedForLanguageGeneration))	//&& !(entityConnection->disabled)
@@ -785,7 +785,7 @@ void NLG2generateNLGinputViewFeatureTagsGenericPerSentence(string* generatedNLGi
 	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagPosPunctuationFullstop;
 }
 
-void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode, int entityIndex, string* generatedNLGinputViewTags)
+void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode, const int entityIndex, string* generatedNLGinputViewTags)
 {
 	string entityIndexString = convertIntToString(entityIndex);
 
@@ -977,7 +977,7 @@ void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode
 
 
 
-string NLG2generateNLGinputViewLine(string type, string governor, string dependent)
+string NLG2generateNLGinputViewLine(const string type, const string governor, const string dependent)
 {
 	#ifdef GIA_NLG_DEBUG_MANUALLY_HARDCODE_INTO_NLG2
 	string NLGInputViewLine = "\"" + type + "(" + governor + ", " + dependent + ")" + "\\n\" +" + "\n";
@@ -990,13 +990,13 @@ string NLG2generateNLGinputViewLine(string type, string governor, string depende
 #else
 
 
-void addDeterminate(GIAentityNode* entityNode, string* entityTextExpanded)
+void addDeterminate(const GIAentityNode* entityNode, string* entityTextExpanded)
 {
 	string determinate = calcDeterminate(entityNode);
 	*entityTextExpanded = determinate +* entityTextExpanded;
 }
 
-string calcDeterminate(GIAentityNode* entityNode)
+string calcDeterminate(const GIAentityNode* entityNode)
 {
 
 	//first letter is vowel		//added 03 August 2012
@@ -1158,7 +1158,7 @@ string calcDeterminate(GIAentityNode* entityNode)
 
 #endif
 
-string getWordOrig(GIAentityNode* entityNode)
+string getWordOrig(const GIAentityNode* entityNode)
 {
 	string wordOrig = "";
 	#ifdef GIA_NLG_NO_MORPHOLOGY_GENERATOR
@@ -1212,7 +1212,7 @@ string getWordOrig(GIAentityNode* entityNode)
 }
 
 
-string determineNLGdefinitionText(GIAentityNode* entityNode)
+string determineNLGdefinitionText(const GIAentityNode* entityNode)
 {
 	string nlgDefinitionText = "";
 	bool isPlural = false;
@@ -1231,7 +1231,7 @@ string determineNLGdefinitionText(GIAentityNode* entityNode)
 	return nlgDefinitionText;
 }
 
-string determineNLGpossessionText(GIAentityNode* entityNode)
+string determineNLGpossessionText(const GIAentityNode* entityNode)
 {
 	string nlgPossessionText = "";
 	bool isPlural = false;

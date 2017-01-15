@@ -19,9 +19,9 @@
 /*******************************************************************************
  *
  * File Name: GIAsemanticParserOperations.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -37,7 +37,7 @@
 
 #ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 
-void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNode** GIAentityNodeArray, GIAsentence* currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet)
+void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(constEffective GIAentityNode** GIAentityNodeArray, const GIAsentence* currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet)
 {
 	#ifdef GIA_DEBUG
 	//cout << "GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain: " << endl;
@@ -67,7 +67,7 @@ void GIA2nonHeuristicImplementationRemoveExperiencesForConnectionistNetworkTrain
 */
 
 //this function [recording aux/cop/det syntatical dependency relations] is required to extract tense and perform instance/networkIndex identification once GIA2 lookup has been performed: it is only currently supported by Stanford parser
-void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(GIAentityNode** GIAentityNodeArray, GIAsentence* currentSentenceInList, bool linkPreestablishedReferencesGIA, int NLPdependencyRelationsType)
+void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(constEffective GIAentityNode** GIAentityNodeArray, const GIAsentence* currentSentenceInList, const bool linkPreestablishedReferencesGIA, const int NLPdependencyRelationsType)
 {
 	#ifndef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
@@ -75,7 +75,7 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 	#endif
 		if(!linkPreestablishedReferencesGIA)
 		{
-			GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
+			const GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 
 			while(currentRelationInList->next != NULL)
 			{
@@ -131,7 +131,7 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 	#endif
 }
 
-void generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet, string* GIA2semanticDependencyRelationText, GIArelation* GIA2semanticDependencyRelation)
+void generateGIA2semanticDependencyRelation(constEffective GIAentityNode** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet, const string* GIA2semanticDependencyRelationText, GIArelation* GIA2semanticDependencyRelation)
 {
 	#ifdef GIA2_SUPPORT_QUERIES
 	string entityWord1 = GIAentityNodeArray[entityIndex1]->entityName;
@@ -209,7 +209,7 @@ void generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, 
 }
 
 #ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
-string generateGIA2semanticDependencyRelationText(string entityName1, string entityName2, string semanticRelation, int entityIndex1, int entityIndex2, bool sameReferenceSet)
+string generateGIA2semanticDependencyRelationText(const string entityName1, const string entityName2, const string semanticRelation, const int entityIndex1, const int entityIndex2, const bool sameReferenceSet)
 {
 	string GIA2semanticDependencyRelation = "";
 	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + semanticRelation + "(" + entityName1 + "-" + convertIntToString(entityIndex1) + ", " + entityName2 + "-" + convertIntToString(entityIndex2) + ") " + createSameReferenceSetRecord(sameReferenceSet);
@@ -219,20 +219,20 @@ string generateGIA2semanticDependencyRelationText(string entityName1, string ent
 	return GIA2semanticDependencyRelation;
 }
 
-string createSameReferenceSetRecord(bool sameReferenceSet)
+string createSameReferenceSetRecord(const bool sameReferenceSet)
 {
 	string sameReferenceSetRecord = "[sameReferenceSet=" + convertBoolToString(sameReferenceSet) + "]";
 	return sameReferenceSetRecord;
 }
 
 //preconditions: determineGIAconnectionistNetworkPOStypeNames() has been executed
-string generateCorpusFileHeaderText(GIAfeature* firstFeatureInSentence, bool addPOSinfo)
+string generateCorpusFileHeaderText(const GIAfeature* firstFeatureInSentence, const bool addPOSinfo)
 {
 	#ifdef GIA_DEBUG
 	//cout << "generateCorupusFileHeaderText{}:" << endl;
 	#endif
 	string sentenceText = "";
-	GIAfeature* currentFeatureInSentence = firstFeatureInSentence;
+	const GIAfeature* currentFeatureInSentence = firstFeatureInSentence;
 	while(currentFeatureInSentence->next != NULL)
 	{
 		string appendString = " ";
@@ -258,7 +258,7 @@ string generateCorpusFileHeaderText(GIAfeature* firstFeatureInSentence, bool add
 #endif
 
 
-void determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList, int NLPfeatureParser)
+void determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList, const int NLPfeatureParser)
 {
 	#ifdef GIA_DEBUG
 	//cout << "\n\n\ndetermineGIAconnectionistNetworkPOStypeNames{}:" << endl;
@@ -608,7 +608,7 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeature
 #ifdef GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS
 //based on NLC generateLogicalConditionImplicitConjunctionsAndIdentifyCommand
 //eg extracts "The pie has a car [GIA_SEMANTIC_PARSER_POS_TYPE_SPECIAL_REDUCED_CONJUNCTION] chicken" from "The pie has a car, bike, and chicken." (where centralWord corresponds to chicken; ie 10)
-GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeature* firstFeatureInSentenceSubset, int centralWord, bool* optimisedBasedOnContextualConjunctions)
+GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeature* firstFeatureInSentenceSubset, const int centralWord, bool* optimisedBasedOnContextualConjunctions)
 {
 	bool result = true;
 
@@ -728,7 +728,7 @@ GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeatu
 }
 #endif
 #ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
-int calculateFirstWordInTupleIndexRelative(int firstWordInTupleIndex, int firstWordInSentenceSubsetIndex)
+int calculateFirstWordInTupleIndexRelative(const int firstWordInTupleIndex, const int firstWordInSentenceSubsetIndex)
 {
 	int firstWordInTupleIndexRelative = firstWordInTupleIndex - firstWordInSentenceSubsetIndex + 1;
 	return firstWordInTupleIndexRelative;

@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAmain.h
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -49,7 +49,7 @@
 
 
 #ifndef USE_NLC
-int main(int argc, char** argv);
+int main(const int argc, const char** argv);
 #endif
 
 bool executeGIA(
@@ -166,7 +166,7 @@ bool executeGIA(
 	);
 
 #ifdef GIA_INPUT_FILE_LISTS
-int getFilesFromFileList(string inputListFileName, string* inputFileNameArray);
+int getFilesFromFileList(const string inputListFileName, string* inputFileNameArray);
 #endif
 
 #ifdef USE_CS_WORKAROUND

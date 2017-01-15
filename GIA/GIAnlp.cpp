@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAnlp.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -47,7 +47,7 @@
 #endif
 
 
-void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfileName, int NLPParser, string NLPexeFolderArray[], bool parseRelationsOrFeatures, bool NLPrelexCompatibilityMode)
+void executeNLPparser(const string inputTextPlainTXTfileName, const string inputTextNLPXMLfileName, const int NLPParser, const string NLPexeFolderArray[], const bool parseRelationsOrFeatures, const bool NLPrelexCompatibilityMode)
 {
 	/*
 	NB execute NLP on current folder not saved working folder (this is required for when a preprocessor eg LRP/CE has been executed on the input text):
@@ -148,7 +148,7 @@ void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfi
 }
 
 
-bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode)
+bool parseNLPparserFile(const string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPfeatureParser, const int NLPdependencyRelationsParser, const bool NLPrelexCompatibilityMode)
 {
 	bool result = true;
 
@@ -184,7 +184,7 @@ bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputText
 	return result;
 }
 
-bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, int NLPfeatureParser, bool* createNewSentences)
+bool parseNLPparserFeaturesFile(const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPfeatureParser, bool* createNewSentences)
 {
 	bool result = true;
 
@@ -243,7 +243,7 @@ bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQu
 	return result;
 }
 
-bool parseNLPparserRelationsFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
+bool parseNLPparserRelationsFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPdependencyRelationsParser, const bool NLPrelexCompatibilityMode, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
@@ -291,7 +291,7 @@ bool parseNLPparserRelationsFile(string inputTextNLPrelationXMLfileName, bool is
 }
 
 #ifdef GIA_RELEX
-bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, bool parseRelations, bool parseFeatures, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
+bool parseRelexFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const bool parseRelations, const bool parseFeatures, const bool NLPrelexCompatibilityMode, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
@@ -471,7 +471,7 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIApar
 
 
 #ifdef GIA_STANFORD_CORENLP
-bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, bool parseRelations, bool parseFeatures, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
+bool parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const bool parseRelations, const bool parseFeatures, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
@@ -1043,7 +1043,7 @@ int countSubstring(const std::string& str, const std::string& sub)
 }
 
 
-bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
+bool parseStanfordParserFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
@@ -1061,7 +1061,7 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 	return result;
 }
 
-bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAsentence* firstSentenceInList, bool createNewSentences, bool parseGIA2file, bool onlyParseIfCorpusLookupFailed)
+bool parseStanfordParserFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const bool createNewSentences, const bool parseGIA2file, const bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
@@ -1252,7 +1252,7 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 
 
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
-void outputInternalRelationsInRelexFormat(string* nameOfRelexCompactFormatCFFfile, string* originalInputFileName, GIAparagraph* firstParagraphInList, int NLPdependencyRelationsParser, int NLPfeatureParser, string NLPexeFolderArray[])
+void outputInternalRelationsInRelexFormat(const string* nameOfRelexCompactFormatCFFfile, const string* originalInputFileName, GIAparagraph* firstParagraphInList, const int NLPdependencyRelationsParser, const int NLPfeatureParser, const string NLPexeFolderArray[])
 {
 	bool result = true;
 

@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAconditionNodeClass.h
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  *
  *******************************************************************************/
 
@@ -134,7 +134,7 @@ public:
 #define TIME_DATE_DISPLAY_FORMAT_STANDARD (2)
 #define TIME_DATE_DISPLAY_FORMAT_AUSTRALIAN (3)
 #define TIME_DATE_DISPLAY_FORMAT (TIME_DATE_DISPLAY_FORMAT_AUSTRALIAN)
-string generateDateTimeConditionName(int dayOfMonth, int month, long year);
+string generateDateTimeConditionName(const int dayOfMonth, const int month, const long year);
 
 
 #endif

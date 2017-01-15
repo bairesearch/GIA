@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAlrp.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2f 12-December-2016
+ * Project Version: 2p3a 14-January-2017
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -51,7 +51,7 @@ GIALRPtag* firstTagInPrepositionsInverseListGlobal;
 bool prepositionsInverseListLoaded;
 #endif
 
-bool initialiseLRP(string newLRPDataFolderName, bool newUseLRP)
+bool initialiseLRP(const string newLRPDataFolderName, const bool newUseLRP)
 {
 	bool result = true;
 
@@ -168,7 +168,7 @@ GIALRPtagTextCorrespondenceInfo* getCurrentGIALRPtagTextCorrespondenceInfo()
 {
 	return currentGIALRPtagTextCorrespondenceInfo;
 }
-void setCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery)
+void setCurrentGIALRPtagTextCorrespondenceInfo(const bool isQuery)
 {
 	if(isQuery)
 	{
@@ -179,7 +179,7 @@ void setCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery)
 		currentGIALRPtagTextCorrespondenceInfo = textGIALRPtagTextCorrespondenceInfo;
 	}
 }
-void initialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery)
+void initialiseCurrentGIALRPtagTextCorrespondenceInfo(const bool isQuery)
 {
 	if(isQuery)
 	{
@@ -190,7 +190,7 @@ void initialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery)
 		textGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();
 	}
 }
-void deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery)
+void deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(const bool isQuery)
 {
 	if(isQuery)
 	{
@@ -203,7 +203,7 @@ void deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery)
 }
 
 
-bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName)
+bool parseTextFileAndReduceLanguage(const string plainTextInputFileName, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName)
 {
 	bool result = true;
 
@@ -267,7 +267,7 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 }
 
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
-bool loadVerbList(string irregularVerbListFileName, GIALRPtag* firstTagInIrregularVerbList)
+bool loadVerbList(const string irregularVerbListFileName, GIALRPtag* firstTagInIrregularVerbList)
 {
 	bool result = true;
 
@@ -311,7 +311,7 @@ bool loadVerbList(string irregularVerbListFileName, GIALRPtag* firstTagInIrregul
 #endif
 
 
-bool loadIrregularVerbList(string irregularVerbListFileName, GIALRPtag* firstTagInIrregularVerbList)
+bool loadIrregularVerbList(const string irregularVerbListFileName, GIALRPtag* firstTagInIrregularVerbList)
 {
 	bool result = true;
 
@@ -405,7 +405,7 @@ generate all tenses variations of the verb based upon a) rules and b) irregular 
 */
 
 //NB current implementation cannot take into account 3 alternate tags (ie x/y/z)
-bool loadPhrasalVerbDataAndGenerateAllTenseVariants(string phrasalVerbDatabaseFileName, GIALRPtag* firstTagInPhrasalVerbList, GIALRPtag* firstTagInIrregularVerbList)
+bool loadPhrasalVerbDataAndGenerateAllTenseVariants(const string phrasalVerbDatabaseFileName, GIALRPtag* firstTagInPhrasalVerbList, GIALRPtag* firstTagInIrregularVerbList)
 {
 	bool result = true;
 
@@ -929,7 +929,7 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag* baseTag, GIALRPtag* firstTagInIr
 	return result;
 }
 
-void copyDefaultVerbTenseFormsToAlternateTenseForms(GIALRPtag* baseTag, bool irregularVerbFound)
+void copyDefaultVerbTenseFormsToAlternateTenseForms(GIALRPtag* baseTag, const bool irregularVerbFound)
 {
 	baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD];
 	baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = baseTag->grammaticalTenseFormsArray[GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD];
@@ -941,7 +941,7 @@ void copyDefaultVerbTenseFormsToAlternateTenseForms(GIALRPtag* baseTag, bool irr
 
 }
 
-bool loadMultiWordPrepositionData(string multiwordPrepositionListFileName, GIALRPtag* firstTagInMultiwordPrepositionList)
+bool loadMultiWordPrepositionData(const string multiwordPrepositionListFileName, GIALRPtag* firstTagInMultiwordPrepositionList)
 {
 	bool result = true;
 
@@ -998,7 +998,7 @@ bool loadMultiWordPrepositionData(string multiwordPrepositionListFileName, GIALR
 	return result;
 }
 
-bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag* firstTagInPlainText)
+bool loadPlainTextFile(const string plainTextInputFileName, GIALRPtag* firstTagInPlainText)
 {
 	bool result = true;
 
@@ -1515,7 +1515,7 @@ bool searchAndReplacePhrasalVerbs(GIALRPtag* firstTagInPlainText, GIALRPtag* fir
 }
 
 
-bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, GIALRPtag* firstTagInMultiwordPrepositionList, GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo)
+bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, const GIALRPtag* firstTagInMultiwordPrepositionList, GIALRPtagTextCorrespondenceInfo* firstGIALRPtagCorrespondenceInfo)
 {
 	bool result = true;
 
@@ -1533,7 +1533,7 @@ bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, GIALR
 		GIALRPtag* previousTagInPlainTextSentence = NULL;
 		while(currentTagInPlainTextSentence->nextTag != NULL)
 		{
-			GIALRPtag* currentTagInMultiwordPrepositionList = firstTagInMultiwordPrepositionList;
+			const GIALRPtag* currentTagInMultiwordPrepositionList = firstTagInMultiwordPrepositionList;
 			bool foundAtLeastOneMultiwordPrepositionInSentenceAndCollapsed = false;
 			while(currentTagInMultiwordPrepositionList->nextSentence != NULL)
 			{
@@ -1542,8 +1542,8 @@ bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, GIALR
 				GIALRPtag* currentTagInPlainTextSentenceTemp = currentTagInPlainTextSentence;
 				GIALRPtag* firstTagInCollapsedMultiwordPreposition = new GIALRPtag();
 				GIALRPtag* currentTagInCollapsedMultiwordPreposition = firstTagInCollapsedMultiwordPreposition;
-				GIALRPtag* firstTagInMultiwordPreposition = currentTagInMultiwordPrepositionList;
-				GIALRPtag* currentTagInMultiwordPreposition = firstTagInMultiwordPreposition;
+				const GIALRPtag* firstTagInMultiwordPreposition = currentTagInMultiwordPrepositionList;
+				const GIALRPtag* currentTagInMultiwordPreposition = firstTagInMultiwordPreposition;
 				#ifdef GIA_DEBUG
 				//cout << "currentTagInPlainTextSentenceTemp->tagName = " << currentTagInPlainTextSentenceTemp->tagName << endl;
 				//cout << "currentTagInMultiwordPreposition->tagName = " << currentTagInMultiwordPreposition->tagName << endl;
@@ -1630,7 +1630,7 @@ bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, GIALR
 	return result;
 }
 
-bool writeTagListToFile(GIALRPtag* firstTagInPlainText, string plainTextLRPoutputFileName, string plainTextLRPforNLPoutputFileName)
+bool writeTagListToFile(const GIALRPtag* firstTagInPlainText, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName)
 {
 	bool result = true;
 
@@ -1639,11 +1639,11 @@ bool writeTagListToFile(GIALRPtag* firstTagInPlainText, string plainTextLRPoutpu
 
 	bool firstCharacterInFile = true;
 
-	GIALRPtag* currentTagInPlainText = firstTagInPlainText;
+	const GIALRPtag* currentTagInPlainText = firstTagInPlainText;
 	while(currentTagInPlainText->nextSentence != NULL)
 	{
-		GIALRPtag* firstTagInPlainTextSentence = currentTagInPlainText;
-		GIALRPtag* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
+		const GIALRPtag* firstTagInPlainTextSentence = currentTagInPlainText;
+		const GIALRPtag* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		while(currentTagInPlainTextSentence->nextTag != NULL)
 		{
 			string plainTextLRPOutputTag = currentTagInPlainTextSentence->tagName;
@@ -1694,7 +1694,7 @@ bool writeTagListToFile(GIALRPtag* firstTagInPlainText, string plainTextLRPoutpu
 }
 
 //NB preposition reversion routine will not work for RelEx as RelEx defines dependency relations based on lemmas not words...
-void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, GIAsentence* currentSentenceInList, GIArelation* currentRelationInListForPrepositionsOnly, bool isPreposition, bool* foundOfficialLRPreplacementString)
+void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, const GIAsentence* currentSentenceInList, const GIArelation* currentRelationInListForPrepositionsOnly, const bool isPreposition, bool* foundOfficialLRPreplacementString)
 {
 	int entityIndexForNonPrepositionsOnly = feature->entityIndex;
 
@@ -1749,8 +1749,8 @@ void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, GIAsentence* curr
 					//now search entire sentence->feature list and find entity/word that has same name, and has the governor/dependent closest to it...
 					string relationGovernor = currentRelationInListForPrepositionsOnly->relationGovernor;
 					string relationDependent = currentRelationInListForPrepositionsOnly->relationDependent;
-					GIAfeature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
-					GIAfeature* currentFeatureInList = firstFeatureInList;
+					const GIAfeature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
+					const GIAfeature* currentFeatureInList = firstFeatureInList;
 					int indexOfPrepositionWithMinimumProximityOfGovernorDependentWords = GIA_ENTITY_INDEX_UNDEFINED;
 					int minimumProximityOfGovernorDependentWords = MAXIMUM_NUMBER_WORDS_PER_SENTENCE;
 					int indexOfLastInstanceOfPreposition = GIA_ENTITY_INDEX_UNDEFINED;
@@ -1878,7 +1878,7 @@ void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, GIAsentence* curr
 
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
 //warning: this function is only currently developed for infinitive and continuous case
-bool determineVerbCaseWrapper(string word, string* baseNameFound, int* grammaticalTenseModifier)
+bool determineVerbCaseWrapper(const string word, string* baseNameFound, int* grammaticalTenseModifier)
 {
 	bool result = true;
 	bool foundVerbCase = false;
@@ -1902,7 +1902,7 @@ bool determineVerbCaseWrapper(string word, string* baseNameFound, int* grammatic
 }
 
 //warning: this function is only currently developed for infinitive and continuous case
-bool determineVerbCase(string word, GIALRPtag* firstTagInVerbList, string* baseNameFound, int* grammaticalTenseModifier)
+bool determineVerbCase(const string word, GIALRPtag* firstTagInVerbList, string* baseNameFound, int* grammaticalTenseModifier)
 {
 	bool foundVerbCase = false;
 
@@ -2075,7 +2075,7 @@ bool determineVerbCase(string word, GIALRPtag* firstTagInVerbList, string* baseN
 	return foundVerbCase;
 }
 
-void testVerbCase(string tagName, string wordLowerCase, string baseTenseFormStart, string baseTenseFormAppend, int* numberOfCharactersInBaseTenseFormAppend, bool* foundVerbCase, string* baseNameFound, int* grammaticalTenseModifier, int grammaticalTenseModifierNew)
+void testVerbCase(string tagName, const string wordLowerCase, const string baseTenseFormStart, string baseTenseFormAppend, int* numberOfCharactersInBaseTenseFormAppend, bool* foundVerbCase, string* baseNameFound, int* grammaticalTenseModifier, int grammaticalTenseModifierNew)
 {
 	if(baseTenseFormAppend.length() >* numberOfCharactersInBaseTenseFormAppend)
 	{
@@ -2094,7 +2094,7 @@ void testVerbCase(string tagName, string wordLowerCase, string baseTenseFormStar
 
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
 //NB determineIfWordIsIrregularVerbContinuousCaseWrapper() can be used instead of determineVerbCaseWrapper(), as Stanford only has a problem identifying verbs (pos tag "VBG") when they are irregular varbs
-bool determineIfWordIsIrregularVerbContinuousCaseWrapper(string word, string* baseNameFound)
+bool determineIfWordIsIrregularVerbContinuousCaseWrapper(const string word, string* baseNameFound)
 {
 	bool result = true;
 	bool foundIrregularVerbContinuousCase = false;
@@ -2112,7 +2112,7 @@ bool determineIfWordIsIrregularVerbContinuousCaseWrapper(string word, string* ba
 }
 
 
-bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag* firstTagInIrregularVerbList, string* baseNameFound)
+bool determineIfWordIsIrregularVerbContinuousCase(const string word, GIALRPtag* firstTagInIrregularVerbList, string* baseNameFound)
 {
 	bool foundIrregularVerbContinuousCase = false;
 
@@ -2177,7 +2177,7 @@ bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag* firstT
 
 
 #ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-bool loadPrepositionsInverseList(string prepositionsInverseListFileName, GIALRPtag* firstTagInPrepositionsInverseList)
+bool loadPrepositionsInverseList(const string prepositionsInverseListFileName, GIALRPtag* firstTagInPrepositionsInverseList)
 {
 	bool result = true;
 
@@ -2242,7 +2242,7 @@ bool loadPrepositionsInverseList(string prepositionsInverseListFileName, GIALRPt
 	return result;
 }
 
-void detectIfInverseOrTwoWayConditionRequired(string conditionName, bool* inverseConditionRequired, bool* twoWayConditionRequired, string* inverseConditionName)
+void detectIfInverseOrTwoWayConditionRequired(const string conditionName, bool* inverseConditionRequired, bool* twoWayConditionRequired, string* inverseConditionName)
 {
 	GIALRPtag* firstTagInPrepositionsInverseList = firstTagInPrepositionsInverseListGlobal;
 
