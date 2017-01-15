@@ -33,7 +33,7 @@ using namespace std;
 #include "GIAConditionNodeClass.h"
 
 
-//#define GIA_TRANSLATOR_DEBUG
+#define GIA_TRANSLATOR_DEBUG
 
 #define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS
 //#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_CLEAR_REFERENCES_EVERY_SENTENCE
@@ -46,7 +46,9 @@ using namespace std;
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C
-#define GIA_IGNORE_MEANINGLESS_RELATIONS
+#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A
+	#define GIA_IGNORE_MEANINGLESS_RELATIONS
+#endif
 #ifndef  GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C
 	#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
@@ -58,6 +60,10 @@ using namespace std;
 
 	#endif
 #endif
+#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B
+	#define GIA_IGNORE_DUPLICATE_COMPARISON_VARIABLES_IN_QUERY
+#endif
+
 #define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 #define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_DEFINITION_BASIC
 
@@ -279,7 +285,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 	void defineIndirectObjects(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[]);
 	void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[]);
 	//4
-	void defineActionPropertyConditions(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList);
+	void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList);
 		void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity, GIAEntityNode * actionOrPropertyConditionEntity, string relationType, bool negative, vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList);
 			void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, GIAEntityNode * conditionTypeConceptEntity);
 			void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity, GIAEntityNode * conditionTypeConceptEntity);

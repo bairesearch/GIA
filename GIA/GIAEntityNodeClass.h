@@ -223,6 +223,7 @@ public:
 	
 	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for properties and actions; but relex does not appear to output this information]
 	
+	bool disableParsingAsAPrepositionRelationTemp;
 };
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode);

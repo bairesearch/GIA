@@ -12,7 +12,7 @@
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
-#define GIA_QUERY_DEBUG
+//#define GIA_QUERY_DEBUG
 #define GIA_QUERY_USE_LONG_CONTEXT_TRACE
 #ifdef GIA_QUERY_USE_LONG_CONTEXT_TRACE
 	//#define GIA_QUERY_USE_EXTRA_LONG_CONTEXT_TRACE

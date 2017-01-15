@@ -96,6 +96,8 @@ GIAEntityNode::GIAEntityNode(void)
 	testedForQueryComparison = false;
 
 	negative = false;
+	
+	disableParsingAsAPrepositionRelationTemp = false;
 }
 GIAEntityNode::~GIAEntityNode(void)
 {

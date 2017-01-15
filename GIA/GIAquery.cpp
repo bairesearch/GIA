@@ -148,13 +148,13 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 		#endif
 		*/
 		
-		cout << "*queryAnswerContext = " << *queryAnswerContext << endl;
+		//cout << "*queryAnswerContext = " << *queryAnswerContext << endl;
 		
 
 		bool foundMatch = false;
 		if(sourceIsConditionAndHasComparisonVariableAttached)
 		{
-			cout << "HERE" << endl;
+			//cout << "HERE" << endl;
 			
 			if(!(*foundAnswer))
 			{//do not overwrite match, if already found match 
@@ -444,7 +444,7 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 			for(actionIter = entityNode->IncomingActionNodeList.begin(); actionIter != entityNode->IncomingActionNodeList.end(); actionIter++) 
 			{
 				//cout << "A" << endl;
-				string sourceContext = "is done to ";
+				string sourceContext = "is ";	//is done to 
 				queryAnswerNode = testReferencedEntityNodeForNameMatch(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 			
 				//cout << "AA" << endl;
