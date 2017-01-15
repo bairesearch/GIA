@@ -3,7 +3,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j6g 03-May-2012
+ * Project Version: 1j6h 04-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -115,6 +115,148 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 
 void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
 {
+
+//for queries only (1j6h)
+#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP
+
+	/*
+	What is the Co-cart designed to do?
+	dep(designed-5, What-1)
+	auxpass(designed-5, is-2)
+	nsubjpass(designed-5, Co-cart-4)
+	xsubj(do-7, Co-cart-4)
+	aux(do-7, to-6)
+	xcomp(designed-5, do-7)
+	interpret; _to-do(design[5], do[7]) + _dep(design[5], what[1]) -> _to-do(design[5], what[1])
+
+	What is the cart designed to integrate with?
+	dep(designed-5, What-1)
+	auxpass(designed-5, is-2)
+	det(cart-4, the-3)
+	nsubjpass(designed-5, cart-4)
+	xsubj(integrate-7, cart-4)
+	root(ROOT-0, designed-5)
+	aux(integrate-7, to-6)
+	xcomp(designed-5, integrate-7)
+	prep(integrate-7, with-8)
+	interpret;
+		dep(designed-5, What-1)
+		_to-do(designed-5, integrate-7)
+		prep(integrate-7, with-8)
+		=>
+		_to-do(designed-5, integrate-7)
+		prep_with(integrate-7, What-1)
+	*/
+
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{			
+		#endif		
+			//cout << "here1" << endl;
+			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+			
+			if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO)
+			{		
+				//cout << "redistributeStanfordRelationsMultiwordPreposition(): stanfordPrepositionFound relexPreposition = " << relexPreposition << endl;
+
+ 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				while(currentRelationInList2->next != NULL)
+				{	
+					//cout << "af1" << endl;
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					if(!(currentRelationInList2->disabled))
+					{			
+					#endif
+					//NB this assumes "cop/aux" etc relations cannot be disabled in fillGrammaticalArraysStanford
+				
+						if(currentRelationInList2->relationType == RELATION_TYPE_DEPENDENT)
+						{	
+							//cout << "af2" << endl;
+							//cout << "redistributeStanfordRelationsMultiwordPreposition(): multiwordPrepositionIntermediaryRelationFound relexPreposition = " << relexPreposition << ", intermediaryrelation = " << currentRelationInList2->relationType << endl;
+							
+							if(currentRelationInList->relationGovernor == currentRelationInList2->relationGovernor)
+							{
+								//cout << "af3" << endl;
+								if(currentRelationInList->relationDependent == RELATION_DEPENDENT_DO)		//this is check required? (perhaps the same case needs to be accounted for when (currentRelationInList->relationDependent != RELATION_DEPENDENT_DO)
+								{
+									//cout << "af4" << endl;
+									//interpret; _to-do(design[5], do[7]) + _dep(design[5], what[1]) -> _to-do(design[5], what[1])
+									
+									currentRelationInList2->disabled = true;
+									disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationDependentIndex]);									
+								
+									currentRelationInList->relationDependentIndex = currentRelationInList2->relationDependentIndex;
+									currentRelationInList->relationDependent = currentRelationInList2->relationDependent;
+
+								}
+								else 
+								{
+									//see if preposition exists;
+
+ 									Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+									while(currentRelationInList3->next != NULL)
+									{	
+										#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+										if(!(currentRelationInList3->disabled))
+										{			
+										#endif								
+
+											if(currentRelationInList3->relationType == RELATION_TYPE_PREPOSITION_MODIFIER)	
+											{	//cout << "SD" << endl;
+													
+												if(currentRelationInList3->relationGovernor == currentRelationInList->relationDependent)
+												{
+													/*
+													interpret;
+													_to-do(designed-5, integrate-7)
+													dep(designed-5, What-1)
+													prep(integrate-7, with-8)
+													=>
+													_to-do(designed-5, integrate-7)
+													prep_with(integrate-7, What-1)
+													*/
+																							
+													currentRelationInList2->disabled = true;
+													
+													string newPrepositionName = "";
+													string relexPreposition = GIAEntityNodeArray[currentRelationInList3->relationDependentIndex]->entityName; 	//currentRelationInList3->relationDependent
+													newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + relexPreposition;
+
+													currentRelationInList3->relationType = newPrepositionName;
+													currentRelationInList3->relationDependentIndex = currentRelationInList2->relationDependentIndex;
+													currentRelationInList3->relationDependent = currentRelationInList2->relationDependent;
+
+												}
+											}		
+										#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+										}		
+										#endif					
+
+										currentRelationInList3 = currentRelationInList3->next;
+									}
+								}
+							}
+						}
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					}			
+					#endif
+
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}		
+		#endif
+		//cout << "here2" << endl;
+		currentRelationInList = currentRelationInList->next;
+	}
+
+#endif
+
+
 	/*
 	What are the patent claims on?
 	match dep with prep
@@ -123,8 +265,9 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 				[then rely upon redistributeStanfordRelationsMultiwordPreposition() for  nsubj(are-4, claims-3) / prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)]
 	*/
 	
+//for queries only (1j6g)
 #ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{	
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS

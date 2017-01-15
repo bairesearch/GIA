@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j6g 03-May-2012
+ * Project Version: 1j6h 04-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -29,6 +29,11 @@ using namespace std;
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP		//working on this now (1j6h)
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION	//added in addition to this; the pre-process of "two word prepositions" eg from http://en.wikipedia.org/wiki/List_of_English_prepositions, or post process (currently implemented)
+//#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION_OLD
+
 
 
 #ifndef GIA_STANFORD_CORE_NLP_DO_NOT_USE_CODEPENDENCIES
@@ -44,9 +49,7 @@ using namespace std;
 #define GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES	//test only
 
 
-#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION	//added in addition to this; the pre-process of "two word prepositions" eg from http://en.wikipedia.org/wiki/List_of_English_prepositions, or post process (currently implemented)
-//#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION_OLD
-#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP
+
 
 #ifndef GIA_DISABLE_REFERENCING
 	#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS	//default: enabled
@@ -302,12 +305,12 @@ used
 #define STANFORD_RELATION_TYPE_POSSESSIVE "possessive"
 #define STANFORD_RELATION_TYPE_PREPOSITION_MODIFIER2 "pmod"
 #define STANFORD_RELATION_TYPE_SEMANTIC_DEPENDENT "sdep"
-#define STANFORD_RELATION_TYPE_XSUBJ "xsubj"
+#define STANFORD_RELATION_TYPE_XSUBJ "xsubj"			//??
+#define RELATION_TYPE_XSUBJ "xsubj"	
 */
-#define STANFORD_RELATION_TYPE_PREPOSITION_MODIFIER "prep"
+#define STANFORD_RELATION_TYPE_PREPOSITION_MODIFIER "prep"	//deal with during stanford reduction (added 3 May 2012)
 #define RELATION_TYPE_PREPOSITION_MODIFIER "_prep"
-
-
+	
 
 //negations;
 #define RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES (1)
@@ -349,6 +352,7 @@ used
 #define RELATION_TYPE_COMPLEMENTS_NUMBER_OF_TYPES (2)
 #define RELATION_TYPE_OBJECT_SPECIAL_TO_DO_PROPERTY_NUMBER_OF_TYPES (1)
 #define RELATION_TYPE_OBJECT_SPECIAL_TO_BE_PROPERTY_NUMBER_OF_TYPES (1)
+#define RELATION_DEPENDENT_DO "do"	
 
 //dates, measures, and quantities;
 #define RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES (5)
@@ -731,7 +735,11 @@ static bool referenceTypePersonCrossReferencePersonArray[REFERENCE_TYPE_PERSON_N
 
 #define GIA_NUMBER_OF_RELEX_VERSUS_STANFORD_DEPENDENCY_RELATION_DISCREPANCIES (12)
 static string relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_NUMBER_OF_TYPES][GIA_NUMBER_OF_RELEX_VERSUS_STANFORD_DEPENDENCY_RELATION_DISCREPANCIES] = {{RELATION_TYPE_COMPLIMENT_TO_BE, RELATION_TYPE_COMPLIMENT_TO_DO, RELATION_TYPE_APPOSITIVE_OF_NOUN, RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT, RELATION_TYPE_SUBJECT, RELATION_TYPE_POSSESSIVE, RELATION_TYPE_QUANTITY, RELATION_TYPE_QUANTITY, RELATION_TYPE_QUANTITY_MOD, RELATION_TYPE_SUBJECT}, {STANFORD_RELATION_TYPE_COMPLIMENT_TO_BE, STANFORD_RELATION_TYPE_COMPLIMENT_TO_DO, STANFORD_RELATION_TYPE_APPOSITIVE_OF_NOUN, STANFORD_RELATION_TYPE_OBJECT, STANFORD_RELATION_TYPE_INFINITIVAL_MODIFIER, STANFORD_RELATION_TYPE_PASSIVE_NOMINAL_SUBJECT, STANFORD_RELATION_TYPE_SUBJECT, STANFORD_RELATION_TYPE_POSS2, STANFORD_RELATION_TYPE_QUANTITY, STANFORD_RELATION_TYPE_ELEMENT_OF_COMPOUND_NUMBER, STANFORD_RELATION_TYPE_QUANTITY_MOD, STANFORD_RELATION_TYPE_AGENT}};
-
+	/*
+	//consider STANFORD_RELATION_TYPE_PASSIVE_NOMINAL_SUBJECT as SUBJECT not OBJECT??
+	*/
+	
+	
 /*************************************************************************************/
 
 /********************************* Features *******************************************/
