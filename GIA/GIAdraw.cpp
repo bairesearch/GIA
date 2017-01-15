@@ -121,7 +121,8 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		vec pos2;
 		vec pos3;
 		vec pos4;
-
+		vec pos5;
+		
 		pos1.x = entityNode->printX;
 		pos1.y = entityNode->printY;	
 		pos1.z = DRAW_CONNECTION_Z;
@@ -200,6 +201,15 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		{	
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+			
+			if(initialiseOrPrint == DRAW_PRINT)
+			{	
+				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
+				pos5.x = (*ConditionIter)->printX;
+				pos5.y = (*ConditionIter)->printY;	
+				pos5.z = DRAW_CONNECTION_Z;
+				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject);
+			}			
 		}
 		//go reverse also...
 		q = DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITION_NODES;
@@ -208,6 +218,15 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		{	
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+		
+			if(initialiseOrPrint == DRAW_PRINT)
+			{	
+				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
+				pos5.x = (*ConditionIter)->printX;
+				pos5.y = (*ConditionIter)->printY;	
+				pos5.z = DRAW_CONNECTION_Z;
+				currentReferenceInPrintList = createReferenceConnection(currentReferenceInPrintList, &pos1, &pos5, GIA_DRAW_CONDITION_CONNECTION_COLOUR, writeFileObject);
+			}		
 		}
 				
 		

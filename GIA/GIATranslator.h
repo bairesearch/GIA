@@ -110,6 +110,7 @@ using namespace std;
 #define RELATION_TYPE_PREPOSITION_WHEN "when"	//eg joe fires his bow when john drives fast.	[fire drive]	//this forms the action condition; "when" [not time, but in association with another action]
 #define RELATION_TYPE_PREPOSITION_BECAUSE "because"
 #define RELATION_TYPE_PREPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES (2)
+#define RELATION_TYPE_PREPOSITION_FIRST_CHARACTER '_'
 
 //?#define RELATION_TYPE_OF "of"		//eg [she grew tired] of it	{same as with it}
 

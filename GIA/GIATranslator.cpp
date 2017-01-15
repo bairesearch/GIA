@@ -1382,6 +1382,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				
 			bool passedPrepositionLocationOrTime = false;
 			bool passedPrepositionActionOrProperty = false;
+			bool passedPrepositionUnkown = false;
 			for(int i=0; i<RELATION_TYPE_PREPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES; i++)
 			{
 				if(currentRelationInList->relationType == relationTypePrepositionLocationOrTimeNameArray[i])
@@ -1396,6 +1397,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					passedPrepositionActionOrProperty = true;
 				}
 			}
+			
+			if(currentRelationInList->relationType[0] != RELATION_TYPE_PREPOSITION_FIRST_CHARACTER)
+			{
+				passedPrepositionUnkown = true;
+			}
+			
 			
 			GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[relationFunctionIndex];				
 			GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
@@ -1445,6 +1452,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				cout << "actionOrPropertyConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
 									
 				addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType);		
+			}
+			else if(passedPrepositionUnkown)
+			{
+				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
+				cout << "actionOrPropertyConditionName = " << actionOrPropertyConditionEntity->entityName << endl;
+									
+				addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, currentRelationInList->relationType.substr(1, currentRelationInList->relationType.length()-1));				
 			}			
 						
 			currentRelationInList = currentRelationInList->next;
