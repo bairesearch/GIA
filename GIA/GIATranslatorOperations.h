@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i14a 16-Apr-2012
+ * Project Version: 1i14b 16-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -52,6 +52,10 @@ using namespace std;
 	#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_CLEAR_REFERENCES_EVERY_SENTENCE	//default: disabled
 #endif
 //#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_CLEAR_REFERENCES_EVERY_SENTENCE	//default: disabled		//Relex and Stanford supported (untested with stanford)
+
+
+//#define GIA_OPTIMISE_PERFORMANCE_FOR_RELEX_PATENT_QUERIES_REPLICATION_RATHER_THAN_RELEX_PATENT_SYNTACTIC_PROTOTYPE_OUTPUT_REPLICATION			//not ever used - old for testing
+//#define GIA_COLLAPSE_COP_RELATION_DEPENDENT_BE_TO_APPOS_NOT_PREDADJ_OLD										//not ever used - old for testing
 
 
 
@@ -472,6 +476,17 @@ static string featureNERindicatesNameConcatenationRequiredTypeArray[FEATURE_NER_
 #define FEATURE_NER_INDICATES_NORMALISED_NER_AVAILABLE_NUMBER_TYPES (4)
 static string featureNERindicatesNormalisedNERavailableTypeArray[FEATURE_NER_INDICATES_NORMALISED_NER_AVAILABLE_NUMBER_TYPES] = {FEATURE_NER_DATE, FEATURE_NER_TIME, FEATURE_NER_MONEY, FEATURE_NER_NUMBER};
 #define FEATURE_NER_NAME_CONCATENATION_TOKEN " " 	//or use "_" for Relex format
+
+
+#define FEATURE_POS_ADJECTIVE "JJ"
+#define FEATURE_POS_ADJECTIVE_COMPARATIVE "JJR" 
+#define FEATURE_POS_ADJECTIVE_SUPERLATIVE "JJS" 
+#define FEATURE_POS_ADVERB "RB"
+#define FEATURE_POS_ADVERB_COMPARATIVE "RBR"
+#define FEATURE_POS_ADVERB_SUPERLATIVE "RBS"
+#define FEATURE_POS_INDICATES_ADJECTIVE_OR_ADVERB (6)
+static string featurePOSindicatesAdjectiveOrAdverbTypeArray[FEATURE_POS_INDICATES_ADJECTIVE_OR_ADVERB] = {FEATURE_POS_ADJECTIVE, FEATURE_POS_ADJECTIVE_COMPARATIVE, FEATURE_POS_ADJECTIVE_SUPERLATIVE, FEATURE_POS_ADVERB, FEATURE_POS_ADVERB_COMPARATIVE, FEATURE_POS_ADVERB_SUPERLATIVE};
+
 
 #define STANFORD_PARSER_PREPOSITION_PREPEND "prep_"
 #define STANFORD_PARSER_PREPOSITION_PREPEND_LENGTH (5)

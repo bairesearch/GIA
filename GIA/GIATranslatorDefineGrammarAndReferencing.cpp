@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammarAndReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i14a 16-Apr-2012
+ * Project Version: 1i14b 16-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -333,7 +333,7 @@ void extractGrammaticalInformationFromPOStag(string * POStag, int entityIndex, i
 }
 
 
-void extractGrammaticalInformation(Feature * firstFeatureInList, bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], string GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[], int NLPfeatureParser)
+void extractGrammaticalInformation(Feature * firstFeatureInList, bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], string GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[], string GIAEntityNodePOSArray[], int NLPfeatureParser)
 {
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
@@ -346,6 +346,7 @@ void extractGrammaticalInformation(Feature * firstFeatureInList, bool GIAEntityN
 			GIAEntityNodeNERArray[currentFeatureIndex] = currentFeatureInList->NER;
 			GIAEntityNodeNormalizedNERArray[currentFeatureIndex] = currentFeatureInList->NormalizedNER;
 			GIAEntityNodeTimexArray[currentFeatureIndex] = currentFeatureInList->Timex;
+			GIAEntityNodePOSArray[currentFeatureIndex] = currentFeatureInList->POS;
 			
 			if((currentFeatureInList->NER == FEATURE_NER_DATE) || (currentFeatureInList->NER == FEATURE_NER_TIME))
 			{
@@ -384,12 +385,12 @@ void extractPastTense(int entityIndex, int entityIndexContainingTenseIndication,
 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 //NB GIAEntityNodeGrammaticalGenderArray and GIAEntityNodeGrammaticalIsPronounArray are not currently filled by fillGrammaticalArraysStanford() 
-void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], string GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[], int NLPfeatureParser)
+void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], string GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[], string GIAEntityNodePOSArray[], int NLPfeatureParser)
 {
 	//uses Stanford specific relations (grammar related)
 
 	//past tense [preliminary only; aux/cop takes precedence], progressive tense, isDate, plurality, isProperNoun extraction
-	extractGrammaticalInformation(currentSentenceInList->firstFeatureInList, GIAEntityNodeIsDateOrStanfordTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray, GIAEntityNodeNERArray, GIAEntityNodeNormalizedNERArray, GIAEntityNodeTimexArray, NLPfeatureParser);					
+	extractGrammaticalInformation(currentSentenceInList->firstFeatureInList, GIAEntityNodeIsDateOrStanfordTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray, GIAEntityNodeNERArray, GIAEntityNodeNormalizedNERArray, GIAEntityNodeTimexArray, GIAEntityNodePOSArray, NLPfeatureParser);					
 
 	 
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -506,7 +507,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList, bool GIAEnt
 
 
 
-void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], string GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[])
+void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeIsDateOrStanfordTime[], int GIAEntityNodeGrammaticalTenseArray[], bool GIAEntityNodeGrammaticalTenseModifierArray[], int GIAEntityNodeGrammaticalNumberArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray[], int GIAEntityNodeGrammaticalGenderArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], string GIAEntityNodeNERArray[], string GIAEntityNodeNormalizedNERArray[], string GIAEntityNodeTimexArray[], string GIAEntityNodePOSArray[])
 {
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{	
@@ -531,6 +532,7 @@ void applyGrammaticalInfoToAllConceptEntities(bool GIAEntityNodeArrayFilled[], G
 			entity->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[w];
 			entity->grammaticalPronounTemp = GIAEntityNodeGrammaticalIsPronounArray[w];	
 			
+			entity->POSTemp = GIAEntityNodePOSArray[w];
 			entity->NERTemp = GIAEntityNodeNERArray[w];
 			entity->NormalizedNERTemp = GIAEntityNodeNormalizedNERArray[w];
 			entity->TimexTemp = GIAEntityNodeTimexArray[w];					
@@ -1511,7 +1513,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 
 
 
-void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int NLPfeatureParser)
 {
 	//eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - > _predadj(rabbit-2, away-6) 
 	//OLD: nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - > nsubj(away-6, rabbit-2) )
@@ -1588,10 +1590,19 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 	
 	
 	//either do eg1 or eg2 ;
-	//eg1 Kane is late 	nsubj(late-3, Kane-1) / cop(late-3, is-2) -> _predadj(kane-1, late-3) 
+	//eg1 Kane is late 		nsubj(late-3, Kane-1) / cop(late-3, is-2) -> _predadj(kane-1, late-3) 				[NB non-determinate of governer and dependent of subject relation; take as indicator of property]
 	//or
-	//eg2 She is the one 	nsubj(one-4, She-1) / cop(one-4, is-2) / det(one-4, the-3) -> appos(She-1, one-4)
-
+	//eg2 She is the one 		nsubj(one-4, She-1) / cop(one-4, is-2) / det(one-4, the-3) -> appos(She-1, one-4)		[NB determinate of dependent of subject relation; take as an indicator of definition] 
+	//or
+	//eg3 The girl is tall 		nsubj(tall-6, girl-2) / cop(tall-6, is-3) / det(girl-2, The-1) -> _predadj(girl-2, tall-6) 	[NB non-plural and determinate of governer of subject relation; take as indicator of property]
+	//or
+	//eg4 bikes are machines  	nsubj(machines-3, bikes-1) / cop(machines-3, are-2) -> appos(bikes-1, machines-3)		[NB plural and non-determinate of governer of subject relation; take as an indicator of definition]
+	//or
+	//eg5 the wheels are green  	nsubj(green-6, wheels-4) / cop(green-6, are-5) -> _predadj(wheels-4, green-6)			[NB plural and determinate of governer of subject relation; take as indicator of property]
+	//or
+	//eg6 That is Jim.   		nsubj(Jim-3, That-1) / cop(Jim-3, is-2) -> appos(That-1, Jim-3)				
+	//or
+	//eg7 The time is 06:45		nsubj(06:45-4, time-2) / cop(06:45-4, is-3) / det(time-2, The-1) -> appos(time-2, 06:45-4)
 	currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{	
@@ -1622,54 +1633,118 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 								{//found a matching object-subject relationship
 
 									#ifndef GIA_OPTIMISE_PERFORMANCE_FOR_RELEX_PATENT_QUERIES_REPLICATION_RATHER_THAN_RELEX_PATENT_SYNTACTIC_PROTOTYPE_OUTPUT_REPLICATION
-									bool detectedDeterminate = false;
- 									Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
-									while(currentRelationInList3->next != NULL)
-									{	
-										#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-										if(!(currentRelationInList3->disabled))
-										{			
-										#endif
-											if(currentRelationInList3->relationType == RELATION_TYPE_DETERMINER) 	
-											{	
-												if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationGovernorIndex)	//redundant test
-												{//found a matching object-subject relationship	
-													detectedDeterminate = true;
+										#ifndef GIA_COLLAPSE_COP_RELATION_DEPENDENT_BE_TO_APPOS_NOT_PREDADJ_OLD`
+										if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+										{
+											GIAEntityNode * subjectGovernorEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
+											
+											bool subjectGovernorAdjectiveOrAdvebFound = false;
+											for(int i=0; i<FEATURE_POS_INDICATES_ADJECTIVE_OR_ADVERB; i++)
+											{
+												//cout << "subjectGovernorEntity->POSTemp = " << subjectGovernorEntity->POSTemp << endl;
+												if(subjectGovernorEntity->POSTemp == featurePOSindicatesAdjectiveOrAdverbTypeArray[i])
+												{
+													subjectGovernorAdjectiveOrAdvebFound = true;
 												}
-											}																			
-										#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-										}			
-										#endif	
-										currentRelationInList3 = currentRelationInList3->next;
-									}										
+											}											
+											
+											if(subjectGovernorAdjectiveOrAdvebFound)
+											{
+												currentRelationInList->relationType = RELATION_TYPE_ADJECTIVE_PREDADJ;
+												currentRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
+												currentRelationInList->relationGovernor = GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
+												currentRelationInList->relationDependentIndex = currentRelationInList2->relationGovernorIndex;
+												currentRelationInList->relationDependent = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName;							
 
-									if(detectedDeterminate)
-									{
-									#endif
+												currentRelationInList2->disabled =  true;												
+											}
+											else
+											{
+												currentRelationInList->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+												currentRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
+												currentRelationInList->relationGovernor = GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
+												currentRelationInList->relationDependentIndex = currentRelationInList2->relationGovernorIndex;
+												currentRelationInList->relationDependent = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName;							
+
+												currentRelationInList2->disabled =  true;											
+											}
+										}
+										else
+										{
+											cout << "warning: redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe() executed with (NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP) - performance substantially reduced" << endl;
+										}
+										#else
+										bool detectedDeterminateOfSubjectGoverner = false;
+										bool detectedDeterminateOfSubjectDependent = false;
+										bool detectedDeterminate = false;
+ 										Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+										while(currentRelationInList3->next != NULL)
+										{	
+
+											#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+											if(!(currentRelationInList3->disabled))
+											{			
+											#endif
+												if(currentRelationInList3->relationType == RELATION_TYPE_DETERMINER) 	
+												{	
+													if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationGovernorIndex)	//redundant test
+													{//found a matching object-subject relationship	
+														//eg she is the one	nsubj(one-4, She-1) / cop(one-4, is-2) / det(one-4, the-3)
+														detectedDeterminateOfSubjectGoverner = true;
+														detectedDeterminate = true;
+													}
+													if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationDependentIndex)	//redundant test
+													{//found a matching object-subject relationship	
+														//eg the girl is tall	nsubj(tall-6, girl-2) / cop(tall-6, is-3) / det(girl-2, The-1)
+														detectedDeterminateOfSubjectDependent = true;
+														detectedDeterminate = true;
+
+														//eg the wheel is green		nsubj(green-6, wheels-4) / cop(green-6, are-5)
+													}												
+												}																			
+											#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+											}			
+											#endif	
+											currentRelationInList3 = currentRelationInList3->next;
+										}
+
+
+										if(detectedDeterminateOfSubjectGoverner || !detectedDeterminate)
+										{
+
+											currentRelationInList->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+											currentRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
+											currentRelationInList->relationGovernor = GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
+											currentRelationInList->relationDependentIndex = currentRelationInList2->relationGovernorIndex;
+											currentRelationInList->relationDependent = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName;							
+
+											currentRelationInList2->disabled =  true;
+										}
+										if(detectedDeterminateOfSubjectDependent)
+										{																
+											currentRelationInList->relationType = RELATION_TYPE_ADJECTIVE_PREDADJ;
+											currentRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
+											currentRelationInList->relationGovernor = GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
+											currentRelationInList->relationDependentIndex = currentRelationInList2->relationGovernorIndex;
+											currentRelationInList->relationDependent = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName;							
+
+											currentRelationInList2->disabled =  true;		
+											/*//Not necessary; already disabled in fillGrammaticalArraysStanford;
+											GIAEntityNode * oldRedundantBeEntity = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];							
+											disableEntityBasedUponFirstSentenceToAppearInNetwork(oldRedundantBeEntity);
+											*/						
+
+										}
+										#endif
+									
+									#else
 										currentRelationInList->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
 										currentRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
 										currentRelationInList->relationGovernor = GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
 										currentRelationInList->relationDependentIndex = currentRelationInList2->relationGovernorIndex;
 										currentRelationInList->relationDependent = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName;							
 
-										currentRelationInList2->disabled =  true;
-									#ifndef GIA_OPTIMISE_PERFORMANCE_FOR_RELEX_PATENT_QUERIES_REPLICATION_RATHER_THAN_RELEX_PATENT_SYNTACTIC_PROTOTYPE_OUTPUT_REPLICATION	
-									}
-									else
-									{																
-										currentRelationInList->relationType = RELATION_TYPE_ADJECTIVE_PREDADJ;
-										currentRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;
-										currentRelationInList->relationGovernor = GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->entityName;
-										currentRelationInList->relationDependentIndex = currentRelationInList2->relationGovernorIndex;
-										currentRelationInList->relationDependent = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->entityName;							
-
-										currentRelationInList2->disabled =  true;		
-										/*//Not necessary; already disabled in fillGrammaticalArraysStanford;
-										GIAEntityNode * oldRedundantBeEntity = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];							
-										disableEntityBasedUponFirstSentenceToAppearInNetwork(oldRedundantBeEntity);
-										*/						
-
-									}
+										currentRelationInList2->disabled =  true;									
 									#endif
 								}
 							}

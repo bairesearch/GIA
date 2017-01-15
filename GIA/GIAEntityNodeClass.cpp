@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i14a 16-Apr-2012
+ * Project Version: 1i14b 16-Apr-2012
  *
  *******************************************************************************/
 
@@ -98,8 +98,8 @@ GIAEntityNode::GIAEntityNode(void)
 	/*
 	CharacterOffsetBeginTemp = -1;
 	CharacterOffsetEndTemp = -1;
-	POSTemp = "";
 	*/
+	POSTemp = "";
 	NERTemp = "";
 	NormalizedNERTemp = "";
 	TimexTemp = "";
