@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u5c 29-Sept-2013
+ * Project Version: 1u5d 29-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1306,9 +1306,9 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 //based on answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork();
 void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, GIACoreference * firstGIACoreferenceInList, int numberReferenceSets)	//bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]
 {
-	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+	//#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "createGIAcoreferenceInListBasedUponIdentifiedReferenceSets()" << endl;
-	#endif
+	//#endif
 	
 	#ifdef GIA_DATABASE_CLEAR_CACHE_EVERY_SENTENCE
 	#ifdef GIA_USE_DATABASE
@@ -1499,11 +1499,12 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 
 				if(foundQueryEntityNodeName)
 				{
+									
 					#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-					cout << "\tcreateGIAcoreferenceInListBasedUponIdentifiedReferenceSet:" << endl;
-					cout << "\tfoundQueryEntityNodeName" << endl;
-					cout << "\tcurrentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
-					cout << "\tconceptEntityMatchingCurrentQueryEntity->entityName = " << conceptEntityMatchingCurrentQueryEntity->entityName << endl;
+					cout << "\tcreateGIAcoreferenceInListBasedUponIdentifiedReferenceSet: entityNode = " << currentQueryEntityNode->entityName << endl;
+					//cout << "\tfoundQueryEntityNodeName" << endl;
+					//cout << "\tcurrentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
+					//cout << "\tconceptEntityMatchingCurrentQueryEntity->entityName = " << conceptEntityMatchingCurrentQueryEntity->entityName << endl;
 					//cout << "currentQueryEntityNode->isConcept = " << currentQueryEntityNode->isConcept << endl;
 					//cout << "conceptEntityMatchingCurrentQueryEntity->isConcept = " << conceptEntityMatchingCurrentQueryEntity->isConcept << endl;
 					#endif
