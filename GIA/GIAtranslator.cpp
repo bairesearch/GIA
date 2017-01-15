@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f2a 01-July-2014
+ * Project Version: 2f2b 01-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -773,15 +773,16 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		}
 	}
 	*/
+	
 	/*
 	cout << "redistributeStanfordRelations: " << endl;
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
 		if(GIAentityNodeArrayFilled[w])
 		{
-			if(GIAfeatureTempEntityNodeArray[w]->disabled)
+			if(!(GIAfeatureTempEntityNodeArray[w]->disabled))
 			{
-				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " disabled" << endl;
+				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " !disabled " << w << endl;
 			}
 		}
 	}
@@ -824,9 +825,9 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	{
 		if(GIAentityNodeArrayFilled[w])
 		{
-			if(GIAfeatureTempEntityNodeArray[w]->disabled)
+			if(!(GIAfeatureTempEntityNodeArray[w]->disabled))
 			{
-				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " disabled" << endl;
+				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " !disabled " << w << endl;
 			}
 		}
 	}
@@ -1549,6 +1550,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 												currentRelationInList = currentRelationInList->next;
 											}
 											*/
+											
 
 											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation
 											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))

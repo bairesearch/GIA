@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f2a 01-July-2014
+ * Project Version: 2f2b 01-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -2384,6 +2384,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 			string prepositionName = convertPrepositionToRelex(&(param->relation[currentRelationID]->relationType), &prepositionFound);
 			if(prepositionFound)
 			{
+				cout << "prepositionName = " << prepositionName << endl;
 				int prepositionEntityIndex = -1;
 				bool prepositionFeatureFound = determineFeatureIndexOfPreposition(param->currentSentenceInList, &prepositionName, &(param->relationEntityIndex[currentRelationID][REL_ENT3]));
 				if(prepositionFeatureFound)
@@ -2392,6 +2393,10 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 					//cout << "REL_ENT3 = " << REL_ENT3 << endl;
 					//cout << "(param->relationEntityIndex[currentRelationID][REL_ENT3]) = " << (param->relationEntityIndex[currentRelationID][REL_ENT3]) << endl;
 				}
+			}
+			else
+			{//added GIA 2f2b
+				param->relationEntityIndex[currentRelationID][REL_ENT3] = -1;
 			}
 			#endif
 
@@ -2877,12 +2882,24 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 											}
 											else
 											{
+												/*
+												if(param->functionName == "redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos")
+												{
+													cout << "prev param->relationEntityIndex[relationID][relationEntityID] = " << param->relationEntityIndex[relationID][relationEntityID] << endl;
+													cout << "prev param->relationEntity[relationID][relationEntityID] = " << param->relationEntity[relationID][relationEntityID] << endl;
+												}
+												*/
 												param->relationEntityIndex[relationID][relationEntityID] = param->relationEntityIndex[param->redistributeRelationEntityIndexReassignmentRelationID[relationID][relationEntityID]][param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID]];
 												param->relationEntity[relationID][relationEntityID] = param->relationEntity[param->redistributeRelationEntityIndexReassignmentRelationID[relationID][relationEntityID]][param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID]];
-												//cout << "param->redistributeRelationEntityIndexReassignmentRelationID[relationID][relationEntityID] = " << param->redistributeRelationEntityIndexReassignmentRelationID[relationID][relationEntityID] << endl;
-												//cout << "param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID] = " << param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID] << endl;
-												//cout << "param->relationEntityIndex[relationID][relationEntityID] = " << param->relationEntityIndex[relationID][relationEntityID] << endl;
-												//cout << "param->relationEntity[relationID][relationEntityID] = " << param->relationEntity[relationID][relationEntityID] << endl;
+												/*
+												if(param->functionName == "redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos")
+												{
+													cout << "param->redistributeRelationEntityIndexReassignmentRelationID[relationID][relationEntityID] = " << param->redistributeRelationEntityIndexReassignmentRelationID[relationID][relationEntityID] << endl;
+													cout << "param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID] = " << param->redistributeRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID] << endl;
+													cout << "new param->relationEntityIndex[relationID][relationEntityID] = " << param->relationEntityIndex[relationID][relationEntityID] << endl;
+													cout << "new param->relationEntity[relationID][relationEntityID] = " << param->relationEntity[relationID][relationEntityID] << endl;
+												}
+												*/
 											}
 
 											if(relationEntityID == REL_ENT1)
@@ -2945,6 +2962,16 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 											}
 											else if(relationEntityID == REL_ENT3)
 											{
+												/*
+												if(param->functionName == "redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos")
+												{
+													cout << "relationID = " << relationID << endl;
+													cout << "relationEntityID = " << relationEntityID << endl;
+													cout << "prev; param->relation[relationID]->relationType = " << param->relation[relationID]->relationType << endl;
+													//cout << "prev; GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = " << param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName << endl;											
+												}
+												*/
+												
 												param->relation[relationID]->relationType = param->redistributeRelationEntityReassignment[relationID][relationEntityID];
 												#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 												if(param->relationEntityIndex[relationID][relationEntityID] != -1)
@@ -2952,6 +2979,15 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 													param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = param->redistributeRelationEntityReassignment[relationID][relationEntityID];
 												}
 												#endif
+												
+												/*
+												if(param->functionName == "redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos")
+												{
+													cout << "param->relationEntityIndex[relationID][relationEntityID]  = " << param->relationEntityIndex[relationID][relationEntityID] << endl;
+													cout << "param->relation[relationID]->relationType = " << param->relation[relationID]->relationType << endl;
+													//cout << "GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = " << param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName << endl;	
+												}
+												*/
 											}
 										}
 									}
