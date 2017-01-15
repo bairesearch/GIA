@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4b 01-September-2014
+ * Project Version: 2g4c 03-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -131,7 +131,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 			//due to opengl code bug, need to execute this function twice.
 
 		#ifdef GIA_FREE_MEMORY1
-		delete initialReferenceInCollapsedSceneFile;
+		//delete initialReferenceInCollapsedSceneFile;	//this cannot be deleted because it is still used by glutDisplayFunc
 		delete topLevelReferenceInCollapsedSceneFile;
 		#endif
 
