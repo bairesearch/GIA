@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7e 29-June-2013
+ * Project Version: 1s7f 30-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -311,7 +311,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		*/
 
 	//for queries only (1j6g)
-	#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP
+	#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_WITH_BE
 		currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{
@@ -3043,6 +3043,72 @@ bool determineIfWordIsVerbContinuousCase(string * word)
 	return foundVerbContinuousCase;
 }
 #endif
+
+void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+{
+	/*
+	redistribute the following stanford relations, eg	
+		Given the nature of the bank, write the letter.
+			translate prep+dep into prep
+			prep(write-8, Given-1)
+			dep(Given-1, nature-3)
+			->prep_given(write-8, nature-3)
+				prep(write-8, Given-1)
+				det(nature-3, the-2)
+				dep(Given-1, nature-3)
+				det(bank-6, the-5)
+				prep_of(nature-3, bank-6)
+				root(ROOT-0, write-8)
+				det(letter-10, the-9)
+				dobj(write-8, letter-10)
+	*/
+
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{
+		//#endif
+			if(currentRelationInList->relationType == RELATION_TYPE_DEPENDENT)
+			{
+ 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+
+				while(currentRelationInList2->next != NULL)
+				{
+					//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					if(!(currentRelationInList2->disabled))
+					{
+					//#endif
+						if(currentRelationInList2->relationType == RELATION_TYPE_PREPOSITION_MODIFIER)
+						{
+							if(currentRelationInList->relationGovernorIndex == currentRelationInList2->relationDependentIndex)
+							{//found a matching relationship
+
+								currentRelationInList->disabled = true;
+								string newPrepositionName = "";
+								string relexPreposition = GIAentityNodeArray[currentRelationInList->relationGovernorIndex]->entityName; 	//currentRelationInList2->relationDependent
+								newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + relexPreposition;
+
+								currentRelationInList2->relationType = newPrepositionName;
+								currentRelationInList2->relationDependentIndex = currentRelationInList->relationDependentIndex;
+								currentRelationInList2->relationDependent = currentRelationInList->relationDependent;
+
+								//disableEntity(GIAentityNodeArray[currentRelationInList->relationGovernorIndex]);	//this will be used
+							}
+						}
+					//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					}
+					//#endif
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+			}
+		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}
+		//#endif
+		currentRelationInList = currentRelationInList->next;
+	}
+}
 
 
 #endif

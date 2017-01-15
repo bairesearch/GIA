@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7e 29-June-2013
+ * Project Version: 1s7f 30-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -541,7 +541,12 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAentit
 											//cout << "conditionTypeConceptEntity = " << conditionTypeConceptEntity->entityName << endl;
 											#endif
 											
+											#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS_RELEX_SPECIFIC
+											cout << "warning: this code was recently updated for Advanced Referencing" << endl;
+											GIAentityNodeArray[currentRelationInList3->relationDependentIndex] = addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
+											#else
 											addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
+											#endif
 										}
 									}
 								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -849,7 +854,12 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 															bool negative = subjectObjectFunctionEntityArray[SUBJECT_INDEX]->negative;
 															subjectIsConnectedToAnAdvMod = true;
 															actionOrSubstanceConditionEntity = objectEntityTemp;
+															#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS_RELEX_SPECIFIC
+															cout << "warning: this code was recently updated for Advanced Referencing" << endl;
+															GIAentityNodeArray[subjectObjectEntityIndexArray[SUBJECT_INDEX]] = addOrConnectBeingDefinitionConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, negative, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);															
+															#else															
 															addOrConnectBeingDefinitionConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, negative, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
+															#endif
 														}
 														#endif
 														#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_CONDITION_PROPERTY
@@ -858,7 +868,12 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 															bool negative = subjectObjectFunctionEntityArray[SUBJECT_INDEX]->negative;
 															subjectIsConnectedToAnAdvMod = true;
 															actionOrSubstanceConditionEntity = objectEntityTemp;	//= subjectObjectEntityArray[SUBJECT_INDEX], = old subjectEntityTemp;
+															#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS_RELEX_SPECIFIC
+															cout << "warning: this code was recently updated for Advanced Referencing" << endl;
+															GIAentityNodeArray[subjectObjectEntityIndexArray[SUBJECT_INDEX]] = addOrConnectHavingPropertyConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, negative, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);															
+															#else																
 															addOrConnectHavingPropertyConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, negative, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
+															#endif
 														}
 														#endif
 														else
@@ -871,8 +886,12 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 															#endif
 															GIAentityNodeArray[actionIndex] = addActionToActionDefinition(actionOrSubstanceConditionEntity);	//not required is done later?
 															actionOrSubstanceConditionEntity = GIAentityNodeArray[actionIndex];
+															#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS_RELEX_SPECIFIC
+															cout << "warning: this code was recently updated for Advanced Referencing" << endl;
+															GIAentityNodeArray[subjectObjectEntityIndexArray[SUBJECT_INDEX]] = addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);															
+															#else	
 															addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
-
+															#endif
 															GIAentityNode * actionEntity = actionOrSubstanceConditionEntity;
 															GIAentityNodeArray[actionIndex] = addOrConnectActionToObject(objectEntityTemp, actionEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 														}
@@ -923,7 +942,12 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 														passpasscomposition = false;		//treat "being" as an action
 														#endif
 
+														#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS_RELEX_SPECIFIC
+														cout << "warning: this code was recently updated for Advanced Referencing" << endl;
+														GIAentityNodeArray[subjectObjectEntityIndexArray[SUBJECT_INDEX]] = addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);														
+														#else	
 														addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
+														#endif
 													#endif
 
 													}
@@ -1030,7 +1054,12 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 												GIAentityNode * actionOrSubstanceConditionEntity = subjectEntityTemp;
 												GIAentityNode * conditionTypeConceptEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
 
+												#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS_RELEX_SPECIFIC
+												cout << "warning: this code was recently updated for Advanced Referencing" << endl;
+												GIAentityNodeArray[subjectObjectFunctionEntityIndexArray[SUBJECT_INDEX]] = addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);												
+												#else
 												addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
+												#endif
 											#endif
 											}
 											else
@@ -1080,10 +1109,14 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 												string conditionTypeName = "specialCondition";
 
 												bool entityAlreadyExistant = false;
-												GIAentityNode * conditionTypeConceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
-
+												#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS_RELEX_SPECIFIC
+												cout << "warning: this code was recently updated for Advanced Referencing" << endl;
+												GIAentityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_SPECIAL_CONDITION_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+												GIAentityNodeArray[FEATURE_INDEX_OF_SPECIAL_CONDITION_UNKNOWN] = addOrConnectConditionToEntity(subjectEntityOrSubstance, specialConditionNode, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);												
+												#else
+												GIAentityNode * conditionTypeConceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);												
 												addOrConnectConditionToEntity(subjectEntityOrSubstance, specialConditionNode, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
-
+												#endif
 											#endif
 										}
 									#ifdef GIA_TRANSLATOR_RETAIN_SUSPECTED_REDUNDANT_RELEX_CODE	
@@ -1258,8 +1291,13 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 																	//cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl;
 																	#endif
 
+																	#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS_RELEX_SPECIFIC
+																	cout << "warning: this code was recently updated for Advanced Referencing" << endl;
+																	GIAentityNodeArray[currentRelationInList3->relationDependentIndex] = addOrConnectConditionToEntity(subjectEntityOrSubstance, specialConditionNode, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);																	
+																	#else
 																	addOrConnectConditionToEntity(subjectEntityOrSubstance, specialConditionNode, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
-
+																	#endif
+																	
 																	foundPartner = true;
 																	currentRelationInList->subjObjRelationAlreadyAdded = true;
 																	currentRelationInList2->subjObjRelationAlreadyAdded = true;
@@ -2126,8 +2164,96 @@ GIAentityNode * addGenericConditionToEntity(GIAentityNode * substanceNode, GIAen
 
 
 //Stanford Only
-void linkPropertiesDependentActions(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
+void linkDependentActionsType1(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
+	/*
+		interpret as condition;
+	To swim to the beach requires strength.
+		csubj(requires-6, swim-2)
+		dobj(requires-6, strength-7)
+	To drive to the beach requires strength.
+		csubj(requires-6, drive-2)
+		dobj(requires-6, strength-7)
+	*/
+	
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			if(currentRelationInList->relationType == RELATION_TYPE_CLAUSAL_SUBJECT)
+			{
+ 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				
+				while(currentRelationInList2->next != NULL)
+				{
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					if(!(currentRelationInList2->disabled))
+					{
+					#endif
+						if(currentRelationInList2->relationType == RELATION_TYPE_OBJECT)
+						{
+							if(currentRelationInList->relationGovernorIndex == currentRelationInList2->relationGovernorIndex)
+							{//found a matching relationship
+
+								string ownerName = currentRelationInList->relationDependent;
+								string substanceName = currentRelationInList2->relationDependent;
+								string conditionTypeName = currentRelationInList->relationGovernor;
+								int ownerIndex = currentRelationInList->relationDependentIndex;
+								int substanceIndex = currentRelationInList2->relationDependentIndex;
+								int conditionTypeIndex = currentRelationInList->relationGovernorIndex; 
+								
+								GIAentityNode * actionOrSubstanceEntity = GIAentityNodeArray[ownerIndex];
+								GIAentityNode * actionOrSubstanceConditionEntity = GIAentityNodeArray[substanceIndex];
+								GIAentityNode * conditionTypeConceptEntity = GIAentityNodeArray[conditionTypeIndex];
+								
+								#ifdef GIA_TRANSLATOR_DEBUG
+								cout << "RELATION_TYPE_DEPENDENT" << endl;
+								cout << "actionOrSubstanceEntity = " << actionOrSubstanceEntity->entityName << endl;								
+								cout << "actionOrSubstanceConditionEntity = " << actionOrSubstanceConditionEntity->entityName << endl;
+								cout << "conditionTypeConceptEntity = " << conditionTypeConceptEntity->entityName << endl;								
+								#endif
+
+								#ifdef GIA_USE_ADVANCED_REFERENCING
+								bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
+								#else
+								bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+								#endif
+											
+								currentRelationInList2->relationType = "dummyRelationNamePreventActionLinkFromBeingCreatedToObject"; 
+								
+								#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
+								GIAentityNodeArray[conditionTypeIndex] = addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, sameReferenceSet);								
+								#else								
+								addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, sameReferenceSet);								
+								#endif
+							}
+						}
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					}
+					#endif
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}	
+}	
+
+
+//Stanford Only
+void linkDependentActionsType2(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts)
+{
+	/*
+	eg To copy the files[, ]create a backup of the old file.
+	 use dep tag to connect dependent actions (interpret as condition - invent one) 
+	 dep(create-6, copy-2)
+	*/
+	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
@@ -2142,8 +2268,8 @@ void linkPropertiesDependentActions(Sentence * currentSentenceInList, GIAentityN
 				int ownerIndex = currentRelationInList->relationGovernorIndex;
 				int substanceIndex = currentRelationInList->relationDependentIndex;
 
-				GIAentityNode * substanceEntity = GIAentityNodeArray[substanceIndex];
-				GIAentityNode * ownerEntity = GIAentityNodeArray[ownerIndex];
+				GIAentityNode * actionOrSubstanceEntity = GIAentityNodeArray[substanceIndex];
+				GIAentityNode * actionOrSubstanceConditionEntity = GIAentityNodeArray[ownerIndex];
 				
 				#ifdef GIA_TRANSLATOR_DEBUG
 				//cout << "RELATION_TYPE_DEPENDENT" << endl;
@@ -2156,8 +2282,22 @@ void linkPropertiesDependentActions(Sentence * currentSentenceInList, GIAentityN
 				#else
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 				#endif
+				
+				string conditionTypeName = GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_DEFAULT_CONDITION_NAME;
+				bool entityAlreadyExistant = false;
+				GIAentityNode * conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, FEATURE_INDEX_OF_ACTION_DEPENDENCY_GENERATED_CONDITION_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+
+				#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
+				GIAentityNodeArray[FEATURE_INDEX_OF_ACTION_DEPENDENCY_GENERATED_CONDITION_UNKNOWN] = addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeEntity, sameReferenceSet);
+				#else
+				addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
+				#endif
+			
+				
+				/*OLD linkPropertiesDependentActions():
 				GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(ownerEntity, substanceEntity, sameReferenceSet);
 				//GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(ownerEntity, substanceEntity, sameReferenceSet);	- check if this might ever be required instead
+				*/
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}

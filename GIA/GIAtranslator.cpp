@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s7e 29-June-2013
+ * Project Version: 1s7f 30-June-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -606,7 +606,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		#endif
 		redistributeStanfordRelationsAdverbalClauseModifierAndComplement(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
 
-		#ifndef GIA_INTERPRET_CSUBJ_AS_SUBJECT_OF_ACTION
+		#ifndef GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_TYPE1
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1c4; redistribute Stanford Relations - Clausal Subject (eg What she said makes sense. 	csubj (make, say)/dobj ( said-3 , What-1 ))" << endl;
 		#endif
@@ -671,6 +671,15 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		#endif
 		redistributeStanfordRelationsExpletives(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPdependencyRelationsType);
 		#endif
+
+		#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP
+		//Added 13 November 2012
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1c14; redistribute Stanford Relations - dependency prepositions (eg 'Given the nature of the bank, write the letter.'  prep(write-8, Given-1) / dep(Given-1, nature-3) -> prep_given(write-8, nature-3) )" << endl;
+		#endif
+		redistributeStanfordRelationsDependencyPreposition(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
+		#endif
+
 	}
 	#endif
 	
@@ -1021,6 +1030,17 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	linkEntityDefinitionsAppositiveOfNouns(currentSentenceInList, GIAentityNodeArray);
 	#endif
 
+#ifdef GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_TYPE1
+	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
+	{
+		//stanford only
+		#ifdef GIA_TRANSLATOR_DEBUG
+ 		cout <<"2d pass; link conditions (dependent actions type 1), eg To swim to the beach requires strength. csubj(requires-6, swim-2) / dobj(requires-6, strength-7) " << endl;
+		#endif
+		linkDependentActionsType1(currentSentenceInList, GIAentityNodeArray);
+	}
+#endif
+
 	#ifdef GIA_TRANSLATOR_DEBUG
  	cout <<"3a pass; link dependent subject-object definition/composition/action relationships" << endl;
 	#endif
@@ -1063,14 +1083,16 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#endif
 	linkConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
+#ifdef GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_TYPE2
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
 		//stanford only
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "3h pass; link properties (dependent actions)" << endl;
+		cout << "3h pass; link conditions (dependent actions type 2); eg To copy the files[, ]create a backup of the old file.	dep(create-6, copy-2)" << endl;
 		#endif
-		linkPropertiesDependentActions(currentSentenceInList, GIAentityNodeArray);
+		linkDependentActionsType2(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts);
 	}
+#endif	
 
 	//Stanford version has been shifted to after all substances have been generated (including actions)... [Upgrade translator - do not associate feature/grammatical info with concept entities; just leave them in the feature array until the concept instances have been generated]
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
