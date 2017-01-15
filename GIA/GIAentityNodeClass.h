@@ -259,6 +259,9 @@ class GIAentityNode
 public:
 
 	GIAentityNode(void);
+	#ifdef USE_NLC
+	GIAentityNode(string newEntityName);
+	#endif
 	~GIAentityNode(void);
 
 

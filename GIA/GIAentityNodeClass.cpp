@@ -278,6 +278,228 @@ GIAentityNode::GIAentityNode(void)
 	#endif
 	#endif
 }
+#ifdef USE_NLC
+GIAentityNode::GIAentityNode(string newEntityName)
+{
+	/*GIA Internal Entity Referencing*/
+	idActiveList = 0;
+	idActiveEntityTypeList = 0;	//temporary ID reserved for specific entity types; concept, action, substance etc
+	idActiveListReorderdIDforXMLsave = 0;
+	idInstance = 0;		//set as concept by default (GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE)
+
+
+	/*GIA Entity Name*/
+	entityName = newEntityName;
+	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
+	wordOrig = "";		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
+	#endif
+	confidence = 1.0;
+
+
+	/*GIA Entity Type*/
+	isConcept = false;
+	isSubstance = false;
+	isAction = false;
+	isCondition = false;
+	hasAssociatedInstance = false;
+	hasAssociatedInstanceIsAction = false;
+	hasAssociatedInstanceIsCondition = false;
+	hasAssociatedTime = false;
+	isSubstanceQuality = false;
+	isSubstanceConcept = false;
+	isActionConcept = false;
+	negative = false;
+
+
+	/*GIA Special Variables (Quantities/Measures)*/
+	hasQuantity = false;
+	quantityNumber = QUANTITY_NUMBER_UNDEFINED;
+	quantityModifier = QUANTITY_MODIFIER_UNDEFINED;	//not yet implemented
+	quantityModifierString = "";	//eg "almost"
+	hasQuantityMultiplier = false;
+	hasMeasure = false;
+	measureType = MEASURE_TYPE_UNDEFINED;
+
+
+	/*GIA Draw Variables*/
+	initialisedForPrinting = false;
+	//printed = false;
+	printX = 0;
+	printY = 0;
+	printXIndex = 0;
+	printYIndex = 0;
+	printTextX = 0;
+	printTextY = 0;
+	printCoordsAlreadyDefined = false;
+
+
+	/*GIA Translator Temporary Variables - Grammar*/
+	grammaticalNumber = GRAMMATICAL_NUMBER_UNDEFINED;
+	grammaticalWordTypeTemp = GRAMMATICAL_WORD_TYPE_UNDEFINED;
+	for(int grammaticalTenseModifierIndex=0; grammaticalTenseModifierIndex<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
+	{
+		grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = false;
+	}
+	grammaticalTenseTemp = GRAMMATICAL_TENSE_UNDEFINED;
+	grammaticalDefiniteTemp = false;
+	grammaticalIndefinitePluralTemp = false;
+	grammaticalProperNounTemp = false;
+	grammaticalGenderTemp = GRAMMATICAL_GENDER_UNDEFINED;
+	//grammaticalCountTemp = GRAMMATICAL_COUNT_UNDEFINED;
+	grammaticalPronounTemp = false;
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+	grammaticalIndexOfDeterminerTemp = GIA_ENTITY_INDEX_UNDEFINED;
+	#endif
+	#ifdef GIA_USE_STANFORD_CORENLP
+	/*
+	CharacterOffsetBeginTemp = INT_DEFAULT_VALUE;
+	CharacterOffsetEndTemp = INT_DEFAULT_VALUE;
+	*/
+	stanfordPOStemp = "";
+	NERTemp = FEATURE_NER_UNDEFINED;
+	NormalizedNERtemp = "";
+	TimexTemp = "";
+	#endif
+
+	/*GIA Translator Temporary Variables*/
+	isSubjectTemp = false;
+	isObjectTemp = false;
+	hasSubstanceTemp = false;
+	//hasQualityTemp = false;
+	isActionTemp = false;
+	entityIndexTemp = GIA_ENTITY_INDEX_UNDEFINED;	//was 0 before 11 October 2012
+	sentenceIndexTemp = GIA_SENTENCE_INDEX_UNDEFINED;	//was 0 before 11 October 2012
+	isToBeComplimentOfActionTemp = false;
+	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	disableParsingAsPrepositionRelationTemp = false;
+	#endif
+	entityAlreadyDeclaredInThisContext = false;
+	hasAssociatedInstanceTemp = false;
+	#ifdef GIA_SUPPORT_ALIASES
+	isName = false;
+	isNameQuery = false;
+	#endif
+	#ifdef GIA_SUPPORT_NUMBER_OF
+	isNumberOf = false;
+	#endif
+	
+	/*GIA Connections*/
+	//to minimise query/referencing code
+	actionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS]);
+	incomingActionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS]);
+	conditionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS]);
+	incomingConditionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS]);
+	propertyNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES]);
+	propertyNodeReverseList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES]);
+	entityNodeDefinitionList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS]);
+	entityNodeDefinitionReverseList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS]);
+	associatedInstanceNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]);
+	actionSubjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT]);
+	actionObjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT]);
+	conditionSubjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT]);
+	conditionObjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT]);
+	entityNodeDefiningThisInstance = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE]);
+	#ifdef GIA_USE_DATABASE
+	DBsetEntityConnectionsReferenceListsLoaded(this, true);	//for now, assume that a new entity will be configured with its connections loaded into RAM
+	#endif
+	/*
+	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_DEFINITIONS] = entityNodeDefinitionList;
+	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_SUBSTANCES] = propertyNodeList;
+	*/
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	/* initialisation shouldnt be necessary...
+	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+	{
+		entityVectorConnectionsParametersSameReferenceSetArray[i] = new vector<GIAentityNode*>();
+	}
+	*/
+	#endif
+	conditionType = CONDITION_NODE_TYPE_UNDEFINED;
+	timeConditionNode = NULL;
+
+
+	/*Query Variables*/
+	isQuery = false;
+	isWhichOrEquivalentWhatQuery = false;
+	isAnswerToQuery = false;
+	testedForQueryComparison = false;
+	testedForQueryComparisonTemp = false;
+	queryAnswerContext = false;
+	queryEntityTraced = false;
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+	entityCorrespondingBestMatch = NULL;
+	#endif
+
+
+	/*GIA Miscellaneous Internal Variables*/
+	disabled = false;
+	permanentConcept = false;
+	firstSentenceToAppearInNetwork = true;
+		//CXL:
+	CXLdummyNode = false;
+		//referencing:
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+	referenceSetID = GIA_REFERENCE_SET_ID_UNDEFINED;
+	minimumEntityIndexOfReferenceSet = GIA_REFERENCE_SET_ID_UNDEFINED;
+	#endif
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
+	wasReferenceTemp = false;
+	#endif
+	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
+	wasReference = false;
+	#endif
+	#endif
+	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+	alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;		//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
+	mustSetIsSubstanceConceptBasedOnApposRelation = false;
+	isPronounReference = false;
+	#endif
+		//databasing:
+	#ifdef GIA_USE_DATABASE
+	added = false;		//implies database Update is Required		//CHECKTHIS removed 'bool' 21 July 2012
+	modified = false;	//implies database Update is Required		//CHECKTHIS removed 'bool' 21 July 2012
+	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
+	conceptEntityLoaded = NULL;
+	#endif
+	#endif
+		//nlg:
+	#ifdef GIA_USE_NLG
+	parsedForLanguageGeneration = false;
+	sourceAddedInLanguageGeneration = false;		//added 3 Aug 2013 - why wasn't this being initialised?
+	sourceReferencedInLanguageGeneration = false;
+	#endif
+
+	#ifdef USE_NLC
+	NLCparsedForCodeBlocks = false;
+	//parsedForNLCcodeBlocksActionRound = false;
+	//parsedForNLCclassHeirarchy = false;
+	NLCisSingularArgument = false;
+	NLClocalListVariableHasBeenDeclared = false;
+	NLClocalListVariableHasBeenInitialised = false;
+	NLClogicalConditionOperation = false;		//required as some logical condition operation conditions (prepositions) require sentence context for detection (eg "for each/all/every")
+	NLCparsedForlogicalConditionOperations = false;
+	NLCconjunctionCondition = false;
+	NLClogicalConditionConjunctionIndex = INT_DEFAULT_VALUE;
+	NLCcontextGenerated = false;
+	NLCoriginalNumericalVariableName = "";
+	NLCcontextGeneratedTemp = false;
+	NLCcategoryListCreatedTemp = false;
+	#endif
+	
+	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
+	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
+	conditionType2 = ""; 
+	#endif
+	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+	conditionTwoWay = false;
+	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	inverseConditionTwoWay = false;
+	#endif
+	#endif
+	#endif
+}
+#endif
 GIAentityNode::~GIAentityNode(void)
 {
 	//delete all connections
