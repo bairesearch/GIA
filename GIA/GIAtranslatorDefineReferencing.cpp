@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o2a 12-October-2016
+ * Project Version: 2o2b 12-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -2098,12 +2098,8 @@ bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode* entityNode, 
 		//}
 		#endif
 
+		bool pass = true;
 		#ifdef GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET
-		#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
-		if((!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)) && ((entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) || isProperty) && !(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX))	//!isNetworkIndex test added 2f19e 24-July-2014
-		#else
-		if((!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)) && ((entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) || isProperty))
-		#endif
 		/*
 		NB1 entityNode->minimumEntityIndexOfReferenceSet is only assigned when referenceSetAlreadyAssigned (referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)
 		NB2 (!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)): only replace reference set id when definining an earlier (ie larger) reference set in the sentence
@@ -2114,10 +2110,36 @@ bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode* entityNode, 
 		     eg reference set 1 identification: the house (!referenceSetAlreadyAssigned  && entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet)
 		     eg reference set 1 reidentification: the book of the house (referenceSetAlreadyAssigned for "house", but; minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet && entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) {overwrites smaller reference set 'the house'}
 		*/
-
-		#else
-		if(!referenceSetAlreadyAssigned)
+		if(!(!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)))
+		{
+			pass = false;
+		}
+		if(!((entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) || isProperty))
+		{
+			pass = false;
+		}
+		#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
+		//added 2f19e 24-July-2014
+		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX)
+		{
+			pass = false;
+		}
 		#endif
+		#else
+		if(referenceSetAlreadyAssigned)
+		{
+			pass = false;
+		}
+		#endif
+		#ifdef GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES
+		#ifdef GIA_SUPPORT_NUMBER_OF
+		if(entityNode->isNumberOf)
+		{
+			pass = false;	//added 2m2b - do not create reference set for number of references (prevents gia advanced referencing of number of expressions, and enables gia advanced referencing of subexpressions eg "mountain" in "the number of blue birds near the mountain")
+		}
+		#endif		
+		#endif
+		if(pass)
 		{
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
 			cout << "\tpass" << endl;
