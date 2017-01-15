@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t9a 14-Sept-2013
+ * Project Version: 1t9b 15-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1028,6 +1028,7 @@ GIAentityNode * addOrConnectActionToObject(GIAentityNode * objectEntity, GIAenti
 	void connectActionInstanceToObject(GIAentityNode * objectEntity, GIAentityNode * newOrExistingAction, bool sameReferenceSet);
 GIAentityNode * addActionToActionDefinitionDefineSubstances(GIAentityNode * actionEntity);
 		void upgradeSubstanceToAction(GIAentityNode * substance);
+			void eraseSubstanceFromSubstanceList(GIAentityNode * existingEntity);
 		GIAentityNode * addAction(GIAentityNode * actionEntity);
 	
 GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionEntityNode, GIAentityNode * conditionTypeEntity, bool sameReferenceSet);
@@ -1265,7 +1266,7 @@ public:
 	bool disableRelationDuringLink[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
 };
 
-bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters * param, int currentRelationID);
+bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters * param, int currentRelationID, string functionName);
 
 #endif
 
@@ -1308,7 +1309,7 @@ public:
 	bool disableEntity;
 };
 
-bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * param);
+bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * param, string functionName);
 
 #endif
 

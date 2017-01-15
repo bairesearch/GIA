@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t9a 14-Sept-2013
+ * Project Version: 1t9b 15-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1352,7 +1352,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 			if(depRelOrEntity)
 			{
 				//cout << "genericDependecyRelationInterpretation()" << endl;							
-				if(genericDependecyRelationInterpretation(&paramDepRel, REL1))
+				if(genericDependecyRelationInterpretation(&paramDepRel, REL1, functionName))
 				{	
 					if(asssertsetDefiniteAfterFinish)
 					{
@@ -1368,7 +1368,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 			}
 			else
 			{
-				if(genericEntityInterpretation(&paramEntity))
+				if(genericEntityInterpretation(&paramEntity, functionName))
 				{
 					/*
 					if(functionName == "defineSubstanceConcepts")			

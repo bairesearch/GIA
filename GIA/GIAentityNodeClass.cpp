@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t9a 14-Sept-2013
+ * Project Version: 1t9b 15-Sept-2013
  *
  *******************************************************************************/
 
@@ -240,6 +240,10 @@ GIAentityNode::GIAentityNode(void)
 	sourceAddedInLanguageGeneration = false;		//added 3 Aug 2013 - why wasn't this being initialised?
 	sourceReferencedInLanguageGeneration = false;
 	#endif
+	
+	#ifdef USE_NLPI
+	parsedForNLPI = false;
+	#endif	
 }
 GIAentityNode::~GIAentityNode(void)
 {

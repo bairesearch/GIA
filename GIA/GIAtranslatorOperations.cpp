@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t9a 14-Sept-2013
+ * Project Version: 1t9b 15-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -449,43 +449,80 @@ void upgradeSubstanceToAction(GIAentityNode * substance)
 
 	if(saveNetwork)
 	{	
-		#ifdef GIA_TRANSLATOR_DEBUG
-		//cout << "existingAction->idActiveEntityTypeList = " << existingAction->idActiveEntityTypeList << endl;
-		#endif
-		int i=0;
-		bool substanceEntityNodesListIteratorIsFound = false;
- 		vector<GIAentityNode*>::iterator substanceEntityNodesListIteratorFound;
-		for(vector<GIAentityNode*>::iterator substanceEntityNodesListIterator = entityNodesActiveListSubstances->begin(); substanceEntityNodesListIterator != entityNodesActiveListSubstances->end(); substanceEntityNodesListIterator++)
-		{
-			if((*substanceEntityNodesListIterator)->idActiveEntityTypeList == existingAction->idActiveEntityTypeList)
-			{
-				substanceEntityNodesListIteratorFound = substanceEntityNodesListIterator;
-				substanceEntityNodesListIteratorIsFound = true;
-			}
-			#ifdef GIA_TRANSLATOR_DEBUG
-			//cout << "i = " << i << endl;
-			//cout << "(*substanceEntityNodesListIterator)->entityName = " << (*substanceEntityNodesListIterator)->entityName << endl;
-			#endif
-			i++;
-		}
-		if(!substanceEntityNodesListIteratorIsFound)
-		{
-			cout << "error: !...EntityNodesListIteratorIsFound" << endl;
-			exit(0);
-		}
-		entityNodesActiveListSubstances->erase(substanceEntityNodesListIteratorFound);
-
-		/*//removed 8 May 2012
-		vector<GIAentityNode*>::iterator substanceEntityNodesListIterator = entityNodesActiveListSubstances->begin();
-		advance(substanceEntityNodesListIterator,existingAction->idActiveEntityTypeList);
-		entityNodesActiveListSubstances->erase(substanceEntityNodesListIterator);
-		currentEntityNodeIDInSubstanceEntityNodesList--;
-		*/
+		eraseSubstanceFromSubstanceList(existingAction);
 
 		entityNodesActiveListActions->push_back(existingAction);
 		currentEntityNodeIDInActionEntityNodesList++;
 	}
 }
+
+/*
+void eraseActionFromActionList(GIAentityNode * existingAction)
+{
+	#ifdef GIA_TRANSLATOR_DEBUG
+	//cout << "existingEntity->idActiveEntityTypeList = " << existingEntity->idActiveEntityTypeList << endl;
+	#endif
+	int i=0;
+	bool actionEntityNodesListIteratorIsFound = false;
+ 	vector<GIAentityNode*>::iterator actionEntityNodesListIteratorFound;
+	for(vector<GIAentityNode*>::iterator actionEntityNodesListIterator = entityNodesActiveListActions->begin(); actionEntityNodesListIterator != entityNodesActiveListActions->end(); actionEntityNodesListIterator++)
+	{
+		if((*actionEntityNodesListIterator)->idActiveEntityTypeList == existingEntity->idActiveEntityTypeList)
+		{
+			actionEntityNodesListIteratorFound = actionEntityNodesListIterator;
+			actionEntityNodesListIteratorIsFound = true;
+		}
+		#ifdef GIA_TRANSLATOR_DEBUG
+		//cout << "i = " << i << endl;
+		//cout << "(*actionEntityNodesListIterator)->entityName = " << (*actionEntityNodesListIterator)->entityName << endl;
+		#endif
+		i++;
+	}
+	if(!actionEntityNodesListIteratorIsFound)
+	{
+		cout << "error: !...EntityNodesListIteratorIsFound" << endl;
+		exit(0);
+	}
+	entityNodesActiveListActions->erase(actionEntityNodesListIteratorFound);
+}
+*/
+
+void eraseSubstanceFromSubstanceList(GIAentityNode * existingEntity)
+{
+	#ifdef GIA_TRANSLATOR_DEBUG
+	//cout << "existingEntity->idActiveEntityTypeList = " << existingEntity->idActiveEntityTypeList << endl;
+	#endif
+	int i=0;
+	bool substanceEntityNodesListIteratorIsFound = false;
+ 	vector<GIAentityNode*>::iterator substanceEntityNodesListIteratorFound;
+	for(vector<GIAentityNode*>::iterator substanceEntityNodesListIterator = entityNodesActiveListSubstances->begin(); substanceEntityNodesListIterator != entityNodesActiveListSubstances->end(); substanceEntityNodesListIterator++)
+	{
+		if((*substanceEntityNodesListIterator)->idActiveEntityTypeList == existingEntity->idActiveEntityTypeList)
+		{
+			substanceEntityNodesListIteratorFound = substanceEntityNodesListIterator;
+			substanceEntityNodesListIteratorIsFound = true;
+		}
+		#ifdef GIA_TRANSLATOR_DEBUG
+		//cout << "i = " << i << endl;
+		//cout << "(*substanceEntityNodesListIterator)->entityName = " << (*substanceEntityNodesListIterator)->entityName << endl;
+		#endif
+		i++;
+	}
+	if(!substanceEntityNodesListIteratorIsFound)
+	{
+		cout << "error: !...EntityNodesListIteratorIsFound" << endl;
+		exit(0);
+	}
+	entityNodesActiveListSubstances->erase(substanceEntityNodesListIteratorFound);
+
+	/*//removed 8 May 2012
+	vector<GIAentityNode*>::iterator substanceEntityNodesListIterator = entityNodesActiveListSubstances->begin();
+	advance(substanceEntityNodesListIterator,existingAction->idActiveEntityTypeList);
+	entityNodesActiveListSubstances->erase(substanceEntityNodesListIterator);
+	currentEntityNodeIDInSubstanceEntityNodesList--;
+	*/
+}
+
 
 GIAentityNode * addActionToActionDefinitionDefineSubstances(GIAentityNode * actionEntity)
 {
@@ -2105,7 +2142,7 @@ GIAgenericDepRelInterpretationParameters::~GIAgenericDepRelInterpretationParamet
 {
 }
 
-bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters * param, int currentRelationID)
+bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters * param, int currentRelationID, string functionName)
 {
 	//cout << "START genericDependecyRelationInterpretation: " << currentRelationID << endl;
 	bool result = false;
@@ -2235,7 +2272,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 					cout << currentRelationID << ": " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
 					#endif
 					GIAgenericDepRelInterpretationParameters paramTemp = *param;	//this shouldnt be required anymore with relationFinalResult/relationEntityFinalResult/relationEntityIndexFinalResult... 	//only record parameters (eg relationEntity/relationEntityIndex) if successfully recused - this is required if additional commands are required to be executed based on the successful (result==true) recursion of genericDependecyRelationInterpretation (e.g. in GIAtranslatorRedistributeStanfordRelations.cpp)  
-					if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1)))
+					if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1), functionName))
 					{
 						result = true;
 						*param = paramTemp;	//this shouldnt be required anymore with relationFinalResult/relationEntityFinalResult/relationEntityIndexFinalResult... 	//only record parameters (eg relationEntity/relationEntityIndex) if successfully recused - this is required if additional commands are required to be executed based on the successful (result==true) recursion of genericDependecyRelationInterpretation (e.g. in GIAtranslatorRedistributeStanfordRelations.cpp)  
@@ -2266,9 +2303,8 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 							if(param->useRelationIndexTest[relationID][relationEntityID])
 							{
 								//cout << "useRelationIndexTest: " << relationID << ", " << relationEntityID << endl;				
-								
 								if(passedEntityMatchTests)
-								{//NB for relationType tests use relationType as indicies are not available							
+								{//NB for relationType tests use relationType as indicies are not available
 									passedEntityMatchTests = false;
 									if(param->relationIndexTestIsNegative[relationID][relationEntityID])
 									{
@@ -2328,6 +2364,8 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 						cout << "passedEntityMatchTests" << endl;
 						#endif
 						result = true;
+						
+						//cout << "genericDependecyRelationInterpretation() passed: function = " << functionName << endl;
 						
 						//record final values for further manipulation of variables after successful (match found) recursive execution of genericDependecyRelationInterpretation:
 						for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
@@ -2607,7 +2645,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										#endif
 										bool auxillaryIndicatesDifferentReferenceSet = true;
 										GIAgenericDepRelInterpretationParameters paramTemp = *param;
-										if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1)))
+										if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1), functionName))
 										{
 											auxillaryIndicatesDifferentReferenceSet = false;
 										}
@@ -2735,7 +2773,7 @@ GIAgenericEntityInterpretationParameters::~GIAgenericEntityInterpretationParamet
 {
 }
 
-bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * param)
+bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * param, string functionName)
 {
 	bool result = false;
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -2782,6 +2820,7 @@ bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * para
 						bool foundAnArrayPass = false;
 						//int entityArrayTestSize = sizeof((param->entityArrayTest))/sizeof((param->entityArrayTest)[0]);
 						//cout << "entityArrayTestSize = " << entityArrayTestSize << endl;
+						//cout << "genericEntityInterpretation() passed: function = " << functionName << endl;
 						for(int j=0; j<param->entityArrayTestSize; j++)
 						{
 							if(param->GIAentityNodeArray[i]->entityName == (param->entityArrayTest)[j])

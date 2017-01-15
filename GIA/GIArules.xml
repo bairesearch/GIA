@@ -1695,6 +1695,7 @@
 			</function>		
 		</file>
 		<file name="GIAtranslatorRedistributeRelexRelations">
+					
 			<function name="collapseRedundantRelationAndMakeNegativeRelex">
 				<example><!--
 				eg Space is saved by not having a bulky cart. _subj(not[5], by[4]), _subj(have[6], not[5])
@@ -2050,7 +2051,22 @@
 				eg interpret 'Max is the name of the red dog.' ? -> appos(dog-3, Max-7)
 				--></example>
 			</function>
-			<!-- #endif -->		
+			<!-- #endif -->
+			
+			<function name="redistributeRelexRelationsDisableRedundantObjectRelations">
+				<!-- this function has only been coded for: it is for NLPI testing only!!! -->
+				<example><!--
+				eg Tom rides the Max's blue bike near the garage
+				near(ride[2], garage[10])
+				_obj(near[8], garage[10])	<- disable this relation
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="2" />
+				<option useRelationArrayTest="true" REL="0" REL_ENT="2" relationArrayTest="_subj|_obj" relationArrayTestSize="2" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="2" relationIndexTestRelationID="0" relationIndexTestEntityID="0" /> <!-- check apparent "action" is not also a preposition - added 15 Sept 2013 for Relex parsing of "Tom rides the Max's blue bike near the garage."-->
+				<option disableRelation="true" REL="0" />
+				</paramDepRel>
+			</function>					
 		</file>
 		<file name="GIAtranslatorDefineSubstances">
 			<function name="defineSubstancesObjectsAndSubjectsWithSubstances">
