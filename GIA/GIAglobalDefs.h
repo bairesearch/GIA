@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r10e 28-November-2012
+ * Project Version: 1r10f 28-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -613,7 +613,7 @@
 	#define GIA_DATABASE_CLEAR_CACHE_EVERY_SENTENCE
 #endif
 
-#define GIA_SEMANTIC_NET_DO_NOT_WRITE_DISABLED_ENTITY_NODES	//added 29 Nov 2012
+#define GIA_SEMANTIC_NET_DO_NOT_WRITE_DISABLED_ENTITY_NODES	//added 29 Nov 2012 (this cannot be used at present as <entityNode> idActiveList values must be consecutive in xml file)
 #ifdef GIA_SEMANTIC_NET_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 	#define GIA_SEMANTIC_NET_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES	//added 29 Nov 2012
 #else
