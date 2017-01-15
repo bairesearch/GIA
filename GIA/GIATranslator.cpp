@@ -143,7 +143,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	cout << "pass A;" << endl;
 	cout << "pass 0; locate/add all entities" << endl;
 	#endif
-	locateAndAddAllConceptEntities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, sentenceConceptEntityNodesList, NLPdependencyRelationsType);
+	locateAndAddAllConceptEntities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, sentenceConceptEntityNodesList, NLPdependencyRelationsType, NLPfeatureParser);
 
 	Feature * featureArrayTemp[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 	generateTempFeatureArray(currentSentenceInList->firstFeatureInList, featureArrayTemp);	//regeneration required for Relex in case query variables detected
@@ -294,7 +294,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		cout << "pass 1z9; redistribute Stanford Relations - Prt And Tmods (eg The disaster happened over night.   prt(happened-3, over-4) / tmod(happened-3, night-5) -> over(happened-3, night-5) )" << endl;
 		#endif
 		redistributeStanfordRelationsPrtAndTmod(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);	
-				
+
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1z10; redistribute Stanford Relations - Create Query Vars (eg interpret 'who is that' / 'what is the time.'  attr(is-2, Who-1) / attr(is-2, What-1) | interpret 'how much'/'how many' | interpret 'which' det(house-2, Which-1) | interpret how/when/where/why advmod(happen-5, How-1) / advmod(leave-4, When-1) / advmod(is-2, Where-1) / advmod(fall-5, Why-1)	 )" << endl;
+		#endif		
+		redistributeStanfordRelationsCreateQueryVars(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+		
 	}
 	#endif
 

@@ -17,14 +17,11 @@
 
 
 
-void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType)
+void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType, int NLPfeatureParser)
 {		
-	bool expectToFindComparisonVariable = false;
 	if(currentSentenceInList->isQuestion)
 	{
-		expectToFindComparisonVariable = true;
 		setFoundComparisonVariable(false);
-		//cout << "expectToFindComparisonVariable" << endl;
 	}	
 		
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -71,20 +68,25 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 		entityAlreadyExistant[1] = false;
 
 		bool argumentIsQuery = false;
-		if(name[1] == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
-		{//modify relation index [to prevent overlapping of comparison variable indicies with other indicies]
-			
-			//update feature->entityIndex using featureArrayTemp - added 1 May 2012 after Relex Failure detected 
-			Feature * featureArrayTemp[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
-			generateTempFeatureArray(currentSentenceInList->firstFeatureInList, featureArrayTemp);			
-			Feature * featureOfQueryNode = featureArrayTemp[relationIndex[1]];
-			featureOfQueryNode->entityIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX;
-					
-			relationIndex[1] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX;
-			currentRelationInList->relationDependentIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX;
-			argumentIsQuery = true;
-			
+		#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
+		if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)		
+		{
+			if(name[1] == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+			{//modify relation index [to prevent overlapping of comparison variable indicies with other indicies]
+
+				//update feature->entityIndex using featureArrayTemp - added 1 May 2012 after Relex Failure detected 
+				Feature * featureArrayTemp[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
+				generateTempFeatureArray(currentSentenceInList->firstFeatureInList, featureArrayTemp);			
+				Feature * featureOfQueryNode = featureArrayTemp[relationIndex[1]];
+				featureOfQueryNode->entityIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX;
+
+				relationIndex[1] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX;
+				currentRelationInList->relationDependentIndex = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX;
+				argumentIsQuery = true;
+
+			}
 		}
+		#endif
 
 		for(int i=0; i<2; i++)
 		{
@@ -105,15 +107,20 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 
 				sentenceConceptEntityNodesList->push_back(entity);	//for GIA_USE_CE
 				
-				if(i == 1)
-				{//argument index only
-					if(argumentIsQuery)
-					{
-						GIAEntityNodeArray[relationIndex[i]]->isQuery = true;
-						setFoundComparisonVariable(true);
-						setComparisonVariableNode(GIAEntityNodeArray[relationIndex[i]]);				
-					}
-				}			
+				#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
+				if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)		
+				{				
+					if(i == 1)
+					{//argument index only
+						if(argumentIsQuery)
+						{
+							GIAEntityNodeArray[relationIndex[i]]->isQuery = true;
+							setFoundComparisonVariable(true);
+							setComparisonVariableNode(GIAEntityNodeArray[relationIndex[i]]);				
+						}
+					}	
+				}
+				#endif		
 			}		
 		}
 

@@ -737,12 +737,13 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 												//NB definitions are only assigned to entities, not properties (instances of entities)
 
+											
 											#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
 											if(currentSentenceInList->isQuestion == true)
 											#else
 											if(subjectEntityTemp->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 											#endif
-											{
+											{//this section of code is only used for RelEx: NB Stanford CoreNLP ouputs "what is"/"who is" queries in appos format (not in obj/subj format)
 											#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY									
 												//switch object/subject variables [transform question into answer form]
 												addDefinitionToEntity(objectEntityTemp, subjectEntityTemp);
@@ -1418,7 +1419,7 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			passedPreposition = true;		
 		}
 		
-		for(int i=0; i<RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES; i++)
+		for(int i=0; i<RELATION_TYPE_QVARIABLE_NUMBER_OF_TYPES; i++)	//this code shouldnt be required, because the qvar should be detected within one of the above loop (as per stanford)
 		{
 			if(prepositionName == relationTypeQVariableNameArray[i])
 			{

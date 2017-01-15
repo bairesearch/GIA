@@ -150,7 +150,19 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 		}
 	}
 	#endif
-	
+	#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
+	#ifdef GIA_USE_STANFORD_PARSER
+	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER)
+	{
+		if(isQuery)
+		{
+			cout << "error: parseNLPParserFile() does not support queries at present with (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER). Set feature parser to RelEx or Stanford Core NLP for queries" << endl;
+			exit(0); 			
+		}
+	}	
+	#endif	
+	#endif
+		
 			
 	//Parse Relations
 	#ifdef GIA_USE_RELEX
@@ -355,6 +367,7 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 		{
 			XMLParserTag * firstTagInTokens = parseTagDownALevel(currentTagInSentence, StanfordCoreNLP_XML_TAG_tokens, &result);
 			XMLParserTag * currentTagInTokens = firstTagInTokens;
+			bool isQuestion = false;
 			
 			while(currentTagInTokens->nextTag != NULL)
 			{
@@ -369,6 +382,14 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 					{
 						string TagValue = currentTagInToken->value;
 						currentFeatureInList->word = TagValue;
+						#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
+						#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
+						if(currentFeatureInList->word == FEATURE_WORD_QUESTIONMARK)
+						{
+							isQuestion = true;
+						}
+						#endif
+						#endif
 					}
 					else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_lemma)
 					{
@@ -428,6 +449,24 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 
 				currentTagInTokens = currentTagInTokens->nextTag;
 			}
+			#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
+			#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
+			if(isQuery)
+			{
+				if(isQuestion)
+				{
+					//cout << "Stanford CoreNLP found question" << endl;
+					currentSentence->isQuestion = true;
+				}
+				else
+				{
+					cout << "error: GIA query is not a question" << endl;
+					exit(0); 
+				}
+			}
+			#endif
+			#endif
+														
 		}
 
 		currentTagInSentence = currentTagInSentence->nextTag;

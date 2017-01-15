@@ -399,8 +399,6 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, GIAEntit
 
 						disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationDependentIndex]);
 
-
-						//THIS IS PROBABLY NOT POSSIBLE FOR THE STANFORD PARSER; (BUT HAS BEEN LEFT IN INCASE THERE IS A FUTURE IMPROVEMENT TO STANFORD PARSER)
 						if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 						{//update comparison variable (set it to the quantity)	
 							quantityProperty->isQuery = true;

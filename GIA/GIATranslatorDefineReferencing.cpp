@@ -32,28 +32,29 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 
 		if(expectToFindComparisonVariable)
 		{
-			/* moved back to locateAndAddAllConceptEntities
-			foundComparisonVariable = false;
-
-			//cout << "here1" << endl;
-			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+			#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
+			if(NLPfeatureParser != GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 			{
-				if(GIAEntityNodeArrayFilled[i])
+				//cout << "here1" << endl;
+				for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 				{
-					GIAEntityNode * entityNode = GIAEntityNodeArray[i];
-					if(entityNode->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+					if(GIAEntityNodeArrayFilled[i])
 					{
-						//cout << "foundComparisonVariable" << endl;
-						entityNode->isQuery = true;
-						foundComparisonVariable = true;
-						comparisonVariableNode = entityNode;	
-						#ifdef GIA_TRANSLATOR_DEBUG
-						cout << "foundComparisonVariable" << endl;				
-						#endif
-					}
-				}			
+						GIAEntityNode * entityNode = GIAEntityNodeArray[i];
+						if(entityNode->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+						{
+							cout << "foundComparisonVariable" << endl;
+							entityNode->isQuery = true;
+							setComparisonVariableNode(entityNode);		
+							setFoundComparisonVariable(true);
+							#ifdef GIA_TRANSLATOR_DEBUG
+							cout << "foundComparisonVariable" << endl;				
+							#endif
+						}
+					}			
+				}
 			}
-			*/
+			#endif
 
 			#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
 			if(!getFoundComparisonVariable())
@@ -75,15 +76,45 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 						cout << "currentFeatureInList->type = " << currentFeatureInList->type << endl;
 						cout << "currentFeatureInList->grammar = " << currentFeatureInList->grammar << endl;
 						*/
-						if((currentFeatureInList->word == featureQueryWordAcceptedByAlternateMethodNameArray[i]) && (currentFeatureInList->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i]) && (currentFeatureInList->type == FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME) && (currentFeatureInList->grammar == featureQueryWordAcceptedByAlternateMethodNameArray[i]))
-						{//eg 1	which	which	adj	which
-							//cout << "foundQueryWordAcceptedByAlternateMethod" << endl;
-							foundQueryWordAcceptedByAlternateMethod = true;
+						
+						#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
+						if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
+						{
+						#endif						
+							if((currentFeatureInList->word == featureQueryWordAcceptedByAlternateMethodNameArray[i]) && (currentFeatureInList->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i]) && (currentFeatureInList->type == FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME) && (currentFeatureInList->grammar == featureQueryWordAcceptedByAlternateMethodNameArray[i]))
+							{//eg 1	which	which	adj	which
+								//cout << "foundQueryWordAcceptedByAlternateMethod" << endl;
+								foundQueryWordAcceptedByAlternateMethod = true;
+							}
+						#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET	
 						}
+						else if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+						{
+							//cannot check the word value here, as the word recorded by the Stanford parser may be capitalised
+							if((currentFeatureInList->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i]) && (currentFeatureInList->stanfordPOS == FEATURE_POS_TAG_WDT))
+							{//eg lemma=which, POS=WHT
+								//cout << "foundQueryWordAcceptedByAlternateMethod" << endl;
+								foundQueryWordAcceptedByAlternateMethod = true;
+							}						
+						}
+						#endif
+
 					}
 					if(foundQueryWordAcceptedByAlternateMethod)
 					{
-						if((currentFeatureInList->type == FEATURE_RELEX_POS_TYPE_NOUN_NAME) && !foundComparisonVariableAlternateMethod)
+						bool nounFound = false;	//finds the first noun after "which"
+						#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
+						if(currentFeatureInList->grammaticalWordType == GRAMMATICAL_WORD_TYPE_NOUN)
+						{
+							nounFound = true;
+						}	
+						#else					
+						if(currentFeatureInList->type == FEATURE_RELEX_POS_TYPE_NOUN_NAME)
+						{
+							nounFound = true;
+						}						
+						#endif		
+						if(nounFound && !foundComparisonVariableAlternateMethod)
 						{
 							foundComparisonVariableAlternateMethod = true;
 							//cout << "foundQueryWordAcceptedByAlternateMethod" << endl;
