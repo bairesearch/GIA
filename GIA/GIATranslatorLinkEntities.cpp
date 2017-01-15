@@ -23,7 +23,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q8a 07-November-2012
+ * Project Version: 1q8b 07-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -660,25 +660,18 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityN
 						}
 						#endif
 
-						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
-						if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_WITH_BE_AS_DEFINITION_LINK
+						for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_TO_DO_SUBSTANCE_NUMBER_OF_TYPES; i++)
 						{
-						#endif
-							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
-							for(int i=0; i<RELATION_TYPE_OBJECT_SPECIAL_TO_DO_SUBSTANCE_NUMBER_OF_TYPES; i++)
+							if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionToDoSubstanceNameArray[i])
 							{
-								if(currentRelationInList2->relationType == relationTypeObjectSpecialConditionToDoSubstanceNameArray[i])
-								{
-									passed2 = true;
-									partnerTypeObjectSpecialConditionToDoSubstanceFound = true;
-								}
+								passed2 = true;
+								partnerTypeObjectSpecialConditionToDoSubstanceFound = true;
 							}
-							#endif
-						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 						}
 						#endif
 
-
+					#ifdef GIA_TRANSLATOR_RETAIN_SUSPECTED_REDUNDANT_RELEX_CODE
 						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 						if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 						{
@@ -696,6 +689,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityN
 						#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 						}
 						#endif
+					#endif
 
 						if(currentRelationInList2->disabled)
 						{//required for relations disabled for negative collapse purposes
@@ -703,7 +697,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityN
 						}
 
 						if(passed2)
-						{
+						{							
 							bool foundPartner = false;
 							#ifdef USE_OLD_SUBJ_OBJ_ONLY_ONE_PAIR_RESTRICTION_METHOD
 							if(subjectObjectRelationshipAlreadyAdded[relationGovernorIndex] != true)
@@ -934,7 +928,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityN
 										//if(currentRelationInList->relationGovernor == RELATION_ENTITY_BE)
 										else if(passdefinition)
 										{//expected subject-object relationship is a definition "is"
-
+											
 											#ifdef GIA_TRANSLATOR_DEBUG
 											//cout << "passdefinition:" << endl;
 											//cout << "objectEntityTemp = " << objectEntityTemp->entityName << endl;
@@ -1016,10 +1010,11 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityN
 
 											#endif
 										}
-										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
+									#ifdef GIA_TRANSLATOR_RETAIN_SUSPECTED_REDUNDANT_RELEX_CODE	
+										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_WITH_BE_AS_DEFINITION_LINK
 										else if(partnerTypeObjectSpecialConditionToDoSubstanceFound)
 										{
-
+											//relevant code is executed in function defineToBeAndToDoPropertiesAndConditions() instead
 										}
 										#endif
 										#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TOBE_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK_AND_ACTION_DEFINITION
@@ -1063,6 +1058,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityN
 
 										}
 										#endif
+									#endif
 										else
 										{//assume that the subject-object relationships is an action
 											string actionName = currentRelationInList->relationGovernor;

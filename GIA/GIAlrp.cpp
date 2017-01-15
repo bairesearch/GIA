@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q8a 07-November-2012
+ * Project Version: 1q8b 07-November-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -545,7 +545,7 @@ bool generateTenseVariantsOfVerbBase(GIALRPtag * baseTag, GIALRPtag * firstTagIn
 		if(currentTagInIrregularVerbList->tagName == base)
 		{
 			irregularVerbFound = true;
-			GIALRPtag *	firstTagInIrregularVerb = currentTagInIrregularVerbList;
+			GIALRPtag * firstTagInIrregularVerb = currentTagInIrregularVerbList;
 			GIALRPtag * currentTagInIrregularVerb = firstTagInIrregularVerb->nextTag;
 			int irregularVerbTagIndex = GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST;
 			while(currentTagInIrregularVerb->nextTag != NULL)

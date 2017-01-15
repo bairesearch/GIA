@@ -23,7 +23,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q8a 07-November-2012
+ * Project Version: 1q8b 07-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * ?TO DO: extract date information of entities from relex <features> tag area
@@ -815,13 +815,21 @@ void defineToBeAndToDoPropertiesAndConditions(Sentence * currentSentenceInList, 
 				}
 				else if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO)
 				{
-					#ifndef GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_SUBSTANCE_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
 					#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
 					if(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->entityName != RELATION_ENTITY_BE)
 					{//this condition is required to support GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
-					#endif
-					#endif
+						//ORIGINAL + NEW - interpret as substance link
+						int entityIndex = currentRelationInList->relationGovernorIndex;
+						int substanceIndex = currentRelationInList->relationDependentIndex;
 
+						GIAEntityNode * entityNode = GIAEntityNodeArray[entityIndex];
+						GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
+
+						bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES; 	//eg The rose smelled sweet. / The chicken ate the pie that smelled sweet.
+						GIAEntityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(entityNode, substanceEntity, sameReferenceSet);					
+					}
+					#else
+						//INTERMEDIATE - interpret as condition link
 						GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
 						GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
 						string conditionTypeEntityNodeName = currentRelationInList->relationType;
@@ -835,12 +843,7 @@ void defineToBeAndToDoPropertiesAndConditions(Sentence * currentSentenceInList, 
 						GIAEntityNodeArray[FEATURE_INDEX_OF_TODO_UNKNOWN] = addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
 						#else
 						addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
-						#endif
-
-					#ifndef GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_SUBSTANCE_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
-					#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
-					}
-					#endif
+						#endif					
 					#endif
 				}
 			}
