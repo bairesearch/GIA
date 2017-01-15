@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1g 14-November-2014
+ * Project Version: 2h2a 18-November-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -148,13 +148,13 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
  	applyGrammaticalInfoToAllEntities(GIAentityNodeArrayFilled, GIAentityNodeArray, currentSentenceInList->firstFeatureInList);
 
 	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
-	cout << "redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllContinuousVerbs" << endl;
+	cout << "redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs" << endl;
 	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout <<"redistribute Stanford Relations - correct POS tags And Lemmas Of All Continuous Verbs" << endl;
 	#endif
-	redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllContinuousVerbs(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
+	redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
 
 #ifndef GIA_ADVANCED_REFERENCING_DEBUG_DISABLE_LINKING
 	#ifdef GIA_USE_ADVANCED_REFERENCING

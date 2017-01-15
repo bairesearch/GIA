@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1g 14-November-2014
+ * Project Version: 2h2a 18-November-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -2000,12 +2000,12 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 
 		if(wordLowerCase == base)
 		{
-			*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_INFINITIVE;
+			*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_OR_PRESENT_NOT_THIRD_PERSON_SINGULAR_TEMP;
 			foundVerbCase = true;
 		}
 		else
 		{
-			//case 1: thinking
+			//continuous case 1: thinking
 			string hypotheticalVerbVariantCase1 = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
 			if(wordLowerCase == hypotheticalVerbVariantCase1)
 			{
@@ -2014,7 +2014,7 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
 
-			//case 2: running - "run" + "n" [run n] + "ing"
+			//continuous case 2: running - "run" + "n" [run n] + "ing"
 			int baseStringLength = base.length();
 			int indexOfLastCharacterInBase = baseStringLength-1;
 			char lastCharacterInBase = base[indexOfLastCharacterInBase];
@@ -2026,7 +2026,7 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
 
-			//case 3: changing - "chang" [change e] + "ing"
+			//continuous case 3: changing - "chang" [change e] + "ing"
 			string baseWithLastLetterDropped = base.substr(0, baseStringLength-1);
 			string hypotheticalVerbVariantCase3 = baseWithLastLetterDropped + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
 			if(wordLowerCase == hypotheticalVerbVariantCase3)
@@ -2036,14 +2036,40 @@ bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * bas
 				*baseNameFound = currentTagInVerbList->tagName;
 			}
 
-			//cout << "hypotheticalVerbVariantCase1 = " << hypotheticalVerbVariantCase1 << endl;
-			//cout << "hypotheticalVerbVariantCase2 = " << hypotheticalVerbVariantCase2 << endl;
-			//cout << "hypotheticalVerbVariantCase3 = " << hypotheticalVerbVariantCase3 << endl;
+			//cout << "continuous hypotheticalVerbVariantCase1 = " << hypotheticalVerbVariantCase1 << endl;
+			//cout << "continuous hypotheticalVerbVariantCase2 = " << hypotheticalVerbVariantCase2 << endl;
+			//cout << "continuous hypotheticalVerbVariantCase3 = " << hypotheticalVerbVariantCase3 << endl;
+			
+			#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
+			//added 2h2a
+			//potential case 1: thinkable/changeable
+			hypotheticalVerbVariantCase1 = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase1)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			//potential case 2: running - "run" + "n" [run n] + "able"
+			baseStringLength = base.length();
+			indexOfLastCharacterInBase = baseStringLength-1;
+			lastCharacterInBase = base[indexOfLastCharacterInBase];
+			hypotheticalVerbVariantCase2 = base + lastCharacterInBase + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase2)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_POTENTIAL;
+				*baseNameFound = currentTagInVerbList->tagName;
+			}
+			#endif
+
+			//cout << "potential hypotheticalVerbVariantCase1 = " << hypotheticalVerbVariantCase1 << endl;
+			//cout << "potential hypotheticalVerbVariantCase2 = " << hypotheticalVerbVariantCase2 << endl;
 		}
 
 		currentTagInVerbList = currentTagInVerbList->nextSentence;
 	}
-
+	
 	#ifdef GIA_LRP_DEBUG
 	if(foundVerbCase)
 	{

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1g 14-November-2014
+ * Project Version: 2h2a 18-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -55,8 +55,8 @@ using namespace std;
 
 //should move the following to GIAtranslatorRedistributeStanfordAndRelations.h/.cpp
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
-void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[]);	//Stanford Specific? (may require Relex equivalent redistribution function)
-	bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature * currentFeature);
+void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[]);	//Stanford Specific? (may require Relex equivalent redistribution function)
+	bool correctVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature * currentFeature);
 		//bool determineVerbCase(string * word);
 
 #endif

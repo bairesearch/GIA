@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1g 14-November-2014
+ * Project Version: 2h2a 18-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -611,7 +611,7 @@
 #define GIA_SUPPORT_NUMBER_OF	//added 2g9a/24-September-2014
 
 #ifdef USE_NLC
-	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
+	//#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 	#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 		#define GIA_DISABLE_ALIAS_ENTITY_MERGING	//added 2g11a/21-October-2014 - required for NLC 1k14a+	//IMPORTANT: when activating/deactivating from compilation, ensure GIArules.xml is updated accordingly (search for "GIA_DISABLE_ALIAS_ENTITY_MERGING") 
 		#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_USE_ADVANCED_REFERENCING 2g5a/05 September 2014	//added 2g5a - required for advanced referencing, dream mode (identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts():identifyReferenceSetDetermineNextCourseOfAction():identifyReferenceSet()), and NLC 1j2b+
@@ -640,6 +640,7 @@
 		#define GIA_LRP_DETECT_PREPOSITION_TYPE		//added 2h1a/14-November-2014 - required for NLC 1m1a+
 		#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW	//added 2h1c/14-November-2014 - required for NLC 1m1a+
 	#endif
+	#define GIA_FEATURE_POS_TAG_VERB_POTENTIAL	//added 2h2a/18-November-2014 - required for NLC 1m2a+	- adds new non-standard pos tag for "able" words
 #endif
 
 #ifdef USE_NLC

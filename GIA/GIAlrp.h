@@ -26,7 +26,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1g 14-November-2014
+ * Project Version: 2h2a 18-November-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -83,6 +83,8 @@ using namespace std;
 #define GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND_LENGTH (1)
 #define GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND_LENGTH (3)
 #define GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_LENGTH (2)
+#define GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND "able"
+
 
 #ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
 #define GIA_LRP_PREPOSITIONS_DATABASE_TAG_NEXTCOLUMN (CHAR_TAB)

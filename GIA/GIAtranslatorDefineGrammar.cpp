@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1g 14-November-2014
+ * Project Version: 2h2a 18-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -476,6 +476,15 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 		}
 		#endif
 
+		//added 2h2a
+		if((currentFeatureInList->grammaticalWordType == GRAMMATICAL_WORD_TYPE_VERB) && (currentFeatureInList->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PASSIVE]) && (currentFeatureInList->grammaticalTense == GRAMMATICAL_TENSE_PRESENT))
+		{
+			currentFeatureInList->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_STATE] = true;	//interpret present passive verbs as state - CHECKTHIS; verify this is an acceptable implementation
+		}
+		//TODO;
+		//detect GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE
+		//detect GRAMMATICAL_TENSE_MODIFIER_INFINITIVE
+		
 		currentFeatureInList = currentFeatureInList->next;
 	}
 }
@@ -525,7 +534,7 @@ void extractGrammaticalInformationFromPOStag(string * POStag, Feature * feature)
 	{
 		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] = true;
 	}
-
+	
 	//infinitive tense extraction (added 28 July 2013) + imperative tense extraction (added 10 April 2014)
 	bool infinitiveOrImperativeDetected = false;
 	for(int i=0; i<FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES; i++)
@@ -600,7 +609,37 @@ void extractGrammaticalInformationFromPOStag(string * POStag, Feature * feature)
 		}
 	}
 
-
+	//added 2h2a
+	#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
+	//not detected by POS standard
+	//"potential" tense extraction;
+	bool potentialDetected = false;
+	for(int i=0; i<FEATURE_POS_TAG_VERB_POTENTIAL_NUMBER_OF_TYPES; i++)
+	{
+		if(*POStag == posTagVerbPotentialArray[i])
+		{
+			potentialDetected = true;
+		}
+	}
+	if(potentialDetected)
+	{
+		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_POTENTIAL] = true;
+	}
+	#endif
+	
+	//state/affection tense extraction;
+	bool stateDetected = false;
+	for(int i=0; i<FEATURE_POS_TAG_VERB_STATE_NUMBER_OF_TYPES; i++)
+	{
+		if(*POStag == posTagVerbStateArray[i])
+		{
+			stateDetected = true;
+		}
+	}
+	if(stateDetected)
+	{
+		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_STATE] = true;
+	}
 }
 
 

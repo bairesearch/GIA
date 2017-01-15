@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1g 14-November-2014
+ * Project Version: 2h2a 18-November-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -4302,7 +4302,7 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 					#ifndef STANFORD_PARSER_USE_POS_TAGS
 					//to work effectively/best, this function requires b) Stanford CoreNLP as pos tagger (ie it is incompatible with STANFORD_PARSER_USE_POS_TAGS, as stanford Parser tags a lot more -ing words as NN [rather than VBG] as compared to Stanford CoreNLP)
 				*/
-				if(correctContinuousVerbPOStagAndLemma(actionOrSubstanceEntity, featureArrayTemp[actionOrSubstanceIndex]))
+				if(correctVerbPOStagAndLemma(actionOrSubstanceEntity, featureArrayTemp[actionOrSubstanceIndex]))
 				{
 					currentRelationInList->relationGovernor = actionOrSubstanceEntity->entityName;
 				}

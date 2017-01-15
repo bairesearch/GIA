@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h1g 14-November-2014
+ * Project Version: 2h2a 18-November-2014
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -566,6 +566,7 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 	bool entityIndexFound = false;
 	bool wasReferenceFound = false;
 	bool isQueryFound = false;
+	bool grammaticalTenseModifierArrayTempFound = false;
 	#endif
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
@@ -858,6 +859,12 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 			int attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->isQuery = attributeValue;
 			isQueryFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp)
+		{
+			string attributeValue = currentAttribute->value;
+			convertStringToBooleanArray(attributeValue, entityNode->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
+			grammaticalTenseModifierArrayTempFound = true;
 		}
 		#endif
 		
@@ -1727,6 +1734,13 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 
 	newAttribute = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute;
+	currentAttribute = currentAttribute->nextAttribute;
+	
+	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp;
+	currentAttribute->value = convertBooleanArrayToString(currentEntity->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
+
+	newAttribute = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;	
 	#endif
 	
@@ -1988,3 +2002,28 @@ bool generateXMLconditionTimeNodeTagList(XMLparserTag * firstTagInConditionTimeN
 
 
 
+string convertBooleanArrayToString(bool booleanArray[], int booleanArraySize)
+{
+	char tempString[MAX_ATTRIBUTE_VALUE_SIZE];
+	string str = "";
+	for(int i=0; i<booleanArraySize; i++)
+	{
+		sprintf(tempString, "%d", int(booleanArray[i]));
+		string tempStr = tempString;
+		str = str + tempStr;
+	}
+	//cout << "convertBooleanArrayToString = " << str << endl;
+	return str;
+
+}
+
+void convertStringToBooleanArray(string str, bool booleanArray[], int booleanArraySize)
+{
+	for(int i=0; i<booleanArraySize; i++)
+	{
+		string tempStr = "";
+		tempStr = tempStr + str[i];
+		booleanArray[i] = atoi(tempStr.c_str());
+		//cout << "convertStringToBooleanArray booleanArray[i]  = " << atoi(tempStr.c_str()) << endl;
+	}
+}
