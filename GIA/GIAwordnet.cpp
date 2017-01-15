@@ -26,7 +26,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g3a 31-August-2014
+ * Project Version: 2g4a 01-September-2014
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -500,15 +500,14 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 
 	char * output = findtheinfo(wordCharStar, wordNetPOS, similarityType, 0);
 
-	char currentItemString[MAX_CHARACTERS_OF_WORDNET_FINDTHEINFO_OUTPUT] = "";
-	char lineString[MAX_CHARACTERS_OF_WORDNET_FINDTHEINFO_OUTPUT_LINE] = "";
-	char synonymString[MAX_CHARACTERS_OF_WORDNET_FINDTHEINFO_OUTPUT_LINE] = "";
-	char numberOfSensesString[MAX_CHARACTERS_OF_WORDNET_FINDTHEINFO_OUTPUT_NUMBER_OF_SENSES] = "";
+	string lineString = "";
+	string synonymString = "";
+	string numberOfSensesString = "";
 
 	int charIndex = 0;
 	int lineIndex = 0;
 
-	if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, numberOfSensesString, CHAR_SPACE, CHAR_END_OF_STRING))	//wait till end of header
+	if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &numberOfSensesString, CHAR_SPACE, CHAR_END_OF_STRING))	//wait till end of header
 	{
 		cout << "findSynonyms error: number of senses string not found" << endl;
 		cout << "charIndex = " << charIndex << endl;
@@ -517,13 +516,13 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 	}
 
 	//now convert numberOfSensesString to number (this becomes the number of 'senses')
-	int numberSenses = atoi(numberOfSensesString);
+	int numberSenses = atoi(numberOfSensesString.c_str());
 	#ifdef GIA_WORDNET_DEBUG
 	cout << "output = " << output << endl;
 	cout << "numberSenses = " << numberSenses << endl;
 	#endif
 
-	if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of header
+	if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of header
 	{
 		cout << "findSynonyms error: new line not found" << endl;
 		cout << "charIndex = " << charIndex << endl;
@@ -547,7 +546,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 		charIndex++;
 		lineIndex++;
 
-		if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of header
+		if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of header
 		{
 			cout << "findSynonyms error: new line not found" << endl;
 			cout << "charIndex = " << charIndex << endl;
@@ -564,8 +563,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 		//cout << "senseEntryTitleStringExpected = " << senseEntryTitleStringExpected << endl;
 		#endif
 
-		string lineStringTemp = lineString;
-		if(senseEntryTitleStringExpected != lineStringTemp)
+		if(senseEntryTitleStringExpected != lineString)
 		{
 			cout << "findSynonyms error: (senseEntryTitleStringExpected != lineString)" << endl;
 			cout << "charIndex = " << charIndex << endl;
@@ -579,7 +577,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 		{//CHECK THIS; only take the meaning/sense from the most popular/likely sense [Future: need to search context for most relevant sense]
 
 			int synonymnIndex = 0;
-			while(recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, synonymString, CHAR_COMMA, CHAR_SPACE))
+			while(recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &synonymString, CHAR_COMMA, CHAR_SPACE))
 			{
 				listOfSynonyms[synonymnIndex] = synonymString;
 				synonymnIndex++;
@@ -601,7 +599,7 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 			numberOfSynonyms = synonymnIndex;
 		}
 
-		if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of line
+		if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of line
 		{
 			cout << "findSynonyms error: new line not found" << endl;
 			cout << "charIndex = " << charIndex << endl;
@@ -628,8 +626,10 @@ void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], i
 	}
 }
 
-bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char * output, int * newCharIndex, char * lineString, char characterToRecordUntil, char escapeCharacter)
+bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char * output, int * newCharIndex, string * lineString, char characterToRecordUntil, char escapeCharacter)
 {
+	*lineString = "";
+	
 	bool result = true;
 	int i = 0;
 
@@ -644,15 +644,12 @@ bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char * output, int 
 		{
 			c = output[i+charIndex];
 
-			lineString[i] = c;
+			*lineString = *lineString + c;
 			i++;
 		}
 	}
 
 	*newCharIndex = i+charIndex;
-
-	i--;
-	lineString[i] = '\0';
 
 	return result;
 }

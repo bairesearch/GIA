@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g3a 31-August-2014
+ * Project Version: 2g4a 01-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -49,10 +49,6 @@ int maxXAtAParticularY[MAX_GIA_TREE_DEPTH];
 void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputPPMfile, bool useOutputSVGfile, int maxNumberSentences)
 {//most of this is copied from CSexecFlow.cpp
 	bool result = true;
-
-	char * outputFileNameLDRcharstar = const_cast<char*>(outputFileNameLDR.c_str());
-	char * displayFileNamePPMcharstar = const_cast<char*>(outputFileNamePPM.c_str());
-	char * outputFileNameSVGcharstar = const_cast<char*>(outputFileNameSVG.c_str());
 
 	XMLparserTag * firstTagInSVGFile = new XMLparserTag();
 	XMLparserTag * currentTagInSVGFile = firstTagInSVGFile;
@@ -77,7 +73,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 
 	if(useOutputSVGfile)
 	{
-		if(!writeSVGfile(outputFileNameSVGcharstar, firstTagInSVGFile))
+		if(!writeSVGfile(outputFileNameSVG, firstTagInSVGFile))
 		{
 			result = false;
 		}
@@ -87,7 +83,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 
 	if(printType[DRAW_CREATE_LDR_REFERENCES] == true)
 	{
-		writeReferencesToFile(outputFileNameLDRcharstar, firstReferenceInPrintList);
+		writeReferencesToFile(outputFileNameLDR, firstReferenceInPrintList);
 	}
 
 	if(display)
@@ -95,8 +91,8 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 
 		//re-parse, then re-write to create a collapsed referencelist file...
 		//method1:
-		char * topLevelSceneFileName = outputFileNameLDRcharstar;
-		char * topLevelSceneFileNameCollapsed = "sceneCollapsedForOpenGLDisplay.ldr";
+		string topLevelSceneFileName = outputFileNameLDR;
+		string topLevelSceneFileNameCollapsed = "sceneCollapsedForOpenGLDisplay.ldr";
 		Reference * initialReferenceInSceneFile = new Reference();
 		Reference * topLevelReferenceInSceneFile = new Reference(topLevelSceneFileName, 1, true);	//The information in this object is not required or meaningful, but needs to be passed into the parseFile/parseReferenceList recursive function
 		if(!parseFile(topLevelSceneFileName, initialReferenceInSceneFile, topLevelReferenceInSceneFile, true))
@@ -111,15 +107,14 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 		*/
 
 		#ifdef GIA_FREE_MEMORY1
-		//delete initialReferenceInSceneFile;
+		delete initialReferenceInSceneFile;
 		delete topLevelReferenceInSceneFile;
 		#endif
 
 
 		unsigned char * rgbMap = new unsigned char[width*height*RGB_NUM];
 
-		//setViewPort2Dortho(-100.0, 2000.0, -100.0, 2000.0);
-		setViewPort3Dortho(-100.0, 1000, 1000.0, -100.0, 1.0, -1.0);
+		setViewPort3Dortho(-100.0, width-100, height-100, -100.0, 1.0, -1.0);
 
 		//now reparse file
 		Reference * initialReferenceInCollapsedSceneFile = new Reference();
@@ -141,7 +136,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*> *entityNodesActiveListComplete,
 
 		if(useOutputPPMfile)
 		{
-			generatePixmapFromRGBmap(displayFileNamePPMcharstar, width, height, rgbMap);
+			generatePixmapFromRGBmap(outputFileNamePPM, width, height, rgbMap);
 		}
 
 		delete rgbMap;
@@ -710,7 +705,7 @@ Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrin
 			positionLDR.x = vect.x - GIA_DRAW_BASICENTITY_NODE_WIDTH/4;
 			positionLDR.y = vect.y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 			positionLDR.z = vect.z - GIA_OUTPUT_Z_POSITION_CONNECTIONS;
-			newCurrentReferenceInPrintList = LDaddBasicTextualSpriteStringToReferenceList(&connectionTypeName, newCurrentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
+			newCurrentReferenceInPrintList = LDaddBasicTextualSpriteStringToReferenceList(connectionTypeName, newCurrentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
 		}
 		if(printType[DRAW_CREATE_SVG_REFERENCES] == true)
 		{
@@ -901,7 +896,7 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 		positionLDR.x = vect->x - GIA_DRAW_BASICENTITY_NODE_WIDTH/4;
 		positionLDR.y = vect->y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 		positionLDR.z = vect->z  -GIA_OUTPUT_Z_POSITION_NODES;
-		newCurrentReferenceInPrintList = LDaddBasicTextualSpriteStringToReferenceList(text, newCurrentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
+		newCurrentReferenceInPrintList = LDaddBasicTextualSpriteStringToReferenceList(*text, newCurrentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
 	}
 
 	if(printType[DRAW_CREATE_SVG_REFERENCES] == true)

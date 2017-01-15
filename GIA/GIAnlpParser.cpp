@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g3a 31-August-2014
+ * Project Version: 2g4a 01-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -39,7 +39,6 @@
 #ifdef GIA_USE_LRP
 #include "GIAlrp.h"
 #endif
-#define MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA 150 //max characters of some word in input data. includes '\0' at end of a string
 
 
 
@@ -63,8 +62,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 
 	int numberOfCharactersInRelationsText = relationsText->length();
 
-	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
-	currentItemString[0] = '\0';
+	string currentItemString = "";
 
 	/* Data file layout example
 
@@ -350,7 +348,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			#endif
 
 			currentRelationPart = 0;
-			currentItemString[0] = '\0';
+			currentItemString = "";
 
 			relationIndex++;
 		}
@@ -358,7 +356,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 		{
 			relationType = currentItemString;
 
-			currentItemString[0] = '\0';
+			currentItemString = "";
 			currentRelationPart++;
 		}
 		else if(c == CHAR_DASH)
@@ -371,7 +369,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			{
 				relationDependent = currentItemString;
 			}
-			currentItemString[0] = '\0';
+			currentItemString = "";
 		}
 		else if((c == CHAR_COMMA) || (c == CHAR_CLOSE_BRACKET))
 		{
@@ -387,14 +385,8 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 				else
 				{
 					//eg 50,000 in quantmod(50,000-8, than-7)
-					char characterString[2];
-					characterString[0] = CHAR_COMMA;
-					characterString[1] = '\0';
-					strcat(currentItemString, characterString);
-
-					characterString[0] = c;
-					characterString[1] = '\0';
-					strcat(currentItemString, characterString);
+					currentItemString = currentItemString + CHAR_COMMA;
+					currentItemString = currentItemString + c;
 				}
 			}
 			else
@@ -406,11 +398,11 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			{
 				if(currentRelationPart == 1)
 				{
-					relationGovernorIndex = int(atof(currentItemString));
+					relationGovernorIndex = int(atof(currentItemString.c_str()));
 				}
 				else if(currentRelationPart == 2)
 				{
-					relationDependentIndex = int(atof(currentItemString));
+					relationDependentIndex = int(atof(currentItemString.c_str()));
 				}
 
 				if(currentRelation->relationGovernorIndex > *maxNumberOfWordsInSentence)
@@ -422,17 +414,14 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 					*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;
 				}
 
-				currentItemString[0] = '\0';
+				currentItemString = "";
 				currentRelationPart++;
 			}
 
 		}
 		else
 		{
-			char characterString[2];
-			characterString[0] = c;
-			characterString[1] = '\0';
-			strcat(currentItemString, characterString);
+			currentItemString = currentItemString + c;
 		}
 
 		characterIndex++;
@@ -501,10 +490,9 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence *
 
 	int numberOfCharactersInWordsAndPOSTagsText = POStagsText->length();
 
-	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
+	string currentItemString = "";
 	string wordOrig = "";
 	string stanfordPOS = "";
-	currentItemString[0] = '\0';
 
 	/* Data file layout example
 
@@ -570,7 +558,7 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence *
 
 				currentFeatureInList = currentFeatureInList->next;
 				readingWord = true;
-				currentItemString[0] = '\0';
+				currentItemString = "";
 				stanfordPOS = "";
 				wordOrig = "";
 			}
@@ -579,14 +567,11 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence *
 		{
 			wordOrig = currentItemString;
 			readingWord = false;
-			currentItemString[0] = '\0';
+			currentItemString = "";
 		}
 		else
 		{
-			char characterString[2];
-			characterString[0] = c;
-			characterString[1] = '\0';
-			strcat(currentItemString, characterString);
+			currentItemString = currentItemString + c;
 		}
 
 		characterIndex++;
@@ -694,8 +679,7 @@ void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSenten
 
 	int numberOfCharactersInRelationsText = featuresText->length();
 
-	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
-	currentItemString[0] = '\0';
+	string currentItemString = "";
 
 	/* Data file layout example
 
@@ -778,7 +762,7 @@ void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSenten
 				*maxNumberOfWordsInSentence = *maxNumberOfWordsInSentence + 1;
 
 				currentFeaturePart = 0;
-				currentItemString[0] = '\0';
+				currentItemString = "";
 
 				featureIndex++;
 
@@ -790,7 +774,7 @@ void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSenten
 				{
 					case 0:
 					{
-						currentFeature->entityIndex = int(atof(currentItemString));
+						currentFeature->entityIndex = int(atof(currentItemString.c_str()));
 						if(currentFeature->entityIndex != featureIndex)
 						{
 							cout << "features parse error: (currentFeature->entityIndex != featureIndex)" << endl;
@@ -818,17 +802,14 @@ void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSenten
 						break;
 					}
 				}
-				currentItemString[0] = '\0';
+				currentItemString = "";
 				currentFeaturePart++;
 
 				break;
 			}
 			default:
 			{
-				char characterString[2];
-				characterString[0] = c;
-				characterString[1] = '\0';
-				strcat(currentItemString, characterString);
+				currentItemString = currentItemString + c;
 				break;
 			}
 		}
@@ -849,8 +830,7 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 
 	int numberOfCharactersInRelationsText = relationsText->length();
 
-	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
-	currentItemString[0] = '\0';
+	string currentItemString = "";
 
 	/* Data file layout example
 
@@ -902,7 +882,7 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 				currentRelation = currentRelation->next;
 
 				currentRelationPart = 0;
-				currentItemString[0] = '\0';
+				currentItemString = "";
 
 				relationIndex++;
 
@@ -931,7 +911,7 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 				}
 
 				currentRelation->relationType = relationType;
-				currentItemString[0] = '\0';
+				currentItemString = "";
 				currentRelationPart++;
 
 				break;
@@ -950,7 +930,7 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 				{
 					currentRelation->relationDependent = currentItemString;
 				}
-				currentItemString[0] = '\0';
+				currentItemString = "";
 
 				break;
 			}
@@ -958,11 +938,11 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 			{
 				if(currentRelationPart == 1)
 				{
-					currentRelation->relationGovernorIndex = int(atof(currentItemString));
+					currentRelation->relationGovernorIndex = int(atof(currentItemString.c_str()));
 				}
 				else if(currentRelationPart == 2)
 				{
-					currentRelation->relationDependentIndex = int(atof(currentItemString));
+					currentRelation->relationDependentIndex = int(atof(currentItemString.c_str()));
 				}
 
 				if(currentRelation->relationGovernorIndex > *maxNumberOfWordsInSentence)
@@ -974,7 +954,7 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 					*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;
 				}
 
-				currentItemString[0] = '\0';
+				currentItemString = "";
 				currentRelationPart++;
 
 				break;
@@ -987,10 +967,7 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 			}
 			default:
 			{
-				char characterString[2];
-				characterString[0] = c;
-				characterString[1] = '\0';
-				strcat(currentItemString, characterString);
+				currentItemString = currentItemString + c;
 				break;
 			}
 		}

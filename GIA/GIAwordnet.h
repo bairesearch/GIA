@@ -26,7 +26,7 @@
  * File Name: GIAwordnet.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g3a 31-August-2014
+ * Project Version: 2g4a 01-September-2014
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -52,7 +52,6 @@ using namespace std;
 #define SYNONYMN_DETECTION_STATUS_QUERIES_ONLY 1
 #define SYNONYMN_DETECTION_STATUS_QUERIES_AND_ADVANCED_REFERENCING 2
 
-#define MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA 150 //max characters of some word in input data. includes '\0' at end of a string
 #define MAX_CHARACTERS_OF_WORDNET_FINDTHEINFO_OUTPUT (10000)
 #define MAX_CHARACTERS_OF_WORDNET_FINDTHEINFO_OUTPUT_LINE (1000)
 #define MAX_CHARACTERS_OF_WORDNET_FINDTHEINFO_OUTPUT_NUMBER_OF_SENSES (10)	//supports e^10 senses
@@ -84,6 +83,6 @@ SynsetPtr findMostPopularSynsets(string * word, bool * wordIsFound, int wordNetP
 
 
 void findSynonymsOLD(string word, bool * wordIsFound, string listOfSynonyms[], int wordNetPOS);
-bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char * output, int * newCharIndex, char * lineString, char characterToRecordUntil, char escapeCharacter);
+bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char * output, int * newCharIndex, string * lineString, char characterToRecordUntil, char escapeCharacter);
 
 #endif
