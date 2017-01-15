@@ -935,6 +935,7 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		{
 			for(entityIter = entityNode->EntityNodeDefinitionList.begin(); entityIter != entityNode->EntityNodeDefinitionList.end(); entityIter++) 
 			{
+				//cout << "DEBUG: expect here 2" << endl;
 				//cout << "*entityIter = " << (*entityIter)->entityName << endl;
 				//cout << "*entityIterQuery = " << (*entityIterQuery)->entityName << endl;
 
@@ -983,6 +984,9 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 				#else
 				string sourceContext = "";
 				#endif
+				
+				//cout << "DEBUG: expect here 1" << endl;
+				
 				//cout << "as0" << endl;
 				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, isSuitableNodeTypeForInexactAnswer, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext, true, nonMatchingConditions);						
 				//cout << "as1" << endl;

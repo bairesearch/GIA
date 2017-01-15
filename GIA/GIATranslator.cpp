@@ -55,6 +55,9 @@ string relationTypeComplementsNameArray[RELATION_TYPE_COMPLEMENTS_NUMBER_OF_TYPE
 int referenceTypeHasDeterminateCrossReferenceNumberArray[GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES] = {GRAMMATICAL_NUMBER_SINGULAR};
 string relationTypeAdjectiveWhichImplyEntityInstanceNameArray[RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_1, RELATION_TYPE_ADJECTIVE_3};
 string relationTypeRequireSwitchingNameArray[RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT_THAT};
+#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_PROPERTY
+string relationTypeTreatAsPronounIeProperty[RELATION_TYPE_TREAT_AS_PRONOUN_IE_PROPERTY_NUMBER_OF_TYPES] = {"that"};
+#endif
 
 string relationTypeQuantityOrMeasureNameArray[RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES] = {RELATION_TYPE_QUANTITY, RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME};
 string relationTypeQuantityOrMeasureSwitchedNameArray[RELATION_TYPE_QUANTITY_OR_MEASURE_SWITCHED_NUMBER_OF_TYPES] = {RELATION_TYPE_QUANTITY_MOD, RELATION_TYPE_MEASURE_PER};
@@ -212,6 +215,8 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 {	
+	//cout << "\t\t addPropertyToPropertyDefinition; propertyEntity->entityName = " << propertyEntity->entityName << endl;
+	
 	GIAEntityNode * newOrExistingProperty;
 	
 	if(propertyEntity->entityAlreadyDeclaredInThisContext)
@@ -450,11 +455,13 @@ void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definiti
 {
 	if(thingEntity->hasAssociatedInstanceTemp)
 	{
+		//cout << "thingEntity = thingEntity->AssociatedInstanceNodeList.back()" << endl;
 		thingEntity = thingEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
 	}
 	
 	if(definitionEntity->hasAssociatedInstanceTemp)
 	{
+		//cout << "definitionEntity = definitionEntity->AssociatedInstanceNodeList.back()" << endl;
 		definitionEntity = definitionEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
 	}
 	
@@ -869,8 +876,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		cout << "0j pass; define properties (has time);" << endl;
 		#endif		
 		definePropertiesHasTime(GIAEntityNodeArrayFilled, GIAEntityNodeArray);		
-					
 		
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_PROPERTY			
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "0k pass; define properties (non explicit pronouns eg 'that');" << endl;
+		#endif
+		definePropertiesNonExplicitPronouns(GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+	#endif
 										
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "1 pass; link properties (possessive relationships); eg joe's bike" << endl;
@@ -2161,6 +2173,35 @@ void definePropertiesPronouns(bool GIAEntityNodeArrayFilled[], GIAEntityNode * G
 	}
 }
 
+#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_PROPERTY
+void definePropertiesNonExplicitPronouns(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+{		
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAEntityNodeArrayFilled[i])
+		{
+			bool passed = false;
+			for(int j=0; j<RELATION_TYPE_TREAT_AS_PRONOUN_IE_PROPERTY_NUMBER_OF_TYPES; j++)
+			{
+				//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;
+				//cout << "relationTypeTreatAsPronounIeProperty[j] = " << relationTypeTreatAsPronounIeProperty[j] << endl;
+				
+				if(GIAEntityNodeArray[i]->entityName == relationTypeTreatAsPronounIeProperty[j])
+				{
+					passed = true;
+				}
+			}
+			
+			if(passed)
+			{
+				addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);	
+			}
+		}
+	}
+}
+#endif
+
+
 void definePropertiesToBe(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -2792,6 +2833,9 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 								//if(currentRelationInList->relationFunction == RELATION_FUNCTION_DEFINITION_1) 
 								else if(passdefinition)
 								{//expected subject-object relationship is a definition "is"
+									
+									//cout << "here: objectEntityTemp = " << objectEntityTemp->entityName << endl;
+									//cout << "here: subjectEntityTemp = " << subjectEntityTemp->entityName << endl;
 																		
 									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 										//NB definitions are only assigned to entities, not properties (instances of entities)
