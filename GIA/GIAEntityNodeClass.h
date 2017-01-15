@@ -160,7 +160,9 @@ public:
 	vector<GIAEntityNode*>::iterator PropertyNodeListIterator;
 	
 		//properties only [is this possible for actions also? - may require upgrade in future]
-	GIAEntityNode * entityNodeContainingThisProperty;				//if property/action only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
+	//GIAEntityNode * entityNodeContainingThisProperty;		//removed 8 Dec 2011			//OLD: if property/action only:	//OLD: eg, Tom; OR;  Tom's Assets	//OLD: NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
+	vector<GIAEntityNode*> PropertyNodeReverseList;			//if property/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given property [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for concept entities [property entities may possibly only be contained by {ie, be a property of} a single entity]
+	vector<GIAEntityNode*>::iterator PropertyNodeReverseListIterator;	
 	
 		//actions and properties only
 	GIAEntityNode * entityNodeDefiningThisInstance;					//if property/action only:					//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector

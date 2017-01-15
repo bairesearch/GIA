@@ -75,7 +75,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 	
 	//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
 	if(!(entityNode->initialisedForPrinting))
-	{
+	{		
 		#ifdef GIA_DRAW_DEBUG
 		if(entityNode->isProperty)
 		{
@@ -292,17 +292,27 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE;
 		}
-		/*this has been removed 25 Sept - use entityNodeContainingThisProperty instead
+		//this was removed 25 Sept 2011 - assume using entityNodeContainingThisProperty instead, and was restored on 8 Dec 2011
 		//go reverse also...
 		q = -DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES;
 		r = -DRAW_X_SPACE_BETWEEN_PROPERTY_NODES;			
 		for(entityIter = entityNode->PropertyNodeReverseList.begin(); entityIter != entityNode->PropertyNodeReverseList.end(); entityIter++) 
-		{//DRAW SHOULD NOT BE REQUIRED
+		{
 			//cout << "a32" << endl;	
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE;			//this was - not +
+			
+			if(initialiseOrPrint == DRAW_PRINT)
+			{					
+				//?may accidentially overwrite adjacent nodes that have already been printed here; be careful...
+				vec pos2;
+				pos2.x = (*entityIter)->printX;
+				pos2.y = (*entityIter)->printY;	
+				pos2.z = DRAW_CONNECTION_Z;								
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_PROPERTY_CONNECTION_COLOUR, writeFileObject, "property");			
+			}
 		}
-		*/	
+			
 		//cout << "a3b" << endl;
 		//go upwards also...
 		q = -DRAW_Y_SPACE_BETWEEN_INSTANCE_DEFINITION_NODES;
@@ -342,6 +352,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			}
 				
 		}
+		/*removed 8 Dec 2011
 		//cout << "a3c" << endl;
 		q = -DRAW_Y_SPACE_BETWEEN_PROPERTY_NODES;		//this used to be - not +
 		r = -DRAW_X_SPACE_BETWEEN_PROPERTY_NODES;			
@@ -361,6 +372,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			}
 				
 		}
+		*/
 		//cout << "a4" << endl;
 		
 

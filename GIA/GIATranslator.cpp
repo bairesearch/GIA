@@ -135,7 +135,7 @@ GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
 
 	newProperty->entityName = propertyEntity->entityName;
 	newProperty->isProperty = true;
-	newProperty->entityNodeContainingThisProperty = NULL;
+	//newProperty->entityNodeContainingThisProperty = NULL;
 	newProperty->entityNodeDefiningThisInstance = propertyEntity;
 	propertyEntity->hasAssociatedInstance = true;
 	propertyEntity->hasAssociatedInstanceTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
@@ -192,7 +192,8 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 
 		thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
-		existingProperty->entityNodeContainingThisProperty = thingEntity;		//added 26 Aug 11a	
+		existingProperty->PropertyNodeReverseList.push_back(thingEntity);	
+		//existingProperty->entityNodeContainingThisProperty = thingEntity;		//added 26 Aug 11a, removed 8 Dec 2011
 		
 	}
 	else
@@ -206,7 +207,8 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 		}
 	
 		GIAEntityNode * newProperty = addProperty(propertyEntity);		
-		newProperty->entityNodeContainingThisProperty = thingEntity;
+		newProperty->PropertyNodeReverseList.push_back(thingEntity);
+		//newProperty->entityNodeContainingThisProperty = thingEntity;		//added 26 Aug 11a, removed 8 Dec 2011
 		
 		//configure entity node containing this property
 		thingEntity->PropertyNodeList.push_back(newProperty);		
@@ -485,7 +487,9 @@ void addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIA
 	newCondition->conditionSubjectEntity = entityNode;
 	entityNode->ConditionNodeList.push_back(newCondition);
 	
-	conditionPropertyNode->entityNodeContainingThisProperty = newCondition;
+	conditionPropertyNode->PropertyNodeReverseList.push_back(newCondition);
+	//conditionPropertyNode->entityNodeContainingThisProperty = newCondition;	//added 26 Aug 11a, removed 8 Dec 2011
+	
 	newCondition->PropertyNodeList.push_back(conditionPropertyNode);	
 }
 
@@ -872,6 +876,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 		currentSentenceInList = currentSentenceInList->next;
 	}
 
+	
 	#ifndef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_CLEAR_REFERENCES_EVERY_SENTENCE	
 	//restore critical variables: used for GIA translator reference paser only - cleared every time a new sentence is parsed (Clearing should actually be applied to each paragraph/manuscript instead)
 	long vectorSize = conceptEntityNamesList->size();

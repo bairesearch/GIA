@@ -608,14 +608,19 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, isSuitableNodeTypeForInexactAnswer, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 			}		
 		}
-		/*this has been removed 25 Sept - use entityNodeContainingThisProperty instead
-		//go reverse also...		
-		for(entityIter = entityNode->PropertyNodeReverseList.begin(); entityIter != entityNode->PropertyNodeReverseList.end(); entityIter++) 
-		{//DRAW SHOULD NOT BE REQUIRED
-			//cout << "a32" << endl;	
-			currentReferenceInPrintList = testEntityNodeForQuery((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+		//this was removed 25 Sept 2011 - assume using entityNodeContainingThisProperty instead, and was restored on 8 Dec 2011
+		//go reverse also...
+		for(entityIterQuery = queryEntityNode->PropertyNodeReverseList.begin(); entityIterQuery != queryEntityNode->PropertyNodeReverseList.end(); entityIterQuery++) 
+		{	
+			for(entityIter = entityNode->PropertyNodeReverseList.begin(); entityIter != entityNode->PropertyNodeReverseList.end(); entityIter++) 
+			{	
+				//cout << "a31" << endl;
+				bool isSuitableNodeTypeForInexactAnswer = false;
+				string sourceContext = "possessed by ";
+				queryAnswerNode = testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, isSuitableNodeTypeForInexactAnswer, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
+			}		
 		}
-		*/	
+			
 		//cout << "a3b" << endl;
 		#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
 		//go upwards also...	
@@ -630,6 +635,7 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 			}		
 		}
 		#endif
+		/*removed 8 Dec 2011
 		//cout << "a3c" << endl;
 		if(queryEntityNode->entityNodeContainingThisProperty != NULL)
 		{
@@ -641,6 +647,7 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 				queryAnswerNode = testReferencedEntityNodeForNameMatch(queryEntityNode->entityNodeContainingThisProperty, entityNode->entityNodeContainingThisProperty, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, isSuitableNodeTypeForInexactAnswer, false, queryAnswerPreviousNode, entityNode, false, queryAnswerContext, sourceContext);
 			}
 		}
+		*/
 		//cout << "a4" << endl;
 		
 
@@ -1039,7 +1046,12 @@ void traceEntityNode(GIAEntityNode * entityNode, int function, int * numberOfMat
 			for(entityNode->PropertyNodeListIterator = entityNode->PropertyNodeList.begin(); entityNode->PropertyNodeListIterator < entityNode->PropertyNodeList.end(); entityNode->PropertyNodeListIterator++)
 			{
 				traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*(entityNode->PropertyNodeListIterator)), "propertyNode(s)", function, numberOfMatchedNodes);	
-			}				
+			}	
+			//added 8 Dec 2011
+			for(entityNode->PropertyNodeReverseListIterator = entityNode->PropertyNodeReverseList.begin(); entityNode->PropertyNodeReverseListIterator < entityNode->PropertyNodeReverseList.end(); entityNode->PropertyNodeReverseListIterator++)
+			{
+				traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*(entityNode->PropertyNodeReverseListIterator)), "propertyNode(s)", function, numberOfMatchedNodes);	
+			}						
 		//}
 
 		#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
@@ -1048,6 +1060,7 @@ void traceEntityNode(GIAEntityNode * entityNode, int function, int * numberOfMat
 			traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, entityNode->entityNodeDefiningThisInstance, "entityNodeDefiningThisInstance", function, numberOfMatchedNodes);
 		}
 		#endif
+		/*	//removed 8 Dec 2011
 		//if(entityNode->isProperty)
 		//{
 			if(entityNode->entityNodeContainingThisProperty != NULL)
@@ -1055,6 +1068,7 @@ void traceEntityNode(GIAEntityNode * entityNode, int function, int * numberOfMat
 				traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, entityNode->entityNodeContainingThisProperty, "entityNodeContainingThisProperty (parent)", function, numberOfMatchedNodes);
 			}	
 		//}
+		*/
 				
 		//if(!(entityNode->isProperty))
 		//{

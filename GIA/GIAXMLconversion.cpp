@@ -487,7 +487,8 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 	bool IncomingActionNodeListFound = false;
 	
 	bool PropertyNodeListFound = false;
-	bool entityNodeContainingThisPropertyFound = false;
+	bool PropertyNodeReverseListFound = false;
+	//bool entityNodeContainingThisPropertyFound = false;
 	bool entityNodeDefiningThisPropertyFound = false;
 	
 	bool EntityNodeDefinitionListFound = false;
@@ -612,7 +613,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			entityNode->conditionType = attributeValue;
 			conditionTypeFound = true;
 		}
-				
+		/*//removed 8 Dec 2011		
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityNodeContainingThisProperty)
 		{
 			//cout << "df1a" << endl;
@@ -626,6 +627,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			}
 			//cout << "df1b" << endl;
 		}
+		*/
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityNodeDefiningThisProperty)
 		{
 			
@@ -768,6 +770,15 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			}				
 			PropertyNodeListFound = true;	
 		}
+		if(currentTagUpdatedL3->name == NET_XML_TAG_PropertyNodeReverseList)
+		{
+			//cout << "PropertyNodeReverseList: " << endl;
+			if(!parsePropertyNodeReverseListTag(currentTagUpdatedL3->firstLowerLevelTag, entityNode, entityNodesCompleteList))
+			{
+				result = false;
+			}				
+			PropertyNodeReverseListFound = true;	
+		}		
 		
 		if(currentTagUpdatedL3->name == NET_XML_TAG_EntityNodeDefinitionList)
 		{
@@ -925,6 +936,27 @@ bool parsePropertyNodeListTag(XMLParserTag * firstTagInPropertyNodeList, GIAEnti
 		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
 	}
 }
+
+bool parsePropertyNodeReverseListTag(XMLParserTag * firstTagInPropertyNodeReverseList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
+{
+	XMLParserTag * currentTagUpdatedL1 = firstTagInPropertyNodeReverseList;
+	while(currentTagUpdatedL1->nextTag != NULL)
+	{
+		if(currentTagUpdatedL1->name == NET_XML_TAG_entityNodeReference)
+		{
+			//cout << "entityNodeReference: " << endl;
+			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
+			long attributeValue = atol(currentAttribute->value.c_str());
+			entityNode->PropertyNodeReverseList.push_back(findEntityNodeByID(attributeValue, entityNodesCompleteList));
+		}
+		else
+		{
+			cout << "parsePropertyNodeReverseListTag error: entityNodeReference tag not found" << endl;
+		}	
+		currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
+	}
+}
+
 
 bool parseEntityNodeDefinitionListTag(XMLParserTag * firstTagInEntityNodeDefinitionList, GIAEntityNode * entityNode, vector<GIAEntityNode*> *entityNodesCompleteList)
 {
@@ -1455,7 +1487,7 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
 
-
+	/*//removed 8 Dec 2011
 	if(currentEntity->entityNodeContainingThisProperty != NULL)
 	{
 		currentAttribute->name = NET_XML_ATTRIBUTE_entityNodeContainingThisProperty;
@@ -1477,7 +1509,7 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 		currentAttribute = currentAttribute->nextAttribute;			
 	}
 	#endif
-
+	*/
 
 	if(currentEntity->entityNodeDefiningThisInstance != NULL)
 	{
@@ -1741,6 +1773,40 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 
 			currentAttribute->name = NET_XML_ATTRIBUTE_id;
 			sprintf(tempString, "%ld", (*(currentEntity->PropertyNodeListIterator))->id);
+			currentAttribute->value = tempString;
+
+			XMLParserAttribute * newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;
+
+			XMLParserTag * newTag3 = new XMLParserTag();	//had to add a null tag
+			currentTagL3->nextTag = newTag3;			
+			currentTagL3 = currentTagL3->nextTag;
+
+		} 
+		newTag2 = new XMLParserTag();	//had to add a null tag
+		currentTagL2->nextTag = newTag2;
+		currentTagL2 = currentTagL2->nextTag;		
+	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
+	}
+	#endif	
+	
+	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
+	if(currentEntity->PropertyNodeReverseList.begin() != currentEntity->PropertyNodeReverseList.end())
+	{
+	#endif		
+		currentTagL2->name = NET_XML_TAG_PropertyNodeReverseList;
+		firstTagL3 = new XMLParserTag();
+		currentTagL2->firstLowerLevelTag = firstTagL3;
+		currentTagL3 = currentTagL2->firstLowerLevelTag;
+		for(currentEntity->PropertyNodeReverseListIterator = currentEntity->PropertyNodeReverseList.begin(); currentEntity->PropertyNodeReverseListIterator < currentEntity->PropertyNodeReverseList.end(); currentEntity->PropertyNodeReverseListIterator++)
+		{	
+			currentTagL3->name = NET_XML_TAG_entityNodeReference;
+
+			currentAttribute = currentTagL3->firstAttribute;
+
+			currentAttribute->name = NET_XML_ATTRIBUTE_id;
+			sprintf(tempString, "%ld", (*(currentEntity->PropertyNodeReverseListIterator))->id);
 			currentAttribute->value = tempString;
 
 			XMLParserAttribute * newAttribute = new XMLParserAttribute();
