@@ -31,23 +31,36 @@ using namespace std;
 #define GRAMMATICAL_TENSE_PAST 2
 #define GRAMMATICAL_TENSE_FUTURE 3
 #define GRAMMATICAL_TENSE_NUMBER_OF_TYPES (4)
+
+#define GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE "progressive"
+#define GRAMMATICAL_TENSE_MODIFIER_PERFECT "perfect"
+#define GRAMMATICAL_TENSE_MODIFIER_PASSIVE "passive"
+#define GRAMMATICAL_TENSE_MODIFIER_INFINITIVE "infinitive"
+#define GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE "imperative"
+#define GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES (5)
+
 #define GRAMMATICAL_NUMBER_UNDEFINED 0
 #define GRAMMATICAL_NUMBER_UNCOUNTABLE 1
 #define GRAMMATICAL_NUMBER_SINGULAR 2
 #define GRAMMATICAL_NUMBER_PLURAL 3
 #define GRAMMATICAL_NUMBER_NUMBER_OF_TYPES (4)
+
 #define GRAMMATICAL_DEFINITE_UNDEFINED false
 #define GRAMMATICAL_DEFINITE true
 #define GRAMMATICAL_DEFINITE_NAME "definite"
+
 #define GRAMMATICAL_PERSON_UNDEFINED false
 #define GRAMMATICAL_PERSON true
 #define GRAMMATICAL_PERSON_NAME "person"
+
 #define GRAMMATICAL_GENDER_UNDEFINED 0
 #define GRAMMATICAL_GENDER_PERSON 1
 #define GRAMMATICAL_GENDER_MASCULINE 2
 #define GRAMMATICAL_GENDER_FEMININE 3
 #define GRAMMATICAL_GENDER_NUMBER_OF_TYPES (4)
+
 #define GRAMMATICAL_CATEGORY_UNDEFINED (0)
+
 #define GRAMMATICAL_PRONOUN_UNDEFINED false
 #define GRAMMATICAL_PRONOUN true
 #define GRAMMATICAL_PRONOUN_NAME "pronoun"
@@ -69,13 +82,9 @@ using namespace std;
 #define MEASURE_TYPE_UNDEFINED (-1)
 
 extern string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
-extern int grammaticalTenseNameLengthsArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES];
+extern string grammaticalTenseModifierNameArray[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];
 extern string grammaticalNumberNameArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES];
-extern int grammaticalNumberNameLengthsArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES];
 extern string grammaticalGenderNameArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES];
-extern int grammaticalGenderNameLengthsArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES];
-
-
 
 
 class GIAEntityNode
@@ -180,7 +189,7 @@ public:
 	int printTextX;
 	int printTextY;
 
-
+	bool grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	int grammaticalTenseTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	int grammaticalNumberTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	bool grammaticalDefiniteTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
