@@ -41,13 +41,12 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 			entityNodeFound->id = *currentEntityNodeIDInConceptEntityNodesList;
 
 			entityNodesCompleteList->push_back(entityNodeFound);
-			*currentEntityNodeIDInCompleteList++;
+			(*currentEntityNodeIDInCompleteList) = (*currentEntityNodeIDInCompleteList) + 1;
 			conceptEntityNodesList->push_back(entityNodeFound);
-			*currentEntityNodeIDInConceptEntityNodesList++;
+			(*currentEntityNodeIDInConceptEntityNodesList) = (*currentEntityNodeIDInConceptEntityNodesList) + 1;
 
 			entityNodeFound->entityName = *entityNodeName;
 				//configure property definition node
-			conceptEntityNodesList->push_back(entityNodeFound);	
 			conceptEntityNamesList->push_back(*entityNodeName);	
 		}
 					
@@ -206,10 +205,7 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 				entityNodeFound->id = *currentEntityNodeIDInConceptEntityNodesList;
 				
 				entityNodesCompleteList->push_back(entityNodeFound);
-				*currentEntityNodeIDInCompleteList++;
-				conceptEntityNodesList->push_back(entityNodeFound);
-				*currentEntityNodeIDInConceptEntityNodesList++;				
-				
+				(*currentEntityNodeIDInCompleteList) = (*currentEntityNodeIDInCompleteList) + 1;
 				entityNodeFound->entityName = *entityNodeName;
 				
 				vector<GIAEntityNode*>::iterator indexOfEntityNodesIterator = conceptEntityNodesList->begin();
@@ -221,6 +217,8 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 				//indexOfEntityNamesIterator = conceptEntityNamesList->at(findIndex);
 				advance(indexOfEntityNamesIterator,findIndex);
 				conceptEntityNamesList->insert(indexOfEntityNamesIterator, *entityNodeName);
+				
+				(*currentEntityNodeIDInConceptEntityNodesList) = (*currentEntityNodeIDInConceptEntityNodesList) + 1;	
 			}
 			
 			first = false;

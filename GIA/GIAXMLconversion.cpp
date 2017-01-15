@@ -188,7 +188,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 							exit(0);
 						}
 						#endif
-						cout << "Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;	
+						cout << "Concept Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;	
 						conceptEntityNamesList->push_back(currentTagUpdatedL3->firstAttribute->nextAttribute->value);						
 										
 						/*
@@ -208,7 +208,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 		}
 		else
 		{
-			cout << "parseSemanticNetTag error: no entity container node tag detected";
+			cout << "parseSemanticNetTag error: no concept entity container node tag detected";
 		}
 		
 		if(currentTagUpdatedL2->name == NET_XML_TAG_propertyEntityNodeContainer)
@@ -244,7 +244,10 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 						entityNodesCompleteList->push_back(newEntity);
 						currentEntityNodeIDInCompleteList++;
 						propertyEntityNodesList->push_back(newEntity);
-						currentEntityNodeIDInPropertyEntityNodesList++;						
+						currentEntityNodeIDInPropertyEntityNodesList++;	
+												
+						cout << "Property Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;	
+											
 						/*
 						GIAEntityNode * newEntity = new GIAEntityNode();
 						currentEntity->next = newEntity;
@@ -262,7 +265,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 		}
 		else
 		{
-			cout << "parseSemanticNetTag error: no entity container node tag detected";
+			cout << "parseSemanticNetTag error: no property entity container node tag detected";
 		}
 		
 		if(currentTagUpdatedL2->name == NET_XML_TAG_actionEntityNodeContainer)
@@ -298,7 +301,10 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 						entityNodesCompleteList->push_back(newEntity);
 						currentEntityNodeIDInCompleteList++;
 						actionEntityNodesList->push_back(newEntity);
-						currentEntityNodeIDInActionEntityNodesList++;						
+						currentEntityNodeIDInActionEntityNodesList++;	
+						
+						cout << "Action Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;	
+											
 						/*
 						GIAEntityNode * newEntity = new GIAEntityNode();
 						currentEntity->next = newEntity;
@@ -316,7 +322,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 		}
 		else
 		{
-			cout << "parseSemanticNetTag error: no entity container node tag detected";
+			cout << "parseSemanticNetTag error: no action entity container node tag detected";
 		}				
 	}
 	
@@ -387,7 +393,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		//cout << "df1" << endl;
 		
 		if(currentAttribute->name == NET_XML_ATTRIBUTE_id)
-		{
+		{			
 			long attributeValue = atol(currentAttribute->value.c_str());
 			entityNode->id = attributeValue;
 			idFound = true;
@@ -649,10 +655,12 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 		if(currentTagUpdatedL3->name == NET_XML_TAG_timeConditionNode)
 		{
 			cout << "timeConditionNode: " << endl;
+			entityNode->timeConditionNode = new GIATimeConditionNode();
 			if(!parseTimeConditionNodeTag(currentTagUpdatedL3, entityNode->timeConditionNode))
 			{
 				result = false;
 			}	
+			cout << "END timeConditionNode: " << endl;
 			timeConditionNodeFound = true;				
 		}
 					
@@ -697,7 +705,7 @@ bool parseActionNodeListTag(XMLParserTag * firstTagInActionNodeList, GIAEntityNo
 	XMLParserTag * currentTagUpdatedL1 = firstTagInActionNodeList;
 	while(currentTagUpdatedL1->nextTag != NULL)
 	{
-		if(currentTagUpdatedL1->name == NET_XML_TAG_entityNodeReference)
+		if(currentTagUpdatedL1->name == NET_XML_TAG_actionNodeReference)
 		{
 			//cout << "actionNodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
@@ -717,7 +725,7 @@ bool parseIncomingActionNodeListTag(XMLParserTag * firstTagInIncomingActionNodeL
 	XMLParserTag * currentTagUpdatedL1 = firstTagInIncomingActionNodeList;
 	while(currentTagUpdatedL1->nextTag != NULL)
 	{
-		if(currentTagUpdatedL1->name == NET_XML_TAG_entityNodeReference)
+		if(currentTagUpdatedL1->name == NET_XML_TAG_actionNodeReference)
 		{
 			//cout << "actionNodeReference: " << endl;
 			XMLParserAttribute * currentAttribute = currentTagUpdatedL1->firstAttribute;
