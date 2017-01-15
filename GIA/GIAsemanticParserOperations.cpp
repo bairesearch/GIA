@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2b 12-December-2016
+ * Project Version: 2p2c 12-December-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -279,7 +279,7 @@ void determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList
 		else if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 		{
 			#ifndef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
-			cout << "warning: determineGIAconnectionistNetworkPOStypeNames() is supported, but Relex cannot generate det and aux syntactic relations (required to be stored by GIA connectionist network as 'GIA semantic relations' to reextract instances/substances and tense)" << endl;
+			cout << "warning: determineGIAconnectionistNetworkPOStypeNames{} is supported, but Relex cannot generate det and aux syntactic relations (required to be stored by GIA connectionist network as 'GIA semantic relations' to reextract instances/substances and tense)" << endl;
 			#endif
 			determineGIAconnectionistNetworkPOStypeNameRelex(currentFeatureInSentence);
 		}

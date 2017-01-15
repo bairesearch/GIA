@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParserTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2b 12-December-2016
+ * Project Version: 2p2c 12-December-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -1145,7 +1145,7 @@ bool generateAllPermutationsFromSemanticRelationsFile(GIAfeature* firstFeatureIn
 
 		GIAfeature* dummyBlankFeature = new GIAfeature();
 		#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-		cout << "parseStanfordParserFile() passed." << endl;
+		cout << "parseStanfordParserFile{} passed." << endl;
 		#endif
 		//now simulate GIA2 semantic relations for each subset of original sentence POS permutation
 		GIAfeature* secondWordInTupleFeature = firstFeatureInList;

@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParserDatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2b 12-December-2016
+ * Project Version: 2p2c 12-December-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -65,10 +65,11 @@ void saveTextToCorpusFileString(string sentenceText);
 void removeTextFromCorpusFileString(string sentenceText);
 void removeTextLineFromCorpusFileString(string sentenceText);
 */
+void writeSemanticParserCorpusFile(GIAfeature* firstFeatureInSentence);
 #else
 string generateSemanticParserCorpusSemanticRelationsText(GIArelation* firstSemanticRelationInList);
 #endif
-void writeSemanticParserCorpusFile(GIAfeature* firstFeatureInSentence);
+void writeSemanticParserCorpusFile(GIAfeature* firstFeatureInSentence, string* sentenceSemanticRelationsText);
 bool loadSemanticParserCorpusDatabaseFile(GIAsentence* currentSentenceInList, GIAfeature* firstFeatureInListorSubset);
 string semanticParserCorpusDBgenerateFileName(GIAfeature* firstFeatureInList);
 #endif
