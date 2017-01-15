@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m2a 06-September-2016
+ * Project Version: 2m3a 06-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -706,6 +706,7 @@
 //#define GIA_DISABLE_2l_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2m_CODE_FOR_DEBUG
 #ifndef GIA_DISABLE_2m_CODE_FOR_DEBUG
+	#define GIA_USE_SYNONYMN_DETECTION_DISABLE_DURING_SPECIFIC_CONCEPT_ACTION_LINKING	//2m3a
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES	//2m2a
 	#define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_PLURAL_GOVERNOR	//2m1b
 	//#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_QUALITIES	//added 2m1a, disabled 2m1c
@@ -1317,6 +1318,9 @@
 #define USE_WORDNET	(takes into account synonymns)
 #ifdef USE_WORDNET
 	#define GIA_USE_SYNONYMN_DETECTION
+	#ifdef GIA_USE_SYNONYMN_DETECTION
+		#define GIA_USE_SYNONYMN_DETECTION_DEFAULT_QUERIES_AND_ADVANCED_REFERENCING
+	#endif
 #endif
 
 
