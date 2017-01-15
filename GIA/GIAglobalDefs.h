@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l1a 14-October-2015
+ * Project Version: 2l2a 14-October-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -663,6 +663,16 @@
 //#define GIA_DISABLE_2i_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2j_CODE_FOR_DEBUG
 //#define GIA_DISABLE_2k_CODE_FOR_DEBUG
+//#define GIA_DISABLE_2l_CODE_FOR_DEBUG
+#ifndef GIA_DISABLE_2l_CODE_FOR_DEBUG
+	//#define GIA_QUERY_WILD_CARDS	//2l3a	//support something/anything - affects both GIA advanced referencing and queries
+	#ifdef GIA_QUERY_WILD_CARDS
+		#define GIA_QUERY_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES (2)
+		#define GIA_QUERY_WILD_CARDS_ACTIONS_NUMBER_OF_TYPES (1)
+		static string giaQueryWildCardSubstanceArray[GIA_QUERY_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES] = {"something", "anything"};
+		static string giaQueryWildCardActionArray[GIA_QUERY_WILD_CARDS_ACTIONS_NUMBER_OF_TYPES] = {"do"};
+	#endif
+#endif
 
 #ifndef GIA_DISABLE_2k_CODE_FOR_DEBUG
 	//#ifdef GIA2_SEMANTIC_PARSER	//has not yet been defined
@@ -1107,7 +1117,7 @@
 		#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	#endif
 	#ifdef USE_NLC	
-		#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//ie #ifndef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY. Note NLC does not require intrasentence referencing when NLC_USE_ADVANCED_REFERENCING is enabled (ie )
+		#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//ie #ifndef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY. Note NLC does not require intrasentence referencing when NLC_USE_ADVANCED_REFERENCING is enabled (ie GIA_DISABLE_CROSS_SENTENCE_REFERENCING is enabled)
 			#define GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 		#endif	
 	#else

@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l1a 14-October-2015
+ * Project Version: 2l2a 14-October-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -530,6 +530,48 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode* queryEntityNode, 
 			}
 			#endif
 
+			#ifdef GIA_QUERY_WILD_CARDS
+ 			if(!traceModeIsQuery)
+			{
+				#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
+				if(!(queryEntityNode->disabled) && !(entityNode->disabled))
+				{
+				#endif
+					#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+					if(!(referenceTraceParameters->intrasentenceReference))
+					{
+					#endif
+						#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+						if(!(referenceTraceParameters->linkSpecificConceptsAndActions))
+						{
+						#endif
+							if(entityNode->isAction)
+							{
+								if(textInTextArray(queryEntityNode->entityName, giaQueryWildCardActionArray, GIA_QUERY_WILD_CARDS_ACTIONS_NUMBER_OF_TYPES))
+								{
+									compareEntityNamesResult = true;
+								}
+							}
+							else
+							{
+								if(textInTextArray(queryEntityNode->entityName, giaQueryWildCardSubstanceArray, GIA_QUERY_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES))
+								{
+									compareEntityNamesResult = true;
+								}
+							}
+						#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+						}
+						#endif
+					#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+					}
+					#endif
+					
+				#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
+				}
+				#endif
+			}
+			#endif
+			
 			if(traceModeIsQuery)
 			{
 				#ifdef GIA_QUERY_DEBUG
@@ -1170,6 +1212,48 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode* queryEntityNode, GI
 				}
 			}
 			#endif
+			
+			#ifdef GIA_QUERY_WILD_CARDS
+ 			if(!traceModeIsQuery)
+			{
+				#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
+				if(!(queryEntityNode->disabled) && !(entityNode->disabled))
+				{
+				#endif
+					#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+					if(!(referenceTraceParameters->intrasentenceReference))
+					{
+					#endif
+						#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+						if(!(referenceTraceParameters->linkSpecificConceptsAndActions))
+						{
+						#endif
+							if(entityNode->isAction)
+							{
+								if(textInTextArray(queryEntityNode->entityName, giaQueryWildCardActionArray, GIA_QUERY_WILD_CARDS_ACTIONS_NUMBER_OF_TYPES))
+								{
+									compareEntityNamesResult = true;
+								}
+							}
+							else
+							{
+								if(textInTextArray(queryEntityNode->entityName, giaQueryWildCardSubstanceArray, GIA_QUERY_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES))
+								{
+									compareEntityNamesResult = true;
+								}
+							}
+						#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+						}
+						#endif
+					#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+					}
+					#endif
+				#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
+				}
+				#endif
+			}
+			#endif
+ 
 
 			if(traceModeIsQuery)
 			{
