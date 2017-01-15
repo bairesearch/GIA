@@ -39,7 +39,7 @@
 
 #include "GIAconditionNodeClass.h"
 #include "GIAglobalDefs.h"
-
+#include "SHAREDvars.h"
 
 #include <iostream>
 #include <fstream>
@@ -519,12 +519,6 @@ void setEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristi
 		void getEntityCharacteristicIterationint(int entityVal, EntityCharacteristic * entityCharacteristicGet, string iterationVariable, bool *foundMatch);
 		void getEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic * entityCharacteristicGet, string iterationVariable, bool *foundMatch);
 #endif
-
-string convertIntToString(int integer);
-string convertBoolToString(bool boolean);
-
-bool textInTextArray(string text, string * textArray, int arraySize);
-bool textInTextArray(string text, string * textArray, int arraySize, int * arrayIndexOfResultFound);
 
 #endif
 
