@@ -23,7 +23,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p10a 23-September-2012
+ * Project Version: 1p10b 23-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -690,6 +690,11 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 									currentRelationInList->relationDependentIndex = atoi(relationDependentIndexString.c_str());
 
 									currentRelationInList->relationType = currentTagInDependencies->firstAttribute->value;
+								
+									//don't use these, use lemmas instead (as per Stanford Core NLP/Relex dependency relation definitions). These are required to be set temporarily for LRP;
+									currentRelationInList->relationGovernor = governerTagInDep->value;
+									currentRelationInList->relationDependent = dependentTagInDep->value;
+																	
 									convertStanfordRelationToRelex(currentRelationInList, currentSentence);
 
 									#ifdef GIA_NLP_DEBUG
@@ -698,11 +703,6 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 									//cout << "currentRelationInList->relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
 									#endif
 									
-									/*
-									//don't use these, use lemmas instead (as per Stanford Core NLP/Relex dependency relation definitions)
-									currentRelationInList->relationGovernor = governerTagInDep->value;
-									currentRelationInList->relationDependent = dependentTagInDep->value;
-									*/
 									currentFeatureInList = firstFeatureInList;
 									for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationDependentIndex; f++)
 									{
