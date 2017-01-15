@@ -176,31 +176,33 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	locateAndAddAllConceptEntities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, GIAEntityNodeIsDate, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsPersonArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, sentenceConceptEntityNodesList, NLPdependencyRelationsType);
 
 	
-	#ifdef GIA_USE_STANFORD_CORENLP
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "pass 1z; redistribute Stanford Relations - Adverbal Clause Modifier And Complement (eg The accident happened as the night was falling. 	advcl(happen, fall) / mark(fall, as))" << endl;
-	#endif
-	redistributeStanfordRelationsAdverbalClauseModifierAndComplement(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
-	#endif
-	#ifdef GIA_USE_STANFORD_CORENLP
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "pass 1z2; redistribute Stanford Relations - Clausal Subject (eg What she said makes sense. 	csubj (make, say)/dobj ( said-3 , What-1 ))" << endl;
-	#endif
-	redistributeStanfordRelationsClausalSubject(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
-	#endif
-	#ifdef GIA_USE_STANFORD_CORENLP
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "pass 1z3; redistribute Stanford Relations - Phrasal Verb Particle (eg They shut down the station. 	prt(shut, down))" << endl;
-	#endif
-	redistributeStanfordRelationsPhrasalVerbParticle(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
-	#endif	
-	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "pass 1z4 pass; redistribute Stanford Relations NSubj And Preposition" << endl;
-	#endif
-	redistributeStanfordRelationsNSubjAndPreposition(currentSentenceInList, GIAEntityNodeArray);
-	#endif
-
+	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+	{
+		#ifdef GIA_USE_STANFORD_CORENLP
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1z; redistribute Stanford Relations - Adverbal Clause Modifier And Complement (eg The accident happened as the night was falling. 	advcl(happen, fall) / mark(fall, as))" << endl;
+		#endif
+		redistributeStanfordRelationsAdverbalClauseModifierAndComplement(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+		#endif
+		#ifdef GIA_USE_STANFORD_CORENLP
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1z2; redistribute Stanford Relations - Clausal Subject (eg What she said makes sense. 	csubj (make, say)/dobj ( said-3 , What-1 ))" << endl;
+		#endif
+		redistributeStanfordRelationsClausalSubject(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+		#endif
+		#ifdef GIA_USE_STANFORD_CORENLP
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1z3; redistribute Stanford Relations - Phrasal Verb Particle (eg They shut down the station. 	prt(shut, down))" << endl;
+		#endif
+		redistributeStanfordRelationsPhrasalVerbParticle(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+		#endif	
+		#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1z4 pass; redistribute Stanford Relations NSubj And Preposition" << endl;
+		#endif
+		redistributeStanfordRelationsNSubjAndPreposition(currentSentenceInList, GIAEntityNodeArray);
+		#endif
+	}
 
 		
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -394,12 +396,15 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#endif
 	linkPropertiesParataxis(currentSentenceInList, GIAEntityNodeArray);	
 
-	#ifdef GIA_USE_STANFORD_CORENLP
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "5a pass; define Clausal Complement Properties (ccomp); eg ccomp(say, like)	He says that you like to swim" << endl;
-	#endif
-	defineClausalComplementProperties(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);	
-	#endif
+	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_STANFORD)
+	{
+		#ifdef GIA_USE_STANFORD_CORENLP
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "5a pass; define Clausal Complement Properties (ccomp); eg ccomp(say, like)	He says that you like to swim" << endl;
+		#endif
+		defineClausalComplementProperties(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);	
+		#endif
+	}
 
 	/*OLD DELETE;
 	//cout << "5a pass; parse questions" << endl;	

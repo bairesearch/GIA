@@ -901,7 +901,6 @@ void redistributeStanfordRelationsNSubjAndPreposition(Sentence * currentSentence
 			{	
 				bool stanfordPrepositionFound = false;
 				string relexPreposition = convertStanfordPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATION_FORMATION_STANFORD, &stanfordPrepositionFound);
-				
 
 				if(stanfordPrepositionFound)
 				{		
