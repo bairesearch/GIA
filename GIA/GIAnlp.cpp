@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k6c 27-July-2015
+ * Project Version: 2k6d 27-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -1032,7 +1032,7 @@ int countSubstring(const std::string& str, const std::string& sub)
 {
     if (sub.length() == 0) return 0;
     int count = 0;
-    for (size_t offset = str.find(sub); offset != std::string::npos;
+    for (size_t offset = str.find(sub); offset != CPP_STRING_FIND_RESULT_FAIL_VALUE;
 	 offset = str.find(sub, offset + sub.length()))
     {
         ++count;
