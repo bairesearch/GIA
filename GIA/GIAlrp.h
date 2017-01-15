@@ -26,7 +26,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2f 18-November-2014
+ * Project Version: 2h2g 18-November-2014
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -231,6 +231,7 @@ public:
 bool initialiseLRP(string newLRPDataFolderName, bool newUseLRP);
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
 	bool loadVerbList(string irregularVerbListFileName, GIALRPtag * firstTagInIrregularVerbList);
+		void testVerbCase(string tagName, string wordLowerCase, string baseTenseFormStart, string baseTenseFormAppend, int * numberOfCharactersInBaseTenseFormAppend, bool * foundVerbCase, string * baseNameFound, int * grammaticalTenseModifier, int grammaticalTenseModifierNew);
 	#endif
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	bool loadPrepositionsInverseList(string prepositionsInverseListFileName, GIALRPtag * firstTagInPrepositionsInverseList);
