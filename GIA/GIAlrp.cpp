@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -274,7 +274,7 @@ bool loadVerbList(string irregularVerbListFileName, GIALRPtag* firstTagInIrregul
 	GIALRPtag* currentTagInIrregularVerbList = firstTagInIrregularVerbList;
 
 	ifstream parseFileObject(irregularVerbListFileName.c_str());
-	if(!parseFileObject.rdbuf( )->is_open( ))
+	if(!parseFileObject.rdbuf()->is_open())
 	{
 		//txt file does not exist in current directory.
 		cout << "Error: Irregular Verb Database File does not exist in current directory: " << irregularVerbListFileName << endl;
@@ -320,7 +320,7 @@ bool loadIrregularVerbList(string irregularVerbListFileName, GIALRPtag* firstTag
 	GIALRPtag* currentTagInIrregularVerb = firstTagInIrregularVerb;
 
 	ifstream parseFileObject(irregularVerbListFileName.c_str());
-	if(!parseFileObject.rdbuf( )->is_open( ))
+	if(!parseFileObject.rdbuf()->is_open())
 	{
 		//txt file does not exist in current directory.
 		cout << "Error: Irregular Verb Database File does not exist in current directory: " << irregularVerbListFileName << endl;
@@ -416,7 +416,7 @@ bool loadPhrasalVerbDataAndGenerateAllTenseVariants(string phrasalVerbDatabaseFi
 	GIALRPtag* recordOfNonAlternateTagInPhrasalVerb = currentTagInPhrasalVerb;
 
 	ifstream parseFileObject(phrasalVerbDatabaseFileName.c_str());
-	if(!parseFileObject.rdbuf( )->is_open( ))
+	if(!parseFileObject.rdbuf()->is_open())
 	{
 		//txt file does not exist in current directory.
 		cout << "Error: Phrasal Verb Database File does not exist in current directory: " << phrasalVerbDatabaseFileName << endl;
@@ -948,7 +948,7 @@ bool loadMultiWordPrepositionData(string multiwordPrepositionListFileName, GIALR
 	GIALRPtag* currentTagInMultiwordPreposition = firstTagInMultiwordPreposition;
 
 	ifstream parseFileObject(multiwordPrepositionListFileName.c_str());
-	if(!parseFileObject.rdbuf( )->is_open( ))
+	if(!parseFileObject.rdbuf()->is_open())
 	{
 		//txt file does not exist in current directory.
 		cout << "Error: Multiword Preposition Database File does not exist in current directory: " << multiwordPrepositionListFileName << endl;
@@ -1704,7 +1704,7 @@ bool searchAndReplaceMultiwordPrepositions(GIALRPtag* firstTagInPlainText, GIALR
 						currentTagInPlainTextSentenceTemp2->tagName = tagNameWithLastLetterDropped;
 						currentCorrespondenceInfo->sentenceIndex = currentTagInPlainText->sentenceIndex;
 						currentCorrespondenceInfo->entityIndex = newEntityIndex;	//this is not currently used for LRP collapsed multiword prepositions
-						//#ifdef GIA_USE_CORPUS_DATABASE
+						//#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 						currentCorrespondenceInfo->lemmaWithLRP = currentTagInPlainTextSentenceTemp2->tagName;	//added 2j6c	//required for GIA2 only?
 						//#endif
 						currentCorrespondenceInfo->wordWithLRP = currentTagInPlainTextSentenceTemp2->tagName;
@@ -2285,7 +2285,7 @@ bool loadPrepositionsInverseList(string prepositionsInverseListFileName, GIALRPt
 	GIALRPtag* currentTagInRow = firstTagInRow;
 
 	ifstream parseFileObject(prepositionsInverseListFileName.c_str());
-	if(!parseFileObject.rdbuf( )->is_open( ))
+	if(!parseFileObject.rdbuf()->is_open())
 	{
 		//txt file does not exist in current directory.
 		cout << "Error: Prepositions Inverse Database File does not exist in current directory: " << prepositionsInverseListFileName << endl;

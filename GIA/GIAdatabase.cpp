@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -543,7 +543,7 @@ void DBreadReferencesFile(string* referencesFileName, GIAentityNode* entity)
 	//read file into c struct
 
 	ifstream parseFileObject(referencesFileName->c_str());
-	if(!parseFileObject.rdbuf( )->is_open( ))
+	if(!parseFileObject.rdbuf()->is_open())
 	{
 		//xml file does not exist in current directory.
 		cout << "Error: GIA Entity File does not exist in current directory: " <<* referencesFileName << endl;
@@ -722,7 +722,7 @@ void DBreadConceptEntityNodesLoadedList()	//unordered_map<string, bool>* DBconce
 
 #ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 	ifstream parseFileObject(conceptEntityNodesListFileName.c_str());
-	if(!parseFileObject.rdbuf( )->is_open( ))
+	if(!parseFileObject.rdbuf()->is_open())
 	{
 		//file does not exist in current directory.
 		cout << "DBreadConceptEntityNodesLoadedList{} error: GIA Concept Entity Nodes List File does not exist in current directory: " << conceptEntityNodesListFileName << endl;
@@ -1188,7 +1188,7 @@ void DBreadEntityNodeFile(string* entityFileName, GIAentityNode* entity)
 
 	/*
 	ifstream parseFileObject(entityFileName->c_str());
-	if(!parseFileObject.rdbuf( )->is_open( ))
+	if(!parseFileObject.rdbuf()->is_open())
 	{
 		//xml file does not exist in current directory.
 		cout << "Error: GIA Entity File does not exist in current directory: " <<* entityFileName << endl;
@@ -1884,13 +1884,12 @@ GIAentityNode* findEntityNodesActiveListCompleteFastIndex(string* entityName, lo
 string createEntityNodesActiveListCompleteFastIndexIndex(string* entityName, long idInstance)
 {
 
-	char idInstanceCharStar[GIA_DATABASE_INSTANCE_ID_MAX_LENGTH+1];	//to take into account string terminator character /0
-	sprintf(idInstanceCharStar, "%ld", idInstance);
+	string idInstanceString = convertLongToString(idInstance);
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	cout << "idInstanceCharStar = " << idInstanceCharStar << endl;
+	cout << "idInstanceString = " << idInstanceString << endl;
 	#endif
 	string entityNodesTempActiveListCompleteIndex = "";
-	entityNodesTempActiveListCompleteIndex = entityNodesTempActiveListCompleteIndex +* entityName + idInstanceCharStar;
+	entityNodesTempActiveListCompleteIndex = entityNodesTempActiveListCompleteIndex +* entityName + idInstanceString;
 
 	#ifdef GIA_DATABASE_DEBUG
 	//cout << "*entityName = " <<* entityName << endl;

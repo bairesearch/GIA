@@ -26,7 +26,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -34,7 +34,7 @@
 
 
 #include "GIAwordnet.h"
-
+#include "SHAREDvars.h"
 
 
 static int synonymnDetectionStatus;
@@ -515,7 +515,7 @@ void findSynonymsOLD(string word, bool* wordIsFound, string listOfSynonyms[], in
 	}
 
 	//now convert numberOfSensesString to number (this becomes the number of 'senses')
-	int numberSenses = atoi(numberOfSensesString.c_str());
+	int numberSenses = convertStringToInt(numberOfSensesString);
 	#ifdef GIA_WORDNET_DEBUG
 	cout << "output = " << output << endl;
 	cout << "numberSenses = " << numberSenses << endl;
@@ -554,8 +554,7 @@ void findSynonymsOLD(string word, bool* wordIsFound, string listOfSynonyms[], in
 		}
 		lineIndex++;
 
-		char senseString[MAX_CHARACTERS_OF_WORDNET_FINDTHEINFO_OUTPUT_NUMBER_OF_SENSES];
-		sprintf(senseString, "%d", sense);
+		string senseString = convertIntToString(sense);
 		string senseEntryTitleStringExpected = "";
 		senseEntryTitleStringExpected = senseEntryTitleStringExpected + WORDNET_SENSE_STRING + " " + senseString;
 		#ifdef GIA_WORDNET_DEBUG

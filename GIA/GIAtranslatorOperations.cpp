@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -41,8 +41,8 @@
 #ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 #include "GIAlrp.h"
 #endif
-#ifdef GIA_USE_CORPUS_DATABASE
-#include "GIAcorpusOperations.h"
+#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+#include "GIAsemanticParserOperations.h"
 #endif
 
 #ifdef GIA_SUPPORT_NLC_INTEGRATION
@@ -586,7 +586,7 @@ GIAentityNode* addOrConnectActionToEntity(GIAentityNode* subjectEntity, GIAentit
 {
 	#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	#ifdef GIA_TRANSLATOR_DO_NOT_CREATE_SUBSTANCE_CONCEPT_PROPERTIES_FOR_NON_SUBSTANCE_CONCEPT_PARENTS
-	if(actionEntity->entityName == RELATION_ENTITY_SPECIAL_POSSESSIVE)
+	if(isActionSpecialPossessive(actionEntity))
 	{
 		if(!(subjectEntity->isSubstanceConcept))
 		{
@@ -1798,7 +1798,9 @@ GIAentityConnection* writeVectorConnection(GIAentityNode* entityNode, GIAentityN
 
 			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 			newConnection->sameReferenceSet = sameReferenceSet;
+			#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
 			newConnection->rcmodIndicatesSameReferenceSet = rcmodIndicatesSameReferenceSet;
+			#endif
 			/*
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 			cout << "writeVectorConnection: newConnection->sameReferenceSet = " << sameReferenceSet << endl;
@@ -2182,7 +2184,11 @@ void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNo
 						#endif
 						#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 						bool sameReferenceSet = (*connectionIter)->sameReferenceSet;
+						#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
 						bool rcmodIndicatesSameReferenceSet = (*connectionIter)->rcmodIndicatesSameReferenceSet;	//CHECKTHIS
+						#else
+						bool rcmodIndicatesSameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+						#endif
 						#else
 						bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 						bool rcmodIndicatesSameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;

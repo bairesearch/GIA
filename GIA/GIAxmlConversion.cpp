@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -212,7 +212,7 @@ bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>
 						GIAentityNode* newEntity = new GIAentityNode();
 
 						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						int attributeValue = atoi(currentTagUpdatedL3->firstAttribute->value.c_str());
+						int attributeValue = convertStringToInt(currentTagUpdatedL3->firstAttribute->value);
 						newEntity->idActiveList = attributeValue;
 						newEntity->entityName = currentTagUpdatedL3->firstAttribute->nextAttribute->value.c_str();
 						//cout << "newEntity->entityName = " << newEntity->entityName << endl;
@@ -334,7 +334,7 @@ bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>
 						GIAentityNode* newEntity = new GIAentityNode();
 
 						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						int attributeValue = atoi(currentTagUpdatedL3->firstAttribute->value.c_str());
+						int attributeValue = convertStringToInt(currentTagUpdatedL3->firstAttribute->value);
 						newEntity->idActiveList = attributeValue;
 						newEntity->entityName = currentTagUpdatedL3->firstAttribute->nextAttribute->value.c_str();
 						//cout << "newEntity->entityName = " << newEntity->entityName << endl;
@@ -407,7 +407,7 @@ bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>
 						GIAentityNode* newEntity = new GIAentityNode();
 
 						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						int attributeValue = atoi(currentTagUpdatedL3->firstAttribute->value.c_str());
+						int attributeValue = convertStringToInt(currentTagUpdatedL3->firstAttribute->value);
 						newEntity->idActiveList = attributeValue;
 						newEntity->entityName = currentTagUpdatedL3->firstAttribute->nextAttribute->value.c_str();
 						//cout << "newEntity->entityName = " << newEntity->entityName << endl;
@@ -480,7 +480,7 @@ bool parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>
 						GIAentityNode* newEntity = new GIAentityNode();
 
 						#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-						int attributeValue = atoi(currentTagUpdatedL3->firstAttribute->value.c_str());
+						int attributeValue = convertStringToInt(currentTagUpdatedL3->firstAttribute->value);
 						newEntity->idActiveList = attributeValue;
 						#endif
 
@@ -613,7 +613,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 	{
 		if(currentAttribute->name == NET_XML_ATTRIBUTE_id)
 		{
-			long attributeValue = atol(currentAttribute->value.c_str());
+			long attributeValue = convertStringToLong(currentAttribute->value);
 			entityNode->idActiveList = attributeValue;
 			idFound = true;
 			#ifdef GIA_SEMANTIC_NET_XML_DEBUG
@@ -644,91 +644,91 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 		#endif
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_confidence)
 		{
-			double attributeValue = atof(currentAttribute->value.c_str());
+			double attributeValue = convertStringToDouble(currentAttribute->value);
 			entityNode->confidence = attributeValue;
 			confidenceFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isConcept)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->isConcept = attributeValue;
 			isConceptFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isSubstance)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->isSubstance = attributeValue;
 			isSubstanceFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isAction)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->isAction = attributeValue;
 			isActionFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isCondition)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->isCondition = attributeValue;
 			isConditionFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedInstance)
 		{
-			bool attributeValue = atoi(currentAttribute->value.c_str());
+			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->hasAssociatedInstance = attributeValue;
 			hasAssociatedSubstanceFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedInstanceIsAction)
 		{
-			bool attributeValue = atoi(currentAttribute->value.c_str());
+			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->hasAssociatedInstanceIsAction = attributeValue;
 			hasAssociatedSubstanceIsActionFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedInstanceIsCondition)
 		{
-			bool attributeValue = atoi(currentAttribute->value.c_str());
+			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->hasAssociatedInstanceIsCondition = attributeValue;
 			hasAssociatedSubstanceIsConditionFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasAssociatedTime)
 		{
-			bool attributeValue = atoi(currentAttribute->value.c_str());
+			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->hasAssociatedTime = attributeValue;
 			hasAssociatedTimeFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isSubstanceQuality)
 		{
-			bool attributeValue = atoi(currentAttribute->value.c_str());
+			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->isSubstanceQuality = attributeValue;
 			isSubstanceQualityFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isSubstanceConcept)
 		{
-			bool attributeValue = atoi(currentAttribute->value.c_str());
+			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->isSubstanceConcept = attributeValue;
 			isSubstanceConceptFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isActionConcept)
 		{
-			bool attributeValue = atoi(currentAttribute->value.c_str());
+			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->isActionConcept = attributeValue;
 			isActionConceptFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_negative)
 		{
-			bool attributeValue = atoi(currentAttribute->value.c_str());
+			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->negative = attributeValue;
 			negativeFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_disabled)
 		{
-			bool attributeValue = atoi(currentAttribute->value.c_str());
+			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->disabled = attributeValue;
 			disabledFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionType)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->conditionType = attributeValue;
 			conditionTypeFound = true;
 		}
@@ -736,19 +736,19 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalNumber)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->grammaticalNumber = attributeValue;
 			grammaticalNumberFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasQuantity)
 		{
-			bool attributeValue = atoi(currentAttribute->value.c_str());
+			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->hasQuantity = attributeValue;
 			hasQuantityFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityNumber)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->quantityNumber = attributeValue;
 			quantityNumberFound = true;
 		}
@@ -760,7 +760,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_quantityModifier)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->quantityModifier = attributeValue;
 			quantityModifierFound = true;
 		}
@@ -772,19 +772,19 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasQuantityMultiplier)
 		{
-			bool attributeValue = atoi(currentAttribute->value.c_str());
+			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->hasQuantityMultiplier = attributeValue;
 			hasQuantityMultiplierFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hasMeasure)
 		{
-			bool attributeValue = atoi(currentAttribute->value.c_str());
+			bool attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->hasMeasure = attributeValue;
 			hasMeasureFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_measureType)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->measureType = attributeValue;
 			measureTypeFound = true;
 		}
@@ -792,42 +792,42 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printX)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->printX = attributeValue;
 			printXFound = true;
 			entityNode->printCoordsAlreadyDefined = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printY)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->printY = attributeValue;
 			printYFound = true;
 			entityNode->printCoordsAlreadyDefined = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printXIndex)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->printXIndex = attributeValue;
 			printXIndexFound = true;
 			entityNode->printCoordsAlreadyDefined = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printYIndex)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->printYIndex = attributeValue;
 			printYIndexFound = true;
 			entityNode->printCoordsAlreadyDefined = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextX)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->printTextX = attributeValue;
 			printTextXFound = true;
 			entityNode->printCoordsAlreadyDefined = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_printTextY)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->printTextY = attributeValue;
 			printTextYFound = true;
 			entityNode->printCoordsAlreadyDefined = true;
@@ -836,53 +836,53 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 		#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_sentenceIndexTemp)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->sentenceIndexTemp = attributeValue;
 			sentenceIndexTempFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalDefiniteTemp)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->grammaticalDefiniteTemp = attributeValue;
 			grammaticalDefiniteTempFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalIndefinitePluralTemp)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->grammaticalIndefinitePluralTemp = attributeValue;
 			grammaticalIndefinitePluralTempFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalProperNounTemp)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->grammaticalProperNounTemp = attributeValue;
 			grammaticalProperNounTempFound = true;
 		}
 		#ifdef GIA_SUPPORT_PREDETERMINERS
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalPredeterminerTemp)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->grammaticalPredeterminerTemp = attributeValue;
 			grammaticalPredeterminerTempFound = true;
 		}
 		#endif
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityIndexTemp)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->entityIndexTemp = attributeValue;
 			entityIndexFound = true;
 		}
 		#ifdef GIA_USE_ADVANCED_REFERENCING
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_wasReference)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->wasReference = attributeValue;
 			wasReferenceFound = true;
 		}
 		#endif
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isQuery)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->isQuery = attributeValue;
 			isQueryFound = true;
 		}
@@ -906,14 +906,14 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 		#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionTwoWay)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->conditionTwoWay = attributeValue;
 			conditionTwoWayFound = true;
 		}
 		#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_inverseConditionTwoWay)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			entityNode->inverseConditionTwoWay = attributeValue;
 			inverseConditionTwoWayFound = true;
 		}
@@ -1028,7 +1028,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 			{
 				if(currentAttribute->name == NET_XML_ATTRIBUTE_id)
 				{
-					long attributeValue = atol(currentAttribute->value.c_str());
+					long attributeValue = convertStringToLong(currentAttribute->value);
 					idActiveList = attributeValue;
 					idFound = true;
 					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
@@ -1039,7 +1039,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 				#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 				else if(currentAttribute->name == NET_XML_ATTRIBUTE_sentenceIndexTemp)
 				{
-					int attributeValue = atoi(currentAttribute->value.c_str());
+					int attributeValue = convertStringToInt(currentAttribute->value);
 					newConnection->sentenceIndexTemp = attributeValue;
 					sentenceIndexTempFound = true;
 					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
@@ -1051,7 +1051,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 				#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 				else if(currentAttribute->name == NET_XML_ATTRIBUTE_isReference)
 				{
-					bool attributeValue = atoi(currentAttribute->value.c_str());
+					bool attributeValue = convertStringToInt(currentAttribute->value);
 					newConnection->isReference = attributeValue;
 					isReferenceFound = true;
 					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
@@ -1063,7 +1063,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				else if(currentAttribute->name == NET_XML_ATTRIBUTE_sameReferenceSet)
 				{
-					bool attributeValue = atoi(currentAttribute->value.c_str());
+					bool attributeValue = convertStringToInt(currentAttribute->value);
 					newConnection->sameReferenceSet = attributeValue;
 					sameReferenceSetFound = true;
 					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
@@ -1073,7 +1073,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 				#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
 				else if(currentAttribute->name == NET_XML_ATTRIBUTE_rcmodIndicatesSameReferenceSet)
 				{
-					bool attributeValue = atoi(currentAttribute->value.c_str());
+					bool attributeValue = convertStringToInt(currentAttribute->value);
 					newConnection->rcmodIndicatesSameReferenceSet = attributeValue;
 					rcmodIndicatesSameReferenceSetFound = true;
 					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
@@ -1085,7 +1085,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 				#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 				else if(currentAttribute->name == NET_XML_ATTRIBUTE_isAlias)
 				{
-					bool attributeValue = atoi(currentAttribute->value.c_str());
+					bool attributeValue = convertStringToInt(currentAttribute->value);
 					newConnection->isAlias = attributeValue;
 					isAliasFound = true;
 					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
@@ -1155,55 +1155,55 @@ bool parseTimeConditionNodeTag(XMLparserTag* firstTagInTimeConditionNode, GIAtim
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_tense)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			timeConditionNode->tense = attributeValue;
 			tenseFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_second)
 		{
-			double attributeValue = atof(currentAttribute->value.c_str());
+			double attributeValue = convertStringToDouble(currentAttribute->value);
 			timeConditionNode->second = attributeValue;
 			secondFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_hour)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			timeConditionNode->hour = attributeValue;
 			hourFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_dayOfWeek)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			timeConditionNode->dayOfWeek = attributeValue;
 			dayOfWeekFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_month)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			timeConditionNode->month = attributeValue;
 			monthFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_dayOfMonth)
 		{
-			int attributeValue = atoi(currentAttribute->value.c_str());
+			int attributeValue = convertStringToInt(currentAttribute->value);
 			timeConditionNode->dayOfMonth = attributeValue;
 			dayOfMonthFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_year)
 		{
-			long attributeValue = atol(currentAttribute->value.c_str());
+			long attributeValue = convertStringToLong(currentAttribute->value);
 			timeConditionNode->year = attributeValue;
 			yearFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_period)
 		{
-			double attributeValue = atoi(currentAttribute->value.c_str());
+			double attributeValue = convertStringToInt(currentAttribute->value);
 			timeConditionNode->period = attributeValue;
 			periodFound = true;
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_totalTimeInSeconds)
 		{
-			long attributeValue = atol(currentAttribute->value.c_str());
+			long attributeValue = convertStringToLong(currentAttribute->value);
 			timeConditionNode->totalTimeInSeconds = attributeValue;
 			totalTimeInSecondsFound = true;
 		}
@@ -1406,7 +1406,6 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 {
 	bool result = true;
 
-	char tempString[MAX_ATTRIBUTE_VALUE_SIZE];
 	//generate neuron connection tag
 	currentTagL1->name = NET_XML_TAG_entityNode;
 	XMLparserTag* firstTagL2 = new XMLparserTag();
@@ -1416,242 +1415,139 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	XMLParserAttribute* currentAttribute = currentTagL1->firstAttribute;
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_id;
-	sprintf(tempString, "%ld", currentEntityNodeIDinEntityNodesActiveCompleteList);
 	/*
 	#ifdef GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
 		//do not write current idActiveList value, write new idActiveList value - this enables fast linking of parsed xml file
-		sprintf(tempString, "%ld", currentEntityNodeIDinEntityNodesActiveCompleteList);
+		tempString = convertLongToString(currentEntityNodeIDinEntityNodesActiveCompleteList);
 	#else
-		sprintf(tempString, "%ld", (currentEntity->idActiveList));
+		tempString = convertLongToString((currentEntity->idActiveList));
 	#endif
 	*/
-	currentAttribute->value = tempString;
-
-	XMLParserAttribute* newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertLongToString(currentEntityNodeIDinEntityNodesActiveCompleteList);
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_entityName;
 	currentAttribute->value = currentEntity->entityName;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	#ifdef GIA_USE_WORD_ORIG
 	currentAttribute->name = NET_XML_ATTRIBUTE_wordOrig;
 	currentAttribute->value = currentEntity->wordOrig;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute = createNewAttribute(currentAttribute);
 	#endif
 
 	#ifdef GIA_SUPPORT_ALIASES
 	currentAttribute->name = NET_XML_ATTRIBUTE_aliases;
 	convertAliasesToAliasesString(currentEntity, &(currentAttribute->value));
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute = createNewAttribute(currentAttribute);
 	#endif
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_confidence;
-	sprintf(tempString, "%0.6f", (currentEntity->confidence));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertDoubleToString((currentEntity->confidence), "%0.6f");
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_isConcept;
-	sprintf(tempString, "%d", int(currentEntity->isConcept));
-	currentAttribute->value = tempString;
+	currentAttribute->value = convertIntToString(int(currentEntity->isConcept));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_isSubstance;
-	sprintf(tempString, "%d", int(currentEntity->isSubstance));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->isSubstance));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_isAction;
-	sprintf(tempString, "%d", int(currentEntity->isAction));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->isAction));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_isCondition;
-	sprintf(tempString, "%d", int(currentEntity->isCondition));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->isCondition));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedInstance;
-	sprintf(tempString, "%d", int(currentEntity->hasAssociatedInstance));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->hasAssociatedInstance));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedInstanceIsAction;
-	sprintf(tempString, "%d", int(currentEntity->hasAssociatedInstanceIsAction));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->hasAssociatedInstanceIsAction));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedInstanceIsCondition;
-	sprintf(tempString, "%d", int(currentEntity->hasAssociatedInstanceIsCondition));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->hasAssociatedInstanceIsCondition));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_hasAssociatedTime;
-	sprintf(tempString, "%d", int(currentEntity->hasAssociatedTime));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->hasAssociatedTime));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_isSubstanceQuality;
-	sprintf(tempString, "%d", int(currentEntity->isSubstanceQuality));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->isSubstanceQuality));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_isSubstanceConcept;
-	sprintf(tempString, "%d", int(currentEntity->isSubstanceConcept));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->isSubstanceConcept));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_isActionConcept;
-	sprintf(tempString, "%d", int(currentEntity->isActionConcept));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->isActionConcept));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_negative;
-	sprintf(tempString, "%d", int(currentEntity->negative));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->negative));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_disabled;
-	sprintf(tempString, "%d", int(currentEntity->disabled));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->disabled));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_conditionType;
-	sprintf(tempString, "%d", currentEntity->conditionType);
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(currentEntity->conditionType);
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalNumber;
-	sprintf(tempString, "%d", (currentEntity->grammaticalNumber));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString((currentEntity->grammaticalNumber));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_hasQuantity;
-	sprintf(tempString, "%d", int(currentEntity->hasQuantity));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->hasQuantity));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
 	if(currentEntity->hasQuantity)
 	{
 	#endif
 		currentAttribute->name = NET_XML_ATTRIBUTE_quantityNumber;
-		sprintf(tempString, "%d", (currentEntity->quantityNumber));
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute->value = convertIntToString((currentEntity->quantityNumber));
+		currentAttribute = createNewAttribute(currentAttribute);
 
 		currentAttribute->name = NET_XML_ATTRIBUTE_quantityNumberString;
 		currentAttribute->value = currentEntity->quantityNumberString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute = createNewAttribute(currentAttribute);
 
 		currentAttribute->name = NET_XML_ATTRIBUTE_quantityModifier;
-		sprintf(tempString, "%d", (currentEntity->quantityModifier));
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute->value = convertIntToString((currentEntity->quantityModifier));
+		currentAttribute = createNewAttribute(currentAttribute);
 
 		currentAttribute->name = NET_XML_ATTRIBUTE_quantityModifierString;
 		currentAttribute->value = currentEntity->quantityModifierString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute = createNewAttribute(currentAttribute);
 
 		currentAttribute->name = NET_XML_ATTRIBUTE_hasQuantityMultiplier;
-		sprintf(tempString, "%d", int(currentEntity->hasQuantityMultiplier));
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute->value = convertIntToString(int(currentEntity->hasQuantityMultiplier));
+		currentAttribute = createNewAttribute(currentAttribute);
 	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
 	}
 	#endif
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_hasMeasure;
-	sprintf(tempString, "%d", int(currentEntity->hasMeasure));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->hasMeasure));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
 	if(currentEntity->hasMeasure)
 	{
 	#endif
 		currentAttribute->name = NET_XML_ATTRIBUTE_measureType;
-		sprintf(tempString, "%d", (currentEntity->measureType));
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute->value = convertIntToString((currentEntity->measureType));
+		currentAttribute = createNewAttribute(currentAttribute);
 	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
 	}
 	#endif
@@ -1662,52 +1558,28 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	#endif
 
 		currentAttribute->name = NET_XML_ATTRIBUTE_printX;
-		sprintf(tempString, "%d", (currentEntity->printX));
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute->value = convertIntToString((currentEntity->printX));
+		currentAttribute = createNewAttribute(currentAttribute);
 
 		currentAttribute->name = NET_XML_ATTRIBUTE_printY;
-		sprintf(tempString, "%d", (currentEntity->printY));
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute->value = convertIntToString((currentEntity->printY));
+		currentAttribute = createNewAttribute(currentAttribute);
 
 		currentAttribute->name = NET_XML_ATTRIBUTE_printXIndex;
-		sprintf(tempString, "%d", (currentEntity->printXIndex));
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute->value = convertIntToString((currentEntity->printXIndex));
+		currentAttribute = createNewAttribute(currentAttribute);
 
 		currentAttribute->name = NET_XML_ATTRIBUTE_printYIndex;
-		sprintf(tempString, "%d", (currentEntity->printYIndex));
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute->value = convertIntToString((currentEntity->printYIndex));
+		currentAttribute = createNewAttribute(currentAttribute);
 
 		currentAttribute->name = NET_XML_ATTRIBUTE_printTextX;
-		sprintf(tempString, "%d", (currentEntity->printTextX));
-		currentAttribute->value = tempString;
-
-		XMLParserAttribute* newAttribute13 = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute13;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute->value = convertIntToString((currentEntity->printTextX));
+		currentAttribute = createNewAttribute(currentAttribute);
 
 		currentAttribute->name = NET_XML_ATTRIBUTE_printTextY;
-		sprintf(tempString, "%d", (currentEntity->printTextY));
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute->value = convertIntToString((currentEntity->printTextY));
+		currentAttribute = createNewAttribute(currentAttribute);
 
 	#ifdef GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
 	}
@@ -1715,106 +1587,60 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 
 	#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
 	currentAttribute->name = NET_XML_ATTRIBUTE_sentenceIndexTemp;
-	sprintf(tempString, "%d", (currentEntity->sentenceIndexTemp));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString((currentEntity->sentenceIndexTemp));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalDefiniteTemp;
-	sprintf(tempString, "%d", int(currentEntity->grammaticalDefiniteTemp));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->grammaticalDefiniteTemp));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalIndefinitePluralTemp;
-	sprintf(tempString, "%d", int(currentEntity->grammaticalIndefinitePluralTemp));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->grammaticalIndefinitePluralTemp));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalProperNounTemp;
-	sprintf(tempString, "%d", int(currentEntity->grammaticalProperNounTemp));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->grammaticalProperNounTemp));
+	currentAttribute = createNewAttribute(currentAttribute);
 	
 	#ifdef GIA_SUPPORT_PREDETERMINERS
 	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalPredeterminerTemp;
-	sprintf(tempString, "%d", int(currentEntity->grammaticalPredeterminerTemp));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->grammaticalPredeterminerTemp));
+	currentAttribute = createNewAttribute(currentAttribute);
 	#endif
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_entityIndexTemp;
-	sprintf(tempString, "%d", (currentEntity->entityIndexTemp));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString((currentEntity->entityIndexTemp));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	currentAttribute->name = NET_XML_ATTRIBUTE_wasReference;
-	sprintf(tempString, "%d", (currentEntity->wasReference));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString((currentEntity->wasReference));
+	currentAttribute = createNewAttribute(currentAttribute);
 	#endif
 	
 	currentAttribute->name = NET_XML_ATTRIBUTE_isQuery;
-	sprintf(tempString, "%d", int(currentEntity->isQuery));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->isQuery));
+	currentAttribute = createNewAttribute(currentAttribute);
 	
 	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp;
 	currentAttribute->value = convertBooleanArrayToString(currentEntity->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;	
+	currentAttribute = createNewAttribute(currentAttribute);	
 	#endif
 	
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
 	currentAttribute->name = NET_XML_ATTRIBUTE_conditionType2;
 	currentAttribute->value = currentEntity->conditionType2;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute = createNewAttribute(currentAttribute);
 	#endif
 	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
 	currentAttribute->name = NET_XML_ATTRIBUTE_conditionTwoWay;
-	sprintf(tempString, "%d", int(currentEntity->conditionTwoWay));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->conditionTwoWay));
+	currentAttribute = createNewAttribute(currentAttribute);
 	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	currentAttribute->name = NET_XML_ATTRIBUTE_inverseConditionTwoWay;
-	sprintf(tempString, "%d", int(currentEntity->inverseConditionTwoWay));
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(int(currentEntity->inverseConditionTwoWay));
+	currentAttribute = createNewAttribute(currentAttribute);
 	#endif
 	#endif
 	#endif	
@@ -1852,64 +1678,40 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 						currentAttribute = currentTagL3->firstAttribute;
 
 						currentAttribute->name = NET_XML_ATTRIBUTE_id;
-						sprintf(tempString, "%ld", connectionEntityNode->idActiveListReorderdIDforXMLsave);
-						currentAttribute->value = tempString;
-
-						XMLParserAttribute* newAttribute = new XMLParserAttribute();
-						currentAttribute->nextAttribute = newAttribute;
-						currentAttribute = currentAttribute->nextAttribute;
+						currentAttribute->value = convertLongToString(connectionEntityNode->idActiveListReorderdIDforXMLsave);
+						currentAttribute = createNewAttribute(currentAttribute);
 
 						#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
 						#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 						currentAttribute->name = NET_XML_ATTRIBUTE_sentenceIndexTemp;
-						sprintf(tempString, "%d", connection->sentenceIndexTemp);
-						currentAttribute->value = tempString;
-
-						newAttribute = new XMLParserAttribute();
-						currentAttribute->nextAttribute = newAttribute;
-						currentAttribute = currentAttribute->nextAttribute;
+						currentAttribute->value = convertIntToString(connection->sentenceIndexTemp);
+						currentAttribute = createNewAttribute(currentAttribute);
 						#endif
 						
 						#ifdef GIA_USE_ADVANCED_REFERENCING
 						#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 						currentAttribute->name = NET_XML_ATTRIBUTE_isReference;
-						sprintf(tempString, "%d", int(connection->isReference));
-						currentAttribute->value = tempString;
-
-						newAttribute = new XMLParserAttribute();
-						currentAttribute->nextAttribute = newAttribute;
-						currentAttribute = currentAttribute->nextAttribute;
+						currentAttribute->value = convertIntToString(int(connection->isReference));
+						currentAttribute = createNewAttribute(currentAttribute);
 						#endif
 						#endif
 						
 						#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 						currentAttribute->name = NET_XML_ATTRIBUTE_sameReferenceSet;
-						sprintf(tempString, "%d", int(connection->sameReferenceSet));
-						currentAttribute->value = tempString;
-
-						newAttribute = new XMLParserAttribute();
-						currentAttribute->nextAttribute = newAttribute;
-						currentAttribute = currentAttribute->nextAttribute;
+						currentAttribute->value = convertIntToString(int(connection->sameReferenceSet));
+						currentAttribute = createNewAttribute(currentAttribute);
 						
 						#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
 						currentAttribute->name = NET_XML_ATTRIBUTE_rcmodIndicatesSameReferenceSet;
-						sprintf(tempString, "%d", int(connection->rcmodIndicatesSameReferenceSet));
-						currentAttribute->value = tempString;
-
-						newAttribute = new XMLParserAttribute();
-						currentAttribute->nextAttribute = newAttribute;
-						currentAttribute = currentAttribute->nextAttribute;
+						currentAttribute->value = convertIntToString(int(connection->rcmodIndicatesSameReferenceSet));
+						currentAttribute = createNewAttribute(currentAttribute);
 						#endif
 						#endif
 						
 						#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 						currentAttribute->name = NET_XML_ATTRIBUTE_isAlias;
-						sprintf(tempString, "%d", int(connection->isAlias));
-						currentAttribute->value = tempString;
-
-						newAttribute = new XMLParserAttribute();
-						currentAttribute->nextAttribute = newAttribute;
-						currentAttribute = currentAttribute->nextAttribute;
+						currentAttribute->value = convertIntToString(int(connection->isAlias));
+						currentAttribute = createNewAttribute(currentAttribute);
 						#endif
 						
 						#endif
@@ -1970,88 +1772,47 @@ bool generateXMLconditionTimeNodeTagList(XMLparserTag* firstTagInConditionTimeNo
 {
 	bool result = true;
 
-	char tempString[MAX_ATTRIBUTE_VALUE_SIZE];
-
 	XMLParserAttribute* currentAttribute = firstTagInConditionTimeNode->firstAttribute;
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_conditionName;
 	currentAttribute->value = conditionTimeNode->conditionName;
-
-	XMLParserAttribute* newAttribute1 = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute1;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_tense;
-	sprintf(tempString, "%d", (conditionTimeNode->tense));
-	currentAttribute->value = tempString;
-
-	XMLParserAttribute* newAttribute1b = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute1b;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString((conditionTimeNode->tense));
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_second;
-	sprintf(tempString, "%0.6f", (conditionTimeNode->second));
-	currentAttribute->value = tempString;
-
-	XMLParserAttribute* newAttribute2 = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute2;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertDoubleToString((conditionTimeNode->second), "%0.6f");
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_hour;
-	sprintf(tempString, "%d", conditionTimeNode->hour);
-	currentAttribute->value = tempString;
-
-	XMLParserAttribute* newAttribute3 = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute3;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(conditionTimeNode->hour);
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_dayOfWeek;
-	sprintf(tempString, "%d", conditionTimeNode->dayOfWeek);
-	currentAttribute->value = tempString;
-
-	XMLParserAttribute* newAttribute4 = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute4;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(conditionTimeNode->dayOfWeek);
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_month;
-	sprintf(tempString, "%d", conditionTimeNode->month);
-	currentAttribute->value = tempString;
-
-	XMLParserAttribute* newAttribute5 = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute5;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(conditionTimeNode->month);
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_dayOfMonth;
-	sprintf(tempString, "%d", conditionTimeNode->dayOfMonth);
-	currentAttribute->value = tempString;
-
-	XMLParserAttribute* newAttribute6 = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute6;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertIntToString(conditionTimeNode->dayOfMonth);
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_year;
-	sprintf(tempString, "%ld", conditionTimeNode->year);
-	currentAttribute->value = tempString;
-
-	XMLParserAttribute* newAttribute7 = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute7;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertLongToString(conditionTimeNode->year);
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_period;
-	sprintf(tempString, "%0.6f", conditionTimeNode->period);
-	currentAttribute->value = tempString;
-
-	XMLParserAttribute* newAttribute8 = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute8;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertDoubleToString(conditionTimeNode->period, "%0.6f");
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_totalTimeInSeconds;
-	sprintf(tempString, "%ld", conditionTimeNode->totalTimeInSeconds);
-	currentAttribute->value = tempString;
-
-	XMLParserAttribute* newAttribute9 = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute9;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertLongToString(conditionTimeNode->totalTimeInSeconds);
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	return result;
 }
@@ -2060,12 +1821,10 @@ bool generateXMLconditionTimeNodeTagList(XMLparserTag* firstTagInConditionTimeNo
 
 string convertBooleanArrayToString(bool booleanArray[], int booleanArraySize)
 {
-	char tempString[MAX_ATTRIBUTE_VALUE_SIZE];
 	string str = "";
 	for(int i=0; i<booleanArraySize; i++)
 	{
-		sprintf(tempString, "%d", int(booleanArray[i]));
-		string tempStr = tempString;
+		string tempStr = convertIntToString(int(booleanArray[i]));
 		str = str + tempStr;
 	}
 	//cout << "convertBooleanArrayToString = " << str << endl;
@@ -2079,7 +1838,7 @@ void convertStringToBooleanArray(string str, bool booleanArray[], int booleanArr
 	{
 		string tempStr = "";
 		tempStr = tempStr + str[i];
-		booleanArray[i] = atoi(tempStr.c_str());
-		//cout << "convertStringToBooleanArray booleanArray[i]  = " << atoi(tempStr.c_str()) << endl;
+		booleanArray[i] = convertStringToInt(tempStr);
+		//cout << "convertStringToBooleanArray booleanArray[i]  = " << convertStringToInt(tempStr) << endl;
 	}
 }

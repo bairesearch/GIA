@@ -23,36 +23,38 @@
 
 /*******************************************************************************
  *
- * File Name: GIAcorpusOperations.h
+ * File Name: GIAsemanticParserOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_CORPUS_OPERATIONS
-#define HEADER_GIA_CORPUS_OPERATIONS
+#ifndef HEADER_GIA_SEMANTIC_PARSER_OPERATIONS
+#define HEADER_GIA_SEMANTIC_PARSER_OPERATIONS
 
 #include "GIAglobalDefs.h"
 #include "GIAtranslatorDefs.h"
 
-#ifdef GIA_USE_CORPUS_DATABASE
+#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 
 void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNode** GIAentityNodeArray, GIAsentence* currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet);
 void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(GIAentityNode** GIAentityNodeArray, GIAsentence* currentSentenceInList, bool linkPreestablishedReferencesGIA, int NLPdependencyRelationsType);
-	string generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet);
-		string generateGIA2semanticDependencyRelationSimple(string entityName1, string entityName2, string semanticRelation, int entityIndex1, int entityIndex2, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet);
+	void generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet, string* GIA2semanticDependencyRelationText, GIArelation* GIA2semanticDependencyRelation);
+		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
+		string generateGIA2semanticDependencyRelationText(string entityName1, string entityName2, string semanticRelation, int entityIndex1, int entityIndex2, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet);
 			string createSameReferenceSetRecord(bool sameReferenceSet);
 			#ifdef GIA_RECORD_RCMOD_SET_INFORMATION
 			string createRcmodIndicatesSameReferenceSetRecord(bool rcmodIndicatesSameReferenceSet);
 			#endif
-string generateCorpusFileHeaderText(GIAfeature* firstFeatureInSentence, bool addPOSinfo, int NLPfeatureParser);
+string generateCorpusFileHeaderText(GIAfeature* firstFeatureInSentence, bool addPOSinfo);
+#endif
 void determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList, int NLPfeatureParser);
 	void determineGIAconnectionistNetworkPOStypeNameStanford(GIAfeature* currentFeatureInSentence);
 	void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeatureInSentence);
-#ifdef GIA2_CONNECTIONIST_NETWORK
+#ifdef GIA2_SEMANTIC_PARSER
 #ifdef GIA2_OPTIMISE_CONNECTIONIST_NETWORK_BASED_ON_CONJUNCTIONS
 GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeature* firstFeatureInSentenceSubset, int centralWord);
 #endif

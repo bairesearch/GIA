@@ -26,7 +26,7 @@
  * File Name: GIAcxlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  *
@@ -70,17 +70,11 @@ bool writeCmapToolsCXLfile(string xmlFileName, vector<GIAentityNode*>* entityNod
 
 		currentAttribute->name = NET_CXL_ATTRIBUTE_xmlns;
 		currentAttribute->value = NET_CXL_ATTRIBUTE_xmlns_DEFAULT_VALUE;
-
-		XMLParserAttribute* newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute = createNewAttribute(currentAttribute);
 
 		currentAttribute->name = NET_CXL_ATTRIBUTE_xmlnsdc;
 		currentAttribute->value = NET_CXL_ATTRIBUTE_xmlnsdc_DEFAULT_VALUE;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute = createNewAttribute(currentAttribute);
 
 	XMLparserTag* firstTagL1 = new XMLparserTag();
 	currentTagL0->firstLowerLevelTag = firstTagL1;
@@ -320,7 +314,6 @@ XMLparserTag* generateCXLentityNodeTag(XMLparserTag* currentTagL1, string entity
 {
 	bool result = true;
 
-	char tempString[MAX_ATTRIBUTE_VALUE_SIZE];
 	//generate neuron connection tag
 	if(conceptOrLinkingPhraseList)
 	{
@@ -352,40 +345,25 @@ XMLparserTag* generateCXLentityNodeTag(XMLparserTag* currentTagL1, string entity
 	XMLParserAttribute* currentAttribute = currentTagL1->firstAttribute;
 
 	currentAttribute->name = NET_CXL_ATTRIBUTE_id;
-	sprintf(tempString, "%ld", entityID);
-	currentAttribute->value = tempString;
-
-	XMLParserAttribute* newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertLongToString(entityID);
+	currentAttribute = createNewAttribute(currentAttribute);
 
 
 	if(!appearanceList)
 	{
 		currentAttribute->name = NET_CXL_ATTRIBUTE_label;
 		currentAttribute->value = entityName;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute = createNewAttribute(currentAttribute);
 	}
 	else
 	{
 		currentAttribute->name = NET_CXL_ATTRIBUTE_x;
-		sprintf(tempString, "%d", printX*GIA_CXL_EXPAND_RATIO);
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute->value = convertIntToString(printX*GIA_CXL_EXPAND_RATIO);;
+		currentAttribute = createNewAttribute(currentAttribute);
 
 		currentAttribute->name = NET_CXL_ATTRIBUTE_y;
-		sprintf(tempString, "%d", printY*GIA_CXL_EXPAND_RATIO);
-		currentAttribute->value = tempString;
-
-		newAttribute = new XMLParserAttribute();
-		currentAttribute->nextAttribute = newAttribute;
-		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute->value = convertIntToString(printY*GIA_CXL_EXPAND_RATIO);;
+		currentAttribute = createNewAttribute(currentAttribute);
 	}
 
 	XMLparserTag* newTag = new XMLparserTag();
@@ -720,11 +698,11 @@ XMLparserTag* generateCXLconnectionNodeTagAndLinkingPhraseTags(XMLparserTag* cur
 				{
 					if(currentAttributeInList->name == NET_CXL_TAG_fromid)
 					{
-						currentFromIDinList[i] = atoi(currentAttributeInList->value.c_str());
+						currentFromIDinList[i] = convertStringToInt(currentAttributeInList->value);
 					}
 					if(currentAttributeInList->name == NET_CXL_TAG_toid)
 					{
-						currentToIDinList[i] = atoi(currentAttributeInList->value.c_str());
+						currentToIDinList[i] = convertStringToInt(currentAttributeInList->value);
 					}
 					currentAttributeInList = currentAttributeInList->nextAttribute;
 				}
@@ -776,7 +754,6 @@ XMLparserTag* generateCXLconnectionNodeTag(XMLparserTag* currentTagL1, long from
 	cout << "toID = " << toID << endl;
 	#endif
 
-	char tempString[MAX_ATTRIBUTE_VALUE_SIZE];
 	//generate neuron connection tag
 	currentTagL1->name = NET_CXL_TAG_connection;
 
@@ -787,20 +764,12 @@ XMLparserTag* generateCXLconnectionNodeTag(XMLparserTag* currentTagL1, long from
 	XMLParserAttribute* currentAttribute = currentTagL1->firstAttribute;
 
 	currentAttribute->name = NET_CXL_TAG_fromid;
-	sprintf(tempString, "%ld", fromID);
-	currentAttribute->value = tempString;
-
-	XMLParserAttribute* newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertLongToString(fromID);
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	currentAttribute->name = NET_CXL_TAG_toid;
-	sprintf(tempString, "%ld", toID);
-	currentAttribute->value = tempString;
-
-	newAttribute = new XMLParserAttribute();
-	currentAttribute->nextAttribute = newAttribute;
-	currentAttribute = currentAttribute->nextAttribute;
+	currentAttribute->value = convertLongToString(toID);
+	currentAttribute = createNewAttribute(currentAttribute);
 
 	XMLparserTag* newTag = new XMLparserTag();
 	currentTagL1->nextTag = newTag;

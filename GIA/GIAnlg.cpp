@@ -26,7 +26,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -284,15 +284,9 @@ void generateThreeEntitySentenceFromEntityNode(GIAentityNode* entityNode0, strin
 	int entityIndex0 = startEntityIndex + 0;
 	int entityIndex1 = startEntityIndex + 1;
 	int entityIndex2 = startEntityIndex + 2;
-	char entityIndex0stringCharstar[10];
-	char entityIndex1stringCharstar[10];
-	char entityIndex2stringCharstar[10];
-	sprintf(entityIndex0stringCharstar, "%d", entityIndex0);
-	sprintf(entityIndex1stringCharstar, "%d", entityIndex1);
-	sprintf(entityIndex2stringCharstar, "%d", entityIndex2);
-	string entityIndex0string = entityIndex0stringCharstar;
-	string entityIndex1string = entityIndex1stringCharstar;
-	string entityIndex2string = entityIndex2stringCharstar;
+	string entityIndex0string = convertIntToString(entityIndex0);
+	string entityIndex1string = convertIntToString(entityIndex1);
+	string entityIndex2string = convertIntToString(entityIndex2);
 
 	NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode0, entityIndex0, generatedText);
 	if(entityNodeAvailableArray[1])
@@ -549,15 +543,9 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 	int entityIndex1 = startEntityIndex + 1;
 	int entityIndex2 = startEntityIndex + 2;
 	int entityIndex0 = startEntityIndex + 0;
-	char entityIndex1stringCharstar[10];
-	char entityIndex2stringCharstar[10];
-	char entityIndex0stringCharstar[10];
-	sprintf(entityIndex1stringCharstar, "%d", entityIndex1);
-	sprintf(entityIndex2stringCharstar, "%d", entityIndex2);
-	sprintf(entityIndex0stringCharstar, "%d", entityIndex0);
-	string entityIndex1string = entityIndex1stringCharstar;
-	string entityIndex2string = entityIndex2stringCharstar;
-	string entityIndex0string = entityIndex0stringCharstar;
+	string entityIndex1string = convertIntToString(entityIndex1);
+	string entityIndex2string = convertIntToString(entityIndex2);
+	string entityIndex0string = convertIntToString(entityIndex0);
 
 	bool generateTwoDependencyRelations = false;
 	string nlgDependencyRelationType1 = "";
@@ -816,9 +804,7 @@ void NLG2generateNLGinputViewFeatureTagsGenericPerSentence(string* generatedNLGi
 
 void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode, int entityIndex, string* generatedNLGinputViewTags)
 {
-	char entityIndexStringCharstar[10];
-	sprintf(entityIndexStringCharstar, "%d", entityIndex);
-	string entityIndexString = entityIndexStringCharstar;
+	string entityIndexString = convertIntToString(entityIndex);
 
 	//lemma
 	string NLGInputViewFeatureTagLemma = NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_LEMMA, entityIndexString, getWordOrig(entityNode));

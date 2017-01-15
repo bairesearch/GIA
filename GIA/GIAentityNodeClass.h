@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -75,12 +75,22 @@ using namespace std;
 
 #define GRAMMATICAL_TENSE_CONCATONATOR_RELEX "_"
 
-//these have been moved from GIAtranslatorOperations.h as RELATION_ENTITY_SPECIAL_POSSESSIVE is used by GIAdraw.cpp
+//these have been moved from GIAtranslatorOperations.h as RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES is used by GIAdraw.cpp
 #define RELATION_ENTITY_HAVE "have"
-#define RELATION_ENTITY_SPECIAL_POSSESSIVE (RELATION_ENTITY_HAVE)
 #define RELATION_ENTITY_CAN "can"
 #define RELATION_ENTITY_BE "be"	//eg x is y
 #define RELATION_ENTITY_IT "it"		//used to handle Relex special case query "What [time] is it?"
+
+#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+#define RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES (RELATION_ENTITY_HAVE)
+#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION
+	#define RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_NUMBER_OF_TYPES (2)
+	#define RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_HAVE (RELATION_ENTITY_HAVE)
+	#define RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_POSS "poss"	//NB "poss" is an artificial "have" auxiliary
+	static string relationEntitySpecialActionNameForEffectivePropertiesArray[RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_NUMBER_OF_TYPES] = {RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_HAVE, RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_POSS};
+#endif
+#endif
+
 
 //extracted from wn.h (WordNet 3.0 library header)
 #define GRAMMATICAL_WORD_TYPE_UNDEFINED (0)
@@ -572,6 +582,10 @@ void setEntityCharacteristics(GIAentityNode* entity, vector<GIAentityCharacteris
 		void getEntityCharacteristicIterationbool(bool entityVal, GIAentityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch);
 		void getEntityCharacteristicIterationint(int entityVal, GIAentityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch);
 		void getEntityCharacteristicIterationstring(string entityVal, GIAentityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch);
+#endif
+
+#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+bool isActionSpecialPossessive(GIAentityNode* actionEntity);
 #endif
 
 #endif

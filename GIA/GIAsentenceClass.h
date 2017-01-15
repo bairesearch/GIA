@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -192,7 +192,7 @@ public:
 	bool isNameTemp;
 	#endif
 
-	#ifdef GIA_USE_CORPUS_DATABASE
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 	bool sameReferenceSet;
 	#ifdef GIA2_SUPPORT_QUERIES
 	string corpusSpecialRelationGovernorIsQuery;
@@ -275,7 +275,7 @@ public:
 
 	bool entityDisabled;	//added 14 July 2012b
 
-	#ifdef GIA_USE_CORPUS_DATABASE
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 	int GIAconnectionistNetworkPOStype;
 	#endif
 	
@@ -345,5 +345,7 @@ void copyFeatures(GIAfeature* firstFeatureInListToCopy, GIAfeature* firstFeature
 void copyStanfordCoreferences(GIAstanfordCoreNLPcoreference* firstCoreferenceInListToCopy, GIAstanfordCoreNLPcoreference* firstCoreferenceInList);
 void copyStanfordMention(GIAstanfordCoreNLPmention* firstMentionInListToCopy, GIAstanfordCoreNLPmention* firstMentionInList);
 #endif
+
+int calculateNumberOfWordsInSentence(GIAfeature* firstFeatureInList);
 
 #endif

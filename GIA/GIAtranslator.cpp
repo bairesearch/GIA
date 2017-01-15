@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -66,10 +66,10 @@
 #ifdef GIA_USE_LRP
 #include "GIAlrp.h"
 #endif
-#ifdef GIA_USE_CORPUS_DATABASE
-#include "GIAcorpusOperations.h"
-#include "GIAcorpusTranslator.h"
-#include "GIAcorpusDatabase.h"
+#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+#include "GIAsemanticParserOperations.h"
+#include "GIAsemanticParserTranslator.h"
+#include "GIAsemanticParserDatabase.h"
 #endif
 #include "GIAtranslatorRules.h"
 #include "GIAtranslatorGeneric.h"
@@ -464,7 +464,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		*currentEntityNodeIDInSentenceConceptEntityNodesList = 0;
 		vector<GIAentityNode*> sentenceConceptEntityNodesListTempNotUsed1;
 		map<int, vector<GIAentityNode*>*> entityNodesActiveListSentencesTempNotUsed;
-		#ifdef GIA_USE_CORPUS_DATABASE
+		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 		if(parseGIA2file)
 		{
 			if(currentSentenceInList->corpusLookupSuccessful)
@@ -551,7 +551,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		#endif
 
 		vector<GIAentityNode*> sentenceConceptEntityNodesListTempNotUsed;
-		#ifdef GIA_USE_CORPUS_DATABASE
+		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 		if(parseGIA2file)
 		{
 			if(currentSentenceInList->corpusLookupSuccessful)
@@ -609,7 +609,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	{
 	#endif
 		vector<GIAentityNode*> sentenceConceptEntityNodesListTempNotUsed;
-		#ifdef GIA_USE_CORPUS_DATABASE
+		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 		if(parseGIA2file)
 		{
 			if(currentSentenceInList->corpusLookupSuccessful)
@@ -645,11 +645,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	if(!linkPreestablishedReferencesGIA)
 	{
 		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
-		corpusFileName = prepareNewCorpusFileTextForWriting(currentSentenceInList->firstFeatureInList);
-		string sentenceText = generateCorpusFileHeaderText(currentSentenceInList->firstFeatureInList, true, NLPfeatureParser);
-		sentenceText = sentenceText + STRING_NEW_LINE;	//required to add new line at end of parsingWordsAndTags as per Stanford Parser specification (see parseStanfordParserFile)
-		saveTextLineToCorpusFileString(sentenceText);
-		cout << sentenceText << endl;
+		prepareSemanticParserDatabaseForWriting();
 	}
 	#endif
 
@@ -1222,11 +1218,11 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	if(!linkPreestablishedReferencesGIA)
 	{
-		string sentenceText = "";	//required to add new line at end of parsingTypedDependencies as per Stanford Parser specification (see parseStanfordParserFile)
-		saveTextLineToCorpusFileString(sentenceText);
-		writeCorpusFile(corpusFileName);
-		#ifdef GIA2_CONNECTIONIST_NETWORK
-		if(!generateAllPermutationsFromSemanticRelationsFile(corpusFileName, NLPfeatureParser))
+		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
+		writeSemanticParserCorpusFile(currentSentenceInList->firstFeatureInList);
+		#endif
+		#ifdef GIA2_SEMANTIC_PARSER
+		if(!generateAllPermutationsFromSemanticRelationsFile(currentSentenceInList->firstFeatureInList, NLPfeatureParser))
 		{
 			cout << "generateAllPermutationsFromSemanticRelationsFile() failed" << endl;
 			exit(0);

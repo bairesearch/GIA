@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -399,22 +399,22 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 			int swapIndex = INT_DEFAULT_VALUE;
 			if(getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_REL, &RELstring))
 			{
-				REL = atoi(RELstring.c_str()) - 1;
+				REL = convertStringToInt(RELstring) - 1;
 				//cout << "REL = " << REL << endl;
 			}
 			if(getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_REL_ENT, &REL_ENTstring))
 			{
-				REL_ENT = atoi(REL_ENTstring.c_str()) - 1;
+				REL_ENT = convertStringToInt(REL_ENTstring) - 1;
 				//cout << "REL_ENT = " << REL_ENT << endl;
 			}
 			if(getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_FUNC_ENT, &FUNC_ENTstring))
 			{
-				FUNC_ENT = atoi(FUNC_ENTstring.c_str()) - 1;
+				FUNC_ENT = convertStringToInt(FUNC_ENTstring) - 1;
 				//cout << "FUNC_ENT = " << FUNC_ENT << endl;
 			}
 			if(getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_swapIndex, &swapIndexstring))
 			{
-				swapIndex = atoi(swapIndexstring.c_str()) - 1;
+				swapIndex = convertStringToInt(swapIndexstring) - 1;
 			}
 
 			if(currentConfigurationTag->name == RULES_XML_TAG_option)
@@ -671,7 +671,7 @@ bool genericInterpretationGenerateSpecialCase(XMLparserTag* xmlTag, GIAentityCha
 	}
 	if(getAttribute(xmlTag, RULES_XML_ATTRIBUTE_arrayIndex, &arrayIndex))
 	{
-		entityCharacteristics->arrayIndex = atoi(arrayIndex.c_str());
+		entityCharacteristics->arrayIndex = convertStringToInt(arrayIndex);
 	}
 	if(getAttribute(xmlTag, RULES_XML_ATTRIBUTE_negative, &negative))
 	{
@@ -911,7 +911,7 @@ bool genericEntityInterpretationApplyOptionbool(bool* paramVal, XMLParserAttribu
 		{
 			cout << "genericEntityInterpretationApplyOptionbool{} error: illegal paramOptionSetValue for " << iterationVariable << ": " << xmlAttribute->value << endl;
 		}
-		//bool paramOptionSetValue = atoi(xmlAttribute->value.c_str());		//if GIA Translator XML file booleans are defined as '1'/'0' instead of 'true'/'false'
+		//bool paramOptionSetValue = convertStringToInt(xmlAttribute->value);		//if GIA Translator XML file booleans are defined as '1'/'0' instead of 'true'/'false'
 		*paramVal = paramOptionSetValue;
 
 		//cout << "genericEntityInterpretationApplyOptionbool{}: " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
@@ -925,7 +925,7 @@ bool genericEntityInterpretationApplyOptionint(int* paramVal, XMLParserAttribute
 	bool result = false;
 	if(xmlAttribute->name == iterationVariable)
 	{
-		int paramOptionSetValue = atoi(xmlAttribute->value.c_str());
+		int paramOptionSetValue = convertStringToInt(xmlAttribute->value);
 		if(subtractOne)
 		{
 			paramOptionSetValue = paramOptionSetValue - 1;

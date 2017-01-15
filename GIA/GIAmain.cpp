@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -53,9 +53,9 @@
 #ifdef GIA_USE_LRP
 #include "GIAlrp.h"
 #endif
-#ifdef GIA_USE_CORPUS_DATABASE
-#include "GIAcorpus.h"
-#include "GIAcorpusDatabase.h"
+#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+#include "GIAsemanticParser.h"
+#include "GIAsemanticParserDatabase.h"
 #endif
 #ifndef LINUX
 	#include <windows.h>
@@ -106,8 +106,8 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 "\n\t-dbwrite           : write to database (GIA knowledge base) [saves knowledge]"
 "\n\t-dbfolder          : database base folder path (def: /home/systemusername/source/GIAKBdatabase)"
 #endif
-#ifdef GIA_USE_CORPUS_DATABASE
-"\n\t-dbcorpusfolder    : corpus database base folder path (def: /home/systemusername/source/GIAcorpusDatabase)"
+#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+"\n\t-dbsemanticparserfolder    : direct semantic parser (corpus or optimised) database base folder path (def: /home/systemusername/source/GIAsemanticparserdatabase)"
 #endif
 #ifdef GIA_USE_LRP
 "\n\t-lrp                               : language reduction preprocessor"
@@ -239,8 +239,8 @@ int main(int argc,char* *argv)
 	bool useDatabase = false;
 	string databaseFolderName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE + GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
 #endif
-#ifdef GIA_USE_CORPUS_DATABASE
-	string corpusDatabaseFolderName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE + GIA_CORPUS_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
+#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	string semanticParserDatabaseFolderName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE + GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
 #endif
 
 #ifdef GIA_USE_LRP
@@ -536,11 +536,11 @@ int main(int argc,char* *argv)
 			databaseFolderName = databaseFolderName + '/';
 		}
 	#endif
-	#ifdef GIA_USE_CORPUS_DATABASE
-		if(argumentExists(argc,argv,"-dbcorpusfolder"))
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+		if(argumentExists(argc,argv,"-dbsemanticparserfolder"))
 		{
-			corpusDatabaseFolderName=getStringArgument(argc,argv,"-dbcorpusfolder");
-			corpusDatabaseFolderName = corpusDatabaseFolderName + '/';
+			semanticParserDatabaseFolderName=getStringArgument(argc,argv,"-dbsemanticparserfolder");
+			semanticParserDatabaseFolderName = semanticParserDatabaseFolderName + '/';
 		}
 	#endif
 
@@ -633,7 +633,7 @@ int main(int argc,char* *argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 2k2a 10-July-2015" << endl;
+			cout << "OpenGIA.exe - Project Version: 2k3a 10-July-2015" << endl;
 			exit(1);
 		}
 
@@ -740,8 +740,8 @@ int main(int argc,char* *argv)
 		databaseFolderName,
 	#endif
 
-	#ifdef GIA_USE_CORPUS_DATABASE
-		corpusDatabaseFolderName,
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+		semanticParserDatabaseFolderName,
 	#endif
 
 	#ifdef GIA_USE_LRP
@@ -864,8 +864,8 @@ bool executeGIA(
 	bool useDatabase,
 	string databaseFolderName,
 #endif
-#ifdef GIA_USE_CORPUS_DATABASE
-	string corpusDatabaseFolderName,
+#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	string semanticParserDatabaseFolderName,
 #endif
 
 #ifdef GIA_USE_LRP
@@ -1039,8 +1039,8 @@ bool executeGIA2()
 	setCurrentDirectory(workingFolder);
 	#endif
 
-	#ifdef GIA_USE_CORPUS_DATABASE
-	initialiseCorpusDatabase(corpusDatabaseFolderName);
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	initialiseSemanticParserDatabase(semanticParserDatabaseFolderName);
 	#endif
 
 	#ifdef USE_WORDNET
@@ -1297,11 +1297,10 @@ bool executeGIA2()
 				inputTextXMLFileName = inputTextXMLFileNameArray[inputFileNameIndex];
 			}
 
-			char inputFileNameIndexStringCharStar[10];
-			sprintf(inputFileNameIndexStringCharStar, "%d", inputFileNameIndex);
-			outputTextCFFFileName = outputTextCFFFileNameBase + "." + inputFileNameIndexStringCharStar;
-			outputLRPTextPlainTXTFileName = outputLRPTextPlainTXTFileNameBase + "." + inputFileNameIndexStringCharStar;
-			outputLRPTextForNLPonlyPlainTXTFileName = outputLRPTextForNLPonlyPlainTXTFileNameBase + "." + inputFileNameIndexStringCharStar;
+			string inputFileNameIndexString = convertIntToString(inputFileNameIndex);
+			outputTextCFFFileName = outputTextCFFFileNameBase + "." + inputFileNameIndexString;
+			outputLRPTextPlainTXTFileName = outputLRPTextPlainTXTFileNameBase + "." + inputFileNameIndexString;
+			outputLRPTextForNLPonlyPlainTXTFileName = outputLRPTextForNLPonlyPlainTXTFileNameBase + "." + inputFileNameIndexString;
 		}
 #endif
 
@@ -1431,7 +1430,7 @@ bool executeGIA2()
 			{
 				GIAparagraph* firstParagraphInList = new GIAparagraph();
 				#ifdef USE_GIA2
-				if(!performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(firstParagraphInList, inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListSentences, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences))
+				if(!performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(firstParagraphInList, inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, entityNodesActiveListSentences, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences))
 				{
 					result = false;
 				}
@@ -1571,7 +1570,7 @@ bool executeGIA2()
 		{
 			GIAparagraph* firstParagraphInList = new GIAparagraph();
 			#ifdef USE_GIA2
-			if(!performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(firstParagraphInList, inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, entityNodesActiveListSentencesQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences))
+			if(!performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(firstParagraphInList, inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, entityNodesActiveListSentencesQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences))
 			{
 				result = false;
 			}
@@ -1657,8 +1656,6 @@ bool executeGIA2()
 		GIAentityNode* comparisonVariableNode = getComparisonVariableNode();
 		bool foundAnswer = false;
 		double confidence = 0.0;
-		char tempConfidenceStringCharStar[100];
-		char tempMaxConfidenceStringCharStar[100];
 
 		GIAentityNode* queryAnswerNode = NULL;
 		string queryAnswerContext = "";
@@ -1695,9 +1692,8 @@ bool executeGIA2()
 					#ifndef GIA_DO_NOT_PRINT_RESULTS
 					cout << "Quantity number: " << queryAnswerNode->quantityNumber << endl;
 					#endif
-					char tempQuantityNumberStringCharStar[100];
-					sprintf(tempQuantityNumberStringCharStar, "%d", queryAnswerNode->quantityNumber);
-					answerString = answerString + "\nQuantity number: " + tempQuantityNumberStringCharStar;
+					string tempQuantityNumberString = convertIntToString(queryAnswerNode->quantityNumber);
+					answerString = answerString + "\nQuantity number: " + tempQuantityNumberString;
 				}
 				/*
 				if(queryAnswerPreviousNode->isCondition)
@@ -1818,13 +1814,13 @@ bool executeGIA2()
 		//add confidence to answer
 		double confidencePrint = confidence*GIA_QUERY_CONFIDENCE_MULTIPLIER;
 		double maxConfidencePrint = maxConfidence*GIA_QUERY_CONFIDENCE_MULTIPLIER;
-		sprintf(tempConfidenceStringCharStar, "%0.6f", confidencePrint);
-		sprintf(tempMaxConfidenceStringCharStar, "%0.6f", maxConfidencePrint);
-		answerString = answerString + "\nconfidence = " + tempConfidenceStringCharStar;
-		answerString = answerString + "\nmax confidence = " + tempMaxConfidenceStringCharStar;
+		string tempConfidenceString = convertDoubleToString(confidencePrint, "%0.6f");
+		string tempMaxConfidenceString = convertDoubleToString(maxConfidencePrint, "%0.6f");
+		answerString = answerString + "\nconfidence = " + tempConfidenceString;
+		answerString = answerString + "\nmax confidence = " + tempMaxConfidenceString;
 		#ifndef GIA_DO_NOT_PRINT_RESULTS
-		cout << "confidence: " << tempConfidenceStringCharStar << endl;
-		cout << "max confidence: " << tempMaxConfidenceStringCharStar << endl;
+		cout << "confidence: " << tempConfidenceString << endl;
+		cout << "max confidence: " << tempMaxConfidenceString << endl;
 		#endif
 
 		//cout << "tempFolder = " << tempFolder << endl;
@@ -1961,7 +1957,7 @@ int getFilesFromFileList(string inputListFileName, string* inputFileNameArray)
 	bool result = true;
 	int numberOfInputFilesInList = 0;
 	ifstream parseFileObject(inputListFileName.c_str());
-	if(!parseFileObject.rdbuf( )->is_open( ))
+	if(!parseFileObject.rdbuf()->is_open())
 	{
 		//txt file does not exist in current directory.
 		cout << "Error: input list file does not exist in current directory: " << inputListFileName << endl;

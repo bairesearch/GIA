@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  *
  *******************************************************************************/
 
@@ -618,8 +618,7 @@ int calculateQuantityNumberInt(string quantityNumberString)
 	}
 	if(!found)
 	{//parse as simple number
-		char* quantityNumberStringcharstar = const_cast<char*>(quantityNumberString.c_str());
-		quantityNumberInt = atoi(quantityNumberStringcharstar);
+		quantityNumberInt = convertStringToInt(quantityNumberString);
 	}
 
 	return quantityNumberInt;
@@ -657,8 +656,7 @@ int calculateQuantityMultiplierInt(string quantityMultiplierString)
 	if(!found)
 	{//parse as simple number
 
-		char* quantityMultiplierStringcharstar = const_cast<char*>(quantityMultiplierString.c_str());
-		quantityMultiplierInt = atoi(quantityMultiplierStringcharstar);
+		quantityMultiplierInt = convertStringToInt(quantityMultiplierString);
 	}
 
 	return quantityMultiplierInt;
@@ -687,9 +685,7 @@ string printQuantityNumberString(GIAentityNode* entityNode)
 
 	if(entityNode->hasQuantityMultiplier)
 	{
-		char quantityNumberStringcharstar[20];
-		sprintf(quantityNumberStringcharstar, "%d", entityNode->quantityNumber);
-		quantityNumberStringTemp = quantityNumberStringcharstar;
+		quantityNumberStringTemp = convertIntToString(entityNode->quantityNumber);
 	}
 	else
 	{
@@ -1027,7 +1023,7 @@ void testEntityCharacteristicIterationbool(bool entityVal, GIAentityCharacterist
 		{
 			cout << "testEntityCharacteristicIterationbool{} error: illegal entityCharacteristicTestValue for " << iterationVariable << ": " << entityCharacteristicTest->value << endl;
 		}
-		//bool entityCharacteristicTestValue = atoi(entityCharacteristicTest->value.c_str());		//if GIA Translator XML file booleans are defined as '1'/'0' instead of 'true'/'false'
+		//bool entityCharacteristicTestValue = convertStringToInt(entityCharacteristicTest->value);		//if GIA Translator XML file booleans are defined as '1'/'0' instead of 'true'/'false'
 		if(entityCharacteristicTestValue == entityVal)
 		{
 			//cout << "testEntityCharacteristicIterationbool{}: " << entityCharacteristicTest->name << " = " << entityCharacteristicTestValue << endl;
@@ -1039,7 +1035,7 @@ void testEntityCharacteristicIterationint(int entityVal, GIAentityCharacteristic
 {
 	if(entityCharacteristicTest->name == iterationVariable)
 	{
-		int entityCharacteristicTestValue = atoi(entityCharacteristicTest->value.c_str());
+		int entityCharacteristicTestValue = convertStringToInt(entityCharacteristicTest->value);
 		if(entityCharacteristicTestValue == entityVal)
 		{
 			//cout << "testEntityCharacteristicIterationint{}: " << entityCharacteristicTest->name << " = " << entityCharacteristicTestValue << endl;
@@ -1178,7 +1174,7 @@ void setEntityCharacteristicIterationint(int* entityVal, GIAentityCharacteristic
 {
 	if(entityCharacteristicSet->name == iterationVariable)
 	{
-		int entityCharacteristicSetValue = atoi(entityCharacteristicSet->value.c_str());
+		int entityCharacteristicSetValue = convertStringToInt(entityCharacteristicSet->value);
 		//cout << "setEntityCharacteristicIterationint{}: " << entityCharacteristicSet->name << " = " << entityCharacteristicSetValue << endl;
 		*entityVal = entityCharacteristicSetValue;
 		*foundMatch = true;
@@ -1303,9 +1299,7 @@ void getEntityCharacteristicIterationint(int entityVal, GIAentityCharacteristic*
 {
 	if(entityCharacteristicGet->name == iterationVariable)
 	{
-		char tempString[ENTITY_CHARACTERISTIC_MAX_VALUE_SIZE];
-		sprintf(tempString, "%d", entityVal);
-		string entityCharacteristicGetValue = string(tempString);
+		string entityCharacteristicGetValue = convertIntToString(entityVal);
 		entityCharacteristicGet->value = entityCharacteristicGetValue;
 		*foundMatch = true;
 	}
@@ -1321,7 +1315,23 @@ void getEntityCharacteristicIterationstring(string entityVal, GIAentityCharacter
 }
 #endif
 
-
+#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+bool isActionSpecialPossessive(GIAentityNode* actionEntity)
+{
+	bool result = false;
+	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION
+	if(textInTextArray(actionEntity->entityName, relationEntitySpecialActionNameForEffectivePropertiesArray, RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_NUMBER_OF_TYPES))
+	{
+		result == true;
+	}
+	#else
+	if(actionEntity->entityName == RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES)
+	{
+		result = true;
+	}
+	#endif
+}
+#endif
 
 
 

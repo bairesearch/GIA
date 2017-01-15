@@ -26,7 +26,7 @@
  * File Name: GIAmain.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -136,8 +136,8 @@ bool executeGIA(
 	string databaseFolderName,
 #endif
 
-#ifdef GIA_USE_CORPUS_DATABASE
-	string corpusDatabaseFolderName,
+#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	string semanticParserDatabaseFolderName,
 #endif
 
 #ifdef GIA_USE_LRP

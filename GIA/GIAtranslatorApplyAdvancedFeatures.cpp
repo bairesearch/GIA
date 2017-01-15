@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -35,8 +35,8 @@
 
 #include "GIAtranslatorApplyAdvancedFeatures.h"
 #include "GIAdatabase.h"
-#ifdef GIA_USE_CORPUS_DATABASE
-#include "GIAcorpusOperations.h"
+#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+#include "GIAsemanticParserOperations.h"
 #endif
 #include "GIAtranslatorGeneric.h"
 
@@ -301,8 +301,7 @@ void extractDatesRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArr
 											//http://www.cplusplus.com/reference/clibrary/cstdlib/atoi/
 												//The string can contain additional characters after those that form the integral number, which are ignored and have no effect on the behavior of this function.	[eg "3rd" -> 3]
 											string dayOfMonthString = currentRelationInList->relationDependent;
-											char* dayOfMonthStringcharstar = const_cast<char*>(dayOfMonthString.c_str());
-											int dayOfMonthInt = atoi(dayOfMonthStringcharstar);
+											int dayOfMonthInt = convertStringToInt(dayOfMonthString);
 											timeConditionEntity->timeConditionNode->dayOfMonth = dayOfMonthInt;
 
 											#ifdef GIA_TRANSLATOR_DEBUG
@@ -318,8 +317,7 @@ void extractDatesRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArr
 											disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
 
 											string yearString = currentRelationInList->relationDependent;
-											char* yearStringcharstar = const_cast<char*>(yearString.c_str());
-											int yearInt = atoi(yearStringcharstar);
+											int yearInt = convertStringToInt(yearString);
 											timeConditionEntity->timeConditionNode->year = yearInt;
 
 											#ifdef GIA_TRANSLATOR_DEBUG
@@ -437,7 +435,7 @@ void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool G
 			if(currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_AMOD)
 			{
 				string s = currentRelationInList->relationDependent;
-				int value = atoi(s.c_str());
+				int value = convertStringToInt(s);
 				if(value || (s == "0"))
 				{
 					currentRelationInList->relationType = RELATION_TYPE_QUANTITY;

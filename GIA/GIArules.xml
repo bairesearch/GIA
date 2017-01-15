@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  *
  *******************************************************************************/
 -->
@@ -3640,10 +3640,12 @@
 				</paramDepRel>
 				-->
 				<!-- #else -->
+				<!-- #ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION -->
+				<!-- #ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION -->
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
-				<option mustGenerateConditionName="true" conditionEntityDefaultName="have" />
+				<option mustGenerateConditionName="true" conditionEntityDefaultName="poss" />	<!-- "poss" is a special have action for _poss cases only (ie artificial have auxiliary) -->
 				<option functionToExecuteUponFind="5" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
@@ -3651,7 +3653,35 @@
 				<option defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				</paramDepRel>
+				<!-- #else -->				
+				<!--
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
+				<option functionToExecuteUponFind="3" />
+				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
+				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
+				// #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
+				// #endif
+				</paramDepRel>
+				-->
+				<!-- #else -->		
+				<!--		
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
+				<option mustGenerateConditionName="true" conditionEntityDefaultName="have" />
+				<option functionToExecuteUponFind="5" />
+				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
+				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
+				// #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+				<option defaultSameSetReferenceValue="true" />
+				// #endif
+				</paramDepRel>
+				-->
 				<!-- #endif -->
+				
 				
 				<!-- #ifndefGIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS -->
 				

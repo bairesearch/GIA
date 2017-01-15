@@ -26,12 +26,13 @@
  * File Name: GIAconditionNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  *
  *******************************************************************************/
 
 
 #include "GIAconditionNodeClass.h"
+#include "SHAREDvars.h"
 
 //~? [eg past, wednesday, etc]
 GIAtimeConditionNode::GIAtimeConditionNode(void)
@@ -64,9 +65,9 @@ GIAtimeConditionNode::~GIAtimeConditionNode(void)
 
 string generateDateTimeConditionName(int dayOfMonth, int month, long year)
 {
-	char dayOfMonthStringcharstar[20] = "";
-	char monthStringcharstar[20] = "";
-	char yearStringcharstar[20] = "";
+	string dayOfMonthString = "";
+	string monthString = "";
+	string yearString = "";
 
 	/*
 	cout << "dayOfMonth = " << dayOfMonth << endl;
@@ -76,29 +77,29 @@ string generateDateTimeConditionName(int dayOfMonth, int month, long year)
 
 	if(dayOfMonth != TIME_DAY_OF_MONTH_UNDEFINED)
 	{
-		sprintf(dayOfMonthStringcharstar, "%d", dayOfMonth);
+		dayOfMonthString = convertIntToString(dayOfMonth);
 	}
 	if(month != TIME_MONTH_UNDEFINED)
 	{
-		sprintf(monthStringcharstar, "%d", month);
+		monthString = convertIntToString(month);
 	}
 	if(year != TIME_YEAR_UNDEFINED)
 	{
-		sprintf(yearStringcharstar, "%d", year);
+		yearString = convertIntToString(year);
 	}
 	string dateTimeConditionName = "";
 
 	if(TIME_DATE_DISPLAY_FORMAT == TIME_DATE_DISPLAY_FORMAT_AMERICAN)
 	{
-		dateTimeConditionName = dateTimeConditionName + monthStringcharstar + "/" + dayOfMonthStringcharstar + "/" + yearStringcharstar;
+		dateTimeConditionName = dateTimeConditionName + monthString + "/" + dayOfMonthString + "/" + yearString;
 	}
 	else if(TIME_DATE_DISPLAY_FORMAT == TIME_DATE_DISPLAY_FORMAT_STANDARD)
 	{
-		dateTimeConditionName = dateTimeConditionName + yearStringcharstar + "/" + monthStringcharstar + "/" + dayOfMonthStringcharstar;
+		dateTimeConditionName = dateTimeConditionName + yearString + "/" + monthString + "/" + dayOfMonthString;
 	}
 	else if(TIME_DATE_DISPLAY_FORMAT == TIME_DATE_DISPLAY_FORMAT_AUSTRALIAN)
 	{
-		dateTimeConditionName = dateTimeConditionName + dayOfMonthStringcharstar + "/" + monthStringcharstar + "/" + yearStringcharstar;
+		dateTimeConditionName = dateTimeConditionName + dayOfMonthString + "/" + monthString + "/" + yearString;
 	}
 	return dateTimeConditionName;
 }

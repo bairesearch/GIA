@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -166,7 +166,7 @@ GIArelation::GIArelation(void)
 	rcmodIndicatesSameReferenceSet = false;
 	#endif
 
-	#ifdef GIA_USE_CORPUS_DATABASE
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 	sameReferenceSet = false;
 	#ifdef GIA2_SUPPORT_QUERIES
 	corpusSpecialRelationGovernorIsQuery = "";
@@ -255,8 +255,8 @@ GIAfeature::GIAfeature(void)
 
 	entityDisabled = false;
 
-	#ifdef GIA_USE_CORPUS_DATABASE
-	GIAconnectionistNetworkPOStype = 0;	//ie GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNDEFINED
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	GIAconnectionistNetworkPOStype = 0;	//ie GIA_SEMANTIC_PARSER_POS_TYPE_UNDEFINED
 	#endif
 
 	#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
@@ -407,7 +407,7 @@ void copyRelations(GIArelation* firstRelationInListToCopy, GIArelation* firstRel
 		//cout << currentRelation->relationType << "(" << currentRelation->relationGovernor << ", " << currentRelation->relationDependent << ")" << endl;
 		#endif
 
-		#ifdef GIA_USE_CORPUS_DATABASE
+		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 		#ifdef GIA2_SUPPORT_QUERIES
 		currentRelation->corpusSpecialRelationGovernorIsQuery = currentRelationToCopy->corpusSpecialRelationGovernorIsQuery;
 		currentRelation->corpusSpecialRelationDependentIsQuery = currentRelationToCopy->corpusSpecialRelationDependentIsQuery;
@@ -509,6 +509,18 @@ void copyStanfordMention(GIAstanfordCoreNLPmention* firstMentionInListToCopy, GI
 		currentMentionInListToCopy = currentMentionInListToCopy->next;
 		currentMentionInList = currentMentionInList->next;
 	}
+}
+
+int calculateNumberOfWordsInSentence(GIAfeature* firstFeatureInList)
+{
+	int maxNumberOfWordsInSentence = 0;
+	GIAfeature* currentFeatureInList = firstFeatureInList;
+	while(currentFeatureInList->next != NULL)
+	{
+		maxNumberOfWordsInSentence++;
+		currentFeatureInList = currentFeatureInList->next;
+	}
+	return maxNumberOfWordsInSentence;
 }
 
 #endif

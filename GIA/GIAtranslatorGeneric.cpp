@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -35,8 +35,8 @@
 
 #include "GIAtranslatorGeneric.h"
 #include "GIAtranslatorOperations.h"
-#ifdef GIA_USE_CORPUS_DATABASE
-#include "GIAcorpusOperations.h"
+#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+#include "GIAsemanticParserOperations.h"
 #endif
 
 
@@ -781,10 +781,11 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 																	
 									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], sameReferenceSet, rcmodIndicatesSameReferenceSet);
 									
+									#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED	//CHECKTHIS
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 									if(!(currentRelationInList->inverseRelationTwoWay))	//added 2j5e
 									{
-										#ifdef GIA_USE_CORPUS_DATABASE
+										#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 										#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
 										if(currentRelationInList->inverseRelationSingle)	//added 2j5g
 										{	
@@ -799,13 +800,14 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										#endif								
 											GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSet, rcmodIndicatesSameReferenceSet);
 											GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, functionEntityIndex2, functionEntityIndex3, sameReferenceSet, rcmodIndicatesSameReferenceSet);
-										#ifdef GIA_USE_CORPUS_DATABASE
+										#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 										#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
 										}
 										#endif
 										#endif
 									
 									}
+									#endif
 									#endif
 									#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
 									if(currentRelationInList->relationTwoWay)	//limitation only works when GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity is called based on a single GIArelation
@@ -878,7 +880,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								}
 								#endif
 								#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-								#ifdef GIA_USE_CORPUS_DATABASE
+								#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addAuxiliaryToEntity)
 								{
 									addDefinitionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet, rcmodIndicatesSameReferenceSet);

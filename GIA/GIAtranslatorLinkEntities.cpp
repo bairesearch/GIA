@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -35,8 +35,8 @@
 
 #include "GIAtranslatorLinkEntities.h"
 #include "GIAdatabase.h"
-#ifdef GIA_USE_CORPUS_DATABASE
-#include "GIAcorpusOperations.h"
+#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+#include "GIAsemanticParserOperations.h"
 #endif
 
 
@@ -167,10 +167,11 @@ void linkPropertiesPossessiveRelationships(GIAsentence* currentSentenceInList, G
 	#endif
 	genericDependecyRelationInterpretation(&paramA, REL1);
 	#else
+	cout << "linkPropertiesPossessiveRelationships{} error: hard coded version of this function is outdated; see GIArules.xml for latest version" << endl;
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, true);
 	paramA.numberOfRelations = 1;
 	paramA.useRelationArrayTest[REL1][REL_ENT3] = true; paramA.relationArrayTest[REL1][REL_ENT3] = relationTypePossessiveNameArray; paramA.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES;
-	paramA.mustGenerateConditionName = true; paramA.conditionEntityDefaultName = RELATION_ENTITY_SPECIAL_POSSESSIVE;	//create intermediary action 'have'
+	paramA.mustGenerateConditionName = true; paramA.conditionEntityDefaultName = RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES;	//create intermediary action 'have'
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity;
 	paramA.functionEntityRelationID[FUNC_ENT1] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	paramA.functionEntityRelationID[FUNC_ENT2] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
@@ -1133,11 +1134,11 @@ void linkSubjectObjectRelationships(GIAsentence* currentSentenceInList, GIAentit
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramC.defaultSameSetReferenceValue = false;
 	#endif
-	#ifndef GIA_USE_CORPUS_DATABASE
+	#ifndef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 	paramC.disableEntity[REL1][REL_ENT1] = true;	//disable "have" entity
 	#endif
 	genericDependecyRelationInterpretation(&paramC, REL1);
-	#ifdef GIA_USE_CORPUS_DATABASE
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 	GIAgenericDepRelInterpretationParameters paramC2 = paramC;
 	paramC2.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addAuxiliaryToEntity;
 	paramC2.disableEntity[REL1][REL_ENT1] = true;	//disable "have" entity

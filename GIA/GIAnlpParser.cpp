@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -97,7 +97,7 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 
 		if(c == CHAR_NEWLINE)
 		{
-			#ifdef GIA_USE_CORPUS_DATABASE
+			#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 			if(parseGIA2file)
 			{
 				//eg actionObject(6-cake, 4-eaten) [sameReferenceSet=false]
@@ -351,7 +351,7 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 				//cout << "(!NLPrelexCompatibilityMode || secondaryRelationDetected): secondaryRelationDetected = " << secondaryRelationDetected << endl;
 			#endif
 
-				#ifdef GIA2_CONNECTIONIST_NETWORK
+				#ifdef GIA2_SEMANTIC_PARSER
 				bool foundReplicateRelation = false;
 				if(parseGIA2file)
 				{
@@ -375,7 +375,7 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 					currentRelation->next = newRelation;
 					currentRelation = currentRelation->next;
 					#endif
-				#ifdef GIA2_CONNECTIONIST_NETWORK
+				#ifdef GIA2_SEMANTIC_PARSER
 				}
 				#endif
 			#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
@@ -433,11 +433,11 @@ void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* c
 			{
 				if(currentRelationPart == 1)
 				{
-					relationGovernorIndex = int(atof(currentItemString.c_str()));
+					relationGovernorIndex = int(convertStringToDouble(currentItemString));
 				}
 				else if(currentRelationPart == 2)
 				{
-					relationDependentIndex = int(atof(currentItemString.c_str()));
+					relationDependentIndex = int(convertStringToDouble(currentItemString));
 				}
 
 				if(currentRelation->relationGovernorIndex >* maxNumberOfWordsInSentence)
@@ -508,7 +508,7 @@ bool findString(string entityName, string stringToFind)
 }
 #endif
 
-#ifdef GIA_USE_CORPUS_DATABASE
+#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 string createSameReferenceSetRecord2(bool sameReferenceSet)
 {
 	string sameReferenceSetRecord = "[sameReferenceSet=" + convertBoolToString(sameReferenceSet) + "]";
@@ -564,12 +564,12 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string* POStagsText, GIAsentence
 			else
 			{
 				stanfordPOS = currentItemString;
-				#ifdef GIA2_CONNECTIONIST_NETWORK
+				#ifdef GIA2_SEMANTIC_PARSER
 				if(createFeaturesGIA2only)
 				{
 					string GIAconnectionistNetworkPOStypeName = stanfordPOS;
-					int GIAconnectionistNetworkPOStype = 0;	//ie GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNDEFINED;
-					for(int i=0; i<GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES; i++)
+					int GIAconnectionistNetworkPOStype = 0;	//ie GIA_SEMANTIC_PARSER_POS_TYPE_UNDEFINED;
+					for(int i=0; i<GIA_SEMANTIC_PARSER_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES; i++)
 					{
 						if(GIAconnectionistNetworkPOStypeName == GIAconnectionistNetworkPOStypeNameArray[i])
 						{
@@ -589,7 +589,7 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string* POStagsText, GIAsentence
 					#ifdef STANFORD_PARSER_USE_POS_TAGS	//overwrite
 					currentFeatureInList->stanfordPOS = stanfordPOS;
 					#endif
-				#ifdef GIA2_CONNECTIONIST_NETWORK
+				#ifdef GIA2_SEMANTIC_PARSER
 				}
 				#endif
 
@@ -753,7 +753,7 @@ void convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInLi
 #endif
 
 /*
-#ifdef GIA_USE_CORPUS_DATABASE
+#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 void convertGIAsemanticRelation(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList)
 {
 	#ifdef GIA_USE_LRP
@@ -945,7 +945,7 @@ void GIATHparseRelexFeaturesText(string* featuresText, GIAsentence* currentSente
 				{
 					case 0:
 					{
-						currentFeature->entityIndex = int(atof(currentItemString.c_str()));
+						currentFeature->entityIndex = int(convertStringToDouble(currentItemString));
 						if(currentFeature->entityIndex != featureIndex)
 						{
 							cout << "features parse error: (currentFeature->entityIndex != featureIndex)" << endl;
@@ -1109,11 +1109,11 @@ void GIATHparseRelexRelationsText(string* relationsText, GIAsentence* currentSen
 			{
 				if(currentRelationPart == 1)
 				{
-					currentRelation->relationGovernorIndex = int(atof(currentItemString.c_str()));
+					currentRelation->relationGovernorIndex = int(convertStringToDouble(currentItemString));
 				}
 				else if(currentRelationPart == 2)
 				{
-					currentRelation->relationDependentIndex = int(atof(currentItemString.c_str()));
+					currentRelation->relationDependentIndex = int(convertStringToDouble(currentItemString));
 				}
 
 				if(currentRelation->relationGovernorIndex >* maxNumberOfWordsInSentence)
@@ -1165,8 +1165,7 @@ string generateRelexCFFfeatureTagContent(GIAfeature* firstFeatureInList)
 		*/
 		relexCFFFeatureTagContent = relexCFFFeatureTagContent + "\n\t\t\t\t";
 
-		char entityIndexString[10];
-		sprintf(entityIndexString, "%d", currentFeatureInList->entityIndex);
+		string entityIndexString = convertIntToString(currentFeatureInList->entityIndex);
 		relexCFFFeatureTagContent = relexCFFFeatureTagContent + entityIndexString + CHAR_TAB + currentFeatureInList->word + CHAR_TAB + currentFeatureInList->lemma + CHAR_TAB + grammaticalWordTypeNameArray[currentFeatureInList->grammaticalWordType] + CHAR_TAB;
 		relexCFFFeatureTagContent = relexCFFFeatureTagContent + featureRelexFlagTypeArray[currentFeatureInList->NER] + CHAR_VERTICAL_BAR;
 		if(currentFeatureInList->grammaticalIsDateOrTime)
@@ -1245,10 +1244,8 @@ string generateRelexCFFrelationTagContent(GIArelation* firstRelationInList)
 			string relationType = currentRelationInList->relationType;
 			string relationGoverner = currentRelationInList->relationGovernor;
 			string relationDependent = currentRelationInList->relationDependent;
-			char relationGovernorIndexString[10];
-			char relationDependentIndexString[10];
-			sprintf(relationGovernorIndexString, "%d", currentRelationInList->relationGovernorIndex);
-			sprintf(relationDependentIndexString, "%d", currentRelationInList->relationDependentIndex);
+			string relationGovernorIndexString = convertIntToString(currentRelationInList->relationGovernorIndex);
+			string relationDependentIndexString = convertIntToString(currentRelationInList->relationDependentIndex);
 
 			relexCFFRelationTagContent = relexCFFRelationTagContent + relationType + CHAR_OPEN_BRACKET + relationGoverner + CHAR_OPEN_SQUARE_BRACKET + relationGovernorIndexString + CHAR_CLOSE_SQUARE_BRACKET + CHAR_COMMA + CHAR_SPACE + relationDependent + CHAR_OPEN_SQUARE_BRACKET + relationDependentIndexString + CHAR_CLOSE_SQUARE_BRACKET + CHAR_CLOSE_BRACKET;
 

@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k2a 10-July-2015
+ * Project Version: 2k3a 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -341,7 +341,7 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIApar
 									{
 										if(currentAttributeInSentenceTag->name == Relex_CFF_XML_ATTRIBUTE_index)
 										{
-											int sentenceIndex = atoi(currentAttributeInSentenceTag->value.c_str());
+											int sentenceIndex = convertStringToInt(currentAttributeInSentenceTag->value);
 											currentSentence->sentenceIndex = sentenceIndex;
 											foundSentenceIndexAttribute = true;
 										}
@@ -511,7 +511,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 				if(!onlyParseIfCorpusLookupFailed || !(currentSentence->corpusLookupSuccessful))
 				{
 					string sentenceIndexString = currentTagInSentences->firstAttribute->value;
-					currentSentence->sentenceIndex = atoi(sentenceIndexString.c_str());
+					currentSentence->sentenceIndex = convertStringToInt(sentenceIndexString);
 					#ifdef GIA_NLP_DEBUG
 					//cout << "currentSentence->sentenceIndex = " << currentSentence->sentenceIndex << endl;
 					#endif
@@ -542,7 +542,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 						if(parseFeatures)
 						{
 							string entityIndexString = currentTagInTokens->firstAttribute->value;
-							currentFeatureInList->entityIndex = atoi(entityIndexString.c_str());
+							currentFeatureInList->entityIndex = convertStringToInt(entityIndexString);
 							#ifdef GIA_SUPPORT_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 							lastFeatureEntityIndex = currentFeatureInList->entityIndex;
 							#endif
@@ -551,7 +551,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 						else
 						{
 							string entityIndexString = currentTagInTokens->firstAttribute->value;
-							lastFeatureEntityIndex = atoi(entityIndexString.c_str());
+							lastFeatureEntityIndex = convertStringToInt(entityIndexString);
 						}
 						#endif
 
@@ -584,12 +584,12 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 								}
 								else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_CharacterOffsetBegin)
 								{
-									int TagValue = atoi(currentTagInToken->value.c_str());
+									int TagValue = convertStringToInt(currentTagInToken->value);
 									currentFeatureInList->CharacterOffsetBegin = TagValue;
 								}
 								else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_CharacterOffsetEnd)
 								{
-									int TagValue = atoi(currentTagInToken->value.c_str());
+									int TagValue = convertStringToInt(currentTagInToken->value);
 									currentFeatureInList->CharacterOffsetEnd = TagValue;
 								}
 								else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_POS)
@@ -766,8 +766,8 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 
 										string relationGovernorIndexString = governerTagInDep->firstAttribute->value;
 										string relationDependentIndexString = dependentTagInDep->firstAttribute->value;
-										currentRelationInList->relationGovernorIndex = atoi(relationGovernorIndexString.c_str());
-										currentRelationInList->relationDependentIndex = atoi(relationDependentIndexString.c_str());
+										currentRelationInList->relationGovernorIndex = convertStringToInt(relationGovernorIndexString);
+										currentRelationInList->relationDependentIndex = convertStringToInt(relationDependentIndexString);
 
 										currentRelationInList->relationType = currentTagInDependencies->firstAttribute->value;
 
@@ -915,22 +915,22 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 						{
 							if(currentTagInMention->name == StanfordCoreNLP_XML_TAG_sentence)
 							{
-								int TagValue = atoi(currentTagInMention->value.c_str());
+								int TagValue = convertStringToInt(currentTagInMention->value);
 								currentMentionInList->sentence = TagValue;
 							}
 							else if(currentTagInMention->name == StanfordCoreNLP_XML_TAG_start)
 							{
-								int TagValue = atoi(currentTagInMention->value.c_str());
+								int TagValue = convertStringToInt(currentTagInMention->value);
 								currentMentionInList->start = TagValue;
 							}
 							else if(currentTagInMention->name == StanfordCoreNLP_XML_TAG_end)
 							{
-								int TagValue = atoi(currentTagInMention->value.c_str());
+								int TagValue = convertStringToInt(currentTagInMention->value);
 								currentMentionInList->end = TagValue;
 							}
 							else if(currentTagInMention->name == StanfordCoreNLP_XML_TAG_head)
 							{
-								int TagValue = atoi(currentTagInMention->value.c_str());
+								int TagValue = convertStringToInt(currentTagInMention->value);
 								currentMentionInList->head = TagValue;
 							}
 
@@ -1068,7 +1068,7 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 	bool parsingTypedDependencies = false;	//parse tree is first set in list
 
 	ifstream parseFileObject(inputTextNLPrelationXMLfileName.c_str());
-	if(!parseFileObject.rdbuf( )->is_open( ))
+	if(!parseFileObject.rdbuf()->is_open())
 	{
 		//xml file does not exist in current directory.
 		cout << "Error: Stanford Parser Output File does not exist in current directory: " << inputTextNLPrelationXMLfileName << endl;
@@ -1319,8 +1319,7 @@ void outputInternalRelationsInRelexFormat(string* nameOfRelexCompactFormatCFFfil
 		GIAsentence* currentSentence = firstSentenceInList;
 		while(currentSentence->next != NULL)
 		{
-			char sentenceIndexString[10];
-			sprintf(sentenceIndexString, "%d", currentSentence->sentenceIndex);
+			string sentenceIndexString = convertIntToString(currentSentence->sentenceIndex);
 
 			currentTagL1b->name = Relex_CFF_XML_TAG_sentence;
 			XMLparserTag* firstTagL2 = new XMLparserTag();
