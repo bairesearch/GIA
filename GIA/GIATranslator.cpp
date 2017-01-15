@@ -1661,7 +1661,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 										{//subject is connected to an _advmod
 											subjectIsConnectedToAnAdvMod = true;
 
+																						
+											GIAEntityNode * actionOrPropertyConditionEntity;
+											GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[currentRelationInList3->relationFunctionIndex];
+											string relationType = subjectEntityTemp->entityName;
 											
+
 											#ifdef ARBITRARY_SUBJECT_FINAL_IMPLEMENTATION
 											cout << "error: ARBITRARY_SUBJECT_FINAL_IMPLEMENTATION not yet coded; in final implementation, the arbitrary subject should be determined during the referencing stage of sentence parsing" << endl;
 											#else
@@ -1672,11 +1677,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 											GIAEntityNode * arbitrarySubjectSpecialConceptEntityNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &arbitrarySubjectSpecialConceptEntityNodeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
 											subjectEntityTemp = arbitrarySubjectSpecialConceptEntityNode;
 											#endif
-											
-											GIAEntityNode * actionOrPropertyConditionEntity;
-											GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[currentRelationInList3->relationFunctionIndex];
-											string relationType = subjectEntityTemp->entityName;
-											
+																						
 											
 											//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 											if(passdefinition || partnerTypeObjectSpecialConditionFound)
@@ -1753,8 +1754,6 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *concept
 									GIAEntityNode * actionEntity = GIAEntityNodeArray[relationFunctionIndex];
 									
 									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-									GIAEntityNode * subjectEntityTemp = subjectEntityTemp;
-									GIAEntityNode * objectEntityTemp = objectEntityTemp;
 
 									/*
 									cout << "SUBJECT_INDEX = " << SUBJECT_INDEX << endl;
