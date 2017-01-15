@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5d 03-June-2012
+ * Project Version: 1l5e 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific version of shared globals (replace if compiling other projects)
  *
@@ -22,6 +22,7 @@
 #define GIA_USE_ADVANCED_REFERENCING	//this needs to be debugged (not yet tested)
 #ifdef GIA_USE_ADVANCED_REFERENCING
 	#define GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
+	#define GIA_USE_ADVANCED_REFERENCING_CONDITIONS		//all conditions; ie, not just preposition conditions
 #endif
 
 //variables currently under attention for testing purposes

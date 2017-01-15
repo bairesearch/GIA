@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5d 03-June-2012
+ * Project Version: 1l5e 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -226,7 +226,14 @@ using namespace std;
 		
 #define SECONDS_IN_YEAR (365*24*60*60)
 
-
+#define FEATURE_INDEX_OF_PREPOSITION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-2)
+#define FEATURE_INDEX_OF_HAVING_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-3)
+#define FEATURE_INDEX_OF_BEING_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-4)
+#define FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-5)
+#define FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-6)
+#define FEATURE_INDEX_OF_MEASURE_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-7)
+#define FEATURE_INDEX_OF_TODO_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-8)
+#define FEATURE_INDEX_OF_CONJUNCTION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-9)
 
 /********************************* Relations *******************************************/
 
@@ -884,9 +891,9 @@ GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity);
 	void upgradePropertyToAction(GIAEntityNode * property);
 	GIAEntityNode * addAction(GIAEntityNode * actionEntity);			
 		
-GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, GIAEntityNode * conditionTypeConceptEntity, bool sameReferenceSet);
-void addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionDefinitionNode, GIAEntityNode * conditionTypeConceptEntity, bool negative, bool sameReferenceSet);
-void addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionPropertyNode, GIAEntityNode * conditionTypeConceptEntity, bool negative, bool sameReferenceSet);
+GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, GIAEntityNode * conditionTypeEntity, bool sameReferenceSet);
+GIAEntityNode * addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionDefinitionNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
+GIAEntityNode * addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionPropertyNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
 	GIAEntityNode * addCondition(GIAEntityNode * conditionEntity);
 
 string convertStanfordPrepositionToRelex(string * preposition, int NLPdependencyRelationsType, bool * stanfordPrepositionFound);				//Stanford Compatible
@@ -947,6 +954,7 @@ void forwardTimeInfoToNewProperty(GIAEntityNode * entity, GIAEntityNode * newPro
 bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relation * relation);
 #endif
 
+GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int featureIndex, string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts);
 GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts);
 
 void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNodeToAdd, int vectorConnectionType, bool sameReferenceSet);

@@ -3,7 +3,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5d 03-June-2012
+ * Project Version: 1l5e 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1240,8 +1240,9 @@ void defineHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * curre
 									
 									string conditionTypeName = prepositionName;
 									bool entityAlreadyExistant = false;
-									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
-
+								
+									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, FEATURE_INDEX_OF_HAVING_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+									
 									GIAEntityNode * haveEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
 									bool negative = haveEntity->negative;
 									GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
@@ -1253,7 +1254,12 @@ void defineHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * curre
 									#else
 									bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 									#endif
+									
+									#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
+									GIAEntityNodeArray[FEATURE_INDEX_OF_HAVING_UNKNOWN] = addOrConnectHavingPropertyConditionToEntity(entityNode, conditionPropertyNode, conditionTypeConceptEntity, negative, sameReferenceSet);										
+									#else
 									addOrConnectHavingPropertyConditionToEntity(entityNode, conditionPropertyNode, conditionTypeConceptEntity, negative, sameReferenceSet);	
+									#endif
 									
 									disableEntityBasedUponFirstSentenceToAppearInNetwork(haveEntity);								
 								}
@@ -1274,8 +1280,9 @@ void defineHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * curre
 									
 									string conditionTypeName = prepositionName;
 									bool entityAlreadyExistant = false;
-									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 																											
+									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, FEATURE_INDEX_OF_BEING_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+																										
 									GIAEntityNode * beEntity = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
 									bool negative = beEntity->negative;
 									GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
@@ -1287,8 +1294,13 @@ void defineHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * curre
 									#else
 									bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 									#endif
-									addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative, sameReferenceSet);																
-								
+									
+									#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
+									GIAEntityNodeArray[FEATURE_INDEX_OF_BEING_UNKNOWN] = addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative, sameReferenceSet);																
+									#else
+									addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative, sameReferenceSet);																									
+									#endif
+									
 									disableEntityBasedUponFirstSentenceToAppearInNetwork(beEntity);
 
 								}	
@@ -1706,49 +1718,24 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 
 		//cout << "3prepositionName = " << prepositionName << endl;
 		
-		#ifdef GIA_USE_ADVANCED_REFERENCING_PREPOSITIONS
 		//added 3 June 2012 for advanced referencing of prepositions
 		GIAEntityNode * conditionTypeConceptEntity;
 		int featureIndexOfPreposition = -1;
-		
 		bool prepositionFeatureFound = determineFeatureIndexOfPreposition(currentSentenceInList, &prepositionName, &featureIndexOfPreposition);
-		if(prepositionFeatureFound)
-		{
-			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-			cout << "prepositionFeatureFound" << endl;
-			cout << "prepositionName = " << prepositionName << endl;
-			cout << "featureIndexOfPreposition = " << featureIndexOfPreposition << endl;
-			#endif
-			if(GIAEntityNodeArrayFilled[featureIndexOfPreposition])
-			{
-				conditionTypeConceptEntity = GIAEntityNodeArray[featureIndexOfPreposition];
-				/*OLD: not required any more as take last word in multword prepositions (eg 'to' in near_to)
-				//conditionTypeConceptEntity->disabled = false;	
-					//required in the case a preposition word has been added in initialisation becuase it occurs as a governor/dependent of a relation within the sentence (as opposed to being initialised as a reference by GIA in its advanced references)
-					//eg He rode the carriage that is near to the horse. nsubj(near-7, carriage-4) / prep_to(near-7, horse-10) -> prep_near_to(carriage-4, horse-10)
-				*/
-			}
-			else
-			{
-				string conditionTypeName = prepositionName;
-				bool entityAlreadyExistant = false;
-				conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);				
-				GIAEntityNodeArrayFilled[featureIndexOfPreposition] = true;
-				//cout << "2prepositionName = " << prepositionName << endl;
-			}
+		if(!prepositionFeatureFound)
+		{	
+			featureIndexOfPreposition = FEATURE_INDEX_OF_PREPOSITION_UNKNOWN;
 		}
-		else
-		{
-			cout << "error: !prepositionFeatureFound" << endl;
-			exit(0);
-		}		
-		#else
-		string conditionTypeName = prepositionName;
-		bool entityAlreadyExistant = false;
-		GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
-		#endif
 		
-
+		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+		cout << "prepositionFeatureFound" << endl;
+		cout << "prepositionName = " << prepositionName << endl;
+		cout << "featureIndexOfPreposition = " << featureIndexOfPreposition << endl;
+		#endif
+		bool entityAlreadyExistant = false;
+		string conditionTypeName = prepositionName;
+		conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureIndexOfPreposition, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);				
+			
 													
 		//cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl; 
 	

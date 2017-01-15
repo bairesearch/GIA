@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5d 03-June-2012
+ * Project Version: 1l5e 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -694,7 +694,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "3e pass; define conjunction conditions; eg Either Tom and/or Max eat the cake...." << endl;
 	#endif
-	defineConjunctionConditions(currentSentenceInList, GIAEntityNodeArray, entityNodesActiveListConcepts);	
+	defineConjunctionConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts);	
 #endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -715,22 +715,22 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "4d pass; extract measures" << endl;
 	#endif
-	extractMeasures(currentSentenceInList, GIAEntityNodeArray, entityNodesActiveListConcepts);
+	extractMeasures(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "4e/4f pass; define to_be/to_do conditions" << endl;
 	#endif
-	defineToBeAndToDoProperties(currentSentenceInList, GIAEntityNodeArray, entityNodesActiveListConcepts);
+	defineToBeAndToDoProperties(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "4g pass; extract qualities" << endl;
 	#endif
-	extractQualities(currentSentenceInList, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
+	extractQualities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "4h pass; link properties (parataxis); eg the guy, Akari said, left..." << endl;
 	#endif
-	linkPropertiesParataxis(currentSentenceInList, GIAEntityNodeArray);	
+	linkPropertiesParataxis(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);	
 
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{

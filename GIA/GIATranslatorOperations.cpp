@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5d 03-June-2012
+ * Project Version: 1l5e 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -271,7 +271,7 @@ GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 				else
 				{	
 					//cout << "\tbreak; adding: propertyEntity->entityName = " << propertyEntity->entityName << endl;
-					newOrExistingProperty = addProperty(propertyEntity);p;
+					newOrExistingProperty = addProperty(propertyEntity);
 				}
 			#else
 				//cout << "\tbreak2; propertyEntity->entityName = " << propertyEntity->entityName << endl;
@@ -749,23 +749,23 @@ GIAEntityNode * addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * 
 }
 
 
-GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, GIAEntityNode * conditionTypeConceptEntity, bool sameReferenceSet)
+GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, GIAEntityNode * conditionTypeEntity, bool sameReferenceSet)
 {
-	GIAEntityNode * newOrExistingCondition = conditionTypeConceptEntity;
+	GIAEntityNode * newOrExistingCondition = conditionTypeEntity;
 	
 	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(entityNode->disabled))
 	{
 	if(!(conditionEntityNode->disabled))
 	{	
-	if(!(conditionTypeConceptEntity->disabled))
+	if(!(conditionTypeEntity->disabled))
 	{					
 	#endif
-		if(!(conditionTypeConceptEntity->isConcept))
+		if(!(conditionTypeEntity->isConcept))
 		{
 			//cout << "existingCondition" << endl;
 			
-			GIAEntityNode * existingCondition = conditionEntityNode;
+			GIAEntityNode * existingCondition = conditionTypeEntity;
 
 			//entityNode->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
@@ -782,7 +782,7 @@ GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEnt
 		{
 			//cout << "newCondition" << endl;
 
-			GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
+			GIAEntityNode * newCondition = addCondition(conditionTypeEntity);
 			
 			writeVectorConnection(newCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
 			writeVectorConnection(newCondition, conditionEntityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, sameReferenceSet);
@@ -820,57 +820,117 @@ GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEnt
 	return newOrExistingCondition;		
 }
 
-void addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionDefinitionNode, GIAEntityNode * conditionTypeConceptEntity, bool negative, bool sameReferenceSet)
+GIAEntityNode * addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionDefinitionNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet)
 {
+	GIAEntityNode * newOrExistingCondition = conditionTypeEntity;
+	
 	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(entityNode->disabled))
 	{
 	if(!(conditionDefinitionNode->disabled))
 	{	
-	if(!(conditionTypeConceptEntity->disabled))
+	if(!(conditionTypeEntity->disabled))
 	{					
 	#endif
 
-		GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
-		newCondition->negative = negative;	//overwrite negative with orrect one from context; ie that from "being" entity node
-		//cout << "negative = " << negative;
+		if(!(conditionTypeEntity->isConcept))
+		{
+			//cout << "existingCondition" << endl;
+			
+			GIAEntityNode * existingCondition = conditionTypeEntity;
 
-		writeVectorConnection(newCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
-		writeVectorConnection(entityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);				
-		writeVectorConnection(newCondition, conditionDefinitionNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);				
-		writeVectorConnection(conditionDefinitionNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet);
+			//entityNode->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+
+			//configure entity node containing this property
+			writeVectorConnection(existingCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
+			writeVectorConnection(entityNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);				
+			writeVectorConnection(existingCondition, conditionDefinitionNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);				
+			writeVectorConnection(conditionDefinitionNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet);
+										
+			newOrExistingCondition = existingCondition;
+
+		}
+		else
+		{
+			//cout << "newCondition" << endl;
+
+			GIAEntityNode * newCondition = addCondition(conditionTypeEntity);
+			newCondition->negative = negative;	//overwrite negative with orrect one from context; ie that from "being" entity node
+			//cout << "negative = " << negative;
+			
+			writeVectorConnection(newCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
+			writeVectorConnection(entityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);				
+			writeVectorConnection(newCondition, conditionDefinitionNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);				
+			writeVectorConnection(conditionDefinitionNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet);
+			
+			//entityNode->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+		
+			newOrExistingCondition = newCondition;
+		}
 		
 	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
 	}				
-	#endif			
+	#endif	
+	
+	return newOrExistingCondition;			
 }
 
-void addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionPropertyNode, GIAEntityNode * conditionTypeConceptEntity, bool negative, bool sameReferenceSet)
+GIAEntityNode * addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionPropertyNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet)
 {
+	GIAEntityNode * newOrExistingCondition = conditionTypeEntity;
+	
 	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(entityNode->disabled))
 	{
 	if(!(conditionPropertyNode->disabled))
 	{	
-	if(!(conditionTypeConceptEntity->disabled))
+	if(!(conditionTypeEntity->disabled))
 	{					
 	#endif
 
-		GIAEntityNode * newCondition = addCondition(conditionTypeConceptEntity);
-		newCondition->negative = negative;	//overwrite negative with correct one from context; ie that from "having" entity node
+		if(!(conditionTypeEntity->isConcept))
+		{
+			//cout << "existingCondition" << endl;
+			
+			GIAEntityNode * existingCondition = conditionTypeEntity;
 
-		writeVectorConnection(newCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
-		writeVectorConnection(entityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);				
-		writeVectorConnection(conditionPropertyNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);				
-		writeVectorConnection(newCondition, conditionPropertyNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+			//entityNode->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+
+			//configure entity node containing this property
+			writeVectorConnection(existingCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
+			writeVectorConnection(entityNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);				
+			writeVectorConnection(conditionPropertyNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);				
+			writeVectorConnection(existingCondition, conditionPropertyNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+										
+			newOrExistingCondition = existingCondition;
+
+		}
+		else
+		{
+			//cout << "newCondition" << endl;
+
+			GIAEntityNode * newCondition = addCondition(conditionTypeEntity);
+			newCondition->negative = negative;	//overwrite negative with correct one from context; ie that from "having" entity node
+			
+			writeVectorConnection(newCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
+			writeVectorConnection(entityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);				
+			writeVectorConnection(conditionPropertyNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);				
+			writeVectorConnection(newCondition, conditionPropertyNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);	
+			
+			//entityNode->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+		
+			newOrExistingCondition = newCondition;
+		}
 		
 	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
 	}					
-	#endif		
+	#endif
+	
+	return newOrExistingCondition;	
 }
 
 GIAEntityNode * addCondition(GIAEntityNode * conditionEntity)
@@ -1293,7 +1353,26 @@ bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relatio
 }
 #endif
 
+
+GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int featureIndex, string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts)
+{	
+	GIAEntityNode * conditionTypeEntity;
+	#ifdef GIA_USE_ADVANCED_REFERENCING_CONDITIONS
+	if(GIAEntityNodeArrayFilled[featureIndex])
+	{
+		conditionTypeEntity = GIAEntityNodeArray[featureIndex];
+	}
+	else
+	{
+		conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapper(entityNodeName, entityAlreadyExistant, entityNodesActiveListConcepts);
+		GIAEntityNodeArrayFilled[featureIndex] = true;
+	}
+	#else									
+	conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapper(entityNodeName, entityAlreadyExistant, entityNodesActiveListConcepts);
+	#endif
 	
+	return conditionTypeEntity;
+}	
 
 GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts)
 {
