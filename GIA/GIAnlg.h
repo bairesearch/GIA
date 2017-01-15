@@ -3,7 +3,7 @@
  * File Name: GIAnlg.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4f 25-July-2012
+ * Project Version: 1n4g 25-July-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -45,10 +45,8 @@ public:
 
 #define GIA_NLG_SUPPORT_PERSON_AND_GENDER
 
-#define NLG_POSSESSIVE_TEXT "has"
+#define NLG_POSSESSIVE_TEXT "has"	//RELATION_GOVERNOR_COMPOSITION_3
 #define NLG_DEFINITION_TEXT "is"
-#define NLG_DEFINITE_TEXT "the"
-#define NLG_INDEFINITE_TEXT "a"
 #define NLG_TEXT_SPACE " "
 
 #define NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS

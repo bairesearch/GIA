@@ -3,7 +3,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4f 25-July-2012
+ * Project Version: 1n4g 25-July-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -12,6 +12,7 @@
 
 
 #include "GIAnlg.h"
+#include "GIATranslatorDefineGrammar.h"
 
 NLGSentence::NLGSentence(void)
 {
@@ -816,6 +817,7 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 		}
 		else
 		{
+			isPerson = true;
 			genderString = grammaticalGenderNameArray[entityNode->grammaticalGenderTemp];
 			hasGender = true;
 		}
@@ -834,9 +836,7 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 	{
 		NLGInputViewFeatureTagGender = NLG2generateNLGInputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_GENDER, entityIndexString, genderString);										
 	}
-		
-	//flag person
-	if(isPerson)
+	else if(isPerson)
 	{
 		NLGInputViewFeatureTagFlagPerson = NLG2generateNLGInputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_FLAG_PERSON, entityIndexString, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_FLAG_PERSON);	
 	}
@@ -912,6 +912,7 @@ string calcDeterminate(GIAEntityNode * entityNode)
 		}
 		else
 		{
+			isPerson = true;
 			genderString = grammaticalGenderNameArray[entityNode->grammaticalGenderTemp];
 			hasGender = true;
 		}
@@ -949,12 +950,12 @@ string calcDeterminate(GIAEntityNode * entityNode)
 				{
 					cout << "cow; definiteSourceAddedInLanguageGeneration" << endl;
 				}		
-				determinate = NLG_DEFINITE_TEXT;	//the
+				determinate = GRAMMATICAL_DETERMINER_DEFINITE;	//the
 				addDeterminate = true;
 			}
 			else
 			{	
-				determinate = NLG_INDEFINITE_TEXT;	//a
+				determinate = GRAMMATICAL_DETERMINER_INDEFINITE;	//a
 				addDeterminate = true;
 			}
 		}
@@ -997,6 +998,31 @@ string getWordOrig(GIAEntityNode * entityNode)
 	#else
 	wordOrig = generateMorphology(entityNode);
 	#endif
+	
+	//prepend quantity/negative indicator - added 25 July 2012
+	if(entityNode->hasQuantity)
+	{
+		string quantityNumberStringTemp;
+		if(entityNode->isQuery)
+		{
+			quantityNumberStringTemp = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+		}
+		else
+		{
+			quantityNumberStringTemp = printQuantityNumberString(entityNode);
+		}
+		wordOrig = quantityNumberStringTemp + " " + wordOrig;
+
+	}
+	else if(entityNode->negative)
+	{
+		wordOrig = string(RELATION_TYPE_NEGATIVE_CONTEXT_1) + " " + wordOrig;
+	}
+	else
+	{
+
+	}			
+				
 	return wordOrig;
 }
 

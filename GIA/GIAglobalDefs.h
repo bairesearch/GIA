@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4f 25-July-2012
+ * Project Version: 1n4g 25-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -51,6 +51,7 @@
 
 #define GIA_USE_NLG
 #ifdef GIA_USE_NLG
+	#define GIA_USE_NLG_OUTPUT_TO_COMMAND_LINE
 	//#define GIA_USE_NLG2
 	#define GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR	//NB even NLG2 requires origWord not lemma, so a morphology generator is required in both
 #endif

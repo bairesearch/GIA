@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4f 25-July-2012
+ * Project Version: 1n4g 25-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -664,7 +664,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe - Project Version: 1n4f 25-July-2012" << endl;
+			cout << "GIA.exe - Project Version: 1n4g 25-July-2012" << endl;
 			exit(1);
 		}
 
@@ -1276,17 +1276,19 @@ int main(int argc,char **argv)
 		GIAEntityNode * entityNode = conceptEntityNodesListMapIter->second;
 		currentNLGsentence = generateLanguageFromEntityNode(entityNode, currentNLGsentence); 
 	}
+	#ifdef GIA_USE_NLG_OUTPUT_TO_COMMAND_LINE
+	cout << "DEBUG: NLG generated text = " << endl;	
+	#ifdef GIA_USE_NLG2
+	cout << "(input text into NLG2)" << endl;		
+	#endif
 	currentNLGsentence = firstNLGsentence;
 	while(currentNLGsentence->next != NULL)
 	{
-		cout << "DEBUG: NLG generated text = " << endl;
-		#ifdef GIA_USE_NLG2
-		cout << "(input text into NLG2)" << endl;		
-		#endif
 		cout << currentNLGsentence->NLGInputViewText << endl;
 		//execute NLG2 on this text
 		currentNLGsentence = currentNLGsentence->next;
 	}
+	#endif	
 	#endif
 	
 	#ifdef GIA_USE_DATABASE
