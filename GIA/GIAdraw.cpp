@@ -465,8 +465,13 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				if(entityNode->hasQuality)
 				{
 					entityColour = GIA_DRAW_PROPERTY_QUALITY_NODE_COLOUR;
+				}
+				else
+				{
+					entityColour = GIA_DRAW_PROPERTY_NODE_COLOUR;
 				}				
-				else if(entityNode->hasMeasure)
+								
+				if(entityNode->hasMeasure)
 				{
 					entityColour = GIA_DRAW_PROPERTY_MEASURE_NODE_COLOUR;
 				}
@@ -474,10 +479,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				{
 					entityColour = GIA_DRAW_PROPERTY_QUANTITY_NODE_COLOUR;
 				}
-				else
-				{
-					entityColour = GIA_DRAW_PROPERTY_NODE_COLOUR;
-				}
+
 			}
 			else if(entityNode->isAction)
 			{
