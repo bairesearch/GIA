@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2g 23-July-2013
+ * Project Version: 1t2h 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -732,6 +732,16 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#ifdef GIA_SUPPORT_ALIASES_RELEX_COMPATIBILITY
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
+	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1c5Alternate; redistribute Relex Relations - Adverb Plus Object Plus Subject Relation All With A Definition Function As Property Links" << endl;	
+		cout << "eg; The chicken is 3 minutes late.	_subj(be[3], chicken[2]) + _obj(be[3], minutes[5]) + _advmod(be[3], late[6]) -> _advmod(late[6], minutes[5]) + _advmod(chicken[2],  late[6])" << endl;
+		#endif
+		//required for aliasing to work
+		redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationAllWithADefinitionFunctionAsPropertyLinks(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
+		#endif
+	#endif	
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1c1Alternate; redistribute Relex Relations -Collapse Subject And Object: Generate Appos" << endl;
 		cout << "She is the one.	_obj(be[2], one[4]) + _subj(be[2], she[1]) -> appos(She-1, one-4)" << endl;
@@ -770,16 +780,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		//required for aliasing to work
 		redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
 		#endif
-		
-		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
-		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "pass 1c5Alternate; redistribute Relex Relations - Adverb Plus Object Plus Subject Relation All With A Definition Function As Property Links" << endl;	
-		cout << "eg; The chicken is 3 minutes late.	_subj(be[3], chicken[2]) + _obj(be[3], minutes[5]) + _advmod(be[3], late[6]) -> _advmod(late[6], minutes[5]) + _advmod(chicken[2],  late[6])" << endl;
-		#endif
-		//required for aliasing to work
-		redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationAllWithADefinitionFunctionAsPropertyLinks(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
-		#endif
-		
+				
 		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A_RELATIONS_DISREGARD_REDUNDANT_DEFINITION_RELATIONS
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1c6Alternate; redistribute Relex Relations - Disregard Redundant Definition Relations" << endl;	

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2g 23-July-2013
+ * Project Version: 1t2h 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -189,6 +189,9 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
+		#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		if(!(currentRelationInList->disabled))
+		{		
 		#endif
 			bool passed = false;
 			for(int i=0; i<RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES; i++)
@@ -254,6 +257,8 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
+		#elif defined GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		}		
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
@@ -2040,7 +2045,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 	paramC.numberOfRelations = 1;
 	paramC.NLPdependencyRelationsType = NLPdependencyRelationsType;	//this is required for expectToFindPrepositionTest
 	paramC.expectToFindPrepositionTest[REL1] = true;
-	/*OLD: before updating GIA to preprocess relex conj_or/conj_and as _conj_or/_conj_and
+	/*OLD: before updating GIA 1t2f preprocess relex conj_or/conj_and as _conj_or/_conj_and
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
 		paramC.useRelationArrayTest[REL1][REL_ENT3] = true; paramC.relationArrayTest[REL1][REL_ENT3] = relationTypeConjugationNameArray; paramC.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES; paramC.relationArrayTestIsNegative[REL1][REL_ENT3] = true;	//NB this case is required because conjunctions relations in Relex/GIA are defined without a prepending "_", which means when (NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX) they will be non-intentionally interpreted as prepositions
@@ -2086,7 +2091,8 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 			
 			bool passed = true;
 			#ifdef GIA_IGNORE_MEANINGLESS_RELATIONS
-			if(GIAentityNodeArray[actionOrSubstanceConditionIndex]->entityName == relationType)
+			bool prepositionFound1 = false;
+			if(GIAentityNodeArray[actionOrSubstanceConditionIndex]->entityName == convertPrepositionToRelex(&relationType, &prepositionFound1))	//this was required to be updated for GIA 1t2f (preprocessing: relex preposition renaming to stanford)
 			{//to prevent meaningless relex relations; eg "on(be[2], on[6])"
 				passed = false;
 			}
@@ -2113,6 +2119,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 			}
 			#endif
 
+			/* this is no longer required as of GIA 1t2f (preprocessing: relex conjunction dependency relations renaming)
 			#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 			if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 			{
@@ -2130,6 +2137,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 			#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 			}
 			#endif
+			*/
 
 			#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
 			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3A_PREPOSITIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_SUBSTANCE_LINK_DEPENDING_UPON_ACTION_OR_SUBSTANCE
