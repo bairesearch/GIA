@@ -3,7 +3,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k3c 11-May-2012
+ * Project Version: 1k3d 11-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -394,7 +394,13 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 					else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_lemma)
 					{
 						string TagValue = currentTagInToken->value;
-						currentFeatureInList->lemma = TagValue;
+						string lemma = TagValue;
+						#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PRONOUN_LEMMA_CASE_ASSIGNMENT_BUG_MAKE_ALL_LEMMAS_LOWER_CASE
+						char firstCharacterOfLemma = lemma[0]; 
+						firstCharacterOfLemma = tolower(firstCharacterOfLemma);
+						lemma[0] = firstCharacterOfLemma;
+						#endif
+						currentFeatureInList->lemma = lemma;
 					}
 					else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_CharacterOffsetBegin)
 					{

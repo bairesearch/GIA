@@ -3,7 +3,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k3c 11-May-2012
+ * Project Version: 1k3d 11-May-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
@@ -40,7 +40,9 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	for(entityIterQuery = conceptEntityNodesListQuery->begin(); entityIterQuery != conceptEntityNodesListQuery->end(); entityIterQuery++) 
 	{//for each node in query semantic net;
 		
-		//cout << "entityIterQuery->second->entityName = " << entityIterQuery->second->entityName << endl;
+		#ifdef GIA_QUERY_DEBUG
+		cout << "Query Trace Start: entityIterQuery->second->entityName = " << entityIterQuery->second->entityName << endl;
+		#endif
 		GIAEntityNode* currentQueryEntityNode = entityIterQuery->second;
 		
 		bool foundQueryEntityNodeName = false;

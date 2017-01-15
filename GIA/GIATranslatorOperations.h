@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k3c 11-May-2012
+ * Project Version: 1k3d 11-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -36,9 +36,14 @@ using namespace std;
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION_OLD
 
 
+//#ifdef GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS	//this condition has been removed for debugging output replication purposes (although this condition is not necessary in practice?)
+	#define GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PRONOUN_LEMMA_CASE_ASSIGNMENT_BUG_MAKE_ALL_LEMMAS_LOWER_CASE	//used to resolve the issue where 'time'/'freedom' and 'Time'/'Freedom' are not matched etc
+//#endif
+//#ifndef GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS	//this condition has been removed for debugging output replication purposes (although this condition is not necessary in practice)
+	#define FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION 	//added 26 April 2012 [UNTESTED]
+//#endif
+
 //#define GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-
-
 
 #ifndef GIA_DISABLE_REFERENCING
 	#define GIA_ENABLE_REFERENCE_LINKING	//default: enabled
