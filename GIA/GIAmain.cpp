@@ -433,7 +433,6 @@ int main(int argc,char **argv)
 		}
 		else
 		{		
-			entityNodesCompleteList = new vector<GIAEntityNode*>;
 			if(!readSemanticNetXMLFile(inputXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conceptEntityNamesList))
 			{
 				result = false;
@@ -577,23 +576,23 @@ int main(int argc,char **argv)
 	{	
 		printGIAnetworkNodes(entityNodesCompleteList, rasterImageWidth, rasterImageHeight, outputLDRFileName, outputSVGFileName, outputPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputLDRFile, useOutputPPMFile);
 	}			
-				
-	if(useOutputXMLFile)
-	{			
-		if(!writeSemanticNetXMLFile(outputXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList))
-		{
-			result = false;
-		}
-	}
 	
-
-		
 	#ifdef GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
 	if(!testReadSemanticNetXMLFile2(entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conceptEntityNamesList))
 	{
 		result = false;
 	}
+	#else				
+	if(useOutputXMLFile)
+	{			
+		if(!writeSemanticNetXMLFile(outputXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conceptEntityNamesList))
+		{
+			result = false;
+		}
+	}
 	#endif
+	
+
 	
 }
 
