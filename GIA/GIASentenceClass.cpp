@@ -103,14 +103,30 @@ Feature::Feature(void)
 	grammar = "";
 	#endif
 
+	NER = FEATURE_NER_UNDEFINED; 
 	#ifdef GIA_USE_STANFORD_CORENLP
 	CharacterOffsetBegin = -1;
 	CharacterOffsetEnd = -1;
 	stanfordPOS = "";
-	NER = "";	//NB Relex uses NER information, but it is only defined for (attached to) entites - see NERTemp - (it is not defined for temporary/intermediary sentence features) 
 	NormalizedNER = "";
 	Timex = "";
 	#endif
+	
+	//derived variables:
+	grammaticalIsDateOrTime = false; 
+	grammaticalTense = GRAMMATICAL_TENSE_UNDEFINED;
+	for(int q=0; q<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES;q++)
+	{
+		grammaticalTenseModifierArray[q] = false;
+	}	
+	grammaticalNumber = GRAMMATICAL_NUMBER_UNDEFINED;
+	grammaticalIsDefinite = false;
+	grammaticalIsProperNoun = false;
+	grammaticalGender = GRAMMATICAL_GENDER_UNDEFINED;
+	grammaticalIsPronoun = GRAMMATICAL_PRONOUN_UNDEFINED;
+	grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
+	
+	isReference = false;
 	
 	next = NULL;
 	previous = NULL;

@@ -24,6 +24,9 @@
 #define CHAR_OPEN_SQUARE_BRACKET '['
 #define CHAR_CLOSE_SQUARE_BRACKET ']'
 #define CHAR_DASH '-'
+#define CHAR_VERTICAL_BAR '|'
+#define CHAR_UNDERSCORE '_'
+#define CHAR_SPACE ' '
 
 string convertStanfordRelationToRelex(string * stanfordRelation)
 {
@@ -476,5 +479,133 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList,
 
 
 
+
+#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
+
+string generateRelexCFFFeatureTagContent(Feature * firstFeatureInList)
+{
+	string relexCFFFeatureTagContent = "";
+	
+	Feature * currentFeatureInList = firstFeatureInList;
+	while(currentFeatureInList->next != NULL)
+	{
+		//if(!(currentFeatureInList->disabled))
+		//{
+			relexCFFFeatureTagContent = relexCFFFeatureTagContent + "\n\t\t\t\t";		
+		
+			char entityIndexString[10];
+			sprintf(entityIndexString, "%d", currentFeatureInList->entityIndex);		
+			relexCFFFeatureTagContent = relexCFFFeatureTagContent + entityIndexString + CHAR_TAB + currentFeatureInList->word + CHAR_TAB + currentFeatureInList->lemma + CHAR_TAB + grammaticalWordTypeNameArray[currentFeatureInList->grammaticalWordType] + CHAR_TAB;
+			relexCFFFeatureTagContent = relexCFFFeatureTagContent + featureRelexFlagTypeArray[currentFeatureInList->NER] + CHAR_VERTICAL_BAR;
+			if(currentFeatureInList->grammaticalIsDateOrTime)
+			{
+				relexCFFFeatureTagContent = relexCFFFeatureTagContent + "isDateOrTime"; 
+			}	
+			relexCFFFeatureTagContent = relexCFFFeatureTagContent + CHAR_VERTICAL_BAR;		
+			relexCFFFeatureTagContent = relexCFFFeatureTagContent + grammaticalTenseNameArray[currentFeatureInList->grammaticalTense];
+			for(int q=0; q<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES;q++)
+			{
+				if(currentFeatureInList->grammaticalTenseModifierArray[q])
+				{
+					relexCFFFeatureTagContent = relexCFFFeatureTagContent + CHAR_UNDERSCORE + grammaticalTenseModifierNameArray[q];
+				}
+			}	
+			relexCFFFeatureTagContent = relexCFFFeatureTagContent + CHAR_VERTICAL_BAR;
+			relexCFFFeatureTagContent = relexCFFFeatureTagContent + grammaticalNumberNameArray[currentFeatureInList->grammaticalNumber] + CHAR_VERTICAL_BAR;
+			if(currentFeatureInList->grammaticalIsDefinite)
+			{
+				relexCFFFeatureTagContent = relexCFFFeatureTagContent + GRAMMATICAL_DEFINITE_NAME + CHAR_VERTICAL_BAR;
+			}
+			if(currentFeatureInList->grammaticalIsProperNoun)
+			{
+				relexCFFFeatureTagContent = relexCFFFeatureTagContent + GRAMMATICAL_PROPERNOUN_NAME + CHAR_VERTICAL_BAR;
+			}			
+			relexCFFFeatureTagContent = relexCFFFeatureTagContent + grammaticalGenderNameArray[currentFeatureInList->grammaticalGender] + CHAR_VERTICAL_BAR;
+			if(currentFeatureInList->grammaticalIsPronoun)
+			{
+				relexCFFFeatureTagContent = relexCFFFeatureTagContent + GRAMMATICAL_PRONOUN_NAME + CHAR_VERTICAL_BAR;
+			}
+									
+			
+			/*
+			cout << "Sentence Word Index = " << w << endl;					
+			cout << "Is Date or Time = " << convertBoolToString(GIAEntityNodeIsDateOrTime[w]);
+			cout << "Tense = " << grammaticalTenseNameArray[GIAEntityNodeGrammaticalTenseArray[w]];
+			for(int q=0; q<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES;q++)
+			{
+				cout << "Tense Modifier (" << grammaticalTenseModifierNameArray[q] << ") = " << convertBoolToString(GIAEntityNodeGrammaticalTenseModifierArray[w*GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES + q]);
+			}					
+			cout << "Plurality = " << grammaticalNumberNameArray[GIAEntityNodeGrammaticalNumberArray[w]];
+			cout << "Is Definite = " << convertBoolToString(GIAEntityNodeGrammaticalIsDefiniteArray[w]);
+			cout << "Is Proper Noun = " << convertBoolToString(GIAEntityNodeGrammaticalIsProperNounArray[w]);
+			cout << "Gender = " << grammaticalGenderNameArray[GIAEntityNodeGrammaticalGenderArray[w]];
+			cout << "Is Pronoun = " << convertBoolToString(GIAEntityNodeGrammaticalIsPronounArray[w]);
+			cout << "Wordtype = " << grammaticalWordTypeNameArray[GIAEntityNodeWordTypeArray[w]];
+
+			cout << "NER = " << featureRelexFlagTypeArray[GIAEntityNodeNERArray[w]];
+			cout << "NormalizedNER = " << GIAEntityNodeNormalizedNERArray[w];
+			cout << "Timex = " << GIAEntityNodeTimexArray[w];
+			cout << "POS = " << GIAEntityNodePOSArray[w];
+			*/			
+					
+		//}
+		currentFeatureInList = currentFeatureInList->next;
+	}
+			
+	return relexCFFFeatureTagContent;
+
+}
+
+string generateRelexCFFRelationTagContent(Relation * firstRelationInList)
+{
+	string relexCFFRelationTagContent = "";
+
+	Relation * currentRelationInList = firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		if(!(currentRelationInList->disabled))
+		{
+			relexCFFRelationTagContent = relexCFFRelationTagContent + "\n\t\t\t\t";	
+			
+			string relationType = currentRelationInList->relationType;
+			string relationGoverner = currentRelationInList->relationGovernor;
+			string relationDependent = currentRelationInList->relationDependent;
+			char relationGovernorIndexString[10]; 
+			char relationDependentIndexString[10];
+			sprintf(relationGovernorIndexString, "%d", currentRelationInList->relationGovernorIndex);	
+			sprintf(relationDependentIndexString, "%d", currentRelationInList->relationDependentIndex);	
+			//GIAEntityNode * relationGoverner = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];				
+			//GIAEntityNode * relationDependent = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+
+			relexCFFRelationTagContent = relexCFFRelationTagContent + relationType + CHAR_OPEN_BRACKET + relationGoverner + CHAR_OPEN_SQUARE_BRACKET + relationGovernorIndexString + CHAR_CLOSE_SQUARE_BRACKET + CHAR_COMMA + CHAR_SPACE + relationDependent + CHAR_OPEN_SQUARE_BRACKET + relationDependentIndexString + CHAR_CLOSE_SQUARE_BRACKET + CHAR_CLOSE_BRACKET;
+			
+
+			/*
+			cout << "relationType = " << currentRelationInList->relationType << endl;	      
+			cout << "relationGoverner = " << relationGoverner->entityName << endl;
+			cout << "relationDependent = " << relationDependent->entityName << endl;		
+			*/
+		}
+		currentRelationInList = currentRelationInList->next;		
+	}
+		
+	return relexCFFRelationTagContent;
+}
+
+
+
+string convertBoolToString(bool boolean)
+{
+	if(boolean)
+	{
+		return "true";
+	}
+	else
+	{
+		return "false";
+	}
+}
+
+#endif
 
 

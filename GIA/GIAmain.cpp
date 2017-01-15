@@ -102,15 +102,6 @@ Additional example where relations + features parsed from different NLP file, qu
 #include <cstdlib>	//for random number generation
 #include <cmath>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
-#include <string.h>
-#include <iostream>
-#include <fstream>
-#include <vector>
-using namespace std;
-
 #include "GIAmain.h"
 #include "GIATranslator.h"
 #include "GIATranslatorOperations.h"
@@ -149,11 +140,13 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-osvg [string]     : semantic network display .svg 2D vector graphics output filename (def: semanticNet.svg)"
 "\n\t-oldr [string]     : semantic network display .ldr 3D vector graphics output filename (def: semanticNet.ldr)"
 "\n\t-oppm [string]     : semantic network display .ppm raster graphics output filename (def: semanticNet.ppm)"
+"\n\t-ocff [string]     : NLP parser generated .cff output filename (def: outputNLP.cff)"
 "\n\t-oxmlq [string]    : query semantic network definition .xml output filename (def: semanticNetQuery.xml)"
 "\n\t-ocxlq [string]    : query semantic network display .cxl vector graphics output filename (def: semanticNetQuery.cxl)"
 "\n\t-osvgq [string]    : query semantic network display .svg 2D vector graphics output filename (def: semanticNetQuery.svg)"
 "\n\t-oldrq [string]    : query semantic network display .ldr 3D vector graphics output filename (def: semanticNetQuery.ldr)"
 "\n\t-oppmq [string]    : query semantic network display .ppm raster graphics output filename (def: semanticNetQuery.ppm)"
+"\n\t-ocffq [string]    : query NLP parser generated .cff output filename (def: outputNLPQuery.cff)"
 "\n\t-oall [string]     : semantic network display xml/.svg/.ldr/.ppm default generic output filename (def: semanticNet)"
 "\n\t-oanswer [string]  : plain text .txt file containing the answer to the query (def: answer.txt)"
 "\n\t-notshow           : do not display outputText in opengl"
@@ -231,6 +224,9 @@ int main(int argc,char **argv)
 	bool useInputTextNLPfeatureXMLFile = false;
 	string inputTextNLPfeatureXMLFileName = "inputNLPfeature.xml";	
 	
+	bool useOutputTextCFFFile = false;
+	string outputTextCFFFileName = "outputNLP.cff";
+		
 	bool useInputTextXMLFile = false;
 	string inputTextXMLFileName = "semanticNet.xml";
 
@@ -248,7 +244,7 @@ int main(int argc,char **argv)
 	
 	bool useOutputTextSVGFile = false;
 	string outputTextSVGFileName = "semanticNet.svg";
-		
+			
 	bool useInputQueryPlainTXTFile = false;
 	string inputQueryPlainTXTFileName = "inputTextQuery.txt";
 		
@@ -258,6 +254,9 @@ int main(int argc,char **argv)
 	bool useInputQueryNLPfeatureXMLFile = false;
 	string inputQueryNLPfeatureXMLFileName = "inputNLPfeatureQuery.xml";	
 	
+	bool useOutputQueryCFFFile = false;
+	string outputQueryCFFFileName = "outputNLPQuery.cff";
+		
 	bool useInputQueryXMLFile = false;
 	string inputQueryXMLFileName = "semanticNetQuery.xml";	
 	
@@ -275,7 +274,7 @@ int main(int argc,char **argv)
 	
 	bool useOutputQuerySVGFile = false;
 	string outputQuerySVGFileName = "semanticNetQuery.svg";
-		
+			
 	bool useOutputTextAllFile = false;
 	string outputTextAllFileName = "semanticNet";
 			
@@ -355,13 +354,18 @@ int main(int argc,char **argv)
 			useInputQuery = true;
 		}
 		
-
 		if(exists_argument(argc,argv,"-ixmlq"))
 		{
 			inputQueryXMLFileName=get_char_argument(argc,argv,"-ixmlq");
 			useInputQueryXMLFile = true;
 			useInputQuery = true;
 		}
+		
+		if(exists_argument(argc,argv,"-ocff"))
+		{
+			outputTextCFFFileName=get_char_argument(argc,argv,"-ocff");
+			useOutputTextCFFFile = true;
+		}		
 		
 		if(exists_argument(argc,argv,"-oxml"))
 		{
@@ -396,6 +400,12 @@ int main(int argc,char **argv)
 			printOutput = true;
 		}
 
+		if(exists_argument(argc,argv,"-ocffq"))
+		{
+			outputQueryCFFFileName=get_char_argument(argc,argv,"-ocffq");
+			useOutputQueryCFFFile = true;
+		}
+		
 		if(exists_argument(argc,argv,"-oxmlq"))
 		{
 			outputQueryXMLFileName=get_char_argument(argc,argv,"-oxmlq");
@@ -428,6 +438,7 @@ int main(int argc,char **argv)
 			useOutputQuerySVGFile = true;
 			printOutputQuery = true;
 		}
+				
 		if(exists_argument(argc,argv,"-oall"))
 		{
 			outputTextAllFileName=get_char_argument(argc,argv,"-oall");
@@ -652,6 +663,14 @@ int main(int argc,char **argv)
 				outputTextPPMFileName = outputTextAllFileName + ".ppm";
 			}
 		}
+		if(!useOutputTextCFFFile)
+		{
+			if(useOutputTextAllFile)
+			{
+				useOutputTextCFFFile = true;		
+				outputTextCFFFileName = outputTextAllFileName + ".cff";
+			}
+		}		
 		
 		if(displayInOpenGLAndOutputScreenshot)
 		{
@@ -704,7 +723,15 @@ int main(int argc,char **argv)
 					useOutputQueryPPMFile = true;		
 					outputQueryPPMFileName = outputTextAllFileName + "Query.ppm";
 				}
-			}				
+			}
+			if(!useOutputQueryCFFFile)
+			{
+				if(useOutputTextAllFile)
+				{				
+					useOutputQueryCFFFile = true;		
+					outputQueryCFFFileName = outputTextAllFileName + "Query.cff";
+				}
+			}							
 		}	
 	}
 	
@@ -720,6 +747,7 @@ int main(int argc,char **argv)
 	cout << "outputTextLDRFileName = " << outputTextLDRFileName << endl;
 	cout << "outputTextPPMFileName = " << outputTextPPMFileName << endl;
 	cout << "outputTextSVGFileName = " << outputTextSVGFileName << endl;
+	cout << "outputTextCFFFileName = " << outputTextCFFFileName << endl;	
 	cout << "inputQueryPlainTXTFileName = " << inputQueryPlainTXTFileName << endl;
 	cout << "inputQueryNLPrelationXMLFileName = " << inputQueryNLPrelationXMLFileName << endl;
 	cout << "inputQueryNLPfeatureXMLFileName = " << inputQueryNLPfeatureXMLFileName << endl;	
@@ -729,6 +757,7 @@ int main(int argc,char **argv)
 	cout << "outputQueryLDRFileName = " << outputQueryLDRFileName << endl;
 	cout << "outputQueryPPMFileName = " << outputQueryPPMFileName << endl;
 	cout << "outputQuerySVGFileName = " << outputQuerySVGFileName << endl;
+	cout << "outputQueryCFFFileName = " << outputQueryCFFFileName << endl;	
 	cout << "useOutputTextAnswerPlainTXTFile = " << useOutputTextAnswerPlainTXTFile << endl;
 	cout << "displayInOpenGLAndOutputScreenshot = " << displayInOpenGLAndOutputScreenshot << endl;
 	cout << "rasterImageWidth = " << rasterImageWidth << endl;
@@ -799,9 +828,9 @@ int main(int argc,char **argv)
 		{
 			//cout << "as" << endl;
 			#ifdef USE_CE	
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, firstClaimInHeirachy, claimsList))
+			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, firstClaimInHeirachy, claimsList))
 			#else
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode))
+			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode))
 			#endif
 			{
 				result = false;
@@ -873,9 +902,9 @@ int main(int argc,char **argv)
 		else
 		{
 			#ifdef USE_CE	
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, firstClaimInHeirachy, claimsList))
+			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, firstClaimInHeirachy, claimsList))
 			#else
-			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode))			
+			if(!parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode))			
 			#endif
 			{
 				result = false;
@@ -1118,9 +1147,9 @@ int main(int argc,char **argv)
 
 
 #ifdef USE_CE	
-bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPrelationXMLFileName, string inputTextNLPfeatureXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList)
+bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPrelationXMLFileName, string inputTextNLPfeatureXMLFileName, string outputCFFFileName, string NLPexeFolderArray[], vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList)
 #else
-bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPrelationXMLFileName, string inputTextNLPfeatureXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode)
+bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedSentences(string inputTextNLPrelationXMLFileName, string inputTextNLPfeatureXMLFileName, string outputCFFFileName, string NLPexeFolderArray[], vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode)
 #endif
 {
 	bool result = true;
@@ -1141,6 +1170,12 @@ bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 		result = false;
 	}
 
+	#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
+	string originalInputFileName = "";
+	originalInputFileName = originalInputFileName + inputTextNLPrelationXMLFileName + " " + inputTextNLPfeatureXMLFileName;
+	outputInternalRelationsInRelexFormat(&outputCFFFileName, &originalInputFileName, firstParagraphInList, NLPdependencyRelationsParser, NLPfeatureParser, NLPexeFolderArray);
+	#endif
+	
 	return result;
 }
 
@@ -1197,7 +1232,7 @@ bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * 
 	cout << "record concept nodes as disabled if they are not permanent (used for printing/xml write purposes)" << endl;
 	#endif
 	recordConceptNodesAsDisabledIfTheyAreNotPermanent(conceptEntityNodesList);
-		
+	
 	return result;
 }
 

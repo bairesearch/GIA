@@ -15,12 +15,24 @@
 #include "GIAglobalDefs.h"
 #include "GIASentenceClass.h"
 
+#define GIA_TM_STRUCT_YEAR_OFFSET 1900
+
+
 #define Relex_CFF_XML_TAG_nlparse ((string)"nlparse")
-#define Relex_CFF_XML_TAG_paragraph ((string)"paragraph")
-#define Relex_CFF_XML_TAG_sentence ((string)"sentence")
-#define Relex_CFF_XML_TAG_parse ((string)"parse")
-#define Relex_CFF_XML_TAG_relations ((string)"relations")
-#define Relex_CFF_XML_TAG_features ((string)"features")
+	#define Relex_CFF_XML_ATTRIBUTE_xmlns ((string)"xmlns")
+	#define Relex_CFF_XML_ATTRIBUTE_xmlns_DEFAULT_VALUE ((string)"http://opencog.org/RelEx/0.1.1")
+	#define Relex_CFF_XML_TAG_parser ((string)"parser")
+	#define Relex_CFF_XML_TAG_date ((string)"date")
+	#define Relex_CFF_XML_TAG_source ((string)"source")
+		#define Relex_CFF_XML_ATTRIBUTE_url ((string)"url")
+	#define Relex_CFF_XML_TAG_paragraph ((string)"paragraph")
+		#define Relex_CFF_XML_TAG_sentence ((string)"sentence")
+		#define Relex_CFF_XML_ATTRIBUTE_index ((string)"index")
+		#define Relex_CFF_XML_ATTRIBUTE_parses ((string)"parses")
+		#define Relex_CFF_XML_TAG_parse ((string)"parse")
+		#define Relex_CFF_XML_ATTRIBUTE_id ((string)"id")
+		#define Relex_CFF_XML_TAG_relations ((string)"relations")
+		#define Relex_CFF_XML_TAG_features ((string)"features")
 
 
 #define StanfordCoreNLP_XML_TAG_root ((string)"root")
@@ -78,5 +90,9 @@ bool parseNLPParserFile(string inputTextNLPrelationXMLFileName, string inputText
 	#ifdef GIA_USE_STANFORD_PARSER
 	bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragraph * firstParagraphInList, bool createNewSentences);
 	#endif
+
+#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
+void outputInternalRelationsInRelexFormat(string * nameOfRelexCompactFormatCFFfile, string * originalInputFileName, Paragraph * firstParagraphInList, int NLPdependencyRelationsParser, int NLPfeatureParser, string NLPexeFolderArray[]);
+#endif
 
 #endif

@@ -820,4 +820,7 @@ void recordConceptNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIA
 
 void convertRelexPOSTypeToWordnetWordType(string * relexPOStype, int * wordNetPOS);
 void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, string * relexPOStype, int * wordNetPOS);		
+
+void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArrayTemp[]);	//used for intrafunction memory allocation purposes only
+
 #endif

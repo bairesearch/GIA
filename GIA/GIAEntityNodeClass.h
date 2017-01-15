@@ -81,6 +81,8 @@ using namespace std;
 
 //#define GRAMMATICAL_COUNT_UNDEFINED 0
 
+#define GRAMMATICAL_PROPERNOUN_NAME "propernoun"	//added 28 April 2012 (for cff export)
+
 
 #define QUANTITY_NUMBER_UNDEFINED (1)
 #define QUANTITY_NUMBER_LOW_NUMBER_OF_TYPES (20)

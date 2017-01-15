@@ -152,7 +152,7 @@ void definePropertiesObjectsAndSubjectsWithProperties(bool GIAEntityNodeArrayFil
 	}
 }	
 
-void definePropertiesDefiniteNouns(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeGrammaticalIsDefiniteArray[], bool GIAEntityNodeGrammaticalIsProperNounArray[], bool GIAEntityNodeIsDateOrTime[], bool GIAEntityNodeIsAReference[])
+void definePropertiesDefiniteNouns(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], Feature * featureArrayTemp[])
 {
 	if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS == 1)
 	{
@@ -160,11 +160,11 @@ void definePropertiesDefiniteNouns(bool GIAEntityNodeArrayFilled[], GIAEntityNod
 		{
 			if(GIAEntityNodeArrayFilled[i])
 			{ //condition required as GIAEntityNodeArrayFilled is not always true. With GRAMMATICAL_DEFINITE, eg "Mr" of "Mr Smith" will still be interpreted as a definite
-				if(!GIAEntityNodeIsAReference[i])
+				if(!(featureArrayTemp[i]->isReference))
 				{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
-					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS || !GIAEntityNodeGrammaticalIsProperNounArray[i])	//&& !GIAEntityNodeIsDateOrTime[i]
+					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS || !(featureArrayTemp[i]->grammaticalIsProperNoun))	//&& !GIAEntityNodeIsDateOrTime[i]
 					{
-						if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
+						if(featureArrayTemp[i]->grammaticalIsDefinite == GRAMMATICAL_DEFINITE)
 						{
 							//cout << "as0" << endl;
 							//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
@@ -177,7 +177,7 @@ void definePropertiesDefiniteNouns(bool GIAEntityNodeArrayFilled[], GIAEntityNod
 	}
 }
 
-void definePropertiesNounsWithDeterminates(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], bool GIAEntityNodeGrammaticalIsProperNounArray[], bool GIAEntityNodeIsDateOrTime[], bool GIAEntityNodeIsAReference[])
+void definePropertiesNounsWithDeterminates(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[])
 {	
 	if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_NOUNS_WITH_DETERMINATES == 1)
 	{
@@ -185,9 +185,9 @@ void definePropertiesNounsWithDeterminates(bool GIAEntityNodeArrayFilled[], GIAE
 		{	
 			if(GIAEntityNodeArrayFilled[i])
 			{
-				if(!GIAEntityNodeIsAReference[i])
+				if(!(featureArrayTemp[i]->isReference))
 				{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
-					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS || !GIAEntityNodeGrammaticalIsProperNounArray[i])	//&& !GIAEntityNodeIsDateOrTime[i]
+					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS || !(featureArrayTemp[i]->grammaticalIsProperNoun))	//&& !GIAEntityNodeIsDateOrTime[i]
 					{
 						bool passed = false;
 						for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
@@ -354,7 +354,7 @@ void definePropertiesExpletives(Sentence * currentSentenceInList, GIAEntityNode 
 	}
 }
 
-void definePropertiesPronouns(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], bool GIAEntityNodeGrammaticalIsPronounArray[], bool GIAEntityNodeIsAReference[])
+void definePropertiesPronouns(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], Feature * featureArrayTemp[])
 {		
 	if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_PRONOUNS == 1)
 	{
@@ -362,10 +362,10 @@ void definePropertiesPronouns(bool GIAEntityNodeArrayFilled[], GIAEntityNode * G
 		{
 			if(GIAEntityNodeArrayFilled[i])
 			{
-				if(!GIAEntityNodeIsAReference[i])
+				if(!(featureArrayTemp[i]->isReference))
 				{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
 
-					if(GIAEntityNodeGrammaticalIsPronounArray[i] == GRAMMATICAL_PRONOUN)
+					if(featureArrayTemp[i]->grammaticalIsPronoun == GRAMMATICAL_PRONOUN)
 					{
 						//cout << "as5" << endl;
 						//cout << "asd" << endl;

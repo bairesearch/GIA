@@ -48,14 +48,9 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIATimeConditionNode*> *timeConditionNodesList, vector<long> *timeConditionNumbersList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPfeatureParser, int NLPdependencyRelationsType);
 
 string convertBoolToString(bool boolean);
-	
-
 
 
 	//?property to property relationship - these they in actual fact represent different levels of detail in information to property to action / action to action nodes - direct property to property relationships are missing the action/connectivity information
-
-
-
 
 
 #endif

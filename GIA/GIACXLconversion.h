@@ -47,7 +47,9 @@ using namespace std;
 
 #define NET_CXL_TAG_cmap ((string)"cmap")
 #define NET_CXL_ATTRIBUTE_xmlns ((string)"xmlns")
+#define NET_CXL_ATTRIBUTE_xmlns_DEFAULT_VALUE ((string)"http://cmap.ihmc.us/xml/cmap/")
 #define NET_CXL_ATTRIBUTE_xmlnsdc ((string)"xmlns:dc")
+#define NET_CXL_ATTRIBUTE_xmlnsdc_DEFAULT_VALUE ((string)"http://purl.org/dc/elements/1.1/")
 #define NET_CXL_TAG_map ((string)"map")
 
 #define NET_CXL_TAG_conceptList ((string)"concept-list")

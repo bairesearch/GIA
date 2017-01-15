@@ -31,7 +31,7 @@ using namespace std;
 #include "XMLParserClass.h"
 #include "XMLrulesClass.h"
 #include "GIAParser.h"
-
+#include "GIATranslatorOperations.h" //required for featureNERTypeArray only
 
 void executeNLPparser(string inputTextPlainTXTFileName, string inputTextNLPrelationXMLFileName, int NLPParser, string NLPexeFolderArray[])
 {
@@ -221,6 +221,26 @@ bool parseRelexFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragr
 					{
 						if(currentTag->name == Relex_CFF_XML_TAG_sentence)
 						{
+							//locate and record sentence index
+							XMLParserAttribute * firstAttributeInSentenceTag = currentTag->firstAttribute;
+							XMLParserAttribute * currentAttributeInSentenceTag = firstAttributeInSentenceTag;
+							bool foundSentenceIndexAttribute = false;
+							while(currentAttributeInSentenceTag->nextAttribute != NULL)
+							{
+								if(currentAttributeInSentenceTag->name != Relex_CFF_XML_ATTRIBUTE_index)
+								{	
+									int sentenceIndex = atoi(currentAttributeInSentenceTag->value.c_str());
+									currentSentence->sentenceIndex = sentenceIndex;
+									foundSentenceIndexAttribute = true;
+								}
+								currentAttributeInSentenceTag = currentAttributeInSentenceTag->nextAttribute;
+							}
+							if(!foundSentenceIndexAttribute)
+							{
+								cout << "error: sentence index attribute expected" << endl;
+								exit(0);							
+							}
+							
 							XMLParserTag * firstTagInSentence;
 							firstTagInSentence = parseTagDownALevel(currentTag, Relex_CFF_XML_TAG_sentence, &result);	
 							XMLParserTag * firstTagInFirstParse;
@@ -303,6 +323,10 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 	bool result = true;
 	
 	Paragraph * currentParagraph = firstParagraphInList;
+	Paragraph * newParagraph = new Paragraph();		
+	newParagraph->previous = currentParagraph;
+	currentParagraph->next = newParagraph;
+					
 	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;	
 	Sentence * currentSentence = firstSentenceInList;
 
@@ -369,7 +393,20 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 					else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_NER)
 					{
 						string TagValue = currentTagInToken->value;
-						currentFeatureInList->NER = TagValue;
+						int currentNER = FEATURE_NER_UNDEFINED;
+						for(int i=0; i<FEATURE_NER_NUMBER_TYPES; i++)
+						{
+							if(TagValue == featureNERTypeArray[i])
+							{
+								currentNER = i;
+								/*
+								#ifdef GIA_WORDNET_DEBUG
+								cout << "nerType currentFeatureIndex = " << currentNER << endl;			
+								#endif
+								*/
+							}
+						}			
+						currentFeatureInList->NER = currentNER;
 					}
 					else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_NormalizedNER)
 					{
@@ -611,6 +648,10 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuer
 	bool result = true;
 	
 	Paragraph * currentParagraph = firstParagraphInList;
+	Paragraph * newParagraph = new Paragraph();		
+	newParagraph->previous = currentParagraph;
+	currentParagraph->next = newParagraph;
+		
 	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;	
 	Sentence * currentSentence = firstSentenceInList;
 
@@ -684,5 +725,153 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuer
 		}
 	}	
 }
+#endif
+
+
+
+
+#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
+void outputInternalRelationsInRelexFormat(string * nameOfRelexCompactFormatCFFfile, string * originalInputFileName, Paragraph * firstParagraphInList, int NLPdependencyRelationsParser, int NLPfeatureParser, string NLPexeFolderArray[])
+{
+	bool result = true;
+
+	string parserTagValue = "";
+	parserTagValue = parserTagValue + "NLP Dependency Relations Parser: " + NLPexeFolderArray[NLPdependencyRelationsParser] + " | NLP Feature Tag Parser: " + NLPexeFolderArray[NLPfeatureParser];
+
+	struct tm *current;
+	time_t now;
+	time(&now);
+	current = localtime(&now);
+	char timeAndDateString[100];
+	sprintf(timeAndDateString, "%i-%.2i-%i %i:%i:%i +1000", (current->tm_year + GIA_TM_STRUCT_YEAR_OFFSET), current->tm_mon, current->tm_mday, current->tm_hour, current->tm_min, current->tm_sec);
+	
+ 	XMLParserTag * firstTagInXMLFile = new XMLParserTag();
+	
+	XMLParserTag * currentTagL0 = firstTagInXMLFile;
+	currentTagL0->name = Relex_CFF_XML_TAG_nlparse;
+	XMLParserTag * newTag0 = new XMLParserTag();	//had to add a null tag
+	currentTagL0->nextTag = newTag0;
+	XMLParserAttribute * currentAttribute = currentTagL0->firstAttribute;
+	currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_xmlns;
+	currentAttribute->value = Relex_CFF_XML_ATTRIBUTE_xmlns_DEFAULT_VALUE;
+	XMLParserAttribute * newAttribute = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute;
+		
+	XMLParserTag * firstTagL1 = new XMLParserTag();
+	currentTagL0->firstLowerLevelTag = firstTagL1;
+	XMLParserTag * currentTagL1 = currentTagL0->firstLowerLevelTag;
+	XMLParserTag * newTag1 = new XMLParserTag();
+	currentTagL1->nextTag = newTag1;
+	
+	currentTagL1->name = Relex_CFF_XML_TAG_parser;
+	currentTagL1->value = parserTagValue;	
+	currentTagL1 = currentTagL1->nextTag;
+	newTag1 = new XMLParserTag();
+	currentTagL1->nextTag = newTag1;	
+	
+	currentTagL1->name = Relex_CFF_XML_TAG_date;
+	currentTagL1->value = timeAndDateString;	
+	currentTagL1 = currentTagL1->nextTag;
+	newTag1 = new XMLParserTag();
+	currentTagL1->nextTag = newTag1;
+	
+	currentTagL1->name = Relex_CFF_XML_TAG_source;
+	currentTagL1->value = "";
+	currentAttribute = currentTagL1->firstAttribute;
+	currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_url;
+	currentAttribute->value = *originalInputFileName;	
+	newAttribute = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute;		
+	currentTagL1 = currentTagL1->nextTag;
+	newTag1 = new XMLParserTag();
+	currentTagL1->nextTag = newTag1;	
+	
+	Paragraph * currentParagraph = firstParagraphInList;
+	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;	
+	
+	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS	
+	while(currentParagraph->next != NULL)
+	{
+		firstSentenceInList = currentParagraph->firstSentenceInList;	
+		
+		currentTagL1->name = Relex_CFF_XML_TAG_paragraph;
+		XMLParserTag * firstTagL1b = new XMLParserTag();
+		currentTagL1->firstLowerLevelTag = firstTagL1b;
+	#else
+		XMLParserTag * firstTagL1b = currentTagL1;
+	#endif
+	
+		XMLParserTag * currentTagL1b = firstTagL1b;
+		Sentence * currentSentence = firstSentenceInList;
+		while(currentSentence->next != NULL)
+		{		
+			char sentenceIndexString[10];
+			sprintf(sentenceIndexString, "%d", currentSentence->sentenceIndex);
+
+			currentTagL1b->name = Relex_CFF_XML_TAG_sentence;
+			XMLParserTag * firstTagL2 = new XMLParserTag();
+			currentTagL1b->firstLowerLevelTag = firstTagL2;
+			currentAttribute = currentTagL1b->firstAttribute;
+			currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_index;
+			currentAttribute->value = sentenceIndexString;			
+			newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			currentAttribute = currentAttribute->nextAttribute;
+			currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_parses;
+			currentAttribute->value = "1";					
+			newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;
+			
+			XMLParserTag * currentTagL2 = firstTagL2;
+			currentTagL2->name = Relex_CFF_XML_TAG_parse;
+			XMLParserTag * firstTagL3 = new XMLParserTag();
+			currentTagL2->firstLowerLevelTag = firstTagL3;
+			currentAttribute = currentTagL2->firstAttribute;
+			currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_id;
+			currentAttribute->value = "1";					
+			newAttribute = new XMLParserAttribute();
+			currentAttribute->nextAttribute = newAttribute;		
+
+			XMLParserTag * currentTagL3 = firstTagL3;
+			currentTagL3->name = Relex_CFF_XML_TAG_features;
+			currentTagL3->value = generateRelexCFFFeatureTagContent(currentSentence->firstFeatureInList);	//fill in currentTagL3->value with features
+			XMLParserTag * newTag3 = new XMLParserTag();		
+			currentTagL3->nextTag = newTag3;		
+			currentTagL3= currentTagL3->nextTag;
+			
+			currentTagL3->name = Relex_CFF_XML_TAG_relations;
+			currentTagL3->value = generateRelexCFFRelationTagContent(currentSentence->firstRelationInList);	//fill in currentTagL3->value with relations
+			newTag3 = new XMLParserTag();		
+			currentTagL3->nextTag = newTag3;		
+			currentTagL3= currentTagL3->nextTag;					
+
+			XMLParserTag * newTag2 = new XMLParserTag();		
+			currentTagL2->nextTag = newTag2;		
+															
+			XMLParserTag * newTag1b = new XMLParserTag();		
+			currentTagL1b->nextTag = newTag1b;
+			currentTagL1b =	currentTagL1b->nextTag;
+			currentSentence = currentSentence->next;
+		}
+	
+
+			
+	#ifdef GIA_USE_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
+		newTag1 = new XMLParserTag();		
+		currentTagL1->nextTag = newTag1;
+		currentTagL1 = currentTagL1->nextTag; 
+		currentParagraph = currentParagraph->next;
+	}
+	#endif	
+	
+ 	if(!writeXMLFile(*nameOfRelexCompactFormatCFFfile, firstTagInXMLFile))
+ 	{
+		result = false;
+	}
+
+	delete firstTagInXMLFile;
+			
+}
+
 #endif
 

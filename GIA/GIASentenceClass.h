@@ -22,6 +22,7 @@
 using namespace std;
 
 #include "GIAglobalDefs.h"
+#include "GIAEntityNodeClass.h"
 
 //#define FEATURE_GRAMMATICAL_TENSE_DATE "date"
 #define FEATURE_WORD_QUESTIONMARK "?"
@@ -132,15 +133,28 @@ public:
 	string grammar;
 	#endif
 	
+	int NER;
 	#ifdef GIA_USE_STANFORD_CORENLP
 	int CharacterOffsetBegin;
 	int CharacterOffsetEnd;
 	string stanfordPOS;
-	string NER;
 	string NormalizedNER;
 	string Timex;
 	#endif
 	
+	//derived variables:	
+	bool grammaticalIsDateOrTime; 
+	int grammaticalTense;
+	bool grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES]; 
+	int grammaticalNumber;
+	bool grammaticalIsDefinite;
+	bool grammaticalIsProperNoun;
+	int grammaticalGender;
+	bool grammaticalIsPronoun;
+	int grammaticalWordType;
+	
+	bool isReference;
+		
 	Feature * next;
 	Feature * previous;	//used for reference lookup
 };
@@ -154,6 +168,8 @@ public:
 	Sentence(void);
 	~Sentence(void);
 	
+	int sentenceIndex;
+	
 	#ifdef GIA_USE_RELEX
 	string sentenceText;		//not required - delete in future
 	string constituentsText;	//not required - delete in future
@@ -163,7 +179,6 @@ public:
 	#endif
 
 	#ifdef GIA_USE_STANFORD_CORENLP
-	int sentenceIndex;
 	StanfordCoreNLPCoreference * firstCoreferenceInList;
 	#endif
 		

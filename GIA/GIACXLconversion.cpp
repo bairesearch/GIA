@@ -44,14 +44,14 @@ bool writeCMapToolsCXLFile(string xmlFileName, vector<GIAEntityNode*> *entityNod
 	XMLParserAttribute * currentAttribute = currentTagL0->firstAttribute;
 
 		currentAttribute->name = NET_CXL_ATTRIBUTE_xmlns;
-		currentAttribute->value = "http://cmap.ihmc.us/xml/cmap/";
+		currentAttribute->value = NET_CXL_ATTRIBUTE_xmlns_DEFAULT_VALUE;
 
 		XMLParserAttribute * newAttribute = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute;
 		currentAttribute = currentAttribute->nextAttribute;
 
 		currentAttribute->name = NET_CXL_ATTRIBUTE_xmlnsdc;
-		currentAttribute->value = "http://purl.org/dc/elements/1.1/";
+		currentAttribute->value = NET_CXL_ATTRIBUTE_xmlnsdc_DEFAULT_VALUE;
 
 		newAttribute = new XMLParserAttribute();
 		currentAttribute->nextAttribute = newAttribute;
