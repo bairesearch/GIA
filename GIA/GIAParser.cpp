@@ -192,7 +192,7 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList)
 				{
 					case 4:
 					{
-						currentFeature->tense = currentItemString;
+						currentFeature->grammar = currentItemString;
 						break;	
 					}					
 				}
@@ -203,10 +203,11 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList)
 				cout << "currentFeature->word = " << currentFeature->word << endl;
 				cout << "currentFeature->lemma = " << currentFeature->lemma << endl;
 				cout << "currentFeature->type = " << currentFeature->type << endl;
-				cout << "currentFeature->tense = " << currentFeature->tense << endl;
+				cout << "currentFeature->grammar = " << currentFeature->grammar << endl;
 				*/
 											
 				Feature * newFeature = new Feature();
+				newFeature->previous = currentFeature;
 				currentFeature->next = newFeature;
 				currentFeature = currentFeature->next;
 				
@@ -247,7 +248,7 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList)
 					}
 					case 4:
 					{
-						currentFeature->tense = currentItemString;
+						currentFeature->grammar = currentItemString;
 						break;	
 					}					
 				}

@@ -35,7 +35,7 @@ using namespace std;
 
 
 #define GIA_ASSIGN_UNIQUE_ACTION_NODE_TO_EACH_ACTION_INSTANCE_OF_A_GIVEN_ACTION_NAME (1)
-#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS (1)		//NB must make this 0 for large.xml to work (after GIA Archive - 1a5f - 04May11a, eg GIA Archive - 1a5g - 04May11a)
+#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS (1)		//NB must make this 0 for large.xml to work (NB this bug was issue introduced after GIA Archive - 1a5d - 04May11a, eg GIA Archive - 1a5e - 04May11a)
 
 #define SUBJECT_INDEX (0)
 #define OBJECT_INDEX (1)
@@ -56,12 +56,45 @@ using namespace std;
 #define RELATION_TYPE_ADJECTIVE_3 "_advmod"
 #define RELATION_TYPE_POSSESSIVE "_poss"	//eg his bike	[bike him]		/its bike
 
+//DOING NOW: references: yet to integrate - see http://wiki.opencog.org/w/Ideas#Improved_reference_resolution for integration (also check for the existence of the "person" tag in the feature "tense" data block)
+#define RELATION_TYPE_QUANTITY "_quantity"	//eg his bike	[bike him]		/its bike
+
+/*
+#define REFERENCE_TYPE_POSSESSIVE_THEIR_OR_THEM "them"	
+#define REFERENCE_TYPE_POSSESSIVE_HIS "his"
+#define REFERENCE_TYPE_POSSESSIVE_HER "her"
+#define REFERENCE_TYPE_POSSESSIVE_OR_QUANTITY_ITS "its"
+#define REFERENCE_TYPE_PERSON_PLURAL_THEY "they"	
+#define REFERENCE_TYPE_PERSON_PLURAL_THEY "he"
+#define REFERENCE_TYPE_PERSON_PLURAL_THEY "she"
+#define REFERENCE_TYPE_PERSON_PLURAL_THEY "it"
+*/
+
+#define REFERENCE_TYPE_LOCATION "there"				//_advmod
+	//pronouns
+#define REFERENCE_TYPE_POSSESSIVE_UNDEFINED 0
+#define REFERENCE_TYPE_POSSESSIVE_MASCULINE 1		//his
+#define REFERENCE_TYPE_POSSESSIVE_FEMININE 2		//her
+#define REFERENCE_TYPE_POSSESSIVE_PLURAL 3		//them/their
+#define REFERENCE_TYPE_POSSESSIVE_NEUTER 4		//its
+#define REFERENCE_TYPE_POSSESSIVE_NUMBER_OF_TYPES (5)
+	//definite pronouns
+#define REFERENCE_TYPE_PERSON_UNDEFINED 0
+#define REFERENCE_TYPE_PERSON_MASCULINE 1	//he
+#define REFERENCE_TYPE_PERSON_FEMININE 2	//she
+#define REFERENCE_TYPE_PERSON_PLURAL 3		//they
+#define REFERENCE_TYPE_PERSON_NEUTER 4		//it
+#define REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES (5)
+
+#define REFERENCE_TYPE_UNDEFINED 0
+
 //straight entities (concepts)					
 #define RELATION_FUNCTION_DEFINITION_1 "be"	//eg x is y
 
 
-#define RELATION_TYPE_OBJECT "_obj"	//eg eats y	[? be y]
-#define RELATION_TYPE_OBJECT_TO "to"	//eg to y	//NB "to" is currently interpreted as an object of an action
+#define RELATION_TYPE_OBJECT "_obj"			//eg eats y	[? be y]
+#define RELATION_TYPE_OBJECT_TO "to"			//eg to y	//NB "to" is currently interpreted as an object of an action
+//?#define RELATION_TYPE_OBJECT_TO_BE "_to-be"		//eg grows tired
 #define RELATION_TYPE_SUBJECT "_subj"	//eg x eats 	[? be x]
 
 //action/property conditions
@@ -69,6 +102,7 @@ using namespace std;
 #define RELATION_TYPE_AT "at"		//eg rides at the palace	[ride palace]	//this forms the action condition; "where"
 #define RELATION_TYPE_WHEN "when"	//eg joe fires his bow when john drives fast.	[fire drive]	//this forms the action condition; "when" [not time, but in association with another action]
 #define RELATION_TYPE_BECAUSE "because"
+//?#define RELATION_TYPE_OF "of"		//eg [she grew tired] of it	{same as with it}
 
 //action/property reasons [???]
 #define RELATION_TYPE_SUCH_THAT "such"

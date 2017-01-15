@@ -99,6 +99,7 @@ int main(int argc,char **argv)
 				Sentence * newSentence = new Sentence();
 				Relation * newRelation = new Relation();
 				Feature * newFeature = new Feature();
+				newSentence->previous = currentSentence;				
 				newSentence->firstRelationInList = newRelation;
 				newSentence->firstFeatureInList = newFeature;					
 				currentSentence->next = newSentence;

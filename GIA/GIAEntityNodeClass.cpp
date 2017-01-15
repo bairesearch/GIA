@@ -14,13 +14,21 @@ string grammaticalTenseNameArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES] = {"undefine
 int grammaticalTenseNameLengthsArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES] = {9, 7, 4, 6};
 string grammaticalNumberNameArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {"undefined", "uncountable", "singular", "plural"};
 int grammaticalNumberNameLengthsArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {9, 11, 8, 6};
+string grammaticalGenderNameArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES] = {"undefined", "person", "masculine", "feminine"};
+int grammaticalGenderNameLengthsArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES] = {9, 6, 9, 8};
 
 //~nouns
 GIAEntityNode::GIAEntityNode(void)
 {
 	grammaticalTenseTemp = GRAMMATICAL_TENSE_UNDEFINED;
 	grammaticalNumberTemp = GRAMMATICAL_NUMBER_UNDEFINED;
-	definiteTemp = GRAMMATICAL_DEFINITE_UNDEFINED;
+	grammaticalDefiniteTemp = GRAMMATICAL_DEFINITE_UNDEFINED;
+	grammaticalPersonTemp = GRAMMATICAL_PERSON_UNDEFINED;		
+	grammaticalGenderTemp = GRAMMATICAL_GENDER_UNDEFINED;
+	isSubjectTemp = false;
+	isObjectTemp = false;
+	hasPropertyTemp = false;
+	
 	hasAssociatedPropertyTemp = false;
 	hasAssociatedActionTemp = false;
 	

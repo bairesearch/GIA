@@ -54,9 +54,10 @@ public:
 	string word;
 	string lemma;
 	string type;
-	string tense;
+	string grammar;
 	
 	Feature * next;
+	Feature * previous;	//used for reference lookup
 };
 
 
@@ -80,6 +81,7 @@ public:
 	Feature * firstFeatureInList;
 	
 	Sentence * next;
+	Sentence * previous;	//used for reference lookup
 
 };
 

@@ -40,9 +40,10 @@ Feature::Feature(void)
 	word = "";
 	lemma = "";
 	type = "";
-	tense = "";
+	grammar = "";
 
 	next = NULL;
+	previous = NULL;
 }
 
 Feature::~Feature(void)
@@ -68,6 +69,7 @@ Sentence::Sentence(void)
 	firstRelationInList = NULL;
 
 	next = NULL;
+	previous = NULL;
 }
 
 Sentence::~Sentence(void)

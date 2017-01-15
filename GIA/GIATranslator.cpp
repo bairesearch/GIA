@@ -13,6 +13,16 @@
 
 #include "GIATranslator.h"
 
+string referenceTypePossessiveNameArray[REFERENCE_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {"undefined", "his", "her", "them", "its"};
+int referenceTypePossessiveNameLengthsArray[REFERENCE_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {9, 3, 3, 4, 3};
+string referenceTypePersonNameArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {"undefined", "he", "she", "they", "it"};
+int referenceTypePersonNameLengthsArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {9, 2, 3, 4, 2};
+
+int referenceTypePersonCrossReferenceNumberArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {GRAMMATICAL_NUMBER_UNDEFINED, GRAMMATICAL_NUMBER_SINGULAR, GRAMMATICAL_NUMBER_SINGULAR, GRAMMATICAL_NUMBER_PLURAL, GRAMMATICAL_NUMBER_SINGULAR};
+int referenceTypePersonCrossReferenceGenderArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {GRAMMATICAL_GENDER_UNDEFINED, GRAMMATICAL_GENDER_MASCULINE, GRAMMATICAL_GENDER_FEMININE, GRAMMATICAL_GENDER_UNDEFINED, GRAMMATICAL_GENDER_UNDEFINED};
+bool referenceTypePersonCrossReferenceDefiniteArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {false, true, true, true, true};
+bool referenceTypePersonCrossReferencePersonArray[REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES] = {GRAMMATICAL_PERSON_UNDEFINED, GRAMMATICAL_PERSON, GRAMMATICAL_PERSON, GRAMMATICAL_PERSON_UNDEFINED, GRAMMATICAL_PERSON_UNDEFINED};
+
 
 
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity)
@@ -28,6 +38,9 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 
 		//configure entity node containing this property
 		thingEntity->firstPropertyNodeInList.push_back(propertyEntity);	
+
+		thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+	
 	}
 	else
 	{
@@ -43,7 +56,7 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 		newProperty->entityNodeContainingThisProperty = thingEntity;
 		newProperty->entityNodeDefiningThisProperty = propertyEntity;
 		propertyEntity->hasAssociatedProperty = true;
-		propertyEntity->hasAssociatedPropertyTemp = true;
+		propertyEntity->hasAssociatedPropertyTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 		
 		//if(propertyEntity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
 		//{
@@ -60,32 +73,42 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 		
 		//configure entity node containing this property
 		thingEntity->firstPropertyNodeInList.push_back(newProperty);		
+
+		thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	}
+	
 }
 
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 {
-	//configure property node
-	GIAEntityNode * newProperty = new GIAEntityNode();
-	newProperty->entityName = propertyEntity->entityName;
-	newProperty->isProperty = true;
-	newProperty->entityNodeContainingThisProperty = NULL;
-	newProperty->entityNodeDefiningThisProperty = propertyEntity;
-	propertyEntity->hasAssociatedProperty = true;
-	propertyEntity->hasAssociatedPropertyTemp = true;
-	
-	//if(propertyEntity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
-	//{
-	newProperty->grammaticalNumber = propertyEntity->grammaticalNumberTemp;
-	//}				
-
-	if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
-	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
-		addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp);
+	if(propertyEntity->hasAssociatedPropertyTemp)
+	{
+		propertyEntity = propertyEntity->firstAssociatedPropertyNodeInList.back();	//added 4 May 11a
 	}
-	
-	//configure property definition node
-	propertyEntity->firstAssociatedPropertyNodeInList.push_back(newProperty);		
+	else
+	{	
+		//configure property node
+		GIAEntityNode * newProperty = new GIAEntityNode();
+		newProperty->entityName = propertyEntity->entityName;
+		newProperty->isProperty = true;
+		newProperty->entityNodeContainingThisProperty = NULL;
+		newProperty->entityNodeDefiningThisProperty = propertyEntity;
+		propertyEntity->hasAssociatedProperty = true;
+		propertyEntity->hasAssociatedPropertyTemp = true;
+
+		//if(propertyEntity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
+		//{
+		newProperty->grammaticalNumber = propertyEntity->grammaticalNumberTemp;
+		//}				
+
+		if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT)
+		{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
+			addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp);
+		}
+
+		//configure property definition node
+		propertyEntity->firstAssociatedPropertyNodeInList.push_back(newProperty);	
+	}	
 }
 
 /*not used
@@ -229,6 +252,8 @@ void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEnt
 	newOrExistingAction->actionSubjectEntity = subjectEntity;
 	//cout << "BUG SHOULD BE JOE; subjectEntity->entityName = " << subjectEntity->entityName << endl;
 	
+	subjectEntity->isSubjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+	
 }
 
 void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity)
@@ -252,6 +277,8 @@ void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntit
 	objectEntity->firstIncomingActionNodeInList.push_back(newOrExistingAction);
 	
 	newOrExistingAction->actionObjectEntity = objectEntity;
+	
+	objectEntity->isObjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 }
 
 void addLocationConditionToAction(GIAActionNode * actionNode, GIAEntityNode * locationConditionEntity)
@@ -428,6 +455,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		int GIAEntityNodeGrammaticalTenseArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 		int GIAEntityNodeGrammaticalNumberArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 		bool GIAEntityNodeGrammaticalIsDefiniteArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
+		bool GIAEntityNodeGrammaticalIsPersonArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
+		int GIAEntityNodeGrammaticalGenderArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 		
 		bool GIAEntityNodeArrayFilled[MAX_NUMBER_OF_WORDS_PER_SENTENCE];		//NB could also use currentSentence->maxNumberOfWordsInSentence
 		GIAEntityNode * GIAEntityNodeArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
@@ -442,7 +471,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			GIAEntityNodeGrammaticalTenseArray[w] = GRAMMATICAL_TENSE_UNDEFINED;
 			GIAEntityNodeGrammaticalNumberArray[w] = GRAMMATICAL_NUMBER_UNDEFINED;
 			GIAEntityNodeGrammaticalIsDefiniteArray[w] = false;
-
+			GIAEntityNodeGrammaticalIsPersonArray[w] = false;
+			GIAEntityNodeGrammaticalGenderArray[w] = GRAMMATICAL_NUMBER_UNDEFINED;
+			
 			GIAEntityNodeArrayFilled[w] = false;
 
 			//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
@@ -453,10 +484,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
 		while(currentFeatureInList->next != NULL)
 		{
-			//cout << "currentFeatureInList->tense = " << currentFeatureInList->tense << endl;
+			//cout << "currentFeatureInList->grammar = " << currentFeatureInList->grammar << endl;
 			
 			//this date code probably requires an update [there appear to be multiple ways in which dates are defined in relex...
-			if((currentFeatureInList->tense).find(FEATURE_GRAMMATICAL_TENSE_DATE) != -1)
+			if((currentFeatureInList->grammar).find(FEATURE_GRAMMATICAL_TENSE_DATE) != -1)
 			{
 				GIAEntityNodeIsDate[currentFeatureInList->entityIndex] = true;
 				//cout << "isDate currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
@@ -464,9 +495,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			
 			for(int grammaticalTenseIndex = 0; grammaticalTenseIndex < GRAMMATICAL_TENSE_NUMBER_OF_TYPES; grammaticalTenseIndex++)
 			{
-				//NB only the first characters of currentFeatureInList->tense contain the tense type name 
-				if((currentFeatureInList->tense).find(grammaticalTenseNameArray[grammaticalTenseIndex]) != -1) 
-				//if((currentFeatureInList->tense).substr(0, grammaticalTenseNameLengthsArray[grammaticalTenseIndex]) == grammaticalTenseNameArray[grammaticalTenseIndex]) 
+				//NB only the first characters of currentFeatureInList->grammar contain the tense type name 
+				if((currentFeatureInList->grammar).find(grammaticalTenseNameArray[grammaticalTenseIndex]) != -1) 
+				//if((currentFeatureInList->grammar).substr(0, grammaticalTenseNameLengthsArray[grammaticalTenseIndex]) == grammaticalTenseNameArray[grammaticalTenseIndex]) 
 				{
 					GIAEntityNodeGrammaticalTenseArray[currentFeatureInList->entityIndex] = grammaticalTenseIndex;
 					//cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalTenseIndex = " << grammaticalTenseNameArray[grammaticalTenseIndex] << endl;
@@ -474,25 +505,43 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			}
 			for(int grammaticalNumberIndex = 0; grammaticalNumberIndex < GRAMMATICAL_NUMBER_NUMBER_OF_TYPES; grammaticalNumberIndex++)
 			{
-				//NB only the first characters of currentFeatureInList->tense contain the grammatical number type name 
-				if((currentFeatureInList->tense).find(grammaticalNumberNameArray[grammaticalNumberIndex]) != -1) 				
+				//NB only the first characters of currentFeatureInList->grammar contain the grammatical number type name 
+				if((currentFeatureInList->grammar).find(grammaticalNumberNameArray[grammaticalNumberIndex]) != -1) 				
 				{
 					GIAEntityNodeGrammaticalNumberArray[currentFeatureInList->entityIndex] = grammaticalNumberIndex;
 					//cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalNumberIndex = " << grammaticalNumberNameArray[grammaticalNumberIndex] << endl;
 				}			
 			}
-			if((currentFeatureInList->tense).find(GRAMMATICAL_DEFINITE_NAME) != -1)
+			if((currentFeatureInList->grammar).find(GRAMMATICAL_DEFINITE_NAME) != -1)
 			{
 				GIAEntityNodeGrammaticalIsDefiniteArray[currentFeatureInList->entityIndex] = GRAMMATICAL_DEFINITE;
 				//cout << "isDefinite currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 				
 			}			
-									 
+
+			if((currentFeatureInList->grammar).find(GRAMMATICAL_PERSON_NAME) != -1)
+			{
+				GIAEntityNodeGrammaticalIsPersonArray[currentFeatureInList->entityIndex] = GRAMMATICAL_PERSON;
+				cout << "isPerson currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
+				
+			}
+			for(int grammaticalGenderIndex = 0; grammaticalGenderIndex < GRAMMATICAL_GENDER_NUMBER_OF_TYPES; grammaticalGenderIndex++)
+			{
+				//NB only the first characters of currentFeatureInList->grammar contain the grammatical Gender type name 
+				if((currentFeatureInList->grammar).find(grammaticalGenderNameArray[grammaticalGenderIndex]) != -1) 				
+				{
+					//NB it will always find "person" in relex grammar string if "person" is existant, but this will be overwritten by "feminine" or "masculine" if this is specified (not possible for bigender names like "joe")
+					GIAEntityNodeGrammaticalGenderArray[currentFeatureInList->entityIndex] = grammaticalGenderIndex;
+					cout << "currentFeatureInList->word = " << currentFeatureInList->word << " currentFeatureInList->entityIndex grammaticalGenderIndex = " << grammaticalGenderNameArray[grammaticalGenderIndex] << endl;
+				}			
+			}
+												 
 			currentFeatureInList = currentFeatureInList->next;
 		}
 		//exit(0);
 		
-		//pass A; locate/add all entities [and define objects and subjects];
+		//pass A; locate/add all entities;
+		//pass 1;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{			
@@ -523,8 +572,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				
 				GIAEntityNodeArray[relationFunctionIndex]->grammaticalTenseTemp = GIAEntityNodeGrammaticalTenseArray[relationFunctionIndex];
 				GIAEntityNodeArray[relationFunctionIndex]->grammaticalNumberTemp = GIAEntityNodeGrammaticalNumberArray[relationFunctionIndex];
-				GIAEntityNodeArray[relationFunctionIndex]->definiteTemp = GIAEntityNodeGrammaticalIsDefiniteArray[relationFunctionIndex];
-			
+				GIAEntityNodeArray[relationFunctionIndex]->grammaticalDefiniteTemp = GIAEntityNodeGrammaticalIsDefiniteArray[relationFunctionIndex];
+				GIAEntityNodeArray[relationFunctionIndex]->grammaticalPersonTemp = GIAEntityNodeGrammaticalIsPersonArray[relationFunctionIndex];
+				GIAEntityNodeArray[relationFunctionIndex]->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[relationFunctionIndex];
+				 
 				GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedPropertyTemp = false;
 				GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedActionTemp = false;
 				
@@ -540,8 +591,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			
 				GIAEntityNodeArray[relationArgumentIndex]->grammaticalTenseTemp = GIAEntityNodeGrammaticalTenseArray[relationArgumentIndex];
 				GIAEntityNodeArray[relationArgumentIndex]->grammaticalNumberTemp = GIAEntityNodeGrammaticalNumberArray[relationArgumentIndex];
-				GIAEntityNodeArray[relationArgumentIndex]->definiteTemp = GIAEntityNodeGrammaticalIsDefiniteArray[relationArgumentIndex];
-				
+				GIAEntityNodeArray[relationArgumentIndex]->grammaticalDefiniteTemp = GIAEntityNodeGrammaticalIsDefiniteArray[relationArgumentIndex];
+				GIAEntityNodeArray[relationArgumentIndex]->grammaticalPersonTemp = GIAEntityNodeGrammaticalIsPersonArray[relationArgumentIndex];
+				GIAEntityNodeArray[relationArgumentIndex]->grammaticalGenderTemp = GIAEntityNodeGrammaticalGenderArray[relationArgumentIndex];
+								
 				GIAEntityNodeArray[relationArgumentIndex]->hasAssociatedPropertyTemp = false;	
 				GIAEntityNodeArray[relationFunctionIndex]->hasAssociatedActionTemp = false;		
 			}
@@ -550,11 +603,211 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 		//cout << "as2" <<endl;
 		
+		
+		//pass 2; identify entity types [define entities as objects, subjects, and being possessive of properties];
+		currentRelationInList = currentSentenceInList->firstRelationInList;
+		while(currentRelationInList->next != NULL)
+		{	
+			if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
+			{
+				int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
+				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;				
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationFunctionIndex];
+				GIAEntityNode * ownerEntity = GIAEntityNodeArray[relationArgumentIndex];
+				ownerEntity->hasPropertyTemp = true;
+			}			
+			if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_2) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3))
+			{
+				int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
+				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;				
+				GIAEntityNode * thingEntity = GIAEntityNodeArray[relationFunctionIndex];
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+				thingEntity->hasPropertyTemp = true;
+			}												
+			if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT)
+			{
+				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;	
+				GIAEntityNode * subjectEntity = GIAEntityNodeArray[relationArgumentIndex];
+				subjectEntity->isSubjectTemp = true;
+			}
+			if((currentRelationInList->relationType == RELATION_TYPE_OBJECT) || (currentRelationInList->relationType == RELATION_TYPE_OBJECT_TO))
+			{
+				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
+				GIAEntityNode * objectEntity = GIAEntityNodeArray[relationArgumentIndex];
+				objectEntity->isObjectTemp = true; 
+			}
+						
+			currentRelationInList = currentRelationInList->next;
+		}
+		
+		//pass 3; link references (eg his/her with joe/emily) 				//OLD: pass 5	
+		for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+		{	
+			//cout << "w = " << w << endl;
+				
+			if(GIAEntityNodeArrayFilled[w])
+			{
+				GIAEntityNode * currentGIAEntityNode = GIAEntityNodeArray[w];
+				//cout << "currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
+
+				for(int i=0; i< REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES; i++)
+				{
+					//cout << "i = " << i << endl;
+
+					if((currentGIAEntityNode->entityName == referenceTypePossessiveNameArray[i]) || (currentGIAEntityNode->entityName == referenceTypePersonNameArray[i]))
+					{
+						cout << "currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
+						//now go for a search in tree for given / this sentence + previous sentence until find candidate reference source
+
+						GIAEntityNode * referenceSource = NULL;
+						bool referenceSourceHasBeenFound = false;
+						bool stillSentencesToSearch = true;
+						Sentence * currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInList;
+						int s2 = 0;
+						while(!referenceSourceHasBeenFound && stillSentencesToSearch) 
+						{
+							cout << "s2 = " << s2 << endl;
+
+							Relation * currentRelationInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->firstRelationInList;
+							int maxWordLimit = 999999;
+							if(s2 == 0)
+							{
+								maxWordLimit = w;
+							}
+							int w2 = 0;
+							while((currentRelationInWhichReferenceSourceIsBeingSearchedFor->next != NULL) && (w2 < maxWordLimit))
+							{
+								cout << "w2 = " << w2 << endl;
+
+								long entityIndex = -1;
+								bool entityAlreadyExistant = false;
+
+								string entityName = currentRelationInWhichReferenceSourceIsBeingSearchedFor->relationArgument;
+											
+								//cout << "entityName = " << entityName << endl;
+											
+								if(entityName != "")
+								{
+								
+									GIAEntityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddEntityNodeByName(indexOfEntityNodes, indexOfEntityNames, &entityName, &entityAlreadyExistant, &entityIndex, false);
+
+									if(entityAlreadyExistant)
+									{
+										//cout << "candidateReferenceSourceEntityName = " << entityName << endl;
+										
+										bool entityPassesGrammaticalTestsForReference = true;
+										
+
+																	
+										//if(referenceTypePersonCrossReferenceNumberArray[i] != GRAMMATICAL_CATEGORY_UNDEFINED) 
+										//if(!((referenceTypePersonCrossReferenceNumberArray[i] == GRAMMATICAL_CATEGORY_UNDEFINED) && (referenceTypePersonCrossReferenceNumberArray[i] == GRAMMATICAL_CATEGORY_UNDEFINED)))
+										//{
+											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumberTemp != referenceTypePersonCrossReferenceNumberArray[i])
+											{
+												entityPassesGrammaticalTestsForReference = false;
+											}
+										//}
+										//if(referenceTypePersonCrossReferenceGenderArray[i] != GRAMMATICAL_CATEGORY_UNDEFINED) 
+										//if(!((referenceTypePersonCrossReferenceGenderArray[i] == GRAMMATICAL_CATEGORY_UNDEFINED) && (referenceTypePersonCrossReferenceGenderArray[i] == GRAMMATICAL_CATEGORY_UNDEFINED)))
+										//{
+											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp != referenceTypePersonCrossReferenceGenderArray[i])
+											{
+												entityPassesGrammaticalTestsForReference = false;
+											}
+										//}
+										//if(referenceTypePersonCrossReferenceDefiniteArray[i] != GRAMMATICAL_CATEGORY_UNDEFINED) 
+										//if(!((referenceTypePersonCrossReferenceDefiniteArray[i] == GRAMMATICAL_CATEGORY_UNDEFINED) && (referenceTypePersonCrossReferenceDefiniteArray[i] == GRAMMATICAL_CATEGORY_UNDEFINED)))
+										//{
+											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp != referenceTypePersonCrossReferenceDefiniteArray[i])
+											{
+												entityPassesGrammaticalTestsForReference = false;
+											}
+										//}
+										//if(referenceTypePersonCrossReferencePersonArray[i] != GRAMMATICAL_CATEGORY_UNDEFINED) 
+										//if(!((referenceTypePersonCrossReferencePersonArray[i] == GRAMMATICAL_CATEGORY_UNDEFINED) && (referenceTypePersonCrossReferencePersonArray[i] == GRAMMATICAL_CATEGORY_UNDEFINED)))
+										//{
+											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPersonTemp != referenceTypePersonCrossReferencePersonArray[i])
+											{
+												entityPassesGrammaticalTestsForReference = false;
+											}
+										//}
+										if(entityPassesGrammaticalTestsForReference)
+										{	
+										
+											cout << "entityPassesGrammaticalTestsForReference" << endl;
+											
+											/*
+											cout << "referenceTypePersonCrossReferenceNumberArray[i] = " << referenceTypePersonCrossReferenceNumberArray[i] << endl;
+											cout << "referenceTypePersonCrossReferenceGenderArray[i] = " << referenceTypePersonCrossReferenceGenderArray[i] << endl;
+											cout << "referenceTypePersonCrossReferenceDefiniteArray[i] = " << referenceTypePersonCrossReferenceDefiniteArray[i] << endl;
+											cout << "referenceTypePersonCrossReferencePersonArray[i] = " << referenceTypePersonCrossReferencePersonArray[i] << endl;
+											cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumberTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumberTemp << endl;
+											cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp << endl;
+											cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp << endl;
+											cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPersonTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPersonTemp << endl;
+											*/
+																																										
+											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp == true)
+											{
+												//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp << endl;
+												referenceSourceHasBeenFound = true;
+												referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
+											}
+											else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp == true) && (s2 > 0))
+											{
+												//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp << endl;
+												referenceSourceHasBeenFound = true;
+												referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
+											}
+											else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp == true) && (s2 > 0))
+											{
+												//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp << endl;
+												referenceSourceHasBeenFound = true;
+												referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
+											}
+										}
+
+									}
+									else
+									{
+										//cout << "error: !entityAlreadyExistant" << endl;	//will be non-existant in the case of intermediary words like "the"
+										//exit(0);
+									}
+								}
+								w2++;
+								
+								currentRelationInWhichReferenceSourceIsBeingSearchedFor = currentRelationInWhichReferenceSourceIsBeingSearchedFor->next;
+							}
+
+							if(currentSentenceInWhichReferenceSourceIsBeingSearchedFor->previous != NULL)
+							{	
+								currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->previous;
+							}
+							else
+							{
+								stillSentencesToSearch = false;
+							}
+							s2++;
+
+						}
+
+						if(referenceSourceHasBeenFound)
+						{//remap entity; eg He to John 
+							cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
+							//referenceSource->isReferenceEntityInThisSentence = true;
+							GIAEntityNodeArray[w] =	referenceSource;
+						}			
+					}
+				}
+			}
+		}
+		
+				
 		//pass B;	
 		
+		//0 pass; define properties (definite nouns); eg the house
 		if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS == 1)
 		{
-			//0 pass; define properties (definite nouns); eg the house
 			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 			{
 				if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
@@ -932,6 +1185,18 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		
 		}
+	
+		/*
+		//restore critical variables; temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
+		for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+		{	
+			if(GIAEntityNodeArrayFilled[w])
+			{
+				GIAEntityNodeArray[w]->isReferenceEntityInThisSentence = false;
+			}
+		}
+		*/	
+	
 		currentSentenceInList = currentSentenceInList->next;
 	}
 }
