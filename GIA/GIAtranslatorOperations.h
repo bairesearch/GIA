@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u4a 29-Sept-2013
+ * Project Version: 1u5a 29-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -464,8 +464,12 @@ static string relationTypeSubjectObjectNameArray[RELATION_TYPE_SUBJECT_OBJECT_NU
 #define RELATION_TYPE_ADJECTIVE_ADVMOD "_advmod"
 #define RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES 3
 #define RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES 2
+#define RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_SAME_REFERENCE_SET_NUMBER_OF_TYPES 2
+#define RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_DIFFERENT_REFERENCE_SET_NUMBER_OF_TYPES 1
 static string relationTypeAdjectiveNameArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_PREDADJ, RELATION_TYPE_ADJECTIVE_ADVMOD};
 static string relationTypeAdjectiveWhichImplyEntityInstanceNameArray[RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_ADVMOD};
+static string relationTypeAdjectiveWhichImplySameReferenceSetNameArray[RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_SAME_REFERENCE_SET_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_ADVMOD};
+static string relationTypeAdjectiveWhichImplyDifferentReferenceSetNameArray[RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_DIFFERENT_REFERENCE_SET_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_PREDADJ};
 
 
 //substances (possessive relationships)

@@ -2426,9 +2426,23 @@
 				<example><!--
 				Joe is happy. _predadj(Joe[1], happy[3]) [NB Stanford nsubj(happy-3, Joe-1) + cop(happy-3, is-2) gets redistributed to _predadj(Joe[1], happy[3])]
 				--></example>
+				
+				<!-- #ifdefGIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILLARY_AND_SET_NOT_SAME_REFERENCE_SET -->
+				<!--
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="0" REL_ENT="2" relationArrayTest="_amod|_predadj|_advmod" relationArrayTestSize="3" />
+				<option functionToExecuteUponFind="4" />
+				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="0" />
+				<option functionEntityRelationID="0" FUNC_ENT="1" functionEntityRelationEntityID="1" />
+				<option defaultSameSetRelationID="0" defaultSameSetReferenceValue="true" />
+				</paramDepRel>
+				-->
+				<!-- #else -->
+				
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="0" REL_ENT="2" relationArrayTest="_amod|_advmod" relationArrayTestSize="2" />
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="0" />
 				<option functionEntityRelationID="0" FUNC_ENT="1" functionEntityRelationEntityID="1" />
@@ -2436,6 +2450,19 @@
 				<option defaultSameSetRelationID="0" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				</paramDepRel>
+				
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="0" REL_ENT="2" relationArrayTest="_predadj" relationArrayTestSize="1" />
+				<option functionToExecuteUponFind="4" />
+				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="0" />
+				<option functionEntityRelationID="0" FUNC_ENT="1" functionEntityRelationEntityID="1" />
+				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<option defaultSameSetRelationID="0" defaultSameSetReferenceValue="false" />
+				<!-- #endif -->
+				</paramDepRel>								
+				
+				<!-- #endif -->
 			</function>
 
 			<function name="linkEntityDefinitionsAppositiveOfNouns">

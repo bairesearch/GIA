@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u4a 29-Sept-2013
+ * Project Version: 1u5a 29-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -591,7 +591,7 @@ void extractPastTense(Feature * featureWithEntityIndex, int entityIndexContainin
 
 
 
-#ifdef GIA_USE_ADVANCED_REFERENCING
+#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILLARY_AND_SET_NOT_SAME_REFERENCE_SET
 void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * currentSentenceInList, int subjectObjectEntityWithAuxillaryEntityIndex, string * subjectObjectEntityWithAuxillaryEntityName)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -677,7 +677,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 				GIAfeatureTempEntityNodeArray[entityIndexOfAuxillary]->disabled = true;
 
 				/*//this shouldnt be required, as verbs are automatically assumed not to be part of same reference set [see DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS]
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILLARY_AND_SET_NOT_SAME_REFERENCE_SET
 				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, GIAentityNodeArray[entityIndexOfVerb]);
 				#endif
 				*/
@@ -702,7 +702,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 				GIAfeatureTempEntityNodeArray[entityIndexOfAuxillary]->disabled = true;
 
 				/*//this shouldnt be required, as verbs are automatically assumed not to be part of same reference set [see DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS]
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILLARY_AND_SET_NOT_SAME_REFERENCE_SET
 				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, GIAentityNodeArray[entityIndexOfVerb]);
 				#endif
 				*/
@@ -730,7 +730,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 
 				GIAfeatureTempEntityNodeArray[entityIndexOfCopula]->disabled = true;
 
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILLARY_AND_SET_NOT_SAME_REFERENCE_SET
 				findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(currentSentenceInList, entityIndexOfNoun, &entityNameOfNoun);
 				#endif
 

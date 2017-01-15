@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u4a 29-Sept-2013
+ * Project Version: 1u5a 29-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -675,6 +675,7 @@
 	#define GIA_ADVANCED_REFERENCING_CONDITIONS_RELEX_SPECIFIC - added 2 July 2013 (requires testing)
 	#define GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET	//added 1m5aTEMP11 [requires Stanford Parser - incompatible with Relex - because it requires record of the sentence entity index of the determiner "the"; grammaticalIsDefiniteIndexOfDeterminer/grammaticalDefiniteIndexOfDeterminerTemp]
 	#define GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES
+	//#define GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILLARY_AND_SET_NOT_SAME_REFERENCE_SET
 #endif
 
 //variables currently under attention for testing purposes
