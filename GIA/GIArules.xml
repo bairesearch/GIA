@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h5b 13-January-2015
+ * Project Version: 2h5c 13-January-2015
  *
  *******************************************************************************/
 -->
@@ -2314,8 +2314,8 @@
 				<!-- #endif -->	
 			</function>
 			<!-- #endif -->
-		
 			
+			<!-- Required for NLC -->
 			<!-- #ifdefGIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF -->
 			<function name="redistributeStanfordRelationsInterpretNamedAsDefinition">
 				<example><!--
@@ -3205,6 +3205,23 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isSubstanceConcept" value="false" REL="1" REL_ENT="2" />
 				<!-- #endif -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="hasAssociatedTime" value="false" REL="1" REL_ENT="2" />
+				<option disableRelationDuringLink="true" REL="1" />
+				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
+				<option functionToExecuteUponFind="14" />
+				<!-- #else -->
+				<!-- <option functionToExecuteUponFind="12" /> -->
+				<!-- #endif -->
+				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
+				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
+				</paramDepRel>
+				
+				<paramDepRel mode="execute">
+				<!-- #ifdefGIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA -->
+				<!-- <assert variable="linkPreestablishedReferencesGIA" /> -->
+				<!-- #endif -->
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
+				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isName" value="true" REL="1" REL_ENT="2" />
 				<option disableRelationDuringLink="true" REL="1" />
 				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
 				<option functionToExecuteUponFind="14" />
