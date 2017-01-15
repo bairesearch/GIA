@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t5c 02-August-2013
+ * Project Version: 1t6a 02-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -142,9 +142,9 @@ int main(int argc,char **argv)
 	string wordExample = "like";
 	bool wordIsFound = false;
 	string listOfSynonyms[WORDNET_FINDTHEINFO_OUTPUT_MAX_NUMBER_SYNONYMS];
-	int wordNetPOS = VERB;	//NOUN	VERB
-	checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(wordExample, &wordIsFound, wordNetPOS);
-	//findSynonymsOLD(wordExample, &wordIsFound, listOfSynonyms, wordNetPOS);
+	int grammaticalWordTypeTemp = VERB;	//NOUN	VERB
+	checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(wordExample, &wordIsFound, grammaticalWordTypeTemp);
+	//findSynonymsOLD(wordExample, &wordIsFound, listOfSynonyms, grammaticalWordTypeTemp);
 	exit(0);
 	#endif
 

@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t5c 02-August-2013
+ * Project Version: 1t6a 02-August-2013
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -66,6 +66,15 @@ using namespace std;
 #define GRAMMATICAL_WORD_TYPE_SATELLITE (6)	/* not really a part of speech */
 #define GRAMMATICAL_WORD_TYPE_ADJSAT (SATELLITE)
 #define GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES (7)
+	//for xml interface:
+#define GRAMMATICAL_WORD_TYPE_UNDEFINED_STRING "0"
+#define GRAMMATICAL_WORD_TYPE_NOUN_STRING "1"
+#define GRAMMATICAL_WORD_TYPE_VERB_STRING "2"
+#define GRAMMATICAL_WORD_TYPE_ADJ_STRING "3"
+#define GRAMMATICAL_WORD_TYPE_ADV_STRING "4"
+#define GRAMMATICAL_WORD_TYPE_PREP_STRING "5"
+#define GRAMMATICAL_WORD_TYPE_SATELLITE_STRING "6"	/* not really a part of speech */
+#define GRAMMATICAL_WORD_TYPE_ADJSAT_STRING "6"
 
 #define GRAMMATICAL_TENSE_PRESENT 1
 #define GRAMMATICAL_TENSE_PAST 2
@@ -217,11 +226,15 @@ public:
 	GIAentityNode(void);
 	~GIAentityNode(void);
 
+	
+	/*GIA Internal Entity Referencing*/
 	long idActiveList;
 	long idActiveEntityTypeList;
 	long idActiveListReorderdIDforXMLsave;	//for CXL output only
 	long idInstance; 		//not for concepts (this instance idActiveList of the concept entityName)
 
+
+	/*GIA Entity Name*/
 	string entityName;
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
 	string wordOrig;		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
@@ -231,6 +244,8 @@ public:
 	vector<string> aliasList;
 	#endif
 
+
+	/*GIA Entity Type*/
 	bool isConcept;			//is this entity a concept? [added 10 May 2012]
 	bool isSubstance;		//is this entity a substance?
 	bool isAction;			//is this entity an action?
@@ -242,63 +257,52 @@ public:
 	bool isSubstanceQuality;		//PRECISE ORIGINAL NAME: isSubstanceQualityOrAffection	//eg 'the locked door..' / 'Jim runs quickly' / 'Mr. Smith is late' 	[Not: Tom has an arm'/'Tom's bike']
 	bool isSubstanceConcept;		//added 1q4a to take into account specific concepts eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
 	bool isActionConcept;			//added 1t5a to take into account specific actions eg 'eating pies', 'to eat a pie'
-	
-	bool hasProgressiveTemp;	//PRECISE ORIGINALNAME: isActionOrSubstanceQualityState		//eg The cat is lying on the bed. / Mark is being happy.
+	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for substances and actions; but relex does not appear to output this information]
 
+
+	/*GIA Connections*/
 	vector<GIAentityConnection*> entityVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];		//allows for generic coding
-	#ifdef GIA_USE_ADVANCED_REFERENCING
-	GIAentityNode* entityCorrespondingBestMatch;	 //best match entity node corresponding to this assumed query entity node	//does not take into account multiple diversions/answers [assumes single matches only]
-	#endif
-
 	#ifdef GIA_USE_DATABASE
 	//designed for a high scale database (eg 200,000 references per instance, 200,000 instances per concept)
 	bool entityVectorConnectionsReferenceListLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];			//signifies whether all the vector connections in the reference list has been loaded from file and entityConnections entityNames+idInstance have therefore been populated. This is the first step required to enable loading of connections into RAM (see entityVectorConnectionsLoadedArray)
 	//bool entityVectorConnectionsLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//not used - vector connections are loaded into RAM on an individual basis. //signifies whether all the vector connection nodes have been loaded (eg from the db)
 	bool entityVectorConnectionsRemovedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];					//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
 	#endif
-
-	//action connections;
-		//non-actions only;
+		//action connections;
+	//non-actions only;
 	vector<GIAentityConnection*> * actionNodeList;	//where this entity is the subject of the action
 	vector<GIAentityConnection*> * incomingActionNodeList;	//where this entity is the object of the action
-
-		//actions only;
+	//actions only;
 	//NB actions can be performed by and on concepts, and by and on substances?
 	vector<GIAentityConnection*> * actionSubjectEntity;	//record of entity that is the subject of this action instance
 	vector<GIAentityConnection*> * actionObjectEntity;	//record of which entity that is the object of this action instance
-
-	//condition connections;
-		//non-conditions only (?);
+		//condition connections;
+	//non-conditions only;
 	//conditions connections: conditions and reverse conditions (reason) lookups [condition and reason respectively]
 	vector<GIAentityConnection*> * conditionNodeList;		//this substance requires the following...
 	vector<GIAentityConnection*> * incomingConditionNodeList;	//this substance is required by the following... //aka reason
-
-		//conditions only;
+	//conditions only;
 	//NB conditions can be performed by and on concepts, and by and on substances?
 	vector<GIAentityConnection*> * conditionSubjectEntity;		//record of entity that is the subject of this action instance
 	vector<GIAentityConnection*> * conditionObjectEntity;		//record of which entity that is the object of this action instance
-
-	//time condition connections;
-	int conditionType;	//added 25 Sept 11
-	GIAtimeConditionNode * timeConditionNode;		//if conditionType == CONDITION_NODE_TYPE_TIME
-
-	//substance connections;
+		//substance connections;
 	//record list of all substances for this entity
 	vector<GIAentityConnection*> * propertyNodeList;
 	vector<GIAentityConnection*> * propertyNodeReverseList;			//if substance/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given substance [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for concept entities [substance entities may possibly only be contained by {ie, be a substance of} a single entity]
-
-		//actions, substances, and conditions only
+	//actions, substances, and conditions only
 	vector<GIAentityConnection*> * entityNodeDefiningThisInstance;					//if substance/action/condition only:					//NB by definition, only 1 thing can contain any given substance [considering a substance is an instance of an entity] - therefore this is not a vector
-
-
-		//concepts only (not substances/"instances" of entities);
-	//entity connections;
+		//entity connections;
 	//record parent and child entity definition nodes
 	vector<GIAentityConnection*> * entityNodeDefinitionList;			//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
 	vector<GIAentityConnection*> * entityNodeDefinitionReverseList;			//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
+	//concepts only (not substances/"instances" of entities);
 	//associated actions and substances [ie does this entity also define an action/verb or a substance/adjective? [ie, it is not just a thing/noun]]
 	vector<GIAentityConnection*> * associatedInstanceNodeList;			//if this entity is not a substance/instance but defines one or more substances/instances
+		//time condition connections;
+	int conditionType;	//added 25 Sept 11
+	GIAtimeConditionNode * timeConditionNode;		//if conditionType == CONDITION_NODE_TYPE_TIME
 
+	/*GIA Special Variables (Quantities/Measures)*/
 	bool hasQuantity;
 	int quantityNumber;		//eg 6
 	string quantityNumberString;	//eg "6:45"
@@ -308,8 +312,9 @@ public:
 	bool hasMeasure;
 	int measureType;
 
+	
+	/*GIA Draw Variables*/
 	bool initialisedForPrinting;
-	//bool printed;
 	int printX;
 	int printY;
 	int printXIndex;
@@ -318,69 +323,68 @@ public:
 	int printTextY;
 	bool printCoordsAlreadyDefined;
 
+
+	/*GIA Translator Temporary Variables - Grammar*/
+	int grammaticalNumber;
+	int grammaticalWordTypeTemp;		//aka wordNetPOS	//added 26 April 2012 (used for compatibility with wordnet)
 	bool grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	int grammaticalTenseTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	int grammaticalNumber;
 	bool grammaticalDefiniteTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	bool grammaticalRelexPersonOrStanfordProperNounTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	int grammaticalGenderTemp; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-	//bool grammaticalCountTemp;	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool grammaticalPronounTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	int grammaticalDefiniteIndexOfDeterminerTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	#endif
 	bool foundPossibleInfinitiveVerbTemp;	//added 28 July 2013 to help support action concepts
-
-	bool isSubjectTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
-	bool isObjectTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
-	bool hasSubstanceTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
-	//bool hasQualityTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
-	bool isActionTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
-	int entityIndexTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Stanford CoreNLP referencing only?)
-	int sentenceIndexTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Stanford CoreNLP referencing only?)
-
 	#ifdef GIA_USE_STANFORD_CORENLP
-	/*
-	int CharacterOffsetBeginTemp;
-	int CharacterOffsetEndTemp;
-	*/
 	string stanfordPOStemp;
 	string NormalizedNERtemp;
 	string TimexTemp;
 	#endif
 	int NERTemp;
-
-	//bool isReferenceEntityInThisSentence;	//temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
+	
+	
+	/*GIA Translator Temporary Variables*/
+	bool isSubjectTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
+	bool isObjectTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
+	bool hasSubstanceTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
+	bool isActionTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
+	int entityIndexTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Stanford CoreNLP referencing only?)
+	int sentenceIndexTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Stanford CoreNLP referencing only?)
+	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	bool isToBeComplimentOfActionTemp;	//required for Relex (linkConditions()/defineSubstancesOfPossessivePrepositions())
+	#else
+	bool disableParsingAsPrepositionRelationTemp;
+	#endif
 	bool entityAlreadyDeclaredInThisContext;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
-
 	bool hasAssociatedInstanceTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-
-	bool isQuery;
-	bool isWhichOrEquivalentWhatQuery;
 	#ifdef GIA_SUPPORT_ALIASES
 	bool isName;
 	bool isNameQuery;
-	#endif
+	#endif	
+	
+	
+	/*Query Variables*/
+	bool isQuery;
+	bool isWhichOrEquivalentWhatQuery;
 	bool isAnswerToQuery;
 	bool testedForQueryComparison;
 	bool testedForQueryComparisonTemp; //added 17 May 2012 - support better trace routine
-	bool queryAnswerContext;
-
-	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for substances and actions; but relex does not appear to output this information]
-
-	bool disableParsingAsPrepositionRelationTemp;
-
+	bool queryAnswerContext;	
 	bool queryEntityTraced;	//temporary for determining max confidence
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	GIAentityNode* entityCorrespondingBestMatch;	 //best match entity node corresponding to this assumed query entity node	//does not take into account multiple diversions/answers [assumes single matches only]
+	#endif
 
+
+	/*GIA Miscellaneous Internal Variables*/
 	bool disabled;	//temporary for concept entities: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool permanentConcept;	//concept entity is to be drawn/saved to XML (if false, this entity has been deemed redundant in semantic network generation)
-
+	bool firstSentenceToAppearInNetwork;	
+		//CXL:
 	bool CXLdummyNode;
-
-	bool firstSentenceToAppearInNetwork;
-
-	int wordNetPOS;		//grammaticalWordTypeTemp	//added 26 April 2012 (used for compatibility with wordnet)
-
+		//referencing:
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	int referenceSetID;
 	int minimumEntityIndexOfReferenceSet;
@@ -391,29 +395,41 @@ public:
 	bool wasReference;
 	#endif	
 	#endif
-
+		//databasing:
 	#ifdef GIA_USE_DATABASE
 	bool added;	//implies database Update is Required
 	bool modified;	//implies database Update is Required
-
 	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 	GIAconceptEntityLoaded * conceptEntityLoaded;
 	#endif
 	#endif
-
+		//nlg:
 	#ifdef GIA_USE_NLG
 	bool parsedForLanguageGeneration;
 	bool sourceAddedInLanguageGeneration;
 	bool sourceReferencedInLanguageGeneration;
 	#endif
-
-	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
-	bool isName;
-	#endif
-	
-	bool isToBeComplimentOfActionTemp;	//required for Relex (linkConditions()/defineSubstancesOfPossessivePrepositions())
 };
 
+#define GIA_ENTITY_CHARACTERISTIC_TYPE_BOOL "bool"
+#define GIA_ENTITY_CHARACTERISTIC_TYPE_INT "int"
+#define GIA_ENTITY_CHARACTERISTIC_TYPE_STRING "string"
+
+class EntityCharacteristic
+{
+public:
+	EntityCharacteristic();
+	EntityCharacteristic(string entityCharacteristicNameNew, string entityCharacteristicValueNew);
+	EntityCharacteristic(string entityCharacteristicNameNew, string entityCharacteristicValueNew, bool isNegativeNew);
+	EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew);
+	EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew, bool isNegativeNew);	
+	~EntityCharacteristic(void);
+	
+	string name;
+	string value;
+	int arrayIndex;
+	bool isNegative;	//only used for test (not assign)
+};
 
 
 #ifdef GIA_USE_DATABASE
@@ -437,6 +453,19 @@ vector<string> explode(const string& str, const char& ch);
 #endif
 
 void deleteEntitiesInEntityNodeList(vector<GIAentityNode*> * entityNodesActiveListComplete);
+
+bool testEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristic*> * redistributeSpecialCasePropertiesTestVector, bool andOrOr);				
+	bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic);
+		void testEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch);
+		void testEntityCharacteristicIterationint(int entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch);
+		void testEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch);
+void setEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristic*> * redistributeSpecialCasePropertiesAssignmentVector);		
+	bool setEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic);
+		void setEntityCharacteristicIterationbool(bool * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch);
+		void setEntityCharacteristicIterationint(int * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch);
+		void setEntityCharacteristicIterationstring(string * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch);
+
+
 
 #endif
 

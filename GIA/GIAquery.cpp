@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t5c 02-August-2013
+ * Project Version: 1t6a 02-August-2013
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -1687,13 +1687,13 @@ bool compareEntitySynonyms(GIAentityNode * queryEntityNode, GIAentityNode * enti
 	{
 	*/
 	
-	if(queryEntityNode->wordNetPOS != entityNode->wordNetPOS)	//error checking
+	if(queryEntityNode->grammaticalWordTypeTemp != entityNode->grammaticalWordTypeTemp)	//error checking
 	{
 		#ifdef GIA_WORDNET_DEBUG
 		/*
-		cout << "compareEntitySynonyms() warning: (queryEntityNode->wordNetPOS != entityNode->wordNetPOS)" << endl;
-		cout << "queryEntityNode->wordNetPOS " << queryEntityNode->entityName << " = " << queryEntityNode->wordNetPOS << endl;
-		cout << "entityNode->wordNetPOS = " << entityNode->entityName << " = " << entityNode->wordNetPOS << endl;
+		cout << "compareEntitySynonyms() warning: (queryEntityNode->grammaticalWordTypeTemp != entityNode->grammaticalWordTypeTemp)" << endl;
+		cout << "queryEntityNode->grammaticalWordTypeTemp " << queryEntityNode->entityName << " = " << queryEntityNode->grammaticalWordTypeTemp << endl;
+		cout << "entityNode->grammaticalWordTypeTemp = " << entityNode->entityName << " = " << entityNode->grammaticalWordTypeTemp << endl;
 		*/
 		#endif
 	}
@@ -1702,7 +1702,7 @@ bool compareEntitySynonyms(GIAentityNode * queryEntityNode, GIAentityNode * enti
 		#ifdef GIA_WORDNET_DEBUG
 		cout << "WN compare: queryEntityNode = " << queryEntityNode->entityName << ", with " << entityNode->entityName << endl;
 		#endif
-		if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(entityNode->entityName), &(queryEntityNode->entityName), entityNode->wordNetPOS))
+		if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(entityNode->entityName), &(queryEntityNode->entityName), entityNode->grammaticalWordTypeTemp))
 		{
 			entityNamesAreSynonymous = true;
 		}
@@ -1712,7 +1712,7 @@ bool compareEntitySynonyms(GIAentityNode * queryEntityNode, GIAentityNode * enti
 		{
 			for(vector<string>::iterator aliasIterQuery = queryEntityNode->aliasList.begin(); aliasIterQuery < queryEntityNode->aliasList.end(); aliasIterQuery++)
 			{
-				if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(*aliasIter), &(*aliasIterQuery), entityNode->wordNetPOS))
+				if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(*aliasIter), &(*aliasIterQuery), entityNode->grammaticalWordTypeTemp))
 				{
 					entityNamesAreSynonymous = true;
 				}
@@ -1720,14 +1720,14 @@ bool compareEntitySynonyms(GIAentityNode * queryEntityNode, GIAentityNode * enti
 		}
 		for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter < entityNode->aliasList.end(); aliasIter++)
 		{
-			if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(*aliasIter), &(queryEntityNode->entityName), entityNode->wordNetPOS))
+			if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(*aliasIter), &(queryEntityNode->entityName), entityNode->grammaticalWordTypeTemp))
 			{
 				entityNamesAreSynonymous = true;
 			}
 		}
 		for(vector<string>::iterator aliasIterQuery = queryEntityNode->aliasList.begin(); aliasIterQuery < queryEntityNode->aliasList.end(); aliasIterQuery++)
 		{
-			if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(entityNode->entityName), &(*aliasIterQuery), entityNode->wordNetPOS))
+			if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(entityNode->entityName), &(*aliasIterQuery), entityNode->grammaticalWordTypeTemp))
 			{
 				entityNamesAreSynonymous = true;
 			}

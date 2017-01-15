@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t5c 02-August-2013
+ * Project Version: 1t6a 02-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -329,10 +329,9 @@ void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubsta
 	newSubstance->NormalizedNERtemp = entity->NormalizedNERtemp;	//always required (not just for time info / time condition related)
 	newSubstance->NERTemp = entity->NERTemp;
 
-	if(entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true)
+	for(int i=0; i<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; i++)
 	{
-		newSubstance->hasProgressiveTemp = true;
-		//cout << "substance has progressive (eg lying/sitting/being happy)" << endl;
+		newSubstance->grammaticalTenseModifierArrayTemp[i] = entity->grammaticalTenseModifierArrayTemp[i];	//including GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE eg "substance has progressive (eg lying/sitting/being happy)"
 	}
 
 	if(entity->foundPossibleInfinitiveVerbTemp)	//added 28 July 2013 to help support action concepts
@@ -343,9 +342,9 @@ void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubsta
 	/*//execution of addTenseOnlyTimeConditionToSubstance has been shifted from forwardInfoToNewSubstance to a separate function - 26 July 2013 
 	//cout << "entity = " << entity->entityName << endl;
 	//cout << "entity->grammaticalTenseTemp = " << entity->grammaticalTenseTemp << endl;	
-	if(entity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || entity->hasProgressiveTemp)	//changed from newSubstance->hasProgressiveTemp to entity->hasProgressiveTemp 26 July 2013
+	if(entity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE])	//changed from newSubstance->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] to entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] 26 July 2013
 	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
-		addTenseOnlyTimeConditionToSubstance(newSubstance, entity->grammaticalTenseTemp, entity->hasProgressiveTemp);
+		addTenseOnlyTimeConditionToSubstance(newSubstance, entity->grammaticalTenseTemp, entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE]);
 	}
 	*/
 	newSubstance->grammaticalTenseTemp = entity->grammaticalTenseTemp;
@@ -416,7 +415,7 @@ GIAentityNode * addSubstance(GIAentityNode * entity)
 	
 	entity->hasAssociatedInstance = true;
 	entity->hasAssociatedInstanceTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	newSubstance->wordNetPOS = entity->wordNetPOS;
+	newSubstance->grammaticalWordTypeTemp = entity->grammaticalWordTypeTemp;
 	newSubstance->grammaticalNumber = entity->grammaticalNumber;
 	#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 	newSubstance->isSubstanceConcept = entity->isSubstanceConcept;
@@ -598,7 +597,7 @@ GIAentityNode * addAction(GIAentityNode * actionEntity)
 	actionEntity->hasAssociatedInstance = true;
 	actionEntity->hasAssociatedInstanceIsAction = true;
 	actionEntity->hasAssociatedInstanceTemp = true;
-	newAction->wordNetPOS = actionEntity->wordNetPOS;
+	newAction->grammaticalWordTypeTemp = actionEntity->grammaticalWordTypeTemp;
 	//WHY WOULD THIS EVER BE REQURIED?; newAction->entityNodeContainingThisSubstance = NULL;
 
 	forwardInfoToNewSubstance(actionEntity, newAction);
@@ -1277,14 +1276,14 @@ void recordConceptNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIA
 	}
 }
 
-void convertRelexPOStypeToWordnetWordType(string * relexPOStype, int * wordNetPOS)
+void convertRelexPOStypeToWordnetWordType(string * relexPOStype, int * grammaticalWordTypeTemp)
 {
-	*wordNetPOS = GRAMMATICAL_WORD_TYPE_UNDEFINED;
+	*grammaticalWordTypeTemp = GRAMMATICAL_WORD_TYPE_UNDEFINED;
 	for(int i=0; i<FEATURE_RELEX_POS_NUMBER_OF_TYPES; i++)
 	{
 		if(featureRelexPOStypeArray[i] == *relexPOStype)
 		{
-			*wordNetPOS = featureRelexPOStypeCrossReferenceWordnetWordTypeArray[i];
+			*grammaticalWordTypeTemp = featureRelexPOStypeCrossReferenceWordnetWordTypeArray[i];
 		}
 	}
 
@@ -1292,12 +1291,12 @@ void convertRelexPOStypeToWordnetWordType(string * relexPOStype, int * wordNetPO
 	/*
 	cout << "convertRelexPOStypeToWordnetWordType(): " << endl;
 	cout << "relexPOStype = " << *relexPOStype << endl;
-	cout << "wordNetPOS = " << *wordNetPOS << endl;
+	cout << "grammaticalWordTypeTemp = " << *grammaticalWordTypeTemp << endl;
 	*/
 	#endif
 }
 
-void convertStanfordPOStagToRelexPOStypeAndWordnetWordType(string * POStag, string * relexPOStype, int * wordNetPOS)
+void convertStanfordPOStagToRelexPOStypeAndWordnetWordType(string * POStag, string * relexPOStype, int * grammaticalWordTypeTemp)
 {
 	*relexPOStype = FEATURE_RELEX_POS_TYPE_WORD;
 	for(int i=0; i<FEATURE_POS_TAG_NUMBER_OF_TYPES_MINIMAL; i++)
@@ -1308,14 +1307,14 @@ void convertStanfordPOStagToRelexPOStypeAndWordnetWordType(string * POStag, stri
 		}
 	}
 
-	convertRelexPOStypeToWordnetWordType(relexPOStype, wordNetPOS);
+	convertRelexPOStypeToWordnetWordType(relexPOStype, grammaticalWordTypeTemp);
 
 	#ifdef GIA_WORDNET_DEBUG
 	/*
 	cout << "convertStanfordPOStagToRelexPOStypeAndWordnetWordType(): " << endl;
 	cout << "POStag = " << *POStag << endl;
 	cout << "relexPOStype = " << *relexPOStype << endl;
-	cout << "wordNetPOS = " << *wordNetPOS << endl;
+	cout << "grammaticalWordTypeTemp = " << *grammaticalWordTypeTemp << endl;
 	*/
 	#endif
 	
@@ -2044,14 +2043,6 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	relationArrayTestSize = {{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}};
 	relationArrayTestIsNegative = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	expectToFindPrepositionTest = {false, false, false, false, false};
-	relationTestSpecialCaseOfOrPossType = {false, false, false, false, false};
-	relationTestSpecialCaseContinousVerb = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};	//special case to check for continuous verbs
-	relationTestSpecialCaseNotDefinite = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
-	relationTestSpecialCasePOStemp = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
-	relationArrayTestSpecialCasePOStemp = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
-	relationTestSpecialCaseIsNotAction = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
-	relationTestSpecialCaseIsAction = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};	
-	relationTestSpecialCaseIsNotToBeComplimentOfAction = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	
 		//entity index match tests
 	useRelationIndexTest = {{false, false, false}, {false, false}, {false, false, false}, {false, false, false}};
@@ -2072,10 +2063,6 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	useRedistributeSpecialCaseRelationEntityReassignmentConcatonate = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID = {{{-1, -1} , {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}};	    
 	redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID = {{{-1, -1} , {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}}};
-	useRedistributeSpecialCaseIsNameQueryAssignment = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
-	useRedistributeSpecialCaseIsNameAssignment = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
-	useRedistributeSpecialCaseNegativeAssignment = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
-	useRedistributeSpecialCaseQualityAssignment = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	useRedistributeSpecialCaseDisableInstanceAndConcept = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	
 		//for execution
@@ -2095,7 +2082,6 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	disableEntityUseOriginalValues = {{false, false}, {false, false}, {false, false}, {false, false}}; 	//for disabling an entity based on its original index
 	disableRelation = {false, false, false, false, false};
 	disableRelationDuringLink = {false, false, false, false, false};
-		
 }
 GIAgenericDepRelInterpretationParameters::~GIAgenericDepRelInterpretationParameters(void)
 {
@@ -2145,87 +2131,34 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 				{
 					passedRelation = false;
 				}
-			}
-			if(param->relationTestSpecialCaseOfOrPossType[currentRelationID])
-			{
-				if(passedRelation)
-				{
-					passedRelation = false;				
-					if(param->relationEntity[currentRelationID][REL_ENT3] == RELATION_TYPE_PREPOSITION_OF)
-					{
-						passedRelation = true;
-					}	
-					else if(param->relationEntity[currentRelationID][REL_ENT3] == RELATION_TYPE_POSSESSIVE)
-					{
-						passedRelation = true;
-					}
-				}			
 			}			
 			for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION; relationEntityID++)
-			{
-				if(param->relationTestSpecialCaseIsNotAction[currentRelationID][relationEntityID])
+			{	
+				if(!testEntityCharacteristics(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]], &(param->specialCaseCharacteristicsTestAndVector[currentRelationID][relationEntityID]), true))				
 				{
-					if(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]]->isAction)
-					{
-						passedRelation = false;	
-					}				
-				}
-				if(param->relationTestSpecialCaseIsAction[currentRelationID][relationEntityID])
+					passedRelation = false;	
+				}	
+				if(!testEntityCharacteristics(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]], &(param->specialCaseCharacteristicsTestOrVector[currentRelationID][relationEntityID]), false))				
 				{
-					if(!(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]]->isAction))
-					{
-						passedRelation = false;	
-					}				
-				}				
-				if(param->relationTestSpecialCaseIsNotToBeComplimentOfAction[currentRelationID][relationEntityID])
-				{
-					if(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]]->isToBeComplimentOfActionTemp)
-					{
-						passedRelation = false;	
-					}				
-				}			
-				if(param->relationTestSpecialCaseNotDefinite[currentRelationID][relationEntityID])
-				{
-					if(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]]->grammaticalDefiniteTemp)
-					{
-						passedRelation = false;	
-					}				
-				}			
-				if(param->relationTestSpecialCaseContinousVerb[currentRelationID][relationEntityID])
-				{
-					if(!((param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]]->wordNetPOS == GRAMMATICAL_WORD_TYPE_VERB) && 
-					     (param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]]->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true)))
-					{
-						passedRelation = false;	
-					}				
-				}			
+					passedRelation = false;	
+				}						
 				if(param->useRelationTest[currentRelationID][relationEntityID])
 				{
 					if(passedRelation)
 					{
-						passedRelation = false;
-						if(param->relationTestSpecialCasePOStemp[currentRelationID][relationEntityID])
-						{//special case
-							if(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]]->stanfordPOStemp == param->relationTest[currentRelationID][relationEntityID])
+						passedRelation = false;					
+						if(param->relationTestIsNegative[currentRelationID][relationEntityID])
+						{//negative
+							if(param->relationEntity[currentRelationID][relationEntityID] != param->relationTest[currentRelationID][relationEntityID])
 							{
 								passedRelation = true;
-							}
+							}						
 						}
 						else
-						{						
-							if(param->relationTestIsNegative[currentRelationID][relationEntityID])
-							{//negative
-								if(param->relationEntity[currentRelationID][relationEntityID] != param->relationTest[currentRelationID][relationEntityID])
-								{
-									passedRelation = true;
-								}						
-							}
-							else
-							{//normal
-								if(param->relationEntity[currentRelationID][relationEntityID] == param->relationTest[currentRelationID][relationEntityID])
-								{
-									passedRelation = true;
-								}
+						{//normal
+							if(param->relationEntity[currentRelationID][relationEntityID] == param->relationTest[currentRelationID][relationEntityID])
+							{
+								passedRelation = true;
 							}
 						}
 					}
@@ -2240,22 +2173,10 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 						//cout << "relationArrayTestSize = " << relationArrayTestSize << endl;
 						for(int j=0; j<param->relationArrayTestSize[currentRelationID][relationEntityID]; j++)
 						{
-							if(param->relationArrayTestSpecialCasePOStemp[currentRelationID][relationEntityID])
-							{//special case
-								if(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]]->stanfordPOStemp == (param->relationArrayTest[currentRelationID][relationEntityID])[j])
-								{
-									//cout << "(param->relationArrayTest[currentRelationID][relationEntityID])[j] = " << (param->relationArrayTest[currentRelationID][relationEntityID])[j] << endl;
-									passedRelation = true;
-									foundAnArrayPass = true;
-								}
-							}
-							else
+							if(param->relationEntity[currentRelationID][relationEntityID] == (param->relationArrayTest[currentRelationID][relationEntityID])[j])
 							{
-								if(param->relationEntity[currentRelationID][relationEntityID] == (param->relationArrayTest[currentRelationID][relationEntityID])[j])
-								{
-									passedRelation = true;
-									foundAnArrayPass = true;
-								}
+								passedRelation = true;
+								foundAnArrayPass = true;
 							}
 						}
 						if(param->relationArrayTestIsNegative[currentRelationID][relationEntityID])
@@ -2659,23 +2580,8 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 												//cout << "param->relation[relationID]->relationType = " << param->relation[relationID]->relationType << endl;
 											}																			
 										}
-										if(param->useRedistributeSpecialCaseIsNameQueryAssignment[relationID][relationEntityID])
-										{
-											param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->isNameQuery = true;							
-										}
-										if(param->useRedistributeSpecialCaseIsNameAssignment[relationID][relationEntityID])
-										{
-											param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->isName = true;
-										}
-										if(param->useRedistributeSpecialCaseNegativeAssignment[relationID][relationEntityID])
-										{
-											//cout << "neg: " << param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName << endl;
-											param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->negative = true;
-										}	
-										if(param->useRedistributeSpecialCaseQualityAssignment[relationID][relationEntityID])
-										{
-											param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->isSubstanceQuality = true;
-										}																												
+										
+										setEntityCharacteristics(param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]], &(param->specialCaseCharacteristicsAssignmentVector[relationID][relationEntityID]));
 									}
 								}														
 							}
@@ -2725,8 +2631,8 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 	}
 	//cout << "END genericDependecyRelationInterpretation: " << currentRelationID << endl;	
 	return result;
-}
-
+}				
+				
 #endif
 
 bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, string * prepositionName, int * indexOfPreposition)

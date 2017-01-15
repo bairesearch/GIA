@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t5c 02-August-2013
+ * Project Version: 1t6a 02-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * ?TO DO: extract date information of entities from relex <features> tag area
@@ -927,7 +927,9 @@ void extractQualities(Sentence * currentSentenceInList, bool GIAentityNodeArrayF
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 1;
 	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeAdjectiveNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES;
-	param.useRedistributeSpecialCaseQualityAssignment[REL1][REL_ENT2] = true;
+	//param.useRedistributeSpecialCaseQualityAssignment[REL1][REL_ENT2] = true;
+	EntityCharacteristic useRedistributeSpecialCaseQualityAssignment("isSubstanceQuality", "true");
+	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT2].push_back(&useRedistributeSpecialCaseQualityAssignment);	
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -1182,9 +1184,9 @@ void defineTenseOnlyTimeConditions(Sentence * currentSentenceInList, bool GIAent
 			//cout << "entity->grammaticalTenseTemp = " << entity->grammaticalTenseTemp << endl;
 			if(entity->conditionType != CONDITION_NODE_TYPE_TIME)		//why can't this be used: if(entity->timeConditionNode != NULL)
 			{//do not overwrite non-tense only time conditions
-				if(entity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || entity->hasProgressiveTemp)
+				if(entity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE])
 				{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
-					addTenseOnlyTimeConditionToSubstance(entity, entity->grammaticalTenseTemp, entity->hasProgressiveTemp);
+					addTenseOnlyTimeConditionToSubstance(entity, entity->grammaticalTenseTemp, entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE]);
 				}
 			}		
 		}
@@ -1204,7 +1206,7 @@ void defineActionConcepts(Sentence * currentSentenceInList, bool GIAentityNodeAr
 			
 			//if(entity->isAction)	//do not check for isAction; because action concepts are assigned for nodes which have not been defined as actions by GIA; eg "eating is fun"
 			//Condition A.
-			if((entity->wordNetPOS == GRAMMATICAL_WORD_TYPE_VERB) && ((entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true) || (entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true) || (entity->foundPossibleInfinitiveVerbTemp)))
+			if((entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && ((entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true) || (entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true) || (entity->foundPossibleInfinitiveVerbTemp)))
 			{	
 				//cout << "A" << endl;
 				//Condition B1. no subject (cannot have subject)

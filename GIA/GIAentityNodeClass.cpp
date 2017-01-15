@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t5c 02-August-2013
+ * Project Version: 1t6a 02-August-2013
  *
  *******************************************************************************/
 
@@ -57,17 +57,22 @@ GIAconceptEntityLoaded::~GIAconceptEntityLoaded(void)
 //~nouns
 GIAentityNode::GIAentityNode(void)
 {
+	/*GIA Internal Entity Referencing*/
 	idActiveList = 0;
 	idActiveEntityTypeList = 0;	//temporary ID reserved for specific entity types; concept, action, substance etc
 	idActiveListReorderdIDforXMLsave = 0;
 	idInstance = 0;		//set as concept by default (GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE)
 
+
+	/*GIA Entity Name*/
 	entityName = "";
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
 	wordOrig = "";		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
 	#endif
 	confidence = 1.0;
 
+
+	/*GIA Entity Type*/
 	isConcept = false;
 	isSubstance = false;
 	isAction = false;
@@ -76,24 +81,13 @@ GIAentityNode::GIAentityNode(void)
 	hasAssociatedInstanceIsAction = false;
 	hasAssociatedInstanceIsCondition = false;
 	hasAssociatedTime = false;
-	hasProgressiveTemp = false;
 	isSubstanceQuality = false;
 	isSubstanceConcept = false;
 	isActionConcept = false;
+	negative = false;
 	
-	//type = undefinedEntityType;
-	//instance = undefinedInstance;
 
-	actionSubjectEntity = NULL;
-	actionObjectEntity = NULL;
-
-	conditionSubjectEntity = NULL;
-	conditionObjectEntity = NULL;
-	conditionType = CONDITION_NODE_TYPE_UNDEFINED;
-	timeConditionNode = NULL;
-
-	entityNodeDefiningThisInstance = NULL;
-
+	/*GIA Special Variables (Quantities/Measures)*/
 	hasQuantity = false;
 	quantityNumber = QUANTITY_NUMBER_UNDEFINED;
 	quantityModifier = QUANTITY_MODIFIER_UNDEFINED;	//not yet implemented
@@ -102,6 +96,8 @@ GIAentityNode::GIAentityNode(void)
 	hasMeasure = false;
 	measureType = MEASURE_TYPE_UNDEFINED;
 
+
+	/*GIA Draw Variables*/
 	initialisedForPrinting = false;
 	//printed = false;
 	printX = 0;
@@ -112,12 +108,15 @@ GIAentityNode::GIAentityNode(void)
 	printTextY = 0;
 	printCoordsAlreadyDefined = false;
 
+
+	/*GIA Translator Temporary Variables - Grammar*/
+	grammaticalNumber = GRAMMATICAL_NUMBER_UNDEFINED;
+	grammaticalWordTypeTemp = GRAMMATICAL_WORD_TYPE_UNDEFINED;
 	for(int grammaticalTenseModifierIndex=0; grammaticalTenseModifierIndex<GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES; grammaticalTenseModifierIndex++)
 	{
 		grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = false;
 	}
 	grammaticalTenseTemp = GRAMMATICAL_TENSE_UNDEFINED;
-	grammaticalNumber = GRAMMATICAL_NUMBER_UNDEFINED;
 	grammaticalDefiniteTemp = GRAMMATICAL_DEFINITE_UNDEFINED;
 	grammaticalRelexPersonOrStanfordProperNounTemp = GRAMMATICAL_PERSON_UNDEFINED;
 	grammaticalGenderTemp = GRAMMATICAL_GENDER_UNDEFINED;
@@ -127,7 +126,18 @@ GIAentityNode::GIAentityNode(void)
 	grammaticalDefiniteIndexOfDeterminerTemp = GIA_ENTITY_INDEX_UNDEFINED;
 	#endif
 	foundPossibleInfinitiveVerbTemp = false;
-	
+	#ifdef GIA_USE_STANFORD_CORENLP
+	/*
+	CharacterOffsetBeginTemp = -1;
+	CharacterOffsetEndTemp = -1;
+	*/
+	stanfordPOStemp = "";
+	NERTemp = FEATURE_NER_UNDEFINED;
+	NormalizedNERtemp = "";
+	TimexTemp = "";
+	#endif
+		
+	/*GIA Translator Temporary Variables*/
 	isSubjectTemp = false;
 	isObjectTemp = false;
 	hasSubstanceTemp = false;
@@ -135,7 +145,20 @@ GIAentityNode::GIAentityNode(void)
 	isActionTemp = false;
 	entityIndexTemp = GIA_ENTITY_INDEX_UNDEFINED;	//was 0 before 11 October 2012
 	sentenceIndexTemp = GIA_SENTENCE_INDEX_UNDEFINED;	//was 0 before 11 October 2012
-
+	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	isToBeComplimentOfActionTemp = false;
+	#else	
+	disableParsingAsPrepositionRelationTemp = false;
+	#endif
+	entityAlreadyDeclaredInThisContext = false;
+	hasAssociatedInstanceTemp = false;
+	#ifdef GIA_SUPPORT_ALIASES
+	isName = false;	
+	isNameQuery = false;
+	#endif
+	
+		
+	/*GIA Connections*/	
 	//to minimise query/referencing code
 	actionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS]);
 	incomingActionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS]);
@@ -151,20 +174,13 @@ GIAentityNode::GIAentityNode(void)
 	conditionSubjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT]);
 	conditionObjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT]);
 	entityNodeDefiningThisInstance = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE]);
-
-	#ifdef GIA_USE_ADVANCED_REFERENCING
-	entityCorrespondingBestMatch = NULL;
-	#endif
-
 	#ifdef GIA_USE_DATABASE
 	DBsetEntityConnectionsReferenceListsLoaded(this, true);	//for now, assume that a new entity will be configured with its connections loaded into RAM
 	#endif
-
 	/*
 	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_DEFINITIONS] = entityNodeDefinitionList;
 	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_SUBSTANCES] = propertyNodeList;
 	*/
-
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	/* initialisation shouldnt be necessary...
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
@@ -172,51 +188,31 @@ GIAentityNode::GIAentityNode(void)
 		entityVectorConnectionsParametersSameReferenceSetArray[i] = new vector<GIAentityNode*>();
 	}
 	*/
-	#endif
-
-
-	#ifdef GIA_USE_STANFORD_CORENLP
-	/*
-	CharacterOffsetBeginTemp = -1;
-	CharacterOffsetEndTemp = -1;
-	*/
-	stanfordPOStemp = "";
-	NERTemp = FEATURE_NER_UNDEFINED;
-	NormalizedNERtemp = "";
-	TimexTemp = "";
-	#endif
-
-
-	entityAlreadyDeclaredInThisContext = false;
-
-	hasAssociatedInstanceTemp = false;
-
+	#endif	
+	conditionType = CONDITION_NODE_TYPE_UNDEFINED;
+	timeConditionNode = NULL;	
+	
+	
+	/*Query Variables*/
 	isQuery = false;
 	isWhichOrEquivalentWhatQuery = false;
-	#ifdef GIA_SUPPORT_ALIASES
-	isName = false;	
-	isNameQuery = false;
-	#endif	
 	isAnswerToQuery = false;
 	testedForQueryComparison = false;
 	testedForQueryComparisonTemp = false;
-	queryAnswerContext = false;
-
-	negative = false;
-
-	disableParsingAsPrepositionRelationTemp = false;
-
+	queryAnswerContext = false;	
 	queryEntityTraced = false;
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	entityCorrespondingBestMatch = NULL;
+	#endif
 
+
+	/*GIA Miscellaneous Internal Variables*/
 	disabled = false;
 	permanentConcept = false;
-
-	CXLdummyNode = false;
-
 	firstSentenceToAppearInNetwork = true;
-
-	wordNetPOS = GRAMMATICAL_WORD_TYPE_UNDEFINED;
-
+		//CXL:
+	CXLdummyNode = false;
+		//referencing:
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	referenceSetID = GIA_REFERENCE_SET_ID_UNDEFINED;
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
@@ -226,26 +222,20 @@ GIAentityNode::GIAentityNode(void)
 	wasReference = false;
 	#endif		
 	#endif
-
+		//databasing:
 	#ifdef GIA_USE_DATABASE
 	added = false;		//implies database Update is Required		//CHECKTHIS removed 'bool' 21 July 2012
 	modified = false;	//implies database Update is Required		//CHECKTHIS removed 'bool' 21 July 2012
-
 	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 	conceptEntityLoaded = NULL;
 	#endif
 	#endif
-
+		//nlg:
 	#ifdef GIA_USE_NLG
 	parsedForLanguageGeneration = false;
+	sourceAddedInLanguageGeneration = false;		//added 3 Aug 2013 - why wasn't this being initialised?
 	sourceReferencedInLanguageGeneration = false;
 	#endif
-
-	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
-	isName = false;
-	#endif
-	
-	isToBeComplimentOfActionTemp = false;
 }
 GIAentityNode::~GIAentityNode(void)
 {
@@ -492,6 +482,376 @@ vector<string> explode(const string& str, const char& ch)
 
 #endif
 
+
+EntityCharacteristic::EntityCharacteristic()
+{
+	name = "";
+	value = "";
+	arrayIndex = 0;
+	isNegative = false;	//only used for test (not assign)
+}
+EntityCharacteristic::EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew)
+{
+	name = entityPropertyNameNew;
+	value = entityPropertyValueNew;
+	arrayIndex = 0;
+	isNegative = false;
+}
+EntityCharacteristic::EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, bool isNegativeNew)
+{
+	name = entityPropertyNameNew;
+	value = entityPropertyValueNew;
+	arrayIndex = 0;
+	isNegative = isNegativeNew;
+}
+EntityCharacteristic::EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew)
+{
+	name = entityPropertyNameNew;
+	value = entityPropertyValueNew;
+	arrayIndex = entityPropertyArrayIndexNew;
+	isNegative = false;
+}
+EntityCharacteristic::EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew, bool isNegativeNew)
+{
+	name = entityPropertyNameNew;
+	value = entityPropertyValueNew;
+	arrayIndex = entityPropertyArrayIndexNew;
+	isNegative = isNegativeNew;
+}
+EntityCharacteristic::~EntityCharacteristic(void)
+{
+}
+
+bool testEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristic*> * redistributeSpecialCasePropertiesTestVector, bool andOrOr)			
+{
+	bool passFound = false;
+	bool failureFound = false;
+	bool vectorHasItems = false;
+	for(vector<EntityCharacteristic*>::iterator entityCharacteristicIter = redistributeSpecialCasePropertiesTestVector->begin(); entityCharacteristicIter != redistributeSpecialCasePropertiesTestVector->end(); entityCharacteristicIter++)
+	{
+		vectorHasItems = true;
+		EntityCharacteristic * entityCharacteristic = *entityCharacteristicIter;
+		//cout << "entityCharacteristic = " << entityCharacteristic->name << ", " << entityCharacteristic->value << endl;
+		if(testEntityCharacteristic(entity, entityCharacteristic))
+		{
+			passFound = true;	
+		}
+		else
+		{
+			failureFound = true;
+		}
+		//cout << "done" << endl;
+	}
+	
+	bool passedRelation = true;
+	if(vectorHasItems)
+	{
+		if(andOrOr)
+		{
+			if(failureFound)
+			{
+				passedRelation = false;
+			}
+			else
+			{
+				passedRelation = true;
+			}
+		}
+		else
+		{
+			if(passFound)
+			{
+				passedRelation = true;
+			}
+			else
+			{
+				passedRelation = false;
+			}
+		} 
+	}	
+	return passedRelation;
+}				
+void setEntityCharacteristics(GIAentityNode * entity, vector<EntityCharacteristic*> * redistributeSpecialCasePropertiesAssignmentVector)																																						
+{
+	for(vector<EntityCharacteristic*>::iterator entityCharacteristicIter = redistributeSpecialCasePropertiesAssignmentVector->begin(); entityCharacteristicIter != redistributeSpecialCasePropertiesAssignmentVector->end(); entityCharacteristicIter++)
+	{
+		EntityCharacteristic * entityCharacteristic = *entityCharacteristicIter;
+		setEntityCharacteristic(entity, entityCharacteristic);
+	}
+}
+bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic)
+{
+	bool foundMatch = false;
+	//cout << "testEntityCharacteristic():" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
+	
+	/*GIA Entity Type*/
+	testEntityCharacteristicIterationbool(entity->isConcept, entityCharacteristic, "isConcept", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->isSubstance, entityCharacteristic, "isSubstance", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->isAction, entityCharacteristic, "isAction", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->isCondition, entityCharacteristic, "isCondition", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->hasAssociatedInstance, entityCharacteristic, "hasAssociatedInstance", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->hasAssociatedInstanceIsAction, entityCharacteristic, "hasAssociatedInstanceIsAction", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->hasAssociatedInstanceIsCondition, entityCharacteristic, "hasAssociatedInstanceIsCondition", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->hasAssociatedTime, entityCharacteristic, "hasAssociatedTime", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->isSubstanceQuality, entityCharacteristic, "isSubstanceQuality", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->isSubstanceConcept, entityCharacteristic, "isSubstanceConcept", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->isActionConcept, entityCharacteristic, "isActionConcept", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->negative, entityCharacteristic, "negative", &foundMatch);
+
+	/*GIA Connections*/
+	testEntityCharacteristicIterationint(entity->conditionType, entityCharacteristic, "conditionType", &foundMatch);
+
+	/*GIA Special Variables (Quantities/Measures)*/
+	testEntityCharacteristicIterationbool(entity->hasQuantity, entityCharacteristic, "hasQuantity", &foundMatch);
+	testEntityCharacteristicIterationint(entity->quantityNumber, entityCharacteristic, "quantityNumber", &foundMatch);
+	testEntityCharacteristicIterationstring(entity->quantityNumberString, entityCharacteristic, "quantityNumberString", &foundMatch);
+	testEntityCharacteristicIterationint(entity->quantityModifier, entityCharacteristic, "quantityModifier", &foundMatch);
+	testEntityCharacteristicIterationstring(entity->quantityModifierString, entityCharacteristic, "quantityModifierString", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->hasQuantityMultiplier, entityCharacteristic, "hasQuantityMultiplier", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->hasMeasure, entityCharacteristic, "hasMeasure", &foundMatch);
+	testEntityCharacteristicIterationint(entity->measureType, entityCharacteristic, "measureType", &foundMatch);
+
+	/*GIA Translator Temporary Variables - Grammar*/
+	testEntityCharacteristicIterationint(entity->grammaticalNumber, entityCharacteristic, "grammaticalNumber", &foundMatch);
+	testEntityCharacteristicIterationint(entity->grammaticalWordTypeTemp, entityCharacteristic, "grammaticalWordTypeTemp", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->grammaticalTenseModifierArrayTemp[entityCharacteristic->arrayIndex], entityCharacteristic, "grammaticalTenseModifierArrayTemp", &foundMatch);
+	testEntityCharacteristicIterationint(entity->grammaticalTenseTemp, entityCharacteristic, "grammaticalTenseTemp", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->grammaticalDefiniteTemp, entityCharacteristic, "grammaticalDefiniteTemp", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->grammaticalRelexPersonOrStanfordProperNounTemp, entityCharacteristic, "grammaticalRelexPersonOrStanfordProperNounTemp", &foundMatch);
+	testEntityCharacteristicIterationint(entity->grammaticalGenderTemp, entityCharacteristic, "grammaticalGenderTemp", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->grammaticalPronounTemp, entityCharacteristic, "grammaticalPronounTemp", &foundMatch);
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	testEntityCharacteristicIterationint(entity->grammaticalDefiniteIndexOfDeterminerTemp, entityCharacteristic, "grammaticalDefiniteIndexOfDeterminerTemp", &foundMatch);
+	#endif
+	testEntityCharacteristicIterationbool(entity->foundPossibleInfinitiveVerbTemp, entityCharacteristic, "foundPossibleInfinitiveVerbTemp", &foundMatch);
+	#ifdef GIA_USE_STANFORD_CORENLP
+	testEntityCharacteristicIterationstring(entity->stanfordPOStemp, entityCharacteristic, "stanfordPOStemp", &foundMatch);
+	testEntityCharacteristicIterationstring(entity->NormalizedNERtemp, entityCharacteristic, "NormalizedNERtemp", &foundMatch);
+	testEntityCharacteristicIterationstring(entity->TimexTemp, entityCharacteristic, "TimexTemp", &foundMatch);
+	#endif
+	testEntityCharacteristicIterationint(entity->NERTemp, entityCharacteristic, "NERTemp", &foundMatch);
+
+	/*GIA Translator Temporary Variables*/
+	testEntityCharacteristicIterationbool(entity->isSubjectTemp, entityCharacteristic, "isSubjectTemp", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->isObjectTemp, entityCharacteristic, "isObjectTemp", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->hasSubstanceTemp, entityCharacteristic, "hasSubstanceTemp", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->isActionTemp, entityCharacteristic, "isActionTemp", &foundMatch);
+	testEntityCharacteristicIterationint(entity->entityIndexTemp, entityCharacteristic, "entityIndexTemp", &foundMatch);
+	testEntityCharacteristicIterationint(entity->sentenceIndexTemp, entityCharacteristic, "sentenceIndexTemp", &foundMatch);
+	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	testEntityCharacteristicIterationbool(entity->isToBeComplimentOfActionTemp, entityCharacteristic, "isToBeComplimentOfActionTemp", &foundMatch);
+	#else
+	testEntityCharacteristicIterationbool(entity->disableParsingAsPrepositionRelationTemp, entityCharacteristic, "disableParsingAsPrepositionRelationTemp", &foundMatch);
+	#endif
+	testEntityCharacteristicIterationbool(entity->entityAlreadyDeclaredInThisContext, entityCharacteristic, "entityAlreadyDeclaredInThisContext", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->hasAssociatedInstanceTemp, entityCharacteristic, "hasAssociatedInstanceTemp", &foundMatch);
+	#ifdef GIA_SUPPORT_ALIASES
+	testEntityCharacteristicIterationbool(entity->isName, entityCharacteristic, "isName", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->isNameQuery, entityCharacteristic, "isNameQuery", &foundMatch);
+	#endif
+	
+	bool result = false;
+	if(entityCharacteristic->isNegative)
+	{
+		if(foundMatch)
+		{
+			result = false;
+		}
+		else
+		{
+			result = true;
+		}
+	}
+	else
+	{
+		if(foundMatch)
+		{
+			result = true;
+		}
+		else
+		{
+			result = false;
+		}	
+	}
+
+	return result;
+}
+void testEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch)
+{
+	if(entityCharacteristicTest->name == iterationVariable)
+	{
+		bool entityCharacteristicTestValue;
+		if(entityCharacteristicTest->value == "true")
+		{
+			entityCharacteristicTestValue = true;
+		}
+		else if(entityCharacteristicTest->value == "false")
+		{
+			entityCharacteristicTestValue = false;
+		}	
+		else
+		{
+			cout << "testEntityCharacteristicIterationbool() error: illegal entityCharacteristicTestValue for " << iterationVariable << ": " << entityCharacteristicTest->value << endl;
+		}
+		//bool entityCharacteristicTestValue = atoi(entityCharacteristicTest->value.c_str());		//if GIA Translator XML file booleans are defined as '1'/'0' instead of 'true'/'false'
+		if(entityCharacteristicTestValue == entityVal)
+		{
+			cout << "testEntityCharacteristicIterationbool(): " << entityCharacteristicTest->name << " = " << entityCharacteristicTestValue << endl;	
+			*foundMatch = true;
+		} 	
+	}
+}
+void testEntityCharacteristicIterationint(int entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch)
+{
+	if(entityCharacteristicTest->name == iterationVariable)
+	{
+		int entityCharacteristicTestValue = atoi(entityCharacteristicTest->value.c_str());
+		if(entityCharacteristicTestValue == entityVal)
+		{
+			cout << "testEntityCharacteristicIterationint(): " << entityCharacteristicTest->name << " = " << entityCharacteristicTestValue << endl;
+			*foundMatch = true;
+		} 	
+	}
+}
+void testEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic * entityCharacteristicTest, string iterationVariable, bool *foundMatch)
+{
+	if(entityCharacteristicTest->name == iterationVariable)
+	{
+		string entityCharacteristicTestValue = entityCharacteristicTest->value;
+		if(entityCharacteristicTestValue == entityVal)
+		{
+			cout << "testEntityCharacteristicIterationstring(): " << entityCharacteristicTest->name << " = " << entityCharacteristicTestValue << endl;
+			*foundMatch = true;
+		} 	
+	}
+}
+
+			
+bool setEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * entityCharacteristic)
+{
+	bool foundMatch = false;
+	
+	//cout << "setEntityCharacteristic():" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
+	
+	/*GIA Entity Type*/
+	setEntityCharacteristicIterationbool(&(entity->isConcept), entityCharacteristic, "isConcept", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->isSubstance), entityCharacteristic, "isSubstance", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->isAction), entityCharacteristic, "isAction", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->isCondition), entityCharacteristic, "isCondition", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->hasAssociatedInstance), entityCharacteristic, "hasAssociatedInstance", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->hasAssociatedInstanceIsAction), entityCharacteristic, "hasAssociatedInstanceIsAction", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->hasAssociatedInstanceIsCondition), entityCharacteristic, "hasAssociatedInstanceIsCondition", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->hasAssociatedTime), entityCharacteristic, "hasAssociatedTime", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->isSubstanceQuality), entityCharacteristic, "isSubstanceQuality", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->isSubstanceConcept), entityCharacteristic, "isSubstanceConcept", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->isActionConcept), entityCharacteristic, "isActionConcept", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->negative), entityCharacteristic, "negative", &foundMatch);
+
+	/*GIA Connections*/
+	setEntityCharacteristicIterationint(&(entity->conditionType), entityCharacteristic, "conditionType", &foundMatch);
+
+	/*GIA Special Variables (Quantities/Measures)*/
+	setEntityCharacteristicIterationbool(&(entity->hasQuantity), entityCharacteristic, "hasQuantity", &foundMatch);
+	setEntityCharacteristicIterationint(&(entity->quantityNumber), entityCharacteristic, "quantityNumber", &foundMatch);
+	setEntityCharacteristicIterationstring(&(entity->quantityNumberString), entityCharacteristic, "quantityNumberString", &foundMatch);
+	setEntityCharacteristicIterationint(&(entity->quantityModifier), entityCharacteristic, "quantityModifier", &foundMatch);
+	setEntityCharacteristicIterationstring(&(entity->quantityModifierString), entityCharacteristic, "quantityModifierString", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->hasQuantityMultiplier), entityCharacteristic, "hasQuantityMultiplier", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->hasMeasure), entityCharacteristic, "hasMeasure", &foundMatch);
+	setEntityCharacteristicIterationint(&(entity->measureType), entityCharacteristic, "measureType", &foundMatch);
+
+	/*GIA Translator Temporary Variables - Grammar*/
+	setEntityCharacteristicIterationint(&(entity->grammaticalNumber), entityCharacteristic, "grammaticalNumber", &foundMatch);
+	setEntityCharacteristicIterationint(&(entity->grammaticalWordTypeTemp), entityCharacteristic, "grammaticalWordTypeTemp", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->grammaticalTenseModifierArrayTemp[entityCharacteristic->arrayIndex]), entityCharacteristic, "grammaticalTenseModifierArrayTemp", &foundMatch);
+	setEntityCharacteristicIterationint(&(entity->grammaticalTenseTemp), entityCharacteristic, "grammaticalTenseTemp", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->grammaticalDefiniteTemp), entityCharacteristic, "grammaticalDefiniteTemp", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->grammaticalRelexPersonOrStanfordProperNounTemp), entityCharacteristic, "grammaticalRelexPersonOrStanfordProperNounTemp", &foundMatch);
+	setEntityCharacteristicIterationint(&(entity->grammaticalGenderTemp), entityCharacteristic, "grammaticalGenderTemp", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->grammaticalPronounTemp), entityCharacteristic, "grammaticalPronounTemp", &foundMatch);
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	setEntityCharacteristicIterationint(&(entity->grammaticalDefiniteIndexOfDeterminerTemp), entityCharacteristic, "grammaticalDefiniteIndexOfDeterminerTemp", &foundMatch);
+	#endif
+	setEntityCharacteristicIterationbool(&(entity->foundPossibleInfinitiveVerbTemp), entityCharacteristic, "foundPossibleInfinitiveVerbTemp", &foundMatch);
+	#ifdef GIA_USE_STANFORD_CORENLP
+	setEntityCharacteristicIterationstring(&(entity->stanfordPOStemp), entityCharacteristic, "stanfordPOStemp", &foundMatch);
+	setEntityCharacteristicIterationstring(&(entity->NormalizedNERtemp), entityCharacteristic, "NormalizedNERtemp", &foundMatch);
+	setEntityCharacteristicIterationstring(&(entity->TimexTemp), entityCharacteristic, "TimexTemp", &foundMatch);
+	#endif
+	setEntityCharacteristicIterationint(&(entity->NERTemp), entityCharacteristic, "NERTemp", &foundMatch);
+
+
+	/*GIA Translator Temporary Variables*/
+	setEntityCharacteristicIterationbool(&(entity->isSubjectTemp), entityCharacteristic, "isSubjectTemp", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->isObjectTemp), entityCharacteristic, "isObjectTemp", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->hasSubstanceTemp), entityCharacteristic, "hasSubstanceTemp", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->isActionTemp), entityCharacteristic, "isActionTemp", &foundMatch);
+	setEntityCharacteristicIterationint(&(entity->entityIndexTemp), entityCharacteristic, "entityIndexTemp", &foundMatch);
+	setEntityCharacteristicIterationint(&(entity->sentenceIndexTemp), entityCharacteristic, "sentenceIndexTemp", &foundMatch);
+	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	setEntityCharacteristicIterationbool(&(entity->isToBeComplimentOfActionTemp), entityCharacteristic, "isToBeComplimentOfActionTemp", &foundMatch);
+	#else
+	setEntityCharacteristicIterationbool(&(entity->disableParsingAsPrepositionRelationTemp), entityCharacteristic, "disableParsingAsPrepositionRelationTemp", &foundMatch);
+	#endif
+	setEntityCharacteristicIterationbool(&(entity->entityAlreadyDeclaredInThisContext), entityCharacteristic, "entityAlreadyDeclaredInThisContext", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->hasAssociatedInstanceTemp), entityCharacteristic, "hasAssociatedInstanceTemp", &foundMatch);
+	#ifdef GIA_SUPPORT_ALIASES
+	setEntityCharacteristicIterationbool(&(entity->isName), entityCharacteristic, "isName", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->isNameQuery), entityCharacteristic, "isNameQuery", &foundMatch);
+	#endif
+	
+	if(!foundMatch)
+	{
+		cout << "setEntityCharacteristic() error: entityCharacteristic not found:" << entityCharacteristic->name << endl;
+	}
+}
+
+void setEntityCharacteristicIterationbool(bool * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch)
+{
+	if(entityCharacteristicSet->name == iterationVariable)
+	{
+		bool entityCharacteristicSetValue;
+		if(entityCharacteristicSet->value == "true")
+		{
+			entityCharacteristicSetValue = true;
+		}
+		else if(entityCharacteristicSet->value == "false")
+		{
+			entityCharacteristicSetValue = false;
+		}	
+		else
+		{
+			cout << "testEntityCharacteristicIterationbool() error: illegal entityCharacteristicTestValue for " << iterationVariable << ": " << entityCharacteristicSet->value << endl;
+		}
+		cout << "setEntityCharacteristicIterationbool(): " << entityCharacteristicSet->name << " = " << entityCharacteristicSetValue << endl;
+		
+		*entityVal = entityCharacteristicSetValue;
+		*foundMatch = true;	
+	}
+}
+void setEntityCharacteristicIterationint(int * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch)
+{
+	if(entityCharacteristicSet->name == iterationVariable)
+	{
+		int entityCharacteristicSetValue = atoi(entityCharacteristicSet->value.c_str());
+		cout << "setEntityCharacteristicIterationint(): " << entityCharacteristicSet->name << " = " << entityCharacteristicSetValue << endl;
+		*entityVal = entityCharacteristicSetValue;
+		*foundMatch = true;	
+	}
+}
+void setEntityCharacteristicIterationstring(string * entityVal, EntityCharacteristic * entityCharacteristicSet, string iterationVariable, bool *foundMatch)
+{
+	if(entityCharacteristicSet->name == iterationVariable)
+	{
+		string entityCharacteristicSetValue = entityCharacteristicSet->value;
+		cout << "setEntityCharacteristicIterationstring(): " << entityCharacteristicSet->name << " = " << entityCharacteristicSetValue << endl;
+		*entityVal = entityCharacteristicSetValue;
+		*foundMatch = true;			
+	}
+}
+
+
+			
 
 
 /*

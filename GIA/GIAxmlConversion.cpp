@@ -23,7 +23,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t5c 02-August-2013
+ * Project Version: 1t6a 02-August-2013
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -528,8 +528,10 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 	bool hasAssociatedTimeFound = false;
 	bool isSubstanceQualityFound = false;
 	bool isSubstanceConceptFound = false;
+	bool isActionConceptFound = false;
+	bool negativeFound = false;
 	bool disabledFound = false;
-
+	
 	bool grammaticalNumberFound = false;
 	bool hasQuantityFound = false;
 	bool quantityNumberFound = false;
@@ -656,7 +658,19 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 			bool attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->isSubstanceConcept = attributeValue;
 			isSubstanceConceptFound = true;
-		}		
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isActionConcept)
+		{
+			bool attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->isActionConcept = attributeValue;
+			isActionConceptFound = true;
+		}
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_negative)
+		{
+			bool attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->negative = attributeValue;
+			negativeFound = true;
+		}						
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_disabled)
 		{
 			bool attributeValue = atoi(currentAttribute->value.c_str());
@@ -1287,6 +1301,22 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;	
 
+	currentAttribute->name = NET_XML_ATTRIBUTE_isActionConcept;
+	sprintf(tempString, "%d", int(currentEntity->isActionConcept));
+	currentAttribute->value = tempString;
+
+	newAttribute = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute;
+	currentAttribute = currentAttribute->nextAttribute;	
+
+	currentAttribute->name = NET_XML_ATTRIBUTE_negative;
+	sprintf(tempString, "%d", int(currentEntity->negative));
+	currentAttribute->value = tempString;
+
+	newAttribute = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute;
+	currentAttribute = currentAttribute->nextAttribute;	
+		
 	currentAttribute->name = NET_XML_ATTRIBUTE_disabled;
 	sprintf(tempString, "%d", int(currentEntity->disabled));
 	currentAttribute->value = tempString;

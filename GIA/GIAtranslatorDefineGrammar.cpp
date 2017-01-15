@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t5c 02-August-2013
+ * Project Version: 1t6a 02-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -357,10 +357,10 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 			#endif
 		}
 
-		//fill wordNetPOS array for wordnet - added 26 April 2012
-		int wordNetPOS = GRAMMATICAL_WORD_TYPE_UNDEFINED;
-		convertRelexPOStypeToWordnetWordType(&(currentFeatureInList->type), &wordNetPOS);
-		currentFeatureInList->grammaticalWordType = wordNetPOS;
+		//fill grammaticalWordTypeTemp array for wordnet - added 26 April 2012
+		int grammaticalWordTypeTemp = GRAMMATICAL_WORD_TYPE_UNDEFINED;
+		convertRelexPOStypeToWordnetWordType(&(currentFeatureInList->type), &grammaticalWordTypeTemp);
+		currentFeatureInList->grammaticalWordType = grammaticalWordTypeTemp;
 
 		#ifdef FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION
 		//fill NER array after Relex Parse for Stanford equivalent proper noun detection - added 26 April 2012
@@ -876,7 +876,7 @@ void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode * entity, Feature * cu
 	#endif
 
 	entity->grammaticalPronounTemp = currentFeatureInList->grammaticalIsPronoun;
-	entity->wordNetPOS = currentFeatureInList->grammaticalWordType;
+	entity->grammaticalWordTypeTemp = currentFeatureInList->grammaticalWordType;
 
 	#ifdef GIA_USE_STANFORD_CORENLP
 	entity->stanfordPOStemp = currentFeatureInList->stanfordPOS;

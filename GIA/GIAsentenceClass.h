@@ -23,7 +23,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t5c 02-August-2013
+ * Project Version: 1t6a 02-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -51,7 +51,7 @@ using namespace std;
 //#define FEATURE_GRAMMATICAL_TENSE_DATE "date"
 #define FEATURE_WORD_QUESTIONMARK "?"
 
-//from http://wiki.opencog.org/w/Word_substances (intermediary - used for translation purposes into WordNet int wordNetPOS only)
+//from http://wiki.opencog.org/w/Word_substances (intermediary - used for translation purposes into WordNet int grammaticalWordTypeTemp only)
 #define FEATURE_RELEX_POS_TYPE_ADJECTIVE (1)
 #define FEATURE_RELEX_POS_TYPE_ADVERB (2)
 #define FEATURE_RELEX_POS_TYPE_CONJUNCTION (3)
@@ -227,7 +227,7 @@ public:
 	bool grammaticalIsProperNoun;
 	int grammaticalGender;
 	bool grammaticalIsPronoun;
-	int grammaticalWordType;	//wordNetPOS
+	int grammaticalWordType;	//grammaticalWordTypeTemp
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	int grammaticalIsDefiniteIndexOfDeterminer;
 	#endif

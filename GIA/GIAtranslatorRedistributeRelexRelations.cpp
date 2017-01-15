@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t5c 02-August-2013
+ * Project Version: 1t6a 02-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -93,7 +93,7 @@ bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity
 	
 	//This section of code cannot be used as originally intended as some verb infinitives are also nouns (eg "yarn") - therefore must formally rely on correct infinitive tagging of verbs (use foundPossibleInfinitiveVerbTemp just in case)...
 	bool foundInfinitiveVerb = false;
-	if((actionOrSubstanceEntity->wordNetPOS == GRAMMATICAL_WORD_TYPE_VERB) && (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true))
+	if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true))
 	{
 		foundInfinitiveVerb = true;
 	}
@@ -109,7 +109,7 @@ bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity
 					
 	bool foundContinuousVerb = false;	
 	//if(actionOrSubstanceEntity->stanfordPOStemp == FEATURE_POS_TAG_VBG)		//Only Stanford Compatible
-	if((actionOrSubstanceEntity->wordNetPOS == GRAMMATICAL_WORD_TYPE_VERB) && (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true))	//Relex compatible
+	if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true))	//Relex compatible
 	{
 		/*
 		Wood is used for delivering milk.
@@ -261,7 +261,9 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 	param.disableEntity[REL1][REL_ENT1] = true; 	//disable "not" entity -
 	//param.useRedistributeSpecialCaseDisableInstanceAndConcept[REL1][REL_ENT1]= true;	//no longer required because collapseRedundantRelationAndMakeNegativeRelex() is executed during redistribution
 	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;	
-	param.useRedistributeSpecialCaseNegativeAssignment[REL2][REL_ENT1] = true;
+	//param.useRedistributeSpecialCaseNegativeAssignment[REL2][REL_ENT1] = true;
+	EntityCharacteristic useRedistributeSpecialCaseNegativeAssignment("negative", "true");
+	param.specialCaseCharacteristicsAssignmentVector[REL2][REL_ENT1].push_back(&useRedistributeSpecialCaseNegativeAssignment);
 	param.disableRelation[REL1] = true;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
@@ -671,8 +673,12 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PREPOSITION_OF;
-	param.relationTestSpecialCaseContinousVerb[REL1][REL_ENT1] = true;
-		
+	//param.relationTestSpecialCaseContinousVerb[REL1][REL_ENT1] = true;
+	EntityCharacteristic relationTestSpecialCaseContinousVerbA("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_VERB_STRING);
+	EntityCharacteristic relationTestSpecialCaseContinousVerbB("grammaticalTenseModifierArrayTemp", "true", GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE);
+	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCaseContinousVerbA);
+	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCaseContinousVerbB);
+
 	//eg Yarn is used in the making of cloth.	of(making[6], cloth[8]) + in(use[3], making[6]) -> _obj(making[6], _cloth[8])
 	GIAgenericDepRelInterpretationParameters paramA = param;
 	paramA.useRelationTest[REL2][REL_ENT3] = true; paramA.relationTest[REL2][REL_ENT3] = RELATION_TYPE_PREPOSITION_OF; paramA.relationTestIsNegative[REL2][REL_ENT3] = true;
@@ -710,7 +716,7 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 			{				
 				int continuousVerbIndex = currentRelationInList->relationGovernorIndex;
 				GIAentityNode * continuousVerbEntity = GIAentityNodeArray[continuousVerbIndex];
-				if((continuousVerbEntity->wordNetPOS == GRAMMATICAL_WORD_TYPE_VERB) && (continuousVerbEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true))
+				if((continuousVerbEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && (continuousVerbEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true))
 				{					
 					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 					while(currentRelationInList2->next != NULL)
@@ -1054,13 +1060,11 @@ void redistributeRelexRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence * c
 	/*interpret;
 		[given 'The name of the dog near the farm is Max.']
 		'What is the name of the red dog near the farm?' [return entity names]
-			nsubj(is-2, name-4) + attr(is-2, What-1) {+ det(name-4, the-3)} + poss/prep_of(name-4, dog-8) -> appos(dog[8], _$qVar[1])	{_name(dog[8], _$qVar)??}
+			? -> appos(dog[8], _$qVar[1])	{_name(dog[8], _$qVar)??}
 		'What is the dog's name?'
-			nsubj(is-2, name-6) + attr(is-2, What-1) + poss(name-6, dog-4)	
-				
+			? -> appos(dog[8], _$qVar[1])
 		'What is the number of the red dogs near the farm?' [return entity number/quantity]
-			nsubj(is-2, number-4) + attr(is-2, What-1) {/ det(number-4, the-3)} + poss/prep_of(number-4, dogs-8) -> _quantity(dog[8], _$qVar[1])
-		
+			? -> _quantity(dog[8], _$qVar[1])	
 	*/
 	
 //#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
@@ -1074,9 +1078,11 @@ void redistributeRelexRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence * c
 #ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 void redistributeRelexRelationsInterpretNameOfAsDefinition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	//eg interpret 'The red dog's name is Max.'		nsubj(Max-7, name-5) + poss(name-5, dog-3) -> appos(dog-3, Max-7)
-	//eg interpret 'The name of the red dog is Max.'	nsubj(Max-7, name-5) + prep_of(name-5, dog-3) -> appos(dog-3, Max-7)
-	//eg interpret 'Max is the name of the red dog.' 	nsubj(name-4, Max-1) + prep_of(name-4, dog-8) -> appos(dog-3, Max-7)
+	/*
+	eg interpret 'The red dog's name is Max.'		? -> appos(dog-3, Max-7)
+	eg interpret 'The name of the red dog is Max.'		? -> appos(dog-3, Max-7)
+	eg interpret 'Max is the name of the red dog.' 		? -> appos(dog-3, Max-7)
+	*/
 
 //#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 

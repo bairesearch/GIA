@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t5c 02-August-2013
+ * Project Version: 1t6a 02-August-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -172,9 +172,10 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 
 void disableRedundantNodesStanfordParser(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	//ONLY USED FOR OLD VERSION OF STANFORD PARSER/CORENLP? note the following example no longer generates a complm dependency relation... 
-	//eliminate redundant complementizer 'that' nodes eg 'The authors believe that their method can identify the time at which a subject becomes aware of her own movement.' / _complm(identify[8], that[4])
-
+	/*
+	ONLY USED FOR OLD VERSION OF STANFORD PARSER/CORENLP? note the following example no longer generates a complm dependency relation... 
+	eliminate redundant complementizer 'that' nodes eg 'The authors believe that their method can identify the time at which a subject becomes aware of her own movement.' / _complm(identify[8], that[4])
+	*/
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
@@ -1260,7 +1261,9 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	amod(dog-8, red-7)
 	prep_of(name-4, dog-8)
 	*/
-	paramOptMultA.relationTestSpecialCaseNotDefinite[REL3][REL_ENT1] = true;
+	//paramOptMultA.relationTestSpecialCaseNotDefinite[REL3][REL_ENT1] = true;
+	EntityCharacteristic relationTestSpecialCaseNotDefinite("grammaticalDefiniteTemp", "false");
+	paramOptMultA.specialCaseCharacteristicsTestAndVector[REL3][REL_ENT1].push_back(&relationTestSpecialCaseNotDefinite);	
 	#endif
 	paramOptMultA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramOptMultA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL3; paramOptMultA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;	
 	paramOptMultA.disableRelation[REL2] = true;
@@ -1737,11 +1740,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;
 	param.useRelationTest[REL2][REL_ENT1] = true; param.relationTest[REL2][REL_ENT1] = RELATION_ENTITY_BE;
 	param.useRelationTest[REL1][REL_ENT1] = true; param.relationTest[REL1][REL_ENT1] = RELATION_ENTITY_BE;
-	#ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
-	param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_POSSESSIVE; 
-	#else
-	param.relationTestSpecialCaseOfOrPossType[REL3] = true;
-	#endif
+	param.useRelationArrayTest[REL3][REL_ENT3] = true; param.relationArrayTest[REL3][REL_ENT3] = relationTypeOfOrPossessivePrepositionsNameArray; param.relationArrayTestSize[REL3][REL_ENT3] = RELATION_TYPE_OF_OR_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES;
 	param.useRelationIndexTest[REL3][REL_ENT1] = true; param.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT2;
 	param.useRelationTest[REL2][REL_ENT2] = true; param.relationTest[REL2][REL_ENT2] = REFERENCE_TYPE_QUESTION_QUERY_WHAT; 
 
@@ -1760,7 +1759,9 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 	paramNameQuery.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramNameQuery.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
 	paramNameQuery.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramNameQuery.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL3; paramNameQuery.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
 	paramNameQuery.useRedistributeRelationEntityReassignment[REL2][REL_ENT2] = true; paramNameQuery.redistributeRelationEntityReassignment[REL2][REL_ENT2] = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What" to _$qVar
-	paramNameQuery.useRedistributeSpecialCaseIsNameQueryAssignment[REL2][REL_ENT2] = true;
+	//paramNameQuery.useRedistributeSpecialCaseIsNameQueryAssignment[REL2][REL_ENT2] = true;
+	EntityCharacteristic useRedistributeSpecialCaseIsNameQueryAssignment("isNameQuery", "true");
+	paramNameQuery.specialCaseCharacteristicsAssignmentVector[REL2][REL_ENT2].push_back(&useRedistributeSpecialCaseIsNameQueryAssignment);
 	genericDependecyRelationInterpretation(&paramNameQuery, REL1);
 
 	/*interpret
@@ -1937,21 +1938,18 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 #ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
-	//eg interpret 'The red dog's name is Max.'		nsubj(Max-7, name-5) + poss(name-5, dog-3) -> appos(dog-3, Max-7)
-	//eg interpret 'The name of the red dog is Max.'	nsubj(Max-7, name-5) + prep_of(name-5, dog-3) -> appos(dog-3, Max-7)
-	//eg interpret 'Max is the name of the red dog.' 	nsubj(name-4, Max-1) + prep_of(name-4, dog-8) -> appos(dog-3, Max-7)
-
+	/*
+	eg interpret 'The red dog's name is Max.'		nsubj(Max-7, name-5) + poss(name-5, dog-3) -> appos(dog-3, Max-7)
+	eg interpret 'The name of the red dog is Max.'	nsubj(Max-7, name-5) + prep_of(name-5, dog-3) -> appos(dog-3, Max-7)
+	eg interpret 'Max is the name of the red dog.' 	nsubj(name-4, Max-1) + prep_of(name-4, dog-8) -> appos(dog-3, Max-7)
+	*/
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 		//general parameters
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 2;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_SUBJECT;
-	#ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
-	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_POSSESSIVE; 
-	#else
-	param.relationTestSpecialCaseOfOrPossType[REL2] = true;
-	#endif
-
+	param.useRelationArrayTest[REL2][REL_ENT3] = true; param.relationArrayTest[REL2][REL_ENT3] = relationTypeOfOrPossessivePrepositionsNameArray; param.relationArrayTestSize[REL2][REL_ENT3] = RELATION_TYPE_OF_OR_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES;
+	
 	GIAgenericDepRelInterpretationParameters paramType1 = param;
 	paramType1.useRelationTest[REL1][REL_ENT2] = true; paramType1.relationTest[REL1][REL_ENT2] = GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME;
 	paramType1.disableRelation[REL1] = true;
@@ -1959,7 +1957,9 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 	paramType1.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramType1.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
 	paramType1.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramType1.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; paramType1.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
 	paramType1.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramType1.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramType1.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT1;	
-	paramType1.useRedistributeSpecialCaseIsNameAssignment[REL2][REL_ENT2] = true;
+	//paramType1.useRedistributeSpecialCaseIsNameAssignment[REL2][REL_ENT2] = true;
+	EntityCharacteristic useRedistributeSpecialCaseIsNameAssignment("isName", "true");
+	paramType1.specialCaseCharacteristicsAssignmentVector[REL2][REL_ENT2].push_back(&useRedistributeSpecialCaseIsNameAssignment);	
 	genericDependecyRelationInterpretation(&paramType1, REL1);
 			
 	GIAgenericDepRelInterpretationParameters paramType2 = param;
@@ -1969,7 +1969,8 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 	paramType2.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; paramType2.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
 	paramType2.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramType2.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL2; paramType2.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
 	paramType2.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramType2.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramType2.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;	
-	paramType2.useRedistributeSpecialCaseIsNameAssignment[REL2][REL_ENT2] = true;
+	//paramType2.useRedistributeSpecialCaseIsNameAssignment[REL2][REL_ENT2] = true;
+	paramType2.specialCaseCharacteristicsAssignmentVector[REL2][REL_ENT2].push_back(&useRedistributeSpecialCaseIsNameAssignment);	
 	genericDependecyRelationInterpretation(&paramType2, REL1);	
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -2062,10 +2063,12 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 
 void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
 {
-	//eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) + advmod(is-3, away-6) - > _predadj(rabbit-2, away-6)
-	//OLD: nsubj(is-3, rabbit-2) + advmod(is-3, away-6) - > nsubj(away-6, rabbit-2) )
-		//case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; nsubj(is-4, rabbit-2) + advmod(is-4, away-7) + rcmod(rabbit-2, is-4) -> _predadj(rabbit-2, away-7)
-
+	/*
+	eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) + advmod(is-3, away-6) - > _predadj(rabbit-2, away-6)
+		//OLD: nsubj(is-3, rabbit-2) + advmod(is-3, away-6) - > nsubj(away-6, rabbit-2) )
+	case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; nsubj(is-4, rabbit-2) + advmod(is-4, away-7) + rcmod(rabbit-2, is-4) -> _predadj(rabbit-2, away-7)
+	*/
+	
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
 	param.numberOfRelations = 2;
@@ -2208,20 +2211,21 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 
 void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppos(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser)
 {
-
-	//eg1 Kane is late. 		nsubj(late-3, Kane-1) + cop(late-3, is-2) -> _predadj(kane-1, late-3) 				[NB non-determinate of governer and dependent of subject relation; take as indicator of substance]
-	//or
-	//eg2 She is the one. 		nsubj(one-4, She-1) + cop(one-4, is-2) + det(one-4, the-3) -> appos(She-1, one-4)		[NB determinate of dependent of subject relation; take as an indicator of definition]
-	//or
-	//eg3 The girl is tall. 	nsubj(tall-6, girl-2) + cop(tall-6, is-3) + det(girl-2, The-1) -> _predadj(girl-2, tall-6) 	[NB non-plural and determinate of governer of subject relation; take as indicator of substance]
-	//or
-	//eg4 bikes are machines.  	nsubj(machines-3, bikes-1) + cop(machines-3, are-2) -> appos(bikes-1, machines-3)		[NB plural and non-determinate of governer of subject relation; take as an indicator of definition]
-	//or
-	//eg5 the wheels are green.  	nsubj(green-6, wheels-4) + cop(green-6, are-5) -> _predadj(wheels-4, green-6)			[NB plural and determinate of governer of subject relation; take as indicator of substance]
-	//or
-	//eg6 That is Jim.   		nsubj(Jim-3, That-1) + cop(Jim-3, is-2) -> appos(That-1, Jim-3)
-	//or
-	//eg7 The time is 06:45.	nsubj(06:45-4, time-2) + cop(06:45-4, is-3) + det(time-2, The-1) -> appos(time-2, 06:45-4)
+	/*
+	eg1 Kane is late. 		nsubj(late-3, Kane-1) + cop(late-3, is-2) -> _predadj(kane-1, late-3) 				[NB non-determinate of governer and dependent of subject relation; take as indicator of substance]
+	or
+	eg2 She is the one.	      nsubj(one-4, She-1) + cop(one-4, is-2) + det(one-4, the-3) -> appos(She-1, one-4) 	      [NB determinate of dependent of subject relation; take as an indicator of definition]
+	or
+	eg3 The girl is tall.	      nsubj(tall-6, girl-2) + cop(tall-6, is-3) + det(girl-2, The-1) -> _predadj(girl-2, tall-6)      [NB non-plural and determinate of governer of subject relation; take as indicator of substance]
+	or
+	eg4 bikes are machines.       nsubj(machines-3, bikes-1) + cop(machines-3, are-2) -> appos(bikes-1, machines-3) 	      [NB plural and non-determinate of governer of subject relation; take as an indicator of definition]
+	or
+	eg5 the wheels are green.     nsubj(green-6, wheels-4) + cop(green-6, are-5) -> _predadj(wheels-4, green-6)		      [NB plural and determinate of governer of subject relation; take as indicator of substance]
+	or
+	eg6 That is Jim.	      nsubj(Jim-3, That-1) + cop(Jim-3, is-2) -> appos(That-1, Jim-3)
+	or
+	eg7 The time is 06:45.        nsubj(06:45-4, time-2) + cop(06:45-4, is-3) + det(time-2, The-1) -> appos(time-2, 06:45-4)
+	*/
 	
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
@@ -2241,7 +2245,19 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			param.numberOfRelations = 2;
 
 			GIAgenericDepRelInterpretationParameters paramA = param;
-			paramA.useRelationArrayTest[REL1][REL_ENT1] = true; paramA.relationArrayTest[REL1][REL_ENT1] = featurePOSindicatesAdjectiveOrAdverbTypeArray; paramA.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_TYPES; paramA.relationArrayTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
+			//paramA.useRelationArrayTest[REL1][REL_ENT1] = true; paramA.relationArrayTest[REL1][REL_ENT1] = featurePOSindicatesAdjectiveOrAdverbTypeArray; paramA.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_TYPES; paramA.relationArrayTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp1A("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp1B("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE_COMPARATIVE);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp1C("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE_SUPERLATIVE);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp1D("stanfordPOStemp", FEATURE_POS_TAG_ADVERB);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp1E("stanfordPOStemp", FEATURE_POS_TAG_ADVERB_COMPARATIVE);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp1F("stanfordPOStemp", FEATURE_POS_TAG_ADVERB_SUPERLATIVE);
+			paramA.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp1A);
+			paramA.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp1B);
+			paramA.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp1C);
+			paramA.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp1D);
+			paramA.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp1E);
+			paramA.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp1F);
 			paramA.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramA.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_ADJECTIVE_PREDADJ;
 			paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;	
 			paramA.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1;
@@ -2249,7 +2265,17 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			genericDependecyRelationInterpretation(&paramA, REL1);
 			
 			GIAgenericDepRelInterpretationParameters paramB = param;
-			paramB.useRelationArrayTest[REL1][REL_ENT1] = true; paramB.relationArrayTest[REL1][REL_ENT1] = featurePOSindicatesNounTypeArray; paramB.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_TYPES; paramB.relationArrayTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
+			//paramB.useRelationArrayTest[REL1][REL_ENT1] = true; paramB.relationArrayTest[REL1][REL_ENT1] = featurePOSindicatesNounTypeArray; paramB.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_TYPES; paramB.relationArrayTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp2A("stanfordPOStemp", FEATURE_POS_TAG_CD);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp2B("stanfordPOStemp", FEATURE_POS_TAG_NN);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp2C("stanfordPOStemp", FEATURE_POS_TAG_NNS);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp2D("stanfordPOStemp", FEATURE_POS_TAG_NNP);
+			EntityCharacteristic relationArrayTestSpecialCasePOStemp2E("stanfordPOStemp", FEATURE_POS_TAG_NNPS);
+			paramB.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp2A);
+			paramB.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp2B);
+			paramB.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp2C);
+			paramB.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp2D);
+			paramB.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&relationArrayTestSpecialCasePOStemp2E);
 			paramB.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramB.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
 			paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;	
 			paramB.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT1;
@@ -2272,7 +2298,9 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			nsubjpass(rowed-6, boat-2)	[already interpreted as obj in GIA]
 			*/
 			GIAgenericDepRelInterpretationParameters paramC = param;
-			paramC.useRelationTest[REL1][REL_ENT1] = true; paramC.relationTest[REL1][REL_ENT1] = FEATURE_POS_TAG_VBN; paramC.relationTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
+			//paramC.useRelationTest[REL1][REL_ENT1] = true; paramC.relationTest[REL1][REL_ENT1] = FEATURE_POS_TAG_VBN; paramC.relationTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
+			EntityCharacteristic relationTestSpecialCasePOStemp("stanfordPOStemp", FEATURE_POS_TAG_VBN);
+			param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCasePOStemp);
 			paramC.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; paramC.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_OBJECT;
 			genericDependecyRelationInterpretation(&paramC, REL1);
 		}
@@ -3113,7 +3141,9 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 	GIAgenericDepRelInterpretationParameters paramNsubjWho = paramNsubj;
 	paramNsubjWho.useRelationTest[REL1][REL_ENT2] = true; paramNsubjWho.relationTest[REL1][REL_ENT2] = REFERENCE_TYPE_QUESTION_QUERY_WHO;
 	#ifdef GIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS
-	paramNsubjWho.useRedistributeSpecialCaseIsNameQueryAssignment[REL1][REL_ENT2] = true; 
+	//paramNsubjWho.useRedistributeSpecialCaseIsNameQueryAssignment[REL1][REL_ENT2] = true; 
+	EntityCharacteristic useRedistributeSpecialCaseIsNameQueryAssignment("isNameQuery", "true");
+	paramNsubjWho.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT2].push_back(&useRedistributeSpecialCaseIsNameQueryAssignment);
 	#endif
 	genericDependecyRelationInterpretation(&paramNsubjWho, REL1);
 
@@ -3146,9 +3176,11 @@ void redistributeStanfordRelationsCreateQueryVarsWhoWhat(Sentence * currentSente
 	paramNsubjAndAttrWho.useRelationTest[REL2][REL_ENT2] = true; paramNsubjAndAttrWho.relationTest[REL2][REL_ENT2] = REFERENCE_TYPE_QUESTION_QUERY_WHO;
 	#ifdef GIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS
 	#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
-	paramNsubjAndAttrWho.useRedistributeSpecialCaseIsNameQueryAssignment[REL2][REL_ENT2] = true;
+	//paramNsubjAndAttrWho.useRedistributeSpecialCaseIsNameQueryAssignment[REL2][REL_ENT2] = true;
+	paramNsubjAndAttrWho.specialCaseCharacteristicsAssignmentVector[REL2][REL_ENT2].push_back(&useRedistributeSpecialCaseIsNameQueryAssignment);	
 	#else
-	paramNsubjAndAttrWho.useRedistributeSpecialCaseIsNameQueryAssignment[REL2][REL_ENT1] = true;
+	//paramNsubjAndAttrWho.useRedistributeSpecialCaseIsNameQueryAssignment[REL2][REL_ENT1] = true;
+	paramNsubjAndAttrWho.specialCaseCharacteristicsAssignmentVector[REL2][REL_ENT1].push_back(&useRedistributeSpecialCaseIsNameQueryAssignment);		
 	#endif
 	#endif
 	genericDependecyRelationInterpretation(&paramNsubjAndAttrWho, REL1);
@@ -3853,7 +3885,7 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 			if(convertPrepositionToRelex(&relationType, &prepositionFound) == RELATION_TYPE_PREPOSITION_OF)
 			{
 				//cout << "actionOrSubstanceEntity->stanfordPOStemp = " << actionOrSubstanceEntity->stanfordPOStemp << endl;
-				//cout << "actionOrSubstanceEntity->wordNetPOS = " << actionOrSubstanceEntity->wordNetPOS << endl;	
+				//cout << "actionOrSubstanceEntity->grammaticalWordTypeTemp = " << actionOrSubstanceEntity->grammaticalWordTypeTemp << endl;	
 				#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION							
 				/*
 				if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
@@ -3871,7 +3903,7 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 				*/
 				#endif
 				//if(actionOrSubstanceEntity->stanfordPOStemp == FEATURE_POS_TAG_VBG)
-				if((actionOrSubstanceEntity->wordNetPOS == GRAMMATICAL_WORD_TYPE_VERB) && (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true))
+				if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true))
 				{
 					currentRelationInList->relationType = RELATION_TYPE_OBJECT;				
 				}
@@ -4062,6 +4094,37 @@ void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSenten
 #ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 void redistributeStanfordRelationsDisableAuxAndCop(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	paramA.numberOfRelations = 1;
+	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_MODAL_AUX;
+	paramA.disableRelation[REL1] = true;
+	genericDependecyRelationInterpretation(&paramA, REL1);
+
+	GIAgenericDepRelInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	paramB.numberOfRelations = 1;
+	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_PASSIVE_AUX;
+	paramB.disableRelation[REL1] = true;
+	genericDependecyRelationInterpretation(&paramB, REL1);
+
+	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	paramC.numberOfRelations = 1;
+	paramC.useRelationTest[REL1][REL_ENT3] = true; paramC.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COPULA;
+	paramC.disableRelation[REL1] = true;
+	genericDependecyRelationInterpretation(&paramC, REL1);
+
+	GIAgenericDepRelInterpretationParameters paramD(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	paramD.numberOfRelations = 1;
+	paramD.useRelationTest[REL1][REL_ENT3] = true; paramD.relationTest[REL1][REL_ENT3] = RELATION_TYPE_MODAL_AUX;
+	paramD.disableRelation[REL1] = true;
+	genericDependecyRelationInterpretation(&paramD, REL1);
+
+	GIAgenericDepRelInterpretationParameters paramE(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	paramE.numberOfRelations = 1;
+	paramE.useRelationTest[REL1][REL_ENT3] = true; paramE.relationTest[REL1][REL_ENT3] = RELATION_TYPE_DETERMINER;
+	paramE.disableRelation[REL1] = true;
+	genericDependecyRelationInterpretation(&paramE, REL1);				
+#else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -4095,6 +4158,7 @@ void redistributeStanfordRelationsDisableAuxAndCop(Sentence * currentSentenceInL
 
 		currentRelationInList = currentRelationInList->next;
 	}
+#endif	
 }
 #endif
 
@@ -4110,7 +4174,9 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 	param.disableRelation[REL1] = true;
 	param.disableEntity[REL1][REL_ENT2] = true; 	//disable "not" entity
 	//param.useRedistributeSpecialCaseDisableInstanceAndConcept[REL1][REL_ENT2]= true;	//no longer required because collapseRedundantRelationAndMakeNegativeRelex() is executed during redistribution	
-	param.useRedistributeSpecialCaseNegativeAssignment[REL1][REL_ENT1] = true;
+	//param.useRedistributeSpecialCaseNegativeAssignment[REL1][REL_ENT1] = true;
+	EntityCharacteristic useRedistributeSpecialCaseNegativeAssignment("negative", "true");
+	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&useRedistributeSpecialCaseNegativeAssignment);
 	genericDependecyRelationInterpretation(&param, REL1);
 #else	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
