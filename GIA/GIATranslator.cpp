@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1f1c 23-Jan-2012
+ * Project Version: 1g6c 12-Feb-2012
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1952,9 +1952,14 @@ void collapseRedundantRelationAndMakeNegative(Sentence * currentSentenceInList, 
 						}
 						if(passed2)
 						{
+							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+							GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex]->disabled = true;
+							GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex]->disabled = true;
+							#endif
 							GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex] = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
 							GIAEntityNodeArray[currentRelationInList2->relationFunctionIndex]->negative = true;
 							currentRelationInList->disabled = true;
+
 						}
 					}
 					currentRelationInList2 = currentRelationInList2->next;
