@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k5a 21-July-2015
+ * Project Version: 2k5b 21-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -141,12 +141,12 @@
  *
  *		1. 	Install Java Development Tools (eg openjdk and openjdk-devel)
  *
- *				Ubuntu 14.04 example;
+ *				Linux Ubuntu 14.04 example;
  *
  *				sudo apt-get install openjdk-7-jdk OR;
  *				sudo dpkg -i openjdk-7-jdk_7u51-2.4.4-0ubuntu0.13.10.1_amd64.deb (and dependencies)
  *
- *				Redhat EL5/EL6 example;
+ *				Linux EL5/EL6 example;
  *
  *				yum install java-1.6.0-openjdk-devel
  *				yum install java-1.6.0-openjdk
@@ -159,12 +159,12 @@
  *
  *		2. 	Install Link Parser
  *
- *				Ubuntu 14.04 example;
+ *				Linux Ubuntu 14.04 example;
  *
  *				sudo apt-get install link-grammar liblink-grammar4-dev liblink-grammar4-java OR;
  *				sudo dpkg -i liblink-grammar4_4.7.4-2_amd64.deb liblink-grammar4-dev_4.7.4-2_amd64.deb liblink-grammar4-java_4.7.4-2_amd64.deb (and dependencies)
  *
- *				Redhat EL5/EL6 example;
+ *				Linux EL5/EL6 example;
  *				(download: http://www.link.cs.cmu.edu/link/
  *				alternate: http://www.abisource.com/projects/link-grammar/#download)
  *
@@ -178,12 +178,12 @@
  *
  *		3. 	Install WordNet dependencies (eg tcl and tk)
  *
- *				Ubuntu 14.04 example;
+ *				Linux Ubuntu 14.04 example;
  *
  *				sudo apt-get install tcl8.5 tcl8.5-lib tk8.5 tk8.5-lib OR;
  *				sudo dpkg -i tcl8.5_8.5.13-1ubuntu4_amd64.deb tcl8.5-lib_8.5.13-1ubuntu4_amd64.deb tk8.5_8.5.11-2ubuntu4_amd64.deb tk8.5-lib_8.5.11-2ubuntu4_amd64.deb (and dependencies)
  *
- *				Redhat EL5/EL6 example;
+ *				Linux EL5/EL6 example;
  *
  *				yum install tcl
  *				yum install tcl-devel
@@ -202,12 +202,12 @@
  *
  *		4.	Install WordNet
  *
- *				Ubuntu 14.04 example;
+ *				Linux Ubuntu 14.04 example;
  *
  *				sudo apt-get install wordnet wordnet-dev wordnet-sense-index OR;
  *				sudo dpkg -i wordnet_1%3a3.0-31_amd64.deb wordnet-base_1%3a3.0-31_all.deb wordnet-dev_1%3a3.0-31_amd64.deb wordnet-gui_1%3a3.0-31_amd64.deb wordnet-sense-index_1%3a3.0-31_all.deb
  *
- *				Redhat EL5/EL6 example;
+ *				Linux EL5/EL6 example;
  *
  *				rpm -i epel-release...
  *				yum install wordnet wordnet-devel
@@ -219,7 +219,7 @@
  *		5.	Install JWNL Java wordnet library
  *			(download: http://sourceforge.net/projects/jwordnet/)
  *
- *				Ubuntu 14.04 example;
+ *				Linux Ubuntu 14.04 example;
  *
  *				unzip jwnl14-rc2.zip
  *				cd jwnl14-rc2
@@ -229,7 +229,7 @@
  *				sudo chmod 777 /usr/share/java/jwnl.jar
  *				sudo chmod 777 /usr/local/share/java/jwnl.jar
  *
- *				Redhat/EL5 example;
+ *				Linux/EL5 example;
  *
  *				unzip jwnl14-rc2.zip
  *				cd jwnl14-rc2
@@ -242,7 +242,7 @@
  *
  *		6. 	Install Relex Dependencies (ant)
  *
- *				Ubuntu 14.04 example;
+ *				Linux Ubuntu 14.04 example;
  *
  *				sudo apt-get install ant
  *				sudo apt-get install libcommons-logging-java
@@ -250,7 +250,7 @@
  *				sudo dpkg -i ant_1.9.2-1_all.deb ant-optional_1.9.2-1_all.deb libxerces2-java_2.11.0-7_all.deb libxml-commons-external-java_1.4.01-2build1_all.deb libxml-commons-resolver1.1-java_1.2-7build1_all.deb
  *				sudo dpkg -i libapache-pom-java_10-2build1_all.deb libcommons-logging-java_1.1.3-1_all.deb libcommons-parent-java_22-2build1_all.deb liblink-grammar4-dev_4.7.4-2_amd64.deb liblink-grammar4-java_4.7.4-2_amd64.deb
  *
- *				Redhat/EL5 example;
+ *				Linux/EL5 example;
  *
  *				yum install ant
  *					OR [EL5]
@@ -267,7 +267,7 @@
  *		7. 	Install Gate 4.0 (optional)
  *			(download: http://gate.ac.uk/download/)
  *
- *				Redhat EL5/EL6 example;
+ *				Linux EL5/EL6 example;
  *				[user needs to have logged in as root at least one time in the past before able to run this from root]
  *
  *				su root
@@ -280,7 +280,7 @@
  *		8. 	Install GNU getopt (optional) (not required for Ubuntu)
  *			(download: http://www.java2s.com/Code/Jar/GHI/Downloadgetoptjar.htm)
  *
- *				Redhat EL5/EL6 example;
+ *				Linux EL5/EL6 example;
  *
  *				unzip getopt.jar.zip
  *				cd getopt.jar.zip_FILES
@@ -292,7 +292,7 @@
  *		9.	Install opennlp (optional)
  *			(download: http://sourceforge.net/projects/opennlp/)
  *
- *				Redhat EL5/EL6 example;
+ *				Linux EL5/EL6 example;
  *
  *				tar -xvf opennlp-tools-1.4.3.tgz
  *				cd opennlp-tools-1.4.3
@@ -316,7 +316,7 @@
  *				ant
  *				./batch-process.sh
  *
- *				Redhat/EL5 example;
+ *				Linux/EL5 example;
  *
  *				tar -xvf relex-1.4.0.tar.gz
  *				cd relex-1.4.0
@@ -333,7 +333,7 @@
  *				gedit file_properties.xml
  *				change dictionary_path to <param name="dictionary_path" value="/usr/share/wordnet"/>
  *
- *				Redhat EL5/EL6 example;
+ *				Linux EL5/EL6 example;
  *
  *				cd relex-1.4.0/data/wordnet
  *				gedit file_properties.xml
@@ -342,7 +342,7 @@
  *
  *		12.	Configure relex batch-process.sh/***.sh class paths;
  *
- *				Redhat EL5/EL6 and Ubuntu example;
+ *				Linux EL5/EL6 and Ubuntu example;
  *
  *				cd relex-1.4.0
  *				gedit batch-process.sh [append/modify the following]
@@ -377,7 +377,7 @@
  *
  *		Note Stanford Parser/CoreNLP requires Java Runtime Environment to be installed;
  *	
- *			(Ubuntu 14.04 only);
+ *			(Linux Ubuntu 14.04 only);
  *			Java 7 (1.7) installation:
  *				sudo apt-get install openjdk-7-jdk
  *			Java 8 (1.8) installation - required for Stanford Parser/CoreNLP 2015-04-20+:
@@ -389,7 +389,7 @@
  *				sudo update-alternatives --config javac [to set active/default Java Compiler]
  *				java -version [check version of java running]
  *	
- *			(Redhat EL5/EL6 only);
+ *			(Linux EL5/EL6 only);
  *			Java 7 (1.7) installation:
  *				yum install java-1.7.0-openjdk-devel
  *				yum install java-1.7.0-openjdk
