@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q6a 28-October-2012
+ * Project Version: 1q6b 28-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -84,6 +84,7 @@ using namespace std;
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_IGNORE_NSUBJ_AND_PREPOSITION_AND_COP_AND_DET	/added 9 August 2012
 
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_PARTMOD_DEAL_WITH_PROGRESSIVE_ANOMALY
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_ACTION_PREPOSITION_ACTION
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP		//working on this now (1j6h)
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_NSUBJ_AND_PREPOSITION	//added in addition to this; the pre-process of "two word prepositions" eg from http://en.wikipedia.org/wiki/List_of_English_prepositions, or post process (currently implemented)
@@ -599,6 +600,13 @@ used
 #define REFERENCE_TYPE_QUESTION_WHEN_CONTEXT_NUMBER_OF_TYPES (15)	//Eg what is the time?
 #define REFERENCE_TYPE_QUESTION_WHERE_CONTEXT_NUMBER_OF_TYPES (3)	//Eg what is the location?
 #define REFERENCE_TYPE_QUESTION_WHY_CONTEXT_NUMBER_OF_TYPES (3)		//Eg what is the reason?
+#define REFERENCE_TYPE_QUESTION_QUERY_WHICH "which"
+#define REFERENCE_TYPE_QUESTION_QUERY_IS "is"
+#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_ACTION_PREPOSITION_ACTION
+	#define FEATURE_QUERY_ACTION_PREPOSITION_ACTION_EQUIVALENT_QUERY_VARIABLE_NUMBER_OF_TYPES (8)	//or should this be arbitary?
+	static string featureQueryActionPrepositionActionEquivalentQueryVariableNameArray[FEATURE_QUERY_ACTION_PREPOSITION_ACTION_EQUIVALENT_QUERY_VARIABLE_NUMBER_OF_TYPES] = {REFERENCE_TYPE_QUESTION_QUERY_WHO, REFERENCE_TYPE_QUESTION_QUERY_WHAT, REFERENCE_TYPE_QUESTION_QUERY_HOW, REFERENCE_TYPE_QUESTION_QUERY_WHERE, REFERENCE_TYPE_QUESTION_QUERY_WHEN, REFERENCE_TYPE_QUESTION_QUERY_WHY, REFERENCE_TYPE_QUESTION_QUERY_WHICH, REFERENCE_TYPE_QUESTION_QUERY_IS};
+#endif
+
 
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE_REPLACEMENT "RELATION_TYPE_PREPOSITION_AT"
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN_REPLACEMENT "RELATION_TYPE_PREPOSITION_AT"	//must also set hasAssociatedTime to true
