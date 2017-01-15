@@ -49,7 +49,7 @@ class GIASharedConditionNode;
 	//ActionReasonNode;		//in order to perform an action
 */
 
-	//this is effectively an action instance node [all actions are recorded for the associated entityNodeDefiningThisAction and are found by looking at entityNodeDefiningThisAction's firstAssociatedActionNodeInList list]
+	//this is effectively an action instance node [all actions are recorded for the associated entityNodeDefiningThisAction and are found by looking at entityNodeDefiningThisAction's AssociatedActionNodeList list]
 class GIAActionNode
 {
 public:
@@ -74,20 +74,20 @@ public:
 	//list of conditions
 
 	//conditions: where, how, when
-	vector<GIATimeConditionNode*> firstTimeConditionNodeInList;
-	vector<GIATimeConditionNode*>::iterator firstTimeConditionNodeInListIterator;
-	vector<GIALocationConditionNode*> firstLocationConditionNodeInList;
-	vector<GIALocationConditionNode*>::iterator firstLocationConditionNodeInListIterator;
-	vector<GIAPropertyConditionNode*> firstPropertyConditionNodeInList;
-	vector<GIAPropertyConditionNode*>::iterator firstPropertyConditionNodeInListIterator;
-	vector<GIAActionConditionNode*> firstActionConditionNodeInList;
-	vector<GIAActionConditionNode*>::iterator firstActionConditionNodeInListIterator;
+	vector<GIATimeConditionNode*> TimeConditionNodeList;
+	vector<GIATimeConditionNode*>::iterator TimeConditionNodeListIterator;
+	vector<GIALocationConditionNode*> LocationConditionNodeList;
+	vector<GIALocationConditionNode*>::iterator LocationConditionNodeListIterator;
+	vector<GIAPropertyConditionNode*> PropertyConditionNodeList;
+	vector<GIAPropertyConditionNode*>::iterator PropertyConditionNodeListIterator;
+	vector<GIAActionConditionNode*> ActionConditionNodeList;
+	vector<GIAActionConditionNode*>::iterator ActionConditionNodeListIterator;
 
 	//reasons: why	[reverse action lookups]
-	vector<GIAPropertyConditionNode*> firstPropertyConditionNodeInReverseList;
-	vector<GIAPropertyConditionNode*>::iterator firstPropertyConditionNodeInReverseListIterator;
-	vector<GIAActionConditionNode*> firstActionConditionNodeInReverseList;
-	vector<GIAActionConditionNode*>::iterator firstActionConditionNodeInReverseListIterator;
+	vector<GIAPropertyConditionNode*> PropertyConditionNodeReverseList;
+	vector<GIAPropertyConditionNode*>::iterator PropertyConditionNodeReverseListIterator;
+	vector<GIAActionConditionNode*> ActionConditionNodeReverseList;
+	vector<GIAActionConditionNode*>::iterator ActionConditionNodeReverseListIterator;
 
 	//a template entity for the associated concept of this action/verb (eg verb=study, associated entity/noun = study):
 	GIAEntityNode * entityNodeDefiningThisAction;
