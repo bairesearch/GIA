@@ -3,7 +3,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j1a 20-Apr-2012
+ * Project Version: 1j1f 26-Apr-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
@@ -247,6 +247,8 @@ bool compareEntityNames(GIAEntityNode * queryEntityNode, GIAEntityNode * entityN
 	cout << "compareEntityNames() error: requires USE_WORDNET" << endl;
 	exit(0);
 	#endif
+	
+	//cout << "\t compareEntityNames: queryEntityNode " << queryEntityNode->entityName << ", with entityNode " << entityNode->entityName << endl; 
 		
 	if(queryEntityNode->entityName == entityNode->entityName)
 	{
@@ -256,15 +258,17 @@ bool compareEntityNames(GIAEntityNode * queryEntityNode, GIAEntityNode * entityN
 	{
 		if(queryEntityNode->wordType != entityNode->wordType)	//error checking
 		{
+			/*
 			#ifdef GIA_WORDNET_DEBUG
 			cout << "compareEntityNames() warning: (queryEntityNode->wordType != entityNode->wordType)" << endl;
-			cout << "queryEntityNode->wordType = " << queryEntityNode->wordType << endl;
-			cout << "entityNode->wordType = " << entityNode->wordType << endl;
+			cout << "queryEntityNode->wordType " << queryEntityNode->entityName << " = " << queryEntityNode->wordType << endl;
+			cout << "entityNode->wordType = " << entityNode->entityName << " = " << entityNode->wordType << endl;
 			#endif
+			*/
 		}
 		else
 		{		
-			if(checkIfQueryWordIsContainedWithinAnotherWordsSynsets(entityNode->entityName, queryEntityNode->entityName, entityNode->wordType))
+			if(checkIfQueryWordIsContainedWithinAnotherWordsSynsets(&(entityNode->entityName), &(queryEntityNode->entityName), entityNode->wordType))
 			{
 				entityNamesAreSynonymous = true;
 			}

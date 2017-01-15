@@ -3,7 +3,7 @@
  * File Name: GIAwordnet.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j1a 20-Apr-2012
+ * Project Version: 1j1f 26-Apr-2012
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -33,7 +33,7 @@ using namespace std;
 
 void initialiseWordNet();
 
-bool checkIfQueryWordIsContainedWithinAnotherWordsSynsets(string word, string queryWord, int wordType);
+bool checkIfQueryWordIsContainedWithinAnotherWordsSynsets(string * word, string * queryWord, int wordType);
 SynsetPtr findMostPopularSynset(string word, bool * wordIsFound, int wordType);
 	SynsetPtr findSynsets(string word, bool * wordIsFound, int wordType);
 	SynsetPtr findMostPopularSynset(SynsetPtr firstSenseInList, int wordType);	

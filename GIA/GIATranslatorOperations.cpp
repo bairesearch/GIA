@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j1a 20-Apr-2012
+ * Project Version: 1j1f 26-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -309,7 +309,8 @@ GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
 	newProperty->entityNodeDefiningThisInstance = propertyEntity;
 	propertyEntity->hasAssociatedInstance = true;
 	propertyEntity->hasAssociatedInstanceTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-
+	newProperty->wordType = propertyEntity->wordType;
+	
 	//if(propertyEntity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
 	//{
 	newProperty->grammaticalNumber = propertyEntity->grammaticalNumberTemp;
@@ -437,6 +438,7 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 	actionEntity->hasAssociatedInstance = true;
 	actionEntity->hasAssociatedInstanceIsAction = true;
 	actionEntity->hasAssociatedInstanceTemp = true;
+	newAction->wordType = actionEntity->wordType;
 	newAction->isAction = true;
 	//WHY WOULD THIS EVER BE REQURIED?; newAction->entityNodeContainingThisProperty = NULL;
 

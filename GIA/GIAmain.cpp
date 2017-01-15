@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j1a 20-Apr-2012
+ * Project Version: 1j1f 26-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
@@ -128,7 +128,7 @@ using namespace std;
 	#include "CEcreateLayout.h"
 	#include "CEvars.h"
 #endif
-#ifdef GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
+#ifdef USE_WORDNET
 #include "GIAwordnet.h"
 #include "wn.h"
 #endif
@@ -184,13 +184,17 @@ int main(int argc,char **argv)
 {
 	#ifdef GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
 	initialiseWordNet();
-	string wordExample = "go";
+	string wordExample = "like";
 	bool wordIsFound = false;
 	string listOfSynonyms[WORDNET_FINDTHEINFO_OUTPUT_MAX_NUMBER_SYNONYMS];
-	int wordType = NOUN;	//NOUN	VERB
+	int wordType = VERB;	//NOUN	VERB
 	findMostPopularSynset(wordExample, &wordIsFound, wordType);
 	//findSynonymsOLD(wordExample, &wordIsFound, listOfSynonyms, wordType);
 	exit(0);	
+	#endif
+	
+	#ifdef USE_WORDNET
+	initialiseWordNet();
 	#endif
 	
 	//print execution time
@@ -560,7 +564,7 @@ int main(int argc,char **argv)
 								
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "GIA.exe - Project Version: 1j1a 20-Apr-2012" << endl;
+			cout << "GIA.exe - Project Version: 1j1f 26-Apr-2012" << endl;
 			exit(1);
 		}
 

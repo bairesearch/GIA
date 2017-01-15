@@ -3,7 +3,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j1a 20-Apr-2012
+ * Project Version: 1j1f 26-Apr-2012
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -96,13 +96,17 @@ int similarityType =
 
 
 //assumes word and queryWord have the same wordType
-bool checkIfQueryWordIsContainedWithinAnotherWordsSynsets(string word, string queryWord, int wordType)
+bool checkIfQueryWordIsContainedWithinAnotherWordsSynsets(string * word, string * queryWord, int wordType)
 {
 	bool wordIsFound = false;
 	bool entityNamesAreSynonymous = false;
-	SynsetPtr firstSenseInList = findSynsets(word, &wordIsFound, wordType);
+	//cout << "wordType = " << wordType << endl;
+	SynsetPtr firstSenseInList = findSynsets(*word, &wordIsFound, wordType);
+	
 	if(wordIsFound)
 	{
+		//cout << "wordIsFound: " << *word << endl;
+		
 		//now search the synsets for equivalent words
 		int senseIndex = 0;
 		bool stillSensesToGo = true;
@@ -112,12 +116,15 @@ bool checkIfQueryWordIsContainedWithinAnotherWordsSynsets(string word, string qu
 			for(int w=0; w<currentSenseInList->wcount; w++)
 			{
 				//cout << "word = " << currentSenseInList->words[w] << endl;
-				if(currentSenseInList->words[w] == queryWord)
+				//cout << "queryWord = " << *queryWord << endl;
+				string currentWord = currentSenseInList->words[w];
+				if(currentWord == *queryWord)
 				{
+					entityNamesAreSynonymous = true;
 					#ifdef GIA_WORDNET_DEBUG
 					cout << "match found - entityNamesAreSynonymous:" << endl;
 					cout << "currentSenseInList->words[w] = " << currentSenseInList->words[w] << endl;
-					cout << "queryWord = " << queryWord << endl;
+					cout << "queryWord = " << *queryWord << endl;
 					#endif
 				}
 			}
@@ -134,8 +141,6 @@ bool checkIfQueryWordIsContainedWithinAnotherWordsSynsets(string word, string qu
 			senseIndex++;
 
 		}
-
-		//entityNamesAreSynonymous = true;
 	}
 	
 	return entityNamesAreSynonymous;
@@ -153,11 +158,17 @@ SynsetPtr findMostPopularSynset(string word, bool * wordIsFound, int wordType)
 }
 
 SynsetPtr findSynsets(string word, bool * wordIsFound, int wordType)
-{
-	bool result = true;
-	
+{	
 	int similarityType = SIMPTR;	//SIMPTR (similar) or SYNS (synonymn) - they both appear to give same output
 	char * wordCharStar = const_cast<char*>(word.c_str());
+	
+	/*
+	#ifdef GIA_WORDNET_DEBUG
+	cout << "findSynsets()" << endl;
+	cout << "wordCharStar = " << wordCharStar << endl;
+	cout << "wordType = " << wordType << endl;
+	#endif
+	*/
 	
 	SynsetPtr firstSenseInList = findtheinfo_ds(wordCharStar, wordType, similarityType, 0);	//returns pointer to the first Synset struct in a Synset struct linked list containing word/searchStr
 
@@ -178,7 +189,6 @@ SynsetPtr findSynsets(string word, bool * wordIsFound, int wordType)
 
 SynsetPtr findMostPopularSynset(SynsetPtr firstSenseInList, int wordType)
 {
-	bool result = true;
 	
 	SynsetPtr currentSenseInList = firstSenseInList;
 	SynsetPtr senseOutputWithHighestTags = firstSenseInList;
