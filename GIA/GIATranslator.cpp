@@ -123,65 +123,6 @@ void collapseRedundantRelationAndMakeNegative()
 }
 
 	
-GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
-{	
-	//configure property node
-	GIAEntityNode * newProperty = new GIAEntityNode();
-	newProperty->id = currentEntityNodeIDInCompleteList;
-	newProperty->idSecondary = currentEntityNodeIDInPropertyEntityNodesList;
-
-	entityNodesCompleteList->push_back(newProperty);
-	currentEntityNodeIDInCompleteList++;
-	propertyEntityNodesList->push_back(newProperty);
-	currentEntityNodeIDInPropertyEntityNodesList++;
-
-	newProperty->entityName = propertyEntity->entityName;
-	newProperty->isProperty = true;
-	//newProperty->entityNodeContainingThisProperty = NULL;
-	newProperty->entityNodeDefiningThisInstance = propertyEntity;
-	propertyEntity->hasAssociatedInstance = true;
-	propertyEntity->hasAssociatedInstanceTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-
-	//if(propertyEntity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
-	//{
-	newProperty->grammaticalNumber = propertyEntity->grammaticalNumberTemp;
-	//}
-
-	if(propertyEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true)
-	{
-		newProperty->hasProgressiveTemp = true;
-		//cout << "property has progressive (eg lying/sitting/being happy)" << endl;
-	}
-		
-	if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newProperty->hasProgressiveTemp)
-	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
-		addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp, newProperty->hasProgressiveTemp);
-	}
-
-	//configure property definition node
-	propertyEntity->AssociatedInstanceNodeList.push_back(newProperty);
-
-	propertyEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
-	
-	#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
-	//cout << "propertyEntity->entityName = " << propertyEntity->entityName << endl;
-	if(propertyEntity->isQuery)
-	{
-
-		propertyEntity->isQuery = false;
-		newProperty->isQuery = true;
-		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
-		if(propertyEntity->isWhichQuery)
-		{
-			propertyEntity->isWhichQuery = false;
-			newProperty->isWhichQuery = true;			
-		}
-		#endif
-	}
-	#endif	
-				
-	return newProperty;	
-}
 
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity)
 {
@@ -256,14 +197,14 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 		thingEntity->PropertyNodeList.push_back(newProperty);		
 
 		thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-	}
-	
-
-	
+	}	
 }
 
+
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
-{
+{	
+	GIAEntityNode * newOrExistingProperty;
+	
 	if(propertyEntity->entityAlreadyDeclaredInThisContext)
 	{
 		if(!(propertyEntity->hasAssociatedInstanceTemp))
@@ -275,7 +216,7 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 	if(propertyEntity->hasAssociatedInstanceTemp)
 	{	
 		//cout << "break; propertyEntity->entityName = " << propertyEntity->entityName << endl;
-		propertyEntity = propertyEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
+		GIAEntityNode * newOrExistingProperty = propertyEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
 		
 	}
 	else
@@ -285,18 +226,69 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 }
 
 
-void addActionToActionDefinition(GIAEntityNode * actionEntity)
-{
-	GIAEntityNode * newOrExistingAction;
-	newOrExistingAction = addAction(actionEntity);
+GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
+{	
+	//configure property node
+	GIAEntityNode * newProperty = new GIAEntityNode();
+	newProperty->id = currentEntityNodeIDInCompleteList;
+	newProperty->idSecondary = currentEntityNodeIDInPropertyEntityNodesList;
+
+	entityNodesCompleteList->push_back(newProperty);
+	currentEntityNodeIDInCompleteList++;
+	propertyEntityNodesList->push_back(newProperty);
+	currentEntityNodeIDInPropertyEntityNodesList++;
+
+	newProperty->entityName = propertyEntity->entityName;
+	newProperty->isProperty = true;
+	//newProperty->entityNodeContainingThisProperty = NULL;
+	newProperty->entityNodeDefiningThisInstance = propertyEntity;
+	propertyEntity->hasAssociatedInstance = true;
+	propertyEntity->hasAssociatedInstanceTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
+
+	//if(propertyEntity->grammaticalNumberTemp > GRAMMATICAL_NUMBER_SINGULAR)
+	//{
+	newProperty->grammaticalNumber = propertyEntity->grammaticalNumberTemp;
+	//}
+
+	if(propertyEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true)
+	{
+		newProperty->hasProgressiveTemp = true;
+		//cout << "property has progressive (eg lying/sitting/being happy)" << endl;
+	}
+		
+	if(propertyEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newProperty->hasProgressiveTemp)
+	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
+		addTenseOnlyTimeConditionToProperty(newProperty, propertyEntity->grammaticalTenseTemp, newProperty->hasProgressiveTemp);
+	}
+
+	//configure property definition node
+	propertyEntity->AssociatedInstanceNodeList.push_back(newProperty);
+
+	propertyEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
+	
+	#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
+	//cout << "propertyEntity->entityName = " << propertyEntity->entityName << endl;
+	if(propertyEntity->isQuery)
+	{
+		propertyEntity->isQuery = false;
+		newProperty->isQuery = true;
+		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
+		if(propertyEntity->isWhichQuery)
+		{
+			propertyEntity->isWhichQuery = false;
+			newProperty->isWhichQuery = true;			
+		}
+		#endif
+	}
+	#endif	
+				
+	return newProperty;	
 }
 
 
-
-	//conditions required to be added [eg when, where, how, why]
-GIAEntityNode * addAction(GIAEntityNode * actionEntity)
-{		
-	bool newAction = false;
+GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity)
+{
+	GIAEntityNode * newOrExistingAction;
 	
 	if(actionEntity->entityAlreadyDeclaredInThisContext)
 	{//CHECK THIS; need to convert to action node here also? ie hasAssociatedInstanceIsAction->true? [must look at generated semanticNet.xml and see if any propertyNodeContainers contain action nodes..., or if any actionNodeContainers do not contain property nodes...]
@@ -308,11 +300,9 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 	}
 			
 	//configure action node	
-	GIAEntityNode * newOrExistingAction;
 	if(actionEntity->hasAssociatedInstanceTemp)
 	{
 		newOrExistingAction = actionEntity->AssociatedInstanceNodeList.back();	
-		
 		
 		if(actionEntity->hasAssociatedInstanceIsAction == false)
 		{//upgrade associated property to action
@@ -334,68 +324,80 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 		}
 	}
 	else
-	{	
-		//cout << "as4" << endl;
-			
-		newOrExistingAction = new GIAEntityNode();
-		newOrExistingAction->id = currentEntityNodeIDInCompleteList;
-		newOrExistingAction->idSecondary = currentEntityNodeIDInActionEntityNodesList;
-							
-		entityNodesCompleteList->push_back(newOrExistingAction);
-		currentEntityNodeIDInCompleteList++;
-		actionEntityNodesList->push_back(newOrExistingAction);
-		currentEntityNodeIDInActionEntityNodesList++;
-				
-		newOrExistingAction->entityName = actionEntity->entityName;		
-		newOrExistingAction->entityNodeDefiningThisInstance = actionEntity;
-		
-		//cout << "as4b" << endl;
-		
-		actionEntity->AssociatedInstanceNodeList.push_back(newOrExistingAction);
-		actionEntity->hasAssociatedInstance = true;
-		actionEntity->hasAssociatedInstanceIsAction = true;
-		actionEntity->hasAssociatedInstanceTemp = true;
-		newOrExistingAction->isAction = true;
-		//WHY WOULD THIS EVER BE REQURIED?; newAction->entityNodeContainingThisProperty = NULL;
-
-		if(actionEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true)
-		{
-			newOrExistingAction->hasProgressiveTemp = true;
-			//cout << "property has progressive (eg lying/sitting/being happy)" << endl;			
-		}
-			
-		//cout << "actionEntity->grammaticalTenseTemp = " << actionEntity->grammaticalTenseTemp << endl;
-		//cout << "actionEntity->entityName = " << actionEntity->entityName << endl;
-
-		if(actionEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newOrExistingAction->hasProgressiveTemp)
-		{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
-			//cout << "hello" << endl;
-			//exit(0);
-			addTenseOnlyTimeConditionToProperty(newOrExistingAction, actionEntity->grammaticalTenseTemp, newOrExistingAction->hasProgressiveTemp);
-		}	
-		
-		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
-		if(actionEntity->isQuery)
-		{
-			actionEntity->isQuery = false;
-			newOrExistingAction->isQuery = true;
-			#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
-			if(actionEntity->isWhichQuery)
-			{
-				actionEntity->isWhichQuery = false;
-				newOrExistingAction->isWhichQuery = true;			
-			}
-			#endif
-		}
-		#endif	
-				
-		actionEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
-		
-		//cout << "as5" << endl;	
+	{
+		newOrExistingAction = addAction(actionEntity);
 	}
-
+	
 	return newOrExistingAction;
 }
+
+
+	//conditions required to be added [eg when, where, how, why]
+GIAEntityNode * addAction(GIAEntityNode * actionEntity)
+{				
+	//cout << "as4" << endl;
+
+	GIAEntityNode * newAction = new GIAEntityNode();
+	newAction->id = currentEntityNodeIDInCompleteList;
+	newAction->idSecondary = currentEntityNodeIDInActionEntityNodesList;
+
+	entityNodesCompleteList->push_back(newAction);
+	currentEntityNodeIDInCompleteList++;
+	actionEntityNodesList->push_back(newAction);
+	currentEntityNodeIDInActionEntityNodesList++;
+
+	newAction->entityName = actionEntity->entityName;		
+	newAction->entityNodeDefiningThisInstance = actionEntity;
+
+	//cout << "as4b" << endl;
+
+	actionEntity->AssociatedInstanceNodeList.push_back(newAction);
+	actionEntity->hasAssociatedInstance = true;
+	actionEntity->hasAssociatedInstanceIsAction = true;
+	actionEntity->hasAssociatedInstanceTemp = true;
+	newAction->isAction = true;
+	//WHY WOULD THIS EVER BE REQURIED?; newAction->entityNodeContainingThisProperty = NULL;
+
+	if(actionEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true)
+	{
+		newAction->hasProgressiveTemp = true;
+		//cout << "property has progressive (eg lying/sitting/being happy)" << endl;			
+	}
+
+	//cout << "actionEntity->grammaticalTenseTemp = " << actionEntity->grammaticalTenseTemp << endl;
+	//cout << "actionEntity->entityName = " << actionEntity->entityName << endl;
+
+	if(actionEntity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newAction->hasProgressiveTemp)
+	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
+		//cout << "hello" << endl;
+		//exit(0);
+		addTenseOnlyTimeConditionToProperty(newAction, actionEntity->grammaticalTenseTemp, newAction->hasProgressiveTemp);
+	}	
+
+	#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
+	if(actionEntity->isQuery)
+	{
+		actionEntity->isQuery = false;
+		newAction->isQuery = true;
+		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
+		if(actionEntity->isWhichQuery)
+		{
+			actionEntity->isWhichQuery = false;
+			newAction->isWhichQuery = true;			
+		}
+		#endif
+	}
+	#endif	
+
+	actionEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
+
+	//cout << "as5" << endl;	
+
+	return newAction;
+}
+
+
+
 
 
 
@@ -470,7 +472,7 @@ void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEnti
 void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity)
 {	
 	GIAEntityNode * newOrExistingAction;
-	newOrExistingAction = addAction(actionEntity);
+	newOrExistingAction = addActionToActionDefinition(actionEntity);
 
 	if(subjectEntity->hasAssociatedInstanceTemp)
 	{
@@ -490,7 +492,7 @@ void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEnt
 void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity)
 {		
 	GIAEntityNode * newOrExistingAction;
-	newOrExistingAction = addAction(actionEntity);
+	newOrExistingAction = addActionToActionDefinition(actionEntity);
 	
 	if(objectEntity->hasAssociatedInstanceTemp)
 	{
@@ -3029,7 +3031,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 						{
 						#endif
 							
-							//addAction(actionEntity);	//WHY WAS THIS HERE????
+							//addActionToActionDefinition(actionEntity);	//WHY WAS THIS HERE????
 							if(firstIndex == SUBJECT_INDEX)
 							{//fired by joe..???? [is there a possible example of this?]
 

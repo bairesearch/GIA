@@ -316,7 +316,6 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
 	GIAEntityNode * addProperty(GIAEntityNode * propertyEntity);
 	
-void addActionToActionDefinition(GIAEntityNode * actionEntity);
 
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, bool isProgressive);
 
@@ -325,7 +324,8 @@ void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definiti
 void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
 	void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity);
 	void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
-		GIAEntityNode * addAction(GIAEntityNode * actionEntity);
+		GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity);
+			GIAEntityNode * addAction(GIAEntityNode * actionEntity);
 		
 void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, GIAEntityNode * conditionTypeConceptEntity);
 void addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionDefinitionNode, GIAEntityNode * conditionTypeConceptEntity, bool negative);
