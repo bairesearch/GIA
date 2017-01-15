@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l4b 09-December-2015
+ * Project Version: 2l5a 11-December-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -943,7 +943,7 @@ void DBreadVectorConnectionEntities(string* entityName, long idInstance, int con
 			if(entityFoundInActiveListCompleteFastIndexDBactive)
 			{
 				#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-				cout << "!DBreadVectorConnectionEntities() - connection already in RAM (active)" << endl;
+				cout << "!DBreadVectorConnectionEntities{} - connection already in RAM (active)" << endl;
 				cout << "connection->entityName = " << connection->entityName << endl;
 				cout << "connection->idInstance = " << connection->idInstance << endl;
 				#endif
@@ -953,7 +953,7 @@ void DBreadVectorConnectionEntities(string* entityName, long idInstance, int con
 			else if(entityFoundInActiveListCompleteFastIndexDBcache)
 			{
 				#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-				cout << "!DBreadVectorConnectionEntities() - connection already in RAM (cache)" << endl;
+				cout << "!DBreadVectorConnectionEntities{} - connection already in RAM (cache)" << endl;
 				cout << "connection->entityName = " << connection->entityName << endl;
 				cout << "connection->idInstance = " << connection->idInstance << endl;
 				#endif
@@ -963,7 +963,7 @@ void DBreadVectorConnectionEntities(string* entityName, long idInstance, int con
 			else
 			{
 				#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-				cout << "!DBreadVectorConnectionEntities() - reading entity from DB" << endl;
+				cout << "!DBreadVectorConnectionEntities{} - reading entity from DB" << endl;
 				cout << "connection->entityName = " << connection->entityName << endl;
 				cout << "connection->idInstance = " << connection->idInstance << endl;
 				#endif
@@ -981,7 +981,7 @@ void DBreadVectorConnectionEntities(string* entityName, long idInstance, int con
 		else
 		{
 			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-			cout << "!DBreadVectorConnectionEntities() - connection already loaded" << endl;
+			cout << "!DBreadVectorConnectionEntities{} - connection already loaded" << endl;
 			cout << "connection->entityName = " << connection->entityName << endl;
 			cout << "connection->idInstance = " << connection->idInstance << endl;
 			#endif

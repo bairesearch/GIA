@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l4b 09-December-2015
+ * Project Version: 2l5a 11-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -361,7 +361,7 @@ void identifyEntityTypes(GIAsentence* currentSentenceInList, GIAentityNode* GIAe
 void linkPronounReferencesRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIAfeature* featureArrayTemp[])
 {
 	#ifdef GIA_WARNINGS
-	cout << "warning: linkPronounReferencesRelex() is not robust - it requires further development" << endl;
+	cout << "warning: linkPronounReferencesRelex{} is not robust - it requires further development" << endl;
 	#endif
 
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -564,7 +564,7 @@ void linkPronounReferencesRelex(GIAsentence* currentSentenceInList, bool GIAenti
 						#else
 						featureArrayTemp[w]->isPronounReference = true;
 						#endif
-						applyConceptEntityAlreadyExistsFunction(referenceSource, true);
+						applyConceptEntityAlreadyExistsFunction(referenceSource, true, true);
 					#else
 
 						bool conceptHasASubstance = false;
@@ -2220,7 +2220,7 @@ void identifyEntityTypesLocal(GIArelation* currentRelationInList, int NLPdepende
 	{
 		dependent->hasSubstanceTemp = true;
 		#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-		dependent->hasSubstanceTemp2 = true;	//only required for linkPronounReferencesRelex(). Not necessary otherwise, as this is set in GIAtranslatorOperations.cpp
+		dependent->hasSubstanceTemp2 = true;	//only required for linkPronounReferencesRelex{}. Not necessary otherwise, as this is set in GIAtranslatorOperations.cpp
 		#endif
 	}
 
@@ -2260,7 +2260,7 @@ void identifyEntityTypesLocal(GIArelation* currentRelationInList, int NLPdepende
 		{
 			governor->hasSubstanceTemp = true;
 			#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-			governor->hasSubstanceTemp2 = true;	//only required for linkPronounReferencesRelex(). Not necessary otherwise, as this is set in GIAtranslatorOperations.cpp
+			governor->hasSubstanceTemp2 = true;	//only required for linkPronounReferencesRelex{}. Not necessary otherwise, as this is set in GIAtranslatorOperations.cpp
 			#endif
 		}
 	}
@@ -2280,7 +2280,7 @@ void identifyEntityTypesLocal(GIArelation* currentRelationInList, int NLPdepende
 	{
 		dependent->isSubjectTemp = true;
 		#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-		dependent->isSubjectTemp2 = true;	//only required for linkPronounReferencesRelex(). Not necessary otherwise, as this is set in GIAtranslatorOperations.cpp
+		dependent->isSubjectTemp2 = true;	//only required for linkPronounReferencesRelex{}. Not necessary otherwise, as this is set in GIAtranslatorOperations.cpp
 		#endif
 	}
 
@@ -2299,7 +2299,7 @@ void identifyEntityTypesLocal(GIArelation* currentRelationInList, int NLPdepende
 	{
 		dependent->isObjectTemp = true;
 		#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-		dependent->isObjectTemp2 = true;	//only required for linkPronounReferencesRelex(). Not necessary otherwise, as this is set in GIAtranslatorOperations.cpp
+		dependent->isObjectTemp2 = true;	//only required for linkPronounReferencesRelex{}. Not necessary otherwise, as this is set in GIAtranslatorOperations.cpp
 		#endif
 	}
 

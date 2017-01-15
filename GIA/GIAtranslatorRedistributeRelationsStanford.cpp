@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelationsStanford.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l4b 09-December-2015
+ * Project Version: 2l5a 11-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -58,7 +58,7 @@ void redistributeStanfordRelations(GIAsentence* currentSentenceInList, bool GIAe
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1c3; redistribute Stanford Relations Create Query Vars Adjust for Action Preposition Action" << endl;
 	#endif
-	//redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction() needs to be called with LRP also - separated out from redistributeStanfordRelationsMultiwordPreposition() 24 July 2013 to achieve this
+	//redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction{} needs to be called with LRP also - separated out from redistributeStanfordRelationsMultiwordPreposition{} 24 July 2013 to achieve this
 	redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);	//added 28 October 2012
 
 	#ifdef GIA_LRP_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
@@ -404,7 +404,7 @@ void disableRedundantNodesStanfordCoreNLP(GIAsentence* currentSentenceInList, bo
 						if(featureNERindicatesNameConcatenationRequiredAllowedByPOS)
 						{
 							governerEntity->entityName = dependentEntity->entityName + FEATURE_NER_NAME_CONCATENATION_TOKEN + governerEntity->entityName;	//join names together
-							/*//OLD: before moving disableRedundantNodesStanfordCoreNLP() forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)
+							/*//OLD: before moving disableRedundantNodesStanfordCoreNLP{} forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)
 							if(governerEntity->hasAssociatedInstanceTemp)
 							{//disable its substance also
 								(governerEntity->associatedInstanceNodeList.back())->entityName = governerEntity->entityName;	//join names together
@@ -1029,7 +1029,7 @@ void redistributeStanfordRelationsMultiwordPreposition(GIAsentence* currentSente
 	match dep with prep
 		dep(are-2, What-1) + nsubj(are-2, claims-5) + prep(are-2, on-6):
 			dep(are-2, What-1) + prep(are-2, on-6) => prep_on(are-2, What-1)
-				[then rely upon redistributeStanfordRelationsMultiwordPreposition() for  nsubj(are-4, claims-3) / prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)]
+				[then rely upon redistributeStanfordRelationsMultiwordPreposition{} for  nsubj(are-4, claims-3) / prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)]
 	*/
 	//for queries only (1j6g)
 
@@ -2187,7 +2187,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(GIAsenten
 
 																	queryWhatNameOrNumberRelationFound = true;
 																	#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-																	cout << "DEBUG: redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(); GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME" << endl;
+																	cout << "DEBUG: redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf{}; GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME" << endl;
 																	#endif
 																	currentRelationInList->disabled =  true;
 																	currentRelationInList3->disabled =  true;
@@ -2215,7 +2215,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(GIAsenten
 
 																	queryWhatNameOrNumberRelationFound = true;
 																	#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-																	cout << "DEBUG: redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(); GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NUMBER" << endl;
+																	cout << "DEBUG: redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf{}; GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NUMBER" << endl;
 																	#endif
 																	currentRelationInList->disabled =  true;
 																	currentRelationInList3->disabled =  true;
@@ -2676,7 +2676,7 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 		}
 		else
 		{
-			cout << "warning: redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe() executed with (NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP) - performance substantially reduced" << endl;
+			cout << "warning: redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe{} executed with (NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP) - performance substantially reduced" << endl;
 		}
 		#else
 		//not used
@@ -2830,7 +2830,7 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 										}
 										else
 										{
-											cout << "warning: redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe() executed with (NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP) - performance substantially reduced" << endl;
+											cout << "warning: redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe{} executed with (NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP) - performance substantially reduced" << endl;
 										}
 										#else
 										bool detectedDeterminateOfSubjectGoverner = false;
@@ -2999,7 +2999,7 @@ void redistributeStanfordRelationsAdverbalClauseModifierAndComplement(GIAsentenc
 								string newRelationType = "";
 								newRelationType = newRelationType + STANFORD_PARSER_PREPOSITION_PREPEND + oldPrepositionEntity->entityName;
 								#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-								cout << "DEBUG: redistributeStanfordRelationsAdverbalClauseModifierAndComplement();" << endl;
+								cout << "DEBUG: redistributeStanfordRelationsAdverbalClauseModifierAndComplement{};" << endl;
 								cout << "newRelationType = " << newRelationType << endl;
 								#endif
 								currentRelationInList->relationType = newRelationType;
@@ -3481,7 +3481,7 @@ void redistributeStanfordRelationsPhrasalVerbParticle(GIAsentence* currentSenten
 				if(!foundTemporalModifierOrObjectOfPreposition)
 				{
 					if(!(currentRelationInList->disabled))	//added 3 June 2012
-					{//do not parse it again, in the case it has already been parsed in redistributeStanfordRelationsMultiwordPreposition()
+					{//do not parse it again, in the case it has already been parsed in redistributeStanfordRelationsMultiwordPreposition{}
 
 						//eg They shut down the station. 	prt(shut, down)
 
@@ -3960,7 +3960,7 @@ void redistributeStanfordRelationsCreateQueryVarsHowMuchHowMany(GIAsentence* cur
 
 void redistributeStanfordRelationsCreateQueryVarsWhich(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
-	//nothing is required here: see identifyComparisonVariableAlternateMethod()
+	//nothing is required here: see identifyComparisonVariableAlternateMethod{}
 }
 
 void redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
@@ -4530,7 +4530,7 @@ void redistributeStanfordRelationsDependencyPreposition(GIAsentence* currentSent
 }
 
 // updated and reactivated 2f12a 13-July-2014
-// redistributeStanfordRelationsAuxHave() was designed for faulty case "flies" is incorrectly tagged by stanford parser in "Red dogs have flies." (a fault which occurs with STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS, when using Stanford Parser in conjunction with Stanford CoreNLP. redistributeStanfordRelationsAuxHave() was temporarily disabled @GIA 2c2a [because it was incompatible with "The chicken has not eaten a pie."])
+// redistributeStanfordRelationsAuxHave{} was designed for faulty case "flies" is incorrectly tagged by stanford parser in "Red dogs have flies." (a fault which occurs with STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS, when using Stanford Parser in conjunction with Stanford CoreNLP. redistributeStanfordRelationsAuxHave{} was temporarily disabled @GIA 2c2a [because it was incompatible with "The chicken has not eaten a pie."])
 #ifdef STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 void redistributeStanfordRelationsAuxHave(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
@@ -4652,7 +4652,7 @@ void collapseRedundantRelationAndMakeNegativeStanford(GIAsentence* currentSenten
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_NEGATIVE;
 	param.disableRelation[REL1] = true;
 	param.disableEntity[REL1][REL_ENT2] = true; 	//disable "not" entity
-	//param.useRedistributeSpecialCaseDisableInstanceAndConcept[REL1][REL_ENT2]= true;	//no longer required because collapseRedundantRelationAndMakeNegativeRelex() is executed during redistribution
+	//param.useRedistributeSpecialCaseDisableInstanceAndConcept[REL1][REL_ENT2]= true;	//no longer required because collapseRedundantRelationAndMakeNegativeRelex{} is executed during redistribution
 	//param.useRedistributeSpecialCaseNegativeAssignment[REL1][REL_ENT1] = true;
 	GIAentityCharacteristic useRedistributeSpecialCaseNegativeAssignment("negative", "true");
 	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&useRedistributeSpecialCaseNegativeAssignment);

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelationsRelex.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l4b 09-December-2015
+ * Project Version: 2l5a 11-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -139,7 +139,7 @@ void collapseRedundantRelationAndMakeNegativeRelex(GIAsentence* currentSentenceI
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.useRelationArrayTest[REL2][REL_ENT2] = true; param.relationArrayTest[REL2][REL_ENT2] = relationContextNegativeNameArray; param.relationArrayTestSize[REL2][REL_ENT2] = RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES;
 	param.disableEntity[REL1][REL_ENT1] = true; 	//disable "not" entity -
-	//param.useRedistributeSpecialCaseDisableInstanceAndConcept[REL1][REL_ENT1]= true;	//no longer required because collapseRedundantRelationAndMakeNegativeRelex() is executed during redistribution
+	//param.useRedistributeSpecialCaseDisableInstanceAndConcept[REL1][REL_ENT1]= true;	//no longer required because collapseRedundantRelationAndMakeNegativeRelex{} is executed during redistribution
 	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;
 	//param.useRedistributeSpecialCaseNegativeAssignment[REL2][REL_ENT1] = true;
 	GIAentityCharacteristic useRedistributeSpecialCaseNegativeAssignment("negative", "true");
@@ -279,7 +279,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(GIAsentence
 	What is the time? _subj(be[2], _$qVar[1]) + _obj(be[2], time[4]) -> appos(time[4], $qVar[1])
 	Who is that?	_subj(be[2], _$qVar[1]) + _obj(be[2], that[3]) -> appos(that[3], _$qVar[1])
 	What time is it?	_subj(be[3], time[2]) + _obj(be[3], it[4]) -> appos(time[2], $qVar[4])
-		note query comparison node used to be identified via identifyComparisonVariableAlternateMethod()
+		note query comparison node used to be identified via identifyComparisonVariableAlternateMethod{}
 	*/
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
@@ -310,7 +310,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(GIAsentence
 
 		/*
 		What time is it?	_subj(be[3], time[2]) + _obj(be[3], it[4]) -> appos(time[2], $qVar[3])		//NB appos has to use Be/$qVar[3] - it cannot use a) it/$qVar[4] for grammatical reasons [as "it" is tagged as a noun/definite], and cannot use b) What/$qVar[1] since it is not referenced by any relex dependency relation
-			note query comparison node used to be identified via identifyComparisonVariableAlternateMethod())
+			note query comparison node used to be identified via identifyComparisonVariableAlternateMethod{})
 		*/
 
 		bool whichOrWhatQueryFound = false;
@@ -429,7 +429,7 @@ void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(GIAsentence
 										{
 											/*
 											What time is it?	_subj(be[3], time[2]) + _obj(be[3], it[4]) -> appos(time[2], $qVar[3])		//NB appos has to use Be/$qVar[3] - it cannot use a) it/$qVar[4] for grammatical reasons [as "it" is tagged as a noun/definite], and cannot use b) What/$qVar[1] since it is not referenced by any relex dependency relation
-												note query comparison node used to be identified via identifyComparisonVariableAlternateMethod())
+												note query comparison node used to be identified via identifyComparisonVariableAlternateMethod{})
 											*/
 
 											GIAentityNode* oldRedundantItEntity = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];

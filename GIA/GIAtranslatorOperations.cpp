@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l4b 09-December-2015
+ * Project Version: 2l5a 11-December-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -280,7 +280,7 @@ GIAentityNode* addOrConnectPropertyToEntity(GIAentityNode* thingEntity, GIAentit
 		{
 			if(!(thingEntity->isSubstanceConcept))
 			{
-				//cout << "addOrConnectPropertyToEntity() warning: property was declared substance concept while parent was not declared substance concept" << endl;
+				//cout << "addOrConnectPropertyToEntity{} warning: property was declared substance concept while parent was not declared substance concept" << endl;
 				propertyEntitySubstance->isSubstanceConcept = false;
 			}
 		}
@@ -515,7 +515,7 @@ void addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, int tens
 	#ifdef GIA_USE_TIME_NODE_INDEXING
 	int timeConditionEntityIndex = INT_DEFAULT_VALUE;
 	bool argumentEntityAlreadyExistant = false;
-	long timeConditionTotalTimeInSeconds = 0; //cannot assign absolute time to an event which occurs in the past.... //calculateTotalTimeInSeconds();
+	long timeConditionTotalTimeInSeconds = 0; //cannot assign absolute time to an event which occurs in the past.... //calculateTotalTimeInSeconds{};
 	GIAtimeConditionNode* newTimeCondition = findOrAddTimeNodeByNumber(timeConditionNodesActiveList, conceptEntityNamesList, timeConditionAbsoluteTimeValue, &argumentEntityAlreadyExistant, &timeConditionEntityIndex, true);
 	#else
 	GIAtimeConditionNode* newTimeCondition = new GIAtimeConditionNode();
@@ -984,15 +984,15 @@ GIAentityNode* addOrConnectConditionToEntity(GIAentityNode* conditionSubjectEnti
 		{
 			if(!(conditionSubjectEntity->isSubstanceConcept))
 			{
-				//cout << "addOrConnectConditionToEntity() warning: condition object was declared substance concept while condition subject was not declared substance concept" << endl;
+				//cout << "addOrConnectConditionToEntity{} warning: condition object was declared substance concept while condition subject was not declared substance concept" << endl;
 				conditionObjectEntity->isSubstanceConcept = false;
 			}
 		}
 		#endif
 		
 		#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-		//required to compensate for defineSubstancesActions() being exectuted before linkDependentActionsType1()
-		newOrExistingCondition->isSubstance = false;	//required because defineSubstancesActions() defines substances [not actions]
+		//required to compensate for defineSubstancesActions{} being exectuted before linkDependentActionsType1{}
+		newOrExistingCondition->isSubstance = false;	//required because defineSubstancesActions{} defines substances [not actions]
 		newOrExistingCondition->isCondition = true;
 		#endif
 		//conditionSubjectEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
@@ -1044,8 +1044,8 @@ GIAentityNode* addOrConnectConditionToSubject(GIAentityNode* conditionSubjectEnt
 		newOrExistingCondition = addConditionToConditionDefinition(conditionEntity);
 
 		#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-		//required to compensate for defineSubstancesActions() being exectuted before linkDependentActionsType1()
-		newOrExistingCondition->isSubstance = false;	//required because defineSubstancesActions() defines substances [not actions]
+		//required to compensate for defineSubstancesActions{} being exectuted before linkDependentActionsType1{}
+		newOrExistingCondition->isSubstance = false;	//required because defineSubstancesActions{} defines substances [not actions]
 		newOrExistingCondition->isCondition = true;
 		#endif
 		//conditionSubjectEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
@@ -1091,8 +1091,8 @@ GIAentityNode* addOrConnectConditionToObject(GIAentityNode* conditionObjectEntit
 		newOrExistingCondition = addConditionToConditionDefinition(conditionEntity);
 
 		#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-		//required to compensate for defineSubstancesActions() being exectuted before linkDependentActionsType1()
-		newOrExistingCondition->isSubstance = false;	//required because defineSubstancesActions() defines substances [not actions]
+		//required to compensate for defineSubstancesActions{} being exectuted before linkDependentActionsType1{}
+		newOrExistingCondition->isSubstance = false;	//required because defineSubstancesActions{} defines substances [not actions]
 		newOrExistingCondition->isCondition = true;
 		#endif
 		//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
@@ -1173,7 +1173,7 @@ GIAentityNode* addCondition(GIAentityNode* conditionEntity)
 	conditionEntity->hasAssociatedInstance = true;
 	conditionEntity->hasAssociatedInstanceIsCondition = true;
 	conditionEntity->hasAssociatedInstanceTemp = true;
-	newCondition->negative = conditionEntity->negative;	//check forwardInfoToNewSubstance() is not required
+	newCondition->negative = conditionEntity->negative;	//check forwardInfoToNewSubstance{} is not required
 
 	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 	conditionEntity->entityAlreadyDeclaredInThisContext = true;	//added 9 May 2012
@@ -1747,7 +1747,7 @@ GIAentityNode* findOrAddConceptEntityNodeByNameSimpleWrapper(string* entityNodeN
 
 
 /*these functions have been added for GIA Database compatibility*/
-//this function does write to database, but prepares data structures for write to database (at the end of the user sequence, writeDatabase() is written...)
+//this function does write to database, but prepares data structures for write to database (at the end of the user sequence, writeDatabase{} is written...)
 GIAentityConnection* writeVectorConnection(GIAentityNode* entityNode, GIAentityNode* entityNodeToAdd, int connectionType, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
 {
 	GIAentityConnection* newConnection = NULL;
@@ -1875,8 +1875,8 @@ long determineNextIdInstance(GIAentityNode* entity)
 {
 	long nextIdInstance;
 	#ifdef GIA_DATABASE_DEBUG
-	cout << "\t\tDEBUG: determineNextIdInstance(); 0. entity->entityName = " << entity->entityName << endl;
-	cout << "\t\tDEBUG: determineNextIdInstance(); 0. entity->idInstance = " << entity->idInstance << endl;
+	cout << "\t\tDEBUG: determineNextIdInstance{}; 0. entity->entityName = " << entity->entityName << endl;
+	cout << "\t\tDEBUG: determineNextIdInstance{}; 0. entity->idInstance = " << entity->idInstance << endl;
 	#endif
 	GIAentityNode* conceptEntity;
 	#ifdef GIA_APPLY_BUG_WORKAROUND_WHERE_A_CONCEPT_ENTITY_OF_INSTANCE_0_CAN_HAVE_NODE_DEFINING_INSTANCE
@@ -1885,8 +1885,8 @@ long determineNextIdInstance(GIAentityNode* entity)
 		//the current entity is a concept entity
 		conceptEntity = entity;
 		#ifdef GIA_DATABASE_DEBUG
-		cout << "\t\tDEBUG: determineNextIdInstance(); 1b. conceptEntity->entityName = " << conceptEntity->entityName << endl;
-		cout << "\t\tDEBUG: determineNextIdInstance(); 1b. conceptEntity->idInstance = " << conceptEntity->idInstance << endl;
+		cout << "\t\tDEBUG: determineNextIdInstance{}; 1b. conceptEntity->entityName = " << conceptEntity->entityName << endl;
+		cout << "\t\tDEBUG: determineNextIdInstance{}; 1b. conceptEntity->idInstance = " << conceptEntity->idInstance << endl;
 		#endif
 	}
 	else
@@ -1897,8 +1897,8 @@ long determineNextIdInstance(GIAentityNode* entity)
 			//the current entity is a substance of a concept entity
 			conceptEntity = getPrimaryConceptNodeDefiningInstance(entity);
 			#ifdef GIA_DATABASE_DEBUG
-			cout << "\t\tDEBUG: determineNextIdInstance(); 1a. conceptEntity->entityName = " << conceptEntity->entityName << endl;
-			cout << "\t\tDEBUG: determineNextIdInstance(); 1a. conceptEntity->idInstance = " << conceptEntity->idInstance << endl;
+			cout << "\t\tDEBUG: determineNextIdInstance{}; 1a. conceptEntity->entityName = " << conceptEntity->entityName << endl;
+			cout << "\t\tDEBUG: determineNextIdInstance{}; 1a. conceptEntity->idInstance = " << conceptEntity->idInstance << endl;
 			#endif
 		}
 		else
@@ -1906,8 +1906,8 @@ long determineNextIdInstance(GIAentityNode* entity)
 			//the current entity is a concept entity
 			conceptEntity = entity;
 			#ifdef GIA_DATABASE_DEBUG
-			cout << "\t\tDEBUG: determineNextIdInstance(); 1b. conceptEntity->entityName = " << conceptEntity->entityName << endl;
-			cout << "\t\tDEBUG: determineNextIdInstance(); 1b. conceptEntity->idInstance = " << conceptEntity->idInstance << endl;
+			cout << "\t\tDEBUG: determineNextIdInstance{}; 1b. conceptEntity->entityName = " << conceptEntity->entityName << endl;
+			cout << "\t\tDEBUG: determineNextIdInstance{}; 1b. conceptEntity->idInstance = " << conceptEntity->idInstance << endl;
 			#endif
 		}
 	#ifdef GIA_APPLY_BUG_WORKAROUND_WHERE_A_CONCEPT_ENTITY_OF_INSTANCE_0_CAN_HAVE_NODE_DEFINING_INSTANCE
@@ -1923,14 +1923,14 @@ long determineNextIdInstance(GIAentityNode* entity)
 		long previousIdInstance = conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].back()->entity->idInstance;
 		nextIdInstance = previousIdInstance + 1;
 		#ifdef GIA_DATABASE_DEBUG
-		cout << "\t\tDEBUG: determineNextIdInstance(); 2a. nextIdInstance = " << nextIdInstance << endl;
+		cout << "\t\tDEBUG: determineNextIdInstance{}; 2a. nextIdInstance = " << nextIdInstance << endl;
 		#endif
 	}
 	else
 	{
 		nextIdInstance = GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE + 1;
 		#ifdef GIA_DATABASE_DEBUG
-		cout << "\t\tDEBUG: determineNextIdInstance(); 2b. nextIdInstance = " << nextIdInstance << endl;
+		cout << "\t\tDEBUG: determineNextIdInstance{}; 2b. nextIdInstance = " << nextIdInstance << endl;
 		#endif
 	}
 	#else
@@ -1944,14 +1944,14 @@ long determineNextIdInstance(GIAentityNode* entity)
 		long previousIdInstance = conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].back()->entity->idInstance;
 		nextIdInstance = previousIdInstance + 1;
 		#ifdef GIA_DATABASE_DEBUG
-		cout << "\t\tDEBUG: determineNextIdInstance(); 2a. nextIdInstance = " << nextIdInstance << endl;
+		cout << "\t\tDEBUG: determineNextIdInstance{}; 2a. nextIdInstance = " << nextIdInstance << endl;
 		#endif
 	}
 	else
 	{
 		nextIdInstance = GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE + 1;
 		#ifdef GIA_DATABASE_DEBUG
-		cout << "\t\tDEBUG: determineNextIdInstance(); 2b. nextIdInstance = " << nextIdInstance << endl;
+		cout << "\t\tDEBUG: determineNextIdInstance{}; 2b. nextIdInstance = " << nextIdInstance << endl;
 		#endif
 	}
 	#else
@@ -1976,7 +1976,7 @@ long determineNextIdInstance(GIAentityNode* entity)
 
 
 #ifdef GIA_USE_DATABASE
-/*//replaced with optimised function findEntityNodesActiveListCompleteFastIndexDBactive()
+/*//replaced with optimised function findEntityNodesActiveListCompleteFastIndexDBactive{}
 bool entityInActiveListComplete(string* entityName, long idInstance)
 {
 	bool entityAlreadyInActiveListComplete = false;
@@ -2023,7 +2023,7 @@ void addInstanceEntityNodeToActiveLists(GIAentityNode* entity)
 	{
 		if(entity->isConcept)
 		{
-			//addInstanceEntityNodeToActiveLists() does not support concept entities. NB when this function is executed via linkAdvancedReferencesGIA(), the referenceSource concept entity is already added to the concept active list (ie, see GIAentityNode* referenceSourceConceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper)
+			//addInstanceEntityNodeToActiveLists{} does not support concept entities. NB when this function is executed via linkAdvancedReferencesGIA{}, the referenceSource concept entity is already added to the concept active list (ie, see GIAentityNode* referenceSourceConceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper)
 		}
 		else if(entity->isAction)
 		{
@@ -2054,7 +2054,7 @@ void addInstanceEntityNodeToActiveLists(GIAentityNode* entity)
 		}
 	}
 	else
-	{//this case should never be used when this function is executed via linkAdvancedReferencesGIA()
+	{//this case should never be used when this function is executed via linkAdvancedReferencesGIA{}
 		entity->idActiveList = currentEntityNodeIDInSentenceCompleteList;
 		currentEntityNodeIDInSentenceCompleteList++;
 	}

@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2l4b 09-December-2015
+ * Project Version: 2l5a 11-December-2015
  *
  *******************************************************************************/
 
@@ -559,7 +559,7 @@ void DBsetEntityConnectionsReferenceListsLoaded(GIAentityNode* entityNode, bool 
 
 void disconnectNodeFromAllButDefinitions(GIAentityNode* entityNode)
 {
-	cout << "warning: disconnectNodeFromAllButDefinitions() not yet coded" << endl;
+	cout << "warning: disconnectNodeFromAllButDefinitions{} not yet coded" << endl;
 	/* need to delete its instance from the reverse lists of each node of each list of this entity...
 	actionNodeList->clear();
 	incomingActionNodeList->clear();
@@ -664,7 +664,7 @@ int calculateQuantityMultiplierInt(string quantityMultiplierString)
 
 int calculateQuantityModifierInt(string quantityModifierString)
 {
-	cout << "warning: calculateQuantityModifierInt() not yet implemented" << endl;
+	cout << "warning: calculateQuantityModifierInt{} not yet implemented" << endl;
 
 	int quantityModifierInt = 1;
 	bool found = false;
