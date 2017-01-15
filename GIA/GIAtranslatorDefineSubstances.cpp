@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p2d 12-December-2016
+ * Project Version: 2p2e 12-December-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1475,6 +1475,7 @@ void defineSubstancesActions(GIAsentence* currentSentenceInList, GIAentityNode* 
 
 #endif
 
+
 void defineSubstancesAllNodes(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	#ifdef GIA_GENERIC_ENTITY_INTERPRETATION
@@ -1526,6 +1527,8 @@ void defineSubstancesActionNetworkIndexes(GIAsentence* currentSentenceInList, bo
 #endif
 }
 #endif
+
+
 
 
 
