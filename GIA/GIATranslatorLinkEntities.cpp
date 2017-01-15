@@ -23,7 +23,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q4c 14-October-2012
+ * Project Version: 1q4d 14-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -207,52 +207,67 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				#endif
 					if((thingEntity->isSubstance || thingEntity->isNameQuery) && (definitionEntity->isSubstance || definitionEntity->isNameQuery))
 					{//equality link found - add alias instead
-
-						cout << "thingEntity->entityName = " << thingEntity->entityName << endl;
-						cout << "definitionEntity->entityName = " << definitionEntity->entityName << endl;
-						cout << "thingEntity->isSubstance = " << thingEntity->isSubstance << endl;
-						cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;
-						
-						#ifndef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS
-						if(!(definitionEntity->hasAssociatedTime))
+						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+						if(!(thingEntity->isSubstanceConcept) && !(definitionEntity->isSubstanceConcept))
 						{
 						#endif
-							treatDefinitionAsEquality = true;
-							if(definitionEntity->grammaticalRelexPersonOrStanfordProperNounTemp || definitionEntity->isNameQuery)
+							#ifdef GIA_TRANSLATOR_DEBUG
+							cout << "thingName = " << thingEntity->entityName << endl;
+							cout << "definitionEntity = " << definitionEntity->entityName << endl;						
+							cout << "thingEntity->isSubstance = " << thingEntity->isSubstance << endl;
+							cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;
+							#endif
+
+							#ifndef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS
+							if(!(definitionEntity->hasAssociatedTime))
 							{
-								#ifdef GIA_ALIASES_DEBUG
-								cout << "linkEntityDefinitionsAppositiveOfNouns1" << endl;
-								#endif
-								//eg max = the brown dog
+							#endif
+								treatDefinitionAsEquality = true;
+								if(definitionEntity->grammaticalRelexPersonOrStanfordProperNounTemp || definitionEntity->isNameQuery)
+								{
+									#ifdef GIA_ALIASES_DEBUG
+									cout << "linkEntityDefinitionsAppositiveOfNouns1" << endl;
+									#endif
+									//eg max = the brown dog
+								}
+								else if(thingEntity->grammaticalRelexPersonOrStanfordProperNounTemp || thingEntity->isNameQuery)
+								{
+									treatDefinitionAsEqualityReversePrimary = true;
+									#ifdef GIA_ALIASES_DEBUG
+									cout << "linkEntityDefinitionsAppositiveOfNouns2" << endl;
+									#endif
+									//eg max = the brown dog
+								}
+								else
+								{
+									#ifdef GIA_ALIASES_DEBUG
+									cout << "linkEntityDefinitionsAppositiveOfNouns3" << endl;
+									#endif
+									//if no proper noun (or query) detected, each node is equal, eg the brown dog == the happy wolf]
+								}
+							#ifndef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS
 							}
-							else if(thingEntity->grammaticalRelexPersonOrStanfordProperNounTemp || thingEntity->isNameQuery)
-							{
-								treatDefinitionAsEqualityReversePrimary = true;
-								#ifdef GIA_ALIASES_DEBUG
-								cout << "linkEntityDefinitionsAppositiveOfNouns2" << endl;
-								#endif
-								//eg max = the brown dog
-							}
-							else
-							{
-								#ifdef GIA_ALIASES_DEBUG
-								cout << "linkEntityDefinitionsAppositiveOfNouns3" << endl;
-								#endif
-								//if no proper noun (or query) detected, each node is equal, eg the brown dog == the happy wolf]
-							}
-						#ifndef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS
+							#endif
+						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 						}
-						#endif
+						#endif							
 					}
 					#ifdef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS
 					else if((thingEntity->isSubstance && thingEntity->entityName == FEATURE_RELEX_FLAG_TIME_NAME) && (definitionEntity->isQuery))
 					{
-						#ifdef GIA_ALIASES_DEBUG
-						cout << "linkEntityDefinitionsAppositiveOfNouns4" << endl;
-						#endif
-						//eg what is the time
-						treatDefinitionAsEquality = true;
-						definitionEntity->isNameQuery = true;
+						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+						if(!(thingEntity->isSubstanceConcept))
+						{
+						#endif					
+							#ifdef GIA_ALIASES_DEBUG
+							cout << "linkEntityDefinitionsAppositiveOfNouns4" << endl;
+							#endif
+							//eg what is the time
+							treatDefinitionAsEquality = true;
+							definitionEntity->isNameQuery = true;
+						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+						}
+						#endif							
 					}
 					#endif
 				#ifdef GIA_USE_ADVANCED_REFERENCING

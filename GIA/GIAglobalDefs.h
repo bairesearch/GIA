@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q4c 14-October-2012
+ * Project Version: 1q4d 14-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -515,6 +515,9 @@
 
 //variables currently being tested (1o1a+)
 
+#define GIA_SUPPORT_SPECIFIC_CONCEPTS	//added 1q4a to take into account specific concepts eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
+	//NB the phrase 'substance concept'/'substance quality' is a misnomer, as concepts and qualities are not really substances [NB concepts are considered secondary substances in Aristotle's categories, but GIA has a separate Entity class for concepts marked by isConcept: which is confusingly not being used in this case of 'specific concepts' - a software development/history artefact]" << endl;
+	
 #define GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
 #ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
 	#define GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_PROPERTIES_AND_DEFINITIONS

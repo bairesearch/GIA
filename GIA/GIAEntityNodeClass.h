@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q4c 14-October-2012
+ * Project Version: 1q4d 14-October-2012
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -237,7 +237,7 @@ public:
 	bool hasAssociatedInstanceIsCondition;
 	bool hasAssociatedTime;
 	bool isSubstanceQuality;		//PRECISE ORIGINAL NAME: isSubstanceQualityOrAffection	//eg 'the locked door..' / 'Jim runs quickly' / 'Mr. Smith is late' 	[Not: Tom has an arm'/'Tom's bike']
-	bool isSubstanceConcept;		//added 1p4a to take into account specific concepts eg 'red bears' as opposed to 'bears'
+	bool isSubstanceConcept;		//added 1q4a to take into account specific concepts eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
 	
 	bool hasProgressiveTemp;	//PRECISE ORIGINALNAME: isActionOrSubstanceQualityState		//eg The cat is lying on the bed. / Mark is being happy.
 

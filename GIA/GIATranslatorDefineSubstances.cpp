@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q4c 14-October-2012
+ * Project Version: 1q4d 14-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -360,8 +360,60 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 					#endif
 					//substance will be assigned to definition [only if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS]
 					featureArrayTemp[definitionIndex]->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;
-				}
+				}			
 			#endif
+			
+				//now prepare for the future setting of isSubstanceConcept by setting isSubstanceConceptTemp for the current concept node		
+			#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_OLD
+				#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_1_GOVERNOR_DEFINITE_DEPENDENT_INDEFINITE
+				if((thingIsDefinite) && (definitionFeatureHasDeterminate && !definitionIsDefinite && !definitionFeatureIsProperNoun))
+				{
+					featureArrayTemp[definitionIndex]->mustSetIsSubstanceConceptBasedOnApposRelation = true;
+				}
+				#endif
+				/*The following is not required here as these will be set later on in defineSubstanceConcepts();
+				#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_2_GOVERNOR_PLURAL_DEPENDENT_PLURAL
+				else if((!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun) && (!definitionFeatureHasDeterminate && !definitionIsDefinite && !definitionFeatureIsProperNoun))
+				{
+					featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation = true;
+					featureArrayTemp[definitionIndex]->mustSetIsSubstanceConceptBasedOnApposRelation = true;					
+				}
+				#endif
+				*/				
+				#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_3_GOVERNOR_INDEFINITE_DEPENDENT_INDEFINITE
+				else if((thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun) && (definitionFeatureHasDeterminate && !definitionIsDefinite && !definitionFeatureIsProperNoun))
+				{
+					featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation = true;
+					featureArrayTemp[definitionIndex]->mustSetIsSubstanceConceptBasedOnApposRelation = true;
+				}
+				#endif
+				#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_4_GOVERNOR_NAME_DEPENDENT_INDEFINITE
+				else if((thingFeatureHasDeterminate && !thingIsDefinite && thingFeatureIsProperNoun) && (definitionFeatureHasDeterminate && !definitionIsDefinite && !definitionFeatureIsProperNoun))		//NB thingFeatureHasDeterminate will be true for proper nouns [as haveDeterminate is regenerated based upon GRAMMATICAL_NUMBER_SINGULAR], even though proper nouns do not actually have a determinate (eg a/the) assigned
+				{
+					featureArrayTemp[definitionIndex]->mustSetIsSubstanceConceptBasedOnApposRelation = true;
+				}
+				#endif
+			#else
+				if(thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun) 
+				{
+					featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation = true;
+				}
+				if(definitionFeatureHasDeterminate && !definitionIsDefinite && !definitionFeatureIsProperNoun) 
+				{
+					featureArrayTemp[definitionIndex]->mustSetIsSubstanceConceptBasedOnApposRelation = true;
+				}
+				/*The following is not required here as these will be set later on in defineSubstanceConcepts();			
+				if(!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)
+				{
+					featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation = true;
+				}
+				if(!definitionFeatureHasDeterminate && !definitionIsDefinite && !definitionFeatureIsProperNoun)
+				{
+					featureArrayTemp[definitionIndex]->mustSetIsSubstanceConceptBasedOnApposRelation = true;			
+				}
+				*/							
+			#endif
+						
 			}
 		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
@@ -730,3 +782,45 @@ void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAEntity
 		currentRelationInList = currentRelationInList->next;
 	}
 }
+
+#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+void defineSubstanceConcepts(bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[])
+{
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAEntityNodeArrayFilled[i])
+		{
+			#ifdef GIA_TRANSLATOR_DEBUG				
+			//cout << "defineSubstancesBasedOnDeterminatesOfDefinitionEntities(): RELATION_TYPE_APPOSITIVE_OF_NOUN" << endl;
+			#endif
+
+			int thingIndex = i;
+			bool thingFeatureHasDeterminate = false;
+			for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
+			{
+				if(featureArrayTemp[thingIndex]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAConceptNodeArray to featureArrayTemp 14 July 2012b
+				{
+					thingFeatureHasDeterminate = true;
+				}
+			}
+			bool thingFeatureIsProperNoun = featureArrayTemp[thingIndex]->grammaticalIsProperNoun;
+			bool thingIsDefinite =  featureArrayTemp[thingIndex]->grammaticalIsDefinite;
+
+			GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
+
+			if(!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun)
+			{
+				thingEntity->isSubstanceConcept = true;
+			}
+			if(featureArrayTemp[thingIndex]->mustSetIsSubstanceConceptBasedOnApposRelation)
+			{
+				thingEntity->isSubstanceConcept = true;
+			}
+		}
+	}
+}
+#endif
+
+
+
+
