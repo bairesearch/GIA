@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3d 12-October-2012
+ * Project Version: 1q3e 13-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -682,26 +682,18 @@ GIAEntityNode * addOrConnectActionToEntity(GIAEntityNode * subjectEntity, GIAEnt
 	#endif
 		
 		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
-		cout << "A1" << endl;
 		//see if relevant link already exists between the two nodes, and if so use that
 		bool foundNode1 = false;
 		GIAEntityConnection * connectionFound = findEntityNodeNameInVector(subjectEntity, &(actionEntity->entityName), GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS, &foundNode1);
 		if(foundNode1)
 		{
-			cout << "foundNode1" << endl;
 			GIAEntityNode * currentActionNodeInList = connectionFound->entity;
 			bool foundNode2 = false;
-			if(objectEntity->isConcept)
-			{
-				cout << "objectEntity->isConcept" << endl;
-			}
 			GIAEntityConnection * connectionFound2 = findEntityNodePointerInVector(currentActionNodeInList, objectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, &foundNode2);
 			if(foundNode2)
 			{
-				cout << "foundNode2" << endl;
 				if(newOrExistingAction != currentActionNodeInList)
 				{
-					cout << "(newOrExistingAction != currentActionNodeInList)" << endl;
 					newOrExistingAction->disabled = true;
 					newOrExistingAction = currentActionNodeInList;
 				}
