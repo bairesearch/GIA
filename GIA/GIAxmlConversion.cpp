@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g11a 21-October-2014
+ * Project Version: 2g11b 21-October-2014
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -945,6 +945,9 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag * firstTagInEntityVecto
 			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 			bool sameReferenceSetFound = false;
 			#endif
+			#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+			bool isAliasFound = false;
+			#endif
 			#endif
 			
 			while(currentAttribute->nextAttribute != NULL)
@@ -997,8 +1000,19 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag * firstTagInEntityVecto
 
 				}
 				#endif
+				#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+				else if(currentAttribute->name == NET_XML_ATTRIBUTE_isAlias)
+				{
+					bool attributeValue = atoi(currentAttribute->value.c_str());
+					newConnection->isAlias = attributeValue;
+					isAliasFound = true;
+					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
+					//cout << "connection idActiveList = " << idActiveList << endl;
+					#endif
+
+				}
 				#endif
-				
+				#endif
 
 				currentAttribute = currentAttribute->nextAttribute;
 			}
@@ -1744,6 +1758,16 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 						#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 						currentAttribute->name = NET_XML_ATTRIBUTE_sameReferenceSet;
 						sprintf(tempString, "%d", int(connection->sameReferenceSet));
+						currentAttribute->value = tempString;
+
+						newAttribute = new XMLParserAttribute();
+						currentAttribute->nextAttribute = newAttribute;
+						currentAttribute = currentAttribute->nextAttribute;
+						#endif
+						
+						#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+						currentAttribute->name = NET_XML_ATTRIBUTE_isAlias;
+						sprintf(tempString, "%d", int(connection->isAlias));
 						currentAttribute->value = tempString;
 
 						newAttribute = new XMLParserAttribute();
