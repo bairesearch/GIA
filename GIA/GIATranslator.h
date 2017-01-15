@@ -78,8 +78,7 @@ using namespace std;
 
 
 
-
-#define RELATION_TYPE_OBJECT_NUMBER_OF_TYPES (4)
+#define RELATION_TYPE_OBJECT_NUMBER_OF_TYPES (5)
 #define RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES (2)
 #define RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES (3)
 #define RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES (2)
@@ -93,6 +92,7 @@ using namespace std;
 #define RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES (3)
 #define GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES (1)
 #define RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES (2)
+#define RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES (1)
 
 #define REFERENCE_TYPE_LOCATION "there"				//_advmod
 	//pronouns
@@ -118,11 +118,10 @@ using namespace std;
 
 #define RELATION_TYPE_OBJECT "_obj"			//eg eats y	[? be y]
 #define RELATION_TYPE_OBJECT_TO "to"			//eg to y	//NB "to" is currently interpreted as an object of an action
-
-//not used yet
+//not testyet;
 #define RELATION_TYPE_OBJECT_TO_BE "_to-be"		//eg grows tired / The rose smelled sweet / _to-be(smell, sweet) - CHECK THIS
 #define RELATION_TYPE_OBJECT_TO_DO "_to-do"		//eg Linas likes to row / _to-do(like, row) - CHECK THIS
-
+#define RELATION_TYPE_OBJECT_THAT "_that"	//there is a place that we go
 
 #define RELATION_TYPE_SUBJECT "_subj"	//eg x eats 	[? be x]
 #define RELATION_TYPE_SUBJECT_EXPLETIVE "_expl"		//eg goes there	//NB "there" is currently interpreted as a subject of an action

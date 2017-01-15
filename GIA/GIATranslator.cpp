@@ -14,7 +14,7 @@
 #include "GIATranslator.h"
 
 
-string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_TO, RELATION_TYPE_OBJECT_TO_BE, RELATION_TYPE_OBJECT_TO_DO};
+string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_TO, RELATION_TYPE_OBJECT_TO_BE, RELATION_TYPE_OBJECT_TO_DO, RELATION_TYPE_OBJECT_THAT};
 //int relationTypeObjectNameLengthsArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {4, 2, 6, 6};
 string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_SUBJECT_EXPLETIVE};
 //int relationTypeSubjectNameLengthsArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {5, 5};
@@ -27,7 +27,7 @@ string relationFunctionCompositionNameArray[RELATION_FUNCTION_COMPOSITION_NUMBER
 
 int referenceTypeHasDeterminateCrossReferenceNumberArray[GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES] = {GRAMMATICAL_NUMBER_SINGULAR};
 string relationTypeAdjectiveWhichImplyEntityInstanceNameArray[RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_1, RELATION_TYPE_ADJECTIVE_3};
-
+string relationTypeRequireSwitchingNameArray[RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT_THAT};
 
 
 
@@ -205,6 +205,11 @@ void convertEntityToProperty(GIAEntityNode * thingEntity, GIAEntityNode * proper
 
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity)
 {
+	if(definitionEntity->hasAssociatedPropertyTemp)
+	{
+		definitionEntity = definitionEntity->firstAssociatedPropertyNodeInList.back();	//added 4 May 11a
+	}
+	
 	//configure entity node
 	thingEntity->firstEntityNodeInDefinitionList.push_back(definitionEntity);
 	
@@ -217,6 +222,7 @@ void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definiti
 void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity)
 {
 	GIAActionNode * newOrExistingAction;
+	
 	if(!(actionEntity->hasAssociatedActionTemp))
 	{
 		newOrExistingAction = addAction(actionEntity);
@@ -645,7 +651,34 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}
 		//cout << "as2" <<endl;
-		
+	
+		//pass 1b; switch argument/functions where necessary
+		currentRelationInList = currentSentenceInList->firstRelationInList;
+		while(currentRelationInList->next != NULL)
+		{
+			bool passed = false;
+			for(int i=0; i<RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES; i++)
+			{
+				//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+ 
+				if(currentRelationInList->relationType == relationTypeRequireSwitchingNameArray[i])
+				{
+					passed = true;
+				}
+			}			
+			if(passed)
+			{
+				//cout << "THERE currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+				string tempString = currentRelationInList->relationArgument;
+				int tempIndex = currentRelationInList->relationArgumentIndex;
+				currentRelationInList->relationArgument = currentRelationInList->relationFunction;				
+				currentRelationInList->relationFunction = tempString;
+				currentRelationInList->relationArgumentIndex = currentRelationInList->relationFunctionIndex;				
+				currentRelationInList->relationFunctionIndex = tempIndex;				
+			}
+			currentRelationInList = currentRelationInList->next;
+		}
+				
 		
 		//pass 2; identify entity types [define entities as objects, subjects, and being possessive of properties];
 		currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -664,7 +697,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				}
 			}			
 			//if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
-			if(passed == true)
+			if(passed)
 			{
 				int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
 				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;				
@@ -684,7 +717,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				}
 			}						
 			//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_1) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_2) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3))
-			if(passed == true)
+			if(passed)
 			{
 				int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
 				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;				
@@ -704,7 +737,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				}
 			}														
 			//if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT || (currentRelationInList->relationType == RELATION_TYPE_SUBJECT_EXPLETIVE))
-			if(passed == true)
+			if(passed)
 			{
 				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;	
 				GIAEntityNode * subjectEntity = GIAEntityNodeArray[relationArgumentIndex];
@@ -722,7 +755,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				}
 			}
 			//if((currentRelationInList->relationType == RELATION_TYPE_OBJECT) || (currentRelationInList->relationType == RELATION_TYPE_OBJECT_TO))
-			if(passed == true)	
+			if(passed)	
 			{
 				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
 				GIAEntityNode * objectEntity = GIAEntityNodeArray[relationArgumentIndex];
@@ -839,19 +872,19 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 											cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPersonTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPersonTemp << endl;
 											*/
 																																										
-											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp == true)
+											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp)
 											{
 												//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp << endl;
 												referenceSourceHasBeenFound = true;
 												referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
 											}
-											else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp == true) && (s2 > 0))
+											else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp) && (s2 > 0))
 											{
 												//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->isObjectTemp << endl;
 												referenceSourceHasBeenFound = true;
 												referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
 											}
-											else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp == true) && (s2 > 0))
+											else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp) && (s2 > 0))
 											{
 												//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp << endl;
 												referenceSourceHasBeenFound = true;
@@ -924,7 +957,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 							passed = true;
 						}
 					}
-					if(passed == true)
+					if(passed)
 					{
 						addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
 					}
@@ -944,7 +977,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					passed = true;
 				}
 			}						
-			if(passed == true)
+			if(passed)
 			{
 				//create a new property for the entity and assign a property definition entity if not already created
 				string thingName = currentRelationInList->relationFunction;
@@ -975,7 +1008,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				}
 			}	
 			//if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
-			if(passed == true)
+			if(passed)
 			{
 				cout << "RELATION_TYPE_POSSESSIVE" << endl;
 				
@@ -1007,7 +1040,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				}
 			}						
 			//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_1) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_2) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3))
-			if(passed == true)
+			if(passed)
 			{
 				//create a new property for the entity and assign a property definition entity if not already created
 				string thingName = currentRelationInList->relationFunction;
@@ -1078,7 +1111,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				}
 			}												
 			//if((currentRelationInList->relationType == RELATION_TYPE_SUBJECT) || ((currentRelationInList->relationType == RELATION_TYPE_OBJECT) || (currentRelationInList->relationType == RELATION_TYPE_OBJECT_TO) || (currentRelationInList->relationType == RELATION_TYPE_SUBJECT_EXPLETIVE)))
-			if(passed == true)
+			if(passed)
 			{
 				if(subjectObjectRelationshipAlreadyAdded[relationFunctionIndex] != true)
 				{
@@ -1116,13 +1149,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						}
 					}			
 					//if((currentRelationInList->relationType == RELATION_TYPE_SUBJECT) || (currentRelationInList->relationType == RELATION_TYPE_SUBJECT_EXPLETIVE))
-					if(passsubject == true)
+					if(passsubject)
 					{
 						firstIndex = SUBJECT_INDEX;
 						secondIndex = OBJECT_INDEX;			
 					}
 					//else if((currentRelationInList->relationType == RELATION_TYPE_OBJECT) || (currentRelationInList->relationType == RELATION_TYPE_OBJECT_TO))
-					else if(passobject == true)
+					else if(passobject)
 					{
 						firstIndex = OBJECT_INDEX;
 						secondIndex = SUBJECT_INDEX;									
@@ -1151,7 +1184,28 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					{	
 						//cout << "currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
 
-						if(currentRelationInList2->relationType == partnerTypeRequired)
+						bool partnerTypeRequiredFound = false;
+						if(partnerTypeRequired == RELATION_TYPE_SUBJECT)
+						{
+							for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
+							{
+								if(currentRelationInList2->relationType == relationTypeSubjectNameArray[i])
+								{
+									partnerTypeRequiredFound = true;
+								}
+							}
+						}
+						else if(partnerTypeRequired == RELATION_TYPE_OBJECT)														
+						{
+							for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
+							{
+								if(currentRelationInList2->relationType == relationTypeObjectNameArray[i])
+								{
+									partnerTypeRequiredFound = true;
+								}
+							}
+						}
+						if(partnerTypeRequiredFound)
 						{
 
 							if(currentRelationInList2->relationFunctionIndex == currentRelationInList->relationFunctionIndex)
@@ -1180,7 +1234,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 									addDefinitionToEntity(subjectObjectEntityArray[SUBJECT_INDEX], subjectObjectEntityArray[OBJECT_INDEX]);
 								}
 								//else if((currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_1) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_2) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_3))
-								else if(passcomposition == true)
+								else if(passcomposition)
 								{//subject-object relationship is a composition [property]
 									addOrConnectPropertyToEntity(subjectObjectEntityArray[SUBJECT_INDEX], subjectObjectEntityArray[OBJECT_INDEX]);
 										//check can use properties for composition/comprises ; ie, does "tom is happy" = "tom comprises happiness" ?
@@ -1211,7 +1265,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						{
 						}
 						//else if((currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_1) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_2) || (currentRelationInList->relationFunction == RELATION_FUNCTION_COMPOSITION_3))
-						else if(passcomposition == true)
+						else if(passcomposition)
 						{
 						}
 						else
@@ -1499,7 +1553,7 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *indexOfEntityN
 		
 		bool first = true;
 		
-		while(searchOptionsAvailable == true)
+		while(searchOptionsAvailable)
 		{
 			nameTemp = indexOfEntityNames->at(findIndex);
 			/*
@@ -1691,7 +1745,7 @@ GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *
 		
 		previousTempTime = indexOfTimeNumbers->at(findIndex);	//requires start value
 		
-		while(searchOptionsAvailable == true)
+		while(searchOptionsAvailable)
 		{
 			//cout << "vectorSize = "  << vectorSize << endl;
 			//cout << "findIndex = " << findIndex << endl;
