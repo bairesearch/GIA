@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2011 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i6a 4-Apr-2012
+ * Project Version: 1i7a 10-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific version of shared globals (replace if compiling other projects)
  *
@@ -14,16 +14,22 @@
 
 #include "SHAREDglobalDefs.h"
 
+//variables currently under attention for testing purposes
+//#define GIA_DISABLE_REFERENCING		//default: off	{this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}
+//#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		{//this should only be enabled with Relex??} 	//this was (effectively) disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
+#define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
+#define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
+
+
+//Debug;
 //#define GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 //#define GIA_TRANSLATOR_DEBUG
 //#define GIA_NLP_DEBUG
-
 //#define GIA_DRAW_DEBUG
 //#define GIA_DATABASE_DEBUG
 //#define GIA_QUERY_DEBUG
 //#define GIA_SEMANTIC_NET_XML_DEBUG
 
-//#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		//this was {effectively} disabled before version 1h3b [but can be re-enabled for testing using new Stanford implementation]
 
 //~External NLP Parser
 #define GIA_USE_RELEX
@@ -53,7 +59,6 @@
 #define GIA_NLP_PARSER_STANFORD_PARSER (2)
 #define GIA_NLP_PARSER_NUMBER_OF_TYPES (3)
 #define GIA_DEFAULT_NLP_PARSER (GIA_NLP_PARSER_RELEX)		//NB GIA_NLP_PARSER_STANFORD_CORENLP will be default in future, once it has been implemented and debugged.
-
 #define GIA_DEPENDENCY_RELATION_FORMATION_RELEX (0)
 #define GIA_DEPENDENCY_RELATION_FORMATION_STANFORD (1)
 #define GIA_DEPENDENCY_RELATION_FORMATION_NUMBER_OF_TYPES (2)		//Relex and Stanford tags
@@ -93,11 +98,8 @@
 
 
 //~GIAdraw
-//#define GIA_DRAW_USE_PATENT
-//#define TRIAL_DATA_CXL_CONVERSION_ONLY
-#ifdef TRIAL_DATA_CXL_CONVERSION_ONLY
-	#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. concept-list -> concepts or properties
-#endif
+//#define GIA_DRAW_USE_PATENT			//modifies colours of nodes such that they print uniquely in black and white
+//#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. concept-list -> concepts or properties
 
 
 #endif

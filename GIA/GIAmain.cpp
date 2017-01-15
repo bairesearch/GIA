@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i6a 4-Apr-2012
+ * Project Version: 1i7a 10-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
@@ -125,8 +125,8 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-notshow           : do not display outputText in opengl"
 "\n\t-width [int]       : raster graphics width in pixels (def: 640)"
 "\n\t-height [int]      : raster graphics height in pixels (def: 480)"
-"\n\t-nlpparser [int]   : NLP parser to be executed by GIA (1 - Relex [def], 2 - Stanford Core NLP, 3 - Stanford Parser)"
-"\n\t-nlpcomp           : NLP Parser dependency relations (sets Relex into Stanford compatibilty mode)"
+"\n\t-nlpparser [int]   : NLP parser to be executed by GIA (1 - Relex [def], 2 - Stanford Core NLP, 3 - Stanford Parser [UNTESTED])"
+"\n\t-nlpcomp           : NLP Parser dependency relations (sets Relex into Stanford compatibilty mode) [UNTESTED]"
 "\n"
 "\n\t-workingfolder [string] : working directory name for input files (def: same as exe)"
 "\n\t-exefolder [string]     : exe directory name for executables GIA.exe and (def: same as exe)"

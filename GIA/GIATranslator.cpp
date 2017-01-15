@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i6a 4-Apr-2012
+ * Project Version: 1i7a 10-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -246,16 +246,16 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#endif
 	identifyEntityTypes(currentSentenceInList, GIAEntityNodeArray, NLPdependencyRelationsType);
 
+	#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS
 	#ifndef GIA_STANFORD_CORE_NLP_DO_NOT_USE_CODEPENDENCIES
 	if(NLPparserType == GIA_NLP_PARSER_RELEX)
 	{
 	#endif
-		#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS
+		
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 3; link references (eg his/her with joe/emily)" << endl;
 		#endif
 		linkReferences(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList, GIAEntityNodeIsDateOrStanfordTime, GIAEntityNodeGrammaticalTenseArray, GIAEntityNodeGrammaticalTenseModifierArray, GIAEntityNodeGrammaticalNumberArray, GIAEntityNodeGrammaticalIsDefiniteArray, GIAEntityNodeGrammaticalIsRelexPersonOrStanfordProperNounArray, GIAEntityNodeGrammaticalGenderArray, GIAEntityNodeGrammaticalIsPronounArray, GIAEntityNodeIsAReference);
-		#endif
 	#ifndef GIA_STANFORD_CORE_NLP_DO_NOT_USE_CODEPENDENCIES	
 	}
 	#ifdef GIA_USE_STANFORD_CORENLP
@@ -265,9 +265,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	}
 	#endif
 	#endif
+	#endif
 
-
-	
 	
 							
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -330,21 +329,25 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	cout << "0j pass; define properties (has time);" << endl;
 	#endif		
 	definePropertiesHasTime(GIAEntityNodeArrayFilled, GIAEntityNodeArray);		
-
+	
+	/*
 	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATION_FORMATION_RELEX)
 	{
 	#endif
+	*/
 		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_PROPERTY			
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "0k pass; define properties (non explicit pronouns eg 'that');" << endl;
 		#endif
 		definePropertiesNonExplicitPronouns(GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 		#endif
+	/*
 	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE	
 	}
 	#endif
-
+	*/
+	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "1 pass; link properties (possessive relationships); eg joe's bike" << endl;
 	#endif

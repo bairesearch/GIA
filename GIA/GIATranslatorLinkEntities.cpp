@@ -3,7 +3,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1i6a 4-Apr-2012
+ * Project Version: 1i7a 10-Apr-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1356,7 +1356,7 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 	if(passedPreposition)
 	{
 
-		cout << "prepositionName = " << prepositionName << endl;
+		//cout << "prepositionName = " << prepositionName << endl;
 		
 		string conditionTypeName = prepositionName;
 		long entityIndex = -1;
@@ -1382,9 +1382,9 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			//cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl; 
 		}
 
-		cout << "createConditionBasedUponPreposition passedPreposition actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;
-		cout << "createConditionBasedUponPreposition passedPreposition actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
-		cout << "createConditionBasedUponPreposition passedPreposition conditionTypeConceptEntity = " << conditionTypeConceptEntity->entityName << endl;
+		//cout << "createConditionBasedUponPreposition passedPreposition actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;
+		//cout << "createConditionBasedUponPreposition passedPreposition actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
+		//cout << "createConditionBasedUponPreposition passedPreposition conditionTypeConceptEntity = " << conditionTypeConceptEntity->entityName << endl;
 			
 		if(passedPropositionTime)
 		{
