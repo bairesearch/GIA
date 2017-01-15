@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1u5d 29-Sept-2013
+ * Project Version: 1u6a 01-October-2013
  *
  *******************************************************************************/
 
@@ -1038,6 +1038,26 @@ void getEntityCharacteristicIterationstring(string entityVal, EntityCharacterist
 	}
 }
 #endif			
+
+string convertIntToString(int integer)
+{
+	char stringCharStar[100];
+	sprintf(stringCharStar, "%d", integer);
+	return string(stringCharStar);
+}
+
+string convertBoolToString(bool boolean)
+{
+	if(boolean)
+	{
+		return "true";
+	}
+	else
+	{
+		return "false";
+	}
+}
+
 
 
 /*
