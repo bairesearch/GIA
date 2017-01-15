@@ -772,7 +772,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 				passed = true;
 			}
 		}						
-		//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_1) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_2) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3))
+		//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_AMOD) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_PREDADJ) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))
 		if(passed)
 		{
 			bool passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList, NLPdependencyRelationsType);
@@ -1267,7 +1267,7 @@ void redistributeStanfordRelationsNSubjAndPreposition(Sentence * currentSentence
 
 void redistributeStanfordRelationsConjunctionAndCoordinate(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
-	//eg	I eat a pie or tom rows the boat. 	cc(pie-4, or-5)  conj(pie-4, tom-6)
+	//eg	I eat a pie or tom rows the boat. 	cc(pie-4, or-5)  / conj(pie-4, tom-6)
 	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1318,7 +1318,83 @@ void redistributeStanfordRelationsConjunctionAndCoordinate(Sentence * currentSen
 		currentRelationInList = currentRelationInList->next;
 	}
 }
-				
+	
+void redistributeStanfordRelationsGenerateUnparsedQuantityModifers(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+{	
+	//eg	 The punter won almost $1000. 	advmod(won-3, almost-4) / pobj(almost-4, $-5)	[Relex: _obj(win[3], $[5])   / _quantity_mod($[5], almost[4])]
+	//	convert to; _obj(win[3], $[5])  _quantity_mod($[5], almost[4])
+			
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{	
+		//cout << "here1" << endl;
+		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+
+		if(currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD)
+		{					
+			//now find the associated object..
+ 			Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+			while(currentRelationInList2->next != NULL)
+			{	
+				bool partnerTypeRequiredFound = false;					
+				if(currentRelationInList2->relationType == RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION)
+				{
+					partnerTypeRequiredFound = true;
+				}
+
+				if(partnerTypeRequiredFound)
+				{		
+					if(currentRelationInList2->relationFunctionIndex == currentRelationInList->relationArgumentIndex)
+					{//found a matching object-subject relationship
+
+						int indexOfQuantityModifier = currentRelationInList->relationArgumentIndex;						
+						string quantityModifier = currentRelationInList->relationArgument;
+						
+						currentRelationInList->relationType = RELATION_TYPE_OBJECT;
+						currentRelationInList->relationArgumentIndex = currentRelationInList2->relationArgumentIndex;
+						currentRelationInList->relationArgument = currentRelationInList2->relationArgument;
+						
+						currentRelationInList2->relationType = RELATION_TYPE_QUANTITY_MOD;
+						currentRelationInList2->relationFunctionIndex = currentRelationInList2->relationArgumentIndex;
+						currentRelationInList2->relationFunction = currentRelationInList2->relationArgument;						
+						currentRelationInList2->relationArgumentIndex = indexOfQuantityModifier;
+						currentRelationInList2->relationArgument = quantityModifier;
+					}
+				}
+
+				currentRelationInList2 = currentRelationInList2->next;
+			}
+		}
+		//cout << "here2" << endl;
+		currentRelationInList = currentRelationInList->next;
+	}
+}
+
+/*
+void redistributeStanfordRelationsGenerateMeasures(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+{
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+ 	while(currentRelationInList->next != NULL)
+	{
+		if(currentRelationInList->relationType == RELATION_TYPE_PHRASAL_VERB_PARTICLE)
+		{
+			//cout << "RELATION_TYPE_PHRASAL_VERB_PARTICLE" << endl;
+			//eg They shut down the station. 	prt(shut, down) 			
+
+			GIAEntityNode * governerEntity = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
+			GIAEntityNode * dependencyEntity = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
+			governerEntity->entityName = governerEntity->entityName + "_" + dependencyEntity->entityName;
+			//cout << "governerEntity->entityName = " <<governerEntity->entityName << endl;
+
+			dependencyEntity->disabled = true;
+		}			
+		currentRelationInList = currentRelationInList->next;
+	}
+}
+*/
+
+	
+	
 #endif	
 
 

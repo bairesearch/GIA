@@ -227,6 +227,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		cout << "pass 1z5; redistribute Stanford Relations - Conjunction And Coordinate (eg I eat a pie or tom rows the boat. 	cc(pie-4, or-5)  conj(pie-4, tom-6))" << endl;
 		#endif
 		redistributeStanfordRelationsConjunctionAndCoordinate(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);		
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1z6; redistribute Stanford Relations - Generate Unparsed Quantity Modifers (eg The punter won almost $1000. 	advmod(won-3, almost-4)  pobj(almost-4, $-5))" << endl;
+		#endif
+		redistributeStanfordRelationsGenerateUnparsedQuantityModifers(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);				
 	}
 	#endif
 

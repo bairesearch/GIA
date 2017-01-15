@@ -69,7 +69,7 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 				passed = true;
 			}
 		}						
-		//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_1) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_2) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3))
+		//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_AMOD) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_PREDADJ) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))
 		if(passed)
 		{				
 			bool passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList, NLPdependencyRelationsType);
@@ -223,7 +223,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 						Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
 						while(currentRelationInList3->next != NULL)
 						{
-							if(currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_3)
+							if(currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD)
 							{
 								//cout << "ASD" << endl;
 
@@ -480,7 +480,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 							Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
 							while(currentRelationInList3->next != NULL)
 							{
-								if(currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_3)
+								if(currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD)
 								{
 								
 									#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
@@ -895,7 +895,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											if(currentRelationInList3->relationFunction == RELATION_FUNCTION_DEFINITION_1)
 											{											
 												//cout << "a2" << endl;
-												if((currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_3))	//OR if (currentRelationInList3->relationType == subjectObjectFunctionEntityArray[OBJECT_INDEX]->entityName)
+												if((currentRelationInList3->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))	//OR if (currentRelationInList3->relationType == subjectObjectFunctionEntityArray[OBJECT_INDEX]->entityName)
 												{
 													//cout << "b" << endl;
 													if(currentRelationInList3->relationArgument == subjectObjectFunctionEntityArray[OBJECT_INDEX]->entityName)

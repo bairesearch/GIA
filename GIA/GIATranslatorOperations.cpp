@@ -99,7 +99,7 @@ bool isAdjectiveNotAnAdvmodAndRelationFunctionIsNotBe(Relation * currentRelation
 	{
 	#endif
 		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES_ADVANCED
-		if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3) && (GIAEntityNodeArray[relationFunctionIndex]->entityName == RELATION_FUNCTION_DEFINITION_1))
+		if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD) && (GIAEntityNodeArray[relationFunctionIndex]->entityName == RELATION_FUNCTION_DEFINITION_1))
 		{//added condition Fri 27 Jan - remove 'be' node artefacts
 			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 			GIAEntityNodeArray[relationFunctionIndex]->disabled = true;
@@ -123,7 +123,7 @@ bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, 
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
 	#endif			
-		if(currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_3)
+		if(currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD)
 		{
 			Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
  			while(currentRelationInList3->next != NULL)
