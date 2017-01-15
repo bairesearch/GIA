@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a4b 09-November-2013
+ * Project Version: 2a5a 23-November-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -833,31 +833,33 @@ void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentit
 		if(GIAentityNodeArrayFilled[w])
 		{
 			GIAentityNode * entity = GIAentityNodeArray[w];
-			#ifdef GIA_TRANSLATOR_DEBUG
-			//cout << "entity->entityName = " << entity->entityName << endl;
-			#endif
-			#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
-			entity->wordOrig = currentFeatureInList->word;
-			#endif
+			if(!(entity->wasReference))	//added GIA 2a5a - required for NLPI; do not overwrite isDefinite=false (from "a dog") with isDefinite=true (from "the dog") when the variable is being re-referenced in context
+			{
+				#ifdef GIA_TRANSLATOR_DEBUG
+				//cout << "entity->entityName = " << entity->entityName << endl;
+				#endif
+				#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
+				entity->wordOrig = currentFeatureInList->word;
+				#endif
 
-			entity->hasAssociatedTime = currentFeatureInList->grammaticalIsDateOrTime;
+				entity->hasAssociatedTime = currentFeatureInList->grammaticalIsDateOrTime;
 
-			applyPOSrelatedGrammaticalInfoToEntity(entity, currentFeatureInList);
+				applyPOSrelatedGrammaticalInfoToEntity(entity, currentFeatureInList);
 
-			entity->grammaticalDefiniteTemp = currentFeatureInList->grammaticalIsDefinite;
-			entity->grammaticalProperNounTemp = currentFeatureInList->grammaticalIsProperNoun;
-			entity->grammaticalGenderTemp = currentFeatureInList->grammaticalGender;
-			#ifdef GIA_USE_ADVANCED_REFERENCING
-			entity->grammaticalDefiniteIndexOfDeterminerTemp = currentFeatureInList->grammaticalIsDefiniteIndexOfDeterminer;
-			//cout << "entity->grammaticalDefiniteIndexOfDeterminerTemp = " << entity->grammaticalDefiniteIndexOfDeterminerTemp << endl;
-			#endif
+				entity->grammaticalDefiniteTemp = currentFeatureInList->grammaticalIsDefinite;
+				entity->grammaticalProperNounTemp = currentFeatureInList->grammaticalIsProperNoun;
+				entity->grammaticalGenderTemp = currentFeatureInList->grammaticalGender;
+				#ifdef GIA_USE_ADVANCED_REFERENCING
+				entity->grammaticalDefiniteIndexOfDeterminerTemp = currentFeatureInList->grammaticalIsDefiniteIndexOfDeterminer;
+				//cout << "entity->grammaticalDefiniteIndexOfDeterminerTemp = " << entity->grammaticalDefiniteIndexOfDeterminerTemp << endl;
+				#endif
 
-			entity->NERTemp = currentFeatureInList->NER;
-			#ifdef GIA_USE_STANFORD_CORENLP
-			entity->NormalizedNERtemp = currentFeatureInList->NormalizedNER;
-			entity->TimexTemp = currentFeatureInList->Timex;
-			#endif
-
+				entity->NERTemp = currentFeatureInList->NER;
+				#ifdef GIA_USE_STANFORD_CORENLP
+				entity->NormalizedNERtemp = currentFeatureInList->NormalizedNER;
+				entity->TimexTemp = currentFeatureInList->Timex;
+				#endif
+			}
 		}
 
 		currentFeatureInList = currentFeatureInList->next;
