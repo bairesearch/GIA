@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5b 26-July-2012
+ * Project Version: 1n6a 28-July-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -43,7 +43,6 @@ using namespace std;
 #define GRAMMATICAL_WORD_TYPE_ADJSAT (SATELLITE)
 #define GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES (7)
 
-#define GRAMMATICAL_TENSE_UNDEFINED 0
 #define GRAMMATICAL_TENSE_PRESENT 1
 #define GRAMMATICAL_TENSE_PAST 2
 #define GRAMMATICAL_TENSE_FUTURE 3
@@ -306,7 +305,7 @@ public:
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	int grammaticalDefiniteIndexOfDeterminerTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	#endif
-	
+
 	bool isSubjectTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
 	bool isObjectTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
 	bool hasPropertyTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
@@ -375,11 +374,11 @@ public:
 	GIAconceptEntityLoaded * conceptEntityLoaded;
 	#endif
 	#endif
-	
+
 	#ifdef GIA_USE_NLG
 	bool parsedForLanguageGeneration;
 	bool sourceAddedInLanguageGeneration;
-	bool sourceReferencedInLanguageGeneration;	
+	bool sourceReferencedInLanguageGeneration;
 	#endif
 
 };

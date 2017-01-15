@@ -3,7 +3,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5b 26-July-2012
+ * Project Version: 1n6a 28-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -736,9 +736,9 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuer
 	string currentStanfordParserOutputParagraphString = "";
 
 	bool parsingWordsAndTags = true;
-	bool parsingPenn = false;	
+	bool parsingPenn = false;
 	bool parsingTypedDependencies = false;	//parse tree is first set in list
-	
+
 	ifstream parseFileObject(inputTextNLPrelationXMLFileName.c_str());
 	if(!parseFileObject.rdbuf( )->is_open( ))
 	{
@@ -763,7 +763,7 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuer
 					{
 						parsingWordsAndTags = false;
 						parsingPenn = true;
-						
+
 						#ifdef STANFORD_PARSER_SENTENCE_SKIP_SUPPORT
 						//take into account sentences skipped by Stanford Parser - added 30 June 2012 to disregard (eg large) sentences that have been skipped
 						int numberOfSentencesSkipped = countSubstring(currentStanfordParserOutputParagraphString, STANFORD_PARSER_SENTENCE_SKIPPED_TEXT);
@@ -777,20 +777,20 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuer
 								currentSentence->next = newSentence;
 							}
 							currentSentence = currentSentence->next;
-						}						
+						}
 						#endif
-						
+
 						#ifdef STANFORD_PARSER_USE_POS_TAGS	//overwrite
 						int maxNumberOfWordsInSentence = 0;
 						bool featuresNotPreviouslyFilled = createNewSentences;
 						#ifdef GIA_NLP_DEBUG
 						cout << "currentStanfordParserOutputParagraphString = " << currentStanfordParserOutputParagraphString << endl;
 						#endif
-						GIATHparseStanfordParseWordsAndPOSTagsText(&currentStanfordParserOutputParagraphString, currentSentence, &maxNumberOfWordsInSentence);						
+						GIATHparseStanfordParseWordsAndPOSTagsText(&currentStanfordParserOutputParagraphString, currentSentence, &maxNumberOfWordsInSentence);
 						#endif
-						
-						currentStanfordParserOutputParagraphString = "";	//reset currentStanfordParserOutputParagraphString for parsing of dependency relations						
-						
+
+						currentStanfordParserOutputParagraphString = "";	//reset currentStanfordParserOutputParagraphString for parsing of dependency relations
+
 					}
 					else if(parsingPenn)
 					{
@@ -798,7 +798,7 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuer
 						parsingTypedDependencies = true;
 
 						currentStanfordParserOutputParagraphString = "";	//reset currentStanfordParserOutputParagraphString for parsing of dependency relations
-					}					
+					}
 					else if(parsingTypedDependencies)
 					{
 						//cout << "parsingDependencyRelationsSTART" << endl;

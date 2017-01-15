@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5b 26-July-2012
+ * Project Version: 1n6a 28-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -409,7 +409,7 @@ used
 #define STANFORD_RELATION_TYPE_COMPLIMENT_TO_BE "acomp"	//NB added '_' for conversion purposes
 #define STANFORD_RELATION_TYPE_COMPLIMENT_TO_DO "xcomp"	//NB added '_' for conversion purposes
 #define RELATION_TYPE_COMPLIMENT_TO_BE_INDEX (0)
-#define RELATION_TYPE_COMPLIMENT_TO_BE_INDEX (1)
+#define RELATION_TYPE_COMPLIMENT_TO_DO_INDEX (1)
 #define RELATION_TYPE_COMPLEMENTS_NUMBER_OF_TYPES (2)
 #define RELATION_TYPE_OBJECT_SPECIAL_TO_DO_PROPERTY_NUMBER_OF_TYPES (1)
 #define RELATION_TYPE_OBJECT_SPECIAL_TO_BE_PROPERTY_NUMBER_OF_TYPES (1)

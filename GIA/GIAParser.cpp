@@ -3,7 +3,7 @@
  * File Name: GIAParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5b 26-July-2012
+ * Project Version: 1n6a 28-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of CFF File
  *
@@ -351,7 +351,7 @@ void GIATHparseStanfordParseWordsAndPOSTagsText(string * POStagsText, Sentence *
 	snapped/VBD communication/NN lines/NNS ,/, closed/VBD airports/NNS
 	and/CC forced/VBD thousands/NNS of/IN people/NNS to/TO sleep/VB in/IN
 	their/PRP$ offices/NNS or/CC walk/VB home/NN during/IN the/DT night/NN
-	,/, officials/NNS said/VBD today/NN ./. 
+	,/, officials/NNS said/VBD today/NN ./.
 
 	*/
 

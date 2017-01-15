@@ -3,7 +3,7 @@
  * File Name: GIAEntityConnectionClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5b 26-July-2012
+ * Project Version: 1n6a 28-July-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -54,7 +54,7 @@ public:
 	bool added;		//signifies whether the database needs to be updated upon exit with new reference
 	//long referenceIndex; 	//OLD [now assume referenceIndex equals the index of the connection in the connection vector] added 24 May 2012 (needs to be populated)
 	#endif
-	
+
 	/*
 	#ifdef GIA_USE_NLG
 	bool parsedForLanguageGeneration;

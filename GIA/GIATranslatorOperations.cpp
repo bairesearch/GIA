@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5b 26-July-2012
+ * Project Version: 1n6a 28-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -344,7 +344,7 @@ GIAEntityNode * addProperty(GIAEntityNode * entity)
 
 	newProperty->entityName = entity->entityName;
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
-	newProperty->wordOrig = entity->wordOrig;	
+	newProperty->wordOrig = entity->wordOrig;
 	#endif
 	newProperty->idInstance = determineNextIdInstance(entity);
 	newProperty->isProperty = true;
@@ -558,8 +558,8 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 
 	newAction->entityName = actionEntity->entityName;
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
-	newAction->wordOrig = actionEntity->wordOrig;	
-	#endif	
+	newAction->wordOrig = actionEntity->wordOrig;
+	#endif
 	newAction->idInstance = determineNextIdInstance(actionEntity);
 
 	writeVectorConnection(newAction, actionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
@@ -975,8 +975,8 @@ GIAEntityNode * addCondition(GIAEntityNode * conditionEntity)
 
 	newCondition->entityName = conditionEntity->entityName;
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
-	newCondition->wordOrig = conditionEntity->wordOrig;	
-	#endif		
+	newCondition->wordOrig = conditionEntity->wordOrig;
+	#endif
 	newCondition->idInstance = determineNextIdInstance(conditionEntity);
 
 	writeVectorConnection(newCondition, conditionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
@@ -1192,12 +1192,12 @@ void disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAE
 {
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 	entity->disabled = true;
-	
-	if(!(entity->entityNodeDefiningThisInstance->empty()))	
+
+	if(!(entity->entityNodeDefiningThisInstance->empty()))
 	{
 		//CHECKTHIS; only disable the concept if it was created in the immediate context (eg sentence)
 		GIAEntityNode * conceptEntity = (entity->entityNodeDefiningThisInstance->back())->entity;
-		
+
 		//cout << "disableConceptEntityBasedUponFirstSentenceToAppearInNetwork( = " << conceptEntity->entityName << endl;
 		disableConceptEntityBasedUponFirstSentenceToAppearInNetwork(conceptEntity);
 	}
@@ -1449,7 +1449,7 @@ GIAEntityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNod
 
 	long entityIndex = -1;
 	entityNodeFound = findOrAddConceptEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodeName, entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList, saveNetwork);
-	
+
 	applyConceptEntityAlreadyExistsFunction(entityNodeFound, *entityAlreadyExistant);
 
 	return entityNodeFound;
@@ -1465,7 +1465,7 @@ void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNod
 	if(!(entityNode->wasReferenceTemp && entityNodeToAdd->wasReferenceTemp))
 	{
 	#endif
-	
+
 		vector<GIAEntityConnection*> * vectorConnection = &(entityNode->entityVectorConnectionsArray[connectionType]);
 		if(entityVectorConnectionIsBasicArray[connectionType])
 		{
@@ -1505,10 +1505,10 @@ void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNod
 			newConnection->added = true;		//this allows for fast update of the DB (append reference connections)
 		}
 		#endif
-		
+
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	}
-	#endif		
+	#endif
 }
 
 long determineNextIdInstance(GIAEntityNode * entity)

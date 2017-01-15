@@ -3,7 +3,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5b 26-July-2012
+ * Project Version: 1n6a 28-July-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -96,9 +96,9 @@ using namespace std;
 	#ifdef GIA_DATABASE_SAVE_WITH_LEADING_ZEROS
 
 		#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
-			#define GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_READ "%ld|%s |%s |%lf|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d\n"			
+			#define GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_READ "%ld|%s |%s |%lf|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d\n"
 		#else
-			#define GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_READ "%ld|%s |%lf|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d\n"		
+			#define GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_READ "%ld|%s |%lf|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d\n"
 		#endif
 		#define GIA_DATABASE_TIME_CONDITION_NODE_FILE_FORMAT_READ "%s |%d|%lf|%d|%d|%d|%d|%ld|%lf|%ld|%d|%d\n"	//used to be %1i %1i at end
 		#define GIA_DATABASE_REFERENCES_FILE_FORMAT_READ "%s |%ld\n"
@@ -106,7 +106,7 @@ using namespace std;
 		#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
 			#define GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE "%0" GIA_ACTIVE_LIST_ID_MAX_LENGTH_STRING "ld|%" GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH_STRING "s |%" GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH_STRING "s |%0.6lf|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%0" GIA_DATABASE_ENTITY_GRAMMATICAL_NUMBER_MAX_LENGTH_STRING "d|%01d|%01d\n"
 		#else
-			#define GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE "%0" GIA_ACTIVE_LIST_ID_MAX_LENGTH_STRING "ld|%" GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH_STRING "s |%0.6lf|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%0" GIA_DATABASE_ENTITY_GRAMMATICAL_NUMBER_MAX_LENGTH_STRING "d|%01d|%01d\n"		
+			#define GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE "%0" GIA_ACTIVE_LIST_ID_MAX_LENGTH_STRING "ld|%" GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH_STRING "s |%0.6lf|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%01d|%0" GIA_DATABASE_ENTITY_GRAMMATICAL_NUMBER_MAX_LENGTH_STRING "d|%01d|%01d\n"
 		#endif
 		#define GIA_DATABASE_TIME_CONDITION_NODE_FILE_FORMAT_WRITE "%" GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH_STRING "s |%02d|%0.6lf|%02d|%01d|%02d|%02d|%020ld|%0.6lf|%020ld|%01d|%01d\n"	//used to be %1i %1i at end
 		#define GIA_DATABASE_REFERENCES_FILE_FORMAT_WRITE "%" GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH_STRING "s |%0" GIA_DATABASE_INSTANCE_ID_MAX_LENGTH_STRING "ld\n"

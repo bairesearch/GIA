@@ -3,7 +3,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5b 26-July-2012
+ * Project Version: 1n6a 28-July-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -243,7 +243,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		traceEntityNode(networkEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);				//added 13 July 2012
 		#endif
 		*/
-		
+
 		if(detectComparisonVariable)
 		{
 			if(queryTraceParameters.foundAnswer)
@@ -259,7 +259,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 				#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS
 				#ifndef GIA_DO_NOT_PRINT_RESULTS
 				if(queryTraceParameters.queryAnswerContexts.size() > 1)
-				{ 
+				{
 					vector<string>::iterator entityAnswerContextsIter = queryTraceParameters.queryAnswerContexts.begin();
 					for(vector<GIAEntityNode*>::iterator entityAnswerIter = queryTraceParameters.queryAnswerNodes.begin(); entityAnswerIter != queryTraceParameters.queryAnswerNodes.end(); entityAnswerIter++)
 					{//for each node in answer list;
@@ -297,33 +297,33 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 	{
 		//KB entity traced, but query entity not traced... implies have chosen wrong trace path
 		result = MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS;
-	}	
+	}
 	else if(((queryEntityNode->testedForQueryComparison) || (queryEntityNode->testedForQueryComparisonTemp)) && !((entityNode->testedForQueryComparison) || (entityNode->testedForQueryComparisonTemp)))
 	{
 		//query entity traced, but KB entity not traced... implies have chosen wrong trace path
 		result = MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS;
-	}	
+	}
 	*/
 	if((entityNode->testedForQueryComparison) && !(queryEntityNode->testedForQueryComparison))
 	{
 		//KB entity traced, but query entity not traced... implies have chosen wrong trace path
-		result = MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS;	
+		result = MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS;
 	}
 	else if((entityNode->testedForQueryComparisonTemp) && !(queryEntityNode->testedForQueryComparisonTemp))
 	{
 		//KB entity traced, but query entity not traced... implies have chosen wrong trace path
-		result = MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS;	
+		result = MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS;
 	}
 	else if((queryEntityNode->testedForQueryComparison) && !(entityNode->testedForQueryComparison))
 	{
 		//KB entity traced, but query entity not traced... implies have chosen wrong trace path
-		result = MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS;	
+		result = MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS;
 	}
 	else if((queryEntityNode->testedForQueryComparisonTemp) && !(entityNode->testedForQueryComparisonTemp))
 	{
 		//KB entity traced, but query entity not traced... implies have chosen wrong trace path
-		result = MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS;	
-	}	
+		result = MATCH_FAIL_COMPLETELY_MISMATCHED_TRACE_PATHS;
+	}
 	else if(!(entityNode->testedForQueryComparison) && !(entityNode->testedForQueryComparisonTemp))	//added '!(entityNode->testedForQueryComparisonTemp)' 18 May 2012
 	{
 		/*DEBUG [check only that never true]:
@@ -333,7 +333,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 			exit(0);
 		}
 		*/
-		
+
 		bool compareEntityNamesResult = false;
 		if(queryEntityNode->entityName == entityNode->entityName)
 		{
@@ -602,7 +602,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 		else
 		{
 			//cout << "queryEntityNode->referenceSetID = " << queryEntityNode->referenceSetID << endl;
-			//cout << "referenceTraceParameters->referenceSetID = " << referenceTraceParameters->referenceSetID << endl;			
+			//cout << "referenceTraceParameters->referenceSetID = " << referenceTraceParameters->referenceSetID << endl;
 			if((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))	//only trace paths of same reference set ID
 			{
 				//cout << "SDF" << endl;
@@ -624,7 +624,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 								passIntrasentenceReferenceRequirements = true;
 							}
 						}
-						
+
 						if(passIntrasentenceReferenceRequirements)
 						{
 						#endif
@@ -645,11 +645,11 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 									#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 									//debug only
 									if(referenceTraceParameters->intrasentenceReference)
-									{						
+									{
 										cout << "EXACT_MATCH_PASS" << endl;
 									}
 									#endif
-									*/									
+									*/
 								}
 								else
 								{
@@ -673,8 +673,8 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 					{
 						result = EXACT_MATCH_FAIL;	//CHECKTHIS
 					}
-					#endif						
-				#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES	
+					#endif
+				#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
 				}
 				else
 				{
@@ -693,7 +693,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 	}
 	else
 	{
-		//cout << "EXACT_MATCH_OUT_OF_BOUNDS1" << endl;	
+		//cout << "EXACT_MATCH_OUT_OF_BOUNDS1" << endl;
 		result = EXACT_MATCH_OUT_OF_BOUNDS;
 	}
 
@@ -727,10 +727,10 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 		entityNode->testedForQueryComparison = true;
 		queryEntityNode->testedForQueryComparison = true;
 		#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
-		entityNode->testedForQueryComparisonTemp = false;		//added 13 July 2012 [Should not be required - redundant]				
+		entityNode->testedForQueryComparisonTemp = false;		//added 13 July 2012 [Should not be required - redundant]
 		queryEntityNode->testedForQueryComparisonTemp = false;		//added 13 July 2012 [Should not be required - redundant]
 		#endif
-		
+
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
 		if(queryTraceParameters->level < 10)
 		{
@@ -741,8 +741,8 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 			cout << queryEntityNode->entityName << ", entityNode->entityName = " << entityNode->entityName << endl;
 		}
 		#endif
-						
-								
+
+
 		if(traceModeIsQuery)
 		{
 			#ifdef GIA_QUERY_DO_NOT_ASSIGN_MATCH_POINTS_FOR_NON_IDENTICAL_CONDITION_TYPES
@@ -968,7 +968,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 							#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 							//debug only
 							if(referenceTraceParameters->intrasentenceReference)
-							{						
+							{
 								cout << "foundExactMatchPass" << endl;
 							}
 							#endif
@@ -996,7 +996,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 								#ifdef GIA_ADVANCED_REFERENCING_UPDATE_NOT_NECESSARY_OR_TESTED
 								foundExactMatchPass = true;
 								#endif
-								
+
 								/*
 								#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 								//debug only
@@ -1006,7 +1006,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 								}
 								#endif
 								*/
-								
+
 								#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 								for(int level=0; level<currentLevel; level++)
 								{
@@ -1179,7 +1179,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 						string irrelevantString = "";
 						bool traceInstantiations = GIA_QUERY_TRACE_INSTANTIATIONS_VALUE;		//clear all (why is this still required if GIA_QUERY_TRACE_INSTANTIATIONS is off? - it is based on testing, but unknown as to why)
 						traceEntityNode((*connectionIter)->entity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
-						traceEntityNode((*connectionIterQuery)->entity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);						
+						traceEntityNode((*connectionIterQuery)->entity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
 
 						//cout << "fin4" << endl;
 					}
@@ -1199,14 +1199,14 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 					if(foundExactMatchPass)
 					{
 						exactMatchFoundTemp = true;
-					}					
+					}
 					#else
 					if(!foundExactMatchFail || foundExactMatchPass)		//OLD before 1 June 2012: (!foundExactMatchFail && foundExactMatchPass)
 					{
 						exactMatchFoundTemp = true;
 					}
 					#endif
-					
+
 					/*
 					#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 					//debug only
@@ -1217,9 +1217,9 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 							cout << "\n\n !foundExactMatchFail" << endl;
 						}
 					}
-					#endif					
+					#endif
 					*/
-					
+
 					bool matchFound = determineMatchParameters(exactMatchFoundTemp, traceModeIsQuery, referenceTraceParameters->traceMode, numberOfMatchedNodesTempMax, &exactMatch);
 
 					/*
@@ -1234,11 +1234,11 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 						if(exactMatchFoundTemp)
 						{
 							cout << "\n\n exactMatchFoundTemp" << endl;
-						}						
+						}
 					}
 					#endif
 					*/
-					
+
 					if(matchFound)
 					{
 						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -1249,11 +1249,11 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 						cout << "matchFound" << endl;
 						#endif
 
-						
+
 						//cout << "matchFound i = " << i << endl;
 						//cout << "matchFound" << endl;
 						//cout << "numberOfMatchedNodesTempMax = " << numberOfMatchedNodesTempMax << endl;
-						
+
 						#ifdef GIA_USE_ADVANCED_REFERENCING
 						if(knownBestMatch)
 						{
@@ -1270,9 +1270,9 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 
 						*numberOfMatchedNodes = numberOfMatchedNodesTemp;
 						*numberOfMatchedNodesRequiredSynonymnDetection = numberOfMatchedNodesRequiredSynonymnDetectionTemp;
-	
+
 						//cout << "matchFoundEND" << endl;
-						
+
 						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 						for(int level=0; level<currentLevel; level++)
 						{
@@ -1291,8 +1291,8 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 						cout << "nomatchFound" << endl;
 						#endif
 					}
-					
-					
+
+
 					//cout << "fin6" << endl;
 
 					#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
@@ -1347,7 +1347,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 
 		entityNode->testedForQueryComparison = false;
 		queryEntityNode->testedForQueryComparison = false;
-		entityNode->testedForQueryComparisonTemp = true;		
+		entityNode->testedForQueryComparisonTemp = true;
 		queryEntityNode->testedForQueryComparisonTemp = true;
 
 	}
@@ -1738,7 +1738,7 @@ void traceEntityNodeDetermineNextCourseOfAction(string * printEntityNodeString, 
 	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION)
 	{
 		traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition, referenceSetID, traceInstantiations);
-	}	
+	}
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY)
 	{
@@ -1781,7 +1781,7 @@ void traceEntityNode(GIAEntityNode * entityNode, int function, int * numberOfMat
 			pass = true;
 			entityNode->parsedForLanguageGeneration = false;
 		}
-	}	
+	}
 	else
 	{
 		if(!(entityNode->queryEntityTraced))

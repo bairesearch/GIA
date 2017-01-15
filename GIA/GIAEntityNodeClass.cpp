@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5b 26-July-2012
+ * Project Version: 1n6a 28-July-2012
  *
  *******************************************************************************/
 
@@ -42,7 +42,7 @@ GIAEntityNode::GIAEntityNode(void)
 	entityName = "";
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
 	wordOrig = "";		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
-	#endif	
+	#endif
 	confidence = 1.0;
 
 	isConcept = false;
@@ -102,7 +102,7 @@ GIAEntityNode::GIAEntityNode(void)
 	grammaticalPronounTemp = GRAMMATICAL_PRONOUN_UNDEFINED;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	grammaticalDefiniteIndexOfDeterminerTemp = GIA_ENTITY_INDEX_UNDEFINED;
-	#endif	
+	#endif
 	isSubjectTemp = false;
 	isObjectTemp = false;
 	hasPropertyTemp = false;
@@ -171,7 +171,7 @@ GIAEntityNode::GIAEntityNode(void)
 	testedForQueryComparison = false;
 	testedForQueryComparisonTemp = false;
 	queryAnswerContext = false;
-	
+
 	negative = false;
 
 	disableParsingAsAPrepositionRelationTemp = false;
@@ -199,11 +199,11 @@ GIAEntityNode::GIAEntityNode(void)
 	conceptEntityLoaded = NULL;
 	#endif
 	#endif
-	
+
 	#ifdef GIA_USE_NLG
 	parsedForLanguageGeneration = false;
 	sourceReferencedInLanguageGeneration = false;
-	#endif	
+	#endif
 }
 GIAEntityNode::~GIAEntityNode(void)
 {

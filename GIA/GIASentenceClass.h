@@ -3,7 +3,7 @@
  * File Name: GIASentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5b 26-July-2012
+ * Project Version: 1n6a 28-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -29,7 +29,6 @@ using namespace std;
 #define FEATURE_WORD_QUESTIONMARK "?"
 
 //from http://wiki.opencog.org/w/Word_properties (intermediary - used for translation purposes into WordNet int wordNetPOS only)
-#define FEATURE_RELEX_POS_TYPE_PUNCTUATION (0)
 #define FEATURE_RELEX_POS_TYPE_ADJECTIVE (1)
 #define FEATURE_RELEX_POS_TYPE_ADVERB (2)
 #define FEATURE_RELEX_POS_TYPE_CONJUNCTION (3)
@@ -40,7 +39,6 @@ using namespace std;
 #define FEATURE_RELEX_POS_TYPE_PUNCTUATION (8)
 #define FEATURE_RELEX_POS_TYPE_VERB (9)
 #define FEATURE_RELEX_POS_TYPE_WORD (10)
-#define FEATURE_RELEX_POS_TYPE_PUNCTUATION_NAME "punctuation"
 #define FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME "adj"
 #define FEATURE_RELEX_POS_TYPE_ADVERB_NAME "adv"
 #define FEATURE_RELEX_POS_TYPE_CONJUNCTION_NAME "conjunction"
@@ -195,11 +193,11 @@ public:
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	int grammaticalIsDefiniteIndexOfDeterminer;
 	#endif
-	
+
 	bool isPronounReference;
 
 	bool entityDisabled;	//added 14 July 2012b
-	
+
 	Feature * next;
 	Feature * previous;	//used for reference lookup
 };

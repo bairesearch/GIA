@@ -3,7 +3,7 @@
  * File Name: GIAXMLconversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n5b 26-July-2012
+ * Project Version: 1n6a 28-July-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -552,7 +552,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			entityNode->wordOrig = attributeValue;
 			wordOrigFound = true;
 		}
-		#endif		
+		#endif
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_confidence)
 		{
 			double attributeValue = atof(currentAttribute->value.c_str());
@@ -1127,7 +1127,7 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	newAttribute = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
-	
+
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
 	currentAttribute->name = NET_XML_ATTRIBUTE_wordOrig;
 	currentAttribute->value = currentEntity->wordOrig;
@@ -1135,7 +1135,7 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	newAttribute = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
-	#endif			
+	#endif
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_confidence;
 	sprintf(tempString, "%0.6f", (currentEntity->confidence));
