@@ -542,7 +542,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		//cout << "as2" <<endl;
 		
 		//pass B;	
-
+		
 		//0 pass; define properties (definite nouns); eg the house
 		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 		{
