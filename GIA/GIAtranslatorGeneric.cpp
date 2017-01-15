@@ -295,7 +295,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 				if(param->relation[currentRelationID]->rcmodIndicatesSameReferenceSet)
 				{
 					passedRelation = false;		//"that"/"which" connection found
-					cout << "rcmodIndicatesSameReferenceSet = " << currentRelationID << endl;
+					//cout << "rcmodIndicatesSameReferenceSet = " << currentRelationID << endl;
 				}
 			
 			}				
