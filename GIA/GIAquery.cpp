@@ -87,15 +87,17 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	if(!detectComparisonVariable || !(*foundAnswer))
 	{//now set draw parameters for optimium solution...
 	
+		//cout << "asf2" << endl;
+		
 		bool foundAnswerTemp = false;
 		GIAEntityNode* queryAnswerNodeTemp;
 		int numberOfMatchedNodes = 0;
 		
-		testEntityNodeForQuery(queryEntityNodeWhenSearchedResultsInBestConfidence, networkEntityNodeWhenSearchedResultsInBestConfidence, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodes, true);
+		queryAnswerNodeTemp = testEntityNodeForQuery(queryEntityNodeWhenSearchedResultsInBestConfidence, networkEntityNodeWhenSearchedResultsInBestConfidence, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodes, true);
 	
 		if(!detectComparisonVariable && foundAnswerTemp)
 		{
-			cout << "asf" << endl;
+			//cout << "asf1" << endl;
 			*foundAnswer = true;
 			queryAnswerNode = queryAnswerNodeTemp;
 		}
@@ -117,7 +119,9 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 		if(detectComparisonVariable && comparisonVariableNode->hasQuantity && queryEntityNode->hasQuantity && entityNode->hasQuantity)
 		{//exact match found [NB if a quantity, the queryEntityNode's entityName will not have the comparisonVariable name (_$qVar) specified, and therefore a matched entity node entityName is required]
 			foundMatch = true;
-			//cout << "entityNode->quantityNumber = " << entityNode->quantityNumber << endl;
+			#ifdef GIA_QUERY_DEBUG
+			cout << "entityNode->quantityNumber = " << entityNode->quantityNumber << endl;
+			#endif
 		}
 		else
 		{
@@ -128,8 +132,8 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 				if(findBestInexactAnswerAndSetDrawParameters)
 				{
 					foundMatch = true;
-					#ifdef GIA_TRANSLATOR_DEBUG
-					cout << "foundBestInexactAnswerAndSetDrawParameters:" << comparisonVariableNode->entityName << endl;
+					#ifdef GIA_QUERY_DEBUG
+					cout << "foundBestInexactAnswerAndSetDrawParameters:" << entityNode->entityName << endl;
 					#endif
 					//set queryAnswerNode if entityNode is an object;
 					/*eg;
@@ -153,13 +157,13 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 	
 	if(foundMatch)
 	{
-		if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters && !(entityNode->isAnswerContextToQuery)))
+		if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters))
 		{
 			entityNode->isAnswerToQuery = true;
 			*foundAnswer = true; 
 			queryAnswerNode = entityNode;
-			#ifdef GIA_TRANSLATOR_DEBUG
-			cout << "foundAnswer:" << comparisonVariableNode->entityName << endl;
+			#ifdef GIA_QUERY_DEBUG
+			cout << "foundAnswer:" << entityNode->entityName << endl;
 			#endif
 			//CHECKTHIS; need to take into account vector of answers (not just a single answer)
 			

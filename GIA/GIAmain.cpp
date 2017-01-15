@@ -657,6 +657,15 @@ void executeRelex(string inputPlainTXTFileName, string inputRelexXMLFileName)
 	#endif	
 			
 }
+
+void addToPrintEntityNodeString(string * printEntityNodeString, string entityName, string context)
+{
+	#ifdef GIA_COMPILE_FOR_BAI_APP_SERVER_RELEASE
+	*printEntityNodeString = *printEntityNodeString + "\nContext: " + context + " = " + entityName;			
+	#else
+	*printEntityNodeString = *printEntityNodeString + "\nContext: = " + entityName;			
+	#endif
+}
 string printEntityNode(GIAEntityNode * queryAnswerNode)
 {
 	string printEntityNodeString = "";
@@ -665,22 +674,22 @@ string printEntityNode(GIAEntityNode * queryAnswerNode)
 	{
 		if(queryAnswerNode->entityNodeContainingThisProperty != NULL)
 		{
-			printEntityNodeString = printEntityNodeString + "Context: entityNodeContainingThisProperty (parent) = " + queryAnswerNode->entityNodeContainingThisProperty->entityName;			
+			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->entityNodeContainingThisProperty->entityName, "entityNodeContainingThisProperty (parent)");
 		}	
 		if(queryAnswerNode->entityNodeDefiningThisPropertyOrAction != NULL)
 		{
-			printEntityNodeString = printEntityNodeString + "Context: entityNodeDefiningThisPropertyOrAction = " + queryAnswerNode->entityNodeDefiningThisPropertyOrAction->entityName;			
+			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->entityNodeDefiningThisPropertyOrAction->entityName, "entityNodeDefiningThisPropertyOrAction");
 		}
 	}	
 	if(queryAnswerNode->hasAssociatedPropertyIsAction)
 	{
 		if(queryAnswerNode->actionSubjectEntity != NULL)
 		{
-			printEntityNodeString = printEntityNodeString + "Context: actionSubjectEntity = " + queryAnswerNode->actionSubjectEntity->entityName;			
+			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->actionSubjectEntity->entityName, "actionSubjectEntity");
 		}
 		if(queryAnswerNode->actionObjectEntity != NULL)
 		{
-			printEntityNodeString = printEntityNodeString + "Context: actionObjectEntity = " + queryAnswerNode->actionObjectEntity->entityName;			
+			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->actionObjectEntity->entityName, "actionObjectEntity");
 		}
 	}
 	if(!(queryAnswerNode->hasAssociatedPropertyIsAction))
@@ -689,14 +698,14 @@ string printEntityNode(GIAEntityNode * queryAnswerNode)
 		{
 			for(queryAnswerNode->ActionNodeListIterator = queryAnswerNode->ActionNodeList.begin(); queryAnswerNode->ActionNodeListIterator < queryAnswerNode->ActionNodeList.end(); queryAnswerNode->ActionNodeListIterator++)
 			{
-				printEntityNodeString = printEntityNodeString + "Context: outgoingAction(s) = " + (*(queryAnswerNode->ActionNodeListIterator))->entityName;				
+				addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->ActionNodeListIterator))->entityName, "outgoingAction(s)");
 			}				
 		}
 		if(queryAnswerNode->IncomingActionNodeList.begin() != queryAnswerNode->IncomingActionNodeList.end())
 		{
 			for(queryAnswerNode->IncomingActionNodeListIterator = queryAnswerNode->IncomingActionNodeList.begin(); queryAnswerNode->IncomingActionNodeListIterator < queryAnswerNode->IncomingActionNodeList.end(); queryAnswerNode->IncomingActionNodeListIterator++)
 			{
-				printEntityNodeString = printEntityNodeString + "Context: incomingAction(s) = " + (*(queryAnswerNode->IncomingActionNodeListIterator))->entityName;				
+				addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->IncomingActionNodeListIterator))->entityName, "incomingAction(s)");			
 			}				
 		}
 	}
@@ -704,7 +713,7 @@ string printEntityNode(GIAEntityNode * queryAnswerNode)
 	{
 		for(queryAnswerNode->PropertyNodeListIterator = queryAnswerNode->PropertyNodeList.begin(); queryAnswerNode->PropertyNodeListIterator < queryAnswerNode->PropertyNodeList.end(); queryAnswerNode->PropertyNodeListIterator++)
 		{
-			printEntityNodeString = printEntityNodeString + "Context: propertyNode(s) = " + (*(queryAnswerNode->PropertyNodeListIterator))->entityName;				
+			addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->PropertyNodeListIterator))->entityName, "propertyNode(s)");	
 		}				
 	}
 	if(queryAnswerNode->ConditionNodeList.begin() != queryAnswerNode->ConditionNodeList.end())
@@ -712,7 +721,7 @@ string printEntityNode(GIAEntityNode * queryAnswerNode)
 		vector<string>::iterator ConditionNodeTypeListIterator = queryAnswerNode->ConditionNodeTypeList.begin();
 		for(queryAnswerNode->ConditionNodeListIterator = queryAnswerNode->ConditionNodeList.begin(); queryAnswerNode->ConditionNodeListIterator < queryAnswerNode->ConditionNodeList.end(); queryAnswerNode->ConditionNodeListIterator++)
 		{
-			printEntityNodeString = printEntityNodeString + "Context: conditionNode(s) = " + (*(queryAnswerNode->ConditionNodeListIterator))->entityName + ", type = " + *ConditionNodeTypeListIterator;			
+			addToPrintEntityNodeString(&printEntityNodeString, ((*(queryAnswerNode->ConditionNodeListIterator))->entityName + ", type = " + *ConditionNodeTypeListIterator), "conditionNode(s)");
 			ConditionNodeTypeListIterator++;
 		}				
 	}
@@ -720,8 +729,8 @@ string printEntityNode(GIAEntityNode * queryAnswerNode)
 	{
 		vector<string>::iterator ConditionNodeTypeListIterator = queryAnswerNode->ConditionNodeTypeReverseList.begin();
 		for(queryAnswerNode->ConditionNodeReverseListIterator = queryAnswerNode->ConditionNodeReverseList.begin(); queryAnswerNode->ConditionNodeReverseListIterator < queryAnswerNode->ConditionNodeReverseList.end(); queryAnswerNode->ConditionNodeReverseListIterator++)
-		{
-			printEntityNodeString = printEntityNodeString + "Context: incomingConditionNode(s) = " + (*(queryAnswerNode->ConditionNodeReverseListIterator))->entityName + ", type = " + *ConditionNodeTypeListIterator;				
+		{		
+			addToPrintEntityNodeString(&printEntityNodeString, ((*(queryAnswerNode->ConditionNodeReverseListIterator))->entityName + ", type = " + *ConditionNodeTypeListIterator), "incomingConditionNode(s)");
 			ConditionNodeTypeListIterator++;
 		}				
 	}
@@ -732,14 +741,14 @@ string printEntityNode(GIAEntityNode * queryAnswerNode)
 		{
 			for(queryAnswerNode->EntityNodeDefinitionReverseListIterator = queryAnswerNode->EntityNodeDefinitionReverseList.begin(); queryAnswerNode->EntityNodeDefinitionReverseListIterator < queryAnswerNode->EntityNodeDefinitionReverseList.end(); queryAnswerNode->EntityNodeDefinitionReverseListIterator++)
 			{
-				printEntityNodeString = printEntityNodeString + "Context: incomingEntityNodeDefinition(s) = " + (*(queryAnswerNode->EntityNodeDefinitionReverseListIterator))->entityName;				
+				addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->EntityNodeDefinitionReverseListIterator))->entityName, "incomingEntityNodeDefinition");	
 			}				
 		}
 		if(queryAnswerNode->EntityNodeDefinitionReverseList.begin() != queryAnswerNode->EntityNodeDefinitionReverseList.end())
 		{
 			for(queryAnswerNode->EntityNodeDefinitionReverseListIterator = queryAnswerNode->EntityNodeDefinitionReverseList.begin(); queryAnswerNode->EntityNodeDefinitionReverseListIterator < queryAnswerNode->EntityNodeDefinitionReverseList.end(); queryAnswerNode->EntityNodeDefinitionReverseListIterator++)
 			{
-				printEntityNodeString = printEntityNodeString + "Context: incomingEntityNodeDefinition(s) = " + (*(queryAnswerNode->EntityNodeDefinitionReverseListIterator))->entityName;				
+				addToPrintEntityNodeString(&printEntityNodeString, (*(queryAnswerNode->EntityNodeDefinitionReverseListIterator))->entityName, "incomingEntityNodeDefinition(s)");	
 			}				
 		}
 	}
@@ -748,7 +757,7 @@ string printEntityNode(GIAEntityNode * queryAnswerNode)
 	{
 		if(queryAnswerNode->timeConditionNode != NULL)
 		{
-			printEntityNodeString = printEntityNodeString + "Context: timeConditionNode = " + queryAnswerNode->timeConditionNode->conditionName;			
+			addToPrintEntityNodeString(&printEntityNodeString, queryAnswerNode->timeConditionNode->conditionName, "timeConditionNode");
 		}
 	}	
 			
