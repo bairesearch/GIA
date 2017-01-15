@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r10c 28-November-2012
+ * Project Version: 1r10d 28-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -601,11 +601,26 @@
 #define GIA_USE_DATABASE	//requires further testing
 #ifdef GIA_USE_DATABASE
 	#define GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ	//enable this for debugging only - not required for GIA
-	//#define GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
+	#define GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES	//added 29 Nov 2012
+	#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
+		#define GIA_DATABASE_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES	//added 29 Nov 2012	
+	#else
+		//#define GIA_DATABASE_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES	//optional to enable disbled node i/o without recording their connections 	
+		//#define GIA_DATABASE_DO_NOT_WRITE_CONNECTIONS_FROM_DISABLED_ENTITY_NODES	//optional to enable disbled node i/o without recording their connections
+	#endif	
 	#define GIA_USE_DATABASE_FILESYSTEM
 	//#define GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 	#define GIA_DATABASE_CLEAR_CACHE_EVERY_SENTENCE
 #endif
+
+#define GIA_SEMANTIC_NET_DO_NOT_WRITE_DISABLED_ENTITY_NODES	//added 29 Nov 2012
+#ifdef GIA_SEMANTIC_NET_DO_NOT_WRITE_DISABLED_ENTITY_NODES
+	#define GIA_SEMANTIC_NET_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES	//added 29 Nov 2012
+#else
+	//#define GIA_SEMANTIC_NET_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES	//optional to enable disbled node i/o without recording their connections
+	//#define GIA_SEMANTIC_NET_DO_NOT_WRITE_CONNECTIONS_FROM_DISABLED_ENTITY_NODES	//optional to enable disbled node i/o without recording their connections
+#endif
+
 #define GIA_USE_ADVANCED_REFERENCING	//requires further testing
 #ifdef GIA_USE_ADVANCED_REFERENCING
 	#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS

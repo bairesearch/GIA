@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r10c 28-November-2012
+ * Project Version: 1r10d 28-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -630,7 +630,7 @@ int main(int argc,char **argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1r10c 28-November-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1r10d 28-November-2012" << endl;
 			exit(1);
 		}
 
@@ -1527,6 +1527,18 @@ int main(int argc,char **argv)
 	#ifdef GIA_USE_DATABASE
 	if(useDatabase)
 	{
+		#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
+		//set conceptEntityLoaded disabled values (used by DBwriteConceptEntityNodesLoadedList() to prevent the writing of disabled concept nodes...)
+		for(unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListMapIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListMapIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListMapIter++)
+		{
+			GIAentityNode * entityNode = conceptEntityNodesListMapIter->second;
+			if(entityNode->disabled)
+			{
+				(entityNode->conceptEntityLoaded)->disabled = true;
+			}
+		}
+		#endif
+		
 		if(writeToDatabase)
 		{
 			//NB currently uses entityNodesActiveListComplete to record which nodes might possibly require an update on the server

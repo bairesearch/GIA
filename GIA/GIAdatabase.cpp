@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r10c 28-November-2012
+ * Project Version: 1r10d 28-November-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -614,68 +614,62 @@ void DBreadDatabase(vector<GIAentityNode*> *entityNodesActiveListComplete, unord
 		bool entityFoundInActiveListCompleteFastIndexDBcache = false;
 		GIAentityNode * entityNodeFoundDBcache = findEntityNodesActiveListCompleteFastIndexDBcache(&(conceptEntityName), GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE, &entityFoundInActiveListCompleteFastIndexDBcache);
 
+		GIAentityNode * conceptEntityNode = NULL;
 		if(entityFoundInActiveListCompleteFastIndexDBcache)
 		{
 			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 			cout << "\tDBreadDatabase() - concept node already in RAM (cache)" << endl;
 			cout << "\tentityNodeFoundDBcache->conceptEntityName = " << entityNodeFoundDBcache->entityName << endl;
 			#endif
-			entityNodesActiveListConcepts->insert(pair<string, GIAentityNode*>(conceptEntityName, entityNodeFoundDBcache));
-			entityNodesActiveListComplete->push_back(entityNodeFoundDBcache);
-
-			#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
-			conceptEntityNodesLoadedListIterator->second = true;
-			#else
-			conceptEntityLoaded->loaded = true;
-			entityNodeFoundDBcache->conceptEntityLoaded = conceptEntityLoaded;
-			#endif			
+			conceptEntityNode = entityNodeFoundDBcache;			
 		}
 		else
 		{
 			//load the concept node from the database into RAM
-			GIAentityNode* conceptEntityNode = new GIAentityNode();
+			conceptEntityNode = new GIAentityNode();
 			DBreadConceptEntityNode(&conceptEntityName, conceptEntityNode);
-			entityNodesActiveListConcepts->insert(pair<string, GIAentityNode*>(conceptEntityName, conceptEntityNode));
-			entityNodesActiveListComplete->push_back(conceptEntityNode);
 			addEntityNodesActiveListCompleteFastIndexDBcache(conceptEntityNode);
+		}
+		
+		entityNodesActiveListConcepts->insert(pair<string, GIAentityNode*>(conceptEntityName, conceptEntityNode));
+		entityNodesActiveListComplete->push_back(conceptEntityNode);
+					
+		#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
+		conceptEntityNodesLoadedListIterator->second = true;
+		#else
+		conceptEntityLoaded->loaded = true;
+		conceptEntityNode->conceptEntityLoaded = conceptEntityLoaded;
+		#endif
+		#ifdef GIA_DATABASE_DEBUG
+		cout << "   conceptEntityNode->entityName = " << conceptEntityNode->entityName << endl;
+		#endif		
 
-			#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
-			conceptEntityNodesLoadedListIterator->second = true;
-			#else
-			conceptEntityLoaded->loaded = true;
-			conceptEntityNode->conceptEntityLoaded = conceptEntityLoaded;
-			#endif
-			#ifdef GIA_DATABASE_DEBUG
-			cout << "   conceptEntityNode->entityName = " << conceptEntityNode->entityName << endl;
-			#endif
+		//based on code from GIAquery()
+		//now load all instances into RAM 
+		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+		{
+			//read all instances
+			DBreadVectorConnections(conceptEntityNode, i);	
+		}	
 
-			//based on code from GIAquery()
-			//now load all instances into RAM 
+		//cout << "done reading concept connections" << endl;
+
+		#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+		conceptEntityNode->wasReference = true;	//required for node to be printed		
+		#endif
+		for(vector<GIAentityConnection*>::iterator connectionIter = (conceptEntityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]).begin(); connectionIter != (conceptEntityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]).end(); connectionIter++)
+		{
+			GIAentityNode* entityNode = (*connectionIter)->entity;
+			entityNodesActiveListComplete->push_back(entityNode);				
+			#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+			entityNode->wasReference = true;	//required for node to be printed
+			#endif
 			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 			{
 				//read all instances
-				DBreadVectorConnections(conceptEntityNode, i);	
-			}	
-
-			//cout << "done reading concept connections" << endl;
-
-			#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-			conceptEntityNode->wasReference = true;	//required for node to be printed		
-			#endif
-			for(vector<GIAentityConnection*>::iterator connectionIter = (conceptEntityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]).begin(); connectionIter != (conceptEntityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]).end(); connectionIter++)
-			{
-				GIAentityNode* entityNode = (*connectionIter)->entity;
-				entityNodesActiveListComplete->push_back(entityNode);				
-				#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-				entityNode->wasReference = true;	//required for node to be printed
-				#endif
-				for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-				{
-					//read all instances
-					DBreadVectorConnections(entityNode, i);
-				}
-			}	
-		}		
+				DBreadVectorConnections(entityNode, i);
+			}
+		}			
 	}
 	
 	//cout << "temp exit" << endl;
@@ -804,7 +798,7 @@ void DBreadConceptEntityNodesLoadedList()	//unordered_map<string, bool> *DBconce
 void DBreadVectorConnections(GIAentityNode * entityNode, int connectionType)
 {
 	#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
-	if(!(entityNode->disabled))	//Added 17 August 2012
+	if(!(entityNode->disabled))	//Added 17 August 2012 (is this required? - entities should not have been written to database in first place with GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES)
 	{
 	#endif
 		#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
@@ -1313,55 +1307,69 @@ void writeDatabase(vector<GIAentityNode*> *entityNodesActiveListComplete)
 				DBwriteEntityNode(&(entityNode->entityName), entityNode->idInstance, entityNode);
 			}
 
-			//only write specific connections
-			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+			#ifdef GIA_DATABASE_DO_NOT_WRITE_CONNECTIONS_FROM_DISABLED_ENTITY_NODES
+			if(!(entityNode->disabled))	//added 29 November 2012
 			{
-				if(entityNode->entityVectorConnectionsReferenceListLoadedArray[i])
-				{//they should all be loaded
+			#endif
+				//only write specific connections
+				for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+				{
+					if(entityNode->entityVectorConnectionsReferenceListLoadedArray[i])
+					{//they should all be loaded
 
-					if(entityNode->added || entityNode->entityVectorConnectionsRemovedArray[i])
-					{
-						#ifdef GIA_DATABASE_DEBUG
-						//cout << "DBwriteVectorConnectionsReferences" << endl;
-						#endif
-						//write all vector connection references
-						DBwriteVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, i, &(entityNode->entityVectorConnectionsArray[i]));
+						if(entityNode->added || entityNode->entityVectorConnectionsRemovedArray[i])
+						{
+							#ifdef GIA_DATABASE_DEBUG
+							//cout << "DBwriteVectorConnectionsReferences" << endl;
+							#endif
+							//write all vector connection references
+							DBwriteVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, i, &(entityNode->entityVectorConnectionsArray[i]));
+						}
+						else
+						{
+							int referenceIndex = 0;
+							for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
+							{
+								GIAentityConnection * connection = *connectionIter;
+								#ifdef GIA_DATABASE_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES
+								if(!(connection->entity->disabled))
+								{
+								#endif			
+									if(connection->modified)
+									{//modified; overwrite vector connection reference
+										#ifdef GIA_DATABASE_DEBUG
+										//cout << "DBmodifyVectorConnectionsReference" << endl;
+										#endif
+										DBmodifyVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance, referenceIndex);
+									}
+									else if(connection->added)
+									{//added; append vector connection reference
+										#ifdef GIA_DATABASE_DEBUG
+										//cout << "DBappendVectorConnectionsReference" << endl;
+										#endif
+										DBappendVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance);
+									}
+								#ifdef GIA_DATABASE_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES
+								}
+								#endif								
+								referenceIndex++;
+							}
+						}
 					}
 					else
 					{
-						int referenceIndex = 0;
-						for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
-						{
-							GIAentityConnection * connection = *connectionIter;
-							if(connection->modified)
-							{//modified; overwrite vector connection reference
-								#ifdef GIA_DATABASE_DEBUG
-								//cout << "DBmodifyVectorConnectionsReference" << endl;
-								#endif
-								DBmodifyVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance, referenceIndex);
-							}
-							else if(connection->added)
-							{//added; append vector connection reference
-								#ifdef GIA_DATABASE_DEBUG
-								//cout << "DBappendVectorConnectionsReference" << endl;
-								#endif
-								DBappendVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance);
-							}
-							referenceIndex++;
-						}
+						//this may be the case when joining reference sets - so do not throw error
+						#ifdef GIA_DATABASE_DEBUG
+						/*
+						cout << "writeDatabase(): entityVectorConnectionsReferenceListLoadedArray[i] != true" << endl;
+						cout << "entityNode = " << entityNode->entityName << endl;
+						*/
+						#endif
 					}
 				}
-				else
-				{
-					//this may be the case when joining reference sets - so do not throw error
-					#ifdef GIA_DATABASE_DEBUG
-					/*
-					cout << "writeDatabase(): entityVectorConnectionsReferenceListLoadedArray[i] != true" << endl;
-					cout << "entityNode = " << entityNode->entityName << endl;
-					*/
-					#endif
-				}
+			#ifdef GIA_DATABASE_DO_NOT_WRITE_CONNECTIONS_FROM_DISABLED_ENTITY_NODES
 			}
+			#endif				
 		#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 		}
 		#endif
@@ -1510,16 +1518,23 @@ void DBwriteVectorConnectionsReferences(string * entityName, long idInstance, in
 		{
 			GIAentityConnection * connection = *connectionIter;
 
-			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-			cout << "\n" << endl;
-			cout << "\t\tconnectionType = " << connectionType << endl;
-			cout << "\t\tconnection->entityName = " << connection->entityName << endl;
-			cout << "\t\tconnection->idInstance = " << connection->idInstance << endl;
-			#endif
+			#ifdef GIA_DATABASE_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES
+			if(!(connection->entity->disabled))
+			{
+			#endif				
+				#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
+				cout << "\n" << endl;
+				cout << "\t\tconnectionType = " << connectionType << endl;
+				cout << "\t\tconnection->entityName = " << connection->entityName << endl;
+				cout << "\t\tconnection->idInstance = " << connection->idInstance << endl;
+				#endif
 
-			char * connectionEntityName = const_cast<char*>(connection->entityName.c_str()); 	//NB NOT connection->entity->entityName (as DBwriteVectorConnectionsReferences() does not assume connection->loaded == true)
-			long connectionInstanceID = connection->idInstance; 					//NB NOT connection->entity->idInstance (as DBwriteVectorConnectionsReferences() does not assume connection->loaded == true)
-			fprintf(pFile, GIA_DATABASE_REFERENCES_FILE_FORMAT_WRITE, connectionEntityName, connectionInstanceID);
+				char * connectionEntityName = const_cast<char*>(connection->entityName.c_str()); 	//NB NOT connection->entity->entityName (as DBwriteVectorConnectionsReferences() does not assume connection->loaded == true)
+				long connectionInstanceID = connection->idInstance; 					//NB NOT connection->entity->idInstance (as DBwriteVectorConnectionsReferences() does not assume connection->loaded == true)
+				fprintf(pFile, GIA_DATABASE_REFERENCES_FILE_FORMAT_WRITE, connectionEntityName, connectionInstanceID);
+			#ifdef GIA_DATABASE_DO_NOT_WRITE_CONNECTIONS_TO_DISABLED_ENTITY_NODES
+			}
+			#endif			
 		}
 		#endif
 
@@ -1620,6 +1635,12 @@ void DBwriteConceptEntityNodesLoadedList()	//unordered_map<string, bool> *DBconc
 	//cout << "conceptEntityNodesListFileName = " << conceptEntityNodesListFileName << endl;
 
 #ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
+
+	#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
+	cout << "error: GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS cannot be used with GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES" << endl;
+	exit(0);
+	#endif
+
 	ofstream writeFileObject(conceptEntityNodesListFileName.c_str());
 	for(unordered_map<string, bool>::iterator conceptEntityNodesLoadedListIterator = DBconceptEntityNodesLoadedList->begin(); conceptEntityNodesLoadedListIterator != DBconceptEntityNodesLoadedList->end(); conceptEntityNodesLoadedListIterator++)
 	{
@@ -1635,7 +1656,7 @@ void DBwriteConceptEntityNodesLoadedList()	//unordered_map<string, bool> *DBconc
 			writeFileObject.put(conceptEntityName[i]);
 		}
 		*/
-		writeFileObject.put(CHAR_NEWLINE);
+		writeFileObject.put(CHAR_NEWLINE);		
 	}
 	writeFileObject.close();
 #else
@@ -1650,16 +1671,24 @@ void DBwriteConceptEntityNodesLoadedList()	//unordered_map<string, bool> *DBconc
 		{
 			string conceptEntityName = conceptEntityNodesLoadedListIterator->first;
 			GIAconceptEntityLoaded * conceptEntityLoaded = conceptEntityNodesLoadedListIterator->second;
+		
+			#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
+			if(!(conceptEntityLoaded->disabled))
+			{
+			#endif		
 
-			#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-			cout << "\n" << endl;
-			cout << "\t\tconceptEntityName = " << conceptEntityName << endl;
-			cout << "\t\tconceptEntityLoaded->numberOfInstances = " << conceptEntityLoaded->numberOfInstances << endl;
-			#endif
+				#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
+				cout << "\n" << endl;
+				cout << "\t\tconceptEntityName = " << conceptEntityName << endl;
+				cout << "\t\tconceptEntityLoaded->numberOfInstances = " << conceptEntityLoaded->numberOfInstances << endl;
+				#endif
 
-			char * connectionEntityName = const_cast<char*>(conceptEntityName.c_str());
-			long numberOfInstances = conceptEntityLoaded->numberOfInstances;
-			fprintf(pFile, GIA_DATABASE_REFERENCES_FILE_FORMAT_WRITE, connectionEntityName, numberOfInstances);
+				char * connectionEntityName = const_cast<char*>(conceptEntityName.c_str());
+				long numberOfInstances = conceptEntityLoaded->numberOfInstances;
+				fprintf(pFile, GIA_DATABASE_REFERENCES_FILE_FORMAT_WRITE, connectionEntityName, numberOfInstances);
+			#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
+			}
+			#endif				
 		}
 		fclose(pFile);
 	}
