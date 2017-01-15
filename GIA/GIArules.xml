@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g8a 13-September-2014
+ * Project Version: 2g9a 24-September-2014
  *
  *******************************************************************************/
 -->
@@ -1168,9 +1168,10 @@
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 				</paramDepRel>
 				
+				<!-- #ifdefGIA_SUPPORT_NUMBER_OF -->
 				<example><!--interpret
 				The number of blue birds near the mountain.
-				prep_near(number-2, mountain-8) + prep_of(number-2, birds-5)  -> prep_near(birds-5, mountain-8) + _quantity(birds-5, _$qVar[1])
+				prep_near(number-2, mountain-8) + prep_of(number-2, birds-5)  -> prep_near(birds-5, mountain-8) + birds-5 with isNumberOf=true
 				--></example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="2" />
@@ -1178,28 +1179,63 @@
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="number|amount" relationArrayTestSize="2" />
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
 				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="of|_poss" relationArrayTestSize="2" />	<!-- NB _poss test is an artefact and is no longer required -->
-				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_quantity" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
-				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityReassignment="_$qVar" /> <!-- convert "number" to _$qVar -->
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNumberOf" value="true" REL="1" REL_ENT="1" />				
 				<option disableEntity="true" REL="2" REL_ENT="3" />
+				<option disableEntity="true" REL="2" REL_ENT="1" />
+				<option disableRelation="true" REL="2" />
 				</paramDepRel>
 				
 				<example><!--interpret
 				Number of red dogs.
-				prep_of(number-4, dogs-7) -> _quantity(dog[8], _$qVar[1])
+				prep_of(number-4, dogs-7) -> + dog-7 with isNumberOf=true
 				--></example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="number|amount" relationArrayTestSize="2" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of|_poss" relationArrayTestSize="2" />	<!-- NB _poss test is an artefact and is no longer required -->
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isNumberOf" value="true" REL="1" REL_ENT="2" />
+				<option disableEntity="true" REL="1" REL_ENT="3" />
+				<option disableEntity="true" REL="1" REL_ENT="1" />
+				<option disableRelation="true" REL="1" />
+				</paramDepRel>
+				<!-- #else -->
+				<!--
+				<example>interpret
+				The number of blue birds near the mountain.
+				prep_near(number-2, mountain-8) + prep_of(number-2, birds-5)  -> prep_near(birds-5, mountain-8) + _quantity(birds-5, _$qVar[1])
+				</example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="2" />
+				<option expectToFindPrepositionTest="true" REL="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="number|amount" relationArrayTestSize="2" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="of|_poss" relationArrayTestSize="2" />
+				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_quantity" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
+				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityReassignment="_$qVar" />
+				<option disableEntity="true" REL="2" REL_ENT="3" />
+				</paramDepRel>
+				
+				<example>interpret
+				Number of red dogs.
+				prep_of(number-4, dogs-7) -> _quantity(dog[8], _$qVar[1])
+				</example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="number|amount" relationArrayTestSize="2" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of|_poss" relationArrayTestSize="2" />
 				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityReassignment="_quantity" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
-				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_$qVar" /> <!-- convert "number" to _$qVar -->
+				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityReassignment="_$qVar" />
 				<option disableEntity="true" REL="1" REL_ENT="3" />
 				</paramDepRel>
+				-->
+				<!-- #endif -->
+				
 			</function>
 			
 			<!-- #ifdefGIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF -->

@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g8a 13-September-2014
+ * Project Version: 2g9a 24-September-2014
  *
  *******************************************************************************/
 
@@ -158,8 +158,10 @@ GIAentityNode::GIAentityNode(void)
 	isName = false;
 	isNameQuery = false;
 	#endif
-
-
+	#ifdef GIA_SUPPORT_NUMBER_OF
+	isNumberOf = false;
+	#endif
+	
 	/*GIA Connections*/
 	//to minimise query/referencing code
 	actionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS]);
@@ -713,7 +715,10 @@ bool testEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * ent
 	testEntityCharacteristicIterationbool(entity->isName, entityCharacteristic, "isName", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->isNameQuery, entityCharacteristic, "isNameQuery", &foundMatch);
 	#endif
-
+	#ifdef GIA_SUPPORT_NUMBER_OF
+	testEntityCharacteristicIterationbool(entity->isNumberOf, entityCharacteristic, "isNumberOf", &foundMatch);
+	#endif
+	
 	/*GIA Miscellaneous Internal Variables*/
 	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 	testEntityCharacteristicIterationbool(entity->wasReference, entityCharacteristic, "wasReference", &foundMatch);
@@ -881,6 +886,9 @@ bool setEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * enti
 	setEntityCharacteristicIterationbool(&(entity->isName), entityCharacteristic, "isName", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->isNameQuery), entityCharacteristic, "isNameQuery", &foundMatch);
 	#endif
+	#ifdef GIA_SUPPORT_NUMBER_OF
+	setEntityCharacteristicIterationbool(&(entity->isNumberOf), entityCharacteristic, "isNumberOf", &foundMatch);
+	#endif
 
 	/*GIA Miscellaneous Internal Variables*/
 	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
@@ -1010,7 +1018,10 @@ bool getEntityCharacteristic(GIAentityNode * entity, EntityCharacteristic * enti
 	getEntityCharacteristicIterationbool(entity->isName, entityCharacteristic, "isName", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->isNameQuery, entityCharacteristic, "isNameQuery", &foundMatch);
 	#endif
-
+	#ifdef GIA_SUPPORT_NUMBER_OF
+	getEntityCharacteristicIterationbool(entity->isNumberOf, entityCharacteristic, "isNumberOf", &foundMatch);
+	#endif
+	
 	/*GIA Miscellaneous Internal Variables*/
 	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 	getEntityCharacteristicIterationbool(entity->wasReference, entityCharacteristic, "wasReference", &foundMatch);

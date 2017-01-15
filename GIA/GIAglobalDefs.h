@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g8a 13-September-2014
+ * Project Version: 2g9a 24-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -607,6 +607,8 @@
 #define HEADER_GIA_GLOBAL_DEFS
 
 #include "SHAREDglobalDefs.h"
+
+#define GIA_SUPPORT_NUMBER_OF	//added 2g9a/24-September-2014
 
 #ifdef USE_NLC
 	//#define NLC_ACTIVATE_PRE1i_CODE_FOR_DEBUG
