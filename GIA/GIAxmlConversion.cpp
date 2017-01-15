@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2e 18-November-2014
+ * Project Version: 2h2f 18-November-2014
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -558,7 +558,7 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 	bool printTextXFound = false;
 	bool printTextYFound = false;
 
-	#ifdef USE_NLC
+	#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
 	bool sentenceIndexTempFound = false;
 	bool grammaticalDefiniteTempFound = false;
 	bool grammaticalIndefinitePluralTempFound = false;
@@ -815,7 +815,7 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 			entityNode->printCoordsAlreadyDefined = true;
 		}
 
-		#ifdef USE_NLC
+		#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_sentenceIndexTemp)
 		{
 			int attributeValue = atoi(currentAttribute->value.c_str());
@@ -978,7 +978,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag * firstTagInEntityVecto
 			GIAentityConnection * newConnection = new GIAentityConnection();
 
 			bool idFound = false;
-			#ifdef USE_NLC
+			#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
 			#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 			bool sentenceIndexTempFound = false;
 			#endif
@@ -1006,7 +1006,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag * firstTagInEntityVecto
 					//cout << "connection idActiveList = " << idActiveList << endl;
 					#endif
 				}
-				#ifdef USE_NLC
+				#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
 				#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 				else if(currentAttribute->name == NET_XML_ATTRIBUTE_sentenceIndexTemp)
 				{
@@ -1677,7 +1677,7 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 	}
 	#endif
 
-	#ifdef USE_NLC
+	#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
 	currentAttribute->name = NET_XML_ATTRIBUTE_sentenceIndexTemp;
 	sprintf(tempString, "%d", (currentEntity->sentenceIndexTemp));
 	currentAttribute->value = tempString;
@@ -1813,7 +1813,7 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 						currentAttribute->nextAttribute = newAttribute;
 						currentAttribute = currentAttribute->nextAttribute;
 
-						#ifdef USE_NLC
+						#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
 						#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 						currentAttribute->name = NET_XML_ATTRIBUTE_sentenceIndexTemp;
 						sprintf(tempString, "%d", connection->sentenceIndexTemp);

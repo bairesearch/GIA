@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h2e 18-November-2014
+ * Project Version: 2h2f 18-November-2014
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -194,7 +194,7 @@ using namespace std;
 #define NET_XML_ATTRIBUTE_printTextX ((string)"printTextX")
 #define NET_XML_ATTRIBUTE_printTextY ((string)"printTextY")
 //
-#ifdef USE_NLC
+#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
 #define NET_XML_ATTRIBUTE_sentenceIndexTemp ((string)"sentenceIndexTemp")	//this is only used for NLC
 #define NET_XML_ATTRIBUTE_grammaticalDefiniteTemp ((string)"grammaticalDefiniteTemp")	//this is only used for NLC
 #define NET_XML_ATTRIBUTE_grammaticalIndefinitePluralTemp ((string)"grammaticalIndefinitePluralTemp")	//this is only used for NLC
