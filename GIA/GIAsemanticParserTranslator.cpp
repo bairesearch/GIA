@@ -26,7 +26,7 @@
  * File Name: GIAsemanticParserTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3c 10-July-2015
+ * Project Version: 2k3d 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -1114,12 +1114,12 @@ bool generateAllPermutationsFromSemanticRelationsFile(GIAfeature* firstFeatureIn
 	bool createNewSentences = true;
 	bool parseGIA2file = true;
 	bool isQuery = false;	//irrelevant
-	//#ifdef GIA2_SEMANTIC_PARSER_DEBUG
+	#ifdef GIA2_SEMANTIC_PARSER_DEBUG
 	cout << "generateAllPermutationsFromSemanticRelationsFile{}:" << endl;
-	//#endif
+	#endif
 	
 	GIArelation* firstRelationInList = NULL;
-	#ifdef GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS	//read in the relations just written to file by writeSemanticParserCorpusFile{}
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD	//read in the relations just written to file by writeSemanticParserCorpusFile{}
 	string corpusFileName = semanticParserCorpusDBgenerateFileName(firstFeatureInList);
 	GIAsentence* sentence = new GIAsentence();
 	if(!parseStanfordParserFile(corpusFileName, isQuery, sentence, createNewSentences, parseGIA2file, false))		//CHECKTHIS; need to account for corpus XyXysemanticRelations.txt having multiple entries [eg different text but identical layout]
@@ -1152,9 +1152,9 @@ bool generateAllPermutationsFromSemanticRelationsFile(GIAfeature* firstFeatureIn
 		for(int secondWordInTupleIndex=minIndexOfSecondWordInTuple; secondWordInTupleIndex<=maxNumberOfWordsInSentence; secondWordInTupleIndex++)	//secondWordInTupleIndex in subset
 		{
 			//NB "secondWordInTupleIndex" aka centralWordIndex
-			//#ifdef GIA2_SEMANTIC_PARSER_DEBUG
+			#ifdef GIA2_SEMANTIC_PARSER_DEBUG
 			cout << "secondWordInTupleIndex = " << secondWordInTupleIndex << ", " << secondWordInTupleFeature->lemma << endl;
-			//#endif
+			#endif
 			GIAfeature* recordOfFeatureAfterSecondWordInTupleFeature = secondWordInTupleFeature->next;
 			secondWordInTupleFeature->next = dummyBlankFeature;	//temporarily disconnect node at end of sentence subset
 
@@ -1172,7 +1172,9 @@ bool generateAllPermutationsFromSemanticRelationsFile(GIAfeature* firstFeatureIn
 				GIAfeature* firstFeatureInSentenceSubsetInitial = firstFeatureInList;
 			#endif
 				int maxIndexOfFirstWordInTuple = (secondWordInTupleFeature->entityIndex - (GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1));
+				#ifdef GIA2_SEMANTIC_PARSER_DEBUG
 				cout << "\tmaxIndexOfFirstWordInTuple = " << maxIndexOfFirstWordInTuple << endl;
+				#endif
 				#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
 				for(int firstWordInTupleIndex = GIA_NLP_START_ENTITY_INDEX; firstWordInTupleIndex <= maxIndexOfFirstWordInTuple; firstWordInTupleIndex++)
 				{
@@ -1185,10 +1187,10 @@ bool generateAllPermutationsFromSemanticRelationsFile(GIAfeature* firstFeatureIn
 						if(firstWordInTupleIndex >= firstWordInSentenceSubsetIndex)
 						{
 						#endif
-							//#ifdef GIA2_SEMANTIC_PARSER_DEBUG
+							#ifdef GIA2_SEMANTIC_PARSER_DEBUG
 							cout << "\t\tfirstWordInTupleIndex = " << firstWordInTupleIndex << endl;
 							cout << "\t\t\tfirstWordInSentenceSubsetIndex = " << firstWordInSentenceSubsetIndex << ", " << firstFeatureInSentenceSubset->lemma << endl;
-							//#endif
+							#endif
 							int subsetSize = secondWordInTupleIndex-firstWordInSentenceSubsetIndex+1;	//subsetSize aka maxSpread
 
 							#ifdef GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
@@ -1221,10 +1223,8 @@ bool generateAllPermutationsFromSemanticRelationsFile(GIAfeature* firstFeatureIn
 
 							#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
 							bool foundAtLeastOneRelation = false;
+							int firstWordInTupleIndexRelative = calculateFirstWordInTupleIndexRelative(firstWordInTupleIndex, firstWordInSentenceSubsetIndex);
 							GIArelation* currentSemanticRelationInList = firstRelationInList;
-							//cout << "firstRelationInList->relationType = " << firstRelationInList->relationType << endl;
-							//cout << "firstWordInTupleIndex = " << firstWordInTupleIndex << endl;
-							//cout << "secondWordInTupleIndex = " << secondWordInTupleIndex << endl;
 							while(currentSemanticRelationInList->next != NULL)
 							{
 								//cout << "currentSemanticRelationInList->relationType = " << currentSemanticRelationInList->relationType << endl;
@@ -1234,24 +1234,26 @@ bool generateAllPermutationsFromSemanticRelationsFile(GIAfeature* firstFeatureIn
 								{
 									//CHECKTHIS; how to handle these cases (currentSemanticRelationInList->relationGovernorIndex >= FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY) || (currentSemanticRelationInList->relationDependentIndex >= FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY))
 										//NB GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE can't handle queries at present (or where featureIndex >= FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
-									int firstWordInTupleIndexRelative = calculateFirstWordInTupleIndexRelative(firstWordInTupleIndex, firstWordInSentenceSubsetIndex);
 									if((currentSemanticRelationInList->relationGovernorIndex == firstWordInTupleIndex) && (currentSemanticRelationInList->relationDependentIndex == secondWordInTupleIndex))
 									{
 										//write semantic relation data
 										bool directionGovernorToDependent = true;
 										writeSemanticParserOptimisedDatabaseFile(firstFeatureInSentenceSubset, firstWordInTupleIndexRelative, semanticDependencyRelationType, directionGovernorToDependent, sameReferenceSet);
 										foundAtLeastOneRelation = true;	//CHECKTHIS
+										#ifdef GIA2_SEMANTIC_PARSER_DEBUG
 										cout << "\t\t\t\twrite semantic relation data" << endl;
 										cout << "\t\t\t\tcurrentSemanticRelationInList->relationType = " << currentSemanticRelationInList->relationType << endl;
 										cout << "\t\t\t\tcurrentSemanticRelationInList->relationGovernorIndex = " << currentSemanticRelationInList->relationGovernorIndex << endl;
 										cout << "\t\t\t\tcurrentSemanticRelationInList->relationDependentIndex = " << currentSemanticRelationInList->relationDependentIndex << endl;
-										
+										#endif
 										GIAfeature* currentFeatureInSentence = firstFeatureInList;
 										while(currentFeatureInSentence->next != NULL)
 										{
 											string POStypeAbbreviationName = GIAconnectionistNetworkPOStypeNameAbbreviationArray[currentFeatureInSentence->GIAsemanticParserPOStype];
+											#ifdef GIA2_SEMANTIC_PARSER_DEBUG
 											cout << "\t\t\t\t\tstanfordPOS = " << currentFeatureInSentence->stanfordPOS << endl;
 											cout << "\t\t\t\t\tPOStypeAbbreviationName = " << POStypeAbbreviationName << endl;
+											#endif
 											currentFeatureInSentence = currentFeatureInSentence->next;
 										}
 									}
@@ -1261,17 +1263,21 @@ bool generateAllPermutationsFromSemanticRelationsFile(GIAfeature* firstFeatureIn
 										bool directionGovernorToDependent = false;
 										writeSemanticParserOptimisedDatabaseFile(firstFeatureInSentenceSubset, firstWordInTupleIndexRelative, semanticDependencyRelationType, directionGovernorToDependent, sameReferenceSet);
 										foundAtLeastOneRelation = true;	//CHECKTHIS
+										#ifdef GIA2_SEMANTIC_PARSER_DEBUG
 										cout << "\t\t\t\twrite semantic relation data" << endl;
 										cout << "\t\t\t\tcurrentSemanticRelationInList->relationType = " << currentSemanticRelationInList->relationType << endl;
 										cout << "\t\t\t\tcurrentSemanticRelationInList->relationGovernorIndex = " << currentSemanticRelationInList->relationGovernorIndex << endl;
 										cout << "\t\t\t\tcurrentSemanticRelationInList->relationDependentIndex = " << currentSemanticRelationInList->relationDependentIndex << endl;
-									
+										#endif
+										
 										GIAfeature* currentFeatureInSentence = firstFeatureInList;
 										while(currentFeatureInSentence->next != NULL)
 										{
 											string POStypeAbbreviationName = GIAconnectionistNetworkPOStypeNameAbbreviationArray[currentFeatureInSentence->GIAsemanticParserPOStype];
+											#ifdef GIA2_SEMANTIC_PARSER_DEBUG
 											cout << "\t\t\t\t\tstanfordPOS = " << currentFeatureInSentence->stanfordPOS << endl;
 											cout << "\t\t\t\t\tPOStypeAbbreviationName = " << POStypeAbbreviationName << endl;
+											#endif
 											currentFeatureInSentence = currentFeatureInSentence->next;
 										}
 									}
@@ -1283,6 +1289,12 @@ bool generateAllPermutationsFromSemanticRelationsFile(GIAfeature* firstFeatureIn
 								}
 								currentSemanticRelationInList = currentSemanticRelationInList->next;
 							}
+							#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_EXTENSIVE
+							if(!foundAtLeastOneRelation)
+							{
+								writeSemanticParserOptimisedDatabaseFile(firstFeatureInSentenceSubset, firstWordInTupleIndexRelative, SEMANTIC_RELATION_TYPE_NON_EXISTENT, BOOL_IRRELEVANT, BOOL_IRRELEVANT);		
+							}
+							#endif
 							#endif
 						#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
 						}

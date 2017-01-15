@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3c 10-July-2015
+ * Project Version: 2k3d 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1220,7 +1220,12 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	{
 		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
+		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD
 		writeSemanticParserCorpusFile(currentSentenceInList->firstFeatureInList);
+		#else
+		string sentenceSemanticRelationsText = generateSemanticParserCorpusSemanticRelationsText(getFirstRelationInSemanticParserSentenceList());
+		writeSemanticParserCorpusFile(currentSentenceInList->firstFeatureInList, &sentenceSemanticRelationsText);
+		#endif
 		#endif
 		#ifdef GIA2_SEMANTIC_PARSER
 		if(!generateAllPermutationsFromSemanticRelationsFile(currentSentenceInList->firstFeatureInList, NLPfeatureParser))

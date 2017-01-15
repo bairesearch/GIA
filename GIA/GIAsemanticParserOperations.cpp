@@ -26,7 +26,7 @@
  * File Name: GIAsemanticParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3c 10-July-2015
+ * Project Version: 2k3d 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -44,16 +44,14 @@
 
 void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNode** GIAentityNodeArray, GIAsentence* currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet, bool rcmodIndicatesSameReferenceSet)
 {
-	
 	//cout << "GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain: " << endl;
 	string GIA2semanticDependencyRelationText = "";
 	GIArelation* GIA2semanticDependencyRelation = getCurrentRelationInSemanticParserSentenceList();
 	generateGIA2semanticDependencyRelation(GIAentityNodeArray, connectionType, entityIndex1, entityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet, &GIA2semanticDependencyRelationText, GIA2semanticDependencyRelation);
-	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD
 	saveTextLineToCorpusFileString(GIA2semanticDependencyRelation);
 	cout << GIA2semanticDependencyRelationText << endl;
-	#endif
-	#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
+	#else
 	GIA2semanticDependencyRelation->next = new GIArelation();
 	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation->next;
 	#endif
@@ -202,11 +200,10 @@ void generateGIA2semanticDependencyRelation(GIAentityNode** GIAentityNodeArray, 
 	#endif
 	//cout << "a2" << endl;
 
-	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD
 	*GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationText(entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet, rcmodIndicatesSameReferenceSet);
 	//cout << "GIA2semanticDependencyRelation = " << GIA2semanticDependencyRelation << endl;
-	#endif
-	#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
+	#else
 	generateGIA2semanticDependencyRelationObject(GIA2semanticDependencyRelation, entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet);
 	#endif
 }

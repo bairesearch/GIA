@@ -26,7 +26,7 @@
  * File Name: GIAsemanticParser.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3c 10-July-2015
+ * Project Version: 2k3d 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -38,10 +38,10 @@
 #include "GIAglobalDefs.h"
 #include "GIAsentenceClass.h"
 
-#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+#ifdef USE_GIA2
 bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAparagraph* firstParagraphInList, string inputPlainTXTFileName, string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, string outputCFFfileName, string NLPexeFolderArray[], vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* entityNodesActiveListSubstances, vector<GIAentityNode*>* entityNodesActiveListActions, vector<GIAentityNode*>* entityNodesActiveListConditions, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, int* maxNumberSentences);
-	bool lookupCorpusFiles(GIAparagraph* firstParagraphInList, int NLPfeatureParser);
-		bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser);
+	bool lookupSemanticParserFiles(GIAparagraph* firstParagraphInList, int NLPfeatureParser);
+		bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser);
 #endif
 
 #endif
