@@ -60,7 +60,6 @@ using namespace std;
 #define GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_BROWN)			//this was dark green to original GIA spec
 
 #define GIA_DRAW_CONDITION_NODE_COLOUR (DAT_FILE_COLOUR_RED)				//this was green in the original spec	
-	#define GIA_DRAW_CONDITION_TIME_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//this was red in the original spec
 #define GIA_DRAW_CONDITION_SUBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was black in the original spec	
 #ifdef GIA_DRAW_USE_CONNECTION_TYPE_NAME_TEXT == (true)
 	#define GIA_DRAW_CONDITION_OBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)			//this was black in the original spec	
@@ -69,6 +68,11 @@ using namespace std;
 #endif
 #define GIA_DRAW_CONDITION_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_ORANGE)	//colour not defined in original GIA spec
 #define GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//this was dark green to original GIA spec
+
+#define GIA_DRAW_CONDITION_TIME_CONNECTION_COLOUR (DAT_FILE_COLOUR_RED)	//colour not defined in original GIA spec
+#define GIA_DRAW_CONDITION_TIME_NODE_COLOUR (DAT_FILE_COLOUR_RED)		//this was red in the original spec
+//#define GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR (DAT_FILE_COLOUR_ORANGE)		//colour not defined in original GIA spec			
+
 
 #define GIA_DRAW_BASICENTITY_CONNECTION_COLOUR (DAT_FILE_COLOUR_BLUE)			//this was black in the original spec
 #define GIA_DRAW_BASICENTITY_NODE_COLOUR (DAT_FILE_COLOUR_BLUE)				//this was blue in the original spec	

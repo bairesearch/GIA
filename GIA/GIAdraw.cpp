@@ -209,7 +209,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		{						
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
-		}		
+		}						
 		q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
 		r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
 		for(ConditionIter = entityNode->ConditionNodeList.begin(); ConditionIter != entityNode->ConditionNodeList.end(); ConditionIter++) 
@@ -217,7 +217,27 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			currentReferenceInPrintList = initialiseEntityNodeForPrinting((*ConditionIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;				
 		}				
-			
+		if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
+		{
+			//cout << "b7" << endl;
+			int timeConditionNodePrintX = x+r;
+			int timeConditionNodePrintY = y+q;
+			currentReferenceInPrintList = initialiseTimeConditionNodeForPrinting(entityNode->timeConditionNode, timeConditionNodePrintY, timeConditionNodePrintX, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+
+			q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+
+			//cout << "b8" << endl;
+			if(initialiseOrPrint == DRAW_PRINT)
+			{	
+				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
+				vec pos2;
+				pos2.x = timeConditionNodePrintX;
+				pos2.y = timeConditionNodePrintY;	
+				pos2.z = DRAW_CONNECTION_Z;
+				currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_TIME_CONNECTION_COLOUR, writeFileObject, "time");
+			}
+		}
+					
 		q = -DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
 		r = -DRAW_X_SPACE_BETWEEN_CONDITION_NODES;			
 		if(entityNode->conditionSubjectEntity != NULL)
@@ -257,7 +277,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			}		
 		}
 						
-		
+					
 		
 		//cout << "a3" << endl;
 		
@@ -541,7 +561,7 @@ Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeCo
 	
 	//may accidentially overwrite adjacent nodes/connections that have already been printed here; be careful...
 
-	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_NODE_COLOUR, &(timeConditionNode->conditionName), writeFileObject, GIA_DRAW_THICKNESS_NORMAL);
+	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_TIME_NODE_COLOUR, &(timeConditionNode->conditionName), writeFileObject, GIA_DRAW_THICKNESS_NORMAL);
 
 	#ifdef GIA_DRAW_DEBUG
 	cout << "Exiting: timeConditionNode = " << timeConditionNode->conditionName << endl;

@@ -153,11 +153,13 @@ GIAEntityNode * addProperty(GIAEntityNode * propertyEntity)
 	propertyEntity->AssociatedInstanceNodeList.push_back(newProperty);
 
 	propertyEntity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
-		
+
+	return newProperty;	
 }
 
 void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity)
 {
+	
 	if(propertyEntity->entityAlreadyDeclaredInThisContext)
 	{
 		if(!(propertyEntity->hasAssociatedInstanceTemp))
@@ -165,18 +167,18 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 			propertyEntity->hasAssociatedInstanceTemp = true;
 		}	
 	}
-	
+
+	if(thingEntity->entityAlreadyDeclaredInThisContext)
+	{
+		if(!(thingEntity->hasAssociatedInstanceTemp))
+		{
+			thingEntity->hasAssociatedInstanceTemp = true;
+		}	
+	}
+			
 	if(propertyEntity->hasAssociatedInstanceTemp)
 	{
 		GIAEntityNode * existingProperty  = propertyEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-
-		if(thingEntity->entityAlreadyDeclaredInThisContext)
-		{
-			if(!(thingEntity->hasAssociatedInstanceTemp))
-			{
-				thingEntity->hasAssociatedInstanceTemp = true;
-			}	
-		}
 		
 		if(thingEntity->hasAssociatedInstanceTemp)
 		{		
@@ -193,16 +195,11 @@ void addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * p
 	}
 	else
 	{
-		if(thingEntity->entityAlreadyDeclaredInThisContext)
-		{
-			if(!(thingEntity->hasAssociatedInstanceTemp))
-			{
-				thingEntity->hasAssociatedInstanceTemp = true;
-			}	
-		}
-		
 		if(thingEntity->hasAssociatedInstanceTemp)
-		{		
+		{	
+			//cout << "thingEntity = " << thingEntity->entityName << endl;
+			//cout << "propertyEntity = " << propertyEntity->entityName << endl;
+				
 			thingEntity = thingEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
 		}
 	
@@ -227,7 +224,7 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 		}	
 	}
 	
-	if((propertyEntity->hasAssociatedInstanceTemp) || (propertyEntity->entityAlreadyDeclaredInThisContext))
+	if(propertyEntity->hasAssociatedInstanceTemp)
 	{	
 		//cout << "break; propertyEntity->entityName = " << propertyEntity->entityName << endl;
 		propertyEntity = propertyEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
@@ -2174,7 +2171,8 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 					bool partnerTypeRequiredFound = false;
 					bool partnerTypeObjectSpecialConditionFound = false;
-
+					bool partnerTypeObjectSpecial2ConditionFound = false;
+					
 					if(partnerTypeRequired == RELATION_TYPE_SUBJECT)
 					{							
 						for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
@@ -2209,6 +2207,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 							if(currentRelationInList2->relationType == relationTypeObjectSpecial2ConditionNameArray[i])
 							{
 								partnerTypeRequiredFound = true;
+								partnerTypeObjectSpecial2ConditionFound = true;
 							}
 						}
 																	
@@ -2412,6 +2411,10 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 
 									addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity);
 								}
+								else if(partnerTypeObjectSpecial2ConditionFound)
+								{
+								
+								}
 								else
 								{//assume that the subject-object relationships is an action
 									string actionName = currentRelationInList->relationFunction;
@@ -2436,8 +2439,15 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									addActionToEntity(subjectEntityTemp, objectEntityTemp, actionEntity);
 								}
 							}
+							
+							#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
+							if(!partnerTypeObjectSpecial2ConditionFound || subjectIsConnectedToAnAdvMod)
+							{
+								foundPartner = true;
+							}
+							#else
 							foundPartner = true;	
-
+							#endif
 
 						}
 						else
@@ -3093,11 +3103,19 @@ void defineToBeAndToDoConditions(Sentence * currentSentenceInList, GIAEntityNode
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
-	{	
+	{
 		//cout << "here1" << endl;
 		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 
-		if((currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_BE) || (currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO))
+		bool pass = false;
+		for(int i=0; i<RELATION_TYPE_COMPLEMENTS_NUMBER_OF_TYPES; i++)
+		{
+			if(currentRelationInList->relationType == relationTypeComplementsNameArray[i])
+			{
+				pass = true;
+			}
+		}																		
+		if(pass)
 		{					
 			GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationFunctionIndex];
 			GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList->relationArgumentIndex];
