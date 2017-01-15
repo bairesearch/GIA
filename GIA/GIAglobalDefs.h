@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j1b 15-May-2015
+ * Project Version: 2j1c 15-May-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -876,7 +876,9 @@
 
 #define STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS	//added 22 Sept to enable Stanford CoreNLP to be used to parse dependency relations with comparable (NOT: same) accuracy as stanford parser (ie when stanford CoreNLP is set as both relation and feature parser)
 #ifndef GIA_DISABLE_2i_CODE_FOR_DEBUG
-	#define STANFORD_PARSER_USE_POS_TAGS	//added 23 July 2012 to support Stanford Parser POS tags instead of Stanford CoreNLP POS tags (Stanford Parser POS tags are sometimes more accurate than Stanford CoreNLP POS tags)
+	#ifndef GIA_USE_CORPUS_DATABASE		//NB GIA2 doesn't support STANFORD_PARSER_USE_POS_TAGS (because the semantic relations word types being written must match those being read [and read can only use feature parser])
+		#define STANFORD_PARSER_USE_POS_TAGS	//added 23 July 2012 to support Stanford Parser POS tags instead of Stanford CoreNLP POS tags (Stanford Parser POS tags are sometimes more accurate than Stanford CoreNLP POS tags)
+	#endif
 	#ifndef STANFORD_PARSER_USE_POS_TAGS
 		#define STANFORD_CORENLP_POS_TAGS_BUG_GIA_WORKAROUND_SET_DETERMINER_DEPENDENT_TO_NOUN	//added 2i2b - eg "a human" in "A human is a player." should always be interpreted as a noun
 	#endif	
