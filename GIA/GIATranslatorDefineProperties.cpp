@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineProperties.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 08-August-2012
+ * Project Version: 1o1a 09-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -174,58 +174,175 @@ void definePropertiesObjectsAndSubjectsWithProperties(Sentence * currentSentence
 
 void definePropertiesDefiniteNouns(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], Feature * featureArrayTemp[])
 {
-	if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS == 1)
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
-		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
-		{
-			if(GIAEntityNodeArrayFilled[i])
-			{ //condition required as GIAEntityNodeArrayFilled is not always true. With GRAMMATICAL_DEFINITE, eg "Mr" of "Mr Smith" will still be interpreted as a definite
-				if(!(featureArrayTemp[i]->isPronounReference))
-				{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
-					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS || !(featureArrayTemp[i]->grammaticalIsProperNoun))	//&& !GIAEntityNodeIsDateOrTime[i]
+		if(GIAEntityNodeArrayFilled[i])
+		{ //condition required as GIAEntityNodeArrayFilled is not always true. With grammaticalIsDefinite, eg "Mr" of "Mr Smith" will still be interpreted as a definite
+			if(!(featureArrayTemp[i]->isPronounReference))
+			{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
+				#ifndef GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS
+				if(!(featureArrayTemp[i]->grammaticalIsProperNoun))	//&& !GIAEntityNodeIsDateOrTime[i]
+				{
+				#endif
+					if(featureArrayTemp[i]->grammaticalIsDefinite)
 					{
-						if(featureArrayTemp[i]->grammaticalIsDefinite == GRAMMATICAL_DEFINITE)
-						{
-							//cout << "as0" << endl;
-							//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;
-							GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
-						}
+						//cout << "as0" << endl;
+						//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;
+						GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
 					}
+				#ifndef GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS	
 				}
+				#endif
 			}
 		}
 	}
 }
 
+#ifdef GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
+//Added 09 August 2012 [INCOMPLETE]
+void definePropertiesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[])
+{
+	/* Added 09 August 2012
+	The bat is an animal - (definition connection, bat = property, animal = concept)	GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_1_GOVERNOR_DEFINITE_DEPENDENT_INDEFINITE [assumes definePropertiesDefiniteNouns() executed]
+		eg2; The red bat is a zenomorph. The blue bat is a non-zenomorph.
+		NO: definite implies animal is an adjective/quality [check NLP]
+	Bats are animals.  (definition connection, bat = concept, animal = concept)		GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_2_GOVERNOR_PLURAL_DEPENDENT_PLURAL
+	A book is an animal (definition connection, bat = concept, animal = concept)		GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_3_GOVERNOR_INDEFINITE_DEPENDENT_INDEFINITE
+	Bat is an animal. (definition connection, bat = concept or property [if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS] with isName==true, animal = concept)	GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_4_GOVERNOR_NAME_DEPENDENT_INDEFINITE
+	The bat is Max. (double definition connection, bat = property, animal = concept or property [if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS] with isName==true)		GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_5_GOVERNOR_DEFINITE_DEPENDENT_NAME	[assumes definePropertiesDefiniteNouns() executed]
+	*/
+					
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+ 	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			if(currentRelationInList->relationType == RELATION_TYPE_APPOSITIVE_OF_NOUN)
+			{
+				//cout << "definePropertiesBasedOnDeterminatesOfDefinitionEntities(): RELATION_TYPE_APPOSITIVE_OF_NOUN" << endl;
+				
+				int thingIndex = currentRelationInList->relationGovernorIndex;
+				int definitionIndex = currentRelationInList->relationDependentIndex;
+				
+				bool thingFeatureHasDeterminate = false;
+				for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
+				{
+					if(featureArrayTemp[thingIndex]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAConceptNodeArray to featureArrayTemp 14 July 2012b
+					{
+						thingFeatureHasDeterminate = true;
+					}
+				}
+				bool definitionFeatureHasDeterminate = false;
+				for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
+				{
+					if(featureArrayTemp[definitionIndex]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAConceptNodeArray to featureArrayTemp 14 July 2012b
+					{
+						definitionFeatureHasDeterminate = true;
+					}
+				}	
+				
+				bool thingFeatureIsProperNoun = featureArrayTemp[thingIndex]->grammaticalIsProperNoun;	
+				bool definitionFeatureIsProperNoun = featureArrayTemp[definitionIndex]->grammaticalIsProperNoun;								
+				
+				bool thingIsDefinite =  featureArrayTemp[thingIndex]->grammaticalIsDefinite;	
+				bool definitionIsDefinite = featureArrayTemp[definitionIndex]->grammaticalIsDefinite;	
+										
+				GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
+				GIAEntityNode * definitionEntity = GIAEntityNodeArray[definitionIndex];
+				featureArrayTemp[thingIndex]->alreadyAssignedPropertiesBasedOnDeterminatesOfDefinitionEntitiesTemp = true;
+				featureArrayTemp[definitionIndex]->alreadyAssignedPropertiesBasedOnDeterminatesOfDefinitionEntitiesTemp = true;
+				
+				/*
+				cout << "thingName = " << thingEntity->entityName << endl;
+				cout << "\tthingFeatureHasDeterminate = " << thingFeatureHasDeterminate << endl;
+				cout << "\tthingIsDefinite = " << thingIsDefinite << endl;
+				cout << "\tthingFeatureIsProperNoun = " << thingFeatureIsProperNoun << endl;
+				cout << "definitionName = " << definitionEntity->entityName << endl;
+				cout << "\tdefinitionFeatureHasDeterminate = " << definitionFeatureHasDeterminate << endl;
+				cout << "\tdefinitionIsDefinite = " << definitionIsDefinite << endl;
+				cout << "\tdefinitionFeatureIsProperNoun = " << definitionFeatureIsProperNoun << endl;
+				*/
+				
+				if((thingIsDefinite) && (definitionFeatureHasDeterminate && !definitionIsDefinite && !definitionFeatureIsProperNoun))
+				{
+					//cout << "GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_1_GOVERNOR_DEFINITE_DEPENDENT_INDEFINITE" << endl;	
+					//property already assigned to thing  [assumes definePropertiesDefiniteNouns() executed]
+					//property will not be assigned to definition
+				}
+				else if((!thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun) && (!definitionFeatureHasDeterminate && !definitionIsDefinite && !definitionFeatureIsProperNoun))
+				{
+					//cout << "GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_2_GOVERNOR_PLURAL_DEPENDENT_PLURAL" << endl;	
+					//property will not be assigned to thing
+					//property will not be assigned to definition
+				}
+				else if((thingFeatureHasDeterminate && !thingIsDefinite && !thingFeatureIsProperNoun) && (definitionFeatureHasDeterminate && !definitionIsDefinite && !definitionFeatureIsProperNoun))
+				{
+					//cout << "GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_3_GOVERNOR_INDEFINITE_DEPENDENT_INDEFINITE" << endl;	
+					//property will not be assigned to thing
+					//property will not be assigned to definition				
+				}
+				else if((thingFeatureHasDeterminate && !thingIsDefinite && thingFeatureIsProperNoun) && (definitionFeatureHasDeterminate && !definitionIsDefinite && !definitionFeatureIsProperNoun))		//NB thingFeatureHasDeterminate will be true for proper nouns [as haveDeterminate is regenerated based upon GRAMMATICAL_NUMBER_SINGULAR], even though proper nouns do not actually have a determinate (eg a/the) assigned
+				{
+					//cout << "GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_4_GOVERNOR_NAME_DEPENDENT_INDEFINITE" << endl;	
+					//property will be assigned to thing [only if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS]
+					featureArrayTemp[thingIndex]->alreadyAssignedPropertiesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;	
+					//property will not be assigned to definition
+				}
+				else if((thingFeatureHasDeterminate && thingIsDefinite && !thingFeatureIsProperNoun) && (definitionFeatureHasDeterminate && !definitionIsDefinite && definitionFeatureIsProperNoun))
+				{
+					//cout << "GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_5_GOVERNOR_DEFINITE_DEPENDENT_NAME" << endl;	
+					//property already assigned to thing  [assumes definePropertiesDefiniteNouns() executed]
+					//property will be assigned to definition [only if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS]
+					featureArrayTemp[definitionIndex]->alreadyAssignedPropertiesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;	
+				}												
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}
+}
+#endif
+
 void definePropertiesNounsWithDeterminates(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature * featureArrayTemp[])
 {
-	if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_NOUNS_WITH_DETERMINATES == 1)
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
-		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+		if(GIAEntityNodeArrayFilled[i])
 		{
-			if(GIAEntityNodeArrayFilled[i])
-			{
-				if(!(featureArrayTemp[i]->isPronounReference))
-				{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
-					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS || !(featureArrayTemp[i]->grammaticalIsProperNoun))	//&& !GIAEntityNodeIsDateOrTime[i]
+			if(!(featureArrayTemp[i]->isPronounReference))
+			{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
+				#ifndef GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS
+				if(!(featureArrayTemp[i]->grammaticalIsProperNoun))	//&& !GIAEntityNodeIsDateOrTime[i]
+				{
+				#endif
+					bool passed = false;
+					for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
 					{
-						bool passed = false;
-						for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
+						if(featureArrayTemp[i]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAConceptNodeArray to featureArrayTemp 14 July 2012b
 						{
-							if(featureArrayTemp[i]->grammaticalNumber == referenceTypeHasDeterminateCrossReferenceNumberArray[j])	//changed from GIAConceptNodeArray to featureArrayTemp 14 July 2012b
-							{
-								passed = true;
-							}
+							passed = true;
 						}
-						if(passed)
+					}
+					if(passed)
+					{
+						#ifdef GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
+						if(!(featureArrayTemp[i]->alreadyAssignedPropertiesBasedOnDeterminatesOfDefinitionEntitiesTemp))
 						{
+						#endif
 							//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;
 							//cout << "as1" << endl;
 							GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
 							//cout << "as2" << endl;
+						#ifdef GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 						}
+						#endif								
 					}
+				#ifndef GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS	
 				}
+				#endif
 			}
 		}
 	}
@@ -378,22 +495,19 @@ void definePropertiesExpletives(Sentence * currentSentenceInList, GIAEntityNode 
 
 void definePropertiesPronouns(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], Feature * featureArrayTemp[])
 {
-	if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_PRONOUNS == 1)
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
-		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+		if(GIAEntityNodeArrayFilled[i])
 		{
-			if(GIAEntityNodeArrayFilled[i])
-			{
-				if(!(featureArrayTemp[i]->isPronounReference))
-				{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
+			if(!(featureArrayTemp[i]->isPronounReference))
+			{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
 
-					if(featureArrayTemp[i]->grammaticalIsPronoun == GRAMMATICAL_PRONOUN)
-					{
-						//cout << "as5" << endl;
-						//cout << "asd" << endl;
-						//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;
-						GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
-					}
+				if(featureArrayTemp[i]->grammaticalIsPronoun == GRAMMATICAL_PRONOUN)
+				{
+					//cout << "as5" << endl;
+					//cout << "asd" << endl;
+					//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;
+					GIAEntityNodeArray[i] = addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
 				}
 			}
 		}

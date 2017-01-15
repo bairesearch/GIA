@@ -23,7 +23,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 08-August-2012
+ * Project Version: 1o1a 09-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1478,7 +1478,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 												//cout << "featurePOSindicatesAdjectiveOrAdverbTypeArray[i] = " << featurePOSindicatesAdjectiveOrAdverbTypeArray[i] << endl;
 												if(subjectGovernorEntity->stanfordPOSTemp == featurePOSindicatesAdjectiveOrAdverbTypeArray[i])
 												{
-													//cout << "subjectGovernorEntity->stanfordPOSTemp = " << subjectGovernorEntity->stanfordPOSTemp << endl;
+													//cout << "subjectGovernorEntity->stanfordPOSTemp1 = " << subjectGovernorEntity->stanfordPOSTemp << endl;
 													subjectGovernorAdjectiveOrAdvebFound = true;
 												}
 											}
@@ -1490,7 +1490,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 												//cout << "featurePOSindicatesNounTypeArray[i] = " << featurePOSindicatesNounTypeArray[i] << endl;
 												if(subjectGovernorEntity->stanfordPOSTemp == featurePOSindicatesNounTypeArray[i])
 												{
-													//cout << "subjectGovernorEntity->stanfordPOSTemp = " << subjectGovernorEntity->stanfordPOSTemp << endl;
+													//cout << "subjectGovernorEntity->stanfordPOSTemp2 = " << subjectGovernorEntity->stanfordPOSTemp << endl;
 													subjectGovernorNounFound = true;
 												}
 											}

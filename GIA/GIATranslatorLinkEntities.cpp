@@ -23,7 +23,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 08-August-2012
+ * Project Version: 1o1a 09-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -173,16 +173,16 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 		#endif
 			if(currentRelationInList->relationType == RELATION_TYPE_APPOSITIVE_OF_NOUN)
 			{
-				string propertyName = currentRelationInList->relationGovernor;
-				string entityName = currentRelationInList->relationDependent;
-				int propertyIndex = currentRelationInList->relationGovernorIndex;
+				string thingName = currentRelationInList->relationGovernor;
+				string definitionName = currentRelationInList->relationDependent;
+				int thingIndex = currentRelationInList->relationGovernorIndex;
 				int definitionIndex = currentRelationInList->relationDependentIndex;
 
-				GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
+				GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
 				GIAEntityNode * definitionEntity = GIAEntityNodeArray[definitionIndex];
 
 				#ifdef GIA_TRANSLATOR_DEBUG
-				cout << "propertyName = " << propertyEntity->entityName << endl;
+				cout << "thingName = " << thingEntity->entityName << endl;
 				cout << "definitionEntity = " << definitionEntity->entityName << endl;
 				#endif
 
@@ -191,7 +191,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				#else
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 				#endif
-				addDefinitionToEntity(propertyEntity, definitionEntity, sameReferenceSet);
+				addDefinitionToEntity(thingEntity, definitionEntity, sameReferenceSet);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
