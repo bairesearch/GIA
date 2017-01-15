@@ -181,7 +181,7 @@ void defineSubstancesObjectsAndSubjectsWithSubstances(Sentence * currentSentence
 	param.specialCaseCharacteristicsTestOrVector.push_back(&entityCharacteristicsTest1);
 	param.specialCaseCharacteristicsTestOrVector.push_back(&entityCharacteristicsTest2);
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest3);
-	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	genericEntityInterpretation(&param);
 #else
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -214,7 +214,7 @@ void defineSubstancesDefiniteNouns(Sentence * currentSentenceInList, bool GIAent
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest2);
 	#endif
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest3);
-	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	genericEntityInterpretation(&param);
 #else
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -557,7 +557,7 @@ void defineSubstancesNounsWithDeterminates(Sentence * currentSentenceInList, boo
 	EntityCharacteristic entityCharacteristicsTest4("alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", "false");
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest4);
 	#endif
-	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	genericEntityInterpretation(&param);
 #else
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -875,7 +875,7 @@ void defineSubstancesPronouns(Sentence * currentSentenceInList, bool GIAentityNo
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
 	EntityCharacteristic entityCharacteristicsTest2("grammaticalPronounTemp", "true");
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest2);
-	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	if(genericEntityInterpretation(&param))
 	{
 		cout << "at1" << endl;
@@ -989,7 +989,7 @@ void defineSubstancesHasTime(Sentence * currentSentenceInList, bool GIAentityNod
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);	
 	EntityCharacteristic entityCharacteristicsTest1("hasAssociatedTime", "true");
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
-	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	genericEntityInterpretation(&param);
 #else
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -1022,7 +1022,7 @@ void defineSubstancesNonExplicitPronouns(Sentence * currentSentenceInList, bool 
 	EntityCharacteristic entityCharacteristicsSet("grammaticalNumber", GRAMMATICAL_NUMBER_SINGULAR_STRING);	//added 14 August 2012	(select any value from referenceTypeHasDeterminateCrossReferenceNumberArray[])
 	param.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSet);	
 	#endif
-	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	genericEntityInterpretation(&param);
 #else
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -1471,7 +1471,7 @@ void defineSubstancesActionConcepts(Sentence * currentSentenceInList, bool GIAen
 	param.specialCaseCharacteristicsTestOrVector.push_back(&entityCharacteristicsTest2);
 	param.specialCaseCharacteristicsTestOrVector.push_back(&entityCharacteristicsTest3);	
 	param.specialCaseCharacteristicsTestOrVector.push_back(&entityCharacteristicsTest4);	
-	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	genericEntityInterpretation(&param);	
 #else		
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)

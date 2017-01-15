@@ -33,12 +33,21 @@
 
 #include "GIAtranslator.h"
 #include "GIAtranslatorDefineGrammar.h"
+
+#ifdef GIA_TEMPORARY_COMPILATION_GCC_FLAG_E_PREPROCESS_TRANSLATOR_XML_FILES
+#include "xmlConversion/GIAtranslatorRedistributeRelexRelations.xml"
+#include "xmlConversion/GIAtranslatorRedistributeStanfordRelations.xml"
+#include "xmlConversion/GIAtranslatorDefineSubstances.xml"
+#include "xmlConversion/GIAtranslatorLinkEntities.xml"
+#include "xmlConversion/GIAtranslatorApplyAdvancedFeatures.xml"
+#else
 #include "GIAtranslatorRedistributeRelexRelations.h"
 #include "GIAtranslatorRedistributeStanfordRelations.h"
 #include "GIAtranslatorDefineReferencing.h"
 #include "GIAtranslatorDefineSubstances.h"
 #include "GIAtranslatorLinkEntities.h"
 #include "GIAtranslatorApplyAdvancedFeatures.h"
+#endif
 #include "GIAdatabase.h"
 //#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG
 #include "GIAparser.h"
@@ -46,6 +55,8 @@
 #ifdef GIA_USE_BOT
 #include "GIAbot.h"
 #endif
+
+
 
 static int referenceTypeHasDeterminateCrossReferenceNumberArray[GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES] = {GRAMMATICAL_NUMBER_SINGULAR};
 

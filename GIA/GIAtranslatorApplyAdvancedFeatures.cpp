@@ -506,7 +506,7 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 			if(!(currentEntity->disabled))
 			{
 				bool featureNERindicatesNormalisedNERavailable = false;
-				for(int i=0; i<FEATURE_NER_INDICATES_NORMALISED_NER_AVAILABLE_NUMBER_TYPES; i++)
+				for(int i=0; i<FEATURE_NER_INDICATES_NORMALISED_NER_AVAILABLE_NUMBER_OF_TYPES; i++)
 				{
 					if(currentEntity->NERTemp == featureNERindicatesNormalisedNERavailableTypeArray[i])
 					{

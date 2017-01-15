@@ -560,7 +560,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 							{
 								string TagValue = currentTagInToken->value;
 								int currentNER = FEATURE_NER_UNDEFINED;
-								for(int i=0; i<FEATURE_NER_NUMBER_TYPES; i++)
+								for(int i=0; i<FEATURE_NER_NUMBER_OF_TYPES; i++)
 								{
 									if(TagValue == featureNERtypeArray[i])
 									{
@@ -618,7 +618,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 
 						#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_LEMMA_CASE_ASSIGNMENT_BUG_USE_ORIGINAL_WORD
 						//eg Stanford CoreNLP converts GIA->gium when it is tagged as NN (instead of NNP)
-						for(int i=0; i<FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_TYPES; i++)
+						for(int i=0; i<FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_OF_TYPES; i++)
 						{
 							if(currentFeatureInList->NER == featureNERindicatesProperNounTypeArray[i])
 							{

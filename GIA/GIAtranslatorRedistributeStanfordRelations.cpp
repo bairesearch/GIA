@@ -328,7 +328,7 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 				GIAentityNode * dependentEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 
 				bool governerAndDependentBothHaveSameNERvalue = false;
-				for(int i=0; i<FEATURE_NER_EXPLICIT_NUMBER_TYPES; i++)
+				for(int i=0; i<FEATURE_NER_EXPLICIT_NUMBER_OF_TYPES; i++)
 				{
 					if((governerEntity->NERTemp == featureNERexplicitTypeArray[i]) && (dependentEntity->NERTemp == featureNERexplicitTypeArray[i]))
 					{
@@ -359,7 +359,7 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 					//cout << "dependentEntity->entityName = " << dependentEntity->entityName << endl;
 
 					bool featureNERindicatesNameConcatenationRequired = false;
-					for(int i=0; i<FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_TYPES; i++)
+					for(int i=0; i<FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_OF_TYPES; i++)
 					{
 						if(governerEntity->NERTemp == featureNERindicatesNameConcatenationRequiredTypeArray[i])
 						{
@@ -2500,7 +2500,7 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			param.numberOfRelations = 2;
 
 			GIAgenericDepRelInterpretationParameters paramA = param;
-			//paramA.useRelationArrayTest[REL1][REL_ENT1] = true; paramA.relationArrayTest[REL1][REL_ENT1] = featurePOSindicatesAdjectiveOrAdverbTypeArray; paramA.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_TYPES; paramA.relationArrayTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
+			//paramA.useRelationArrayTest[REL1][REL_ENT1] = true; paramA.relationArrayTest[REL1][REL_ENT1] = featurePOSindicatesAdjectiveOrAdverbTypeArray; paramA.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_OF_TYPES; paramA.relationArrayTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
 			EntityCharacteristic relationArrayTestSpecialCasePOStemp1A("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE);
 			EntityCharacteristic relationArrayTestSpecialCasePOStemp1B("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE_COMPARATIVE);
 			EntityCharacteristic relationArrayTestSpecialCasePOStemp1C("stanfordPOStemp", FEATURE_POS_TAG_ADJECTIVE_SUPERLATIVE);
@@ -2520,7 +2520,7 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 			genericDependecyRelationInterpretation(&paramA, REL1);
 			
 			GIAgenericDepRelInterpretationParameters paramB = param;
-			//paramB.useRelationArrayTest[REL1][REL_ENT1] = true; paramB.relationArrayTest[REL1][REL_ENT1] = featurePOSindicatesNounTypeArray; paramB.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_TYPES; paramB.relationArrayTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
+			//paramB.useRelationArrayTest[REL1][REL_ENT1] = true; paramB.relationArrayTest[REL1][REL_ENT1] = featurePOSindicatesNounTypeArray; paramB.relationArrayTestSize[REL1][REL_ENT1] = FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_OF_TYPES; paramB.relationArrayTestSpecialCasePOStemp[REL1][REL_ENT1] = true;
 			EntityCharacteristic relationArrayTestSpecialCasePOStemp2A("stanfordPOStemp", FEATURE_POS_TAG_CD);
 			EntityCharacteristic relationArrayTestSpecialCasePOStemp2B("stanfordPOStemp", FEATURE_POS_TAG_NN);
 			EntityCharacteristic relationArrayTestSpecialCasePOStemp2C("stanfordPOStemp", FEATURE_POS_TAG_NNS);
@@ -2654,7 +2654,7 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 											#endif
 											
 											bool subjectGovernorAdjectiveOrAdvebFound = false;
-											for(int i=0; i<FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_TYPES; i++)
+											for(int i=0; i<FEATURE_POS_TAG_INDICATES_ADJECTIVE_OR_ADVERB_NUMBER_OF_TYPES; i++)
 											{
 												if(subjectGovernorEntity->stanfordPOStemp == featurePOSindicatesAdjectiveOrAdverbTypeArray[i])
 												{
@@ -2662,7 +2662,7 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 												}
 											}
 											bool subjectGovernorNounFound = false;
-											for(int i=0; i<FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_TYPES; i++)
+											for(int i=0; i<FEATURE_POS_TAG_INDICATES_NOUN_NUMBER_OF_TYPES; i++)
 											{
 												if(subjectGovernorEntity->stanfordPOStemp == featurePOSindicatesNounTypeArray[i])
 												{

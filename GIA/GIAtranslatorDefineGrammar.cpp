@@ -364,7 +364,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 
 		#ifdef FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION
 		//fill NER array after Relex Parse for Stanford equivalent proper noun detection - added 26 April 2012
-		for(int featureRelexFlagIndex = 0; featureRelexFlagIndex < FEATURE_RELEX_FLAG_NUMBER_TYPES; featureRelexFlagIndex++)
+		for(int featureRelexFlagIndex = 0; featureRelexFlagIndex < FEATURE_RELEX_FLAG_NUMBER_OF_TYPES; featureRelexFlagIndex++)
 		{
 			if((currentFeatureInList->grammar).find(featureRelexFlagTypeArray[featureRelexFlagIndex]) != -1)
 			{
@@ -374,7 +374,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 				#endif
 			}
 		}
-		for(int i=0; i<FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_TYPES; i++)
+		for(int i=0; i<FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_OF_TYPES; i++)
 		{
 			if(currentFeatureInList->NER == featureNERindicatesProperNounTypeArray[i])
 			{
@@ -501,7 +501,7 @@ void extractGrammaticalInformationFromPOStag(string * POStag, Feature * feature)
 	//pronoun detection;
 	bool pronounDetected = false;
 	//use stanfordPOS information to extract pronoun information - NB alternatively, could use referenceTypePersonNameArray and referenceTypePossessiveNameArray (as there is only a limited set of pronouns in english)
-	for(int i=0; i<FEATURE_POS_TAG_INDICATES_PRONOUN_NUMBER_TYPES; i++)
+	for(int i=0; i<FEATURE_POS_TAG_INDICATES_PRONOUN_NUMBER_OF_TYPES; i++)
 	{
 		if(*POStag == featurePOSindicatesPronounTypeArray[i])
 		{
@@ -530,7 +530,7 @@ void extractGrammaticalInformationStanford(Feature * firstFeatureInList, int NLP
 			}
 			
 			#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PROPERNOUN_ASSIGNMENT_BUG_USE_NER_VALUES
-			for(int i=0; i<FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_TYPES; i++)
+			for(int i=0; i<FEATURE_NER_INDICATES_PROPER_NOUN_NUMBER_OF_TYPES; i++)
 			{
 				if(currentFeatureInList->NER == featureNERindicatesProperNounTypeArray[i])
 				{
