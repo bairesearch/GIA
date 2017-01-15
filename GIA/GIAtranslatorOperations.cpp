@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1b 14-July-2013
+ * Project Version: 1t1c 15-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1994,16 +1994,19 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	numberOfRelations = 1;
 	parseDisabledRelation = {false, false, false, false, false};
 
-	relation = {NULL, NULL, NULL, NULL};
-	
 		//found values
+	relation = {NULL, NULL, NULL, NULL};		
 	//relationEntity = {{"", "", ""}, {"", "", ""}, {"", "", ""}, {"", "", ""}}; 	//internal compiler error: Segmentation fault
 	relationEntityIndex = {{-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}};
 	relationEntityPrepFound = {false, false, false, false, false};
 		//required to swap variables via redistributeRelationEntityIndexReassignmentUseOriginalValues;
 	//relationEntityOriginal = {{"", "", ""}, {"", "", ""}, {"", "", ""}, {"", "", ""}}; 	//internal compiler error: Segmentation fault
 	relationEntityIndexOriginal = {{-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}};
-			
+		//for further manipulation of variables after successful (match found) recursive execution of genericDependecyRelationInterpretation():
+	relationFinalResult = {false, false, false, false, false};
+	//relationEntityFinalResult = {{"", "", ""}, {"", "", ""}, {"", "", ""}, {"", "", ""}}; 	//internal compiler error: Segmentation fault
+	relationEntityIndexFinalResult = {{-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}};
+	
 		//predefined values tests
 	useRelationTest = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	//relationTest = {{"", "", ""}, {"", "", ""}, {"", "", ""}, {"", "", ""}};	//internal compiler error: Segmentation fault
@@ -2220,11 +2223,11 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 					#ifdef GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 					cout << currentRelationID << ": " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
 					#endif
-					GIAgenericDepRelInterpretationParameters paramTemp = *param;
+					GIAgenericDepRelInterpretationParameters paramTemp = *param;	//this shouldnt be required anymore with relationFinalResult/relationEntityFinalResult/relationEntityIndexFinalResult... 	//only record parameters (eg relationEntity/relationEntityIndex) if successfully recused - this is required if additional commands are required to be executed based on the successful (result==true) recursion of genericDependecyRelationInterpretation (e.g. in GIAtranslatorRedistributeStanfordRelations.cpp)  
 					if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1)))
 					{
 						result = true;
-						*param = paramTemp;	//only record parameters (eg relationEntity/relationEntityIndex) if successfully recused - this is required if additional commands are required to be executed based on the successful (result==true) recursion of genericDependecyRelationInterpretation (e.g. in GIAtranslatorRedistributeStanfordRelations.cpp)  
+						*param = paramTemp;	//this shouldnt be required anymore with relationFinalResult/relationEntityFinalResult/relationEntityIndexFinalResult... 	//only record parameters (eg relationEntity/relationEntityIndex) if successfully recused - this is required if additional commands are required to be executed based on the successful (result==true) recursion of genericDependecyRelationInterpretation (e.g. in GIAtranslatorRedistributeStanfordRelations.cpp)  
 					}
 				}
 				else
@@ -2301,6 +2304,17 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 						cout << "passedEntityMatchTests" << endl;
 						#endif
 						result = true;
+						
+						//record final values for further manipulation of variables after successful (match found) recursive execution of genericDependecyRelationInterpretation:
+						for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
+						{
+							param->relationFinalResult[relationID] = param->relation[relationID];
+							for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION; relationEntityID++)
+							{							
+								param->relationEntityFinalResult[relationID][relationEntityID] = param->relationEntity[relationID][relationEntityID];
+								param->relationEntityIndexFinalResult[relationID][relationEntityID] = param->relationEntityIndex[relationID][relationEntityID];
+							}
+						}
 						
 						if(!specialCaseAuxillaryIndicatesDifferentReferenceSetCheck)
 						{

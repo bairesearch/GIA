@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t1b 14-July-2013
+ * Project Version: 1t1c 15-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1156,22 +1156,18 @@ public:
 	int numberOfRelations;
 	bool parseDisabledRelation[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
 	
-	Relation * relation[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
-	
 		//found values
+	Relation * relation[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];		
 	string relationEntity[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
 	int relationEntityIndex[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];
 	bool relationEntityPrepFound[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
 		//required to swap variables via redistributeRelationEntityIndexReassignmentUseOriginalValues;
 	string relationEntityOriginal[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
 	int relationEntityIndexOriginal[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];		
-	
-	/*
-	//for Alternate Implementation:		
-	//updated values (used in case useRedistributeRelationEntityReassignment is applied after useRedistributeRelationEntityIndexReassignment);
-	bool useRelationEntityIndexUpdated[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];
-	int relationEntityIndexUpdated[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];
-	*/
+		//for further manipulation of variables after successful (match found) recursive execution of genericDependecyRelationInterpretation:
+	Relation * relationFinalResult[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
+	string relationEntityFinalResult[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//warning: will contain latest match if multiple matches found
+	int relationEntityIndexFinalResult[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];	//warning: will contain latest match if multiple matches found
 	
 		//predefined values tests
 	bool useRelationTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
