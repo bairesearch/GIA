@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p2a 12-September-2012
+ * Project Version: 1p2b 13-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -523,6 +523,7 @@
 	#define GIA_WITH_CE_USE_CODEEXTENSION_HEIRACHY
 	#define GIA_WITH_CE_DERIVE_SCODEEXTENSION_PREPEND
 	//#define GIA_WITH_CE_USE_ALL_CODEEXTENSION_COMBINATIONS	//else just use first
+	//#define GIA_WITH_CE_DEBUG
 #endif
 
 //#define GIA_QUERIES_MUST_BE_QUESTIONS	//disabled 30 June 2012 for IPentity support
@@ -582,7 +583,6 @@
 //#define GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
 
 //Debug [Disable these for official build];
-//#define GIA_WITH_CE_DEBUG
 //#define GIA_LRP_DEBUG
 //#define GIA_NLG_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET

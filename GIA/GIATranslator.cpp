@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p2a 12-September-2012
+ * Project Version: 1p2b 13-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -118,6 +118,9 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirac
 	#ifdef GIA_WITH_CE_USE_ALL_CODEEXTENSION_COMBINATIONS
 	for(codeextensionIter = codeextensionsList->begin(); codeextensionIter != codeextensionsList->end(); codeextensionIter++)
 	{
+		//need to declare new GIA semantic network environment for each heirachical combination
+		entityNodesActiveListConcepts = new unordered_map<string, GIAEntityNode*>;
+		timeConditionNodesActiveList = new unordered_map<long, GIATimeConditionNode*>;
 	#else
 		codeextensionIter = codeextensionsList->begin();
 	#endif
@@ -132,18 +135,23 @@ void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirac
 		cout << "currentCodeextensionInHeirachy->codeextensionTextRaw = " << currentCodeextensionInHeirachy->codeextensionTextRaw << endl;		
 		#endif
 		Sentence * currentSentenceInArtificialList = firstSentenceInArtificialList;
-		while(currentSentenceInArtificialList->next != NULL)
+		do
 		{
-			Relation * currentRelationInList = firstSentenceInArtificialList->firstRelationInList;
+			Relation * currentRelationInList = currentSentenceInArtificialList->firstRelationInList;
 			while(currentRelationInList->next != NULL)
 			{
 				#ifdef GIA_WITH_CE_DEBUG
 				cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
 				#endif
 				currentRelationInList = currentRelationInList->next;
-			}		
+			}	
+				
 			currentSentenceInArtificialList = currentSentenceInArtificialList->next;
+			#ifdef GIA_WITH_CE_DEBUG
+			cout << "\tcurrentSentenceInArtificialList = currentSentenceInArtificialList->next;" << endl;
+			#endif
 		}
+		while(currentSentenceInArtificialList != NULL);
 		#ifdef GIA_WITH_CE_DEBUG
 		cout << "\n\n" << endl;
 		#endif
@@ -192,7 +200,7 @@ void convertCESentenceListRelationsIntoGIAnetworkNodes(unordered_map<string, GIA
 
 		currentSentenceInList = currentSentenceInList->next;
 	}
-	while(currentSentenceInList->next != NULL);
+	while(currentSentenceInList != NULL);
 
 	/*
 	#ifdef GIA_USE_ADVANCED_REFERENCING
