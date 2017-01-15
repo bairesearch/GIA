@@ -3,7 +3,7 @@
  * File Name: GIACXLconversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1h4g 14-Mar-2012
+ * Project Version: 1g6c 12-Feb-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function overwrites entity id values upon read/write to speed up linking process
  *
@@ -424,13 +424,14 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 	{
 		GIAEntityNode * currentEntity = *entityNodesCompleteListIterator;
 
+		
 		#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
 		if(currentEntity->AssociatedInstanceNodeList.begin() == currentEntity->AssociatedInstanceNodeList.end())
 		{//if GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES; then do not add a concept entity if it has an associated instance (property node) 
 		//if((currentEntity->isAction) || (currentEntity->isProperty) || (currentEntity->isCondition))
 		//{//do not add raw concept nodes
 		#endif
-		
+			//cout << "cxl1" << endl;
 			//cout << "w1" << endl;
 			
 			#ifdef GIA_CMAP_CONVERSION_SANITISED
@@ -439,22 +440,40 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 				//cout << "w1b" << endl;
 				string connectionTypeName = currentEntity->entityName;
 				//cout << "connectionTypeName = " << connectionTypeName << endl;
-				GIAEntityNode * actionSubjectEntity = currentEntity->actionSubjectEntity ;
+				GIAEntityNode * actionSubjectEntity = currentEntity->actionSubjectEntity;
 				GIAEntityNode * actionObjectEntity = currentEntity->actionObjectEntity;
 				long linkingPhraseID = currentEntity->reorderdIDforXMLsave;
+				bool subjectIsEmpty = false;
+				bool objectIsEmpty = false;
 				if(currentEntity->actionSubjectEntity == NULL)
 				{
+					subjectIsEmpty = true;				
 					actionSubjectEntity = new GIAEntityNode();
 					actionSubjectEntity->CXLdummyNode = true;
+					//cout << "currentEntity->actionSubjectEntity == NULL" << endl;					
 				
 				}
-				else if(currentEntity->actionObjectEntity == NULL)
+				if(currentEntity->actionObjectEntity == NULL)
 				{
+					objectIsEmpty = true;
 					actionObjectEntity = new GIAEntityNode();
-					actionObjectEntity->CXLdummyNode = true;	
+					actionObjectEntity->CXLdummyNode = true;
+					//cout << "currentEntity->actionObjectEntity == NULL" << endl;	
 				
 				}
-				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, actionSubjectEntity, actionObjectEntity, connectionTypeName, &linkingPhraseID, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, true);		
+				if(!(subjectIsEmpty && objectIsEmpty))
+				{	
+					currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, actionSubjectEntity, actionObjectEntity, connectionTypeName, &linkingPhraseID, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, true);		
+				}
+				if(subjectIsEmpty)
+				{
+					delete actionSubjectEntity;
+				}
+				if(objectIsEmpty)
+				{
+					delete actionObjectEntity;
+				}
+							
 			}
 			
 			if(currentEntity->isCondition)
@@ -465,20 +484,36 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 				GIAEntityNode * conditionSubjectEntity = currentEntity->conditionSubjectEntity;
 				GIAEntityNode * conditionObjectEntity = currentEntity->conditionObjectEntity;
 				long linkingPhraseID = currentEntity->reorderdIDforXMLsave;
+				bool subjectIsEmpty = false;
+				bool objectIsEmpty = false;
 				if(currentEntity->conditionSubjectEntity == NULL)
 				{
+					subjectIsEmpty = true;
 					conditionSubjectEntity = new GIAEntityNode();
 					conditionSubjectEntity->CXLdummyNode = true;	
-					cout << "conditionSubjectEntity->reorderdIDforXMLsave = " << conditionSubjectEntity->reorderdIDforXMLsave << endl;
+					//cout << "currentEntity->conditionSubjectEntity == NULL" << endl;
 				}
-				else if(currentEntity->conditionObjectEntity == NULL)
+				if(currentEntity->conditionObjectEntity == NULL)
 				{
+					objectIsEmpty = true;		
 					conditionObjectEntity = new GIAEntityNode();
 					conditionObjectEntity->CXLdummyNode = true;
-					cout << "conditionObjectEntity->reorderdIDforXMLsave = " << conditionObjectEntity->reorderdIDforXMLsave << endl;
+					//cout << "currentEntity->conditionObjectEntity == NULL" << endl;
 						
-				}							
-				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, conditionSubjectEntity, conditionObjectEntity, connectionTypeName, &linkingPhraseID, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, true);				
+				}
+				if(!(subjectIsEmpty && objectIsEmpty))
+				{							
+					currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, conditionSubjectEntity, conditionObjectEntity, connectionTypeName, &linkingPhraseID, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, true);				
+				}
+				
+				if(subjectIsEmpty)
+				{
+					delete conditionSubjectEntity;
+				}
+				if(objectIsEmpty)
+				{
+					delete conditionObjectEntity;
+				}			
 			}
 							
 			#else
@@ -506,6 +541,9 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, currentEntity->conditionObjectEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);			
 			}		
 			#endif
+			
+			//cout << "cxl2" << endl;
+			
 
 			//cout << "w1d" << endl;
 
@@ -567,6 +605,7 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 			}
 			*/
 
+			//cout << "cxl3" << endl;
 			if(currentEntity->PropertyNodeReverseList.begin() != currentEntity->PropertyNodeReverseList.end())
 			{
 				for(currentEntity->PropertyNodeReverseListIterator = currentEntity->PropertyNodeReverseList.begin(); currentEntity->PropertyNodeReverseListIterator < currentEntity->PropertyNodeReverseList.end(); currentEntity->PropertyNodeReverseListIterator++)
@@ -584,6 +623,7 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 					currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, *(currentEntity->EntityNodeDefinitionListIterator), connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);
 				} 
 			}
+			//cout << "cxl4" << endl;
 
 			/*
 			if(currentEntity->EntityNodeDefinitionReverseList.begin() != currentEntity->EntityNodeDefinitionReverseList.end())
@@ -621,6 +661,8 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 				currentTagL1 = generateCXLConnectionNodeTagAndLinkingPhraseTags(currentTagL1, currentEntity, &fakeTimeEntity, connectionTypeName, currentCmapNodeIDInCmapNodeList, currentTagInLinkingPhraseList, currentTagInLinkingPhraseAppearanceList, firstTagInConnectionsList, false);
 			}
 			#endif
+			
+			//cout << "cxl5" << endl;
 			//cout << "w3" << endl;
 		
 		#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_CONCEPT_NODES
@@ -636,6 +678,7 @@ XMLParserTag * addToCXLConnectionNodeTagList(XMLParserTag * currentTagL1, vector
 
 XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * currentTagL1, GIAEntityNode * entity1, GIAEntityNode * entity2, string connectionTypeName, long * currentCmapNodeIDInCmapNodeList, XMLParserTag ** currentTagInLinkingPhraseList, XMLParserTag ** currentTagInLinkingPhraseAppearanceList, XMLParserTag * firstTagInConnectionsList, bool alreadyMadeLinkingPhrase)
 {
+		
 	#ifdef GIA_SEMANTIC_NET_CXL_REORDER_CONCEPT_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
 	//cout << "entity1->reorderdIDforXMLsave = " << entity1->reorderdIDforXMLsave << endl;
 	//cout << "entity2->reorderdIDforXMLsave = " << entity2->reorderdIDforXMLsave << endl;
@@ -645,6 +688,9 @@ XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * c
 	int entity1ID = entity1->id;
 	int entity2ID = entity2->id;	
 	#endif
+	//cout << "entity1ID = " << entity1ID << endl;
+	//cout << "entity2ID = " << entity2ID << endl;
+		
 	int entity1X =  entity1->printX;
 	int entity2X =  entity2->printX;
 	int entity1Y =  entity1->printY;
@@ -652,7 +698,7 @@ XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * c
 	int connectionTypeX = (entity1X + entity2X) / 2;
 	int connectionTypeY = (entity1Y + entity2Y) / 2;
 	int connectionID = (*currentCmapNodeIDInCmapNodeList);
-	
+					
 	//cout << "q1" << endl;
 	
 	//verify connection is not already found;
@@ -714,9 +760,11 @@ XMLParserTag * generateCXLConnectionNodeTagAndLinkingPhraseTags(XMLParserTag * c
 		}
 		if(!alreadyMadeLinkingPhrase)
 		{
+			//cout << "a" << endl;
 			*currentTagInLinkingPhraseList = generateCXLEntityNodeTag(*currentTagInLinkingPhraseList, connectionTypeName, connectionID, connectionTypeX, connectionTypeY, false, false);
 			*currentTagInLinkingPhraseAppearanceList = generateCXLEntityNodeTag(*currentTagInLinkingPhraseAppearanceList, connectionTypeName, connectionID, connectionTypeX, connectionTypeY, false, true);		
 			(*currentCmapNodeIDInCmapNodeList) = (*currentCmapNodeIDInCmapNodeList) + 1;
+			//cout << "b" << endl;
 		}
 		//cout << "q4" << endl;
 	}

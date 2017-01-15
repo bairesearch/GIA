@@ -3,7 +3,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1h4g 14-Mar-2012
+ * Project Version: 1g6c 12-Feb-2012
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -43,7 +43,7 @@ using namespace std;
 
 #define GIA_USE_SVG_ELLIPTICAL_BOXES (true)
 
-#define MAX_GIA_TREE_DEPTH (10000)
+#define MAX_GIA_TREE_DEPTH (100000)
 #define DRAW_X_INITIAL_OFFSET (150)
 #define DRAW_Y_INITIAL_OFFSET (150)
 
@@ -183,24 +183,27 @@ using namespace std;
 #define PRINT_TO_SVG_AND_CREATE_LDR_REFERENCES (1)
 #define DRAW_INITIALISE (INITIALISE_FOR_PRINT)
 #define DRAW_PRINT (PRINT_TO_SVG_AND_CREATE_LDR_REFERENCES)
+#define DRAW_CREATE_LDR_REFERENCES (0)
+#define DRAW_CREATE_SVG_REFERENCES (1)
+#define DRAW_CREATE_LDR_OR_SVG_REFERENCES (2)
 
 #define GIA_OUTPUT_Z_POSITION_CONNECTIONS (0.6)
 #define GIA_OUTPUT_Z_POSITION_NODES (0.4)
 #define GIA_OUTPUT_Z_POSITION_TEXT (0.2)
 
 
-void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesCompleteList, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile);
+void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesCompleteList, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile, bool useOutputSVGFile);
 
-void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesCompleteList, int initialiseOrPrint, Reference * firstReferenceInPrintList, ofstream * writeFileObject);
+void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesCompleteList, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, ofstream * writeFileObject);
 
 void initiateMaxXAtAParticularY();
-Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, int initialiseOrPrint, Reference * currentReferenceInPrintList, ofstream * writeFileObject);
-	Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAEntityNode * entityNodeToConnect, Reference * currentReferenceInPrintList, int initialiseOrPrint, string connectionName, int entityDefinitionConnectionColour, ofstream * writeFileObject);
-	Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeConditionNode, int y, int x, int initialiseOrPrint, Reference * currentReferenceInPrintList, ofstream * writeFileObject);
+Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, ofstream * writeFileObject);
+	Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAEntityNode * entityNodeToConnect, Reference * currentReferenceInPrintList, bool initialiseOrPrint[], string connectionName, int entityDefinitionConnectionColour, ofstream * writeFileObject);
+	Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeConditionNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, ofstream * writeFileObject);
 
-Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, ofstream * writeFileObject, string connectionTypeName);
-	Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, ofstream * writeFileObject);
-Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, ofstream * writeFileObject, int thickness);
+Reference * createReferenceConnectionWithText(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, ofstream * writeFileObject, string connectionTypeName, bool initialiseOrPrint[]);
+	Reference * createReferenceConnection(Reference * currentReferenceInPrintList, vec * pos1, vec * pos2, int colour, ofstream * writeFileObject, bool initialiseOrPrint[]);
+Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, double width, double height, int colour, string * text, ofstream * writeFileObject, int thickness, bool initialiseOrPrint[]);
 
 
 

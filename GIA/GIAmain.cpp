@@ -3,7 +3,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1h4g 14-Mar-2012
+ * Project Version: 1g6c 12-Feb-2012
  * Requirements: requires text parsed by RelEx (available in .CFF format <relations>)
  * Yet to Do: all Nodes should be indexed in an indexed database to allow for fast referencing
  *
@@ -419,9 +419,12 @@ int main(int argc,char **argv)
 			}
 		}
 		if(!useOutputTextSVGFile)
-		{	
-			useOutputTextSVGFile = true;	//SVG outputText is always required when printing/drawing semantic network
-			outputTextSVGFileName = outputTextAllFileName + ".svg";
+		{
+			if(useOutputTextAllFile)
+			{				
+				useOutputTextSVGFile = true;
+				outputTextSVGFileName = outputTextAllFileName + ".svg";
+			}
 		}
 		if(!useOutputTextPPMFile)
 		{
@@ -536,7 +539,7 @@ int main(int argc,char **argv)
 	#ifdef GIA_DEBUG_PRINT_QUERY_SEMANTIC_NETWORK		
 		if(printOutput)
 		{	
-			printGIAnetworkNodes(entityNodesCompleteListQuery, rasterImageWidth, rasterImageHeight, outputQueryLDRFileName, outputQuerySVGFileName, outputQueryPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputQueryLDRFile, useOutputQueryPPMFile);
+			printGIAnetworkNodes(entityNodesCompleteListQuery, rasterImageWidth, rasterImageHeight, outputQueryLDRFileName, outputQuerySVGFileName, outputQueryPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputQueryLDRFile, useOutputQueryPPMFile, useOutputQuerySVGFile);
 		}	
 	#endif
 			
@@ -717,7 +720,7 @@ int main(int argc,char **argv)
 			
 	if(printOutput)
 	{	
-		printGIAnetworkNodes(entityNodesCompleteList, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile);
+		printGIAnetworkNodes(entityNodesCompleteList, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile, useOutputTextSVGFile);
 	}			
 	
 	#ifdef GIA_XML_DEBUG_TEST_WRITE_READ_WRITE

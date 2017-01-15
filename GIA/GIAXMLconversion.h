@@ -3,7 +3,7 @@
  * File Name: GIAXMLconversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1h4g 14-Mar-2012
+ * Project Version: 1g6c 12-Feb-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -27,9 +27,6 @@ using namespace std;
 #include "XMLParserClass.h"
 #include "GIAEntityNodeClass.h"
 #include "GIAConditionNodeClass.h"
-
-#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. concept-list -> concepts or properties
-#define GIA_CMAP_CONVERSION_SANITISED_USE_PROPERTIES_ELSE_USE_CONCEPTS
 
 #define GIA_SEMANTIC_NET_XML_REORDER_CONCEPT_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
 //#define GIA_SEMANTIC_NET_XML_DEBUG
