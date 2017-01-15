@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2e 20-July-2013
+ * Project Version: 1t2f 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1019,44 +1019,22 @@ GIAentityNode * addCondition(GIAentityNode * conditionEntity)
 	return newCondition;
 }
 
-
-string convertPrepositionToRelex(string * preposition, int NLPdependencyRelationsType, bool * prepositionFound)
+//assumes prepositions have previously been converted to stanford prep_preposition format during preprocessor (for robustness)
+string convertPrepositionToRelex(string * preposition, bool * prepositionFound)
 {
 	string relexPreposition = *preposition;
-	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
+	for(int i=0; i<REFERENCE_TYPE_STANFORD_PARSER_PREPOSITION_PREPEND_NUMBER_OF_TYPES; i++)
 	{
-		string stanfordPrepositionPrependFound = "";
-		bool multiwordPrepositionIntermediaryRelationTypeBFound = false;
-		for(int i=0; i<REFERENCE_TYPE_STANFORD_PARSER_PREPOSITION_PREPEND_NUMBER_OF_TYPES; i++)
-		{
-			string currentStanfordPrepositionPrepend = referenceTypeStanfordParserPrepositionPrependNameArray[i];
-			int foundStanfordPrepositionPrepend = preposition->find(currentStanfordPrepositionPrepend);
+		string currentStanfordPrepositionPrepend = referenceTypeStanfordParserPrepositionPrependNameArray[i];
+		int foundStanfordPrepositionPrepend = preposition->find(currentStanfordPrepositionPrepend);
 
-			if(foundStanfordPrepositionPrepend == string::npos)
-			{
-				/*
-				#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-				cout << "convertPrepositionToRelex(): error - preposition 'prep_...' not found" << endl;
-				cout << "the following dependency relation was expected to be a preposition = " << *preposition << endl;
-				exit(0);
-				#endif
-				*/
-			}
-			else
-			{
-				int indexOfFirstRealCharacterInPreposition = currentStanfordPrepositionPrepend.length();
-				int lengthOfPreposition = preposition->length() - (indexOfFirstRealCharacterInPreposition);
-				relexPreposition = preposition->substr(indexOfFirstRealCharacterInPreposition, lengthOfPreposition);
-				*prepositionFound = true;
-			}
-		}
-	}
-	else if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
-	{
-		if((*preposition)[0] != RELATION_TYPE_PREPOSITION_FIRST_CHARACTER)
-		{//not valid for REFERENCE_TYPE_QUESTION_QUERY_VARIABLEs... [but this is not a problem because passedPrepositionUnknown is processed last in the if/else switch in createConditionBasedUponPreposition()]
+		if(foundStanfordPrepositionPrepend != string::npos)
+		{
+			int indexOfFirstRealCharacterInPreposition = currentStanfordPrepositionPrepend.length();
+			int lengthOfPreposition = preposition->length() - (indexOfFirstRealCharacterInPreposition);
+			relexPreposition = preposition->substr(indexOfFirstRealCharacterInPreposition, lengthOfPreposition);
 			*prepositionFound = true;
-		}		
+		}
 	}
 	
 	return relexPreposition;
@@ -2026,7 +2004,6 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	GIAentityNodeArrayFilled = newGIAentityNodeArrayFilled;
 	GIAentityNodeArray = newGIAentityNodeArray;
 	unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts;
-	NLPdependencyRelationsType = GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD; 	//for safety + simplicity - note NLPdependencyRelationsType must be set explicitly by user if expectToFindPrepositionTest is required to be used
 	
 	executeOrReassign = newexecuteOrReassign;
 		
@@ -2143,7 +2120,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 			param->relationEntity[currentRelationID][REL_ENT1] = param->relation[currentRelationID]->relationGovernor;
 			param->relationEntity[currentRelationID][REL_ENT2] = param->relation[currentRelationID]->relationDependent;
 			param->relationEntity[currentRelationID][REL_ENT3] = param->relation[currentRelationID]->relationType;
-			param->relationEntity[currentRelationID][REL_ENT3] = convertPrepositionToRelex(&(param->relationEntity[currentRelationID][REL_ENT3]), param->NLPdependencyRelationsType, &(param->relationEntityPrepFound[currentRelationID]));	//convert stanford prep_x to relex x 
+			param->relationEntity[currentRelationID][REL_ENT3] = convertPrepositionToRelex(&(param->relationEntity[currentRelationID][REL_ENT3]), &(param->relationEntityPrepFound[currentRelationID]));	//convert stanford prep_x to relex x 
 			param->relationEntityIndex[currentRelationID][REL_ENT1] = param->relation[currentRelationID]->relationGovernorIndex;
 			param->relationEntityIndex[currentRelationID][REL_ENT2] = param->relation[currentRelationID]->relationDependentIndex;
 				//required to swap variables via redistributeRelationEntityIndexReassignmentUseOriginalValues;

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2e 20-July-2013
+ * Project Version: 1t2f 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -561,7 +561,7 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 		{
 		//#endif
 			bool prepositionFound = false;
-			if(convertPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_RELEX, &prepositionFound) == RELATION_TYPE_PREPOSITION_OF)
+			if(convertPrepositionToRelex(&(currentRelationInList->relationType), &prepositionFound) == RELATION_TYPE_PREPOSITION_OF)
 			{				
 				int continuousVerbIndex = currentRelationInList->relationGovernorIndex;
 				GIAentityNode * continuousVerbEntity = GIAentityNodeArray[continuousVerbIndex];
@@ -575,7 +575,7 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 						{
 						//#endif
 							bool prepositionFound2 = false;
-							if(convertPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_RELEX, &prepositionFound2) != RELATION_TYPE_PREPOSITION_OF)
+							if(convertPrepositionToRelex(&(currentRelationInList2->relationType), &prepositionFound2) != RELATION_TYPE_PREPOSITION_OF)
 							{
 								if(currentRelationInList2->relationDependent == currentRelationInList->relationGovernor)
 								{
@@ -638,6 +638,21 @@ void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * 
 void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]) 
 {
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
+		cout << "before" << endl;
+		Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+		while(currentRelationInList->next != NULL)
+		{
+			if(!(currentRelationInList->disabled))
+			{
+				string relationType = currentRelationInList->relationType;
+				GIAentityNode * relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+				GIAentityNode * relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+
+				cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
+			}
+			currentRelationInList = currentRelationInList->next;
+		}
+			
 	/*eg1;  Space is saved by having a chicken.	_subj(have[5], by[4]) + _obj(have[5], chicken[7]) + _advmod(save[3], by[4]) -> dobj(have[5], chicken[7]) + prep_by(save[3], have[5])	{required for interpretation by linkHavingPropertyConditionsAndBeingDefinitionConditions}
 	_subj(have[5], by[4])
 	_obj(have[5], chicken[7])
@@ -666,7 +681,22 @@ void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHas
 	param.disableRelation[REL1] = true;
 	param.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT2] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT2] = REL_ENT1;	
 	param.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT3] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT3] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT3] = REL_ENT2;	
-	genericDependecyRelationInterpretation(&param, 1);
+	genericDependecyRelationInterpretation(&param, REL1);
+	
+		cout << "after" << endl;
+		currentRelationInList = currentSentenceInList->firstRelationInList;
+		while(currentRelationInList->next != NULL)
+		{
+			if(!(currentRelationInList->disabled))
+			{
+				string relationType = currentRelationInList->relationType;
+				GIAentityNode * relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+				GIAentityNode * relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+
+				cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
+			}
+			currentRelationInList = currentRelationInList->next;
+		}	
 	#else
 	cout << "!GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION not migrated for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION" << endl;
 	#endif
@@ -696,7 +726,7 @@ void redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationAllWithADefini
 	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL3; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
 	param.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_ADJECTIVE_ADVMOD;
 	param.useRedistributeRelationEntityIndexReassignment[REL3][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL3][REL_ENT1] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL3][REL_ENT1] = REL_ENT2;	
-	genericDependecyRelationInterpretation(&param, 1);
+	genericDependecyRelationInterpretation(&param, REL1);
 	#else
 	cout << "GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO not migrated for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION" << endl;
 	#endif
@@ -724,9 +754,9 @@ void redistributeRelexRelationsDisregardRedundantDefinitionRelations(Sentence * 
 	param.disableRelation[REL3] = true;
 	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;	
 	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL3; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT2;	
-	genericDependecyRelationInterpretation(&param, 1);
+	genericDependecyRelationInterpretation(&param, REL1);
 	
-	#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
 	cout << "!GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK not migrated for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION" << endl;
 	#endif
 
@@ -753,7 +783,7 @@ void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(Senten
 	paramA.disableRelation[REL1] = true;
 	paramA.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT1;	
 	paramA.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; paramA.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL2; paramA.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT2; paramA.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL2][REL_ENT3] = true;	
-	genericDependecyRelationInterpretation(&paramA, 1);
+	genericDependecyRelationInterpretation(&paramA, REL1);
 
 	/*eg 2 What is the Co-cart designed for?	_obj(for[6], _$qVar[1]) + _advmod(design[5], for[6]) -> for(design[5], _$qVar[1])
 	_obj(for[6], _$qVar[1])
@@ -772,7 +802,7 @@ void redistributeRelexRelationsAdverbPlusSubjectRelationAsActionCondition(Senten
 	paramB.disableRelation[REL1] = true;
 	paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;	
 	paramB.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT3] = true; paramB.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT3] = REL2; paramB.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT3] = REL_ENT2; paramB.redistributeRelationEntityIndexReassignmentUseOriginalValues[REL2][REL_ENT3] = true;	
-	genericDependecyRelationInterpretation(&paramB, 1);
+	genericDependecyRelationInterpretation(&paramB, REL1);
 	
 }
 #endif

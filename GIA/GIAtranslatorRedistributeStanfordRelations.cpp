@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2e 20-July-2013
+ * Project Version: 1t2f 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -353,13 +353,13 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
-			bool stanfordPrepositionFound = false;
-			string relexPreposition = convertPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+			bool prepositionFound = false;
+			string relexPreposition = convertPrepositionToRelex(&(currentRelationInList->relationType), &prepositionFound);
 			
 			#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP
-			if(stanfordPrepositionFound || (currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO))
+			if(prepositionFound || (currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO))
 			#else
-			if(stanfordPrepositionFound)
+			if(prepositionFound)
 			#endif
 			{				
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
@@ -867,10 +867,10 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 					if(!(currentRelationInList2->disabled))
 					{
 					#endif
-						bool stanfordPrepositionFound = false;
-						string relexPreposition = convertPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+						bool prepositionFound = false;
+						string relexPreposition = convertPrepositionToRelex(&(currentRelationInList2->relationType), &prepositionFound);
 
-						if(stanfordPrepositionFound)
+						if(prepositionFound)
 						{
 							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
 							{//found a matching relationship
@@ -1303,10 +1303,10 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
-			bool stanfordPrepositionFound = false;
-			string relexPreposition = convertPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+			bool prepositionFound = false;
+			string relexPreposition = convertPrepositionToRelex(&(currentRelationInList->relationType), &prepositionFound);
 
-			if(stanfordPrepositionFound)
+			if(prepositionFound)
 			{
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
@@ -1656,10 +1656,10 @@ void redistributeStanfordRelationsInterpretOfAsPossessive(Sentence * currentSent
 		{
 		//#endif
 
-			bool stanfordPrepositionFound = false;
-			string relexPreposition = convertPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+			bool prepositionFound = false;
+			string relexPreposition = convertPrepositionToRelex(&(currentRelationInList->relationType), &prepositionFound);
 
-			if(stanfordPrepositionFound)
+			if(prepositionFound)
 			{
 				if(relexPreposition == RELATION_TYPE_PREPOSITION_OF)
 				{
@@ -1808,9 +1808,9 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 													#ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
 													if(currentRelationInList3->relationType == RELATION_TYPE_POSSESSIVE)
 													#else
-													bool stanfordPrepositionFound = false;
-													string relexPreposition = convertPrepositionToRelex(&(currentRelationInList3->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
-													if((currentRelationInList3->relationType == RELATION_TYPE_POSSESSIVE) || (stanfordPrepositionFound && (relexPreposition == RELATION_TYPE_PREPOSITION_OF)))
+													bool prepositionFound = false;
+													string relexPreposition = convertPrepositionToRelex(&(currentRelationInList3->relationType), &prepositionFound);
+													if((currentRelationInList3->relationType == RELATION_TYPE_POSSESSIVE) || (prepositionFound && (relexPreposition == RELATION_TYPE_PREPOSITION_OF)))
 													#endif
 													{
 														if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationDependentIndex)
@@ -1961,9 +1961,9 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 							#ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
 							if(currentRelationInList2->relationType == RELATION_TYPE_POSSESSIVE)
 							#else
-							bool stanfordPrepositionFound = false;
-							string relexPreposition = convertPrepositionToRelex(&(currentRelationInList2->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
-							if((currentRelationInList2->relationType == RELATION_TYPE_POSSESSIVE) || (stanfordPrepositionFound && (relexPreposition == RELATION_TYPE_PREPOSITION_OF)))
+							bool prepositionFound = false;
+							string relexPreposition = convertPrepositionToRelex(&(currentRelationInList2->relationType), &prepositionFound);
+							if((currentRelationInList2->relationType == RELATION_TYPE_POSSESSIVE) || (prepositionFound && (relexPreposition == RELATION_TYPE_PREPOSITION_OF)))
 							#endif
 							{
 								if(currentRelationInList2->relationGovernor == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME)	//added 11 August 2012
@@ -3817,8 +3817,8 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 			GIAentityNode * actionOrSubstanceEntity = GIAentityNodeArray[actionOrSubstanceIndex];
 			GIAentityNode * actionOrSubstanceConditionEntity = GIAentityNodeArray[actionOrSubstanceConditionIndex];		
 
-			bool stanfordPrepositionFound = false;
-			if(convertPrepositionToRelex(&relationType, GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound) == RELATION_TYPE_PREPOSITION_OF)
+			bool prepositionFound = false;
+			if(convertPrepositionToRelex(&relationType, &prepositionFound) == RELATION_TYPE_PREPOSITION_OF)
 			{
 				//cout << "actionOrSubstanceEntity->stanfordPOStemp = " << actionOrSubstanceEntity->stanfordPOStemp << endl;
 				//cout << "actionOrSubstanceEntity->wordNetPOS = " << actionOrSubstanceEntity->wordNetPOS << endl;	

@@ -23,7 +23,7 @@
  * File Name: GIAparser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2e 20-July-2013
+ * Project Version: 1t2f 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -63,7 +63,7 @@ void convertStanfordRelationToRelex(Relation * currentRelationInList, Sentence *
 	}
 
 	bool stanfordPrepositionFound = false;
-	string tempRelexPrepositionString = convertPrepositionToRelex(&stanfordRelation, GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+	string tempRelexPrepositionString = convertPrepositionToRelex(&stanfordRelation, &stanfordPrepositionFound);
 	if(stanfordPrepositionFound)
 	{
 		relationTypeRelexStandard = stanfordRelation;	//do not modify stanford preposition relations "prep_...." to "_prep_..."
@@ -590,6 +590,20 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 			case CHAR_OPEN_BRACKET:
 			{
 				string relationType = currentItemString;
+				
+				//added 23 July 2013 - preprocess relex conj_or/conj_and as _conj_or/_conj_and
+				if((relationType == RELATION_TYPE_CONJUGATION_AND) || (relationType == RELATION_TYPE_CONJUGATION_OR))
+				{
+					string depRelNonPrepositionFirstChar = "";
+					depRelNonPrepositionFirstChar = depRelNonPrepositionFirstChar + RELATION_TYPE_RELEX_NON_PREPOSITION_FIRST_CHARACTER;
+					relationType = depRelNonPrepositionFirstChar + relationType;
+				}
+				//added 23 July 2013 - preprocess relex prepositions to stanford format for robustness
+				if(relationType[0] != RELATION_TYPE_RELEX_NON_PREPOSITION_FIRST_CHARACTER)
+				{//not valid for REFERENCE_TYPE_QUESTION_QUERY_VARIABLEs that require to be interpreted as prepositions (these must be explicitly compensated for)...
+					relationType = string(STANFORD_PARSER_PREPOSITION_PREPEND) + relationType;
+				}
+				
 				currentRelation->relationType = relationType;
 				currentItemString[0] = '\0';
 				currentRelationPart++;

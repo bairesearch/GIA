@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2e 20-July-2013
+ * Project Version: 1t2f 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1132,7 +1132,7 @@ void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, 
 			for(int i=0; i<RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES; i++)
 			{
 				bool prepositionFound = false;
-				if(convertPrepositionToRelex(&(currentRelationInList->relationType), NLPdependencyRelationsType, &prepositionFound) == relationTypePossessivePrepositionsNameArray[i])
+				if(convertPrepositionToRelex(&(currentRelationInList->relationType), &prepositionFound) == relationTypePossessivePrepositionsNameArray[i])
 				{
 					foundPossessivePreposition = true;
 				}

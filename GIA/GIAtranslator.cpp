@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2e 20-July-2013
+ * Project Version: 1t2f 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -760,7 +760,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		#endif
 		
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION	
-		#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
+		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1c4Alternate; redistribute Relex Relations - Adverb Plus Object Plus Subject Relation Where Adverb Has Same Argument As Subject As Condition" << endl;
 		cout << "eg1;  Space is saved by having a chicken.	_subj(have[5], by[4]) + _obj(have[5], chicken[7]) + _advmod(save[3], by[4]) -> dobj(have[5], chicken[7]) + prep_by(save[3], have[5])	{required for interpretation by linkHavingPropertyConditionsAndBeingDefinitionConditions}" << endl;	
@@ -771,7 +771,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
 		#endif
 		
-		#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
+		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1c5Alternate; redistribute Relex Relations - Adverb Plus Object Plus Subject Relation All With A Definition Function As Property Links" << endl;	
 		cout << "eg; The chicken is 3 minutes late.	_subj(be[3], chicken[2]) + _obj(be[3], minutes[5]) + _advmod(be[3], late[6]) -> _advmod(late[6], minutes[5]) + _advmod(chicken[2],  late[6])" << endl;
@@ -780,7 +780,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationAllWithADefinitionFunctionAsPropertyLinks(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
 		#endif
 		
-		#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A_RELATIONS_DISREGARD_REDUNDANT_DEFINITION_RELATIONS
+		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A_RELATIONS_DISREGARD_REDUNDANT_DEFINITION_RELATIONS
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1c6Alternate; redistribute Relex Relations - Disregard Redundant Definition Relations" << endl;	
 		cout << "eg1 What are the patent claims on?	_subj(be[2], claim[5]) + _obj(on[6], _$qVar[1]) -> on(claim[5], _$qVar[1]) " << endl;			
@@ -789,7 +789,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		redistributeRelexRelationsDisregardRedundantDefinitionRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
 		#endif
 		
-		#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_RELATION_AS_ACTION_CONDITION
+		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_RELATION_AS_ACTION_CONDITION
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1c7Alternate; redistribute Relex Relations - Adverb Plus Subject Relation As Action Condition" << endl;
 		cout << "eg1 Space is saved by running fast.	_subj(run[5], by[4]) + _advmod(save[3], by[4]) -> by(save[3], run[5])" << endl;

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2e 20-July-2013
+ * Project Version: 1t2f 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -394,7 +394,7 @@ used
 
 
 //conditions: prepositions [predicates????]
-#define RELATION_TYPE_PREPOSITION_FIRST_CHARACTER '_'
+#define RELATION_TYPE_RELEX_NON_PREPOSITION_FIRST_CHARACTER '_'
 #define RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION "_pobj"
 #define RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION "_psubj"
 
@@ -1023,7 +1023,7 @@ GIAentityNode * addOrConnectBeingDefinitionConditionToEntity(GIAentityNode * ent
 GIAentityNode * addOrConnectHavingPropertyConditionToEntity(GIAentityNode * entityNode, GIAentityNode * conditionSubstanceNode, GIAentityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
 		GIAentityNode * addCondition(GIAentityNode * conditionEntity);
 
-string convertPrepositionToRelex(string * preposition, int NLPdependencyRelationsType, bool * prepositionFound);
+string convertPrepositionToRelex(string * preposition, bool * prepositionFound);	//converts prep_preposition to preposition
 
 
 

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2e 20-July-2013
+ * Project Version: 1t2f 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -520,7 +520,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 		#endif
 
 			bool stanfordPrepositionFound = false;
-			string prepositionName = convertPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+			string prepositionName = convertPrepositionToRelex(&(currentRelationInList->relationType), &stanfordPrepositionFound);
 
 			if(stanfordPrepositionFound)
 			{
@@ -2025,10 +2025,12 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 	paramC.numberOfRelations = 1;
 	paramC.NLPdependencyRelationsType = NLPdependencyRelationsType;	//this is required for expectToFindPrepositionTest
 	paramC.expectToFindPrepositionTest[REL1] = true;
+	/*OLD: before updating GIA to preprocess relex conj_or/conj_and as _conj_or/_conj_and
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
 		paramC.useRelationArrayTest[REL1][REL_ENT3] = true; paramC.relationArrayTest[REL1][REL_ENT3] = relationTypeConjugationNameArray; paramC.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES; paramC.relationArrayTestIsNegative[REL1][REL_ENT3] = true;	//NB this case is required because conjunctions relations in Relex/GIA are defined without a prepending "_", which means when (NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX) they will be non-intentionally interpreted as prepositions
 	}
+	*/
 	paramC.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
 	paramC.functionEntityRelationID[FUNC_ENT1] = REL1; paramC.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 	paramC.functionEntityRelationID[FUNC_ENT2] = REL1; paramC.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
@@ -2120,7 +2122,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 			bool foundPossessivePreposition = false;
 			for(int i=0; i<RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES; i++)
 			{
-				if(convertPrepositionToRelex(&relationType, NLPdependencyRelationsType, &prepositionFound) == relationTypePossessivePrepositionsNameArray[i])
+				if(convertPrepositionToRelex(&relationType, &prepositionFound) == relationTypePossessivePrepositionsNameArray[i])
 				{
 					foundPossessivePreposition = true;
 				}
@@ -2204,7 +2206,7 @@ void createConditionBasedUponPreposition(GIAentityNode * actionOrSubstanceEntity
 	*/
 
 	bool prepositionFound = false;
-	string prepositionName = convertPrepositionToRelex(&relationType, NLPdependencyRelationsType, &prepositionFound);
+	string prepositionName = convertPrepositionToRelex(&relationType, &prepositionFound);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	//cout << "prepositionName = " << prepositionName << endl;

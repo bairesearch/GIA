@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2e 20-July-2013
+ * Project Version: 1t2f 23-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -516,7 +516,7 @@
 //variables currently being tested (1t1a+)
 
 //#define GIA_1T2D_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_REMOVE_ASSSIGNMENT_OF_SPECIFIC_CONCEPTS_TO_PROPERNOUNS
-//#define GIA_1S8C_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_REMOVE_ASSSIGNMENT_OF_SPECIFIC_CONCEPTS_TO_PRONOUNS
+#define GIA_1S8C_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_REMOVE_ASSSIGNMENT_OF_SPECIFIC_CONCEPTS_TO_PRONOUNS
 
 #define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
 #define GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
