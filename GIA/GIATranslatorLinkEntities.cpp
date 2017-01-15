@@ -23,7 +23,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2b 10-August-2012
+ * Project Version: 1o2c 11-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -77,7 +77,7 @@ void linkSubstancesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 				#else
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 				#endif
-				GIAEntityNodeArray[substanceIndex] = connectPropertyToEntity(ownerEntity, substanceEntity, sameReferenceSet);
+				GIAEntityNodeArray[substanceIndex] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(ownerEntity, substanceEntity, sameReferenceSet);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
@@ -863,7 +863,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityN
 										else if(passcomposition)
 										{//subject-object relationship is a composition [substance]
 											bool sameReferenceSet = false;
-											GIAEntityNodeArray[objectEntityIndexTemp] = connectPropertyToEntity(subjectEntityTemp, objectEntityTemp, sameReferenceSet);
+											GIAEntityNodeArray[objectEntityIndexTemp] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(subjectEntityTemp, objectEntityTemp, sameReferenceSet);
 												//check can use substances for composition/comprises ; ie, does "tom is happy" = "tom comprises happiness" ?
 											//cout << "a" << endl;
 
@@ -1189,7 +1189,7 @@ void linkIndirectObjects(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 								GIAEntityNode * thingEntity = GIAEntityNodeArray[thingIndex];
 
 								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//eg the linebacker that gave the quarterback a push is blue. / the linebacker gave the quarterback a push
-								GIAEntityNodeArray[substanceIndex] = connectPropertyToEntity(thingEntity, substanceEntity, sameReferenceSet);
+								GIAEntityNodeArray[substanceIndex] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(thingEntity, substanceEntity, sameReferenceSet);
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -1503,10 +1503,13 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 			}
 			#endif
 
+			/*
 			#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
 			if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 			{
 			#endif
+			*/
+			#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE
 				#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3A_PREPOSITIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_SUBSTANCE_LINK_DEPENDING_UPON_ACTION_OR_SUBSTANCE
 				bool stanfordPrepositionFound = false;
 				if(convertStanfordPrepositionToRelex(&relationType, NLPdependencyRelationsType, &stanfordPrepositionFound) == RELATION_TYPE_OF)
@@ -1519,11 +1522,16 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 					//cout << "b" << endl;
 					if(actionOrSubstanceEntity->isAction)
 					{
-						/*
+						/*Relex:
 						NB not in this case "She grew tired of the pie."
 						of(tired[3], pie[6])
 						_to-be(grow[2], tired[3])
 						_subj(grow[2], she[1])
+						*/
+						/*Stanford:
+						prep_of(grew-2, pie-6)
+						acomp(grew-2, tired-3)
+						nsubj(grew-2, She-1)						
 						*/
 
 						//cout << "c" << endl;
@@ -1543,7 +1551,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 
 					if(!passed)
 					{
-						cout << "ASF" << endl;
+						//cout << "ASF" << endl;
 						/*
 						NB this case "The house of Kriton is blue." should create 2 substance connections (not just 1)
 						of(house[2], Kriton[4])
@@ -1554,14 +1562,17 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 						#else
 						bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 						#endif
-						GIAEntityNodeArray[actionOrSubstanceIndex] = connectPropertyToEntity(actionOrSubstanceConditionEntity, actionOrSubstanceEntity, sameReferenceSet);
+						GIAEntityNodeArray[actionOrSubstanceIndex] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(actionOrSubstanceConditionEntity, actionOrSubstanceEntity, sameReferenceSet);
 					}
 				}
 				#endif
+			#endif
+			/*
 			#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
 			}
 			#endif
-
+			*/
+			
 			if(passed)
 			{
 				#ifdef GIA_USE_ADVANCED_REFERENCING

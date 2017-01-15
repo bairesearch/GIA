@@ -23,7 +23,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2b 10-August-2012
+ * Project Version: 1o2c 11-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1113,7 +1113,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 	/*interpret;
 		[given 'The name of the dog near the farm is Max.']
 		'What is the name of the red dog near the farm?' [return entity names]
-			nsubj(is-2, name-4) / attr(is-2, What-1) {/ det(name-4, the-3)} / poss/prep_of(name-4, dog-8) -> appos(That-1, _$qVar[1])	{_name(That-1, _$qVar)??}
+			nsubj(is-2, name-4) / attr(is-2, What-1) {/ det(name-4, the-3)} / poss/prep_of(name-4, dog-8) -> appos(dog[8], _$qVar[1])	{_name(dog[8], _$qVar)??}
 		'What is the number of the red dogs near the farm?' [return entity number/quantity]
 			nsubj(is-2, number-4) / attr(is-2, What-1) {/ det(number-4, the-3)} / poss/prep_of(number-4, dogs-8) -> _quantity(dog[8], _$qVar[1])
 	*/
@@ -1281,7 +1281,8 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 	//eg interpret 'The red dog's name is Max.'		nsubj(Max-7, name-5)  poss(name-5, dog-3) -> appos(dog-3, Max-7)
 	//eg interpret 'The name of the red dog is Max.'	nsubj(Max-7, name-5)  prep_of(name-5, dog-3) -> appos(dog-3, Max-7)
 	//eg interpret 'Max is the name of the red dog.' 	nsubj(name-4, Max-1)  prep_of(name-4, dog-8) -> appos(dog-3, Max-7)
-
+	//cout << "h1" << endl;
+	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -1295,7 +1296,9 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 			if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT)
 			{
 				if((currentRelationInList->relationDependent == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME) || (currentRelationInList->relationGovernor == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME))
-				{		
+				{	
+					//cout << "h2" << endl;
+						
 					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 					while(currentRelationInList2->next != NULL)
 					{
@@ -1314,39 +1317,42 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 							if((currentRelationInList2->relationType == RELATION_TYPE_POSSESSIVE) || (stanfordPrepositionFound && (relexPreposition == GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_OF)))	
 							#endif
 							{	
-								if(currentRelationInList->relationDependent == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME) 
+								if(currentRelationInList2->relationGovernor == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME)	//added 11 August 2012
 								{
-									#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG								
-									cout << "DEBUG: redistributeStanfordRelationsInterpretNameOfAsDefinition(): relationDependent == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME" << endl;
-									#endif
+									if(currentRelationInList->relationDependent == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME) 
+									{
+										#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG								
+										cout << "DEBUG: redistributeStanfordRelationsInterpretNameOfAsDefinition(): relationDependent == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME" << endl;
+										#endif
 
-									currentRelationInList->disabled =  true;
+										currentRelationInList->disabled =  true;
 
-									GIAEntityNode * oldRedundantNameEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
-									disableEntity(oldRedundantNameEntity);
+										GIAEntityNode * oldRedundantNameEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+										disableEntity(oldRedundantNameEntity);
 
-									currentRelationInList2->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-									currentRelationInList2->relationGovernorIndex = currentRelationInList2->relationDependentIndex;
-									currentRelationInList2->relationGovernor = currentRelationInList2->relationDependent;
-									currentRelationInList2->relationDependentIndex = currentRelationInList->relationGovernorIndex;
-									currentRelationInList2->relationDependent = currentRelationInList->relationGovernor;
-								}
-								else if(currentRelationInList->relationGovernor == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME)
-								{
-									#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG								
-									cout << "DEBUG: redistributeStanfordRelationsInterpretNameOfAsDefinition(): relationGovernor == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME" << endl;
-									#endif
+										currentRelationInList2->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+										currentRelationInList2->relationGovernorIndex = currentRelationInList2->relationDependentIndex;
+										currentRelationInList2->relationGovernor = currentRelationInList2->relationDependent;
+										currentRelationInList2->relationDependentIndex = currentRelationInList->relationGovernorIndex;
+										currentRelationInList2->relationDependent = currentRelationInList->relationGovernor;
+									}
+									else if(currentRelationInList->relationGovernor == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME)
+									{
+										#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG								
+										cout << "DEBUG: redistributeStanfordRelationsInterpretNameOfAsDefinition(): relationGovernor == GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME" << endl;
+										#endif
 
-									currentRelationInList->disabled =  true;
+										currentRelationInList->disabled =  true;
 
-									GIAEntityNode * oldRedundantNameEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
-									disableEntity(oldRedundantNameEntity);
+										GIAEntityNode * oldRedundantNameEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
+										disableEntity(oldRedundantNameEntity);
 
-									currentRelationInList2->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-									currentRelationInList2->relationGovernorIndex = currentRelationInList2->relationDependentIndex;
-									currentRelationInList2->relationGovernor = currentRelationInList2->relationDependent;
-									currentRelationInList2->relationDependentIndex = currentRelationInList->relationDependentIndex;
-									currentRelationInList2->relationDependent = currentRelationInList->relationDependent;								
+										currentRelationInList2->relationType = RELATION_TYPE_APPOSITIVE_OF_NOUN;
+										currentRelationInList2->relationGovernorIndex = currentRelationInList2->relationDependentIndex;
+										currentRelationInList2->relationGovernor = currentRelationInList2->relationDependent;
+										currentRelationInList2->relationDependentIndex = currentRelationInList->relationDependentIndex;
+										currentRelationInList2->relationDependent = currentRelationInList->relationDependent;								
+									}
 								}									
 							}
 						//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS

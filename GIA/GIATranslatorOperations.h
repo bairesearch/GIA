@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o2b 10-August-2012
+ * Project Version: 1o2c 11-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -50,6 +50,8 @@ using namespace std;
 #include "GIAEntityConnectionClass.h"
 #include "GIAConditionNodeClass.h"
 
+#define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE	//intended to be enabled by default
+	//#define GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE	//added 8 August 2012		//Not used - already coded - reuse Relex code in linkConditions instead (GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE)
 
 #define GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES	//added 9 August 2012
 #ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
@@ -60,7 +62,8 @@ using namespace std;
 	#define GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_5_GOVERNOR_DEFINITE_DEPENDENT_NAME
 #endif
 
-#define GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE	//added 8 August 2012
+
+
 
 #define GIA_SUPPORT_NAMES
 #ifdef GIA_SUPPORT_NAMES
@@ -914,8 +917,9 @@ void initialiseGIATranslatorForTexualContextOperations();
 bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation * currentRelationInList, GIAEntityNode * GIAEntityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType);
 bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, Relation * currentRelationInList, int NLPdependencyRelationsType);								//Stanford Compatible
 
-GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet);	//Not used anymore
-GIAEntityNode * connectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet);
+GIAEntityNode * addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet);
+	GIAEntityNode * connectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet);
+	GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet);	//Not used anymore
 GIAEntityNode * addSubstanceToSubstanceDefinition(GIAEntityNode * substanceEntity);
 	GIAEntityNode * addSubstance(GIAEntityNode * entity);
 
