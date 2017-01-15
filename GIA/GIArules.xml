@@ -2815,6 +2815,28 @@
 				</paramDepRel>
 			</function>
 
+			
+			<!-- NLPI Only -->
+			<function name="NLPIinterpretWithAsPropertyWhenConnectedToSubstanceOnly">
+				<example><!--
+				eg The city with a house is fast.
+					_predadj(city[2], fast[7])
+					prep_with(city[2], house[5])
+				--></example>
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="0" REL_ENT="2" relationTest="with" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="0" REL_ENT="0" />
+				<option disableRelationDuringLink="true" REL="0" />
+				<option functionToExecuteUponFind="3" />
+				<option functionEntityRelationID="0" FUNC_ENT="0" functionEntityRelationEntityID="0" />
+				<option functionEntityRelationID="0" FUNC_ENT="1" functionEntityRelationEntityID="1" />
+				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<option defaultSameSetRelationID="0" defaultSameSetReferenceValue="true" />
+				<!-- #endif -->
+				</paramDepRel>
+			</function>
+			
 			<function name="linkConditions">
 				<!-- #ifdefGIA_IGNORE_MEANINGLESS_RELATIONS -->
 				<!-- NB with , meaningless relations are now disabled completely rather than just ignored -->
@@ -3053,7 +3075,7 @@
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="grammaticalTenseModifierArrayTemp" value="true" arrayIndex="0" />
 				<option functionToExecuteUponFind="2" />
 				</paramEntity>
-			</function>		
+			</function>						
 		</file>								
 	</translator>
 </rules>
