@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -1794,7 +1794,7 @@ bool writeTagListToFile(GIALRPtag* firstTagInPlainText, string plainTextLRPoutpu
 }
 
 //NB preposition reversion routine will not work for RelEx as RelEx defines dependency relations based on lemmas not words...
-void revertNLPtagNameToOfficialLRPtagName(Feature* feature, Sentence* currentSentenceInList, Relation* currentRelationInListForPrepositionsOnly, bool isPreposition, bool* foundOfficialLRPreplacementString)
+void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, GIAsentence* currentSentenceInList, GIArelation* currentRelationInListForPrepositionsOnly, bool isPreposition, bool* foundOfficialLRPreplacementString)
 {
 	int entityIndexForNonPrepositionsOnly = feature->entityIndex;
 
@@ -1843,8 +1843,8 @@ void revertNLPtagNameToOfficialLRPtagName(Feature* feature, Sentence* currentSen
 					//now search entire sentence->feature list and find entity/word that has same name, and has the governor/dependent closest to it...
 					string relationGovernor = currentRelationInListForPrepositionsOnly->relationGovernor;
 					string relationDependent = currentRelationInListForPrepositionsOnly->relationDependent;
-					Feature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
-					Feature* currentFeatureInList = firstFeatureInList;
+					GIAfeature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
+					GIAfeature* currentFeatureInList = firstFeatureInList;
 					int indexOfPrepositionWithMinimumProximityOfGovernorDependentWords = GIA_ENTITY_INDEX_UNDEFINED;
 					int minimumProximityOfGovernorDependentWords = MAXIMUM_NUMBER_WORDS_PER_SENTENCE;
 					int indexOfLastInstanceOfPreposition = GIA_ENTITY_INDEX_UNDEFINED;

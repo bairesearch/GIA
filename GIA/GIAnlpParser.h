@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -50,25 +50,25 @@ using namespace std;
 
 #define RELEX_DEPENDENCY_RELATION_PREPENDITION "_"
 
-void GIATHparseStanfordParseWordsAndPOStagsText(string* POStagsText, Sentence* currentSentenceInList, int* maxNumberOfWordsInSentence, bool createFeaturesGIA2only);
-	bool findReplicateRelation(Sentence* currentSentenceInList, Relation* relation);
-		bool compareRelations(Relation* relation1, Relation* relation2);
+void GIATHparseStanfordParseWordsAndPOStagsText(string* POStagsText, GIAsentence* currentSentenceInList, int* maxNumberOfWordsInSentence, bool createFeaturesGIA2only);
+	bool findReplicateRelation(GIAsentence* currentSentenceInList, GIArelation* relation);
+		bool compareRelations(GIArelation* relation1, GIArelation* relation2);
 	#ifdef GIA2_SUPPORT_QUERIES
 	bool findString(string entityName, string stringToFind);
 	#endif
 	#ifdef GIA_USE_CORPUS_DATABASE
 	string createSameReferenceSetRecord2(bool sameReferenceSet);
 	#endif
-void GIATHparseStanfordParserRelationsText(string* relationsText, Sentence* currentSentenceInList, int* maxNumberOfWordsInSentence, bool featuresNotPreviouslyFilled, bool parseGIA2file, bool NLPrelexCompatibilityMode);
-	void convertStanfordRelationToRelex(Relation* currentRelationInList, Sentence* currentSentenceInList);
+void GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* currentSentenceInList, int* maxNumberOfWordsInSentence, bool featuresNotPreviouslyFilled, bool parseGIA2file, bool NLPrelexCompatibilityMode);
+	void convertStanfordRelationToRelex(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList);
 		string convertPrepositionToRelex2(string* preposition, bool* prepositionFound);
 
-void GIATHparseRelexFeaturesText(string* featuresText, Sentence* currentSentenceInList, int* maxNumberOfWordsInSentence);
-void GIATHparseRelexRelationsText(string* relationsText, Sentence* currentSentenceInList, int* maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode);
+void GIATHparseRelexFeaturesText(string* featuresText, GIAsentence* currentSentenceInList, int* maxNumberOfWordsInSentence);
+void GIATHparseRelexRelationsText(string* relationsText, GIAsentence* currentSentenceInList, int* maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode);
 
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
-string generateRelexCFFfeatureTagContent(Feature* firstFeatureInList);
-string generateRelexCFFrelationTagContent(Relation* firstRelationInList);
+string generateRelexCFFfeatureTagContent(GIAfeature* firstFeatureInList);
+string generateRelexCFFrelationTagContent(GIArelation* firstRelationInList);
 #endif
 
 

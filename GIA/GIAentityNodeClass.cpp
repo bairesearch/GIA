@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  *
  *******************************************************************************/
 
@@ -786,54 +786,54 @@ string* convertDelimitedStringToArray(string str, char delimiter)
 
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
-EntityCharacteristic::EntityCharacteristic()
+GIAentityCharacteristic::GIAentityCharacteristic()
 {
 	name = "";
 	value = "";
 	arrayIndex = 0;
 	isNegative = false;	//only used for test (not assign)
 }
-EntityCharacteristic::EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew)
+GIAentityCharacteristic::GIAentityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew)
 {
 	name = entityPropertyNameNew;
 	value = entityPropertyValueNew;
 	arrayIndex = 0;
 	isNegative = false;
 }
-EntityCharacteristic::EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, bool isNegativeNew)
+GIAentityCharacteristic::GIAentityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, bool isNegativeNew)
 {
 	name = entityPropertyNameNew;
 	value = entityPropertyValueNew;
 	arrayIndex = 0;
 	isNegative = isNegativeNew;
 }
-EntityCharacteristic::EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew)
+GIAentityCharacteristic::GIAentityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew)
 {
 	name = entityPropertyNameNew;
 	value = entityPropertyValueNew;
 	arrayIndex = entityPropertyArrayIndexNew;
 	isNegative = false;
 }
-EntityCharacteristic::EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew, bool isNegativeNew)
+GIAentityCharacteristic::GIAentityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew, bool isNegativeNew)
 {
 	name = entityPropertyNameNew;
 	value = entityPropertyValueNew;
 	arrayIndex = entityPropertyArrayIndexNew;
 	isNegative = isNegativeNew;
 }
-EntityCharacteristic::~EntityCharacteristic(void)
+GIAentityCharacteristic::~GIAentityCharacteristic(void)
 {
 }
 
-bool testEntityCharacteristics(GIAentityNode* entity, vector<EntityCharacteristic*>* redistributeSpecialCasePropertiesTestVector, bool andOrOr)
+bool testEntityCharacteristics(GIAentityNode* entity, vector<GIAentityCharacteristic*>* redistributeSpecialCasePropertiesTestVector, bool andOrOr)
 {
 	bool passFound = false;
 	bool failureFound = false;
 	bool vectorHasItems = false;
-	for(vector<EntityCharacteristic*>::iterator entityCharacteristicIter = redistributeSpecialCasePropertiesTestVector->begin(); entityCharacteristicIter != redistributeSpecialCasePropertiesTestVector->end(); entityCharacteristicIter++)
+	for(vector<GIAentityCharacteristic*>::iterator entityCharacteristicIter = redistributeSpecialCasePropertiesTestVector->begin(); entityCharacteristicIter != redistributeSpecialCasePropertiesTestVector->end(); entityCharacteristicIter++)
 	{
 		vectorHasItems = true;
-		EntityCharacteristic* entityCharacteristic =* entityCharacteristicIter;
+		GIAentityCharacteristic* entityCharacteristic =* entityCharacteristicIter;
 		if(testEntityCharacteristic(entity, entityCharacteristic))
 		{
 			//cout << "passFound" << endl;
@@ -875,15 +875,15 @@ bool testEntityCharacteristics(GIAentityNode* entity, vector<EntityCharacteristi
 	}
 	return passedRelation;
 }
-void setEntityCharacteristics(GIAentityNode* entity, vector<EntityCharacteristic*>* redistributeSpecialCasePropertiesAssignmentVector)
+void setEntityCharacteristics(GIAentityNode* entity, vector<GIAentityCharacteristic*>* redistributeSpecialCasePropertiesAssignmentVector)
 {
-	for(vector<EntityCharacteristic*>::iterator entityCharacteristicIter = redistributeSpecialCasePropertiesAssignmentVector->begin(); entityCharacteristicIter != redistributeSpecialCasePropertiesAssignmentVector->end(); entityCharacteristicIter++)
+	for(vector<GIAentityCharacteristic*>::iterator entityCharacteristicIter = redistributeSpecialCasePropertiesAssignmentVector->begin(); entityCharacteristicIter != redistributeSpecialCasePropertiesAssignmentVector->end(); entityCharacteristicIter++)
 	{
-		EntityCharacteristic* entityCharacteristic =* entityCharacteristicIter;
+		GIAentityCharacteristic* entityCharacteristic =* entityCharacteristicIter;
 		setEntityCharacteristic(entity, entityCharacteristic);
 	}
 }
-bool testEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entityCharacteristic)
+bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic)
 {
 	bool foundMatch = false;
 	bool illegalVariable = false;
@@ -1003,7 +1003,7 @@ bool testEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entit
 
 	return result;
 }
-void testEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch)
+void testEntityCharacteristicIterationbool(bool entityVal, GIAentityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicTest->name == iterationVariable)
 	{
@@ -1028,7 +1028,7 @@ void testEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic*
 		}
 	}
 }
-void testEntityCharacteristicIterationint(int entityVal, EntityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch)
+void testEntityCharacteristicIterationint(int entityVal, GIAentityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicTest->name == iterationVariable)
 	{
@@ -1040,7 +1040,7 @@ void testEntityCharacteristicIterationint(int entityVal, EntityCharacteristic* e
 		}
 	}
 }
-void testEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch)
+void testEntityCharacteristicIterationstring(string entityVal, GIAentityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicTest->name == iterationVariable)
 	{
@@ -1054,7 +1054,7 @@ void testEntityCharacteristicIterationstring(string entityVal, EntityCharacteris
 }
 
 
-bool setEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entityCharacteristic)
+bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic)
 {
 	bool foundMatch = false;
 
@@ -1144,7 +1144,7 @@ bool setEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entity
 	return foundMatch;
 }
 
-void setEntityCharacteristicIterationbool(bool* entityVal, EntityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch)
+void setEntityCharacteristicIterationbool(bool* entityVal, GIAentityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicSet->name == iterationVariable)
 	{
@@ -1167,7 +1167,7 @@ void setEntityCharacteristicIterationbool(bool* entityVal, EntityCharacteristic*
 		*foundMatch = true;
 	}
 }
-void setEntityCharacteristicIterationint(int* entityVal, EntityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch)
+void setEntityCharacteristicIterationint(int* entityVal, GIAentityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicSet->name == iterationVariable)
 	{
@@ -1177,7 +1177,7 @@ void setEntityCharacteristicIterationint(int* entityVal, EntityCharacteristic* e
 		*foundMatch = true;
 	}
 }
-void setEntityCharacteristicIterationstring(string* entityVal, EntityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch)
+void setEntityCharacteristicIterationstring(string* entityVal, GIAentityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicSet->name == iterationVariable)
 	{
@@ -1188,7 +1188,7 @@ void setEntityCharacteristicIterationstring(string* entityVal, EntityCharacteris
 	}
 }
 
-bool getEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entityCharacteristic)
+bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic)
 {
 	bool foundMatch = false;
 	//cout << "testEntityCharacteristic():" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
@@ -1275,7 +1275,7 @@ bool getEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entity
 	}
 	return foundMatch;
 }
-void getEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch)
+void getEntityCharacteristicIterationbool(bool entityVal, GIAentityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicGet->name == iterationVariable)
 	{
@@ -1292,7 +1292,7 @@ void getEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic* 
 		*foundMatch = true;
 	}
 }
-void getEntityCharacteristicIterationint(int entityVal, EntityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch)
+void getEntityCharacteristicIterationint(int entityVal, GIAentityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicGet->name == iterationVariable)
 	{
@@ -1303,7 +1303,7 @@ void getEntityCharacteristicIterationint(int entityVal, EntityCharacteristic* en
 		*foundMatch = true;
 	}
 }
-void getEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch)
+void getEntityCharacteristicIterationstring(string entityVal, GIAentityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicGet->name == iterationVariable)
 	{

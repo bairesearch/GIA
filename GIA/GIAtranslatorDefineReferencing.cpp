@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -37,7 +37,7 @@
 #include "GIAdatabase.h"
 
 //unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts
-void identifyComparisonVariableAlternateMethod(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser)
+void identifyComparisonVariableAlternateMethod(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser)
 {
 	bool expectToFindComparisonVariable = false;
 	if(currentSentenceInList->isQuestion)
@@ -80,7 +80,7 @@ void identifyComparisonVariableAlternateMethod(Sentence* currentSentenceInList, 
 			bool foundComparisonVariableAlternateMethod = false;
 
 			bool foundQueryWordAcceptedByAlternateMethod = false;
-			Feature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
+			GIAfeature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
 			while(currentFeatureInList->next != NULL)
 			{
 				bool passed = false;
@@ -95,7 +95,7 @@ void identifyComparisonVariableAlternateMethod(Sentence* currentSentenceInList, 
 					}
 					else
 					{//ie if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
-						Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+						GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 						while(currentRelationInList->next != NULL)
 						{
 							if(currentRelationInList->relationType == RELATION_TYPE_DETERMINER)	//only supported by Stanford
@@ -220,9 +220,9 @@ void identifyComparisonVariableAlternateMethod(Sentence* currentSentenceInList, 
 
 
 
-void identifyEntityTypes(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], int NLPdependencyRelationsType)
+void identifyEntityTypes(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], int NLPdependencyRelationsType)
 {
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -358,7 +358,7 @@ void identifyEntityTypes(Sentence* currentSentenceInList, GIAentityNode* GIAenti
 }
 
 //updated 22 May 2012 with GIAconceptNodeArray+GIAentityNodeArray (and substances add)
-void linkPronounReferencesRelex(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, Feature* featureArrayTemp[])
+void linkPronounReferencesRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIAfeature* featureArrayTemp[])
 {
 	#ifdef GIA_WARNINGS
 	cout << "warning: linkPronounReferencesRelex() is not robust - it requires further development" << endl;
@@ -385,14 +385,14 @@ void linkPronounReferencesRelex(Sentence* currentSentenceInList, bool GIAentityN
 					GIAentityNode* referenceSource = NULL;
 					bool referenceSourceHasBeenFound = false;
 					bool stillSentencesToSearch = true;
-					Sentence* currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInList;
+					GIAsentence* currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInList;
 					int s2 = 0;
 					while(!referenceSourceHasBeenFound && stillSentencesToSearch)
 					{
 						#ifdef GIA_PRONOUN_REFERENCING_DEBUG
 						cout << "s2 = " << s2 << endl;
 						#endif
-						Relation* currentRelationInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->firstRelationInList;
+						GIArelation* currentRelationInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->firstRelationInList;
 						int maxWordLimit = 999999;
 						if(s2 == 0)
 						{
@@ -636,16 +636,16 @@ void linkPronounReferencesRelex(Sentence* currentSentenceInList, bool GIAentityN
 
 
 #ifdef GIA_USE_STANFORD_CORENLP
-void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, StanfordCoreNLPcoreference* firstCoreferenceInList, Feature* featureArrayTemp[])
+void linkPronounAndTextualContextReferencesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIAstanfordCoreNLPcoreference* firstCoreferenceInList, GIAfeature* featureArrayTemp[])
 {
 	#ifdef GIA_PRONOUN_REFERENCING_DEBUG
 	//cout << "linkPronounAndTextualContextReferencesStanfordCoreNLP()" << endl;
 	#endif
-	StanfordCoreNLPcoreference* currentCoreferenceInList = firstCoreferenceInList;
+	GIAstanfordCoreNLPcoreference* currentCoreferenceInList = firstCoreferenceInList;
 	while(currentCoreferenceInList->next != NULL)
 	{
-		StanfordCoreNLPmention* firstMentionInList = currentCoreferenceInList->firstMentionInList;
-		StanfordCoreNLPmention* currentMentionInList = firstMentionInList;
+		GIAstanfordCoreNLPmention* firstMentionInList = currentCoreferenceInList->firstMentionInList;
+		GIAstanfordCoreNLPmention* currentMentionInList = firstMentionInList;
 		GIAentityNode* referenceSource = NULL;
 		bool foundReferenceSource = false;
 		while(currentMentionInList->next != NULL)
@@ -671,7 +671,7 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence* currentSent
 					if(referenceSourceSentenceIndex <= currentSentenceInList->sentenceIndex)
 					#endif
 					{
-						Sentence* currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInList;
+						GIAsentence* currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInList;
 						bool stillExistsPreviousSentence = true;
 						while(stillExistsPreviousSentence)
 						{
@@ -680,7 +680,7 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence* currentSent
 							#endif
 							if(currentSentenceInWhichReferenceSourceIsBeingSearchedFor->sentenceIndex == referenceSourceSentenceIndex)
 							{
-								Feature* currentFeatureInList = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->firstFeatureInList;
+								GIAfeature* currentFeatureInList = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->firstFeatureInList;
 								while(currentFeatureInList->next != NULL)
 								{
 									#ifdef GIA_PRONOUN_REFERENCING_DEBUG
@@ -742,7 +742,7 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence* currentSent
 						int currentSentenceEntityNodeIndex = currentMentionInList->head;
 						if(GIAentityNodeArrayFilled[currentSentenceEntityNodeIndex])
 						{
-							Feature* referenceFeature = featureArrayTemp[currentSentenceEntityNodeIndex];
+							GIAfeature* referenceFeature = featureArrayTemp[currentSentenceEntityNodeIndex];
 
 							bool coreferenceIsPronoun = false;
 							//use stanfordPOS information to ensure that the reference is a pronoun - NB alternatively, could use referenceTypePersonNameArray and referenceTypePossessiveNameArray (as there is only a limited set of pronouns in english)
@@ -853,11 +853,11 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence* currentSent
 
 #ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 
-void fillExplicitReferenceSameSetTags(Sentence* currentSentenceInList)
+void fillExplicitReferenceSameSetTags(GIAsentence* currentSentenceInList)
 {
 	//eg the chicken which ate a pie rowed the boat. rcmod(chicken-2, ate-4) / nsubj(ate-4, chicken-2)		 [OLD: + the blue chicken... amod(chicken-3, blue-2)]
 
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -866,7 +866,7 @@ void fillExplicitReferenceSameSetTags(Sentence* currentSentenceInList)
 		#endif
 			if(currentRelationInList->relationType == RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER)
 			{
-				Relation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				GIArelation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
  				while(currentRelationInList2->next != NULL)
 				{
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -912,7 +912,7 @@ void fillExplicitReferenceSameSetTags(Sentence* currentSentenceInList)
 								}
 							}
 
-							Relation* currentRelationInList3 = currentSentenceInList->firstRelationInList;
+							GIArelation* currentRelationInList3 = currentSentenceInList->firstRelationInList;
  							while(currentRelationInList3->next != NULL)
 							{
 								if(currentRelationInList3->relationGovernorIndex == currentRelationInList2->relationGovernorIndex)
@@ -1354,7 +1354,7 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 			#endif
 
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-			cout << "Reference Set Trace Start: currentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
+			cout << "LDreference Set Trace Start: currentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
 			#endif
 
 			/*
@@ -1565,7 +1565,7 @@ GIACoreference* generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIAe
 
 
 
-void linkAdvancedReferencesGIA(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIACoreference* firstCoreferenceInList, Feature* featureArrayTemp[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAconceptNodeArray[])
+void linkAdvancedReferencesGIA(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIACoreference* firstCoreferenceInList, GIAfeature* featureArrayTemp[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAconceptNodeArray[])
 {
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "linkAdvancedReferencesGIA()" << endl;
@@ -1800,7 +1800,7 @@ void linkAdvancedReferencesGIA(Sentence* currentSentenceInList, bool GIAentityNo
 							{
 								GIAentityNodeArrayFilled[referenceEntityIndex] = true;	//preposition reference
 								GIAfeatureTempEntityNodeArray[referenceEntityIndex] = referenceSource;		//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
-								featureArrayTemp[referenceEntityIndex] = new Feature();				//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
+								featureArrayTemp[referenceEntityIndex] = new GIAfeature();				//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
 								GIAconceptNodeArray[referenceEntityIndex] = referenceSource;			//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
 							}
 							#endif
@@ -2134,7 +2134,7 @@ void identifyReferenceSet(GIAentityNode* entityNode, int referenceSetID, int min
 
 
 /*
-void identifyEntityTypesLocal(Relation* currentRelationInList, int NLPdependencyRelationsType, GIAentityNode* governor, GIAentityNode* dependent)
+void identifyEntityTypesLocal(GIArelation* currentRelationInList, int NLPdependencyRelationsType, GIAentityNode* governor, GIAentityNode* dependent)
 {
 	//possessive of substances [NB plural/singular indicates definite noun - eg a robin, the robin, the robins - which is therefore a substance (entity instance):
 
@@ -2247,9 +2247,9 @@ void identifyEntityTypesLocal(Relation* currentRelationInList, int NLPdependency
 
 }
 
-void identifyEntityTypes(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], int NLPdependencyRelationsType)
+void identifyEntityTypes(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], int NLPdependencyRelationsType)
 {
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD

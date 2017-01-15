@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -42,7 +42,7 @@
 
 
 
-void applyAdvancedFeatures(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, int NLPdependencyRelationsType, int NLPfeatureParser)
+void applyAdvancedFeatures(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, int NLPdependencyRelationsType, int NLPfeatureParser)
 {
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -124,7 +124,7 @@ void applyAdvancedFeatures(Sentence* currentSentenceInList, bool GIAentityNodeAr
 	#endif
 }
 
-void extractDates(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser)
+void extractDates(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser)
 {
 	#ifdef GIA_USE_RELEX
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
@@ -144,7 +144,7 @@ void extractDates(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled
 }
 
 #ifdef GIA_USE_STANFORD_CORENLP
-void extractDatesStanfordCoreNLP(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void extractDatesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
@@ -220,7 +220,7 @@ void extractDatesStanfordCoreNLP(Sentence* currentSentenceInList, bool GIAentity
 #endif
 
 #ifdef GIA_USE_RELEX
-void extractDatesRelex(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void extractDatesRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
@@ -268,7 +268,7 @@ void extractDatesRelex(Sentence* currentSentenceInList, bool GIAentityNodeArrayF
 			}
 		}
 	}
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -401,7 +401,7 @@ void addTimeToSubstance(GIAentityNode* timeConditionEntity)
 }
 #endif
 
-void extractQuantities(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, int NLPfeatureParser)
+void extractQuantities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, int NLPfeatureParser)
 {
 	/*
 	eg He lost three dollars. /   He lost almost three dollars. / He lost three hundred dollars.	_quantity(dollar, three) / _quantity_mod(three, almost) / _quantity_mult(hundred, three)
@@ -422,9 +422,9 @@ void extractQuantities(Sentence* currentSentenceInList, bool GIAentityNodeArrayF
 }
 
 #ifdef GIA_USE_STANFORD_CORENLP
-void extractQuantitiesStanfordCoreNLP(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts)
+void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts)
 {
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	
 	#ifdef GIA_TRANSLATOR_CONVERT_AMOD_WITH_NUMBERS_TO_QUANTITY_RELATION
 	//convert amod(piece, 1) to num(piece, 1)
@@ -502,7 +502,7 @@ void extractQuantitiesStanfordCoreNLP(Sentence* currentSentenceInList, bool GIAe
 					}
 
 					//now locate quantity modifiers
-					Relation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
+					GIArelation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
 					while(currentRelationInList2->next != NULL)
 					{
 						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -608,9 +608,9 @@ void extractQuantitiesStanfordCoreNLP(Sentence* currentSentenceInList, bool GIAe
 #endif
 
 #ifdef GIA_USE_RELEX
-void extractQuantitiesRelex(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts)
+void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts)
 {
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -652,7 +652,7 @@ void extractQuantitiesRelex(Sentence* currentSentenceInList, bool GIAentityNodeA
 				}
 
 				//now locate quantity modifiers and multiplicators
-				Relation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				GIArelation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -734,7 +734,7 @@ void extractQuantitiesRelex(Sentence* currentSentenceInList, bool GIAentityNodeA
 
 					GIAentityNode* entityToConnectMeasurePerEntity;
 					bool foundQuantityOwner = false;
-					Relation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
+					GIArelation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
 					while(currentRelationInList2->next != NULL)
 					{
 						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -837,7 +837,7 @@ void extractQuantitiesRelex(Sentence* currentSentenceInList, bool GIAentityNodeA
 
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
 
-void extractMeasures(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts)
+void extractMeasures(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts)
 {
 	/*
 	eg The boy is 4 feet away. / Take these 4 times a day. / The boy is 4 feet tall. / The birthday boy is 12 years old.	_measure_distance(away, foot) / _measure_per(times, day) / _measure_size(tall, feet) / _measure_time(old, years)
@@ -863,7 +863,7 @@ void extractMeasures(Sentence* currentSentenceInList, bool GIAentityNodeArrayFil
 	paramB.mustGenerateConditionName = true; paramB.conditionEntityDefaultName = RELATION_TYPE_MEASURE_UNKNOWN;	//NB GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK does not support the full array of Relex measure/dependency types
 	genericDependecyRelationInterpretation(&paramB, REL1);
 #else
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -954,7 +954,7 @@ void extractMeasures(Sentence* currentSentenceInList, bool GIAentityNodeArrayFil
 }
 
 
-void defineToBeAndToDoConditions(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts)
+void defineToBeAndToDoConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts)
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
@@ -1028,7 +1028,7 @@ void defineToBeAndToDoConditions(Sentence* currentSentenceInList, bool GIAentity
 	#endif
 
 #else
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1098,7 +1098,7 @@ void defineToBeAndToDoConditions(Sentence* currentSentenceInList, bool GIAentity
 #endif
 }
 
-void extractQualities(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, int NLPdependencyRelationsType)
+void extractQualities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, int NLPdependencyRelationsType)
 {
 	/*
 	eg The broken pencil fell apart. / Giants are red. [Joe is happy.] / Tom runs quickly.	_amod(pencil, broken) / _predadj(giants, red) / _advmod(run, quick)
@@ -1108,11 +1108,11 @@ void extractQualities(Sentence* currentSentenceInList, bool GIAentityNodeArrayFi
 	param.numberOfRelations = 1;
 	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeAdjectiveNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES;
 	//param.useRedistributeSpecialCaseQualityAssignment[REL1][REL_ENT2] = true;
-	EntityCharacteristic useRedistributeSpecialCaseQualityAssignment("isSubstanceQuality", "true");
+	GIAentityCharacteristic useRedistributeSpecialCaseQualityAssignment("isSubstanceQuality", "true");
 	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT2].push_back(&useRedistributeSpecialCaseQualityAssignment);
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1163,7 +1163,7 @@ void extractQualities(Sentence* currentSentenceInList, bool GIAentityNodeArrayFi
 }
 
 
-void linkPropertiesParataxis(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void linkPropertiesParataxis(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
@@ -1177,7 +1177,7 @@ void linkPropertiesParataxis(Sentence* currentSentenceInList, bool GIAentityNode
 	#endif
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1212,7 +1212,7 @@ void linkPropertiesParataxis(Sentence* currentSentenceInList, bool GIAentityNode
 //currently disabled;
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 #ifndef GIA_TRANSLATOR_INTERPRET_CLAUSAL_COMPLEMENT_AS_ACTION_OBJECT_INSTEAD_OF_ACTION_PROPERTY
-void defineClausalComplementProperties(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void defineClausalComplementProperties(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	/*
 	eg He says that you like to swim. ccomp(say, like)
@@ -1229,7 +1229,7 @@ void defineClausalComplementProperties(Sentence* currentSentenceInList, bool GIA
 	#endif
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1268,14 +1268,14 @@ void defineClausalComplementProperties(Sentence* currentSentenceInList, bool GIA
 #endif
 #endif
 
-void defineTenseOnlyTimeConditions(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void defineTenseOnlyTimeConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
-	EntityCharacteristic entityCharacteristicsTest1("conditionType", CONDITION_NODE_TYPE_TIME_STRING, true);
-	EntityCharacteristic entityCharacteristicsTest2("grammaticalTenseTemp", GRAMMATICAL_TENSE_PAST_STRING);
-	EntityCharacteristic entityCharacteristicsTest3("grammaticalTenseTemp", GRAMMATICAL_TENSE_FUTURE_STRING);
-	EntityCharacteristic entityCharacteristicsTest4("grammaticalTenseModifierArrayTemp", "true", GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE);
+	GIAentityCharacteristic entityCharacteristicsTest1("conditionType", CONDITION_NODE_TYPE_TIME_STRING, true);
+	GIAentityCharacteristic entityCharacteristicsTest2("grammaticalTenseTemp", GRAMMATICAL_TENSE_PAST_STRING);
+	GIAentityCharacteristic entityCharacteristicsTest3("grammaticalTenseTemp", GRAMMATICAL_TENSE_FUTURE_STRING);
+	GIAentityCharacteristic entityCharacteristicsTest4("grammaticalTenseModifierArrayTemp", "true", GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE);
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
 	param.specialCaseCharacteristicsTestOrVector.push_back(&entityCharacteristicsTest2);
 	param.specialCaseCharacteristicsTestOrVector.push_back(&entityCharacteristicsTest3);
@@ -1306,7 +1306,7 @@ void defineTenseOnlyTimeConditions(Sentence* currentSentenceInList, bool GIAenti
 #ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
-void defineActionConcepts1(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void defineActionConcepts1(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 //#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
@@ -1314,9 +1314,9 @@ void defineActionConcepts1(Sentence* currentSentenceInList, bool GIAentityNodeAr
 	param.parseDisabledRelation[REL1] = true;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_MODAL_AUX;
 	param.useRelationTest[REL1][REL_ENT2] = true; param.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_CAN;
-	EntityCharacteristic entityCharacteristicsTest("isAction", "true");
+	GIAentityCharacteristic entityCharacteristicsTest("isAction", "true");
 	param.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest);
-	EntityCharacteristic useRedistributeSpecialCaseAssignment("isActionConcept", "true");
+	GIAentityCharacteristic useRedistributeSpecialCaseAssignment("isActionConcept", "true");
 	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&useRedistributeSpecialCaseAssignment);
 	genericDependecyRelationInterpretation(&param, REL1);
 //#else
@@ -1325,7 +1325,7 @@ void defineActionConcepts1(Sentence* currentSentenceInList, bool GIAentityNodeAr
 }
 #endif
 
-void defineActionConcepts2(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void defineActionConcepts2(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	/*
 	eg Writing is good exercise. / To eat a pie requires strength.
@@ -1381,7 +1381,7 @@ void defineActionConcepts2(Sentence* currentSentenceInList, bool GIAentityNodeAr
 #endif
 
 #ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
-void updateSubstanceConceptDesignationBasedPropertyOwnerContext(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void updateSubstanceConceptDesignationBasedPropertyOwnerContext(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	/*
 	updateSubstanceConceptDesignationBasedPropertyOwnerContext() is designed to distinguish between;

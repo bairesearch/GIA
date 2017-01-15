@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -639,7 +639,7 @@ int main(int argc,char* *argv)
 
 		if (argumentExists(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 2h17a 27-January-2015" << endl;
+			cout << "OpenGIA.exe - Project Version: 2h17b 27-January-2015" << endl;
 			exit(1);
 		}
 
@@ -1438,7 +1438,7 @@ bool executeGIA2()
 				//cout << "tempCurrentFolder = " << tempCurrentFolder << endl;
 				#endif
 
-				Paragraph* firstParagraphInList = new Paragraph();
+				GIAparagraph* firstParagraphInList = new GIAparagraph();
 				#ifdef USE_GIA2
 				if(!performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(firstParagraphInList, inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences))
 				{
@@ -1578,7 +1578,7 @@ bool executeGIA2()
 		}
 		else
 		{
-			Paragraph* firstParagraphInList = new Paragraph();
+			GIAparagraph* firstParagraphInList = new GIAparagraph();
 			#ifdef USE_GIA2
 			if(!performCorpusLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(firstParagraphInList, inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListConceptsQuery, entityNodesActiveListSubstancesQuery, entityNodesActiveListActionsQuery, entityNodesActiveListConditionsQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences))
 			{
@@ -1794,9 +1794,9 @@ bool executeGIA2()
 			#endif
 
 			#ifdef GIA_USE_NLG
-			NLGSentence* firstNLGsentence = new NLGSentence();
+			GIANLGSentence* firstNLGsentence = new GIANLGSentence();
 			//look for action links
-			NLGSentence* currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 1);
+			GIANLGSentence* currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 1);
 			int irrelevant;
 			string printEntityNodeString = "";
 			bool traceInstantiations = false;
@@ -1804,14 +1804,14 @@ bool executeGIA2()
 			if(firstNLGsentence->NLGInputViewText == "")
 			{
 				//look for condition links
-				NLGSentence* currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 2);
+				GIANLGSentence* currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 2);
 				traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
 
 			}
 			if(firstNLGsentence->NLGInputViewText == "")
 			{
 				//look for substance/definition links
-				NLGSentence* currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 3);
+				GIANLGSentence* currentNLGsentence = generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 3);
 				traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
 			}
 
@@ -1887,8 +1887,8 @@ bool executeGIA2()
 	//cout << "ak11" << endl;
 
 	#ifdef GIA_USE_NLG
-	NLGSentence* firstNLGsentence = new NLGSentence();
-	NLGSentence* currentNLGsentence = firstNLGsentence;
+	GIANLGSentence* firstNLGsentence = new GIANLGSentence();
+	GIANLGSentence* currentNLGsentence = firstNLGsentence;
 	string generatedText = "";
 	for(unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListMapIter = entityNodesActiveListConcepts->begin(); conceptEntityNodesListMapIter != entityNodesActiveListConcepts->end(); conceptEntityNodesListMapIter++)
 	{

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -105,7 +105,7 @@ void initialiseGIATranslatorForTexualContextOperations()
 
 #ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 //this is no longer required with redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition, etc..
-bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation* currentRelationInList, GIAentityNode* GIAentityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType)
+bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(GIArelation* currentRelationInList, GIAentityNode* GIAentityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType)
 {
 	bool result = true;
 
@@ -131,7 +131,7 @@ bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation* currentRelationI
 }
 
 //this is no longer required with redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition, etc..
-bool isAdjectiveNotConnectedToObjectOrSubject(Sentence* currentSentenceInList, Relation* currentRelationInList, int NLPdependencyRelationsType)
+bool isAdjectiveNotConnectedToObjectOrSubject(GIAsentence* currentSentenceInList, GIArelation* currentRelationInList, int NLPdependencyRelationsType)
 {
 	bool passed2 = true;
 
@@ -141,7 +141,7 @@ bool isAdjectiveNotConnectedToObjectOrSubject(Sentence* currentSentenceInList, R
 	#endif
 		if(currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD)
 		{
-			Relation* currentRelationInList3 = currentSentenceInList->firstRelationInList;
+			GIArelation* currentRelationInList3 = currentSentenceInList->firstRelationInList;
  			while(currentRelationInList3->next != NULL)
 			{
 				bool partnerTypeRequiredFound = false;
@@ -1553,14 +1553,14 @@ void convertStanfordPOStagToRelexPOStypeAndWordnetWordType(string* POStag, strin
 
 }
 
-void generateTempFeatureArray(Feature* firstFeatureInList, Feature* featureArrayTemp[])
+void generateTempFeatureArray(GIAfeature* firstFeatureInList, GIAfeature* featureArrayTemp[])
 {
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
 		featureArrayTemp[w] = NULL;	//initialise as NULL (required to prevent crashes during array access) - added 14 July 2013
 	}
 
-	Feature* currentFeatureInList = firstFeatureInList;
+	GIAfeature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
 		//cout << "currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
@@ -1571,7 +1571,7 @@ void generateTempFeatureArray(Feature* firstFeatureInList, Feature* featureArray
 	/*OLD: is not compatible with Relex query nodes (set to new entity index eg "199")
 	//generateFeatureArray;
 	int featureIndex = 1;
-	Feature* currentFeatureInList = firstFeatureInList;
+	GIAfeature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
 		featureArrayTemp[featureIndex] = currentFeatureInList;
@@ -1637,7 +1637,7 @@ GIAentityNode* getEntitySubstanceThatWasDeclaredInContext(GIAentityNode* entityN
 #endif
 
 #ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relation* relation)
+bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, GIArelation* relation)
 {
 	bool auxiliaryIndicatesDifferentReferenceSet = relation->auxiliaryIndicatesDifferentReferenceSet;
 	bool rcmodIndicatesSameReferenceSet = relation->rcmodIndicatesSameReferenceSet;

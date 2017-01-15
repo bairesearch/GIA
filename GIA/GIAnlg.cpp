@@ -26,7 +26,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -39,16 +39,16 @@
 
 #ifdef GIA_USE_NLG
 
-NLGSentence::NLGSentence(void)
+GIANLGSentence::GIANLGSentence(void)
 {
 	NLGInputViewText = "";
 
 	next = NULL;
 }
 
-NLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, NLGSentence* currentNLGsentence, bool isQueryAnswerContext, int isQueryAnswerContextRound)
+GIANLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, GIANLGSentence* currentNLGsentence, bool isQueryAnswerContext, int isQueryAnswerContextRound)
 {
-	NLGSentence* currentNLGsentenceUpdated = currentNLGsentence;
+	GIANLGSentence* currentNLGsentenceUpdated = currentNLGsentence;
 	if(!(entityNode->parsedForLanguageGeneration) && !(entityNode->disabled))
 	{
 		#ifdef GIA_NLG_DEBUG
@@ -109,7 +109,7 @@ NLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, NLGSenten
 					#ifdef GIA_USE_NLG2
 					NLG2generateNLGinputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));
 					#endif
-					NLGSentence* newNLGsentence = new NLGSentence();
+					GIANLGSentence* newNLGsentence = new GIANLGSentence();
 					currentNLGsentenceUpdated->next = newNLGsentence;
 					currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;
 				}
@@ -125,7 +125,7 @@ NLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, NLGSenten
 					#ifdef GIA_USE_NLG2
 					NLG2generateNLGinputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));
 					#endif
-					NLGSentence* newNLGsentence = new NLGSentence();
+					GIANLGSentence* newNLGsentence = new GIANLGSentence();
 					currentNLGsentenceUpdated->next = newNLGsentence;
 					currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;
 				}
@@ -151,7 +151,7 @@ NLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, NLGSenten
 							#ifdef GIA_USE_NLG2
 							NLG2generateNLGinputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));
 							#endif
-							NLGSentence* newNLGsentence = new NLGSentence();
+							GIANLGSentence* newNLGsentence = new GIANLGSentence();
 							currentNLGsentenceUpdated->next = newNLGsentence;
 							currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;
 						}

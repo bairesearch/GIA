@@ -26,7 +26,7 @@
  * File Name: GIAnlg.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -50,16 +50,16 @@
 using namespace std;
 
 
-class NLGSentence
+class GIANLGSentence
 {
 public:
 
-	NLGSentence(void);
-	~NLGSentence(void);
+	GIANLGSentence(void);
+	~GIANLGSentence(void);
 
 	string NLGInputViewText;
 
-	NLGSentence* next;
+	GIANLGSentence* next;
 };
 
 
@@ -132,7 +132,7 @@ static string nlgSentenceThreeEntitiesDependencyRelationVectorConnectionsArray[G
 static string grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES] = {"undefined", ".n", ".v", "adj", "adv", "prep", "satellite"};
 
 
-NLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, NLGSentence* currentNLGsentence, bool isQueryAnswerContext, int isQueryAnswerContextRound);
+GIANLGSentence* generateLanguageFromEntityNode(GIAentityNode* entityNode, GIANLGSentence* currentNLGsentence, bool isQueryAnswerContext, int isQueryAnswerContextRound);
 	void generateThreeEntitySentenceFromEntityNode(GIAentityNode* entityNode0, string* generatedText, int connectionType1, int connectionType2, int startEntityIndex, bool supportAdditionalLinks);
 	void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, GIAentityConnection* entityConnection, string* generatedText, int connectionType, int startEntityIndex, bool additionalLink);
 		#ifdef GIA_USE_NLG2

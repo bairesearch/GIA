@@ -26,7 +26,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -68,16 +68,16 @@ using namespace std;
 
 //based on convertSentenceSyntacticRelationsIntoGIAnetworkNodes():
 #ifdef GIA_USE_ADVANCED_REFERENCING
-void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, Sentence* firstSentenceInList, Sentence* currentSentenceInList, vector<GIAentityNode*>* sentenceConceptEntityNodesList, int NLPfeatureParser, bool linkPreestablishedReferencesGIA,  GIACoreference* firstGIACoreferenceInList)
+void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, GIAsentence* firstSentenceInList, GIAsentence* currentSentenceInList, vector<GIAentityNode*>* sentenceConceptEntityNodesList, int NLPfeatureParser, bool linkPreestablishedReferencesGIA,  GIACoreference* firstGIACoreferenceInList)
 #else
-void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, Sentence* firstSentenceInList, Sentence* currentSentenceInList, vector<GIAentityNode*>* sentenceConceptEntityNodesList, int NLPfeatureParser)
+void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, GIAsentence* firstSentenceInList, GIAsentence* currentSentenceInList, vector<GIAentityNode*>* sentenceConceptEntityNodesList, int NLPfeatureParser)
 #endif
 {
 	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
 	cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes" << endl;
 	/*
 	cout << "dependency relations: " << endl;
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		string relationType = currentRelationInList->relationType;
@@ -111,7 +111,7 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 	cout << "generateTempFeatureArray" << endl;
 	#endif
 
-	Feature* featureArrayTemp[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
+	GIAfeature* featureArrayTemp[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 	generateTempFeatureArray(currentSentenceInList->firstFeatureInList, featureArrayTemp);	//regeneration required for Relex in case query variables detected
 
 	#ifdef GIA_CORPUS_TRANSLATOR_DEBUG
@@ -290,11 +290,11 @@ void convertSentenceSemanticRelationsIntoGIAnetworkNodes(unordered_map<string, G
 }
 
 
-void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAconceptNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* sentenceConceptEntityNodesList, int NLPfeatureParser)
+void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAconceptNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* sentenceConceptEntityNodesList, int NLPfeatureParser)
 {
 	//code from locateAndAddAllFeatureTempEntities():
 
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		bool isDependencyRelationSecondary = false;
@@ -389,9 +389,9 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(Sentence* currentSen
 
 
 
-void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], Feature* featureArrayTemp[])
+void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
 {
-	Relation* currentRelationInList;
+	GIArelation* currentRelationInList;
 
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -407,7 +407,7 @@ void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(Sentence* curren
 				GIAentityNode* entity = GIAentityNodeArray[thingIndex];
 				string auxiliaryString = GIAentityNodeArray[auxiliaryIndex]->wordOrig;	//featureArrayTemp[auxiliaryIndex]->word;
 
-				Relation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				GIArelation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
  				while(currentRelationInList2->next != NULL)
 				{
 					if(!(currentRelationInList2->disabled))
@@ -498,7 +498,7 @@ void updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(GIAentityNode* entity,
 	}
 }
 
-void defineSubstancesBasedOnSemanticRelations(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void defineSubstancesBasedOnSemanticRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	#ifdef GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -527,7 +527,7 @@ void defineSubstancesBasedOnSemanticRelations(Sentence* currentSentenceInList, b
 				bool hasDeterminer = false;
 				bool indefiniteDeterminer = false;
 				string determinerString = "";
-				Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+				GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  				while(currentRelationInList->next != NULL)
 				{
 					if(!(currentRelationInList->disabled))
@@ -577,7 +577,7 @@ void defineSubstancesBasedOnSemanticRelations(Sentence* currentSentenceInList, b
 				//eg The bat is an animal (definition connection, bat = substance, animal = concept)
 				if(hasDeterminer && indefiniteDeterminer)
 				{
-					Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+					GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  					while(currentRelationInList->next != NULL)
 					{
 						if(!(currentRelationInList->disabled))
@@ -619,7 +619,7 @@ void defineSubstancesBasedOnSemanticRelations(Sentence* currentSentenceInList, b
 }
 
 #ifdef GIA2_SUPPORT_QUERIES
-void identifyComparisonVariableBasedOnSemanticRelations(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void identifyComparisonVariableBasedOnSemanticRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	if(currentSentenceInList->isQuestion)
 	{
@@ -644,7 +644,7 @@ void identifyComparisonVariableBasedOnSemanticRelations(Sentence* currentSentenc
 	if(currentSentenceInList->isQuestion)
 	{
 		//cout << "isQuestion" << endl;
-		Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+		GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{
 			GIAentityNode* entityNodes[2];
@@ -698,9 +698,9 @@ void identifyComparisonVariableBasedOnSemanticRelations(Sentence* currentSentenc
 #endif
 
 
-void defineConnectionsBasedOnSemanticRelations(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void defineConnectionsBasedOnSemanticRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		if(!(currentRelationInList->disabled))
@@ -719,7 +719,7 @@ void defineConnectionsBasedOnSemanticRelations(Sentence* currentSentenceInList, 
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT])
 			{
 				bool foundMatchingObject = false;
-				Relation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				GIArelation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
  				while(currentRelationInList2->next != NULL)
 				{
 					int entity2Index2 = currentRelationInList2->relationDependentIndex;
@@ -755,7 +755,7 @@ void defineConnectionsBasedOnSemanticRelations(Sentence* currentSentenceInList, 
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT])
 			{
 				bool foundMatchingObject = false;
-				Relation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				GIArelation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
  				while(currentRelationInList2->next != NULL)
 				{
 					int entity2Index2 = currentRelationInList2->relationDependentIndex;
@@ -808,7 +808,7 @@ void defineConnectionsBasedOnSemanticRelations(Sentence* currentSentenceInList, 
 	}
 }
 
-void applyAdvancedFeaturesBasedOnSemanticRelations(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser)
+void applyAdvancedFeaturesBasedOnSemanticRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser)
 {
 	defineQuantitiesBasedOnSemanticRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser);
 
@@ -818,9 +818,9 @@ void applyAdvancedFeaturesBasedOnSemanticRelations(Sentence* currentSentenceInLi
 	defineTenseOnlyTimeConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 }
 
-void defineQuantitiesBasedOnSemanticRelations(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser)
+void defineQuantitiesBasedOnSemanticRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser)
 {
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		if(!(currentRelationInList->disabled))
@@ -904,7 +904,7 @@ void defineQuantitiesBasedOnSemanticRelations(Sentence* currentSentenceInList, b
 	}
 }
 
-void defineQualitiesBasedOnSemanticRelations(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser)
+void defineQualitiesBasedOnSemanticRelations(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int NLPfeatureParser)
 {
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -927,7 +927,7 @@ bool generateAllPermutationsFromSemanticRelationsFile(string corpusFileName, int
 {
 	//code based on loadCorpusFileSemanticDependencyRelations():
 	bool result = true;
-	Sentence* sentence = new Sentence();
+	GIAsentence* sentence = new GIAsentence();
 	bool createNewSentences = true;
 	bool parseGIA2file = true;
 	bool isQuery = false;	//irrelevant
@@ -941,21 +941,21 @@ bool generateAllPermutationsFromSemanticRelationsFile(string corpusFileName, int
 	}
 	else
 	{
-		Feature* dummyBlankFeature = new Feature();
+		GIAfeature* dummyBlankFeature = new GIAfeature();
 		#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
 		cout << "parseStanfordParserFile() passed." << endl;
 		#endif
 		//now simulate GIA2 semantic relations for each subset of original sentence POS permutation
-		Feature* centralFeatureInSentence = sentence->firstFeatureInList;
+		GIAfeature* centralFeatureInSentence = sentence->firstFeatureInList;
 		for(int centralWord=1; centralWord<=sentence->maxNumberOfWordsInSentence; centralWord++)	//centralWord in subset
 		{
 			#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
 			cout << "centralWord = " << centralWord << ", " << centralFeatureInSentence->lemma << endl;
 			#endif
-			Feature* recordOfFeatureAfterCentralFeatureInSentence = centralFeatureInSentence->next;
+			GIAfeature* recordOfFeatureAfterCentralFeatureInSentence = centralFeatureInSentence->next;
 			centralFeatureInSentence->next = dummyBlankFeature;	//temporarily disconnect node at end of sentence subset
 
-			Feature* firstFeatureInSentenceSubset = sentence->firstFeatureInList;
+			GIAfeature* firstFeatureInSentenceSubset = sentence->firstFeatureInList;
 			for(int firstWord=1; firstWord<centralWord; firstWord++)	//firstWord in subset
 			{
 				#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
@@ -970,13 +970,13 @@ bool generateAllPermutationsFromSemanticRelationsFile(string corpusFileName, int
 				sentenceText = sentenceText + STRING_NEW_LINE;
 
 				bool foundAtLeastOneRelation = false;
-				Relation* currentRelationInList = sentence->firstRelationInList;
+				GIArelation* currentRelationInList = sentence->firstRelationInList;
 				while(currentRelationInList->next != NULL)
 				{
 					if((currentRelationInList->relationGovernorIndex >= firstWord) && ((currentRelationInList->relationGovernorIndex <= centralWord) || (currentRelationInList->relationGovernorIndex > FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY))
 					&& (currentRelationInList->relationDependentIndex >= firstWord) && ((currentRelationInList->relationDependentIndex <= centralWord) || (currentRelationInList->relationDependentIndex > FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)))
 					{
-						//regenerate semantic relation based on parsed Relation object
+						//regenerate semantic relation based on parsed GIArelation object
 						string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationSimple(currentRelationInList->relationGovernor, currentRelationInList->relationDependent, currentRelationInList->relationType, currentRelationInList->relationGovernorIndex, currentRelationInList->relationDependentIndex, currentRelationInList->sameReferenceSet);
 						GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + STRING_NEW_LINE;
 						sentenceText = sentenceText + GIA2semanticDependencyRelation;

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -41,7 +41,7 @@
 
 
 #ifndef GIA_TRANSLATOR_XML_INTERPRETATION
-void defineSubstances(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature* featureArrayTemp[], int NLPdependencyRelationsType)
+void defineSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], GIAfeature* featureArrayTemp[], int NLPdependencyRelationsType)
 {
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0a0 pass; define substances (objects/subjects with substances; eg 'Truffles which are picked are tasty.' - Truffle must be an instance/substance in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
@@ -180,13 +180,13 @@ void defineSubstances(Sentence* currentSentenceInList, bool GIAentityNodeArrayFi
 	#endif
 }
 
-void defineSubstancesObjectsAndSubjectsWithSubstances(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAentityNode* GIAfeatureTempEntityNodeArray[])
+void defineSubstancesObjectsAndSubjectsWithSubstances(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAentityNode* GIAfeatureTempEntityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
-	EntityCharacteristic entityCharacteristicsTest1("isObjectTemp", "true");
-	EntityCharacteristic entityCharacteristicsTest2("isSubjectTemp", "true");
-	EntityCharacteristic entityCharacteristicsTest3("hasSubstanceTemp", "true");
+	GIAentityCharacteristic entityCharacteristicsTest1("isObjectTemp", "true");
+	GIAentityCharacteristic entityCharacteristicsTest2("isSubjectTemp", "true");
+	GIAentityCharacteristic entityCharacteristicsTest3("hasSubstanceTemp", "true");
 	param.specialCaseCharacteristicsTestOrVector.push_back(&entityCharacteristicsTest1);
 	param.specialCaseCharacteristicsTestOrVector.push_back(&entityCharacteristicsTest2);
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest3);
@@ -209,7 +209,7 @@ void defineSubstancesObjectsAndSubjectsWithSubstances(Sentence* currentSentenceI
 #endif
 }
 
-void defineSubstancesExpletives(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
+void defineSubstancesExpletives(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 	//eg There is 	_expl(be[2], there[1]) [Relex]	/ expl(is-2, There-1) [stanford]
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
@@ -228,7 +228,7 @@ void defineSubstancesExpletives(Sentence* currentSentenceInList, GIAentityNode* 
 	genericDependecyRelationInterpretation(&param, REL1);
 	#endif
 #else
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -259,16 +259,16 @@ void defineSubstancesExpletives(Sentence* currentSentenceInList, GIAentityNode* 
 #endif
 }
 
-void defineSubstancesDefiniteNouns(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], Feature* featureArrayTemp[])
+void defineSubstancesDefiniteNouns(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
 {
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
-	EntityCharacteristic entityCharacteristicsTest1("isPronounReference", "false");
+	GIAentityCharacteristic entityCharacteristicsTest1("isPronounReference", "false");
 	#ifndef GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS
-	EntityCharacteristic entityCharacteristicsTest2("grammaticalProperNounTemp", "false");
+	GIAentityCharacteristic entityCharacteristicsTest2("grammaticalProperNounTemp", "false");
 	#endif
-	EntityCharacteristic entityCharacteristicsTest3("grammaticalDefiniteTemp", "true");
-	EntityCharacteristic entityCharacteristicsTest4("grammaticalIndefinitePluralTemp", "true");
+	GIAentityCharacteristic entityCharacteristicsTest3("grammaticalDefiniteTemp", "true");
+	GIAentityCharacteristic entityCharacteristicsTest4("grammaticalIndefinitePluralTemp", "true");
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
 	#ifndef GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest2);
@@ -311,7 +311,7 @@ void defineSubstancesDefiniteNouns(Sentence* currentSentenceInList, bool GIAenti
 
 #ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 //Added 09 August 2012 [INCOMPLETE]
-void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature* featureArrayTemp[])
+void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], GIAfeature* featureArrayTemp[])
 {
 	/* Added 09 August 2012
 	The bat is an animal - (definition connection, bat = substance, animal = concept)	GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_1_GOVERNOR_DEFINITE_DEPENDENT_INDEFINITE [assumes defineSubstancesDefiniteNouns() executed]
@@ -333,7 +333,7 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence* currentSe
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	param.numberOfRelations = 1;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-	EntityCharacteristic entityCharacteristicsSet("alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", "true");
+	GIAentityCharacteristic entityCharacteristicsSet("alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", "true");
 	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&entityCharacteristicsSet);
 	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT2].push_back(&entityCharacteristicsSet);
 	genericDependecyRelationInterpretation(&param, REL1);
@@ -341,15 +341,15 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence* currentSe
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
 	paramA.numberOfRelations = 1;
 	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-	EntityCharacteristic entityCharacteristicsTest1("grammaticalNumber", GRAMMATICAL_NUMBER_SINGULAR_STRING);
-	EntityCharacteristic entityCharacteristicsTest2("grammaticalDefiniteTemp", "false");
-	EntityCharacteristic entityCharacteristicsTest3("grammaticalIndefinitePluralTemp", "false");
-	EntityCharacteristic entityCharacteristicsTest4("grammaticalProperNounTemp", "true");
+	GIAentityCharacteristic entityCharacteristicsTest1("grammaticalNumber", GRAMMATICAL_NUMBER_SINGULAR_STRING);
+	GIAentityCharacteristic entityCharacteristicsTest2("grammaticalDefiniteTemp", "false");
+	GIAentityCharacteristic entityCharacteristicsTest3("grammaticalIndefinitePluralTemp", "false");
+	GIAentityCharacteristic entityCharacteristicsTest4("grammaticalProperNounTemp", "true");
 	paramA.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1);
 	paramA.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest2);
 	paramA.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest3);
 	paramA.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest4);
-	EntityCharacteristic entityCharacteristicsSetAB("alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", "false");
+	GIAentityCharacteristic entityCharacteristicsSetAB("alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", "false");
 	paramA.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&entityCharacteristicsSetAB);
 	genericDependecyRelationInterpretation(&paramA, REL1);
 
@@ -369,7 +369,7 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence* currentSe
 	paramC.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest1);
 	paramC.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest2);
 	paramC.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest3);
-	EntityCharacteristic entityCharacteristicsSetCD("mustSetIsSubstanceConceptBasedOnApposRelation", "true");
+	GIAentityCharacteristic entityCharacteristicsSetCD("mustSetIsSubstanceConceptBasedOnApposRelation", "true");
 	paramC.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&entityCharacteristicsSetCD);
 	if(genericDependecyRelationInterpretation(&paramC, REL1))
 	{
@@ -389,7 +389,7 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence* currentSe
 	}
 	#endif
 #else
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD		//disabled nodes must be ignored, else disabled name definitions (eg name is Tom) will conflict (eg "The red dog's name is Tom.")
@@ -604,20 +604,20 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence* currentSe
 }
 #endif
 
-void defineSubstancesNounsWithDeterminates(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature* featureArrayTemp[])
+void defineSubstancesNounsWithDeterminates(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], int referenceTypeHasDeterminateCrossReferenceNumberArray[], GIAfeature* featureArrayTemp[])
 {
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
-	EntityCharacteristic entityCharacteristicsTest1("isPronounReference", "false");
+	GIAentityCharacteristic entityCharacteristicsTest1("isPronounReference", "false");
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
 	#ifndef GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS
-	EntityCharacteristic entityCharacteristicsTest2("grammaticalProperNounTemp", "false");
+	GIAentityCharacteristic entityCharacteristicsTest2("grammaticalProperNounTemp", "false");
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest2);
 	#endif
-	EntityCharacteristic entityCharacteristicsTest3("grammaticalNumber", GRAMMATICAL_NUMBER_SINGULAR_STRING);
+	GIAentityCharacteristic entityCharacteristicsTest3("grammaticalNumber", GRAMMATICAL_NUMBER_SINGULAR_STRING);
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest3);
 	#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
-	EntityCharacteristic entityCharacteristicsTest4("alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", "false");
+	GIAentityCharacteristic entityCharacteristicsTest4("alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", "false");
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest4);
 	#endif
 	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
@@ -667,7 +667,7 @@ void defineSubstancesNounsWithDeterminates(Sentence* currentSentenceInList, bool
 #endif
 }
 
-void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], int NLPdependencyRelationsType)
+void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], int NLPdependencyRelationsType)
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, true);
@@ -690,7 +690,7 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence* currentS
 	genericDependecyRelationInterpretation(&paramB, REL1);
 	#endif
 #else
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -790,7 +790,7 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence* currentS
 #endif
 }
 
-void defineSubstancesQuantitiesAndMeasures(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
+void defineSubstancesQuantitiesAndMeasures(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
@@ -800,7 +800,7 @@ void defineSubstancesQuantitiesAndMeasures(Sentence* currentSentenceInList, GIAe
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -835,7 +835,7 @@ void defineSubstancesQuantitiesAndMeasures(Sentence* currentSentenceInList, GIAe
 #endif
 }
 
-void defineSubstancesQuantityModifiers(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
+void defineSubstancesQuantityModifiers(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
@@ -845,7 +845,7 @@ void defineSubstancesQuantityModifiers(Sentence* currentSentenceInList, GIAentit
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -880,13 +880,13 @@ void defineSubstancesQuantityModifiers(Sentence* currentSentenceInList, GIAentit
 #endif
 }
 
-void defineSubstancesPronouns(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], Feature* featureArrayTemp[])
+void defineSubstancesPronouns(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
 {
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
-	EntityCharacteristic entityCharacteristicsTest1("isPronounReference", "false");
+	GIAentityCharacteristic entityCharacteristicsTest1("isPronounReference", "false");
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
-	EntityCharacteristic entityCharacteristicsTest2("grammaticalPronounTemp", "true");
+	GIAentityCharacteristic entityCharacteristicsTest2("grammaticalPronounTemp", "true");
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest2);
 	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	genericEntityInterpretation(&param);
@@ -915,7 +915,7 @@ void defineSubstancesPronouns(Sentence* currentSentenceInList, bool GIAentityNod
 }
 
 
-void defineSubstancesToBe(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
+void defineSubstancesToBe(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
@@ -925,7 +925,7 @@ void defineSubstancesToBe(Sentence* currentSentenceInList, GIAentityNode* GIAent
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -954,7 +954,7 @@ void defineSubstancesToBe(Sentence* currentSentenceInList, GIAentityNode* GIAent
 #endif
 }
 
-void defineActionsToDo(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
+void defineActionsToDo(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
@@ -964,7 +964,7 @@ void defineActionsToDo(Sentence* currentSentenceInList, GIAentityNode* GIAentity
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -993,11 +993,11 @@ void defineActionsToDo(Sentence* currentSentenceInList, GIAentityNode* GIAentity
 #endif
 }
 
-void defineSubstancesHasTime(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], Feature* featureArrayTemp[])
+void defineSubstancesHasTime(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
 {
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
-	EntityCharacteristic entityCharacteristicsTest1("hasAssociatedTime", "true");
+	GIAentityCharacteristic entityCharacteristicsTest1("hasAssociatedTime", "true");
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
 	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	genericEntityInterpretation(&param);
@@ -1023,13 +1023,13 @@ void defineSubstancesHasTime(Sentence* currentSentenceInList, bool GIAentityNode
 }
 
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE
-void defineSubstancesNonExplicitPronouns(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void defineSubstancesNonExplicitPronouns(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
 	param.useEntityArrayTest = true; param.entityArrayTest = featureTypeTreatAsPronounIeSubstance; param.entityArrayTestSize = RELATION_TYPE_TREAT_AS_PRONOUN_IE_SUBSTANCE_NUMBER_OF_TYPES;
 	#ifdef GIA_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE_ASSIGN_DETERMINATE_SINGULAR
-	EntityCharacteristic entityCharacteristicsSet("grammaticalNumber", GRAMMATICAL_NUMBER_SINGULAR_STRING);	//added 14 August 2012	(select any value from referenceTypeHasDeterminateCrossReferenceNumberArray[])
+	GIAentityCharacteristic entityCharacteristicsSet("grammaticalNumber", GRAMMATICAL_NUMBER_SINGULAR_STRING);	//added 14 August 2012	(select any value from referenceTypeHasDeterminateCrossReferenceNumberArray[])
 	param.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSet);
 	#endif
 	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
@@ -1065,7 +1065,7 @@ void defineSubstancesNonExplicitPronouns(Sentence* currentSentenceInList, bool G
 }
 #endif
 
-void defineSubstancesIndirectObjects(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
+void defineSubstancesIndirectObjects(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, NULL, GIAentityNodeArray, true);
@@ -1077,7 +1077,7 @@ void defineSubstancesIndirectObjects(Sentence* currentSentenceInList, GIAentityN
 	param.functionEntityRelationID[FUNC_ENT1] = REL2; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1087,7 +1087,7 @@ void defineSubstancesIndirectObjects(Sentence* currentSentenceInList, GIAentityN
 			if(currentRelationInList->relationType == RELATION_TYPE_INDIRECT_OBJECT)
 			{
 				//now find the associated object..
- 				Relation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
+ 				GIArelation* currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1137,76 +1137,76 @@ void defineSubstancesIndirectObjects(Sentence* currentSentenceInList, GIAentityN
 }
 
 #ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
-void defineSubstanceConcepts(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], Feature* featureArrayTemp[])
+void defineSubstanceConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[],  int referenceTypeHasDeterminateCrossReferenceNumberArray[], GIAfeature* featureArrayTemp[])
 {
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 
 	GIAgenericEntityInterpretationParameters paramA(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
-	EntityCharacteristic entityCharacteristicsTestA1("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_NOUN_STRING);
+	GIAentityCharacteristic entityCharacteristicsTestA1("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_NOUN_STRING);
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA1);
 	#ifdef GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES
-	EntityCharacteristic entityCharacteristicsTestA2("wasReference", "false");
+	GIAentityCharacteristic entityCharacteristicsTestA2("wasReference", "false");
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA2);
 	#endif
 	#ifndef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS
-	EntityCharacteristic entityCharacteristicsTestA3("grammaticalPronounTemp", "false");
+	GIAentityCharacteristic entityCharacteristicsTestA3("grammaticalPronounTemp", "false");
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA3);
 	#endif
-	EntityCharacteristic entityCharacteristicsTestA4("grammaticalNumber", GRAMMATICAL_NUMBER_SINGULAR_STRING, true);
+	GIAentityCharacteristic entityCharacteristicsTestA4("grammaticalNumber", GRAMMATICAL_NUMBER_SINGULAR_STRING, true);
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA4);
-	EntityCharacteristic entityCharacteristicsTestA5("grammaticalDefiniteTemp", "false");
+	GIAentityCharacteristic entityCharacteristicsTestA5("grammaticalDefiniteTemp", "false");
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA5);
-	EntityCharacteristic entityCharacteristicsTestA6("grammaticalIndefinitePluralTemp", "false");
+	GIAentityCharacteristic entityCharacteristicsTestA6("grammaticalIndefinitePluralTemp", "false");
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA6);
-	EntityCharacteristic entityCharacteristicsTestA7("grammaticalProperNounTemp", "false");
+	GIAentityCharacteristic entityCharacteristicsTestA7("grammaticalProperNounTemp", "false");
 	paramA.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestA7);
-	EntityCharacteristic entityCharacteristicsSetA("isSubstanceConcept", "true");
+	GIAentityCharacteristic entityCharacteristicsSetA("isSubstanceConcept", "true");
 	paramA.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetA);
 	genericEntityInterpretation(&paramA);
 
 	GIAgenericEntityInterpretationParameters paramB(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
-	EntityCharacteristic entityCharacteristicsTestB1("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_NOUN_STRING);
+	GIAentityCharacteristic entityCharacteristicsTestB1("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_NOUN_STRING);
 	paramB.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestB1);
 	#ifdef GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES
-	EntityCharacteristic entityCharacteristicsTestB2("wasReference", "false");
+	GIAentityCharacteristic entityCharacteristicsTestB2("wasReference", "false");
 	paramB.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestB2);
 	#endif
 	#ifndef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS
-	EntityCharacteristic entityCharacteristicsTestB3("grammaticalPronounTemp", "false");
+	GIAentityCharacteristic entityCharacteristicsTestB3("grammaticalPronounTemp", "false");
 	paramB.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestB3);
 	#endif
-	EntityCharacteristic entityCharacteristicsTestB4("mustSetIsSubstanceConceptBasedOnApposRelation", "true");
+	GIAentityCharacteristic entityCharacteristicsTestB4("mustSetIsSubstanceConceptBasedOnApposRelation", "true");
 	paramB.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestB4);
-	EntityCharacteristic entityCharacteristicsSetB("isSubstanceConcept", "true");
+	GIAentityCharacteristic entityCharacteristicsSetB("isSubstanceConcept", "true");
 	paramB.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetB);
 	genericEntityInterpretation(&paramB);
 
 	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS
 	GIAgenericEntityInterpretationParameters paramC(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
-	EntityCharacteristic entityCharacteristicsTestC1("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_NOUN_STRING);
+	GIAentityCharacteristic entityCharacteristicsTestC1("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_NOUN_STRING);
 	paramC.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestC1);
 	#ifdef GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES
-	EntityCharacteristic entityCharacteristicsTestC2("wasReference", "false");
+	GIAentityCharacteristic entityCharacteristicsTestC2("wasReference", "false");
 	paramC.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestC2);
 	#endif
-	EntityCharacteristic entityCharacteristicsTestC3("grammaticalPronounTemp", "true");
+	GIAentityCharacteristic entityCharacteristicsTestC3("grammaticalPronounTemp", "true");
 	paramC.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestC3);
-	EntityCharacteristic entityCharacteristicsSetC("isSubstanceConcept", "true");
+	GIAentityCharacteristic entityCharacteristicsSetC("isSubstanceConcept", "true");
 	paramC.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetC);
 	genericEntityInterpretation(&paramC);
 	#endif
 
 	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS
 	GIAgenericEntityInterpretationParameters paramD(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
-	EntityCharacteristic entityCharacteristicsTestD1("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_NOUN_STRING);
+	GIAentityCharacteristic entityCharacteristicsTestD1("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_NOUN_STRING);
 	paramD.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestD1);
 	#ifdef GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES
-	EntityCharacteristic entityCharacteristicsTestD2("wasReference", "false");
+	GIAentityCharacteristic entityCharacteristicsTestD2("wasReference", "false");
 	paramD.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestD2);
 	#endif
-	EntityCharacteristic entityCharacteristicsTestD3("grammaticalProperNounTemp", "true");
+	GIAentityCharacteristic entityCharacteristicsTestD3("grammaticalProperNounTemp", "true");
 	paramD.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTestD3);
-	EntityCharacteristic entityCharacteristicsSetD("isSubstanceConcept", "true");
+	GIAentityCharacteristic entityCharacteristicsSetD("isSubstanceConcept", "true");
 	paramD.specialCaseCharacteristicsAssignmentVector.push_back(&entityCharacteristicsSetD);
 	genericEntityInterpretation(&paramD);
 	#endif
@@ -1302,7 +1302,7 @@ void defineSubstanceConcepts(Sentence* currentSentenceInList, bool GIAentityNode
 #endif
 
 
-void defineSubstancesOfPossessivePrepositions(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
+void defineSubstancesOfPossessivePrepositions(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	/*
@@ -1313,11 +1313,11 @@ void defineSubstancesOfPossessivePrepositions(Sentence* currentSentenceInList, G
 	paramA.numberOfRelations = 1;
 	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_BE;
 	//paramA.useRedistributeSpecialCaseIsToBeComplimentOfActionTempAssignment[REL1][REL_ENT2] = true;
-	EntityCharacteristic useRedistributeSpecialCaseIsToBeComplimentOfActionTempAssignment("isToBeComplimentOfActionTemp", "true");
+	GIAentityCharacteristic useRedistributeSpecialCaseIsToBeComplimentOfActionTempAssignment("isToBeComplimentOfActionTemp", "true");
 	paramA.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT2].push_back(&useRedistributeSpecialCaseIsToBeComplimentOfActionTempAssignment);
 	genericDependecyRelationInterpretation(&paramA, REL1);
 	/*OLD:
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1341,15 +1341,15 @@ void defineSubstancesOfPossessivePrepositions(Sentence* currentSentenceInList, G
 	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypePossessivePrepositionsNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES;
 	//param.relationTestSpecialCaseIsNotAction[REL1][REL_ENT1] = true;	//Stanford Condition
 	//param.relationTestSpecialCaseIsNotToBeComplimentOfAction[REL1][REL_ENT1] = true;	//Relex Condition
-	EntityCharacteristic relationTestSpecialCaseIsNotAction("isAction", "false");								//Stanford Condition
+	GIAentityCharacteristic relationTestSpecialCaseIsNotAction("isAction", "false");								//Stanford Condition
 	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCaseIsNotAction);			//Stanford Condition
-	EntityCharacteristic relationTestSpecialCaseIsNotToBeComplimentOfAction("isToBeComplimentOfActionTemp", "false");			//Relex Condition
+	GIAentityCharacteristic relationTestSpecialCaseIsNotToBeComplimentOfAction("isToBeComplimentOfActionTemp", "false");			//Relex Condition
 	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCaseIsNotToBeComplimentOfAction);	//Relex Condition
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 	genericDependecyRelationInterpretation(&param, REL1);
 #else
-	Relation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -1436,7 +1436,7 @@ void defineSubstancesOfPossessivePrepositions(Sentence* currentSentenceInList, G
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 //this function was developed after GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION and was designed for it
-void defineSubstancesActions(Sentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
+void defineSubstancesActions(GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[])
 {
 	/*
 	eg 'run' in 'Tom runs' _subj(run[2], Tom[1])
@@ -1468,16 +1468,16 @@ void defineSubstancesActions(Sentence* currentSentenceInList, GIAentityNode* GIA
 #endif
 
 #ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
-void defineSubstancesActionConcepts(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], Feature* featureArrayTemp[])
+void defineSubstancesActionConcepts(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
 {
 	/*
 	eg 'swim' in 'To swim to the beach requires strength.'
 	*/
 #ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
-	EntityCharacteristic entityCharacteristicsTest1("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_VERB_STRING);
-	EntityCharacteristic entityCharacteristicsTest2("grammaticalTenseModifierArrayTemp", "true", GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE);
-	EntityCharacteristic entityCharacteristicsTest3("grammaticalTenseModifierArrayTemp", "true", GRAMMATICAL_TENSE_MODIFIER_INFINITIVE);
+	GIAentityCharacteristic entityCharacteristicsTest1("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_VERB_STRING);
+	GIAentityCharacteristic entityCharacteristicsTest2("grammaticalTenseModifierArrayTemp", "true", GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE);
+	GIAentityCharacteristic entityCharacteristicsTest3("grammaticalTenseModifierArrayTemp", "true", GRAMMATICAL_TENSE_MODIFIER_INFINITIVE);
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
 	param.specialCaseCharacteristicsTestOrVector.push_back(&entityCharacteristicsTest2);
 	param.specialCaseCharacteristicsTestOrVector.push_back(&entityCharacteristicsTest3);
@@ -1505,12 +1505,12 @@ void defineSubstancesActionConcepts(Sentence* currentSentenceInList, bool GIAent
 }
 #endif
 
-void defineSubstancesAllNodes(Sentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
+void defineSubstancesAllNodes(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[])
 {
 	#ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
 	param.useEntityTest = true; param.entityTest = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE; param.entityTestIsNegative = true;
-	EntityCharacteristic entityCharacteristicsTest1("isConcept", "true");
+	GIAentityCharacteristic entityCharacteristicsTest1("isConcept", "true");
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
 	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
 	genericEntityInterpretation(&param);

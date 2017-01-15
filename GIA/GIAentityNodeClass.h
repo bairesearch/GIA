@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -492,15 +492,15 @@ public:
 #define GIA_ENTITY_CHARACTERISTIC_TYPE_INT "int"
 #define GIA_ENTITY_CHARACTERISTIC_TYPE_STRING "string"
 
-class EntityCharacteristic
+class GIAentityCharacteristic
 {
 public:
-	EntityCharacteristic();
-	EntityCharacteristic(string entityCharacteristicNameNew, string entityCharacteristicValueNew);
-	EntityCharacteristic(string entityCharacteristicNameNew, string entityCharacteristicValueNew, bool isNegativeNew);
-	EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew);
-	EntityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew, bool isNegativeNew);
-	~EntityCharacteristic(void);
+	GIAentityCharacteristic();
+	GIAentityCharacteristic(string entityCharacteristicNameNew, string entityCharacteristicValueNew);
+	GIAentityCharacteristic(string entityCharacteristicNameNew, string entityCharacteristicValueNew, bool isNegativeNew);
+	GIAentityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew);
+	GIAentityCharacteristic(string entityPropertyNameNew, string entityPropertyValueNew, int entityPropertyArrayIndexNew, bool isNegativeNew);
+	~GIAentityCharacteristic(void);
 
 	string name;
 	string value;
@@ -533,21 +533,21 @@ string* convertDelimitedStringToArray(string str, char delimiter);
 void deleteEntitiesInEntityNodeList(vector<GIAentityNode*>* entityNodesActiveListComplete);
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
-bool testEntityCharacteristics(GIAentityNode* entity, vector<EntityCharacteristic*>* redistributeSpecialCasePropertiesTestVector, bool andOrOr);
-	bool testEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entityCharacteristic);
-		void testEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch);
-		void testEntityCharacteristicIterationint(int entityVal, EntityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch);
-		void testEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch);
-void setEntityCharacteristics(GIAentityNode* entity, vector<EntityCharacteristic*>* redistributeSpecialCasePropertiesAssignmentVector);
-	bool setEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entityCharacteristic);
-		void setEntityCharacteristicIterationbool(bool* entityVal, EntityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch);
-		void setEntityCharacteristicIterationint(int* entityVal, EntityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch);
-		void setEntityCharacteristicIterationstring(string* entityVal, EntityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch);
+bool testEntityCharacteristics(GIAentityNode* entity, vector<GIAentityCharacteristic*>* redistributeSpecialCasePropertiesTestVector, bool andOrOr);
+	bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic);
+		void testEntityCharacteristicIterationbool(bool entityVal, GIAentityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch);
+		void testEntityCharacteristicIterationint(int entityVal, GIAentityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch);
+		void testEntityCharacteristicIterationstring(string entityVal, GIAentityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch);
+void setEntityCharacteristics(GIAentityNode* entity, vector<GIAentityCharacteristic*>* redistributeSpecialCasePropertiesAssignmentVector);
+	bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic);
+		void setEntityCharacteristicIterationbool(bool* entityVal, GIAentityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch);
+		void setEntityCharacteristicIterationint(int* entityVal, GIAentityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch);
+		void setEntityCharacteristicIterationstring(string* entityVal, GIAentityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch);
 	#define ENTITY_CHARACTERISTIC_MAX_VALUE_SIZE (100)
-	bool getEntityCharacteristic(GIAentityNode* entity, EntityCharacteristic* entityCharacteristic);	//fills in entityCharacteristic->value based on entityCharacteristic->name
-		void getEntityCharacteristicIterationbool(bool entityVal, EntityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch);
-		void getEntityCharacteristicIterationint(int entityVal, EntityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch);
-		void getEntityCharacteristicIterationstring(string entityVal, EntityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch);
+	bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic);	//fills in entityCharacteristic->value based on entityCharacteristic->name
+		void getEntityCharacteristicIterationbool(bool entityVal, GIAentityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch);
+		void getEntityCharacteristicIterationint(int entityVal, GIAentityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch);
+		void getEntityCharacteristicIterationstring(string entityVal, GIAentityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch);
 #endif
 
 #endif

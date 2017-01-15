@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -70,7 +70,7 @@ void printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiveListComplete,
 		printType[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = true;
 	}
 
-	Reference* firstReferenceInPrintList = new Reference();
+	LDreference* firstReferenceInPrintList = new LDreference();
 	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, printType, firstReferenceInPrintList, &currentTagInSVGFile, maxNumberSentences);
 
 	if(useOutputSVGfile)
@@ -94,8 +94,8 @@ void printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiveListComplete,
 		//method1:
 		string topLevelSceneFileName = outputFileNameLDR;
 		string topLevelSceneFileNameCollapsed = "sceneCollapsedForOpenGLDisplay.ldr";
-		Reference* initialReferenceInSceneFile = new Reference();
-		Reference* topLevelReferenceInSceneFile = new Reference(topLevelSceneFileName, 1, true);	//The information in this object is not required or meaningful, but needs to be passed into the parseFile/parseReferenceList recursive function
+		LDreference* initialReferenceInSceneFile = new LDreference();
+		LDreference* topLevelReferenceInSceneFile = new LDreference(topLevelSceneFileName, 1, true);	//The information in this object is not required or meaningful, but needs to be passed into the parseFile/parseReferenceList recursive function
 		if(!parseFile(topLevelSceneFileName, initialReferenceInSceneFile, topLevelReferenceInSceneFile, true))
 		{//file does not exist
 			cout << "The file: " << topLevelSceneFileName << " does not exist in the directory" << endl;
@@ -118,8 +118,8 @@ void printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiveListComplete,
 		setViewPort3Dortho(-100.0, width-100, height-100, -100.0, 1.0, -1.0);	//-100 is used to display the most left semantic network nodes
 
 		//now reparse file
-		Reference* initialReferenceInCollapsedSceneFile = new Reference();
-		Reference* topLevelReferenceInCollapsedSceneFile = new Reference(topLevelSceneFileNameCollapsed, 1, true);	//The information in this object is not required or meaningful, but needs to be passed into the parseFile/parseReferenceList recursive function
+		LDreference* initialReferenceInCollapsedSceneFile = new LDreference();
+		LDreference* topLevelReferenceInCollapsedSceneFile = new LDreference(topLevelSceneFileNameCollapsed, 1, true);	//The information in this object is not required or meaningful, but needs to be passed into the parseFile/parseReferenceList recursive function
 		if(!parseFile(topLevelSceneFileNameCollapsed, initialReferenceInCollapsedSceneFile, topLevelReferenceInCollapsedSceneFile, true))
 		{//file does not exist
 			cout << "The file: " << topLevelSceneFileNameCollapsed << " does not exist in the directory" << endl;
@@ -164,11 +164,11 @@ void initiateMaxXAtParticularY()
 }
 
 
-void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, bool printType[], Reference* firstReferenceInPrintList, XMLparserTag** currentTag, int maxNumberSentences)
+void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, bool printType[], LDreference* firstReferenceInPrintList, XMLparserTag** currentTag, int maxNumberSentences)
 {
 	vector<GIAentityNode*>::iterator entityIter;
 
-	Reference* currentReferenceInPrintList = firstReferenceInPrintList;
+	LDreference* currentReferenceInPrintList = firstReferenceInPrintList;
 
 	initiateMaxXAtParticularY();
 	int xInitial = DRAW_X_INITIAL_OFFSET;
@@ -208,7 +208,7 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesA
 	}
 }
 
-Reference* initialiseEntityConnectionForPrinting(vec* pos1, GIAentityConnection* entityConnection, Reference* currentReferenceInPrintList, bool printType[], string connectionName, int entityConnectionColour, XMLparserTag** currentTag)
+LDreference* initialiseEntityConnectionForPrinting(vec* pos1, GIAentityConnection* entityConnection, LDreference* currentReferenceInPrintList, bool printType[], string connectionName, int entityConnectionColour, XMLparserTag** currentTag)
 {
 	GIAentityNode* entityNodeToConnect = entityConnection->entity;
 
@@ -240,7 +240,7 @@ Reference* initialiseEntityConnectionForPrinting(vec* pos1, GIAentityConnection*
 }
 
 
-Reference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, bool printType[], Reference* currentReferenceInPrintList, XMLparserTag** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance)
+LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, bool printType[], LDreference* currentReferenceInPrintList, XMLparserTag** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance)
 {
 	//cout << "1 entityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp  << endl;
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
@@ -660,7 +660,7 @@ Reference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int
 
 
 
-Reference* initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, int y, int x, bool printType[], Reference* currentReferenceInPrintList, XMLparserTag** currentTag)
+LDreference* initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, int y, int x, bool printType[], LDreference* currentReferenceInPrintList, XMLparserTag** currentTag)
 {
 
 	int timeConditionNodePrintX = x;
@@ -704,9 +704,9 @@ Reference* initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeCond
 }
 
 
-Reference* createReferenceConnectionWithText(Reference* currentReferenceInPrintList, vec* pos1, vec* pos2, int colour, XMLparserTag** currentTag, string connectionTypeName, bool printType[])
+LDreference* createReferenceConnectionWithText(LDreference* currentReferenceInPrintList, vec* pos1, vec* pos2, int colour, XMLparserTag** currentTag, string connectionTypeName, bool printType[])
 {
-	Reference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
+	LDreference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
 	newCurrentReferenceInPrintList = createReferenceConnection(newCurrentReferenceInPrintList, pos1, pos2, colour, currentTag, printType);
 
@@ -739,9 +739,9 @@ Reference* createReferenceConnectionWithText(Reference* currentReferenceInPrintL
 	return newCurrentReferenceInPrintList;
 }
 
-Reference* createReferenceConnection(Reference* currentReferenceInPrintList, vec* pos1, vec* pos2, int colour, XMLparserTag** currentTag, bool printType[])
+LDreference* createReferenceConnection(LDreference* currentReferenceInPrintList, vec* pos1, vec* pos2, int colour, XMLparserTag** currentTag, bool printType[])
 {
-	Reference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
+	LDreference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
 	if(printType[DRAW_CREATE_LDR_REFERENCES] == true)
 	{
@@ -777,7 +777,7 @@ Reference* createReferenceConnection(Reference* currentReferenceInPrintList, vec
 		*/
 		#endif
 
-		Reference* newDispayReference = new Reference();
+		LDreference* newDispayReference = new LDreference();
 		newCurrentReferenceInPrintList->next = newDispayReference;
 		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
 	}
@@ -796,9 +796,9 @@ Reference* createReferenceConnection(Reference* currentReferenceInPrintList, vec
 
 //consider using elipse instead; <ellipse cx="240" cy="100" rx="220" ry="30">
 
-Reference* createBox(Reference* currentReferenceInPrintList, vec* vect, double width, double height, int colour, string* text, XMLparserTag** currentTag, int thickness, bool printType[])
+LDreference* createBox(LDreference* currentReferenceInPrintList, vec* vect, double width, double height, int colour, string* text, XMLparserTag** currentTag, int thickness, bool printType[])
 {
-	Reference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
+	LDreference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
 	if(printType[DRAW_CREATE_LDR_REFERENCES] == true)
 	{
@@ -843,9 +843,9 @@ Reference* createBox(Reference* currentReferenceInPrintList, vec* vect, double w
 		*/
 		#endif
 
-		Reference* newDispayReference;
+		LDreference* newDispayReference;
 
-		newDispayReference = new Reference();
+		newDispayReference = new LDreference();
 		newCurrentReferenceInPrintList->next = newDispayReference;
 		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
 
@@ -860,7 +860,7 @@ Reference* createBox(Reference* currentReferenceInPrintList, vec* vect, double w
 		newCurrentReferenceInPrintList->vertex2relativePosition.y = vect->y + height/2.0;
 		newCurrentReferenceInPrintList->vertex2relativePosition.z = vect->z;
 
-		newDispayReference = new Reference();
+		newDispayReference = new LDreference();
 		newCurrentReferenceInPrintList->next = newDispayReference;
 		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
 
@@ -875,7 +875,7 @@ Reference* createBox(Reference* currentReferenceInPrintList, vec* vect, double w
 		newCurrentReferenceInPrintList->vertex2relativePosition.y = vect->y - height/2.0;
 		newCurrentReferenceInPrintList->vertex2relativePosition.z = vect->z;
 
-		newDispayReference = new Reference();
+		newDispayReference = new LDreference();
 		newCurrentReferenceInPrintList->next = newDispayReference;
 		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
 
@@ -890,7 +890,7 @@ Reference* createBox(Reference* currentReferenceInPrintList, vec* vect, double w
 		newCurrentReferenceInPrintList->vertex2relativePosition.y = vect->y - height/2.0;
 		newCurrentReferenceInPrintList->vertex2relativePosition.z = vect->z;
 
-		newDispayReference = new Reference();
+		newDispayReference = new LDreference();
 		newCurrentReferenceInPrintList->next = newDispayReference;
 		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
 
@@ -906,7 +906,7 @@ Reference* createBox(Reference* currentReferenceInPrintList, vec* vect, double w
 		newCurrentReferenceInPrintList->vertex2relativePosition.z = vect->z;
 
 
-		newDispayReference = new Reference();
+		newDispayReference = new LDreference();
 		newCurrentReferenceInPrintList->next = newDispayReference;
 		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
 
@@ -998,7 +998,7 @@ void fillInGIARulesExternVariables()
 {
 	//extract common sprite variables from either xml file (LRRC or ANN)
 
-	RulesClass* currentReferenceRulesClass = CSrulesDraw;
+	XMLrulesClass* currentReferenceRulesClass = CSrulesDraw;
 
 	while(currentReferenceRulesClass->next != NULL)
 	{

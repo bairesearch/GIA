@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -89,12 +89,12 @@ static string featureRelexPOStypeArray[FEATURE_RELEX_POS_NUMBER_OF_TYPES] = {FEA
 
 
 #ifdef GIA_USE_STANFORD_CORENLP
-class StanfordCoreNLPmention
+class GIAstanfordCoreNLPmention
 {
 public:
 
-	StanfordCoreNLPmention(void);
-	~StanfordCoreNLPmention(void);
+	GIAstanfordCoreNLPmention(void);
+	~GIAstanfordCoreNLPmention(void);
 
 	bool representative;
 	int sentence;
@@ -102,19 +102,19 @@ public:
 	int end;
 	int head;
 
-	StanfordCoreNLPmention* next;
+	GIAstanfordCoreNLPmention* next;
 };
 
-class StanfordCoreNLPcoreference
+class GIAstanfordCoreNLPcoreference
 {
 public:
 
-	StanfordCoreNLPcoreference(void);
-	~StanfordCoreNLPcoreference(void);
+	GIAstanfordCoreNLPcoreference(void);
+	~GIAstanfordCoreNLPcoreference(void);
 
-	StanfordCoreNLPmention* firstMentionInList;
+	GIAstanfordCoreNLPmention* firstMentionInList;
 
-	StanfordCoreNLPcoreference* next;
+	GIAstanfordCoreNLPcoreference* next;
 };
 
 #endif
@@ -154,12 +154,12 @@ public:
 
 
 
-class Relation
+class GIArelation
 {
 public:
 
-	Relation(void);
-	~Relation(void);
+	GIArelation(void);
+	~GIArelation(void);
 
 	string relationType;
 	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
@@ -212,16 +212,16 @@ public:
 	#endif
 	#endif
 	
-	Relation* next;
+	GIArelation* next;
 };
 
 
-class Feature
+class GIAfeature
 {
 public:
 
-	Feature(void);
-	~Feature(void);
+	GIAfeature(void);
+	~GIAfeature(void);
 
 	int entityIndex;
 	string word;
@@ -276,18 +276,18 @@ public:
 	bool determinerPotentiallySingularDetected;
 	#endif
 
-	Feature* next;
-	Feature* previous;	//used for reference lookup
+	GIAfeature* next;
+	GIAfeature* previous;	//used for reference lookup
 };
 
 
 
-class Sentence
+class GIAsentence
 {
 public:
 
-	Sentence(void);
-	~Sentence(void);
+	GIAsentence(void);
+	~GIAsentence(void);
 
 	int sentenceIndex;
 
@@ -300,16 +300,16 @@ public:
 	#endif
 
 	#ifdef GIA_USE_STANFORD_CORENLP
-	StanfordCoreNLPcoreference* firstCoreferenceInList;
+	GIAstanfordCoreNLPcoreference* firstCoreferenceInList;
 	#endif
 
 	int maxNumberOfWordsInSentence;
 
-	Relation* firstRelationInList;
-	Feature* firstFeatureInList;
+	GIArelation* firstRelationInList;
+	GIAfeature* firstFeatureInList;
 
-	Sentence* next;
-	Sentence* previous;	//used for reference lookup
+	GIAsentence* next;
+	GIAsentence* previous;	//used for reference lookup
 
 	bool isQuestion;
 
@@ -318,25 +318,25 @@ public:
 	int conditionEntityArtificialIndexCurrent;	//added 2g1a/25-August-2014
 };
 
-class Paragraph
+class GIAparagraph
 {
 public:
 
-	Paragraph(void);
-	~Paragraph(void);
+	GIAparagraph(void);
+	~GIAparagraph(void);
 
-	Sentence* firstSentenceInList;
+	GIAsentence* firstSentenceInList;
 
-	Paragraph* next;
-	Paragraph* previous;	//used for reference lookup
+	GIAparagraph* next;
+	GIAparagraph* previous;	//used for reference lookup
 };
 
-void copySentences(Sentence* sentenceToCopy, Sentence* newSentence);
-void copyRelations(Relation* firstRelationInListToCopy, Relation* firstRelationInList);
-void copyFeatures(Feature* firstFeatureInListToCopy, Feature* firstFeatureInList);
+void copySentences(GIAsentence* sentenceToCopy, GIAsentence* newSentence);
+void copyRelations(GIArelation* firstRelationInListToCopy, GIArelation* firstRelationInList);
+void copyFeatures(GIAfeature* firstFeatureInListToCopy, GIAfeature* firstFeatureInList);
 #ifdef GIA_USE_STANFORD_CORENLP
-void copyStanfordCoreferences(StanfordCoreNLPcoreference* firstCoreferenceInListToCopy, StanfordCoreNLPcoreference* firstCoreferenceInList);
-void copyStanfordMention(StanfordCoreNLPmention* firstMentionInListToCopy, StanfordCoreNLPmention* firstMentionInList);
+void copyStanfordCoreferences(GIAstanfordCoreNLPcoreference* firstCoreferenceInListToCopy, GIAstanfordCoreNLPcoreference* firstCoreferenceInList);
+void copyStanfordMention(GIAstanfordCoreNLPmention* firstMentionInListToCopy, GIAstanfordCoreNLPmention* firstMentionInList);
 #endif
 
 #endif

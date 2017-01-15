@@ -26,7 +26,7 @@
  * File Name: GIAnlp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h17a 27-January-2015
+ * Project Version: 2h17b 27-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -39,7 +39,7 @@
 #include "GIAsentenceClass.h"
 
 #define STANFORD_PARSER_SENTENCE_SKIP_SUPPORT
-#define STANFORD_PARSER_SENTENCE_SKIPPED_TEXT "Sentence skipped"
+#define STANFORD_PARSER_SENTENCE_SKIPPED_TEXT "GIAsentence skipped"
 
 #define Relex_CFF_XML_TAG_nlparse ((string)"nlparse")
 	#define Relex_CFF_XML_ATTRIBUTE_xmlns ((string)"xmlns")
@@ -117,23 +117,23 @@ static string StanfordCoreNLP_relationSetNameArray[StanfordCoreNLP_numberOfDepen
 
 void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfileName, int NLPParser, string NLPexeFolderArray[], bool parseRelationsOrFeatures, bool NLPrelexCompatibilityMode);
 
-bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, bool isQuery, Paragraph* firstParagraphInList, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode);
-	bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQuery, Paragraph* firstParagraphInList, int NLPfeatureParser, bool* createNewSentences);
-	bool parseNLPparserRelationsFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph* firstParagraphInList, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed);
+bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode);
+	bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, int NLPfeatureParser, bool* createNewSentences);
+	bool parseNLPparserRelationsFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed);
 		#ifdef GIA_USE_RELEX
-		bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph* firstParagraphInList, bool parseRelations, bool parseFeatures, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed);
+		bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, bool parseRelations, bool parseFeatures, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed);
 		#endif
 		#ifdef GIA_USE_STANFORD_CORENLP
-		bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph* firstParagraphInList, bool parseRelations, bool parseFeatures, bool createNewSentences, bool onlyParseIfCorpusLookupFailed);
+		bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, bool parseRelations, bool parseFeatures, bool createNewSentences, bool onlyParseIfCorpusLookupFailed);
 		#endif
 		#ifdef GIA_USE_STANFORD_PARSER
-		bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuery, Paragraph* firstParagraphInList, bool createNewSentences, bool onlyParseIfCorpusLookupFailed);
-			bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuery, Sentence* firstSentenceInList, bool createNewSentences, bool parseGIA2file, bool onlyParseIfCorpusLookupFailed);
+		bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAparagraph* firstParagraphInList, bool createNewSentences, bool onlyParseIfCorpusLookupFailed);
+			bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAsentence* firstSentenceInList, bool createNewSentences, bool parseGIA2file, bool onlyParseIfCorpusLookupFailed);
 		#endif
 			int countSubstring(const std::string& str, const std::string& sub);
 
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
-void outputInternalRelationsInRelexFormat(string* nameOfRelexCompactFormatCFFfile, string* originalInputFileName, Paragraph* firstParagraphInList, int NLPdependencyRelationsParser, int NLPfeatureParser, string NLPexeFolderArray[]);
+void outputInternalRelationsInRelexFormat(string* nameOfRelexCompactFormatCFFfile, string* originalInputFileName, GIAparagraph* firstParagraphInList, int NLPdependencyRelationsParser, int NLPfeatureParser, string NLPexeFolderArray[]);
 #endif
 
 #endif
