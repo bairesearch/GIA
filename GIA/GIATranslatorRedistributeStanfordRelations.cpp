@@ -3,7 +3,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5b 03-June-2012
+ * Project Version: 1l5c 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -488,6 +488,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 
 	collapse these prepositions;
 
+	[CaseD]
 	nsubj(broke-3, computer-2)
 	acomp(broke-3, due-4)
 	prep_to(due-4, fire-7)
@@ -499,14 +500,17 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		acomp(broke-6, due-7)
 		prep_to(due-7, fire-10)
 
+	[CaseB]
 	nsubj(went-2, They-1)
 	advmod(went-2, back-3)
 	prep_to(went-2, mall-6)
 
+	[CaseA]
 	nsubj(close-3, He-1)
 	cop(close-3, is-2)
 	prep_to(close-3, house-6)
 
+	[CaseA]
 	nsubjpass(left-4, house-2)
 	auxpass(left-4, is-3)
 	prep_of(left-4, bank-7)
@@ -515,7 +519,8 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		nsubjpass(saved-9, time-7)
 		auxpass(saved-9, is-8)	
 		prep_in_addition_to(saved-9, assembly-5)
-		
+	
+	[CaseA]	
 	nsubj(near-4, carriage-2)
 	cop(near-4, is-3)
 	prep_to(near-4, horse-7)
@@ -527,14 +532,17 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		rcmod(carriage-4, near-7)
 		prep_to(near-7, horse-10)
 
+	[CaseA]
 	nsubj(next-4, farmer-2)
 	cop(next-4, is-3)
 	prep_to(next-4, plank-7
 
+	[CaseB]
 	nsubj(goes-3, chicken-2)
 	prt(goes-3, on-4)
 	prep_to(goes-3, plank-7)
 
+	[CaseA]
 	nsubj(outside-4, man-2)
 	cop(outside-4, is-3)
 	prep_of(outside-4, house-7)
@@ -544,21 +552,25 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		partmod(bought-7, Owing-1)	//NB currently interpreted as obj	
 		prep_to(Owing-1, weather-4)
 
-	nsubj(beach-8, Right-1)
-	cop(beach-8, is-6)
-	prep_of(Right-1, house-4)
+		[CaseE]
+		nsubj(beach-8, Right-1)
+		cop(beach-8, is-6)
+		prep_of(Right-1, house-4)
 
-	nsubjpass(done-9, it-6)
-	partmod(done-9, Subsequent-1)
-	prep_to(Subsequent-1, holidays-4)
+		[CaseD]
+		nsubjpass(done-9, it-6)
+		partmod(done-9, Subsequent-1)
+		prep_to(Subsequent-1, holidays-4)
 
-	partmod(watch-8, Thanks-1)
-	prep_to(Thanks-1, results-4)
-	nsubj(watch-8, he-6)
+		[CaseD]
+		nsubj(watch-8, he-6)		
+		partmod(watch-8, Thanks-1)
+		prep_to(Thanks-1, results-4)
 
-	nsubj(doing-6, that-2)		
-	aux(doing-6, is-1)
-	prep_of(that-2, Tom-4)
+		[CaseF]
+		nsubj(doing-6, that-2)		
+		aux(doing-6, is-1)
+		prep_of(that-2, Tom-4)
 		
 		[Not required to be removed based upon the following; Space is saved by not having a bulky cart to store at home and in the car. , because "to-10" is not "be-10"]
 		nsubj(store-11, cart-9)
@@ -566,10 +578,17 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 		prep_at(store-11, home-13)
 		prep_in(store-11', car-17)
 		
-	
+	[CaseB]
 	nsubj(reached-2, He-1)
 	prt(reached-2, up-3)
 	prep_to(reached-2, sky-6)
+	
+		[case added 1 June 2012]
+		It was he that reached up to the sky.
+		nsubj(reached-5, he-3)
+		rcmod(he-3, reached-5)
+		prt(reached-5, up-6)
+		prep_to(reached-5, sky-9)
 
 
 	summary of multiword preposition contraction process;
@@ -597,6 +616,75 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	det(house-9, the-8)
 	prep_of(right-6, house-9)
 
+
+
+		[CaseA]
+		nsubj(close-3, He-1)
+		cop(close-3, is-2)
+		prep_to(close-3, house-6)
+
+		[CaseA] {NOT SUPPORTED}
+		nsubjpass(left-4, house-2)
+		auxpass(left-4, is-3)
+		prep_of(left-4, bank-7)
+
+		[CaseA]	
+		nsubj(near-4, carriage-2)
+		cop(near-4, is-3)
+		prep_to(near-4, horse-7)
+
+		[CaseA]
+		nsubj(next-4, farmer-2)
+		cop(next-4, is-3)
+		prep_to(next-4, plank-7
+
+		[CaseA]
+		nsubj(outside-4, man-2)
+		cop(outside-4, is-3)
+		prep_of(outside-4, house-7)			
+
+		[CaseB]
+		nsubj(went-2, They-1)
+		advmod(went-2, back-3)
+		prep_to(went-2, mall-6)
+
+		[CaseB]
+		nsubj(goes-3, chicken-2)
+		prt(goes-3, on-4)
+		prep_to(goes-3, plank-7)
+
+		[CaseB]
+		nsubj(reached-2, He-1)
+		prt(reached-2, up-3)
+		prep_to(reached-2, sky-6)
+
+
+		[CaseD]
+		nsubj(broke-3, computer-2)
+		acomp(broke-3, due-4)
+		prep_to(due-4, fire-7)
+
+		[CaseD]
+		nsubjpass(done-9, it-6)
+		partmod(done-9, Subsequent-1)
+		prep_to(Subsequent-1, holidays-4)
+
+		[CaseD]
+		nsubj(watch-8, he-6)		
+		partmod(watch-8, Thanks-1)
+		prep_to(Thanks-1, results-4)
+
+		[CaseE]
+		nsubj(beach-8, Right-1)
+		cop(beach-8, is-6)
+		prep_of(Right-1, house-4)
+
+		[CaseF]
+		nsubj(doing-6, that-2)		
+		aux(doing-6, is-1)
+		prep_of(that-2, Tom-4)
+			
+				
 	*/	
 	
 	
@@ -646,70 +734,102 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 								multiwordPrepositionIntermediaryRelationTypeBFound = true;
 							}
 						}
+						
+						bool multiwordPrepositionIntermediaryRelationTypeDFound = false;
+						for(int i=0; i<GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPED; i++)
+						{
+							if(currentRelationInList2->relationType == redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeD[i])
+							{
+								multiwordPrepositionIntermediaryRelationTypeDFound = true;
+							}
+						}
+						
+						bool multiwordPrepositionIntermediaryRelationTypeEFound = false;
+						for(int i=0; i<GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEE; i++)
+						{
+							if(currentRelationInList2->relationType == redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeE[i])
+							{
+								if(currentRelationInList2->relationDependent == RELATION_ENTITY_BE)
+								{
+									multiwordPrepositionIntermediaryRelationTypeEFound = true;
+								}															
+							}
+						}
+																		
 
-						if(multiwordPrepositionIntermediaryRelationTypeAFound || multiwordPrepositionIntermediaryRelationTypeBFound)
+						if(multiwordPrepositionIntermediaryRelationTypeAFound || multiwordPrepositionIntermediaryRelationTypeBFound || multiwordPrepositionIntermediaryRelationTypeDFound || multiwordPrepositionIntermediaryRelationTypeEFound)
 						{
 							//cout << "redistributeStanfordRelationsMultiwordPreposition(): multiwordPrepositionIntermediaryRelationFound relexPreposition = " << relexPreposition << ", intermediaryrelation = " << currentRelationInList2->relationType << endl;
 
-							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
-							{//found a matching relationship
-
- 								Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
-								while(currentRelationInList3->next != NULL)
-								{	
-									#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-									if(!(currentRelationInList3->disabled))
-									{			
-									#endif								
-										bool multiwordPrepositionSubjectOrObjectRelationFound = false;
-										for(int i=0; i<GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_SUBJOBJ_RELATIONS; i++)
+ 							Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+							while(currentRelationInList3->next != NULL)
+							{	
+								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+								if(!(currentRelationInList3->disabled))
+								{			
+								#endif								
+									bool multiwordPrepositionSubjectOrObjectRelationFound = false;
+									for(int i=0; i<GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_SUBJOBJ_RELATIONS; i++)
+									{
+										//cout << "currentRelationInList3->relationType = " << currentRelationInList3->relationType << endl;
+										if(currentRelationInList3->relationType == redistributionStanfordRelationsMultiwordPrepositionSubjObjRelations[i])
 										{
-											//cout << "currentRelationInList3->relationType = " << currentRelationInList3->relationType << endl;
-											if(currentRelationInList3->relationType == redistributionStanfordRelationsMultiwordPrepositionSubjObjRelations[i])
-											{
-												multiwordPrepositionSubjectOrObjectRelationFound = true;
-											}
+											multiwordPrepositionSubjectOrObjectRelationFound = true;
 										}
+									}
 
-										//cout << "SD1" << endl;
+									//cout << "SD1" << endl;
 
-										if(multiwordPrepositionSubjectOrObjectRelationFound)
-										{	
-											//cout << "SD" << endl;
+									if(multiwordPrepositionSubjectOrObjectRelationFound)
+									{
+										/*this shouldnt be required; it should be covered elsewhere... [eg same reference set is implied for all prepositions/conditions; eg "the computer near the house ate a tree" == "the computer that is near the house ate a tree"
+										#ifdef GIA_USE_ADVANCED_REFERENCING											
+										//[case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING]
+										//He rode the carriage that is near to the horse.
+										//nsubj(near-7, carriage-4)
+										//cop(near-7, is-6)
+										//rcmod(carriage-4, near-7)
+										//prep_to(near-7, horse-10)
+										bool auxillaryIndicatesDifferentReferenceSet = true;
+										Relation * currentRelationInList4 = currentSentenceInList->firstRelationInList;
+										while(currentRelationInList4->next != NULL)
+										{
+											if(currentRelationInList4->relationType == RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER)
+											{
+												if((currentRelationInList4->relationDependentIndex == currentRelationInList3->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList3->relationDependentIndex))		//OLD: before 1 June 2012 code review: if((currentRelationInList4->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList->relationDependentIndex))
+												{
+													auxillaryIndicatesDifferentReferenceSet = false;
+													//cout << "AXE" << endl;	
+												}
+											}																			
+											currentRelationInList4 = currentRelationInList4->next;
+										}
+										currentRelationInList3->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;	
+										#endif
+										*/
 
-											if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
-											{//found a matching relationship								
+														
+																								
+										//cout << "SD" << endl;								
 
-												//cout << "SD2" << endl;						
-												if(!(currentRelationInList->prepositionCombinationAlreadyCreatedTemp))
-												{		
-													if(multiwordPrepositionIntermediaryRelationTypeAFound)
-													{
-														#ifdef GIA_USE_ADVANCED_REFERENCING
-														/*											
-														[case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING]
-														He rode the carriage that is near to the horse.
-														nsubj(near-7, carriage-4)
-														cop(near-7, is-6)
-														rcmod(carriage-4, near-7)
-														prep_to(near-7, horse-10)
-														*/
-														bool auxillaryIndicatesDifferentReferenceSet = true;
-														Relation * currentRelationInList4 = currentSentenceInList->firstRelationInList;
-														while(currentRelationInList4->next != NULL)
-														{
-															if(currentRelationInList4->relationType == RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER)
-															{
-																if((currentRelationInList4->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList3->relationDependentIndex))		//OLD: before 1 June 2012 code review: if((currentRelationInList4->relationDependentIndex == currentRelationInList->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList->relationDependentIndex))
-																{
-																	auxillaryIndicatesDifferentReferenceSet = false;
-																	//cout << "AXE" << endl;	
-																}
-															}																			
-															currentRelationInList4 = currentRelationInList4->next;
-														}
-														currentRelationInList->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;	
-														#endif
+											//cout << "SD2" << endl;						
+										if(!(currentRelationInList->prepositionCombinationAlreadyCreatedTemp))
+										{		
+											if(multiwordPrepositionIntermediaryRelationTypeAFound)
+											{
+												/*
+												[CaseA]
+												He is close to the house.
+												nsubj(close-3, He-1)
+												cop(close-3, is-2)
+												prep_to(close-3, house-6)
+												*/											
+												if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
+												{//found a matching relationship
+
+													if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
+													{//found a matching relationship													
+
 														
 														GIAEntityNode * entityContainingFirstWordOfMultiwordPreposition = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex];
 
@@ -727,44 +847,28 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 														currentRelationInList3->disabled = true;	//added 3 June 2012
 														
 														disableEntityBasedUponFirstSentenceToAppearInNetwork(entityContainingFirstWordOfMultiwordPreposition);										
-
 													}
-													else if(multiwordPrepositionIntermediaryRelationTypeBFound)
-													{
-														/*
-														if(currentRelationInList2->relationType == RELATION_TYPE_PARTICIPIAL_MODIFIER)
-														{
-															cout << "SFDFD" << endl;
-															exit(0);
-														}
-														*/
-														
-														#ifdef GIA_USE_ADVANCED_REFERENCING
-														/*											
-														[case added 1 June 2012 for GIA_USE_ADVANCED_REFERENCING]
-														He used a computer that broke due to the fire.
-														nsubj(broke-6, computer-4)
-														rcmod(computer-4, broke-6)
-														acomp(broke-6, due-7)
-														prep_to(due-7, fire-10)
-														*/
-														bool auxillaryIndicatesDifferentReferenceSet = true;
-														Relation * currentRelationInList4 = currentSentenceInList->firstRelationInList;
-														while(currentRelationInList4->next != NULL)
-														{
-															if(currentRelationInList4->relationType == RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER)
-															{
-																if((currentRelationInList4->relationDependentIndex == currentRelationInList2->relationGovernorIndex) && (currentRelationInList4->relationGovernorIndex == currentRelationInList3->relationDependentIndex))
-																{
-																	auxillaryIndicatesDifferentReferenceSet = false;	
-																}
-															}																			
-															currentRelationInList4 = currentRelationInList4->next;
-														}
-														currentRelationInList->auxillaryIndicatesDifferentReferenceSet = auxillaryIndicatesDifferentReferenceSet;	
-														#endif		
-		
-														
+												}
+											}
+											if(multiwordPrepositionIntermediaryRelationTypeBFound)
+											{
+												/*
+												[CaseB]
+												The chicken goes on to the plank.
+												He is close to the house.
+												nsubj(goes-3, chicken-2)
+												prt(goes-3, on-4)
+												prep_to(goes-3, plank-7)
+												*/
+																							
+												if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
+												{//found a matching relationship
+
+													if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
+													{//found a matching relationship
+
+														//cout << "sdf" << endl;	
+
 														GIAEntityNode * entityContainingFirstWordOfMultiwordPreposition = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
 
 														string newPrepositionName = "";
@@ -775,20 +879,92 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 														currentRelationInList->prepositionCombinationAlreadyCreatedTemp = true;
 
 														currentRelationInList2->disabled = true;
-														currentRelationInList3->disabled = true;	//added 3 June 2012
-														
+
 														disableEntityBasedUponFirstSentenceToAppearInNetwork(entityContainingFirstWordOfMultiwordPreposition);
 													}
-
 												}
 											}
-										}		
-									#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-									}		
-									#endif					
+											if(multiwordPrepositionIntermediaryRelationTypeDFound)
+											{
+												/*
+												[CaseD]
+												Subsequent to the holidays, it will be done.
+												nsubjpass(done-9, it-6)
+												partmod(done-9, Subsequent-1)
+												prep_to(Subsequent-1, holidays-4)
+												*/
+																							
+												if(currentRelationInList2->relationDependentIndex == currentRelationInList->relationGovernorIndex)
+												{//found a matching relationship
 
-									currentRelationInList3 = currentRelationInList3->next;
-								}
+													if(currentRelationInList3->relationGovernorIndex == currentRelationInList2->relationGovernorIndex)
+													{//found a matching relationship
+
+														//cout << "sdf" << endl;	
+
+														GIAEntityNode * entityContainingFirstWordOfMultiwordPreposition = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
+
+														string newPrepositionName = "";
+														newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
+
+														//cout << "redistributeStanfordRelationsMultiwordPreposition(): newPrepositionName = " << newPrepositionName << endl;
+														currentRelationInList->relationType = newPrepositionName;
+														currentRelationInList->prepositionCombinationAlreadyCreatedTemp = true;
+														
+														currentRelationInList->relationGovernorIndex = currentRelationInList3->relationGovernorIndex;
+														currentRelationInList->relationGovernor =  GIAEntityNodeArray[currentRelationInList3->relationGovernorIndex]->entityName;														
+
+														currentRelationInList2->disabled = true;
+
+														disableEntityBasedUponFirstSentenceToAppearInNetwork(entityContainingFirstWordOfMultiwordPreposition);
+													}
+												}
+											}
+											if(multiwordPrepositionIntermediaryRelationTypeEFound)
+											{
+												/*
+												[CaseE]
+												Right of the house, is the beach.
+												nsubj(beach-8, Right-1)
+												cop(beach-8, is-6)
+												prep_of(Right-1, house-4)
+												*/
+												
+												//cout << "sdf1" << endl;	
+																							
+												if(currentRelationInList2->relationGovernorIndex == currentRelationInList3->relationGovernorIndex)
+												{//found a matching relationship
+													//cout << "sdf2" << endl;	
+													if(currentRelationInList3->relationDependentIndex == currentRelationInList->relationGovernorIndex)
+													{//found a matching relationship
+
+														//cout << "sdf3" << endl;	
+
+														GIAEntityNode * entityContainingFirstWordOfMultiwordPreposition = GIAEntityNodeArray[currentRelationInList3->relationDependentIndex];
+
+														string newPrepositionName = "";
+														newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + entityContainingFirstWordOfMultiwordPreposition->entityName + STANFORD_PARSER_PREPOSITION_DELIMITER + relexPreposition;
+
+														//cout << "redistributeStanfordRelationsMultiwordPreposition(): newPrepositionName = " << newPrepositionName << endl;
+														currentRelationInList->relationType = newPrepositionName;
+														currentRelationInList->prepositionCombinationAlreadyCreatedTemp = true;
+														
+														currentRelationInList->relationGovernorIndex = currentRelationInList3->relationGovernorIndex;
+														currentRelationInList->relationGovernor =  GIAEntityNodeArray[currentRelationInList3->relationGovernorIndex]->entityName;														
+
+														currentRelationInList2->disabled = true;
+
+														disableEntityBasedUponFirstSentenceToAppearInNetwork(entityContainingFirstWordOfMultiwordPreposition);
+													}
+												}
+											}																					
+										}
+									}		
+								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+								}		
+								#endif					
+
+								currentRelationInList3 = currentRelationInList3->next;
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -1541,17 +1717,21 @@ void redistributeStanfordRelationsPrtAndTmod(Sentence * currentSentenceInList, b
 				#ifdef GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE
 				if(!foundTemporalModifier)
 				{
-					//cout << "\t\t\t!foundTemporalModifier" << endl;
+					if(!(currentRelationInList->disabled))	//added 3 June 2012
+					{//do not parse it again, in the case it has already been parsed in redistributeStanfordRelationsMultiwordPreposition()
 					
-					//cout << "RELATION_TYPE_PHRASAL_VERB_PARTICLE" << endl;
-					//eg They shut down the station. 	prt(shut, down) 			
+						//cout << "\t\t\t!foundTemporalModifier" << endl;
 
-					GIAEntityNode * governerEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
-					GIAEntityNode * dependentEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
-					governerEntity->entityName = governerEntity->entityName + "_" + dependentEntity->entityName;
-					//cout << "governerEntity->entityName = " <<governerEntity->entityName << endl;
+						//cout << "RELATION_TYPE_PHRASAL_VERB_PARTICLE" << endl;
+						//eg They shut down the station. 	prt(shut, down) 			
 
-					disableEntityBasedUponFirstSentenceToAppearInNetwork(dependentEntity);		
+						GIAEntityNode * governerEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
+						GIAEntityNode * dependentEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+						governerEntity->entityName = governerEntity->entityName + "_" + dependentEntity->entityName;
+						//cout << "governerEntity->entityName = " <<governerEntity->entityName << endl;
+
+						disableEntityBasedUponFirstSentenceToAppearInNetwork(dependentEntity);		
+					}
 				}
 				#endif
 				

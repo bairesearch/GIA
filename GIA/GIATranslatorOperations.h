@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5b 03-June-2012
+ * Project Version: 1l5c 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -668,10 +668,15 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 
 /********************************* Relations *******************************************/
 
-#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA (2)	//OLD: 3
-static string redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeA[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA] = {RELATION_TYPE_MODAL_AUX, RELATION_TYPE_COPULA};	//OLD: RELATION_TYPE_PASSIVE_AUX
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA (1)	//OLD: 3
+static string redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeA[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA] = {RELATION_TYPE_COPULA};	//OLD: RELATION_TYPE_PASSIVE_AUX, RELATION_TYPE_MODAL_AUX
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEB (2)
-static string redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeB[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEB] = {RELATION_TYPE_COMPLIMENT_TO_BE, RELATION_TYPE_PHRASAL_VERB_PARTICLE};	//removed RELATION_TYPE_PARTICIPIAL_MODIFIER 9 May 2012
+static string redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeB[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEB] = {RELATION_TYPE_PHRASAL_VERB_PARTICLE, RELATION_TYPE_ADJECTIVE_ADVMOD};
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPED (2)
+static string redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeD[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPED] = {RELATION_TYPE_COMPLIMENT_TO_BE, RELATION_TYPE_PARTICIPIAL_MODIFIER};	//added 3 June 2012
+#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEE (1)
+static string redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeE[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEE] = {RELATION_TYPE_COPULA};	//added 3 June 2012
+
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_SUBJOBJ_RELATIONS (2)
 static string redistributionStanfordRelationsMultiwordPrepositionSubjObjRelations[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_SUBJOBJ_RELATIONS] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_OBJECT};
 
@@ -800,7 +805,7 @@ static string relationTypeAdjectiveImpliesSameSetNameArray[RELATION_TYPE_ADJECTI
 
 //#define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES (true)	//there is no default case; it depends upon what kind of property
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS (false)	//an action is considered by default not to be part of the same reference set as its subject/object (eg "the man fires the bow"). An rcmod /"that" is explicitly required for an action to be considered part of the same reference set as its subject/object (eg "the man that fires the bow...")
-#define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS (true)	//a condition is considered by default to be part of the same reference set as its subject/object (eg "the cat near the park"). A copular "is" is explicitly required for a condition to be considered not part of the same reference set as its subject/object (eg "the cat is near the park")
+#define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS (true)	//a condition is considered by default to be part of the same reference set as its subject/object (eg "the cat near the park..." == "the cat that is near the park..."). A copular "is" is explicitly required for a condition to be considered not part of the same reference set as its subject/object (eg "the cat is near the park")
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS (true)	
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_PROPERTY_CONDITIONS (true)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES (true)

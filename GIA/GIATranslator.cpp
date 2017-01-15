@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l5b 03-June-2012
+ * Project Version: 1l5c 03-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -472,12 +472,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	}		
 	
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	if(!linkPreestablishedReferencesGIA)
-	{
+	//if(!linkPreestablishedReferencesGIA)	//this condition has been disabled for debugging purposes
+	//{
 		//identify explicit same set linkages
 		//eg "the guy that robbed the bank" in "the guy that robbed the bank is tall" 
 		fillExplicitReferenceSameSetTags(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);	
-	}
+	//}
 	#endif
 					
 	#ifdef GIA_TRANSLATOR_DEBUG
