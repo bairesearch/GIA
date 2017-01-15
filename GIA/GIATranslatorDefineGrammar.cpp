@@ -3,10 +3,10 @@
  * File Name: GIATranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1f 23-May-2012
+ * Project Version: 1l1g 24-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
- * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
+ * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
  * TO DO: extract date information of entities from relex <features> tag area
  *******************************************************************************/
 
@@ -17,7 +17,7 @@
 
 
 
-void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType, int NLPfeatureParser)
+void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, vector<GIAEntityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType, int NLPfeatureParser)
 {		
 	if(currentSentenceInList->isQuestion)
 	{
@@ -87,7 +87,7 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 			if(!GIAEntityNodeArrayFilled[relationIndex[i]])
 			{
 				bool entityAlreadyExistant = false;
-				GIAEntityNode * entity = findOrAddEntityNodeByNameSimpleWrapper(&(name[i]), &entityAlreadyExistant, conceptEntityNodesList);
+				GIAEntityNode * entity = findOrAddEntityNodeByNameSimpleWrapper(&(name[i]), &entityAlreadyExistant, entityNodesActiveListConcepts);
 				
 				GIAEntityNodeArrayFilled[relationIndex[i]] = true;
 				GIAEntityNodeArray[relationIndex[i]] = entity;

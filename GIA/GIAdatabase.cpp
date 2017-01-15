@@ -3,7 +3,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1f 23-May-2012
+ * Project Version: 1l1g 24-May-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -18,25 +18,25 @@
 unordered_map<string, bool> *DBconceptEntityNodesLoadedList;
 bool useDatabase;
 
-GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList, bool saveNetwork)
+GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList, bool saveNetwork)
 {
 	if(useDatabase)
 	{
-		GIAEntityNode * entityNodeFound = DBfindOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, entityNodeName, found, index, addIfNonexistant, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList, saveNetwork);
+		GIAEntityNode * entityNodeFound = DBfindOrAddEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodeName, found, index, addIfNonexistant, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList, saveNetwork);
 	}
 	else
 	{
-		GIAEntityNode * entityNodeFound = LocalFindOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, entityNodeName, found, index, addIfNonexistant, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList, saveNetwork);
+		GIAEntityNode * entityNodeFound = LocalFindOrAddEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodeName, found, index, addIfNonexistant, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList, saveNetwork);
 	}
 	return entityNodeFound;
 }
 
-GIAEntityNode * DBfindOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList, bool saveNetwork)
+GIAEntityNode * DBfindOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList, bool saveNetwork)
 {
 	GIAEntityNode * entityNodeFound = NULL;
 	
 	unordered_map<string, bool> ::iterator conceptEntityNodesLoadedListIterator;
-	conceptEntityNodesLoadedListIterator = conceptEntityNodesList->find(*entityNodeName);
+	conceptEntityNodesLoadedListIterator = entityNodesActiveListConcepts->find(*entityNodeName);
 	
 	if(conceptEntityNodesLoadedListIterator != conceptEntityNodesLoadedListIterator->end())
 	{//concept entity found	
@@ -51,7 +51,7 @@ GIAEntityNode * DBfindOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesC
 		if(conceptEntityNodeLoaded)
 		{
 			unordered_map<string, GIAEntityNode*> ::iterator conceptEntityNodesListIterator;
-			conceptEntityNodesListIterator = conceptEntityNodesList->find(*entityNodeName);		
+			conceptEntityNodesListIterator = entityNodesActiveListConcepts->find(*entityNodeName);		
 			conceptEntityNode = conceptEntityNodesListIterator->second;
 		}
 		else
@@ -59,7 +59,7 @@ GIAEntityNode * DBfindOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesC
 			//load the concept node from the database into RAM
 			conceptEntityNode = new GIAEntityNode();
 			DBreadConceptEntityNode(entityNodeName, conceptEntityNode);
-			conceptEntityNodesList->insert(pair<string, GIAEntityNode*>(*entityNodeName, conceptEntityNode));
+			entityNodesActiveListConcepts->insert(pair<string, GIAEntityNode*>(*entityNodeName, conceptEntityNode));
 			//readConceptEntityNumberOfInstances(entityNodeName);
 		}
 			
@@ -88,11 +88,11 @@ GIAEntityNode * DBfindOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesC
 			
 			if(saveNetwork)
 			{
-				entityNodesCompleteList->push_back(newEntityNode);							//not used for database...
+				entityNodesActiveListComplete->push_back(newEntityNode);							//not used for database...
 			}
 			(*currentEntityNodeIDInCompleteList) = (*currentEntityNodeIDInCompleteList) + 1;				//used to indicate that this new node may need to be updated on the database
 
-			conceptEntityNodesList->insert(pair<string, GIAEntityNode*>(*entityNodeName, newEntityNode));
+			entityNodesActiveListConcepts->insert(pair<string, GIAEntityNode*>(*entityNodeName, newEntityNode));
 			(*currentEntityNodeIDInConceptEntityNodesList) = (*currentEntityNodeIDInConceptEntityNodesList) + 1;		//not used for database...
 
 			bool conceptEntityNodeLoaded = true;
@@ -116,18 +116,18 @@ GIAEntityNode * DBfindOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesC
 
 //uses fast search algorithm
 #ifdef GIA_USE_DATABASE
-GIAEntityNode * LocalFindOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList, bool saveNetwork)
+GIAEntityNode * LocalFindOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList, bool saveNetwork)
 #else
-GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCompleteList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList, bool saveNetwork)
+GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList, bool saveNetwork)
 #endif
 {
 	GIAEntityNode * entityNodeFound = NULL;
 	
 	unordered_map<string, GIAEntityNode*> ::iterator conceptEntityNodesListIterator;
-	conceptEntityNodesListIterator = conceptEntityNodesList->find(*entityNodeName);
+	conceptEntityNodesListIterator = entityNodesActiveListConcepts->find(*entityNodeName);
 	
 	
-	if(conceptEntityNodesListIterator != conceptEntityNodesList->end())
+	if(conceptEntityNodesListIterator != entityNodesActiveListConcepts->end())
 	{//concept entity found	
 		#ifdef GIA_DATABASE_DEBUG
 		cout << "\tentity node found; " << *entityNodeName << endl;
@@ -154,12 +154,12 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 			
 			if(saveNetwork)
 			{
-				entityNodesCompleteList->push_back(entityNodeFound);
+				entityNodesActiveListComplete->push_back(entityNodeFound);
 			}
 			(*currentEntityNodeIDInCompleteList) = (*currentEntityNodeIDInCompleteList) + 1;
 
-			//conceptEntityNodesList[entityNodeName] = entityNodeFound;
-			conceptEntityNodesList->insert(pair<string, GIAEntityNode*>(*entityNodeName, entityNodeFound));
+			//entityNodesActiveListConcepts[entityNodeName] = entityNodeFound;
+			entityNodesActiveListConcepts->insert(pair<string, GIAEntityNode*>(*entityNodeName, entityNodeFound));
 			(*currentEntityNodeIDInConceptEntityNodesList) = (*currentEntityNodeIDInConceptEntityNodesList) + 1;
 
 			entityNodeFound->entityName = *entityNodeName;	
@@ -170,13 +170,13 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 }
 
 
-GIAEntityNode * findEntityNodeByID(long EntityNodeID, vector<GIAEntityNode*> *entityNodesCompleteList)
+GIAEntityNode * findEntityNodeByID(long EntityNodeID, vector<GIAEntityNode*> *entityNodesActiveListComplete)
 {
 	GIAEntityNode * foundEntityNode = NULL;
-	foundEntityNode = entityNodesCompleteList->at(EntityNodeID);
+	foundEntityNode = entityNodesActiveListComplete->at(EntityNodeID);
 	
 	/*
-	GIAEntityNode * currentEntityNode = entityNodesCompleteList;
+	GIAEntityNode * currentEntityNode = entityNodesActiveListComplete;
 	while(currentEntityNode->next != NULL)
 	{
 		if(currentEntityNode->idActiveList == EntityNodeID)
@@ -301,29 +301,30 @@ string DBgenerateFileName(string * entityName, long idInstance, int connectionTy
 	
 
 //assumes entityVectorConnections list is not already populated (ie, not already intialised with null pointers / GIA entity nodes)	
-void DBreadVectorConnections(string * entityName, long idInstance, int connectionType, vector<GIAConnectionProperties*> *vectorConnectionProperties, vector<GIAEntityNode*> *entityVectorConnections)
+void DBreadVectorConnections(string * entityName, long idInstance, int connectionType, vector<GIAEntityConnection*> *entityVectorConnections)
 {	
-	for(vector<GIAConnectionProperties*>::iterator vectorConnectionPropertiesIterator = vectorConnectionProperties->begin(); vectorConnectionPropertiesIterator != vectorConnectionProperties->end(); vectorConnectionPropertiesIterator++) 
+	for(vector<GIAEntityConnection*>::iterator connectionIter = vectorConnectionProperties->begin(); connectionIter != vectorConnectionProperties->end(); connectionIter++) 
 	{
-		GIAConnectionProperties* connectionProperties = *vectorConnectionPropertiesIterator;
+		GIAEntityConnection* connection = *connectionIter;
 		
-		if(!(connectionProperties->loaded))
+		if(!(connection->loaded))
 		{
-			string entityFileName = DBgenerateFileName(&(connectionProperties->entityName), connectionProperties->idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY);
+			string entityFileName = DBgenerateFileName(&(connection->entityName), connection->idInstance, connectionType, GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY);
 			
 			GIAEntityNode * entity = new GIAEntityNode();
 			DBreadEntityFile(entityFileName, entity);
-			entityVectorConnections->push_back(entity);				
+			connection->entity = entity;
+			connection->loaded = true;
+			connection->modified = false;
+			connection->added = false;
 		}
-
-		vectorConnectionPropertiesIterator++;
 	}
 }
 
 
 //this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
 //assume vectorConnectionProperties has not been populated
-void DBreadVectorConnectionsReferences(string * entityName, long idInstance, int connectionType, vector<GIAConnectionProperties*> *vectorConnectionProperties)
+void DBreadVectorConnectionsReferences(string * entityName, long idInstance, int connectionType, vector<GIAEntityConnection*> *entityVectorConnections)
 {
 	/*
 	Format:
@@ -355,11 +356,11 @@ void DBreadVectorConnectionsReferences(string * entityName, long idInstance, int
 			long connectionInstanceID; 
 			fscanf(pFile, GIA_DATABASE_REFRENCES_FILE_FORMAT, &connectionEntityName, &connectionInstanceID); 		
 			
-			GIAConnectionProperties* newConnectionProperties = new vectorConnectionProperties();
-			vectorConnectionProperties->entityName = connectionEntityName;
-			vectorConnectionProperties->idInstance = connectionInstanceID;
-			vectorConnectionProperties->referenceLoaded = true;
-			vectorConnectionProperties->push_back(newConnectionProperties);
+			GIAEntityConnection* newConnection = new vectorConnectionProperties();
+			newConnection->entityName = connectionEntityName;
+			newConnection->idInstance = connectionInstanceID;
+			newConnection->referenceLoaded = true;
+			entityVectorConnections->push_back(newConnection);
 		}
 		#endif
 		
@@ -405,7 +406,7 @@ void DBreadVectorConnectionsReference(string * entityName, long idInstance, int 
 
 
 //this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
-void DBwriteVectorConnectionsReferences(string * entityName, long idInstance, int connectionType, vector<string> *entityVectorConnectionsName, vector<long> *entityVectorConnectionsID)
+void DBwriteVectorConnectionsReferences(string * entityName, long idInstance, int connectionType, vector<GIAEntityConnection*> *entityVectorConnections)
 {
 	/*
 	Format:
@@ -432,13 +433,13 @@ void DBwriteVectorConnectionsReferences(string * entityName, long idInstance, in
 		cout << "error: GIA_DATABASE_SAVE_WITH_LEADING_ZEROS_TAKE_ADVANTAGE_FOR_DIRECT_IO_IMPLEMENTATION not yet coded to take advantage of fixed length file columns" << endl;
 		#else	
 		
-		vector<bool>::iterator entityVectorConnectionsIDIterator = entityVectorConnectionsID->begin();
-		for(entityVectorConnectionsNamesIterator = entityVectorConnectionsName->begin(); entityVectorConnectionsNamesIterator != entityVectorConnectionsName->end(); entityVectorConnectionsNamesIterator++) 
+		for(vector<GIAEntityConnection*>::iterator connectionIter = entityVectorConnections->begin(); connectionIter != entityVectorConnections->end(); connectionIter++) 
 		{
-			char * connectionEntityName = const_cast<char*>((*entityVectorConnectionsNamesIterator).c_str()); 
-			long connectionInstanceID = *entityVectorConnectionsIDIterator; 		
+			GIAEntityConnection * connection = *connectionIter;
+			
+			char * connectionEntityName = const_cast<char*>(connection->entityName.c_str()); 	//NB NOT connection->entity->entityName (as DBwriteVectorConnectionsReferences() does not assume connection->loaded == true) 
+			long connectionInstanceID = connection->idInstance; 					//NB NOT connection->entity->idInstance (as DBwriteVectorConnectionsReferences() does not assume connection->loaded == true) 
 			fprintf(pFile, GIA_DATABASE_REFRENCES_FILE_FORMAT, connectionEntityName, connectionInstanceID); 	
-			entityVectorConnectionsIDIterator++;
 		}
 		#endif
 		
@@ -446,7 +447,7 @@ void DBwriteVectorConnectionsReferences(string * entityName, long idInstance, in
 	}
 }
 
-void DBmodifyVectorConnectionsReference(string * entityName, long idInstance, int connectionType, string *entityVectorConnectionsName, long *entityVectorConnectionsID, long referenceIndex)
+void DBmodifyVectorConnectionsReference(string * entityName, long idInstance, int connectionType, string *entityVectorConnectionsName, long entityVectorConnectionsID, long referenceIndex)
 {
 	/*
 	Format:
@@ -478,7 +479,7 @@ void DBmodifyVectorConnectionsReference(string * entityName, long idInstance, in
 	fclose(pFile);	
 }
 
-void DBappendVectorConnectionsReference(string * entityName, long idInstance, int connectionType, string *entityVectorConnectionsName, long *entityVectorConnectionsID)
+void DBappendVectorConnectionsReference(string * entityName, long idInstance, int connectionType, string *entityVectorConnectionsName, long entityVectorConnectionsID)
 {
 	/*
 	Format:
@@ -580,6 +581,44 @@ void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 }
 
 //this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
+void DBreadTimeConditionNodeFile(string * timeConditionFileName, GIATimeConditionNode* timeCondition)
+{
+	/*
+	Format:
+	conditionName,tense,second,hour,dayOfWeek,month,dayOfMonth,year,period,totalTimeInSeconds,tenseOnlyTimeCondition,isProgressive
+	//format derived from GIA XML file
+	*/
+	
+ 	FILE * pFile = NULL;
+	const char * fileNameCharStar = timeConditionFileName->c_str();
+  	pFile = fopen(fileNameCharStar,"r");
+	if(pFile == NULL)
+	{
+		cout << "DBreadTimeConditionNodeFile() error: timeConditionFileName, " << *timeConditionFileName << " does not exist" << endl;
+	}
+	else
+	{
+		fscanf(pFile, GIA_DATABASE_TIME_CONDITION_NODE_FILE_FORMAT, &(timeCondition->conditionName), &(timeCondition->tense), &(timeCondition->second), &(timeCondition->hour), &(timeCondition->dayOfWeek), &(timeCondition->month), &(timeCondition->dayOfMonth), &(timeCondition->year), &(timeCondition->period), &(timeCondition->totalTimeInSeconds), &(int(timeCondition->tenseOnlyTimeCondition)), &(int(timeCondition->isProgressive)));	//tenseOnlyTimeCondition + isProgressive are only in DB at the moment (not yet in XML i/o) 
+		fclose(pFile);
+	}
+  
+}
+
+
+void DBwriteEntityNode(string * entityName, long idInstance, GIAEntityNode * entityNode)
+{
+	string entityFileName = DBgenerateFileName(entityName, idInstance, GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY);
+	DBwriteEntityNodeFile(entityFileName, entityNode);
+	
+	if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
+	{
+		string timeConditionFileName = DBgenerateFileName(entityName, idInstance, GIA_DATABASE_GENERATE_FILENAME_TYPE_IRRELEVANT, GIA_DATABASE_GENERATE_FILENAME_FILE_TIME_CONDITION_NODE);
+		DBwriteTimeConditionNodeFile(timeConditionFileName, entityNode->timeConditionNode);
+	}
+}	
+
+
+//this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
 void DBwriteEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 {
 	/*
@@ -610,30 +649,6 @@ void DBwriteEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 	*/
 	
 	return result;
-}
-
-//this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
-void DBreadTimeConditionNodeFile(string * timeConditionFileName, GIATimeConditionNode* timeCondition)
-{
-	/*
-	Format:
-	conditionName,tense,second,hour,dayOfWeek,month,dayOfMonth,year,period,totalTimeInSeconds,tenseOnlyTimeCondition,isProgressive
-	//format derived from GIA XML file
-	*/
-	
- 	FILE * pFile = NULL;
-	const char * fileNameCharStar = timeConditionFileName->c_str();
-  	pFile = fopen(fileNameCharStar,"r");
-	if(pFile == NULL)
-	{
-		cout << "DBreadTimeConditionNodeFile() error: timeConditionFileName, " << *timeConditionFileName << " does not exist" << endl;
-	}
-	else
-	{
-		fscanf(pFile, GIA_DATABASE_TIME_CONDITION_NODE_FILE_FORMAT, &(timeCondition->conditionName), &(timeCondition->tense), &(timeCondition->second), &(timeCondition->hour), &(timeCondition->dayOfWeek), &(timeCondition->month), &(timeCondition->dayOfMonth), &(timeCondition->year), &(timeCondition->period), &(timeCondition->totalTimeInSeconds), &(int(timeCondition->tenseOnlyTimeCondition)), &(int(timeCondition->isProgressive)));	//tenseOnlyTimeCondition + isProgressive are only in DB at the moment (not yet in XML i/o) 
-		fclose(pFile);
-	}
-  
 }
 
 //this could be made more efficient, as it is known each row is of fixed column width (assuming entity names can be padded)
@@ -726,6 +741,13 @@ long DBreadNumberOfReferencesInList(GIAEntityNode * entityNodeName, long idInsta
 	return 	numberOfReferences;
 }
 
+
+
+void openDatabase()
+{
+	DBreadConceptEntityNodesLoadedList();
+}
+
 void DBreadConceptEntityNodesLoadedList()	//unordered_map<string, bool> *DBconceptEntityNodesLoadedListLocal
 {
 	string conceptEntityNodesListFileName = DBgenerateFileName(NULL, NULL, NULL, GIA_DATABASE_GENERATE_FILENAME_FILE_CONCEPT_ENTITY_NODES_LIST);
@@ -741,12 +763,86 @@ void DBreadConceptEntityNodesLoadedList()	//unordered_map<string, bool> *DBconce
 	{
 		char currentToken;
 		char conceptEntityNameCharStar[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
-		string conceptEntityName = conceptEntityNameCharStar;
 		while(parseFileObject.getline(conceptEntityNameCharStar, GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH))
 		{
+			string conceptEntityName = conceptEntityNameCharStar;
 			DBconceptEntityNodesLoadedList->insert(pair<string, bool>(conceptEntityName, false));			
 		}
 	}
+}
+
+void closeDatabase()
+{
+	//no action
+}
+
+void writeAndCloseDatabase(vector<GIAEntityNode*> *entityNodesActiveListComplete)
+{
+	writeDatabase(entityNodesActiveListComplete);
+	
+	DBwriteConceptEntityNodesLoadedList();
+}
+
+void writeDatabase(vector<GIAEntityNode*> *entityNodesActiveListComplete)
+{
+	for(vector<GIAEntityNode*>::iterator entityNodesCompleteListIterator = entityNodesActiveListComplete->begin(); entityNodesCompleteListIterator != entityNodesActiveListComplete->end(); entityNodesCompleteListIterator++) 
+	{
+		GIAEntityNode* entityNode = *entityNodesCompleteListIterator;
+		
+		if(entityNode->added || entityNode->modified)
+		{
+			//(re-)write node itself
+			DBwriteEntityNode(entityNode->entityName, entityNode->idInstance, entityNode);
+		}
+		
+		if(entityVectorConnectionsReferenceListLoadedArray[i])
+		{//they should all be loaded
+
+			//only write specific connections
+			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+			{
+				if(entityNode->added || entityVectorConnectionsRemovedArray[i])
+				{	
+					//write all vector connection references
+					DBwriteVectorConnectionsReferences(&(entityNode->entityName), entityNode->idInstance, connectionType, entityNode->entityVectorConnectionsArray[i]);					
+				}
+				else
+				{
+					int referenceIndex = 0;			
+					for(vector<bool>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i]->begin(); connectionIter != entityNode->entityVectorConnectionsArray[i]->end(); connectionIter++) 
+					{
+						GIAEntityConnection * connection = *connectionIter;
+						if(connection->modified)
+						{//modified; overwrite vector connection reference
+							DBmodifyVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance);
+						}
+						else if(connection->added)
+						{//added; append vector connection reference
+							DBappendVectorConnectionsReference(&(entityNode->entityName), entityNode->idInstance, i, &(connection->entityName), connection->idInstance;
+						}
+						referenceIndex++;
+					}
+				}
+			}
+		}
+		else
+		{
+			cout << "error: writeDatabase(): entityVectorConnectionsReferenceListLoadedArray[i] != true" << endl;
+			cout << "entityNode = " << entityNode->entityName << endl;
+		}
+	}
+	
+	/* this is done in DBwriteConceptEntityNodesLoadedList()
+	string conceptEntityName = conceptEntityNodesLoadedListIterator->first;
+	const char * conceptEntityNameCharStar = conceptEntityName.c_str();
+	writeFileObject.write(conceptEntityNameCharStar, conceptEntityName.length());
+	//for(int i=0; i<conceptEntityName.length(); i++)
+	//{
+	//	writeFileObject.put(conceptEntityName[i]);
+	//}
+	writeFileObject.put(CHAR_NEW_LINE);
+	*/
+			
 }
 
 void DBwriteConceptEntityNodesLoadedList(string * conceptEntityNodesListFileName)	//unordered_map<string, bool> *DBconceptEntityNodesLoadedList 
@@ -772,6 +868,7 @@ void DBwriteConceptEntityNodesLoadedList(string * conceptEntityNodesListFileName
 	writeFileObject.close();
 }
 
+
 void setUseDatabase(bool value)
 {
 	useDatabase = value;
@@ -779,61 +876,6 @@ void setUseDatabase(bool value)
 bool getUseDatabase()
 {
 	return useDatabase;
-}
-
-void writeDatabase(vector<GIAEntityNode*> *entityNodesCompleteList)
-{
-	for(vector<GIAEntityNode*>::iterator entityNodesCompleteListIterator = entityNodesCompleteList->begin(); entityNodesCompleteListIterator != entityNodesCompleteList->end(); entityNodesCompleteListIterator++) 
-	{
-		GIAEntityNode* entityNode = *entityNodesCompleteListIterator;
-		
-		if(entityNode->added || entityNode->modified)
-		{
-			//write node itself
-		}
-		
-		if(entityNode->added)
-		{
-			//write all vector connections
-		}
-		else
-		{
-			//only write specific connections
-			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-			{
-				for(vector<bool>::iterator entityVectorConnectionsModifiedArrayIterator = entityNode->entityVectorConnectionsModifiedArray[i]->begin(); entityVectorConnectionsModifiedArrayIterator != entityNode->entityVectorConnectionsModifiedArray[i]->end(); entityVectorConnectionsModifiedArrayIterator++) 
-				{
-					if(*entityVectorConnectionsModifiedArrayIterator)
-					{//modified (or new), so must be written
-						write
-					}
-				}
-			}
-			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-			{
-				for(vector<bool>::iterator entityVectorConnectionsModifiedArrayIterator = entityNode->entityVectorConnectionsModifiedArray[i]->begin(); entityVectorConnectionsModifiedArrayIterator != entityNode->entityVectorConnectionsModifiedArray[i]->end(); entityVectorConnectionsModifiedArrayIterator++) 
-				{
-					if(*entityVectorConnectionsModifiedArrayIterator)
-					{//modified (or new), so must be written
-						write
-					}
-				}
-			}		
-
-		}
-
-		
-		string conceptEntityName = conceptEntityNodesLoadedListIterator->first;
-		const char * conceptEntityNameCharStar = conceptEntityName.c_str();
-		writeFileObject.write(conceptEntityNameCharStar, conceptEntityName.length());
-		/*
-		for(int i=0; i<conceptEntityName.length(); i++)
-		{
-			writeFileObject.put(conceptEntityName[i]);
-		}
-		*/
-		writeFileObject.put(CHAR_NEW_LINE);
-	}
 }
 
 	

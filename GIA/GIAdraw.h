@@ -3,7 +3,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1f 23-May-2012
+ * Project Version: 1l1g 24-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -204,9 +204,9 @@ static int entityVectorConnectionDrawColourNameArray[GIA_ENTITY_NUMBER_OF_VECTOR
 static bool entityVectorConnectionDrawConnectionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, false, true, true, false, false, true, true, true, true, true};
 
 
-void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesCompleteList, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile, bool useOutputSVGFile);
+void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile, bool useOutputSVGFile);
 
-void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesCompleteList, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, ofstream * writeFileObject);
+void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, ofstream * writeFileObject);
 
 void initiateMaxXAtAParticularY();
 Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, int x, bool initialiseOrPrint[], Reference * currentReferenceInPrintList, ofstream * writeFileObject);

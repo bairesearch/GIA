@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineReferencing.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1f 23-May-2012
+ * Project Version: 1l1g 24-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -33,9 +33,9 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList, int NLPdependencyRelationsType);
 void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], int NLPdependencyRelationsType);									//Stanford Compatible	
 
-void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, Feature * featureArrayTemp[]);	//theoretically stanford Compatible - [would require a lot of parameters to be manually derived, where they are automatically derived by Relex, and it would take time to get this to work properly]. Dont use this, use references instead Stanford codependency references instead
+void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[]);	//theoretically stanford Compatible - [would require a lot of parameters to be manually derived, where they are automatically derived by Relex, and it would take time to get this to work properly]. Dont use this, use references instead Stanford codependency references instead
 #ifdef GIA_USE_STANFORD_CORENLP
-void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAConceptNodeArray[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, StanfordCoreNLPCoreference * firstCoreferenceInList, Feature * featureArrayTemp[]);	//Stanford Compatible
+void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAConceptNodeArray[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, StanfordCoreNLPCoreference * firstCoreferenceInList, Feature * featureArrayTemp[]);	//Stanford Compatible
 #endif
 
 #ifdef GIA_USE_ADVANCED_REFERENCING
@@ -44,10 +44,10 @@ int identifyReferenceSets(unordered_map<string, GIAEntityNode*> *sentenceConcept
 int identifyDefiniteReferenceSets(unordered_map<string, GIAEntityNode*> *sentenceConceptEntityNodesList);
 	void identityReferenceSet(GIAEntityNode * entityNode, int referenceSetID);
 	void identityReferenceSetDetermineNextCourseOfAction(GIAEntityNode * entityNode, int referenceSetID);
-void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAEntityNode*> *sentenceConceptEntityNodesList, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, GIACoreference * firstGIACoreferenceInList, int numberReferenceSets);	//bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[]
+void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAEntityNode*> *sentenceConceptEntityNodesList, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, GIACoreference * firstGIACoreferenceInList, int numberReferenceSets);	//bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[]
 	GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(GIAEntityNode * entityNode, GIACoreference * currentGIACoreferenceInList);
 		GIACoreference * generateCoreferenceListBasedUponPreviouslyMatchedEntityNodeDetermineNextCourseOfAction(GIAEntityNode * entityNode, GIACoreference * currentGIACoreferenceInList);
-void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAConceptNodeArray[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, GIACoreference * firstCoreferenceInList, Feature * featureArrayTemp[]);
+void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAConceptNodeArray[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, GIACoreference * firstCoreferenceInList, Feature * featureArrayTemp[]);
 
 #endif
 			

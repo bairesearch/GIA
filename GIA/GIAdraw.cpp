@@ -3,7 +3,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1f 23-May-2012
+ * Project Version: 1l1g 24-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -35,7 +35,7 @@ void initiateMaxXAtAParticularY()
 }
 
 
-void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesCompleteList, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, ofstream * writeFileObject)
+void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete, bool initialiseOrPrint[], Reference * firstReferenceInPrintList, ofstream * writeFileObject)
 {
 	vector<GIAEntityNode*>::iterator entityIter;
 	
@@ -47,7 +47,7 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *entityNodesC
 	maxXAtAParticularY[yInitial] = xInitial;
 	//first pass; determine maxXAtAParticularY	[and use these to centre each row {at a given y} respectively]
 		
-	for (entityIter = entityNodesCompleteList->begin(); entityIter != entityNodesCompleteList->end(); entityIter++) 
+	for (entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++) 
 	{		
 		if(!((*entityIter)->initialisedForPrinting))
 		{
@@ -174,9 +174,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		{
 			int q = entityVectorConnectionDrawPosYinitialArray[i];
 			int r = entityVectorConnectionDrawPosXinitialArray[i];			
-			for(vector<GIAEntityNode*>::iterator entityIter = entityNode->entityVectorConnectionsArray[i].begin(); entityIter != entityNode->entityVectorConnectionsArray[i].end(); entityIter++) 
+			for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++) 
 			{	
-				currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+				currentReferenceInPrintList = initialiseEntityNodeForPrinting((*connectionIter)->entity, y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
 				
 				bool pass = true;
 				int entityConnectionColour = entityVectorConnectionDrawColourNameArray[i];
@@ -196,7 +196,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				{				
 					if(entityVectorConnectionDrawConnectionArray[i])
 					{
-						currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, (*entityIter), currentReferenceInPrintList, initialiseOrPrint, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, writeFileObject);				
+						currentReferenceInPrintList = initialiseEntityConnectionForPrinting(&pos1, (*connectionIter)->entity, currentReferenceInPrintList, initialiseOrPrint, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, writeFileObject);				
 					}
 				}
 				q = q + entityVectorConnectionDrawPosYspacingArray[i];			
@@ -667,7 +667,7 @@ Reference * createBox(Reference * currentReferenceInPrintList, vec * vect, doubl
 
 
 
-void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesCompleteList, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile, bool useOutputSVGFile)
+void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesActiveListComplete, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRFile, bool useOutputPPMFile, bool useOutputSVGFile)
 {//most of this is copied from CSexecFlow.cpp
 	
 	char * outputFileNameLDRcharstar = const_cast<char*>(outputFileNameLDR.c_str());
@@ -697,11 +697,11 @@ void printGIAnetworkNodes(vector<GIAEntityNode*> *entityNodesCompleteList, int w
 	}
 	
 	Reference * firstReferenceInPrintList = new Reference();
-	determineBasicPrintPositionsOfAllNodes(entityNodesCompleteList, initialiseOrPrint, firstReferenceInPrintList, writeFileObject);
+	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, initialiseOrPrint, firstReferenceInPrintList, writeFileObject);
 	/*
 	//cout << "h1" << endl;
 	initialiseOrPrint = DRAW_PRINT;
-	determineBasicPrintPositionsOfAllNodes(entityNodesCompleteList, initialiseOrPrint, firstReferenceInPrintList, writeFileObject);
+	determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, initialiseOrPrint, firstReferenceInPrintList, writeFileObject);
 	*/
 		
 

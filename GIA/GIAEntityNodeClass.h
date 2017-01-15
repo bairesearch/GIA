@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1f 23-May-2012
+ * Project Version: 1l1g 24-May-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -154,6 +154,8 @@ static bool entityVectorConnectionIsBasicArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNE
 #define VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN (true)
 #define BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN (true)
 
+class GIAEntityConnection;
+
 class GIAEntityNode
 {
 public:
@@ -190,12 +192,11 @@ public:
 	}instance;	//is the following entity known to be an instance?		
 	*/
 
-	vector<GIAEntityNode*> entityVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
+	vector<GIAEntityConnection*> entityVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];		//allows for generic coding
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	GIAEntityNode* entityCorrespondingBestMatch;	 //best match entity node corresponding to this assumed query entity node	//does not take into account multiple diversions/answers [assumes single matches only]	
 	#endif
 	
-	vector<GIAConnectionProperties*> entityVectorConnectionsPropertiesArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];	
 	#ifdef GIA_USE_DATABASE
 	//designed for a high scale database (eg 200,000 references per instance, 200,000 instances per concept)	
 	bool entityVectorConnectionsReferenceListLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];			//signifies whether all the vector connections in the reference list has been loaded from file and entityConnectionsNameArray/entityConnectionsIDArray have therefore been populated. This is the first step required to enable loading of connections into RAM (see entityVectorConnectionsLoadedArray)
@@ -203,27 +204,26 @@ public:
 	bool entityVectorConnectionsRemovedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];					//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
 	#endif
 
-	
 	//action connections;
 		//non-actions only;
-	vector<GIAEntityNode*> ActionNodeList;	//where this entity is the subject of the action
-	vector<GIAEntityNode*> IncomingActionNodeList;	//where this entity is the object of the action
+	vector<GIAEntityConnection*> * ActionNodeList;	//where this entity is the subject of the action
+	vector<GIAEntityConnection*> * IncomingActionNodeList;	//where this entity is the object of the action
 	
 		//actions only;
 	//NB actions can be performed by and on concepts, and by and on properties?
-	GIAEntityNode * actionSubjectEntity;	//record of entity that is the subject of this action instance
-	GIAEntityNode * actionObjectEntity;	//record of which entity that is the object of this action instance
+	vector<GIAEntityConnection*> * actionSubjectEntity;	//record of entity that is the subject of this action instance
+	vector<GIAEntityConnection*> * actionObjectEntity;	//record of which entity that is the object of this action instance
 	
 	//condition connections;
 		//non-conditions only (?);
 	//conditions connections: conditions and reverse conditions (reason) lookups [condition and reason respectively]
-	vector<GIAEntityNode*> ConditionNodeList;		//this property requires the following...
-	vector<GIAEntityNode*> IncomingConditionNodeList;	//this property is required by the following... //aka reason	[NB these may only be property, location, {and time action condtions}, not action conditions]
+	vector<GIAEntityConnection*> * ConditionNodeList;		//this property requires the following...
+	vector<GIAEntityConnection*> * IncomingConditionNodeList;	//this property is required by the following... //aka reason	[NB these may only be property, location, {and time action condtions}, not action conditions]
 
 		//conditions only;
 	//NB conditions can be performed by and on concepts, and by and on properties?
-	GIAEntityNode * conditionSubjectEntity;	//record of entity that is the subject of this action instance
-	GIAEntityNode * conditionObjectEntity;		//record of which entity that is the object of this action instance
+	vector<GIAEntityConnection*> * conditionSubjectEntity;		//record of entity that is the subject of this action instance
+	vector<GIAEntityConnection*> * conditionObjectEntity;		//record of which entity that is the object of this action instance
 
 	//time condition connections;
 	int conditionType;	//added 25 Sept 11	
@@ -231,22 +231,22 @@ public:
 
 	//property connections;
 	//record list of all properties for this entity
-	vector<GIAEntityNode*> PropertyNodeList;
+	vector<GIAEntityConnection*> * PropertyNodeList;
 		//properties only [is this possible for actions also? - may require upgrade in future]
-	//GIAEntityNode * entityNodeContainingThisProperty;		//removed 8 Dec 2011			//OLD: if property/action only:	//OLD: eg, Tom; OR;  Tom's Assets	//OLD: NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
-	vector<GIAEntityNode*> PropertyNodeReverseList;			//if property/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given property [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for concept entities [property entities may possibly only be contained by {ie, be a property of} a single entity]
+	//GIAEntityConnection * entityNodeContainingThisProperty;		//removed 8 Dec 2011			//OLD: if property/action only:	//OLD: eg, Tom; OR;  Tom's Assets	//OLD: NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
+	vector<GIAEntityConnection*> * PropertyNodeReverseList;			//if property/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given property [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for concept entities [property entities may possibly only be contained by {ie, be a property of} a single entity]
 
 		//actions, properties, and conditions only
-	GIAEntityNode * entityNodeDefiningThisInstance;					//if property/action/condition only:					//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
+	vector<GIAEntityConnection*> * entityNodeDefiningThisInstance;					//if property/action/condition only:					//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
 
 	
 		//concepts only (not properties/"instances" of entities);
 	//entity connections;										
 	//record parent and child entity definition nodes
-	vector<GIAEntityNode*> EntityNodeDefinitionList;			//if not property only: 	//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
-	vector<GIAEntityNode*> EntityNodeDefinitionReverseList;			//if not property only: 	//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
+	vector<GIAEntityConnection*> * EntityNodeDefinitionList;			//if not property only: 	//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
+	vector<GIAEntityConnection*> * EntityNodeDefinitionReverseList;			//if not property only: 	//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
 	//associated actions and properties [ie does this entity also define an action/verb or a property/adjective? [ie, it is not just a thing/noun]]
-	vector<GIAEntityNode*> AssociatedInstanceNodeList;			//if not property only: if type == definesAPropertyAdjective (ie, if this entity is not a property/instance but defines one or more properties/instances)
+	vector<GIAEntityConnection*> * AssociatedInstanceNodeList;			//if not property only: if type == definesAPropertyAdjective (ie, if this entity is not a property/instance but defines one or more properties/instances)
 	
 	//CHECKTHIS; what is the difference between EntityNodeDefinitionList and entityNodeDefiningThisInstance? - it appears to achieve a similar purpose; ANSWER - one is direct definition [definition of instance] the other is not
 	//CHECKTHIS; what is the difference between EntityNodeDefinitionReverseList and AssociatedInstanceNodeList? - it appears to achieve a similar purpose; ANSWER - one is direct definition [definition of instance] the other is not
@@ -345,26 +345,6 @@ public:
 	#endif
 };
 
-class GIAConnectionProperties
-{
-public:
-	GIAConnectionProperties(void);
-	~GIAConnectionProperties(void);
-	GIAConnectionProperties(string * entityName, long idInstance);
-	
-	#ifdef GIA_USE_ADVANCED_REFERENCING
-	bool sameReferenceSet;
-	#endif
-		
-	#ifdef GIA_USE_DATABASE
-	bool referenceLoaded;
-	string entityName;	//records the vector connection target entity name (to enable loading from db) [of target] 
-	long idInstance;	//records the vector connection target instance id (to enable loading from db) [of target]
-	bool loaded;		//signifies whether the vector connection target node has been loaded and is in RAM (eg from the db)
-	bool modified;		//signifies whether the database needs to be updated upon exit with modified reference
-	bool added;		//signifies whether the database needs to be updated upon exit with new reference
-	#endif
-}
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode);
 

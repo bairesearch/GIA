@@ -3,10 +3,10 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l1f 23-May-2012
+ * Project Version: 1l1g 24-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
- * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
+ * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
  * TO DO: extract date information of entities from relex <features> tag area
  *******************************************************************************/
 
@@ -169,7 +169,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 }
 
 
-void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType)
+void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType)
 {
  	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 
@@ -384,7 +384,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 	}
 }
 
-void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType)
+void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType)
 {
  	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	
@@ -656,7 +656,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 														//create arbitrarySubjectSpecialConceptEntityNode
 														string arbitrarySubjectSpecialConceptEntityNodeName = ARBITRARY_SUBJECT_SPECIAL_CONCEPT_NODE_NAME;
 														bool entityAlreadyExistant = false;
-														GIAEntityNode * arbitrarySubjectSpecialConceptEntityNode = findOrAddEntityNodeByNameSimpleWrapper(&arbitrarySubjectSpecialConceptEntityNodeName, &entityAlreadyExistant, conceptEntityNodesList);
+														GIAEntityNode * arbitrarySubjectSpecialConceptEntityNode = findOrAddEntityNodeByNameSimpleWrapper(&arbitrarySubjectSpecialConceptEntityNodeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 														subjectEntityTemp = arbitrarySubjectSpecialConceptEntityNode;		//overwrites subjectEntityTemp
 														#endif
 
@@ -853,7 +853,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 												string conditionTypeName = "specialCondition";
 
 												bool entityAlreadyExistant = false;
-												GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, conceptEntityNodesList);
+												GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 												addOrConnectPropertyConditionToEntity(subjectEntityOrProperty, specialConditionNode, conditionTypeConceptEntity, OLD_RELEX_PROBLEM_WORKAROUND_CODE_NOT_YET_SPENT_TIME_TO_DETERMINE_WHETHER_IMPLIES_SAME_SET);
 
@@ -1155,7 +1155,7 @@ void defineIndirectObjects(Sentence * currentSentenceInList, GIAEntityNode * GIA
 
 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
-void defineHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
+void defineHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts)
 {
 	/*
 			Space is saved through having a chicken.
@@ -1207,7 +1207,7 @@ void defineHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * curre
 									
 									string conditionTypeName = prepositionName;
 									bool entityAlreadyExistant = false;
-									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, conceptEntityNodesList);
+									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 									GIAEntityNode * haveEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
 									bool negative = haveEntity->negative;
@@ -1236,7 +1236,7 @@ void defineHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * curre
 									
 									string conditionTypeName = prepositionName;
 									bool entityAlreadyExistant = false;
-									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, conceptEntityNodesList);
+									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 																											
 									GIAEntityNode * beEntity = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
 									bool negative = beEntity->negative;
@@ -1269,7 +1269,7 @@ void defineHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * curre
 #endif
 
 //is this still used by Stanford?
-void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType)
+void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1315,7 +1315,7 @@ void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntit
 								//should really take into account the boolean and of both values: bool relationNegative = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->negative & GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex]->negative;
 
 								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//CHECK THIS...
-								createConditionBasedUponPreposition(entityNode, conditionEntityNode, conditionTypeConceptEntity->entityName, false, conceptEntityNodesList, NLPdependencyRelationsType, sameReferenceSet);
+								createConditionBasedUponPreposition(entityNode, conditionEntityNode, conditionTypeConceptEntity->entityName, false, entityNodesActiveListConcepts, NLPdependencyRelationsType, sameReferenceSet);
 
 								/*
 								bool passedPropositionTime = false;	
@@ -1362,7 +1362,7 @@ void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntit
 }
 
 
-void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType)
+void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1485,7 +1485,7 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 			if(passed)
 			{
 				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS, currentRelationInList);
-				createConditionBasedUponPreposition(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType, false, conceptEntityNodesList, NLPdependencyRelationsType, sameReferenceSet);
+				createConditionBasedUponPreposition(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType, false, entityNodesActiveListConcepts, NLPdependencyRelationsType, sameReferenceSet);
 			}
 		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
@@ -1496,7 +1496,7 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 }
 
 
-void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity, GIAEntityNode * actionOrPropertyConditionEntity, string relationType, bool negative, unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType, bool sameReferenceSet)
+void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity, GIAEntityNode * actionOrPropertyConditionEntity, string relationType, bool negative, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType, bool sameReferenceSet)
 {	
 	/* does not cover all grounds	
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
@@ -1611,7 +1611,7 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 		
 		string conditionTypeName = prepositionName;
 		bool entityAlreadyExistant = false;
-		GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, conceptEntityNodesList);
+		GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 													
 		//cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl; 
 	
@@ -1710,7 +1710,7 @@ void addTimeToProperty(GIAEntityNode * timeConditionEntity)
 
 /*
 #ifdef GIA_USE_TIME_NODE_INDEXING
-void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, GIAEntityNode * conditionTypeConceptEntity, vector<GIATimeConditionNode*> *timeConditionNodesList, vector<long> *timeConditionNumbersList)
+void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, GIAEntityNode * conditionTypeConceptEntity, vector<GIATimeConditionNode*> *timeConditionNodesActiveList, vector<long> *timeConditionNumbersActiveList)
 #else
 void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity, GIAEntityNode * conditionTypeConceptEntity)
 #endif
@@ -1725,7 +1725,7 @@ void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * ti
 	int timeConditionEntityIndex = -1;
 	bool argumentEntityAlreadyExistant = false;
 	long timeConditionTotalTimeInSeconds = calculateTotalTimeInSeconds(timeConditionEntity->entityName);
-	GIATimeConditionNode * newTimeCondition = findOrAddTimeNodeByNumber(timeConditionNodesList, conceptEntityNamesList, timeConditionAbsoluteTimeValue, &argumentEntityAlreadyExistant, &timeConditionEntityIndex, true);
+	GIATimeConditionNode * newTimeCondition = findOrAddTimeNodeByNumber(timeConditionNodesActiveList, conceptEntityNamesList, timeConditionAbsoluteTimeValue, &argumentEntityAlreadyExistant, &timeConditionEntityIndex, true);
 	#else	
 	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
 	#endif
