@@ -3,7 +3,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4c 23-July-2012
+ * Project Version: 1n4d 24-July-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -783,7 +783,9 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuer
 						#ifdef STANFORD_PARSER_USE_POS_TAGS	//overwrite
 						int maxNumberOfWordsInSentence = 0;
 						bool featuresNotPreviouslyFilled = createNewSentences;
+						#ifdef GIA_NLP_DEBUG
 						cout << "currentStanfordParserOutputParagraphString = " << currentStanfordParserOutputParagraphString << endl;
+						#endif
 						GIATHparseStanfordParseWordsAndPOSTagsText(&currentStanfordParserOutputParagraphString, currentSentence, &maxNumberOfWordsInSentence);						
 						#endif
 						

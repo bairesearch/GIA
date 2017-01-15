@@ -3,7 +3,7 @@
  * File Name: GIAnlg.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4c 23-July-2012
+ * Project Version: 1n4d 24-July-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -17,6 +17,16 @@
 #include "GIAEntityNodeClass.h"
 #include "GIATranslatorOperations.h"
 
+#include <iostream>
+#include <fstream>
+#include <ctime>
+#include <cstring>
+#include <cstdlib>	//for random number generation
+#include <cmath>
+#include <string>
+using namespace std;
+
+
 class NLGSentence
 {
 public:
@@ -29,7 +39,17 @@ public:
 	NLGSentence * next;
 };
 
+#ifndef GIA_USE_NLG2
+	#define GIA_NLG_INDEX_IRRELEVANT (0)
+#endif
+
 #define GIA_NLG_SUPPORT_PERSON_AND_GENDER
+
+#define NLG_POSSESSIVE_TEXT "has"
+#define NLG_DEFINITION_TEXT "is"
+#define NLG_DEFINITE_TEXT "the"
+#define NLG_INDEFINITE_TEXT "a"
+#define NLG_TEXT_SPACE " "
 
 #define NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS
 #define NLG_INPUTVIEW_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
@@ -54,8 +74,9 @@ public:
 
 static bool nlgSentenceThreeEntitiesGenerateVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, false, false, false, false, false, true, true, true, true, false};
 #define NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS (2)
-static int nlgSentenceThreeEntitiesGenerateAdditionsVectorConnectionsArray[NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT};
+static int nlgSentenceThreeEntitiesGenerateAdditionsVectorConnectionsArray[NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS};
 static bool nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityConnection[NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS] = {false, true};
+static int nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[2] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT};
 
 
 static bool nlgSentenceTwoEntitiesGenerateVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, true, false, true, false, false, false, false, false, false, false};
@@ -69,22 +90,18 @@ static string nlgSentenceThreeEntitiesDependencyRelationVectorConnectionsArray[G
 
 static string grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES] = {"undefined", ".n", ".v", "adj", "adv", "prep", "satellite"};
 
-#include <iostream>
-#include <fstream>
-#include <ctime>
-#include <cstring>
-#include <cstdlib>	//for random number generation
-#include <cmath>
-#include <string>
-using namespace std;
 
 NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSentence * currentNLGsentence);
 	void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, string * generatedText, int connectionType1, int connectionType2, int startEntityIndex, bool supportAdditionalLinks);
-	void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode0, GIAEntityConnection * entityConnection, string * generatedText, int connectionType, int startEntityIndex);
-		void generateNLGInputViewFeatureTagsGenericPerSentence(string * generatedRelexTags);
-		void generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNode, int entityIndex, string * generatedRelexTags);
-			string generateNLGInputViewLine(string type, string governor, string dependent);
-
-string generateNLGInputViewLine(string type, string governor, string dependent);
+	void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode0, GIAEntityConnection * entityConnection, string * generatedText, int connectionType, int startEntityIndex, bool additionalLink);
+		#ifdef GIA_USE_NLG2	
+		void NLG2generateNLGInputViewFeatureTagsGenericPerSentence(string * generatedNLGInputViewTags);
+		void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNode, int entityIndex, string * generatedNLGInputViewTags);
+			string NLG2generateNLGInputViewLine(string type, string governor, string dependent);
+		#else
+		void addDeterminate(GIAEntityNode * entityNode, string * entityTextExpanded);
+		#endif
+		
+string getWordOrig(GIAEntityNode * entityNode);
 
 #endif

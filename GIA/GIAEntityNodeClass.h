@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n4c 23-July-2012
+ * Project Version: 1n4d 24-July-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -192,7 +192,7 @@ public:
 	long idInstance; 		//not for concepts (this instance idActiveList of the concept entityName)
 
 	string entityName;
-	#ifdef GIA_USE_NLG_BUG_IN_NLG2_REQUIRES_ORIG_WORD_NOT_LEMMA
+	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
 	string wordOrig;		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
 	#endif
 	double confidence;
@@ -375,6 +375,7 @@ public:
 	
 	#ifdef GIA_USE_NLG
 	bool parsedForLanguageGeneration;
+	bool definiteSourceAddedInLanguageGeneration;
 	#endif
 
 };
